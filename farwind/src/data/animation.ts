@@ -1,9 +1,63 @@
 import type { Facing, MotionAction } from "../game/systems/locomotion";
-export const COMBAT_ART = {
+import { STRIKES } from "../game/systems/combat";
+export const COMBAT_ACTION_ART = {
   frameSize: 160,
-  displaySize: 110,
+  displaySize: 145,
   footY: 154,
 } as const;
+export type CombatVisual = {
+  texture: string;
+  frame: number;
+  clip: string;
+  frameIndex: number;
+  facing: Facing;
+  phase: "windup" | "active" | "recovery";
+  phaseProgress: number;
+  provisional: boolean;
+};
+export function combatVisual(
+  stage: number,
+  facing: Facing,
+  elapsed: number,
+): CombatVisual {
+  const move = STRIKES[stage - 1];
+  const activeEnd = move.windup + move.active;
+  const total = activeEnd + move.recovery;
+  const t = Math.max(0, Math.min(elapsed, total));
+  const phase =
+    t < move.windup ? "windup" : t < activeEnd ? "active" : "recovery";
+  const phaseStart =
+    phase === "windup" ? 0 : phase === "active" ? move.windup : activeEnd;
+  const phaseDuration =
+    phase === "windup"
+      ? move.windup
+      : phase === "active"
+        ? move.active
+        : move.recovery;
+  const phaseProgress = Math.min(1, (t - phaseStart) / phaseDuration);
+  const view = facing === 0 ? 0 : facing === 1 ? 1 : 2;
+  const boundaries = [
+    0,
+    move.windup * 0.55,
+    move.windup,
+    move.windup + move.active * 0.5,
+    activeEnd,
+    activeEnd + move.recovery * 0.5,
+  ];
+  let frameIndex = 0;
+  for (let i = 1; i < boundaries.length; i++)
+    if (t >= boundaries[i]) frameIndex = i;
+  return {
+    texture: "hero-combat-action",
+    frame: view * 18 + (stage - 1) * 6 + frameIndex,
+    clip: `hero/combat/${facing}/${stage}`,
+    frameIndex,
+    facing,
+    phase,
+    phaseProgress,
+    provisional: true,
+  };
+}
 export type Clip = {
   texture: string;
   frames: number[];

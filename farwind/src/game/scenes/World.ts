@@ -13,7 +13,7 @@ import { makeTerrain } from "../systems/terrain";
 import Phaser from "phaser";
 import { props, roads, enemyDefs, region, type Prop } from "../../data/world";
 import { items, type ItemId } from "../../data/content";
-import { COMBAT_ART } from "../../data/animation";
+import { COMBAT_ACTION_ART, combatVisual } from "../../data/animation";
 import {
   initialState,
   add,
@@ -119,10 +119,14 @@ export class World extends Phaser.Scene {
         `/assets/animation/round-three/${id}-motion.png`,
         { frameWidth: 128, frameHeight: 128 },
       );
-    this.load.spritesheet("hero-combat", "/assets/animation/hero-combat.png", {
-      frameWidth: COMBAT_ART.frameSize,
-      frameHeight: COMBAT_ART.frameSize,
-    });
+    this.load.spritesheet(
+      "hero-combat-action",
+      "/assets/animation/hero-combat-action.png",
+      {
+        frameWidth: COMBAT_ACTION_ART.frameSize,
+        frameHeight: COMBAT_ACTION_ART.frameSize,
+      },
+    );
     this.load.on("loaderror", (file: { key: string }) =>
       this.failed.push(file.key),
     );
@@ -472,19 +476,30 @@ export class World extends Phaser.Scene {
     const m = STRIKES[a.stage - 1],
       [vx, vy] = facingVector(a.facing);
     const angle = Math.atan2(vy, vx);
+    const progress = Math.max(
+      0,
+      Math.min(1, (this.sim - a.start - m.windup) / m.active),
+    );
+    const reverse = a.stage === 2;
+    const sweep =
+      angle +
+      (reverse
+        ? m.angle - 2 * m.angle * progress
+        : -m.angle + 2 * m.angle * progress);
+    const tail = 0.24;
     this.slash.setDepth(this.state.player.y + 1);
     this.slash.lineStyle(
       a.stage === 3 ? 5 : 3,
       a.stage === 3 ? 0xffe3a3 : 0xe5f8e8,
-      0.9,
+      0.65,
     );
     this.slash.beginPath();
     this.slash.arc(
       this.state.player.x,
       this.state.player.y - 8,
-      m.range * 0.92,
-      angle - m.angle,
-      angle + m.angle,
+      m.range * COMBAT.slashRadiusScale,
+      reverse ? sweep : sweep - tail,
+      reverse ? sweep + tail : sweep,
     );
     this.slash.strokePath();
   }
@@ -725,20 +740,23 @@ export class World extends Phaser.Scene {
       dt,
       striking ? 0 : a.x,
       striking ? 0 : a.y,
+      striking
+        ? combatVisual(
+            striking.stage,
+            striking.facing,
+            this.sim - striking.start,
+          )
+        : undefined,
+      !striking && this.sim < this.combat.dashUntil
+        ? Math.abs(this.combat.dashX) > Math.abs(this.combat.dashY)
+          ? this.combat.dashX < 0
+            ? 2
+            : 3
+          : this.combat.dashY < 0
+            ? 1
+            : 0
+        : undefined,
     );
-    if (striking)
-      this.hero.combatPose(
-        striking.stage,
-        this.combat.phase(this.sim),
-        striking.facing,
-      );
-    else if (this.sim < this.combat.dashUntil) {
-      const x = this.combat.dashX,
-        y = this.combat.dashY;
-      this.hero.dashPose(
-        Math.abs(x) > Math.abs(y) ? (x < 0 ? 2 : 3) : y < 0 ? 1 : 0,
-      );
-    }
     this.drawSlash();
     this.drawDashTrail();
     this.hero.sprite.setAlpha(
@@ -766,7 +784,7 @@ export class World extends Phaser.Scene {
         [this.hero, this.cat]
           .map((a) => {
             const d = a.debug();
-            return `${a.cat ? "黑猫" : "旅人"} ${d.key} 帧${d.frame} 速度${d.speed.toFixed(1)} 翻转${d.flip} 根${d.root.map((n) => n.toFixed(0))} 锚64,124${d.provisional ? " 素材待补" : ""}`;
+            return `${a.cat ? "黑猫" : "旅人"} ${d.key} ${d.texture}:${d.frame} 进度${d.phaseProgress.toFixed(2)} 速度${d.speed.toFixed(1)} 翻转${d.flip} 根${d.root.map((n) => n.toFixed(0))} 锚${d.anchor.join(",")} 原点${d.origin.map((n) => n.toFixed(2))} 缩放${d.scale.map((n) => n.toFixed(2))}${d.provisional ? " 素材待补" : ""}`;
           })
           .join("\n") +
           `\n体力${p.stamina.toFixed(1)} 耗尽恢复${this.sprint.exhausted} sim${this.sim.toFixed(0)} 攻击截止${this.attackUntil.toFixed(0)}`,

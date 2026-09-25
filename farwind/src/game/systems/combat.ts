@@ -12,7 +12,6 @@ export const STRIKES = [
     knock: 5,
     flash: 110,
     stagger: 75,
-    pose: { windup: 3, recovery: 4 },
   },
   {
     windup: 90,
@@ -25,7 +24,6 @@ export const STRIKES = [
     knock: 7,
     flash: 110,
     stagger: 75,
-    pose: { windup: 4, recovery: 3 },
   },
   {
     windup: 145,
@@ -38,13 +36,14 @@ export const STRIKES = [
     knock: 27,
     flash: 170,
     stagger: 170,
-    pose: { windup: 2, recovery: 5 },
   },
 ] as const;
 export const COMBAT = {
   buffer: 150,
   grace: 200,
   chainWindow: 100,
+  restartWindow: 150,
+  slashRadiusScale: 0.72,
   dash: {
     distance: 90,
     duration: 200,
@@ -128,7 +127,12 @@ export class CombatController {
     this.dashCooldown = cooldown;
   }
   requestAttack(now: number) {
-    if (this.dashUntil > now || this.pending || this.attack?.stage === 3)
+    if (this.pending && now > this.bufferUntil) this.pending = false;
+    if (this.dashUntil > now || this.pending) return;
+    if (
+      this.attack?.stage === 3 &&
+      now < this.attack.start + this.total(3) - COMBAT.restartWindow
+    )
       return;
     this.pending = true;
     this.bufferUntil = now + COMBAT.buffer;

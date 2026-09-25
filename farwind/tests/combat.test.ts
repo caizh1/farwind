@@ -7,6 +7,9 @@ import {
   sweepMove,
 } from "../src/game/systems/combat";
 import { add, count, initialState, parseSave } from "../src/game/systems/state";
+import { combatVisual, COMBAT_ACTION_ART } from "../src/data/animation";
+import sharp from "sharp";
+import { createHash } from "node:crypto";
 
 function arena() {
   const c = new CombatController();
@@ -35,6 +38,39 @@ function arena() {
   return { c, p, enemies, hits, starts, tick };
 }
 describe("普攻时间轴和连段", () => {
+  it("过期缓冲先释放本步新输入，并与无旧缓冲的对照一致", () => {
+    for (const stale of [false, true]) {
+      const a = arena();
+      a.c.requestAttack(0);
+      a.tick(0, 0);
+      if (stale) a.c.requestAttack(90);
+      a.tick(0, 230);
+      a.c.requestAttack(250);
+      a.tick(230, 250);
+      expect(a.starts).toEqual([1, 2]);
+      expect(a.c.pending).toBe(false);
+    }
+  });
+  it("第三段末尾一次缓存仅在完整收招后重启第一段", () => {
+    const a = arena();
+    a.c.requestAttack(0);
+    a.tick(0, 0);
+    a.c.requestAttack(240);
+    a.tick(0, 240);
+    a.c.requestAttack(530);
+    a.tick(240, 530);
+    expect(a.starts).toEqual([1, 2, 3]);
+    a.c.requestAttack(600);
+    expect(a.c.pending).toBe(false);
+    a.c.requestAttack(900);
+    a.c.requestAttack(900);
+    a.tick(530, 1039);
+    expect(a.starts).toEqual([1, 2, 3]);
+    a.tick(1039, 1040);
+    expect(a.starts).toEqual([1, 2, 3, 1]);
+    a.tick(1040, 1200);
+    expect(a.starts).toEqual([1, 2, 3, 1]);
+  });
   it("前摇不伤害，有效期多目标各命中一次；跨整段有效期仍结算一次", () => {
     const a = arena();
     a.c.requestAttack(0);
@@ -93,6 +129,69 @@ describe("普攻时间轴和连段", () => {
     a.tick(500, 1000);
     expect(a.hits).toEqual(["1:a", "1:b"]);
   });
+});
+it("动作样本用攻击时间选出有效帧、方向与阶段，并匹配真实图集", async () => {
+  const atlas = sharp("public/assets/animation/hero-combat-action.png");
+  expect(await atlas.metadata()).toMatchObject({ width: 960, height: 1440 });
+  for (let view = 0; view < 3; view++) {
+    let previousEnd = "";
+    for (let stage = 0; stage < 3; stage++) {
+      const hashes: string[] = [];
+      for (let pose = 0; pose < 6; pose++) {
+        const pixels = await sharp(
+          "public/assets/animation/hero-combat-action.png",
+        )
+          .extract({
+            left: pose * 160,
+            top: (view * 3 + stage) * 160,
+            width: 160,
+            height: 160,
+          })
+          .raw()
+          .toBuffer();
+        hashes.push(createHash("sha256").update(pixels).digest("hex"));
+      }
+      expect(new Set(hashes).size).toBe(6);
+      if (previousEnd) expect(hashes[0]).toBe(previousEnd);
+      previousEnd = hashes[5];
+    }
+  }
+  for (const facing of [0, 1, 2, 3] as const) {
+    for (let stage = 1; stage <= 3; stage++) {
+      const move = STRIKES[stage - 1];
+      const times = [
+        0,
+        move.windup * 0.6,
+        move.windup,
+        move.windup + move.active * 0.6,
+        move.windup + move.active,
+        move.windup + move.active + move.recovery * 0.6,
+      ];
+      const samples = times.map((time) => combatVisual(stage, facing, time));
+      expect(samples.map((s) => s.frameIndex)).toEqual([0, 1, 2, 3, 4, 5]);
+      expect(samples.map((s) => s.phase)).toEqual([
+        "windup",
+        "windup",
+        "active",
+        "active",
+        "recovery",
+        "recovery",
+      ]);
+      expect(new Set(samples.map((s) => s.frame)).size).toBe(6);
+      expect(
+        samples.every(
+          (s) =>
+            s.texture === "hero-combat-action" &&
+            s.facing === facing &&
+            s.frame >= 0 &&
+            s.frame < 54,
+        ),
+      ).toBe(true);
+    }
+  }
+  expect(COMBAT_ACTION_ART.footY).toBeLessThan(COMBAT_ACTION_ART.frameSize);
+  expect(combatVisual(1, 2, 90).frame).toBe(combatVisual(1, 3, 90).frame);
+  expect(combatVisual(1, 0, 90).frame).not.toBe(combatVisual(1, 1, 90).frame);
 });
 describe("风步、碰撞和保护", () => {
   it("成本由成功启动决定，冷却、无敌边界与独立保护不混淆", () => {

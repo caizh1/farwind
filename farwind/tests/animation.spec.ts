@@ -11,6 +11,10 @@ async function hold(page: any, keys: string[], ms: number) {
 test("motion-directions-wall-stop-pause", async ({ page }) => {
   await page.goto("/?animationDebug=1");
   await page.getByRole("button", { name: "启程 · 新游戏" }).click();
+  await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
+  await page.waitForFunction(
+    () => (window as any).__farwind?.().session.sim > 500,
+  );
   await page.waitForTimeout(300);
   for (const [key, direction] of [
     ["d", 3],
@@ -76,6 +80,10 @@ test("motion-directions-wall-stop-pause", async ({ page }) => {
 test("companion-well-house-corners", async ({ page }) => {
   await page.goto("/?animationDebug=1");
   await page.getByRole("button", { name: "启程 · 新游戏" }).click();
+  await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
+  await page.waitForFunction(
+    () => (window as any).__farwind?.().session.sim > 500,
+  );
   await page.waitForTimeout(300);
   async function go(x: number, y: number) {
     for (const axis of ["x", "y"] as const) {

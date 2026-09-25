@@ -1,11 +1,24 @@
 import Phaser from "phaser";
 import { Locomotion, type MotionSample } from "../systems/locomotion";
-import { clipFor, COMBAT_ART } from "../../data/animation";
-import { STRIKES } from "../systems/combat";
+import {
+  clipFor,
+  COMBAT_ACTION_ART,
+  type CombatVisual,
+} from "../../data/animation";
+import type { Facing } from "../systems/locomotion";
 export class Actor {
   sprite: Phaser.GameObjects.Sprite;
   shadow: Phaser.GameObjects.Ellipse;
   motion: Locomotion;
+  presentation = {
+    key: "",
+    frameIndex: 0,
+    provisional: false,
+    phase: "idle",
+    phaseProgress: 0,
+    facing: 0 as Facing,
+    anchor: [64, 124] as [number, number],
+  };
   constructor(
     scene: Phaser.Scene,
     x: number,
@@ -44,65 +57,80 @@ export class Actor {
     dt = 0,
     intentX = 0,
     intentY = 0,
+    combat?: CombatVisual,
+    dashFacing?: Facing,
   ) {
     this.motion.update({ dx, dy, dt, intentX, intentY, attack });
-    this.draw(x, y);
+    this.draw(x, y, combat, dashFacing);
   }
   animate(sample: MotionSample) {
     this.motion.update(sample);
     this.draw(this.sprite.x, this.sprite.y);
   }
-  draw(x: number, y: number) {
+  draw(x: number, y: number, combat?: CombatVisual, dashFacing?: Facing) {
     const clip = clipFor(this.cat, this.motion.direction, this.motion.action);
     const index =
         Math.floor(this.motion.phase * clip.frames.length) % clip.frames.length,
-      frame = clip.frames[index];
-    if (this.sprite.texture.key !== clip.texture)
-      this.sprite.setTexture(clip.texture, frame);
+      frame = combat
+        ? combat.frame
+        : dashFacing !== undefined
+          ? dashFacing * 6 + 2
+          : clip.frames[index],
+      texture =
+        combat?.texture ?? (dashFacing !== undefined ? "hero" : clip.texture),
+      art = combat ? COMBAT_ACTION_ART : null;
+    if (this.sprite.texture.key !== texture)
+      this.sprite.setTexture(texture, frame);
     else if (String(this.sprite.frame.name) !== String(frame))
       this.sprite.setFrame(frame);
-    this.sprite.setFlipX(clip.flip).setPosition(x, y).setDepth(y);
     this.sprite
-      .setOrigin(0.5, 124 / 128)
-      .setDisplaySize(this.cat ? 55 : 86, this.cat ? 54 : 92);
+      .setFlipX(
+        combat
+          ? combat.facing === 2
+          : dashFacing !== undefined
+            ? false
+            : clip.flip,
+      )
+      .setPosition(x, y)
+      .setDepth(y);
+    this.sprite
+      .setOrigin(0.5, art ? art.footY / art.frameSize : 124 / 128)
+      .setDisplaySize(
+        art ? art.displaySize : this.cat ? 55 : 86,
+        art ? art.displaySize : this.cat ? 54 : 92,
+      );
+    this.presentation = {
+      key:
+        combat?.clip ??
+        (dashFacing !== undefined ? `hero/dash/${dashFacing}` : clip.name),
+      frameIndex: combat?.frameIndex ?? (dashFacing !== undefined ? 2 : index),
+      provisional: combat?.provisional ?? !!clip.provisional,
+      phase:
+        combat?.phase ??
+        (dashFacing !== undefined ? "dash" : this.motion.action),
+      phaseProgress: combat?.phaseProgress ?? this.motion.phase,
+      facing: combat?.facing ?? dashFacing ?? this.motion.direction,
+      anchor: art ? [art.frameSize / 2, art.footY] : [64, 124],
+    };
     this.shadow.setPosition(x, y - 3).setDepth(y - 0.5);
   }
-  combatPose(stage: number, phase: string, facing: number) {
-    const base = facing * 6;
-    const pose = STRIKES[stage - 1].pose;
-    const frame = base + (phase === "windup" ? pose.windup : pose.recovery);
-    this.motion.direction = facing as 0 | 1 | 2 | 3;
-    if (phase === "active")
-      this.sprite
-        .setTexture(
-          "hero-combat",
-          (facing === 0 ? 0 : facing === 1 ? 1 : 2) * 3 + stage - 1,
-        )
-        .setFlipX(facing === 2)
-        .setOrigin(0.5, COMBAT_ART.footY / COMBAT_ART.frameSize)
-        .setDisplaySize(COMBAT_ART.displaySize, COMBAT_ART.displaySize);
-    else this.sprite.setTexture("hero", frame).setFlipX(false);
-  }
-  dashPose(facing: number) {
-    this.motion.direction = facing as 0 | 1 | 2 | 3;
-    this.sprite.setTexture("hero", facing * 6 + 2).setFlipX(false);
-  }
   debug() {
-    const c = clipFor(this.cat, this.motion.direction, this.motion.action);
     return {
       action: this.motion.action,
-      key: c.name,
+      key: this.presentation.key,
+      texture: this.sprite.texture.key,
       frame: this.sprite.frame.name,
-      frameIndex:
-        Math.floor(this.motion.phase * c.frames.length) % c.frames.length,
-      direction: this.direction,
-      phase: this.motion.phase,
+      frameIndex: this.presentation.frameIndex,
+      direction: this.presentation.facing,
+      phase: this.presentation.phase,
+      phaseProgress: this.presentation.phaseProgress,
       speed: this.motion.speed,
       flip: this.sprite.flipX,
       root: [this.sprite.x, this.sprite.y],
-      anchor: [64, 124],
+      anchor: this.presentation.anchor,
+      origin: [this.sprite.originX, this.sprite.originY],
       scale: [this.sprite.scaleX, this.sprite.scaleY],
-      provisional: !!c.provisional,
+      provisional: this.presentation.provisional,
     };
   }
 }
