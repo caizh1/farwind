@@ -1,0 +1,18 @@
+# 本地依赖与构建产物
+**/node_modules/
+**/dist/
+**/.DS_Store
+**/test-results/
+**/playwright-report/
+
+# 本地交付包与体积较大的原始调试压缩包
+/farwind-delivery.zip
+/farwind-delivery-checksum.txt
+/farwind/docs/test-evidence/**/*.zip
+
+# 本地配置与密钥
+.env
+.env.*
+!.env.example
+*.pem
+*.key
