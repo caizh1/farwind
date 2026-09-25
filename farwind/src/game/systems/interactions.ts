@@ -68,7 +68,7 @@ export function interact(this: World, p: Prop) {
     if (add(s, p.item!, p.item === "herb" ? 2 : 2)) {
       s.collected[p.id] = s.time;
       this.soundFx.play("pick");
-      this.attackUntil = this.sim + 260;
+      this.gatherUntil = this.sim + 260;
       this.float(p.x, p.y, `${items[p.item!].name} +2`);
       this.ui.message(`获得${items[p.item!].name} ×2`);
       this.refresh();
@@ -139,6 +139,10 @@ export function interact(this: World, p: Prop) {
   }
   if (p.kind === "shortcut") {
     if (s.shortcut) {
+      this.combat.reset(this.combat.dashCooldown);
+      this.pointerAttack = false;
+      this.attackUntil = 0;
+      this.slash?.clear();
       s.player.x = 740;
       s.player.y = 780;
       this.cat.place(662, 798);

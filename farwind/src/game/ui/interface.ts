@@ -18,12 +18,13 @@ export class Interface {
   selected: ItemId | null = null;
   hotbarMarkup = "";
   state?: State;
+  combatStatus = "Space 风步 · 就绪";
   actions!: Actions;
   modal!: HTMLElement;
   hud!: HTMLElement;
   toastEl!: HTMLElement;
   constructor() {
-    this.root.innerHTML = `<div id="hud" hidden><div class="top"><section class="vitals"><img class="portrait" src="/assets/portrait.png" alt="旅行者"><div><b>旅人 <small>与小黑同行</small></b><div class="meter health"><i></i><span></span></div><div class="meter stamina"><i></i><span></span></div></div></section><section class="location"><b id="region">风铃村</b><span id="clock"></span><canvas id="minimap" width="150" height="88" aria-label="位置小地图"></canvas></section></div><div class="quest-tracker"><small>风从这里开始</small><span id="objective"></span><button data-panel="quest">Q 旅途手记</button></div><div id="prompt"></div><div class="bottom"><span class="help">WASD 移动 · Shift 奔跑 · E 交互 · J 攻击</span><div id="hotbar"></div><div class="toolbar"><button data-panel="bag">Tab 行囊</button><button data-panel="map">M 地图</button><button data-panel="pause">Esc 暂停</button></div></div></div><div id="toast" role="status"></div><div id="modal"></div>`;
+    this.root.innerHTML = `<div id="hud" hidden><div class="top"><section class="vitals"><img class="portrait" src="/assets/portrait.png" alt="旅行者"><div><b>旅人 <small>与小黑同行</small></b><div class="meter health"><i></i><span></span></div><div class="meter stamina"><i></i><span></span></div></div></section><section class="location"><b id="region">风铃村</b><span id="clock"></span><canvas id="minimap" width="150" height="88" aria-label="位置小地图"></canvas></section></div><div class="quest-tracker"><small>风从这里开始</small><span id="objective"></span><button data-panel="quest">Q 旅途手记</button></div><div id="prompt"></div><div class="bottom"><span class="help">WASD 移动 · Shift 奔跑 · E 交互 · J/左键 三连斩 · <span id="combat-status">Space 风步 · 就绪</span></span><div id="hotbar"></div><div class="toolbar"><button data-panel="bag">Tab 行囊</button><button data-panel="map">M 地图</button><button data-panel="pause">Esc 暂停</button></div></div></div><div id="toast" role="status"></div><div id="modal"></div>`;
     this.modal = this.root.querySelector("#modal")!;
     this.hud = this.root.querySelector("#hud")!;
     this.toastEl = this.root.querySelector("#toast")!;
@@ -243,6 +244,7 @@ export class Interface {
       `第 ${Math.floor(s.time / 1440) + 1} 日 · ${String(Math.floor(s.time / 60) % 24).padStart(2, "0")}:${String(Math.floor(s.time % 60)).padStart(2, "0")}`;
     this.root.querySelector("#objective")!.textContent = objectives[s.quest];
     this.root.querySelector("#prompt")!.textContent = prompt;
+    this.root.querySelector("#combat-status")!.textContent = this.combatStatus;
     const hotbarMarkup = s.hotbar
       .map(
         (a, i) =>

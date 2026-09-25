@@ -6,6 +6,6 @@ test("village-visual", async ({ page }) => {
   await page.getByRole("button", { name: "启程 · 新游戏" }).click();
   await expect(page.locator("#hud")).toBeVisible();
   await page.waitForTimeout(1000);
-  await page.screenshot({ path: "docs/animation/round-three/regression/village-first.png" });
+  await page.screenshot({ path: "docs/combat/regression/village-first.png" });
   expect(errors).toEqual([]);
 });

@@ -15,7 +15,7 @@ export class Input {
       )
         e.preventDefault();
       const k = e.key.toLowerCase();
-      if (!this.held.has(k)) this.pressed.add(k);
+      if (!e.repeat && !this.held.has(k)) this.pressed.add(k);
       this.held.add(k);
     });
     window.addEventListener("keyup", (e) =>

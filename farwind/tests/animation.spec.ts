@@ -25,12 +25,17 @@ test("motion-directions-wall-stop-pause", async ({ page }) => {
       .poll(async () => (await read(page)).animation.hero.action)
       .toBe("idle");
   }
-  for (const [key, direction] of [["s",0],["w",1],["d",3],["a",2]] as const) {
-    const run = await hold(page, ["Shift",key], 400);
+  for (const [key, direction] of [
+    ["s", 0],
+    ["w", 1],
+    ["d", 3],
+    ["a", 2],
+  ] as const) {
+    const run = await hold(page, ["Shift", key], 400);
     expect(run.animation.hero.direction).toBe(direction);
     expect(run.animation.hero.action).toBe("run");
     expect(run.animation.hero.provisional).toBe(false);
-    expect(run.animation.hero.speed).toBeCloseTo(235,0);
+    expect(run.animation.hero.speed).toBeCloseTo(235, 0);
   }
   const diagonal = await hold(page, ["d", "s"], 400);
   expect(diagonal.animation.hero.speed).toBeCloseTo(150, 0);
@@ -66,7 +71,7 @@ test("motion-directions-wall-stop-pause", async ({ page }) => {
   await page.keyboard.press("Escape");
   await expect(page.locator("#modal")).toBeHidden();
   expect((await hold(page, ["d"], 300)).animation.hero.action).toBe("walk");
-  await page.screenshot({ path: "docs/animation/round-three/regression/debug-runtime.png" });
+  await page.screenshot({ path: "docs/combat/regression/debug-runtime.png" });
 });
 test("companion-well-house-corners", async ({ page }) => {
   await page.goto("/?animationDebug=1");
@@ -110,5 +115,5 @@ test("companion-well-house-corners", async ({ page }) => {
       s.companion.y - s.state.player.y,
     ),
   ).toBeLessThan(130);
-  await page.screenshot({ path: "docs/animation/round-three/regression/corner-runtime.png" });
+  await page.screenshot({ path: "docs/combat/regression/corner-runtime.png" });
 });

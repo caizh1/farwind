@@ -11,6 +11,8 @@ export type State = {
   collected: Record<string, number>;
   chests: string[];
   killed: string[];
+  pendingDrops: { enemyId: string; item: ItemId; x: number; y: number }[];
+  dashCooldownRemaining: number;
   stones: number[];
   shortcut: boolean;
   time: number;
@@ -27,6 +29,8 @@ export const initialState = (): State => ({
   collected: {},
   chests: [],
   killed: [],
+  pendingDrops: [],
+  dashCooldownRemaining: 0,
   stones: [],
   shortcut: false,
   time: 8 * 60,
@@ -90,7 +94,11 @@ export function reward(s: State) {
   return true;
 }
 export function validate(raw: unknown): State {
-  const s = raw as State;
+  const s = structuredClone(raw) as State;
+  if (s && s.schema_version === 1) {
+    s.pendingDrops ??= [];
+    s.dashCooldownRemaining ??= 0;
+  }
   const num = (n: unknown, min: number, max: number) =>
     typeof n === "number" && Number.isFinite(n) && n >= min && n <= max;
   const strarr = (a: unknown) =>
@@ -123,6 +131,17 @@ export function validate(raw: unknown): State {
     !num(s.side, 0, 2) ||
     !strarr(s.chests) ||
     !strarr(s.killed) ||
+    !Array.isArray(s.pendingDrops) ||
+    s.pendingDrops.length > enemyDefs.length ||
+    !s.pendingDrops.every(
+      (d) =>
+        d &&
+        typeof d.enemyId === "string" &&
+        Object.hasOwn(items, d.item) &&
+        num(d.x, 30, 3570) &&
+        num(d.y, 80, 2170),
+    ) ||
+    !num(s.dashCooldownRemaining, 0, 650) ||
     !Array.isArray(s.stones) ||
     s.stones.length > 3 ||
     !s.stones.every((n) => Number.isInteger(n) && num(n, 0, 2)) ||
@@ -144,6 +163,17 @@ export function validate(raw: unknown): State {
   if (
     !validIds(s.chests, "chest") ||
     !s.killed.every((id) => enemyDefs.some((e) => e.id === id)) ||
+    !s.pendingDrops.every(
+      (d) =>
+        s.killed.includes(d.enemyId) &&
+        enemyDefs.some(
+          (e) =>
+            e.id === d.enemyId &&
+            d.item === (e.type === "leaf" ? "crystal" : "berry"),
+        ),
+    ) ||
+    new Set(s.pendingDrops.map((d) => d.enemyId)).size !==
+      s.pendingDrops.length ||
     !Object.keys(s.collected).every((id) =>
       props.some((p) => p.id === id && p.kind === "resource"),
     ) ||

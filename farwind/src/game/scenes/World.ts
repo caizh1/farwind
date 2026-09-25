@@ -1,11 +1,19 @@
 import { Sprint } from "../systems/sprint";
 import { resetSessionTimers } from "../systems/session";
-import { attack } from "../systems/combat";
+import {
+  CombatController,
+  COMBAT,
+  STRIKES,
+  enemyTint,
+  facingVector,
+  sweepMove,
+} from "../systems/combat";
 import { interact } from "../systems/interactions";
 import { makeTerrain } from "../systems/terrain";
 import Phaser from "phaser";
 import { props, roads, enemyDefs, region, type Prop } from "../../data/world";
 import { items, type ItemId } from "../../data/content";
+import { COMBAT_ART } from "../../data/animation";
 import {
   initialState,
   add,
@@ -30,6 +38,8 @@ type Enemy = {
   hp: number;
   cool: number;
   windup: number;
+  flashUntil: number;
+  staggerUntil: number;
   sprite: Phaser.GameObjects.Sprite;
   shadow: Phaser.GameObjects.Ellipse;
 };
@@ -48,6 +58,10 @@ export class World extends Phaser.Scene {
   attackSerial = 0;
   cooldown = 0;
   invulnerable = 0;
+  respawnInvulnerable = 0;
+  combat = new CombatController();
+  pointerAttack = false;
+  gatherUntil = 0;
   target?: Prop;
   follower = new Follower();
   sprint = new Sprint();
@@ -60,6 +74,9 @@ export class World extends Phaser.Scene {
   fps: number[] = [];
   motionDebug?: Phaser.GameObjects.Text;
   motionRoots?: Phaser.GameObjects.Graphics;
+  dropImages = new Map<string, Phaser.GameObjects.Text>();
+  slash?: Phaser.GameObjects.Graphics;
+  windTrail?: Phaser.GameObjects.Graphics;
   constructor() {
     super("World");
   }
@@ -102,6 +119,10 @@ export class World extends Phaser.Scene {
         `/assets/animation/round-three/${id}-motion.png`,
         { frameWidth: 128, frameHeight: 128 },
       );
+    this.load.spritesheet("hero-combat", "/assets/animation/hero-combat.png", {
+      frameWidth: COMBAT_ART.frameSize,
+      frameHeight: COMBAT_ART.frameSize,
+    });
     this.load.on("loaderror", (file: { key: string }) =>
       this.failed.push(file.key),
     );
@@ -175,7 +196,7 @@ export class World extends Phaser.Scene {
     };
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
       if (pointer.leftButtonDown() && !this.ui.paused && this.active)
-        this.attack();
+        this.pointerAttack = true;
     });
     const suspend = () => {
       this.keys.clear();
@@ -202,6 +223,16 @@ export class World extends Phaser.Scene {
                   cooldown: this.cooldown,
                   invulnerable: this.invulnerable,
                   exhausted: this.sprint.exhausted,
+                  combat: {
+                    ...this.combat.diagnostic(this.sim),
+                    invulnerableSources: [
+                      ...(this.sim < this.invulnerable ? ["受击保护"] : []),
+                      ...(this.sim < this.respawnInvulnerable
+                        ? ["复活保护"]
+                        : []),
+                      ...(this.combat.invulnerable(this.sim) ? ["风步"] : []),
+                    ],
+                  },
                 },
                 animation: {
                   hero: this.hero.debug(),
@@ -224,6 +255,13 @@ export class World extends Phaser.Scene {
             x: e.x,
             y: e.y,
             hp: e.hp,
+            ...(import.meta.env.DEV
+              ? {
+                  flashRemaining: Math.max(0, e.flashUntil - this.sim),
+                  windup: e.windup,
+                  staggerRemaining: Math.max(0, e.staggerUntil - this.sim),
+                }
+              : {}),
           })),
           fps: this.fps.slice(-600),
           renderer: this.game.renderer?.type,
@@ -249,6 +287,10 @@ export class World extends Phaser.Scene {
     this.ui.state = this.state;
     this.active = true;
     resetSessionTimers(this);
+    this.combat.reset(this.state.dashCooldownRemaining);
+    this.pointerAttack = false;
+    this.respawnInvulnerable = 0;
+    this.gatherUntil = 0;
     this.keys.clear();
     this.sprint.reset(this.state.player.stamina);
     this.hero.sprite.setAlpha(1);
@@ -260,6 +302,7 @@ export class World extends Phaser.Scene {
     this.cameras.main.centerOn(this.state.player.x, this.state.player.y - 150);
     this.refresh();
     this.spawnEnemies();
+    this.syncDrops();
     this.ui.close();
     this.soundFx.start();
     if (!continued) await this.persist();
@@ -267,6 +310,10 @@ export class World extends Phaser.Scene {
   }
   async persist() {
     try {
+      this.state.dashCooldownRemaining = Math.max(
+        0,
+        this.combat.dashCooldown - this.sim,
+      );
       const snapshot = structuredClone(this.state);
       await save(snapshot);
       this.loaded = snapshot;
@@ -281,6 +328,10 @@ export class World extends Phaser.Scene {
     try {
       await this.persist();
       this.active = false;
+      this.combat.reset();
+      this.pointerAttack = false;
+      this.attackUntil = 0;
+      this.slash?.clear();
       this.ui.title();
     } catch {}
   }
@@ -357,12 +408,102 @@ export class World extends Phaser.Scene {
         hp: d.type === "slime" ? 48 : 72,
         cool: 0,
         windup: 0,
+        flashUntil: 0,
+        staggerUntil: 0,
         sprite: this.add
           .sprite(d.x, d.y, d.type, 0)
           .setOrigin(0.5, 1)
           .setDisplaySize(75, 75),
         shadow: this.add.ellipse(d.x, d.y, 45, 15, 0x18392d, 0.2),
       }));
+  }
+  syncDrops() {
+    for (const [id, image] of this.dropImages)
+      if (!this.state.pendingDrops.some((d) => d.enemyId === id)) {
+        image.destroy();
+        this.dropImages.delete(id);
+      }
+    for (const d of this.state.pendingDrops)
+      if (!this.dropImages.has(d.enemyId))
+        this.dropImages.set(
+          d.enemyId,
+          this.add
+            .text(
+              d.x,
+              d.y - 32,
+              d.item === "crystal" ? "✦ 风之结晶 · E" : "● 浆果 · E",
+              {
+                fontSize: "16px",
+                color: "#fff2bf",
+                backgroundColor: "#294b3a",
+                padding: { x: 5, y: 3 },
+              },
+            )
+            .setOrigin(0.5)
+            .setDepth(d.y + 1),
+        );
+  }
+  claimDrop() {
+    const p = this.state.player;
+    const d = this.state.pendingDrops.find(
+      (v) =>
+        Math.hypot(v.x - p.x, v.y - p.y) < 95 &&
+        this.clearLine(p.x, p.y, v.x, v.y),
+    );
+    if (!d) return false;
+    if (!add(this.state, d.item, 1)) {
+      this.ui.message("行囊已满，请整理后再领取。");
+      return true;
+    }
+    this.state.pendingDrops = this.state.pendingDrops.filter(
+      (v) => v.enemyId !== d.enemyId,
+    );
+    this.syncDrops();
+    this.soundFx.play("pick");
+    this.ui.message(d.item === "crystal" ? "领取风之结晶 ×1" : "领取浆果 ×1");
+    void this.persist().catch(() => {});
+    return true;
+  }
+  drawSlash() {
+    this.slash ??= this.add.graphics();
+    this.slash.clear();
+    const a = this.combat.attack;
+    if (!a || this.combat.phase(this.sim) !== "active") return;
+    const m = STRIKES[a.stage - 1],
+      [vx, vy] = facingVector(a.facing);
+    const angle = Math.atan2(vy, vx);
+    this.slash.setDepth(this.state.player.y + 1);
+    this.slash.lineStyle(
+      a.stage === 3 ? 5 : 3,
+      a.stage === 3 ? 0xffe3a3 : 0xe5f8e8,
+      0.9,
+    );
+    this.slash.beginPath();
+    this.slash.arc(
+      this.state.player.x,
+      this.state.player.y - 8,
+      m.range * 0.92,
+      angle - m.angle,
+      angle + m.angle,
+    );
+    this.slash.strokePath();
+  }
+  drawDashTrail() {
+    this.windTrail ??= this.add.graphics();
+    this.windTrail.clear();
+    if (this.sim >= this.combat.dashUntil) return;
+    const p = this.state.player,
+      x = this.combat.dashX,
+      y = this.combat.dashY;
+    this.windTrail.setDepth(p.y - 0.2);
+    this.windTrail.lineStyle(2, 0xbdeee5, 0.7);
+    for (const offset of [18, 29])
+      this.windTrail.lineBetween(
+        p.x - x * offset - y * 7,
+        p.y - y * offset + x * 7 - 25,
+        p.x - x * (offset + 15) - y * 7,
+        p.y - y * (offset + 15) + x * 7 - 25,
+      );
   }
   use(id: ItemId) {
     if (!this.active || !["potion", "berry"].includes(id)) return;
@@ -399,7 +540,54 @@ export class World extends Phaser.Scene {
       onComplete: () => t.destroy(),
     });
   }
-  attack = attack;
+  strikeEnemy(e: Enemy, stage: number) {
+    if (e.hp <= 0) return;
+    const move = STRIKES[stage - 1];
+    e.hp = Math.max(0, e.hp - move.damage);
+    e.flashUntil = this.sim + move.flash;
+    e.staggerUntil = this.sim + move.stagger;
+    this.float(e.x, e.y, String(move.damage));
+    this.soundFx.play(stage === 3 ? "finish" : "hit");
+    const spark = this.add
+      .circle(e.x, e.y - 34, stage === 3 ? 13 : 8, 0xffefb5, 0.82)
+      .setDepth(e.y + 2);
+    this.tweens.add({
+      targets: spark,
+      scale: 1.8,
+      alpha: 0,
+      duration: 115,
+      onComplete: () => spark.destroy(),
+    });
+    const [vx, vy] = facingVector(this.combat.attack!.facing);
+    sweepMove(e, vx * move.knock, vy * move.knock, (x, y) =>
+      this.blocked(x, y),
+    );
+    if (stage === 3 && e.windup > 0) {
+      e.windup = 0;
+      e.cool = this.sim + 420;
+    }
+    if (e.hp > 0) return;
+    e.windup = 0;
+    e.sprite.setVisible(false);
+    e.shadow.setVisible(false);
+    this.state.killed.push(e.id);
+    if (e.type === "leaf" && this.state.quest === 3) this.state.quest = 4;
+    const item = e.type === "leaf" ? "crystal" : "berry";
+    if (add(this.state, item, 1)) {
+      this.float(e.x, e.y - 30, item === "crystal" ? "风之结晶 +1" : "浆果 +1");
+      this.soundFx.play("pick");
+    } else {
+      this.state.pendingDrops.push({
+        enemyId: e.id,
+        item,
+        x: e.homeX,
+        y: e.homeY,
+      });
+      this.syncDrops();
+      this.ui.message("背包已满：掉落留在敌人原位置，整理行囊后按 E 领取。");
+    }
+    void this.persist().catch(() => {});
+  }
   update(_time: number, delta: number) {
     if (!this.hero) return;
     if (this.keys.take("escape")) {
@@ -416,6 +604,10 @@ export class World extends Phaser.Scene {
     )
       this.ui.close();
     if (!this.active || this.ui.paused) {
+      this.pointerAttack = false;
+      this.combat.pending = false;
+      this.keys.take("j");
+      this.keys.take(" ");
       this.tweens.pauseAll();
       return;
     }
@@ -430,6 +622,7 @@ export class World extends Phaser.Scene {
         return;
       }
     const dt = Math.min(delta, 50) / 1000;
+    const prevSim = this.sim;
     this.sim += dt * 1000;
     this.state.time += dt * 1.5;
     if (delta < 200) this.fps.push(1000 / delta);
@@ -437,32 +630,123 @@ export class World extends Phaser.Scene {
     const p = this.state.player,
       a = this.keys.axis();
     const length = Math.hypot(a.x, a.y);
+    const nextFacing = !length
+      ? this.hero.direction
+      : Math.abs(a.x) > Math.abs(a.y)
+        ? a.x < 0
+          ? 2
+          : 3
+        : a.y < 0
+          ? 1
+          : 0;
+    if (!this.combat.attack && this.sim >= this.combat.dashUntil && length) {
+      this.hero.motion.direction = nextFacing;
+    }
+    const dashRequested = this.keys.take(" ");
+    const attackRequested = this.keys.take("j") || this.pointerAttack;
+    this.pointerAttack = false;
+    if (dashRequested) {
+      if (
+        this.combat.requestDash(this.sim, p.stamina, a, this.hero.direction)
+      ) {
+        p.stamina -= COMBAT.dash.cost;
+        this.sprint.reset(p.stamina);
+        this.soundFx.play("dash");
+      } else
+        this.ui.message(
+          p.stamina < COMBAT.dash.cost ? "体力不足，无法风步" : "风步尚不可用",
+        );
+    }
+    if (
+      attackRequested &&
+      !(dashRequested && this.combat.dashStart === this.sim)
+    )
+      this.combat.requestAttack(this.sim);
+    const busy =
+      !!this.combat.attack ||
+      this.combat.pending ||
+      this.sim < this.combat.dashUntil;
     const movement = this.sprint.update(
       p.stamina,
-      this.keys.held.has("shift") && length > 0,
-      dt,
+      this.keys.held.has("shift") && length > 0 && !busy,
+      this.sim < this.combat.dashUntil ? 0 : dt,
     );
-    const speed = movement.speed;
+    const speed = busy ? (this.combat.attack ? 55 : 0) : movement.speed;
     p.stamina = movement.stamina;
     const dx = length ? (a.x / length) * speed * dt : 0,
       dy = length ? (a.y / length) * speed * dt : 0;
     const oldX = p.x,
       oldY = p.y;
-    if (!this.blocked(p.x + dx, p.y)) p.x += dx;
-    if (!this.blocked(p.x, p.y + dy)) p.y += dy;
+    sweepMove(p, dx, dy, (x, y) => this.blocked(x, y));
+    const active = this.combat.attack;
+    if (active) {
+      const m = STRIKES[active.stage - 1];
+      const from = active.start + m.windup,
+        until = from + m.active;
+      const overlap = Math.max(
+        0,
+        Math.min(this.sim, until) - Math.max(prevSim, from),
+      );
+      if (overlap) {
+        const [vx, vy] = facingVector(active.facing);
+        sweepMove(
+          p,
+          (vx * m.step * overlap) / m.active,
+          (vy * m.step * overlap) / m.active,
+          (x, y) => this.blocked(x, y),
+        );
+      }
+    }
+    this.combat.update(
+      prevSim,
+      this.sim,
+      nextFacing,
+      p,
+      this.enemies,
+      (x, y) => this.blocked(x, y),
+      (x, y, tx, ty) => this.clearLine(x, y, tx, ty),
+      (target, stage) => this.strikeEnemy(target as Enemy, stage),
+      () => this.soundFx.play("attack"),
+    );
+    const striking = this.combat.attack;
+    this.attackSerial = this.combat.serial;
+    this.attackUntil = striking
+      ? striking.start + this.combat.total(striking.stage)
+      : 0;
     this.hero.move(
       p.x,
       p.y,
       p.x - oldX,
       p.y - oldY,
       this.sim,
-      this.sim < this.attackUntil,
+      !!striking ||
+        this.sim < this.combat.dashUntil ||
+        this.sim < this.gatherUntil,
       dt,
-      a.x,
-      a.y,
+      striking ? 0 : a.x,
+      striking ? 0 : a.y,
     );
+    if (striking)
+      this.hero.combatPose(
+        striking.stage,
+        this.combat.phase(this.sim),
+        striking.facing,
+      );
+    else if (this.sim < this.combat.dashUntil) {
+      const x = this.combat.dashX,
+        y = this.combat.dashY;
+      this.hero.dashPose(
+        Math.abs(x) > Math.abs(y) ? (x < 0 ? 2 : 3) : y < 0 ? 1 : 0,
+      );
+    }
+    this.drawSlash();
+    this.drawDashTrail();
     this.hero.sprite.setAlpha(
-      this.sim < this.invulnerable ? 0.6 + Math.sin(this.sim / 45) * 0.3 : 1,
+      this.sim < this.invulnerable ||
+        this.sim < this.respawnInvulnerable ||
+        this.combat.invulnerable(this.sim)
+        ? 0.6 + Math.sin(this.sim / 45) * 0.3
+        : 1,
     );
     if (
       import.meta.env.DEV &&
@@ -526,8 +810,8 @@ export class World extends Phaser.Scene {
           Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y) ||
           a.id.localeCompare(b.id),
       )[0];
-    if (this.keys.take("e") && this.target) this.interact(this.target);
-    if (this.keys.take("j")) this.attack();
+    if (this.keys.take("e") && !this.claimDrop() && this.target)
+      this.interact(this.target);
     for (let i = 0; i < 8; i++)
       if (this.keys.take(String(i + 1)) && this.state.hotbar[i])
         this.use(this.state.hotbar[i]!);
@@ -546,19 +830,23 @@ export class World extends Phaser.Scene {
     for (const e of this.enemies) {
       if (e.hp <= 0 || Math.hypot(e.x - p.x, e.y - p.y) > 650) continue;
       const d = Math.hypot(e.x - p.x, e.y - p.y);
-      e.sprite.clearTint();
-      if (e.windup > 0) {
+      if (this.sim < e.staggerUntil) {
+        // 短硬直不重置普通攻击前摇。
+      } else if (e.windup > 0) {
         e.windup -= dt;
-        e.sprite.setTint(0xffce84).setFrame(1);
+        e.sprite.setFrame(1);
         if (e.windup <= 0) {
           e.cool = this.sim + (e.type === "leaf" ? 1400 : 1100);
           if (
             d < 100 &&
             this.sim > this.invulnerable &&
+            this.sim > this.respawnInvulnerable &&
+            !this.combat.invulnerable(this.sim) &&
             this.clearLine(e.x, e.y, p.x, p.y)
           ) {
             p.hp -= e.type === "leaf" ? 18 : 10;
             this.invulnerable = this.sim + 850;
+            this.combat.reset(this.combat.dashCooldown);
             this.soundFx.play("hit");
             this.float(p.x, p.y, e.type === "leaf" ? "-18" : "-10");
           }
@@ -584,10 +872,16 @@ export class World extends Phaser.Scene {
         }
         e.sprite.setFrame(Math.floor(this.sim / 240) % 2);
       }
+      const tint = enemyTint(this.sim, e.flashUntil, e.windup);
+      if (tint === null) e.sprite.clearTint();
+      else e.sprite.setTint(tint);
       e.sprite.setPosition(e.x, e.y).setDepth(e.y);
       e.shadow.setPosition(e.x, e.y - 3).setDepth(e.y - 0.5);
     }
     if (p.hp <= 0) {
+      this.combat.reset(this.combat.dashCooldown);
+      this.attackUntil = 0;
+      this.slash?.clear();
       p.hp = 100;
       p.stamina = 100;
       this.sprint.reset(p.stamina);
@@ -596,7 +890,7 @@ export class World extends Phaser.Scene {
       this.follower.reset(this.state.player);
       this.cat.place(592, 738);
       this.hero.place(p.x, p.y);
-      this.invulnerable = this.sim + 2000;
+      this.respawnInvulnerable = this.sim + 2000;
       this.ui.message("岚爷爷把你带回广场。行囊与旅途进度都还在。");
       void this.persist().catch(() => {});
     }
@@ -627,6 +921,13 @@ export class World extends Phaser.Scene {
     this.hudTimer += dt;
     if (this.hudTimer > 0.1) {
       this.hudTimer = 0;
+      const remaining = Math.max(0, this.combat.dashCooldown - this.sim);
+      this.ui.combatStatus =
+        remaining > 0
+          ? `Space 风步 · ${(remaining / 1000).toFixed(1)}秒`
+          : p.stamina < COMBAT.dash.cost
+            ? "Space 风步 · 体力不足"
+            : "Space 风步 · 就绪";
       this.ui.update(this.state, this.target ? `E · ${this.target.label}` : "");
       this.refresh();
     }

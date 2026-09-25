@@ -89,8 +89,9 @@ test("session-title-continue-new-refresh", async ({ page }) => {
       intervals: [16, 32, 50],
     })
     .toBe("attack");
-  await page.waitForTimeout(350);
-  expect((await read(page)).animation.hero.action).toBe("idle");
+  await expect
+    .poll(async () => (await read(page)).animation.hero.action)
+    .toBe("idle");
   const saved = (await read(page)).state;
   await title(page);
   await page.getByRole("button", { name: "继续旅途", exact: true }).click();
@@ -137,8 +138,9 @@ test("session-title-continue-new-refresh", async ({ page }) => {
       intervals: [16, 32, 50],
     })
     .toBe("attack");
-  await page.waitForTimeout(350);
-  expect((await read(page)).animation.hero.action).toBe("idle");
+  await expect
+    .poll(async () => (await read(page)).animation.hero.action)
+    .toBe("idle");
   await page.keyboard.press("Tab");
   await expect(page.getByText("旅人的行囊", { exact: true })).toBeVisible();
   await page.keyboard.press("Tab");

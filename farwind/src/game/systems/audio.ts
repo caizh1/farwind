@@ -10,13 +10,18 @@ export class Sound {
     const c = this.context,
       o = c.createOscillator(),
       g = c.createGain();
-    o.type = kind === "hit" ? "triangle" : "sine";
+    o.type = kind === "hit" || kind === "finish" ? "triangle" : "sine";
     o.frequency.setValueAtTime(
       (
-        { pick: 650, talk: 420, hit: 140, attack: 230, success: 880 } as Record<
-          string,
-          number
-        >
+        {
+          pick: 650,
+          talk: 420,
+          hit: 140,
+          finish: 100,
+          attack: 230,
+          dash: 720,
+          success: 880,
+        } as Record<string, number>
       )[kind] ?? 520,
       c.currentTime,
     );

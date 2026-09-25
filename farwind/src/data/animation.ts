@@ -1,4 +1,9 @@
 import type { Facing, MotionAction } from "../game/systems/locomotion";
+export const COMBAT_ART = {
+  frameSize: 160,
+  displaySize: 110,
+  footY: 154,
+} as const;
 export type Clip = {
   texture: string;
   frames: number[];
