@@ -49,5 +49,5 @@ test("pause-input-and-save-file-validation", async ({ page }) => {
   await page.getByRole("button", { name: "导出备份" }).click();
   const download = await downloading;
   expect(download.suggestedFilename()).toBe("farwind-save.json");
-  await download.saveAs("docs/test-evidence/exported-save.json");
+  await download.saveAs("docs/animation/round-three/regression/exported-save.json");
 });

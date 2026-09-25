@@ -57,7 +57,19 @@ export class Locomotion {
       this.action = action;
     }
     if (action === "walk" || action === "run") {
-      const stride = this.cat ? (running ? 108 : 76) : running ? 142 : 96;
+      // 新竖向跑步短于侧向步幅：避免同速度下小步素材缓慢滑行。
+      const stride =
+        running && this.direction < 2
+          ? this.cat
+            ? 72
+            : 110
+          : this.cat
+            ? running
+              ? 108
+              : 76
+            : running
+              ? 142
+              : 96;
       this.distance += distance;
       this.phase = (this.phase + distance / stride) % 1;
     }

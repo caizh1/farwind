@@ -1,3 +1,5 @@
+import { Sprint } from "../systems/sprint";
+import { resetSessionTimers } from "../systems/session";
 import { attack } from "../systems/combat";
 import { interact } from "../systems/interactions";
 import { makeTerrain } from "../systems/terrain";
@@ -48,6 +50,7 @@ export class World extends Phaser.Scene {
   invulnerable = 0;
   target?: Prop;
   follower = new Follower();
+  sprint = new Sprint();
   water!: Phaser.GameObjects.Image;
   night!: Phaser.GameObjects.Rectangle;
   hudTimer = 0;
@@ -96,7 +99,7 @@ export class World extends Phaser.Scene {
     for (const id of ["hero", "cat"])
       this.load.spritesheet(
         `${id}-motion`,
-        `/assets/animation/round-two/${id}-motion.png`,
+        `/assets/animation/round-three/${id}-motion.png`,
         { frameWidth: 128, frameHeight: 128 },
       );
     this.load.on("loaderror", (file: { key: string }) =>
@@ -193,6 +196,13 @@ export class World extends Phaser.Scene {
           attackSerial: this.attackSerial,
           ...(import.meta.env.DEV
             ? {
+                session: {
+                  sim: this.sim,
+                  attackUntil: this.attackUntil,
+                  cooldown: this.cooldown,
+                  invulnerable: this.invulnerable,
+                  exhausted: this.sprint.exhausted,
+                },
                 animation: {
                   hero: this.hero.debug(),
                   cat: this.cat.debug(),
@@ -238,9 +248,10 @@ export class World extends Phaser.Scene {
     }
     this.ui.state = this.state;
     this.active = true;
-    this.sim = 0;
-    this.cooldown = 0;
-    this.invulnerable = 0;
+    resetSessionTimers(this);
+    this.keys.clear();
+    this.sprint.reset(this.state.player.stamina);
+    this.hero.sprite.setAlpha(1);
     this.follower.reset(this.state.player);
     this.cat.place(this.state.player.x - 78, this.state.player.y + 18);
     if (this.blocked(this.cat.sprite.x, this.cat.sprite.y))
@@ -426,13 +437,13 @@ export class World extends Phaser.Scene {
     const p = this.state.player,
       a = this.keys.axis();
     const length = Math.hypot(a.x, a.y);
-    const running = this.keys.held.has("shift") && length > 0 && p.stamina > 1;
-    const speed = running ? 235 : 150;
-    p.stamina = Phaser.Math.Clamp(
-      p.stamina + (running ? -21 : 14) * dt,
-      0,
-      100,
+    const movement = this.sprint.update(
+      p.stamina,
+      this.keys.held.has("shift") && length > 0,
+      dt,
     );
+    const speed = movement.speed;
+    p.stamina = movement.stamina;
     const dx = length ? (a.x / length) * speed * dt : 0,
       dy = length ? (a.y / length) * speed * dt : 0;
     const oldX = p.x,
@@ -473,7 +484,8 @@ export class World extends Phaser.Scene {
             const d = a.debug();
             return `${a.cat ? "黑猫" : "旅人"} ${d.key} 帧${d.frame} 速度${d.speed.toFixed(1)} 翻转${d.flip} 根${d.root.map((n) => n.toFixed(0))} 锚64,124${d.provisional ? " 素材待补" : ""}`;
           })
-          .join("\n"),
+          .join("\n") +
+          `\n体力${p.stamina.toFixed(1)} 耗尽恢复${this.sprint.exhausted} sim${this.sim.toFixed(0)} 攻击截止${this.attackUntil.toFixed(0)}`,
       );
       this.motionRoots.clear().lineStyle(1, 0xffdf6b);
       for (const a of [this.hero, this.cat]) {
@@ -578,6 +590,7 @@ export class World extends Phaser.Scene {
     if (p.hp <= 0) {
       p.hp = 100;
       p.stamina = 100;
+      this.sprint.reset(p.stamina);
       p.x = 670;
       p.y = 720;
       this.follower.reset(this.state.player);

@@ -18,7 +18,7 @@ class Preview extends Phaser.Scene {
       );
       this.load.spritesheet(
         `${id}-motion`,
-        `/assets/animation/round-two/${id}-motion.png`,
+        `/assets/animation/round-three/${id}-motion.png`,
         { frameWidth: 128, frameHeight: 128 },
       );
     }

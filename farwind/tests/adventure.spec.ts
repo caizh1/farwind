@@ -61,10 +61,10 @@ test("adventure-loop", async ({ page, context }) => {
   await dismiss(page);
   await page.keyboard.press("Tab");
   await page.getByRole("button", { name: "制作恢复药剂", exact: true }).click();
-  await page.screenshot({ path: "docs/screenshots/inventory.png" });
+  await page.screenshot({ path: "docs/animation/round-three/regression/inventory.png" });
   await page.getByRole("button", { name: "收好行囊" }).click();
   await expect.poll(async () => (await snapshot(page)).state.quest).toBe(3);
-  await page.screenshot({ path: "docs/screenshots/forest.png" });
+  await page.screenshot({ path: "docs/animation/round-three/regression/forest.png" });
   await move(page, 1900, 1080);
   for (let round = 0; round < 70; round++) {
     await dismiss(page);
@@ -96,7 +96,7 @@ test("adventure-loop", async ({ page, context }) => {
   await interact(page, "wind-1");
   await move(page, 3350, 510);
   await interact(page, "wind-2");
-  await page.screenshot({ path: "docs/screenshots/ruins.png" });
+  await page.screenshot({ path: "docs/animation/round-three/regression/ruins.png" });
   await move(page, 3140, 730);
   await interact(page, "waymark");
   await dismiss(page);
@@ -110,7 +110,7 @@ test("adventure-loop", async ({ page, context }) => {
   await dismiss(page);
   await expect.poll(async () => (await snapshot(page)).state.quest).toBe(7);
   await page.keyboard.press("q");
-  await page.screenshot({ path: "docs/screenshots/quest.png" });
+  await page.screenshot({ path: "docs/animation/round-three/regression/quest.png" });
   await page.getByRole("button", { name: "合上手记" }).click();
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "保存旅途", exact: true }).click();
@@ -127,5 +127,5 @@ test("adventure-loop", async ({ page, context }) => {
   expect(after.stones).toEqual([0, 1, 2]);
   expect(after.reward).toBe(true);
   expect(errors).toEqual([]);
-  await reopened.screenshot({ path: "docs/screenshots/continued.png" });
+  await reopened.screenshot({ path: "docs/animation/round-three/regression/continued.png" });
 });

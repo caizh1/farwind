@@ -59,8 +59,8 @@ npm run preview
 
 依赖锁定：Phaser 4.2.1、Vite 8.3.1、TypeScript 7.0.2、Vitest 5.0.1、Playwright 1.63.0。以 `package-lock.json` 为准。已核对 [Phaser 官方版本页](https://phaser.io/download/phaser4) 和 [Vite 官方运行要求](https://vite.dev/guide/)，并使用安装版本的类型定义检查 API。
 
-## 移动动画专项（第二轮）
+## 动作与会话状态收尾
 
-当前已接入四方向待机／行走及独立侧向奔跑；竖向奔跑暂用同方向行走，尚待补齐。启动开发服务后访问 `/docs/animation/index.html` 观看上一轮通过版本与当前版本的正常速度录屏、各方向放大循环和接触表。`/animation-preview.html` 可选择动作；`/?animationDebug=1` 开启开发诊断，生产版默认不提供。
+当前四方向独立待机／行走／奔跑已接入；修复了体力耗尽走跑抖动和同页继续的攻击计时残留。启动开发服务后访问 `/docs/animation/round-three/index.html` 查看本轮实际录屏、循环和接触表。`/animation-preview.html` 提供开发动作选择，`/?animationDebug=1` 开启诊断，生产版不显示。
 
-详细素材、验证与剩余任务见 [第二轮报告](docs/animation/ROUND-TWO.md)。生成素材及原始提示词在 `public/assets/animation/round-two`，上一轮基线保留在 `docs/animation/round-one`。
+本轮24项逻辑／资源测试、7项浏览器回归、类型检查及构建通过。素材范围、失败首因和验证边界见 [收尾报告](docs/animation/round-three/REPORT.md)。上一轮历史记录保留在 [第二轮报告](docs/animation/ROUND-TWO.md)。
