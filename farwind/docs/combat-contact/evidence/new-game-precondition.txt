@@ -1,0 +1,43 @@
+
+Running 1 test using 1 worker
+
+(node:92749) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/combat-contact.spec.ts:7:1 › 隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手 (47.5s)
+
+
+  1) tests/combat-contact.spec.ts:7:1 › 隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手 ─────────────────────────────────
+
+    Test was interrupted.
+
+    Error: page.waitForFunction: Test ended.
+
+      85 |     () => (window as any).__farwind?.().session.sim > 500,
+      86 |   );
+    > 87 |   await page.keyboard.down("w");
+         |              ^
+      88 |   await page.waitForFunction(
+      89 |     () => (window as any).__farwind().animation.hero.direction === 1,
+      90 |   );
+        at /Users/archer/Documents/ChatGPT/Game/farwind/tests/combat-contact.spec.ts:87:14
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/combat-contact-隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/combat-contact-隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/combat-contact-隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/combat-contact-隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/combat-contact-隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 interrupted
+    tests/combat-contact.spec.ts:7:1 › 隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手 ──────────────────────────────────

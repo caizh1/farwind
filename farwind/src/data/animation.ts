@@ -38,28 +38,26 @@ export function combatVisual(
         : move.recovery;
   const phaseProgress = Math.min(1, (t - phaseStart) / phaseDuration);
   const view = facing === 0 ? 0 : facing === 1 ? 1 : 2;
-  const boundaries = [
-    0,
-    move.windup * 0.55,
-    move.windup,
-    move.windup + move.active * 0.5,
-    activeEnd,
-    activeEnd + move.recovery * 0.5,
-  ];
+  const boundaries = combatPoseTimes(stage, facing);
   let frameIndex = 0;
   for (let i = 1; i < boundaries.length; i++)
     if (t >= boundaries[i]) frameIndex = i;
   let frame = (stage - 1) * 6 + frameIndex;
-  if (facing >= 2 && stage === 1 && enter && t < move.windup * 0.55)
+  if (facing >= 1 && stage === 1 && enter && t < move.windup * 0.55)
     frame = t < 16 ? 18 : t < 30 ? 19 : 20;
   return {
-    texture: facing >= 2 ? "hero-combat-side" : "hero-combat-action",
-    frame: facing >= 2 ? frame : view * 18 + (stage - 1) * 6 + frameIndex,
+    texture:
+      facing >= 2
+        ? "hero-combat-side"
+        : facing === 1
+          ? "hero-combat-back"
+          : "hero-combat-action",
+    frame: facing >= 1 ? frame : view * 18 + (stage - 1) * 6 + frameIndex,
     clip:
-      facing >= 2 && frame >= 18
+      facing >= 1 && frame >= 18
         ? `hero/draw/${facing}`
         : `hero/combat/${facing}/${stage}`,
-    frameIndex: facing >= 2 && frame >= 18 ? frame - 18 : frameIndex,
+    frameIndex: facing >= 1 && frame >= 18 ? frame - 18 : frameIndex,
     facing,
     phase,
     phaseProgress,
@@ -101,14 +99,24 @@ export function clipFor(cat: boolean, d: Facing, action: MotionAction): Clip {
   };
 }
 
-export function settleVisual(facing: Facing, elapsed: number): CombatVisual {
+export function settleVisual(
+  facing: Facing,
+  elapsed: number,
+  stage = 3,
+): CombatVisual {
   const index = Math.min(
     3,
     Math.floor(Math.max(0, elapsed) / (COMBAT.settle / 4)),
   );
   return {
     ...combatVisual(1, facing, 335),
-    frame: [19, 21, 22, 23][index],
+    frame: (facing === 1
+      ? stage === 1
+        ? [24, 25, 26, 23]
+        : stage === 2
+          ? [27, 28, 29, 22]
+          : [21, 20, 22, 23]
+      : [19, 21, 22, 23])[index],
     clip: `hero/settle/${facing}`,
     frameIndex: index,
     phase: "settle",
@@ -168,10 +176,83 @@ const sideWeapons = [
     [1433, 700, 1510, 702],
   ],
 ];
-function sideWeapon(stage: number, facing: Facing, elapsed: number) {
+const backRoots = [
+  [
+    [250, 450],
+    [765, 450],
+    [1285, 450],
+    [258, 957],
+    [765, 957],
+    [1285, 957],
+  ],
+  [
+    [162, 250],
+    [462, 250],
+    [760, 250],
+    [156, 574],
+    [443, 574],
+    [744, 574],
+  ],
+  [
+    [156, 890],
+    [443, 890],
+    [744, 890],
+    [165, 1174],
+    [443, 1174],
+    [744, 1174],
+  ],
+];
+const backWeapons = [
+  [
+    [350, 350, 440, 410],
+    [755, 145, 620, 60],
+    [1370, 180, 1460, 80],
+    [260, 650, 260, 542],
+    [725, 650, 650, 565],
+    [1200, 844, 1120, 900],
+  ],
+  // 首帧复用上一刀真实左侧收势；坐标按600→440源尺度转换。
+  [
+    [100, 167, 41, 208],
+    [397, 144, 311, 99],
+    [690, 88, 608, 33],
+    [152, 362, 151, 282],
+    [501, 385, 562, 310],
+    [739, 363, 737, 282],
+  ],
+  [
+    [149, 671, 149, 597],
+    [452, 701, 388, 657],
+    [759, 689, 801, 617],
+    [145, 986, 77, 931],
+    [365, 1049, 298, 1017],
+    [809, 1101, 870, 1140],
+  ],
+];
+// 第二刀保持低位蓄势；90–175ms穿过前方，210ms后才带到侧上方。
+// 控制器时长和伤害不变，选帧与武器插值共同读取这些姿态时刻。
+export function combatPoseTimes(stage: number, facing: Facing) {
   const m = STRIKES[stage - 1],
     end = m.windup + m.active;
-  const times = [
+  if (facing >= 2 && stage === 2)
+    return [
+      m.windup,
+      m.windup + 30,
+      m.windup + 85,
+      end,
+      end + 35,
+      end + m.recovery * 0.5,
+    ];
+  if (facing === 1)
+    return [
+      0,
+      m.windup * 0.55,
+      m.windup,
+      m.windup + m.active * 0.4,
+      end - 15,
+      end + m.recovery * 0.31,
+    ];
+  return [
     0,
     m.windup * 0.55,
     m.windup,
@@ -179,6 +260,9 @@ function sideWeapon(stage: number, facing: Facing, elapsed: number) {
     end,
     end + m.recovery * 0.5,
   ];
+}
+function poseWeapon(stage: number, facing: Facing, elapsed: number) {
+  const times = combatPoseTimes(stage, facing);
   let i = 0;
   while (i < 4 && elapsed >= times[i + 1]) i++;
   const t = Math.max(
@@ -186,11 +270,12 @@ function sideWeapon(stage: number, facing: Facing, elapsed: number) {
     Math.min(1, (elapsed - times[i]) / (times[i + 1] - times[i])),
   );
   const transform = (pose: number, offset: number) => {
-    const p = sideWeapons[stage - 1][pose],
-      root = sideRoots[stage - 1][pose];
+    const p = (facing === 1 ? backWeapons : sideWeapons)[stage - 1][pose],
+      root = (facing === 1 ? backRoots : sideRoots)[stage - 1][pose];
+    const size = facing === 1 ? (stage === 1 ? 600 : 440) : 348;
     return {
-      x: (((p[offset] - root[0]) * 145) / 348) * (facing === 2 ? -1 : 1),
-      y: ((p[offset + 1] - root[1]) * 145) / 348,
+      x: (((p[offset] - root[0]) * 145) / size) * (facing === 2 ? -1 : 1),
+      y: ((p[offset + 1] - root[1]) * 145) / size,
     };
   };
   const mix = (offset: number) => {
@@ -258,8 +343,8 @@ export function weaponSample(stage: number, facing: Facing, elapsed: number) {
     y: (y - COMBAT_ACTION_ART.footY) * scale,
   });
   return {
-    ...(facing >= 2
-      ? sideWeapon(stage, facing, elapsed)
+    ...(facing >= 1
+      ? poseWeapon(stage, facing, elapsed)
       : { grip: point(gx, gy), tip: point(tx, ty) }),
     visible: sample.phase === "active",
     progress: sample.phaseProgress,

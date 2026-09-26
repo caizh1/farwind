@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN">
+  <meta charset="UTF-8" /><title>背向三连固定根预览</title>
+  <style>
+    body {
+      font: 16px system-ui;
+      background: #ebe4cb;
+      color: #263f36;
+      margin: 32px;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    button {
+      padding: 8px 16px;
+    }
+    canvas {
+      background: #d9d6b4;
+      border: 1px solid #788877;
+    }
+    p {
+      max-width: 750px;
+    }
+  </style>
+  <header>
+    <h1>背向三连固定根预览</h1>
+    <button id="mirror">重新播放</button>
+  </header>
+  <p>
+    开发核查专用，使用实际控制器与图集。左侧为已通过待机，右侧为早按三连、就绪、收剑。固定根预览不代替森林实战。
+  </p>
+  <canvas id="view" width="680" height="320"></canvas>
+  <p id="status"></p>
+  <script type="module">
+    import {
+      combatVisual,
+      settleVisual,
+      COMBAT_ACTION_ART,
+    } from "/src/data/animation.ts";
+    import { CombatController } from "/src/game/systems/combat.ts";
+    import { WeaponTrail } from "/src/game/systems/weaponTrail.ts";
+    const image = async (src) => {
+      const i = new Image();
+      i.src = src;
+      await i.decode();
+      return i;
+    };
+    const atlas = await image("/assets/animation/hero-combat-back.png"),
+      idle = await image("/assets/animation/round-three/hero-motion.png");
+    const canvas = document.querySelector("canvas"),
+      ctx = canvas.getContext("2d"),
+      status = document.querySelector("#status");
+    let direction = 1,
+      prev = 0,
+      cycle = 0,
+      last = performance.now(),
+      controller = new CombatController(),
+      trail = new WeaponTrail(),
+      next = 0;
+    document.querySelector("button").onclick = () => {
+      direction = 1;
+      controller.reset();
+      prev = 0;
+      cycle = 0;
+      next = 0;
+    };
+    function draw(img, frame, x, y, width, height, size, foot) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(direction === 2 ? -1 : 1, 1);
+      ctx.drawImage(
+        img,
+        (frame % Math.floor(img.width / size)) * size,
+        Math.floor(frame / Math.floor(img.width / size)) * size,
+        size,
+        size,
+        -width / 2,
+        (-height * foot) / size,
+        width,
+        height,
+      );
+      ctx.restore();
+    }
+    function render(now) {
+      const dt = Math.min(50, now - last);
+      last = now;
+      cycle += dt;
+      if (cycle > 1700) {
+        controller.reset();
+        prev = 0;
+        cycle = 0;
+        next = 0;
+      }
+      for (const at of [0, 60, 300].slice(next)) {
+        if (cycle < at) break;
+        controller.update(
+          prev,
+          at,
+          direction,
+          { x: 0, y: 0 },
+          [],
+          () => false,
+          () => true,
+          () => {},
+          () => {},
+        );
+        controller.requestAttack(at);
+        prev = at;
+        next++;
+      }
+      controller.update(
+        prev,
+        cycle,
+        direction,
+        { x: 0, y: 0 },
+        [],
+        () => false,
+        () => true,
+        () => {},
+        () => {},
+      );
+      prev = cycle;
+      ctx.clearRect(0, 0, 680, 320);
+      draw(idle, 18, 180, 240, 86, 92, 128, 124);
+      const a = controller.attack;
+      let pose = a
+        ? combatVisual(a.stage, a.facing, cycle - a.start, !!a.enter)
+        : cycle < controller.readyUntil
+          ? combatVisual(
+              controller.lastStage,
+              direction,
+              controller.total(controller.lastStage),
+            )
+          : cycle < controller.settleUntil
+            ? settleVisual(
+                direction,
+                cycle - controller.readyUntil,
+                controller.lastStage,
+              )
+            : null;
+      trail.update(cycle, a, { x: 470, y: 240 }, controller.epoch);
+      for (const { a, b, alpha } of trail.segments(cycle)) {
+        ctx.fillStyle = `rgba(225,255,234,${alpha})`;
+        ctx.beginPath();
+        ctx.moveTo(a.inner.x, a.inner.y);
+        ctx.lineTo(a.tip.x, a.tip.y);
+        ctx.lineTo(b.tip.x, b.tip.y);
+        ctx.lineTo(b.inner.x, b.inner.y);
+        ctx.closePath();
+        ctx.fill();
+      }
+      if (pose) draw(atlas, pose.frame, 470, 240, 145, 145, 160, 154);
+      else draw(idle, 18, 470, 240, 86, 92, 128, 124);
+      ctx.fillStyle = "#476456";
+      ctx.fillRect(169, 241, 22, 1);
+      ctx.fillRect(459, 241, 22, 1);
+      status.textContent = `背向；段号 ${a?.stage ?? 0}；表现 ${pose?.clip ?? "普通待机"}；帧 ${pose?.frame ?? 0}`;
+      requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
+  </script>
+</html>

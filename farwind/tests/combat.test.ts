@@ -10,6 +10,7 @@ import {
 import { add, count, initialState, parseSave } from "../src/game/systems/state";
 import {
   combatVisual,
+  combatPoseTimes,
   COMBAT_ACTION_ART,
   weaponSample,
 } from "../src/data/animation";
@@ -172,9 +173,11 @@ it("动作样本用攻击时间选出有效帧、方向与阶段，并匹配真�
         move.windup + move.active,
         move.windup + move.active + move.recovery * 0.6,
       ];
-      const samples = times.map((time) => combatVisual(stage, facing, time));
+      const samples = combatPoseTimes(stage, facing).map((time) =>
+        combatVisual(stage, facing, time),
+      );
       expect(samples.map((s) => s.frameIndex)).toEqual([0, 1, 2, 3, 4, 5]);
-      expect(samples.map((s) => s.phase)).toEqual([
+      expect(times.map((t) => combatVisual(stage, facing, t).phase)).toEqual([
         "windup",
         "windup",
         "active",
@@ -187,7 +190,11 @@ it("动作样本用攻击时间选出有效帧、方向与阶段，并匹配真�
         samples.every(
           (s) =>
             s.texture ===
-              (facing >= 2 ? "hero-combat-side" : "hero-combat-action") &&
+              (facing >= 2
+                ? "hero-combat-side"
+                : facing === 1
+                  ? "hero-combat-back"
+                  : "hero-combat-action") &&
             s.facing === facing &&
             s.frame >= 0 &&
             s.frame < 54,
@@ -197,7 +204,9 @@ it("动作样本用攻击时间选出有效帧、方向与阶段，并匹配真�
   }
   expect(COMBAT_ACTION_ART.footY).toBeLessThan(COMBAT_ACTION_ART.frameSize);
   expect(combatVisual(1, 2, 90).frame).toBe(combatVisual(1, 3, 90).frame);
-  expect(combatVisual(1, 0, 90).frame).not.toBe(combatVisual(1, 1, 90).frame);
+  expect(combatVisual(1, 0, 90).texture).not.toBe(
+    combatVisual(1, 1, 90).texture,
+  );
 });
 describe("风步、碰撞和保护", () => {
   it("成本由成功启动决定，冷却、无敌边界与独立保护不混淆", () => {
@@ -514,4 +523,126 @@ it("侧向新图集有24个合法姿态，拔剑及收剑有独立动作样本",
     expect(new Set(points.map((p) => `${p.x},${p.y}`)).size).toBe(4);
     for (const p of points) expect(Math.hypot(p.x, p.y)).toBeLessThan(110);
   }
+});
+
+// 本轮检查实际有效期几何，不以图集帧号或采样数量代替扫掠面积。
+describe("前方接触与背向固定根轨迹", () => {
+  it("第二刀有效期经过前方腰胸高度，再顺势带向侧上方", () => {
+    const m = STRIKES[1];
+    const tips = Array.from(
+      { length: m.active },
+      (_, i) => weaponSample(2, 3, m.windup + i).tip,
+    );
+    expect(tips.some((p) => p.x > 35 && p.y > -40 && p.y < -15)).toBe(true);
+    expect(tips.at(-1)!.y).toBeLessThan(-60);
+  });
+  it("背向固定根每刀连续扫过前方，历史带不退化为重复点", () => {
+    for (const stage of [1, 2, 3]) {
+      const m = STRIKES[stage - 1];
+      const tips = Array.from(
+        { length: m.active },
+        (_, i) => weaponSample(stage, 1, m.windup + i).tip,
+      );
+      const distances = tips
+        .slice(1)
+        .map((p, i) => Math.hypot(p.x - tips[i].x, p.y - tips[i].y));
+      expect(
+        distances.filter((d) => d > 0.02).length / distances.length,
+      ).toBeGreaterThan(0.9);
+      expect(Math.max(...distances)).toBeLessThan(5);
+      expect(tips.some((p) => Math.abs(p.x) < 15 && p.y < -60)).toBe(true);
+      const trail = new WeaponTrail();
+      const attack = {
+        id: 1,
+        stage,
+        facing: 1 as const,
+        start: 0,
+        hit: new Set<string>(),
+      };
+      for (let t = m.windup; t <= m.windup + m.active; t += 8)
+        trail.update(t, attack, { x: 0, y: 0 }, 0);
+      const area = trail
+        .segments(m.windup + m.active)
+        .reduce((sum, { a, b }) => {
+          const points = [a.inner, a.tip, b.tip, b.inner];
+          return (
+            sum +
+            Math.abs(
+              points.reduce((v, p, i) => {
+                const q = points[(i + 1) % 4];
+                return v + p.x * q.y - p.y * q.x;
+              }, 0),
+            ) /
+              2
+          );
+        }, 0);
+      expect(area).toBeGreaterThan(180);
+    }
+  });
+});
+it("四方向伤害仍只结算前方，同段去重与画面朝向一致", () => {
+  for (const facing of [0, 1, 2, 3] as const) {
+    const c = new CombatController(),
+      vectors = [
+        [0, 1],
+        [0, -1],
+        [-1, 0],
+        [1, 0],
+      ],
+      v = vectors[facing];
+    const enemies = [
+      { id: "front", x: v[0] * 60, y: v[1] * 60, hp: 100 },
+      { id: "back", x: -v[0] * 60, y: -v[1] * 60, hp: 100 },
+    ];
+    const hits: string[] = [];
+    c.requestAttack(0);
+    const tick = (a: number, b: number) =>
+      c.update(
+        a,
+        b,
+        facing,
+        { x: 0, y: 0 },
+        enemies,
+        () => false,
+        () => true,
+        (e) => hits.push(e.id),
+        () => {},
+      );
+    tick(0, 74);
+    expect(hits).toEqual([]);
+    tick(74, 190);
+    tick(190, 335);
+    expect(hits).toEqual(["front"]);
+  }
+});
+it("背向武器标注落在对应真实刀刃像素附近，裁切与地面根一致", async () => {
+  const { data, info } = await sharp(
+    "public/assets/animation/hero-combat-back.png",
+  )
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  for (const stage of [1, 2, 3])
+    for (const i of [2, 3, 4]) {
+      const t = combatPoseTimes(stage, 1)[i],
+        w = weaponSample(stage, 1, t),
+        frame = combatVisual(stage, 1, t).frame;
+      const x = Math.round(80 + (w.tip.x * 160) / 145),
+        y = Math.round(154 + (w.tip.y * 160) / 145);
+      let opaque = 0;
+      for (let dy = -5; dy <= 5; dy++)
+        for (let dx = -5; dx <= 5; dx++) {
+          const px = (frame % 6) * 160 + x + dx,
+            py = Math.floor(frame / 6) * 160 + y + dy;
+          if (
+            px >= 0 &&
+            py >= 0 &&
+            px < info.width &&
+            py < info.height &&
+            data[(py * info.width + px) * 4 + 3] > 100
+          )
+            opaque++;
+        }
+      expect(opaque, `第${stage}刀姿态${i}剑尖锚点`).toBeGreaterThan(2);
+    }
 });

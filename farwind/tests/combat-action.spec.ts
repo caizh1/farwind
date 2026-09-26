@@ -60,7 +60,12 @@ test("四方向实机动作逐帧推进，三段收招与再次进攻", async ({
     expect(
       selected.every(
         (f: any) =>
-          f.texture === (facing >= 2 ? "hero-combat-side" : "hero-combat-action") &&
+          f.texture ===
+            (facing >= 2
+              ? "hero-combat-side"
+              : facing === 1
+                ? "hero-combat-back"
+                : "hero-combat-action") &&
           f.anchor[0] === 80 &&
           f.anchor[1] === 154,
       ),

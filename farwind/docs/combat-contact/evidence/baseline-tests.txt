@@ -1,0 +1,51 @@
+
+> farwind@0.1.0 test
+> vitest run tests/logic.test.ts tests/motion.test.ts tests/combat.test.ts
+
+
+ RUN  v5.0.1 /Users/archer/Documents/ChatGPT/Game/farwind
+
+ ❯ tests/combat.test.ts (23 tests | 2 failed) 138ms
+   ❯ 前方接触与背向固定根轨迹 (2)
+     × 第二刀有效期经过前方腰胸高度，再顺势带向侧上方 3ms
+     × 背向固定根每刀连续扫过前方，历史带不退化为重复点 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/combat.test.ts > 前方接触与背向固定根轨迹 > 第二刀有效期经过前方腰胸高度，再顺势带向侧上方
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/combat.test.ts:524:64
+    522|     const m = STRIKES[1];
+    523|     const tips = Array.from({ length: m.active }, (_, i) => weaponSamp…
+    524|     expect(tips.some(p => p.x > 35 && p.y > -40 && p.y < -15)).toBe(tr…
+       |                                                                ^
+    525|     expect(tips.at(-1)!.y).toBeLessThan(-60);
+    526|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/combat.test.ts > 前方接触与背向固定根轨迹 > 背向固定根每刀连续扫过前方，历史带不退化为重复点
+AssertionError: expected 0.008771929824561403 to be greater than 0.9
+ ❯ tests/combat.test.ts:532:69
+    530|       const tips=Array.from({length:m.active},(_,i)=>weaponSample(stag…
+    531|       const distances=tips.slice(1).map((p,i)=>Math.hypot(p.x-tips[i].…
+    532|       expect(distances.filter(d=>d>0.02).length / distances.length).to…
+       |                                                                     ^
+    533|       expect(Math.max(...distances)).toBeLessThan(5);
+    534|       expect(tips.some(p=>Math.abs(p.x)<15 && p.y < -60)).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 45 passed (47)
+   Start at  12:53:23
+   Duration  314ms (tests 47%, transform 26%, import 25%, worker 1%)
+

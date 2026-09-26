@@ -83,6 +83,7 @@ export class World extends Phaser.Scene {
   motionRoots?: Phaser.GameObjects.Graphics;
   dropImages = new Map<string, Phaser.GameObjects.Text>();
   slash?: Phaser.GameObjects.Graphics;
+  slashBack?: Phaser.GameObjects.Graphics;
   windTrail?: Phaser.GameObjects.Graphics;
   constructor() {
     super("World");
@@ -133,6 +134,11 @@ export class World extends Phaser.Scene {
         frameWidth: COMBAT_ACTION_ART.frameSize,
         frameHeight: COMBAT_ACTION_ART.frameSize,
       },
+    );
+    this.load.spritesheet(
+      "hero-combat-back",
+      "/assets/animation/hero-combat-back.png",
+      { frameWidth: 160, frameHeight: 160 },
     );
     this.load.spritesheet(
       "hero-combat-side",
@@ -353,6 +359,7 @@ export class World extends Phaser.Scene {
       this.pointerAttack = false;
       this.attackUntil = 0;
       this.slash?.clear();
+      this.slashBack?.clear();
       this.ui.title();
     } catch {}
   }
@@ -488,6 +495,9 @@ export class World extends Phaser.Scene {
   drawSlash() {
     this.slash ??= this.add.graphics();
     this.slash.clear();
+    this.slashBack ??= this.add.graphics();
+    this.slashBack.clear();
+    this.slashBack.setDepth(this.state.player.y - 0.1);
     this.weaponTrail.update(
       this.sim,
       this.combat.attack,
@@ -496,16 +506,17 @@ export class World extends Phaser.Scene {
     );
     this.slash.setDepth(this.state.player.y + 1);
     for (const { a, b, alpha } of this.weaponTrail.segments(this.sim)) {
-      this.slash.fillStyle(b.stage === 3 ? 0xffdfa3 : 0xdaf9ed, alpha);
-      this.slash.beginPath();
-      this.slash.moveTo(a.inner.x, a.inner.y);
-      this.slash.lineTo(a.tip.x, a.tip.y);
-      this.slash.lineTo(b.tip.x, b.tip.y);
-      this.slash.lineTo(b.inner.x, b.inner.y);
-      this.slash.closePath();
-      this.slash.fillPath();
-      this.slash.lineStyle(b.stage === 3 ? 2.4 : 1.6, 0xfff8dc, alpha);
-      this.slash.lineBetween(a.tip.x, a.tip.y, b.tip.x, b.tip.y);
+      const ink = b.facing === 1 ? this.slashBack : this.slash;
+      ink.fillStyle(b.stage === 3 ? 0xffdfa3 : 0xdaf9ed, alpha);
+      ink.beginPath();
+      ink.moveTo(a.inner.x, a.inner.y);
+      ink.lineTo(a.tip.x, a.tip.y);
+      ink.lineTo(b.tip.x, b.tip.y);
+      ink.lineTo(b.inner.x, b.inner.y);
+      ink.closePath();
+      ink.fillPath();
+      ink.lineStyle(b.stage === 3 ? 2.4 : 1.6, 0xfff8dc, alpha);
+      ink.lineBetween(a.tip.x, a.tip.y, b.tip.x, b.tip.y);
     }
   }
 
@@ -785,10 +796,11 @@ export class World extends Phaser.Scene {
               ),
               phase: "ready" as const,
             }
-          : this.combat.lastFacing >= 2 && this.sim < this.combat.settleUntil
+          : this.combat.lastFacing >= 1 && this.sim < this.combat.settleUntil
             ? settleVisual(
                 this.combat.lastFacing,
                 this.sim - this.combat.readyUntil,
+                this.combat.lastStage,
               )
             : undefined,
       !striking && this.sim < this.combat.dashUntil
@@ -946,6 +958,7 @@ export class World extends Phaser.Scene {
       this.combat.reset(this.combat.dashCooldown);
       this.attackUntil = 0;
       this.slash?.clear();
+      this.slashBack?.clear();
       p.hp = 100;
       p.stamina = 100;
       this.sprint.reset(p.stamina);

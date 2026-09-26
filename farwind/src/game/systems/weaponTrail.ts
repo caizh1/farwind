@@ -7,6 +7,7 @@ type Sample = {
   inner: Point;
   tip: Point;
   stage: number;
+  facing: number;
 };
 // 只承载表现历史，不参与伤害；不同实例永不连接。数量受110ms寿命及8ms采样间隔约束。
 export class WeaponTrail {
@@ -66,6 +67,7 @@ export class WeaponTrail {
             id: attack.id,
             at,
             stage: attack.stage,
+            facing: attack.facing,
             inner: {
               x: x + w.grip.x * 0.7 + w.tip.x * 0.3,
               y: y + w.grip.y * 0.7 + w.tip.y * 0.3,

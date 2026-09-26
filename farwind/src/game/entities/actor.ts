@@ -84,9 +84,9 @@ export class Actor {
     carryRemaining = 0,
     armedDash = false,
   ) {
-    if (!this.cat && armedDash && dashFacing !== undefined && dashFacing >= 2)
+    if (!this.cat && armedDash && dashFacing !== undefined && dashFacing >= 1)
       combat = {
-        texture: "hero-combat-side",
+        texture: dashFacing === 1 ? "hero-combat-back" : "hero-combat-side",
         frame: 0,
         clip: `hero/dash/${dashFacing}`,
         frameIndex: 0,

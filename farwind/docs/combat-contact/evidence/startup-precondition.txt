@@ -1,0 +1,44 @@
+
+Running 1 test using 1 worker
+
+(node:92111) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/combat-contact.spec.ts:7:1 › 隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手 (4.6s)
+
+
+  1) tests/combat-contact.spec.ts:7:1 › 隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手 ─────────────────────────────────
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      18 |  const side=await page.evaluate(()=>(window as any).__contact);
+      19 |  const hits=side.filter((s:any)=>s.combat.stage===2&&s.combat.phase==='active'&&s.enemies.find((e:any)=>e.id==='leaf-1').hp===34);
+    > 20 |  expect(hits.length).toBeGreaterThan(0);
+         |                      ^
+      21 |  expect(hits.every((s:any)=>s.combat.facing===3)).toBe(true);
+      22 |  expect(hits.some((s:any)=>{const e=s.enemies.find((e:any)=>e.id==='leaf-1'),w=s.hero.weapon;return w&&e.x>s.player.x&&Math.hypot(s.player.x+w.tip.x-e.x,s.player.y+w.tip.y-(e.y-25))<38;})).toBe(true);
+      23 |  await page.screenshot({path:`${dir}/side-contact-runtime.png`});
+        at /Users/archer/Documents/ChatGPT/Game/farwind/tests/combat-contact.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/combat-contact-隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/combat-contact-隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/combat-contact-隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/combat-contact-隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/combat-contact-隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/combat-contact.spec.ts:7:1 › 隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手 ──────────────────────────────────
