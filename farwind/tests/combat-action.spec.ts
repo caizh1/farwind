@@ -128,7 +128,7 @@ test("四方向实机动作逐帧推进，三段收招与再次进攻", async ({
       { intervals: [16, 16, 16, 16, 16] },
     )
     .toBeLessThan(80);
-  await page.keyboard.press("Space");
+  await page.keyboard.press("l");
   await expect
     .poll(async () =>
       page.evaluate(

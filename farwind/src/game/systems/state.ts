@@ -1,8 +1,9 @@
-import { props, enemyDefs } from "../../data/world";
+import { props, enemyDefs, WORLD } from "../../data/world";
 import { items, type ItemId } from "../../data/content";
 export type Slot = { id: ItemId; count: number } | null;
 export type State = {
   schema_version: 1;
+  map_version?: 2;
   player: { x: number; y: number; hp: number; stamina: number };
   bag: Slot[];
   hotbar: (ItemId | null)[];
@@ -21,6 +22,7 @@ export type State = {
 };
 export const initialState = (): State => ({
   schema_version: 1,
+  map_version: 2,
   player: { x: 670, y: 720, hp: 100, stamina: 100 },
   bag: Array(24).fill(null),
   hotbar: ["potion", "berry", null, null, null, null, null, null],
@@ -108,8 +110,9 @@ export function validate(raw: unknown): State {
   if (
     !s ||
     s.schema_version !== 1 ||
+    (s.map_version !== undefined && s.map_version !== 2) ||
     !s.player ||
-    !num(s.player.x, 25, 3575) ||
+    !num(s.player.x, 25, s.map_version === 2 ? WORLD.width - 25 : 3575) ||
     !num(s.player.y, 25, 2175) ||
     !num(s.player.hp, 1, 100) ||
     !num(s.player.stamina, 0, 100) ||
@@ -138,7 +141,7 @@ export function validate(raw: unknown): State {
         d &&
         typeof d.enemyId === "string" &&
         Object.hasOwn(items, d.item) &&
-        num(d.x, 30, 3570) &&
+        num(d.x, 30, s.map_version === 2 ? WORLD.width - 30 : 3570) &&
         num(d.y, 80, 2170),
     ) ||
     !num(s.dashCooldownRemaining, 0, 650) ||
@@ -183,6 +186,14 @@ export function validate(raw: unknown): State {
     s.reward !== (s.quest === 7)
   )
     throw Error("存档世界状态不一致，请使用有效备份。");
+  // 旧地图只平移森林与遗迹；稳定交互编号及背包、任务全部保留。
+  if (s.map_version === undefined) {
+    if (s.player.x >= 1450) s.player.x += 600;
+    s.pendingDrops.forEach((d) => {
+      if (d.x >= 1450) d.x += 600;
+    });
+    s.map_version = 2;
+  }
   return structuredClone(s);
 }
 export function parseSave(text: string) {

@@ -535,3 +535,19 @@ button:focus-visible {
     max-width: 55vw;
   }
 }
+
+.map-guide {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0 18px;
+}
+.map-guide p,
+.map-routes p {
+  margin: 7px 0;
+  font-size: 14px;
+}
+.map-routes {
+  border-top: 1px solid #a59a71;
+  margin-top: 12px;
+  padding-top: 6px;
+}

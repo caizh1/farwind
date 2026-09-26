@@ -1,6 +1,6 @@
-import { solidPropAt } from "../../data/world";
+import { solidPropAt, terrainBlocked, WORLD } from "../../data/world";
 import { clearPath } from "../systems/combat";
-import { TRAINING, TrainingDummy } from "../systems/training";
+import { FIELD_TARGETS, TRAINING, TrainingDummy } from "../systems/training";
 import { TrainingDummyView } from "../entities/trainingDummy";
 import type { Attack } from "../systems/combat";
 import { WeaponTrail } from "../systems/weaponTrail";
@@ -68,6 +68,8 @@ export class World extends Phaser.Scene {
   enemies: Enemy[] = [];
   training = new TrainingDummy();
   trainingView!: TrainingDummyView;
+  fieldTargets = FIELD_TARGETS.map((t) => new TrainingDummy(t.id, t.x, t.y));
+  fieldViews: TrainingDummyView[] = [];
   active = false;
   sim = 0;
   attackUntil = 0;
@@ -81,7 +83,6 @@ export class World extends Phaser.Scene {
   target?: Prop;
   follower = new Follower();
   sprint = new Sprint();
-  water!: Phaser.GameObjects.Image;
   night!: Phaser.GameObjects.Rectangle;
   hudTimer = 0;
   loaded: State | null = null;
@@ -173,26 +174,6 @@ export class World extends Phaser.Scene {
       return;
     }
     this.makeTerrain();
-    const pond = this.textures.createCanvas("pond", 340, 220)!;
-    const pc = pond.context;
-    pc.beginPath();
-    pc.ellipse(170, 110, 160, 95, 0, 0, Math.PI * 2);
-    pc.fillStyle = "#d4cba0";
-    pc.fill();
-    pc.clip();
-    pc.drawImage(
-      this.textures.get("water").getSourceImage() as HTMLImageElement,
-      0,
-      0,
-      340,
-      220,
-    );
-    pc.strokeStyle = "#7b9765";
-    pc.lineWidth = 12;
-    pc.stroke();
-    pond.refresh();
-    this.water = this.add.image(1240, 890, "pond").setDepth(-10);
-
     props.forEach((p) => {
       const im = this.add
         .image(p.x, p.y, p.art, 0)
@@ -202,10 +183,13 @@ export class World extends Phaser.Scene {
       this.propImages.set(p.id, im);
     });
     this.trainingView = new TrainingDummyView(this, this.training);
+    this.fieldViews = this.fieldTargets.map(
+      (t) => new TrainingDummyView(this, t),
+    );
     this.hero = new Actor(this, 670, 720);
     this.cat = new Actor(this, 720, 740, true);
     this.cameras.main
-      .setBounds(0, 0, 3600, 2200)
+      .setBounds(0, 0, WORLD.width, WORLD.height)
       .startFollow(this.hero.sprite, true, 0.1, 0.1, 0, 150);
     this.cameras.main.setZoom(this.scale.width / 1280);
     this.scale.on("resize", (size: Phaser.Structs.Size) => {
@@ -219,7 +203,7 @@ export class World extends Phaser.Scene {
       .setDepth(10000);
     this.ui.actions = {
       start: (c) => void this.start(c).catch(() => {}),
-      save: () => this.persist(),
+      save: () => this.persist(true),
       import: async (s) => {
         await save(s);
         this.loaded = s;
@@ -256,6 +240,9 @@ export class World extends Phaser.Scene {
           ...(import.meta.env.DEV
             ? {
                 training: this.training.snapshot(this.sim),
+                fieldTraining: this.fieldTargets.map((t) =>
+                  t.snapshot(this.sim),
+                ),
                 trainingTargets: this.combatTargets().filter(
                   (t) => t.kind === "trainingDummy",
                 ).length,
@@ -331,6 +318,8 @@ export class World extends Phaser.Scene {
     this.active = true;
     resetSessionTimers(this);
     this.combat.reset(this.state.dashCooldownRemaining);
+    this.fieldTargets.forEach((t) => t.reset());
+    this.fieldViews.forEach((v) => v.reset());
     this.training.reset();
     this.trainingView.reset();
     this.pointerAttack = false;
@@ -353,7 +342,7 @@ export class World extends Phaser.Scene {
     if (!continued) await this.persist();
     this.ui.message("风铃村欢迎你。向北走几步，按 E 与守风人交谈。");
   }
-  async persist() {
+  async persist(notify = false) {
     try {
       this.state.dashCooldownRemaining = Math.max(
         0,
@@ -363,7 +352,7 @@ export class World extends Phaser.Scene {
       await save(snapshot);
       this.loaded = snapshot;
       this.ui.available = true;
-      this.ui.message("旅途已保存");
+      if (notify) this.ui.message("旅途已保存");
     } catch (e) {
       this.ui.message((e as Error).message);
       throw e;
@@ -371,9 +360,11 @@ export class World extends Phaser.Scene {
   }
   async toTitle() {
     try {
-      await this.persist();
+      await this.persist(true);
       this.active = false;
       this.combat.reset();
+      this.fieldTargets.forEach((t) => t.reset());
+      this.fieldViews.forEach((v) => v.reset());
       this.training.reset();
       this.trainingView.reset();
       this.pointerAttack = false;
@@ -385,19 +376,9 @@ export class World extends Phaser.Scene {
   }
   makeTerrain = makeTerrain;
   blocked(x: number, y: number, ignore?: string) {
-    if (y >= 650 && y <= 1580 && !(y >= 1010 && y <= 1180)) {
-      const t = (y - 650) / 930;
-      const streamX =
-        (1 - t) ** 3 * 2020 +
-        3 * (1 - t) ** 2 * t * 1940 +
-        3 * (1 - t) * t * t * 2100 +
-        t ** 3 * 1970;
-      if (Math.abs(x - streamX) < 40) return true;
-    }
-    if (x < 30 || x > 3570 || y < 80 || y > 2170) return true;
-    if (((x - 1240) / 160) ** 2 + ((y - 890) / 98) ** 2 < 1) return true;
-    return solidPropAt(x, y, ignore);
+    return terrainBlocked(x, y) || solidPropAt(x, y, ignore);
   }
+
   clearLine(x: number, y: number, tx: number, ty: number, ignore?: string) {
     return clearPath(
       x,
@@ -584,7 +565,7 @@ export class World extends Phaser.Scene {
     });
   }
   combatTargets(): CombatTarget[] {
-    return [...this.enemies, this.training];
+    return [...this.enemies, this.training, ...this.fieldTargets];
   }
   hitFeedback(stage: number, material: "enemy" | "straw") {
     this.combat.stopOnHit(stage);
@@ -606,7 +587,11 @@ export class World extends Phaser.Scene {
     target.sync(this.combat.epoch);
     if (target.hit(attack, this.sim)) {
       this.hitFeedback(stage, "straw");
-      this.trainingView.hit(this.sim, STRIKES[stage - 1].damage);
+      const view =
+        target === this.training
+          ? this.trainingView
+          : this.fieldViews[this.fieldTargets.indexOf(target)];
+      view.hit(this.sim, STRIKES[stage - 1].damage);
     }
   }
   strikeEnemy(e: Enemy, stage: number) {
@@ -686,7 +671,7 @@ export class World extends Phaser.Scene {
       this.pointerAttack = false;
       this.combat.pending = false;
       this.keys.take("j");
-      this.keys.take(" ");
+      this.keys.take("l");
       this.tweens.pauseAll();
       return;
     }
@@ -743,7 +728,7 @@ export class World extends Phaser.Scene {
     if (!this.combat.attack && this.sim >= this.combat.dashUntil && length) {
       this.hero.motion.direction = nextFacing;
     }
-    const dashRequested = this.keys.take(" ");
+    const dashRequested = this.keys.take("l");
     const attackRequested = this.keys.take("j") || this.pointerAttack;
     this.pointerAttack = false;
     if (dashRequested) {
@@ -767,7 +752,7 @@ export class World extends Phaser.Scene {
       this.sim < this.combat.dashUntil;
     const movement = this.sprint.update(
       p.stamina,
-      this.keys.held.has("shift") && length > 0 && !busy,
+      this.keys.held.has(" ") && length > 0 && !busy,
       this.sim < this.combat.dashUntil ? 0 : dt,
     );
     const speed = busy ? (this.combat.attack ? 55 : 0) : movement.speed;
@@ -956,6 +941,7 @@ export class World extends Phaser.Scene {
         if (e.windup <= 0) {
           e.cool = this.sim + (e.type === "leaf" ? 1400 : 1100);
           if (
+            p.x > WORLD.forest + 50 &&
             d < 100 &&
             this.sim > this.invulnerable &&
             this.sim > this.respawnInvulnerable &&
@@ -969,12 +955,12 @@ export class World extends Phaser.Scene {
             this.float(p.x, p.y, e.type === "leaf" ? "-18" : "-10");
           }
         }
-      } else if (d < 80 && this.sim > e.cool && p.x > 1500) {
+      } else if (d < 80 && this.sim > e.cool && p.x > WORLD.forest + 50) {
         e.windup = e.type === "leaf" ? 0.65 : 0.3;
       } else {
         const chase =
           d < 380 &&
-          p.x > 1500 &&
+          p.x > WORLD.forest + 50 &&
           Math.hypot(e.x - e.homeX, e.y - e.homeY) < 420;
         const tx = chase ? p.x : e.homeX,
           ty = chase ? p.y : e.homeY,
@@ -1013,7 +999,7 @@ export class World extends Phaser.Scene {
       this.ui.message("岚爷爷把你带回广场。行囊与旅途进度都还在。");
       void this.persist().catch(() => {});
     }
-    if (this.state.quest === 1 && p.x > 1510) {
+    if (this.state.quest === 1 && p.x > WORLD.forest + 60) {
       this.state.quest = this.state.crafted ? 3 : 2;
       this.ui.dialog(
         "林间异响",
@@ -1031,18 +1017,23 @@ export class World extends Phaser.Scene {
       this.ui.message(`抵达 · ${r}`);
       void this.persist().catch(() => {});
     }
-    this.water.setScale(
-      1 + Math.sin(this.sim / 1600) * 0.008,
-      1 + Math.sin(this.sim / 1900) * 0.008,
+    const targets = [this.training, ...this.fieldTargets];
+    const views = [this.trainingView, ...this.fieldViews];
+    targets.forEach((target, i) => {
+      if (target.epoch !== this.combat.epoch) {
+        target.sync(this.combat.epoch);
+        views[i].reset();
+      }
+      views[i].update(this.sim, p);
+    });
+    const nearest = targets.reduce((a, b) =>
+      Math.hypot(p.x - a.x, p.y - a.y) < Math.hypot(p.x - b.x, p.y - b.y)
+        ? a
+        : b,
     );
-    if (this.training.epoch !== this.combat.epoch) {
-      this.training.sync(this.combat.epoch);
-      this.trainingView.reset();
-    }
-    this.trainingView.update(this.sim, p);
     this.ui.training(
-      this.training.snapshot(this.sim),
-      Math.hypot(p.x - TRAINING.x, p.y - TRAINING.y) < TRAINING.near,
+      nearest.snapshot(this.sim),
+      Math.hypot(p.x - nearest.x, p.y - nearest.y) < TRAINING.near,
     );
     const hour = (this.state.time / 60) % 24;
     this.night.setAlpha(hour > 18 || hour < 6 ? 0.22 : 0);
@@ -1052,10 +1043,10 @@ export class World extends Phaser.Scene {
       const remaining = Math.max(0, this.combat.dashCooldown - this.sim);
       this.ui.combatStatus =
         remaining > 0
-          ? `Space 风步 · ${(remaining / 1000).toFixed(1)}秒`
+          ? `L 风步 · ${(remaining / 1000).toFixed(1)}秒`
           : p.stamina < COMBAT.dash.cost
-            ? "Space 风步 · 体力不足"
-            : "Space 风步 · 就绪";
+            ? "L 风步 · 体力不足"
+            : "L 风步 · 就绪";
       this.ui.update(this.state, this.target ? `E · ${this.target.label}` : "");
       this.refresh();
     }

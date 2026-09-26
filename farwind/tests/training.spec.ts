@@ -3,7 +3,7 @@ import { writeFile } from "node:fs/promises";
 import { captureGameAudio } from "../tools/capture-game-audio.mjs";
 import { initialState } from "../src/game/systems/state";
 test.use({ video: { mode: "on", size: { width: 1280, height: 720 } } });
-const dir = "docs/training-dummy/evidence",
+const dir = "docs/map-expansion/training",
   read = (p: Page) => p.evaluate(() => (window as any).__farwind());
 async function walk(p: Page, x: number, y: number) {
   for (const [axis, target] of [
@@ -97,7 +97,7 @@ test("新游戏四面训练、风步底座、暂停和同页继续：真实输�
   await face(page, "w", 1);
   const stamina = (await read(page)).state.player.stamina;
   await page.keyboard.down("w");
-  await page.keyboard.press("Space");
+  await page.keyboard.press("l");
   await page.waitForTimeout(300);
   await page.keyboard.up("w");
   const dash = await read(page);
@@ -118,7 +118,7 @@ test("新游戏四面训练、风步底座、暂停和同页继续：真实输�
   await page.getByRole("button", { name: "继续旅途" }).click();
   await page.waitForFunction(() => (window as any).__farwind().mode === "");
   expect((await read(page)).training.damage).toBe(0);
-  expect((await read(page)).trainingTargets).toBe(1);
+  expect((await read(page)).trainingTargets).toBe(4);
   await face(page, "w", 1);
   await page.keyboard.press("j");
   await expect.poll(async () => (await read(page)).training.damage).toBe(18);
@@ -174,6 +174,7 @@ test("隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练�
   fixture.player.y = 1070;
   fixture.bag = Array.from({ length: 24 }, () => ({ id: "stone", count: 20 }));
   fixture.killed = ["slime-1"];
+  delete fixture.map_version;
   delete fixture.pendingDrops;
   delete fixture.dashCooldownRemaining;
   page.on("dialog", (d) => d.accept());
@@ -200,7 +201,7 @@ test("隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练�
   await face(page, "w", 1);
   await combo(page);
   const after = await read(page);
-  expect(after.trainingTargets).toBe(1);
+  expect(after.trainingTargets).toBe(4);
   expect(after.training.hp).toBe(1);
   expect(after.state.bag).toEqual(before.bag);
   expect(after.state.killed).toEqual(["slime-1"]);
@@ -209,6 +210,6 @@ test("隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练�
   await page.reload();
   await page.getByRole("button", { name: "继续旅途" }).click();
   await page.waitForFunction(() => (window as any).__farwind().mode === "");
-  expect((await read(page)).trainingTargets).toBe(1);
+  expect((await read(page)).trainingTargets).toBe(4);
   expect((await read(page)).training.damage).toBe(0);
 });

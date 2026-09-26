@@ -11,6 +11,7 @@ test("隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及�
   page.on("dialog", (d) => d.accept());
   await page.goto("/");
   const fixture = initialState();
+  delete fixture.map_version;
   fixture.player.x = 2230;
   fixture.player.y = 1070;
   fixture.quest = 3;

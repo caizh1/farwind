@@ -16,9 +16,19 @@ async function finishWindow(page: Page) {
 test("真实键鼠：三连、断连、风步、暂停和续玩", async ({ page }) => {
   await page.goto("/?animationDebug=1");
   await page.getByRole("button", { name: "启程 · 新游戏" }).click();
+  await expect(page.locator("#combat-status")).toHaveText("L 风步 · 就绪");
+  const beforeSpace = (await read(page)).state.player;
+  await page.keyboard.press("Space");
+  await page.waitForTimeout(180);
+  const afterSpace = await read(page);
+  expect(afterSpace.session.combat.dashCooldownRemaining).toBe(0);
+  expect(afterSpace.state.player.x).toBe(beforeSpace.x);
+  expect(afterSpace.state.player.y).toBe(beforeSpace.y);
   await page.keyboard.press("j");
   await expect
-    .poll(async () => (await read(page)).session.combat.stage)
+    .poll(async () => (await read(page)).session.combat.stage, {
+      intervals: [16, 16, 16],
+    })
     .toBe(1);
   await finishWindow(page);
   await page.keyboard.press("j");
@@ -60,7 +70,7 @@ test("真实键鼠：三连、断连、风步、暂停和续玩", async ({ page 
   await expect
     .poll(async () => (await read(page)).animation.hero.direction)
     .toBe(3);
-  await page.keyboard.press("Space");
+  await page.keyboard.press("l");
   await expect
     .poll(async () => (await read(page)).session.combat.dashRemaining)
     .toBeGreaterThan(0);
@@ -79,6 +89,7 @@ test("真实键鼠：三连、断连、风步、暂停和续玩", async ({ page 
   await page.keyboard.press("Escape");
   const paused = await read(page);
   await page.keyboard.press("j");
+  await page.keyboard.press("l");
   await page.waitForTimeout(300);
   expect((await read(page)).session.sim).toBe(paused.session.sim);
   await page.keyboard.press("Escape");
@@ -101,9 +112,9 @@ test("真实键鼠：三连、断连、风步、暂停和续玩", async ({ page 
   await page.keyboard.up("j");
   expect((await read(page)).attackSerial).toBe(serial + 1);
   const holdStart = (await read(page)).state.player;
-  await page.keyboard.down("Space");
+  await page.keyboard.down("l");
   await page.waitForTimeout(1200);
-  await page.keyboard.up("Space");
+  await page.keyboard.up("l");
   const holdEnd = (await read(page)).state.player;
   expect(
     Math.hypot(holdEnd.x - holdStart.x, holdEnd.y - holdStart.y),
@@ -114,6 +125,7 @@ test("真实键鼠：三连、断连、风步、暂停和续玩", async ({ page 
 });
 test("隔离森林战斗夹具：三连命中、风步拉开、再进攻", async ({ page }) => {
   const fixture = initialState();
+  delete fixture.map_version;
   fixture.player.x = 2230;
   fixture.player.y = 1070;
   fixture.quest = 3;
@@ -186,7 +198,7 @@ test("隔离森林战斗夹具：三连命中、风步拉开、再进攻", async
   ).toBe(true);
   const beforeDash = (await read(page)).state.player.x;
   await page.keyboard.down("a");
-  await page.keyboard.press("Space");
+  await page.keyboard.press("l");
   await expect
     .poll(async () => (await read(page)).session.combat.dashRemaining)
     .toBeGreaterThan(0);
@@ -206,11 +218,11 @@ test("隔离森林战斗夹具：三连命中、风步拉开、再进攻", async
     if (distance < 25) {
       const away =
         key === "d" ? "a" : key === "a" ? "d" : key === "s" ? "w" : "s";
-      await page.keyboard.down("Shift");
+      await page.keyboard.down("Space");
       await page.keyboard.down(away);
       await page.waitForTimeout(250);
       await page.keyboard.up(away);
-      await page.keyboard.up("Shift");
+      await page.keyboard.up("Space");
     } else if (distance > 85) {
       await page.keyboard.down(key);
       await page.waitForTimeout(100);

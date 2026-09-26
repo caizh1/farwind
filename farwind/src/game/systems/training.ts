@@ -8,11 +8,18 @@ export const TRAINING = {
   fade: 250,
   recoil: 330,
 } as const;
+export const FIELD_TARGETS = [
+  { id: "field-dummy-west", x: 1510, y: 470 },
+  { id: "field-dummy-east", x: 1760, y: 470 },
+  { id: "field-dummy-south", x: 1540, y: 650 },
+] as const;
 export class TrainingDummy implements Target {
   readonly kind = "trainingDummy" as const;
-  readonly id = TRAINING.id;
-  readonly x = TRAINING.x;
-  readonly y = TRAINING.y;
+  constructor(
+    readonly id: string = TRAINING.id,
+    readonly x: number = TRAINING.x,
+    readonly y: number = TRAINING.y,
+  ) {}
   // 仅表示可受击，训练对象不执行扣血/死亡路径。
   readonly hp = 1;
   comboId = -1;

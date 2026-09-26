@@ -58,7 +58,7 @@ test("最终显示：宽限内持剑，接招不插空手；缓退松键按有�
     await page.keyboard.down(opposite);
     await page.waitForTimeout(30);
     await page.keyboard.up(opposite);
-    await page.keyboard.press("Space");
+    await page.keyboard.press("l");
     await page.waitForFunction(
       () => (window as any).__farwind().session.combat.dashRemaining > 0,
       undefined,

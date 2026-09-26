@@ -29,10 +29,19 @@ test("session-sprint-recovery", async ({ page }) => {
   await expect
     .poll(async () => (await read(page)).session.sim)
     .toBeGreaterThan(200);
+  await expect(page.locator(".help")).toContainText("空格 奔跑");
+  await page.keyboard.down("Shift");
+  const oldKey = await hold(page, "a", 180);
+  expect(oldKey.animation.hero.action).toBe("walk");
+  expect(oldKey.animation.hero.speed).toBeCloseTo(150, 0);
+  await page.keyboard.up("Shift");
+  const stationary = await hold(page, "Space", 180);
+  expect(stationary.animation.hero.action).toBe("idle");
+  expect(stationary.session.combat.dashCooldownRemaining).toBe(0);
   const transitions: any[] = [];
   let last = "run",
     lastChange = 0;
-  await page.keyboard.down("Shift");
+  await page.keyboard.down("Space");
   for (let n = 0; n < 32; n++) {
     const key = n % 2 ? "d" : "a";
     await page.keyboard.down(key);
@@ -41,6 +50,17 @@ test("session-sprint-recovery", async ({ page }) => {
         intervals: [16, 32, 50],
       })
       .toBeGreaterThan(100);
+    if (n === 0) {
+      expect((await read(page)).animation.hero.action).toBe("run");
+      await page.keyboard.up("Space");
+      await expect
+        .poll(async () => (await read(page)).animation.hero.action)
+        .toBe("walk");
+      await page.keyboard.down("Space");
+      await expect
+        .poll(async () => (await read(page)).animation.hero.action)
+        .toBe("run");
+    }
     for (let i = 0; i < 10; i++) {
       await page.waitForTimeout(50);
       const s = await read(page),
@@ -61,14 +81,14 @@ test("session-sprint-recovery", async ({ page }) => {
         s.state.player.stamina > 3 &&
         s.state.player.stamina < 15
       ) {
-        await page.keyboard.up("Shift");
-        await page.keyboard.down("Shift");
+        await page.keyboard.up("Space");
+        await page.keyboard.down("Space");
         expect(s.animation.hero.action).toBe("walk");
       }
     }
     await page.keyboard.up(key);
   }
-  await page.keyboard.up("Shift");
+  await page.keyboard.up("Space");
   expect(transitions.length).toBeGreaterThan(4);
   expect(transitions.length).toBeLessThan(18);
   await page.keyboard.press("Escape");

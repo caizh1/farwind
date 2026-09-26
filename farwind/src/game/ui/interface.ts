@@ -1,3 +1,12 @@
+import {
+  WORLD,
+  BRIDGES,
+  POND,
+  roads,
+  villageAreas,
+  villageRoutes,
+  routeSeconds,
+} from "../../data/world";
 import { TRAINING, type TrainingDummy } from "../systems/training";
 import { items, objectives, type ItemId } from "../../data/content";
 import { count, craft, discard, parseSave, type State } from "../systems/state";
@@ -19,13 +28,13 @@ export class Interface {
   selected: ItemId | null = null;
   hotbarMarkup = "";
   state?: State;
-  combatStatus = "Space 风步 · 就绪";
+  combatStatus = "L 风步 · 就绪";
   actions!: Actions;
   modal!: HTMLElement;
   hud!: HTMLElement;
   toastEl!: HTMLElement;
   constructor() {
-    this.root.innerHTML = `<div id="hud" hidden><div class="top"><div class="vitals-stack"><section class="vitals"><img class="portrait" src="/assets/portrait.png" alt="旅行者"><div><b>旅人 <small>与小黑同行</small></b><div class="meter health"><i></i><span></span></div><div class="meter stamina"><i></i><span></span></div></div></section><section id="training-panel" hidden><b>广场练习</b><small>J / 左键：攻击；连按接三连；Space：风步</small><span id="training-stats"></span></section></div><section class="location"><b id="region">风铃村</b><span id="clock"></span><canvas id="minimap" width="150" height="88" aria-label="位置小地图"></canvas></section></div><div class="quest-tracker"><small>风从这里开始</small><span id="objective"></span><button data-panel="quest">Q 旅途手记</button></div><div id="prompt"></div><div class="bottom"><span class="help">WASD 移动 · Shift 奔跑 · E 交互 · J/左键 三连斩 · <span id="combat-status">Space 风步 · 就绪</span></span><div id="hotbar"></div><div class="toolbar"><button data-panel="bag">Tab 行囊</button><button data-panel="map">M 地图</button><button data-panel="pause">Esc 暂停</button></div></div></div><div id="toast" role="status"></div><div id="modal"></div>`;
+    this.root.innerHTML = `<div id="hud" hidden><div class="top"><div class="vitals-stack"><section class="vitals"><img class="portrait" src="/assets/portrait.png" alt="旅行者"><div><b>旅人 <small>与小黑同行</small></b><div class="meter health"><i></i><span></span></div><div class="meter stamina"><i></i><span></span></div></div></section><section id="training-panel" hidden><b>木桩练习</b><small>J / 左键：攻击；连按接三连；L：风步</small><span id="training-stats"></span></section></div><section class="location"><b id="region">风铃村</b><span id="clock"></span><canvas id="minimap" width="150" height="88" aria-label="位置小地图"></canvas></section></div><div class="quest-tracker"><small>风从这里开始</small><span id="objective"></span><button data-panel="quest">Q 旅途手记</button></div><div id="prompt"></div><div class="bottom"><span class="help">WASD 移动 · 空格 奔跑 · E 交互 · J/左键 三连斩 · <span id="combat-status">L 风步 · 就绪</span></span><div id="hotbar"></div><div class="toolbar"><button data-panel="bag">Tab 行囊</button><button data-panel="map">M 地图</button><button data-panel="pause">Esc 暂停</button></div></div></div><div id="toast" role="status"></div><div id="modal"></div>`;
     this.modal = this.root.querySelector("#modal")!;
     this.hud = this.root.querySelector("#hud")!;
     this.toastEl = this.root.querySelector("#toast")!;
@@ -167,7 +176,7 @@ export class Interface {
     if (mode === "map" && s) {
       this.shell(
         "风的足迹",
-        `<p>风铃村 → 翡翠森林 → 风之遗迹</p><canvas id="world-map" width="720" height="400"></canvas><p class="muted">金点是你的位置。石路连接三个可步行区域；遗迹南侧的归乡风径修复后开放。</p><button id="close">收起地图</button>`,
+        `<p>风铃村 → 翡翠森林 → 风之遗迹</p><canvas id="world-map" width="840" height="440"></canvas><div class="map-guide">${villageAreas.map((a) => `<p><b>${a.id} ${a.name}</b> · ${a.detail}</p>`).join("")}</div><div class="map-routes">${villageRoutes.map((r) => `<p><b>${r.name}</b> · 约 ${routeSeconds(r.points)} 秒（步行、不含停留）</p>`).join("")}</div><p class="muted">世界 4200 × 2200 · 金点是你的位置。临水木桥可步行，池水不可通行；遗迹南侧的归乡风径修复后开放。</p><button id="close">收起地图</button>`,
       );
       this.drawMap(this.modal.querySelector("canvas")!, s);
     }
@@ -273,32 +282,60 @@ export class Interface {
     const ctx = c.getContext("2d")!,
       w = c.width,
       h = c.height;
+    const sx = w / WORLD.width,
+      sy = h / WORLD.height;
     ctx.fillStyle = "#9cb67e";
     ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = "#477d66";
-    ctx.fillRect(w * 0.4, 0, w * 0.35, h);
+    ctx.fillRect(WORLD.forest * sx, 0, (WORLD.ruins - WORLD.forest) * sx, h);
     ctx.fillStyle = "#aaa78a";
-    ctx.fillRect(w * 0.75, 0, w * 0.25, h);
+    ctx.fillRect(WORLD.ruins * sx, 0, w - WORLD.ruins * sx, h);
     ctx.strokeStyle = "#e6ce9b";
-    ctx.lineWidth = w / 60;
+    ctx.lineWidth = w > 200 ? 5 : 2;
+    roads.forEach((path) => {
+      ctx.beginPath();
+      path.forEach(([x, y], i) =>
+        i ? ctx.lineTo(x * sx, y * sy) : ctx.moveTo(x * sx, y * sy),
+      );
+      ctx.stroke();
+    });
+    ctx.fillStyle = "#4c9bad";
     ctx.beginPath();
-    ctx.moveTo(w * 0.18, h * 0.3);
-    ctx.lineTo(w * 0.18, h * 0.36);
-    ctx.lineTo(w * 0.6, h * 0.5);
-    ctx.lineTo(w * 0.88, h * 0.29);
-    ctx.stroke();
+    ctx.ellipse(
+      POND.x * sx,
+      POND.y * sy,
+      POND.rx * sx,
+      POND.ry * sy,
+      0,
+      0,
+      Math.PI * 2,
+    );
+    ctx.fill();
+    ctx.fillStyle = "#c49a62";
+    BRIDGES.forEach((b) =>
+      ctx.fillRect(b.x * sx, b.y * sy, b.w * sx, b.h * sy),
+    );
     if (w > 200) {
-      ctx.font = "20px serif";
-      ctx.fillStyle = "#f9edca";
-      ctx.fillText("风铃村", w * 0.13, h * 0.2);
-      ctx.fillText("翡翠森林", w * 0.48, h * 0.7);
-      ctx.fillText("风之遗迹", w * 0.76, h * 0.18);
+      ctx.font = "bold 14px serif";
+      ctx.textAlign = "center";
+      villageAreas.forEach((a) => {
+        ctx.fillStyle = "#284b3b";
+        ctx.fillRect(a.x * sx - 10, a.y * sy - 11, 20, 22);
+        ctx.fillStyle = "#fff4cf";
+        ctx.fillText(a.id, a.x * sx, a.y * sy + 5);
+      });
+      ctx.font = "18px serif";
+      ctx.fillStyle = "#fff4cf";
+      ctx.fillText("风铃村", 200, h * 0.16);
+      ctx.fillText("翡翠森林", w * 0.64, h * 0.7);
+      ctx.fillText("风之遗迹", w * 0.88, h * 0.18);
+      ctx.textAlign = "start";
     }
     ctx.fillStyle = "#fff6ca";
     ctx.beginPath();
     ctx.arc(
-      (s.player.x / 3600) * w,
-      (s.player.y / 2200) * h,
+      (s.player.x / WORLD.width) * w,
+      (s.player.y / WORLD.height) * h,
       w > 200 ? 6 : 3,
       0,
       Math.PI * 2,

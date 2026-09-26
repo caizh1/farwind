@@ -35,7 +35,7 @@ test("motion-directions-wall-stop-pause", async ({ page }) => {
     ["d", 3],
     ["a", 2],
   ] as const) {
-    const run = await hold(page, ["Shift", key], 400);
+    const run = await hold(page, ["Space", key], 400);
     expect(run.animation.hero.direction).toBe(direction);
     expect(run.animation.hero.action).toBe("run");
     expect(run.animation.hero.provisional).toBe(false);
@@ -43,7 +43,7 @@ test("motion-directions-wall-stop-pause", async ({ page }) => {
   }
   const diagonal = await hold(page, ["d", "s"], 400);
   expect(diagonal.animation.hero.speed).toBeCloseTo(150, 0);
-  const run = await hold(page, ["Shift", "a"], 400);
+  const run = await hold(page, ["Space", "a"], 400);
   expect(run.animation.hero.action).toBe("run");
   expect(run.animation.hero.speed).toBeCloseTo(235, 0);
   const x = (await read(page)).state.player.x;

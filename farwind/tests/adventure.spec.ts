@@ -1,3 +1,4 @@
+import { move } from "./map-navigation";
 import { writeFile } from "node:fs/promises";
 import { captureGameAudio } from "../tools/capture-game-audio.mjs";
 import { test, expect, type Page } from "@playwright/test";
@@ -9,26 +10,6 @@ async function dismiss(p: Page) {
     await p.getByRole("button", { name: "继续 · E" }).click();
   else if (s.mode === "pause")
     await p.getByRole("button", { name: "继续旅途", exact: true }).click();
-}
-async function move(p: Page, x: number, y: number) {
-  for (let i = 0; i < 100; i++) {
-    await dismiss(p);
-    const s = await snapshot(p),
-      dx = x - s.state.player.x,
-      dy = y - s.state.player.y;
-    if (Math.hypot(dx, dy) < 12) return;
-    const key =
-      Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "d" : "a") : dy > 0 ? "s" : "w";
-    const distance = Math.max(Math.abs(dx), Math.abs(dy));
-    await p.keyboard.down(key);
-    await p.waitForTimeout(
-      Math.min(350, Math.max(45, ((distance - 4) / 150) * 1000)),
-    );
-    await p.keyboard.up(key);
-  }
-  throw Error(
-    `移动受阻，目标 ${x},${y}，实际 ${JSON.stringify((await snapshot(p)).state.player)}`,
-  );
 }
 async function interact(p: Page, id: string) {
   await expect.poll(async () => (await snapshot(p)).target).toBe(id);
@@ -46,30 +27,23 @@ test("adventure-loop", async ({ page, context }) => {
   await interact(page, "elder");
   await dismiss(page);
   await expect.poll(async () => (await snapshot(page)).state.quest).toBe(1);
-  await move(page, 790, 790);
+  await move(page, 1180, 560);
   await interact(page, "herb-v1");
-  await move(page, 600, 900);
-  await move(page, 535, 900);
+  await move(page, 350, 1410);
   await interact(page, "berry-v1");
-  await move(page, 400, 1030);
-  await move(page, 370, 1040);
+  await move(page, 270, 1150);
   await interact(page, "wood-v1");
-  await move(page, 1060, 1050);
+  await move(page, 1730, 1210);
   await interact(page, "stone-v1");
-  await move(page, 1100, 1040);
-  await move(page, 1200, 1040);
-  await move(page, 1200, 1010);
-  await move(page, 1400, 1010);
-  await move(page, 1400, 1080);
-  await move(page, 1580, 1080);
+  await move(page, 2170, 1080);
   await dismiss(page);
   await page.keyboard.press("Tab");
   await page.getByRole("button", { name: "制作恢复药剂", exact: true }).click();
-  await page.screenshot({ path: "docs/combat/regression/inventory.png" });
+  await page.screenshot({ path: "docs/map-expansion/adventure/inventory.png" });
   await page.getByRole("button", { name: "收好行囊" }).click();
   await expect.poll(async () => (await snapshot(page)).state.quest).toBe(3);
-  await page.screenshot({ path: "docs/combat/regression/forest.png" });
-  await move(page, 1900, 1080);
+  await page.screenshot({ path: "docs/map-expansion/adventure/forest.png" });
+  await move(page, 2500, 1080);
   for (let round = 0; round < 70; round++) {
     await dismiss(page);
     const s = await snapshot(page);
@@ -89,32 +63,32 @@ test("adventure-loop", async ({ page, context }) => {
     if (s.state.player.hp < 60) await page.keyboard.press("1");
   }
   await expect.poll(async () => (await snapshot(page)).state.quest).toBe(4);
-  await move(page, 2600, 1100);
-  await move(page, 2770, 920);
-  await move(page, 2850, 920);
-  await move(page, 2850, 680);
-  await move(page, 2910, 590);
+  await move(page, 3200, 1100);
+  await move(page, 3370, 920);
+  await move(page, 3450, 920);
+  await move(page, 3450, 680);
+  await move(page, 3510, 590);
   await interact(page, "wind-0");
-  await move(page, 3130, 500);
-  await move(page, 3160, 450);
+  await move(page, 3730, 500);
+  await move(page, 3760, 450);
   await interact(page, "wind-1");
-  await move(page, 3350, 510);
+  await move(page, 3950, 510);
   await interact(page, "wind-2");
-  await page.screenshot({ path: "docs/combat/regression/ruins.png" });
-  await move(page, 3140, 730);
+  await page.screenshot({ path: "docs/map-expansion/adventure/ruins.png" });
+  await move(page, 3740, 730);
   await interact(page, "waymark");
   await dismiss(page);
   await expect
     .poll(async () => (await snapshot(page)).state.shortcut)
     .toBe(true);
-  await move(page, 2950, 890);
+  await move(page, 3550, 890);
   await interact(page, "shortcut");
   await move(page, 670, 690);
   await interact(page, "elder");
   await dismiss(page);
   await expect.poll(async () => (await snapshot(page)).state.quest).toBe(7);
   await page.keyboard.press("q");
-  await page.screenshot({ path: "docs/combat/regression/quest.png" });
+  await page.screenshot({ path: "docs/map-expansion/adventure/quest.png" });
   await page.getByRole("button", { name: "合上手记" }).click();
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "保存旅途", exact: true }).click();
@@ -122,16 +96,16 @@ test("adventure-loop", async ({ page, context }) => {
   const before = (await snapshot(page)).state;
   const audio = await page.evaluate(() => (window as any).__finishAudio());
   await writeFile(
-    "docs/combat-feel/evidence/forest-audio.webm",
+    "docs/map-expansion/adventure/forest-audio.webm",
     Buffer.from(audio.base64, "base64"),
   );
   await writeFile(
-    "docs/combat-feel/evidence/forest-audio-offset.txt",
+    "docs/map-expansion/adventure/forest-audio-offset.txt",
     String(audio.offset),
   );
   const video = page.video();
   await page.close();
-  await video?.saveAs("docs/combat-feel/evidence/forest-journey.webm");
+  await video?.saveAs("docs/map-expansion/adventure/forest-journey.webm");
   const reopened = await context.newPage();
   await reopened.goto("/");
   await reopened.getByRole("button", { name: "继续旅途", exact: true }).click();
@@ -142,5 +116,7 @@ test("adventure-loop", async ({ page, context }) => {
   expect(after.stones).toEqual([0, 1, 2]);
   expect(after.reward).toBe(true);
   expect(errors).toEqual([]);
-  await reopened.screenshot({ path: "docs/combat/regression/continued.png" });
+  await reopened.screenshot({
+    path: "docs/map-expansion/adventure/continued.png",
+  });
 });

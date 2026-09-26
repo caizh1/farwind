@@ -93,6 +93,7 @@ async function importArena(
   killed: string[] = [],
 ) {
   const fixture = initialState();
+  delete fixture.map_version;
   fixture.player.x = x;
   fixture.player.y = y;
   fixture.quest = 3;
@@ -118,6 +119,7 @@ const sample = (page: any) => page.evaluate(() => (window as any).__farwind());
 function westBank(y: number) {
   const t = (y - 650) / 930;
   return (
+    600 +
     (1 - t) ** 3 * 2020 +
     3 * (1 - t) ** 2 * t * 1940 +
     3 * (1 - t) * t * t * 2100 +
@@ -130,7 +132,7 @@ test("隔离河岸夹具：风步与普攻踏步不穿障碍，范围内隔岸�
 }) => {
   await importArena(page, 1950, 1240);
   await page.keyboard.down("d");
-  await page.keyboard.press("Space");
+  await page.keyboard.press("l");
   await page.waitForTimeout(300);
   await page.keyboard.up("d");
   await expect

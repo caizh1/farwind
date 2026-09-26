@@ -30,11 +30,26 @@ export function interact(this: World, p: Prop) {
             : "顺着东边的石路走。古碑说：晨风起，林风和，暮风归。",
         );
     }
-    if (p.id === "healer")
-      this.ui.dialog(
-        p.label!,
-        "两株药草加一份浆果，就能做成恢复药剂。按 Tab 打开行囊制作；采集点三个游戏小时后再生。",
-      );
+    if (p.id === "healer") {
+      const next = structuredClone(s);
+      if (
+        remove(next, "herb", 2) &&
+        remove(next, "berry", 1) &&
+        add(next, "potion", 1)
+      ) {
+        s.bag = next.bag;
+        s.crafted = true;
+        if (s.quest === 2) s.quest = 3;
+        this.ui.dialog(
+          p.label!,
+          "药草两株、浆果一份，替你调好了恢复药剂。药圃可以采药；出门前再检查一下行囊吧。",
+        );
+      } else
+        this.ui.dialog(
+          p.label!,
+          "带来药草 ×2 和浆果 ×1，我可以替你调制一瓶恢复药剂。药草就在小院，浆果去南侧果园采；也可按 Tab 自行制作。采集点三个游戏小时后再生，兑换前请留出行囊空间。",
+        );
+    }
     if (p.id === "carpenter") {
       if (s.side === 0) {
         s.side = 1;
@@ -79,9 +94,7 @@ export function interact(this: World, p: Prop) {
     if (add(s, id, 1)) {
       s.chests.push(p.id);
       this.soundFx.play("success");
-      this.ui.message(
-        p.id === "hidden-chest" ? "小黑发现了旅风护符！" : "获得恢复药剂 ×1",
-      );
+      this.ui.message(`宝箱奖励：${items[id].name} ×1`);
       this.refresh();
       void this.persist().catch(() => {});
     } else this.ui.message("行囊已满，宝箱保留未打开。");
@@ -107,6 +120,16 @@ export function interact(this: World, p: Prop) {
       this.ui.message("风声散去了。碑文：晨风起，林风和，暮风归。");
     }
   }
+  if (p.id === "village-guide")
+    this.ui.dialog(
+      "东村口路牌",
+      "向东：翡翠森林与风之遗迹。向西：风铃广场。北面练习场可练三连击与风步，南面环湖小径经过果园回到广场。",
+    );
+  if (p.id === "training-guide")
+    this.ui.dialog(
+      "练习场须知",
+      "J / 左键挥剑，连续按下接三连击；从木桩四面靠近练习朝向。L 风步可快速移动，不能穿过木桩与围栏。练习不消耗任务物品、不掉落战利品。",
+    );
   if (p.id === "clue")
     this.ui.dialog(
       "被风磨亮的碑文",

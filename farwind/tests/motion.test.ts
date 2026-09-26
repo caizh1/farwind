@@ -191,7 +191,7 @@ it("实际图集与方向帧映射契约：主角51／黑猫49个有效非空帧
 import { Sprint, SPRINT } from "../src/game/systems/sprint";
 import { resetSessionTimers } from "../src/game/systems/session";
 describe("体力耗尽恢复与会话计时", () => {
-  it("临界点、恢复期、重新允许奔跑和反复按放Shift", () => {
+  it("临界点、恢复期、重新允许奔跑和反复按放空格键", () => {
     const s = new Sprint();
     expect(s.update(100, true, 1 / 60).speed).toBe(235);
     expect(s.update(1, true, 1 / 60).running).toBe(false);

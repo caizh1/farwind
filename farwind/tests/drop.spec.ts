@@ -3,6 +3,7 @@ import { initialState } from "../src/game/systems/state";
 const read = (p: any) => p.evaluate(() => (window as any).__farwind());
 test("隔离满包夹具：正常击杀、整理后领取、存档往返不重复", async ({ page }) => {
   const fixture = initialState();
+  delete fixture.map_version;
   fixture.player.x = 2260;
   fixture.player.y = 1070;
   fixture.quest = 3;

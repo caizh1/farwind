@@ -1,5 +1,37 @@
-import { TRAINING } from "../game/systems/training";
+import { FIELD_TARGETS, TRAINING } from "../game/systems/training";
 import type { ItemId } from "./content";
+export const WORLD = {
+  width: 4200,
+  height: 2200,
+  forest: 2050,
+  ruins: 3300,
+} as const;
+export const POND = { x: 1280, y: 1120, rx: 260, ry: 230 } as const;
+export const BRIDGES = [
+  { x: 1030, y: 900, w: 120, h: 550 },
+  { x: 1260, y: 1300, w: 100, h: 200 },
+];
+export const villageAreas = [
+  { id: "A", name: "风铃广场", x: 670, y: 780, detail: "接任务、辨方向、回村" },
+  { id: "B", name: "西侧生活巷", x: 320, y: 990, detail: "木匠委托、收集木材" },
+  {
+    id: "C",
+    name: "南侧果园",
+    x: 470,
+    y: 1450,
+    detail: "浆果、花圃与隐蔽宝箱",
+  },
+  { id: "D", name: "药师小院", x: 1120, y: 540, detail: "采药、兑换恢复药剂" },
+  { id: "E", name: "临水草坡", x: 1330, y: 1470, detail: "环湖散步、临水捷径" },
+  {
+    id: "F",
+    name: "东北练习场",
+    x: 1640,
+    y: 540,
+    detail: "四向攻击、三连击与风步",
+  },
+  { id: "G", name: "东村口", x: 1880, y: 980, detail: "沿石路向东进入森林" },
+] as const;
 export type Prop = {
   id: string;
   art: string;
@@ -23,11 +55,11 @@ export const props: Prop[] = [
     h: 22,
     solid: [26, 14],
   },
-  { id: "ruins-arch", art: "arch", x: 3150, y: 300, w: 330, h: 270 },
+  { id: "ruins-arch", art: "arch", x: 3750, y: 300, w: 330, h: 270 },
   {
     id: "ruins-pillar-left",
     art: "rune",
-    x: 3000,
+    x: 3600,
     y: 300,
     w: 65,
     h: 100,
@@ -36,7 +68,7 @@ export const props: Prop[] = [
   {
     id: "ruins-pillar-right",
     art: "rune",
-    x: 3300,
+    x: 3900,
     y: 300,
     w: 65,
     h: 100,
@@ -54,8 +86,8 @@ export const props: Prop[] = [
   {
     id: "shop",
     art: "shop",
-    x: 1020,
-    y: 590,
+    x: 1120,
+    y: 400,
     w: 290,
     h: 310,
     solid: [235, 95],
@@ -69,7 +101,7 @@ export const props: Prop[] = [
     h: 240,
     solid: [160, 90],
   },
-  { id: "well", art: "well", x: 930, y: 820, w: 135, h: 155, solid: [90, 60] },
+  { id: "well", art: "well", x: 940, y: 445, w: 135, h: 155, solid: [90, 60] },
   {
     id: "elder",
     art: "elder",
@@ -83,8 +115,8 @@ export const props: Prop[] = [
   {
     id: "healer",
     art: "healer",
-    x: 1040,
-    y: 720,
+    x: 1110,
+    y: 570,
     w: 74,
     h: 90,
     kind: "npc",
@@ -93,8 +125,8 @@ export const props: Prop[] = [
   {
     id: "carpenter",
     art: "carpenter",
-    x: 400,
-    y: 970,
+    x: 330,
+    y: 1010,
     w: 76,
     h: 90,
     kind: "npc",
@@ -103,8 +135,8 @@ export const props: Prop[] = [
   {
     id: "village-chest",
     art: "chest",
-    x: 1150,
-    y: 1020,
+    x: 580,
+    y: 1570,
     w: 68,
     h: 62,
     kind: "chest",
@@ -113,8 +145,8 @@ export const props: Prop[] = [
   {
     id: "herb-v1",
     art: "herb",
-    x: 790,
-    y: 820,
+    x: 1180,
+    y: 520,
     w: 60,
     h: 55,
     kind: "resource",
@@ -124,8 +156,8 @@ export const props: Prop[] = [
   {
     id: "berry-v1",
     art: "berry",
-    x: 500,
-    y: 900,
+    x: 350,
+    y: 1370,
     w: 78,
     h: 65,
     kind: "resource",
@@ -135,8 +167,8 @@ export const props: Prop[] = [
   {
     id: "wood-v1",
     art: "wood",
-    x: 360,
-    y: 1080,
+    x: 270,
+    y: 1110,
     w: 75,
     h: 55,
     kind: "resource",
@@ -146,8 +178,8 @@ export const props: Prop[] = [
   {
     id: "stone-v1",
     art: "rock",
-    x: 1100,
-    y: 1080,
+    x: 1730,
+    y: 1170,
     w: 75,
     h: 55,
     kind: "resource",
@@ -157,7 +189,7 @@ export const props: Prop[] = [
   {
     id: "herb-f1",
     art: "herb",
-    x: 1700,
+    x: 2300,
     y: 1040,
     w: 65,
     h: 58,
@@ -168,7 +200,7 @@ export const props: Prop[] = [
   {
     id: "herb-f2",
     art: "herb",
-    x: 1900,
+    x: 2500,
     y: 1250,
     w: 65,
     h: 58,
@@ -179,7 +211,7 @@ export const props: Prop[] = [
   {
     id: "berry-f1",
     art: "berry",
-    x: 1750,
+    x: 2350,
     y: 1180,
     w: 78,
     h: 65,
@@ -190,7 +222,7 @@ export const props: Prop[] = [
   {
     id: "wood-f1",
     art: "wood",
-    x: 2260,
+    x: 2860,
     y: 1140,
     w: 75,
     h: 55,
@@ -201,7 +233,7 @@ export const props: Prop[] = [
   {
     id: "stone-f1",
     art: "rock",
-    x: 2400,
+    x: 3000,
     y: 1030,
     w: 75,
     h: 55,
@@ -212,7 +244,7 @@ export const props: Prop[] = [
   {
     id: "hidden-chest",
     art: "chest",
-    x: 2000,
+    x: 2600,
     y: 1660,
     w: 68,
     h: 62,
@@ -222,7 +254,7 @@ export const props: Prop[] = [
   {
     id: "clue",
     art: "sign",
-    x: 2770,
+    x: 3370,
     y: 830,
     w: 100,
     h: 140,
@@ -232,7 +264,7 @@ export const props: Prop[] = [
   {
     id: "wind-0",
     art: "rune",
-    x: 2910,
+    x: 3510,
     y: 540,
     w: 90,
     h: 120,
@@ -243,7 +275,7 @@ export const props: Prop[] = [
   {
     id: "wind-1",
     art: "rune",
-    x: 3160,
+    x: 3760,
     y: 390,
     w: 90,
     h: 120,
@@ -254,7 +286,7 @@ export const props: Prop[] = [
   {
     id: "wind-2",
     art: "rune",
-    x: 3370,
+    x: 3970,
     y: 570,
     w: 90,
     h: 120,
@@ -265,7 +297,7 @@ export const props: Prop[] = [
   {
     id: "waymark",
     art: "sign",
-    x: 3140,
+    x: 3740,
     y: 680,
     w: 140,
     h: 180,
@@ -275,7 +307,7 @@ export const props: Prop[] = [
   {
     id: "shortcut",
     art: "rune",
-    x: 2900,
+    x: 3500,
     y: 920,
     w: 85,
     h: 110,
@@ -283,62 +315,211 @@ export const props: Prop[] = [
     label: "归乡风径",
   },
 ];
-const trees: [[number, number], ...Array<[number, number]>] = [
-  [160, 530],
-  [1300, 540],
-  [140, 930],
-  [1280, 1080],
-  [520, 480],
-  [880, 440],
-  [200, 1250],
-  [780, 1180],
-  [1190, 1330],
-  [1520, 580],
-  [1700, 620],
-  [1900, 740],
-  [2120, 650],
-  [2400, 740],
-  [2530, 980],
-  [1670, 1430],
-  [1860, 1520],
-  [2250, 1490],
-  [2440, 1390],
-  [2130, 1800],
-  [1700, 1830],
-  [2740, 530],
-  [2810, 300],
-  [3430, 840],
-  [3450, 320],
+// 树冠与围栏沿道路边缘布置，入口保留至少 120 像素通路。
+const trees = [
+  [140, 530],
+  [520, 460],
+  [200, 820],
+  [160, 1230],
+  [800, 1160],
+  [190, 1560],
+  [680, 1560],
+  [830, 330],
+  [1300, 350],
+  [1430, 760],
+  [1660, 1040],
+  [1800, 1290],
+  [1530, 1510],
+  [980, 1540],
+  [1940, 700],
+  [2120, 580],
+  [2300, 620],
+  [2500, 740],
+  [2720, 650],
+  [3000, 740],
+  [3130, 980],
+  [2270, 1430],
+  [2460, 1520],
+  [2850, 1490],
+  [3040, 1390],
+  [2730, 1800],
+  [2300, 1830],
+  [3340, 530],
+  [3410, 300],
+  [4030, 840],
+  [4050, 320],
 ];
 trees.forEach(([x, y], i) =>
   props.push({
     id: `tree-${i}`,
-    art: i === 4 || i === 6 ? "pink" : "tree",
+    art: i % 5 === 1 ? "pink" : "tree",
     x,
     y,
-    w: i < 9 ? 200 : 245,
-    h: i < 9 ? 240 : 280,
+    w: i < 15 ? 190 : 245,
+    h: i < 15 ? 230 : 280,
     solid: [38, 27],
   }),
 );
-for (let i = 0; i < 8; i++)
+props.push(
+  {
+    id: "plaza-fountain",
+    art: "fountain",
+    x: 680,
+    y: 890,
+    w: 130,
+    h: 130,
+    solid: [100, 45],
+  },
+  {
+    id: "west-cottage",
+    art: "house",
+    x: 310,
+    y: 850,
+    w: 230,
+    h: 255,
+    solid: [190, 85],
+  },
+  {
+    id: "carpenter-workshop",
+    art: "shop",
+    x: 180,
+    y: 1040,
+    w: 195,
+    h: 210,
+    solid: [150, 75],
+  },
+  { id: "village-gate", art: "village-gate", x: 1870, y: 960, w: 230, h: 215 },
+  {
+    id: "village-guide",
+    art: "sign",
+    x: 1950,
+    y: 1100,
+    w: 75,
+    h: 110,
+    kind: "sign",
+    label: "东村口路牌",
+  },
+  {
+    id: "training-guide",
+    art: "sign",
+    x: 1400,
+    y: 680,
+    w: 70,
+    h: 100,
+    kind: "sign",
+    label: "练习场须知",
+  },
+  {
+    id: "herb-garden-1",
+    art: "herb",
+    x: 1220,
+    y: 450,
+    w: 65,
+    h: 58,
+    kind: "resource",
+    item: "herb",
+    label: "药圃 · 药草",
+  },
+  {
+    id: "herb-garden-2",
+    art: "herb",
+    x: 1310,
+    y: 510,
+    w: 65,
+    h: 58,
+    kind: "resource",
+    item: "herb",
+    label: "药圃 · 药草",
+  },
+  {
+    id: "orchard-berry-1",
+    art: "berry",
+    x: 490,
+    y: 1320,
+    w: 80,
+    h: 70,
+    kind: "resource",
+    item: "berry",
+    label: "果园 · 浆果",
+  },
+  {
+    id: "orchard-berry-2",
+    art: "berry",
+    x: 670,
+    y: 1390,
+    w: 80,
+    h: 70,
+    kind: "resource",
+    item: "berry",
+    label: "果园 · 浆果",
+  },
+  {
+    id: "wood-yard-1",
+    art: "wood",
+    x: 440,
+    y: 1110,
+    w: 80,
+    h: 60,
+    kind: "resource",
+    item: "wood",
+    label: "木工区 · 木材",
+  },
+  {
+    id: "wood-yard-2",
+    art: "wood",
+    x: 220,
+    y: 1180,
+    w: 80,
+    h: 60,
+    kind: "resource",
+    item: "wood",
+    label: "木工区 · 木材",
+  },
+);
+FIELD_TARGETS.forEach((t) =>
+  props.push({
+    id: t.id,
+    art: "training-base",
+    x: t.x,
+    y: t.y,
+    w: 90,
+    h: 22,
+    solid: [26, 14],
+  }),
+);
+for (const [i, x] of [230, 390, 550, 710].entries())
+  props.push({
+    id: `orchard-tree-${i}`,
+    art: i % 2 ? "pink" : "tree",
+    x,
+    y: 1280,
+    w: 145,
+    h: 180,
+    solid: [28, 22],
+  });
+const fences: number[][] = [
+  ...[180, 290, 400, 510, 620, 730].map((x) => [x, 1620]),
+  ...[1480, 1590, 1700, 1810].map((x) => [x, 330]),
+  [1480, 750],
+  [1810, 750],
+  [930, 500],
+  [1270, 620],
+];
+fences.forEach(([x, y], i) =>
   props.push({
     id: `fence-${i}`,
     art: "fence",
-    x: i < 2 ? 190 + i * 110 : 240 + i * 120,
-    y: i < 2 ? 860 : 1160,
+    x,
+    y,
     w: 110,
     h: 68,
     solid: [108, 15],
-  });
-for (let i = 0; i < 36; i++) {
-  const x = 100 + ((i * 317) % 3300),
+  }),
+);
+for (let i = 0; i < 45; i++) {
+  const x = 120 + ((i * 337) % 3900),
     y = 280 + ((i * 193) % 1600);
-  if (
-    (x < 1400 && Math.abs(y - 780) < 130) ||
-    (x > 1400 && Math.abs(y - 1100) < 120)
-  )
-    continue;
+  if (x < 2050 && y < 1600) continue;
   props.push({
     id: `bush-${i}`,
     art: "bush",
@@ -352,46 +533,144 @@ export const roads = [
   [
     [650, 200],
     [650, 780],
-    [1050, 800],
-    [1570, 1080],
-    [2200, 1100],
-    [2560, 1000],
-    [2880, 760],
-    [3150, 660],
+    [900, 780],
+    [990, 720],
+    [1230, 720],
+    [1480, 840],
+    [1870, 980],
+    [2170, 1080],
+    [2800, 1100],
+    [3160, 1000],
+    [3480, 760],
+    [3750, 660],
   ],
   [
-    [250, 680],
+    [330, 620],
+    [330, 780],
+    [470, 850],
+    [470, 1030],
+    [650, 1100],
+    [670, 1440],
+    [860, 1470],
+    [1040, 1500],
+    [1280, 1480],
+    [1550, 1400],
+    [1680, 1210],
+    [1870, 980],
+  ],
+  [
     [650, 780],
-    [460, 1040],
+    [650, 1100],
   ],
   [
-    [1030, 540],
-    [1030, 800],
-    [1150, 1020],
+    [470, 1030],
+    [300, 1030],
+    [300, 1450],
+    [670, 1440],
   ],
   [
-    [2200, 1100],
-    [2070, 1430],
-    [2000, 1700],
+    [990, 720],
+    [1110, 570],
+    [1230, 570],
+    [1400, 570],
+    [1640, 620],
+    [1730, 750],
+    [1870, 980],
   ],
   [
-    [3150, 660],
-    [3140, 400],
+    [860, 1470],
+    [1090, 1450],
+    [1090, 900],
+    [900, 780],
   ],
   [
-    [2910, 540],
-    [3140, 600],
-    [3370, 570],
+    [1280, 1480],
+    [1300, 1370],
+  ],
+  [
+    [2800, 1100],
+    [2670, 1430],
+    [2600, 1700],
+  ],
+  [
+    [3750, 660],
+    [3740, 400],
+  ],
+  [
+    [3510, 540],
+    [3740, 600],
+    [3970, 570],
   ],
 ] as number[][][];
+export const villageRoutes = [
+  {
+    name: "主线出发路线",
+    points: [
+      [670, 780],
+      [900, 780],
+      [990, 720],
+      [1110, 570],
+      [1400, 570],
+      [1640, 620],
+      [1730, 750],
+      [1870, 980],
+      [2110, 1050],
+    ],
+  },
+  {
+    name: "生活探索环线",
+    points: [
+      [670, 780],
+      [470, 850],
+      [470, 1030],
+      [300, 1030],
+      [300, 1450],
+      [670, 1440],
+      [860, 1470],
+      [1280, 1480],
+      [1550, 1400],
+      [1680, 1210],
+      [1870, 980],
+      [1480, 840],
+      [1230, 720],
+      [990, 720],
+      [900, 780],
+      [670, 780],
+    ],
+  },
+  {
+    name: "临水小径",
+    points: [
+      [1280, 1480],
+      [1090, 1450],
+      [1090, 900],
+      [900, 780],
+      [670, 780],
+    ],
+  },
+];
+export function routeSeconds(points: number[][]) {
+  return Math.round(
+    points
+      .slice(1)
+      .reduce(
+        (n, p, i) => n + Math.hypot(p[0] - points[i][0], p[1] - points[i][1]),
+        0,
+      ) / 150,
+  );
+}
 export const enemyDefs = [
-  { id: "slime-1", x: 1850, y: 1060, type: "slime" },
-  { id: "slime-2", x: 2070, y: 1230, type: "slime" },
-  { id: "leaf-1", x: 2320, y: 1070, type: "leaf" },
-  { id: "leaf-2", x: 2570, y: 930, type: "leaf" },
+  { id: "slime-1", x: 2450, y: 1060, type: "slime" },
+  { id: "slime-2", x: 2670, y: 1230, type: "slime" },
+  { id: "leaf-1", x: 2920, y: 1070, type: "leaf" },
+  { id: "leaf-2", x: 3170, y: 930, type: "leaf" },
 ] as const;
 export function region(x: number) {
-  return x < 1450 ? "风铃村" : x < 2700 ? "翡翠森林" : "风之遗迹";
+  return x < WORLD.forest
+    ? "风铃村"
+    : x < WORLD.ruins
+      ? "翡翠森林"
+      : "风之遗迹";
 }
 
 // 交互物只阻挡实际占地，互动视线忽略目标本体。
@@ -411,4 +690,30 @@ export function solidPropAt(x: number, y: number, ignore?: string) {
       y > p.y - p.solid[1] - 10 &&
       y < p.y + 10,
   );
+}
+
+// 地形与渲染使用同一份池塘和桥梁尺寸，桥面优先于水域阻挡。
+export function terrainBlocked(x: number, y: number) {
+  if (x < 30 || x > WORLD.width - 30 || y < 80 || y > WORLD.height - 30)
+    return true;
+  const bridge = BRIDGES.some(
+    (b) => x >= b.x + 12 && x <= b.x + b.w - 12 && y >= b.y && y <= b.y + b.h,
+  );
+  if (
+    !bridge &&
+    ((x - POND.x) / (POND.rx + 10)) ** 2 +
+      ((y - POND.y) / (POND.ry + 10)) ** 2 <
+      1
+  )
+    return true;
+  if (y >= 650 && y <= 1580 && !(y >= 1010 && y <= 1180)) {
+    const t = (y - 650) / 930;
+    const streamX =
+      (1 - t) ** 3 * 2620 +
+      3 * (1 - t) ** 2 * t * 2540 +
+      3 * (1 - t) * t * t * 2700 +
+      t ** 3 * 2570;
+    if (Math.abs(x - streamX) < 40) return true;
+  }
+  return false;
 }
