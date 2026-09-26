@@ -1,5 +1,5 @@
 import type { Facing, MotionAction } from "../game/systems/locomotion";
-import { STRIKES } from "../game/systems/combat";
+import { COMBAT, STRIKES } from "../game/systems/combat";
 export const COMBAT_ACTION_ART = {
   frameSize: 160,
   displaySize: 145,
@@ -12,7 +12,7 @@ export type CombatVisual = {
   clip: string;
   frameIndex: number;
   facing: Facing;
-  phase: "windup" | "active" | "recovery" | "ready";
+  phase: "windup" | "active" | "recovery" | "ready" | "settle" | "dash";
   phaseProgress: number;
   provisional: boolean;
 };
@@ -20,6 +20,7 @@ export function combatVisual(
   stage: number,
   facing: Facing,
   elapsed: number,
+  enter = false,
 ): CombatVisual {
   const move = STRIKES[stage - 1];
   const activeEnd = move.windup + move.active;
@@ -48,11 +49,17 @@ export function combatVisual(
   let frameIndex = 0;
   for (let i = 1; i < boundaries.length; i++)
     if (t >= boundaries[i]) frameIndex = i;
+  let frame = (stage - 1) * 6 + frameIndex;
+  if (facing >= 2 && stage === 1 && enter && t < move.windup * 0.55)
+    frame = t < 16 ? 18 : t < 30 ? 19 : 20;
   return {
-    texture: "hero-combat-action",
-    frame: view * 18 + (stage - 1) * 6 + frameIndex,
-    clip: `hero/combat/${facing}/${stage}`,
-    frameIndex,
+    texture: facing >= 2 ? "hero-combat-side" : "hero-combat-action",
+    frame: facing >= 2 ? frame : view * 18 + (stage - 1) * 6 + frameIndex,
+    clip:
+      facing >= 2 && frame >= 18
+        ? `hero/draw/${facing}`
+        : `hero/combat/${facing}/${stage}`,
+    frameIndex: facing >= 2 && frame >= 18 ? frame - 18 : frameIndex,
     facing,
     phase,
     phaseProgress,
@@ -92,6 +99,106 @@ export function clipFor(cat: boolean, d: Facing, action: MotionAction): Clip {
     name: `${cat ? "cat" : "hero"}/${action}/${d}`,
     provisional: false,
   };
+}
+
+export function settleVisual(facing: Facing, elapsed: number): CombatVisual {
+  const index = Math.min(
+    3,
+    Math.floor(Math.max(0, elapsed) / (COMBAT.settle / 4)),
+  );
+  return {
+    ...combatVisual(1, facing, 335),
+    frame: [19, 21, 22, 23][index],
+    clip: `hero/settle/${facing}`,
+    frameIndex: index,
+    phase: "settle",
+    phaseProgress: Math.min(1, elapsed / COMBAT.settle),
+  };
+}
+// 源图局部武器点与分帧脚下根一致。所有点均通过同一仿射变换映射到角色地面根。
+const sideRoots = [
+  [
+    [140, 252],
+    [405, 252],
+    [634, 252],
+    [891, 252],
+    [1156, 252],
+    [1410, 252],
+  ],
+  [
+    [135, 499],
+    [389, 499],
+    [626, 499],
+    [886, 499],
+    [1140, 499],
+    [1394, 499],
+  ],
+  [
+    [123, 750],
+    [388, 750],
+    [633, 750],
+    [889, 750],
+    [1138, 750],
+    [1387, 750],
+  ],
+];
+const sideWeapons = [
+  [
+    [181, 193, 256, 206],
+    [366, 98, 318, 46],
+    [710, 165, 780, 120],
+    [960, 166, 1038, 158],
+    [1218, 197, 1278, 222],
+    [1437, 200, 1508, 212],
+  ],
+  [
+    [181, 443, 252, 465],
+    [435, 423, 495, 371],
+    [697, 397, 746, 325],
+    [943, 356, 992, 299],
+    [1170, 319, 1105, 278],
+    [1425, 323, 1398, 266],
+  ],
+  [
+    [158, 570, 104, 512],
+    [411, 606, 346, 562],
+    [700, 617, 784, 562],
+    [950, 712, 1025, 750],
+    [1206, 703, 1280, 717],
+    [1433, 700, 1510, 702],
+  ],
+];
+function sideWeapon(stage: number, facing: Facing, elapsed: number) {
+  const m = STRIKES[stage - 1],
+    end = m.windup + m.active;
+  const times = [
+    0,
+    m.windup * 0.55,
+    m.windup,
+    m.windup + m.active * 0.5,
+    end,
+    end + m.recovery * 0.5,
+  ];
+  let i = 0;
+  while (i < 4 && elapsed >= times[i + 1]) i++;
+  const t = Math.max(
+    0,
+    Math.min(1, (elapsed - times[i]) / (times[i + 1] - times[i])),
+  );
+  const transform = (pose: number, offset: number) => {
+    const p = sideWeapons[stage - 1][pose],
+      root = sideRoots[stage - 1][pose];
+    return {
+      x: (((p[offset] - root[0]) * 145) / 348) * (facing === 2 ? -1 : 1),
+      y: ((p[offset + 1] - root[1]) * 145) / 348,
+    };
+  };
+  const mix = (offset: number) => {
+    const a = transform(i, offset),
+      b = transform(i + 1, offset);
+    return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+  };
+  return { grip: mix(0), tip: mix(2) };
 }
 
 // 当前图集有效期两姿态的手工标注（160×160，原点为画布左上）。
@@ -151,8 +258,9 @@ export function weaponSample(stage: number, facing: Facing, elapsed: number) {
     y: (y - COMBAT_ACTION_ART.footY) * scale,
   });
   return {
-    grip: point(gx, gy),
-    tip: point(tx, ty),
+    ...(facing >= 2
+      ? sideWeapon(stage, facing, elapsed)
+      : { grip: point(gx, gy), tip: point(tx, ty) }),
     visible: sample.phase === "active",
     progress: sample.phaseProgress,
     // 每个实际姿态内短暂亮起后衰减，不独立旋转一条悬空圆弧。

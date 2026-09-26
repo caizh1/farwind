@@ -1,3 +1,4 @@
+import { WeaponTrail } from "../src/game/systems/weaponTrail";
 import { describe, expect, it } from "vitest";
 import {
   CombatController,
@@ -91,7 +92,7 @@ describe("普攻时间轴和连段", () => {
     b.tick(0, 400);
     expect(b.hits).toEqual(["1:a", "1:b"]);
   });
-  it("一个缓冲只衔接一段，提前过久过期，同帧请求合并，宽限过后回第一段", () => {
+  it("产品规则变更：本段早按预约保留，同帧合并，宽限过后回第一段", () => {
     const a = arena();
     a.c.requestAttack(0);
     a.c.requestAttack(0);
@@ -99,7 +100,7 @@ describe("普攻时间轴和连段", () => {
     expect(a.starts).toEqual([1]);
     a.c.requestAttack(50);
     a.tick(0, 220);
-    expect(a.c.pending).toBe(false);
+    expect(a.c.pending).toBe(true);
     a.c.requestAttack(230);
     a.tick(220, 240);
     expect(a.starts).toEqual([1, 2]);
@@ -185,7 +186,8 @@ it("动作样本用攻击时间选出有效帧、方向与阶段，并匹配真�
       expect(
         samples.every(
           (s) =>
-            s.texture === "hero-combat-action" &&
+            s.texture ===
+              (facing >= 2 ? "hero-combat-side" : "hero-combat-action") &&
             s.facing === facing &&
             s.frame >= 0 &&
             s.frame < 54,
@@ -420,5 +422,96 @@ it("左右武器局部坐标严格水平镜像，正背视图独立，非有效�
       expect(left.visible).toBe(right.visible);
       if (t === 0 || t === 600) expect(left.visible).toBe(false);
     }
+  }
+});
+
+describe("战斗手感样板：单刀预约与封顶停顿", () => {
+  it("第一刀60ms早按预约第二刀，乱按不累积到第三刀", () => {
+    const a = arena();
+    a.c.requestAttack(0);
+    a.tick(0, 0);
+    a.c.requestAttack(60);
+    const owner = a.c.reservationOwner;
+    for (const t of [65, 70, 80, 90]) a.c.requestAttack(t);
+    expect(owner).toBe(a.c.attack?.id);
+    a.tick(0, 234);
+    expect(a.starts).toEqual([1]);
+    a.tick(234, 300);
+    expect(a.starts).toEqual([1, 2]);
+    expect(a.c.attack?.start).toBe(235);
+    a.tick(300, 1000);
+    expect(a.starts).toEqual([1, 2]);
+  });
+  it("单击不自动三连；取消和新会话丢预约", () => {
+    const a = arena();
+    a.c.requestAttack(0);
+    a.tick(0, 1000);
+    expect(a.starts).toEqual([1]);
+    a.c.requestAttack(1000);
+    a.tick(1000, 1000);
+    a.c.requestAttack(1060);
+    a.c.reset();
+    a.tick(1060, 2000);
+    expect(a.starts).toEqual([1, 1]);
+  });
+  it("命中停顿不相加，未冻结delta推进，输入可预约，重置清理", () => {
+    const a = arena();
+    a.c.requestAttack(0);
+    a.tick(0, 80);
+    a.c.stopOnHit(1);
+    a.c.stopOnHit(1);
+    expect(a.c.hitStopRemaining).toBe(36);
+    expect(a.c.advanceFrame(20)).toBe(0);
+    a.c.requestAttack(80);
+    expect(a.c.pending).toBe(true);
+    expect(a.c.advanceFrame(20)).toBe(4);
+    a.c.stopOnHit(3);
+    a.c.stopOnHit(1);
+    expect(a.c.hitStopRemaining).toBe(58);
+    a.c.reset();
+    expect(a.c.hitStopRemaining).toBe(0);
+  });
+});
+
+it("剑风有短寿命连续历史；收招只衰减，不同实例与取消不相连", () => {
+  const trail = new WeaponTrail();
+  const attack = {
+    id: 1,
+    stage: 1,
+    facing: 3 as const,
+    start: 0,
+    hit: new Set<string>(),
+  };
+  for (const now of [75, 91, 108, 125, 142, 159, 176, 192])
+    trail.update(now, attack, { x: 100, y: 100 }, 0);
+  expect(trail.segments(192).length).toBeGreaterThan(5);
+  const points = trail.samples.length;
+  trail.update(220, null, { x: 100, y: 100 }, 0);
+  expect(trail.samples.length).toBeLessThan(points);
+  trail.update(300, { ...attack, id: 2, start: 220 }, { x: 100, y: 100 }, 0);
+  expect(trail.segments(300).every((s) => s.a.id === s.b.id)).toBe(true);
+  trail.update(301, null, { x: 100, y: 100 }, 1);
+  expect(trail.samples).toHaveLength(0);
+  trail.update(400, attack, { x: 800, y: 100 }, 1);
+  expect(trail.segments(400)).toHaveLength(0);
+});
+it("侧向新图集有24个合法姿态，拔剑及收剑有独立动作样本", async () => {
+  expect(
+    await sharp("public/assets/animation/hero-combat-side.png").metadata(),
+  ).toMatchObject({ width: 960, height: 640 });
+  const { settleVisual } = await import("../src/data/animation");
+  expect([0, 20, 35].map((t) => combatVisual(1, 3, t, true).frame)).toEqual([
+    18, 19, 20,
+  ]);
+  expect([0, 45, 85, 125].map((t) => settleVisual(3, t).frame)).toEqual([
+    19, 21, 22, 23,
+  ]);
+  for (const stage of [1, 2, 3]) {
+    const start = STRIKES[stage - 1].windup;
+    const points = [0, 25, 50, 75].map(
+      (t) => weaponSample(stage, 3, start + t).tip,
+    );
+    expect(new Set(points.map((p) => `${p.x},${p.y}`)).size).toBe(4);
+    for (const p of points) expect(Math.hypot(p.x, p.y)).toBeLessThan(110);
   }
 });

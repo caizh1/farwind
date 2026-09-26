@@ -1,0 +1,108 @@
+
+> farwind@0.1.0 test:e2e
+> playwright test
+
+
+Running 13 tests using 3 workers
+
+(node:75698) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:75699) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:75700) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   3 tests/combat-feel.spec.ts:3:1 › 固定早按与乱按：单击不自动续刀，最多预约一刀，停手收剑，移动立即退出 (8.2s)
+(node:75725) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/combat-action.spec.ts:5:1 › 四方向实机动作逐帧推进，三段收招与再次进攻 (10.8s)
+  ✘   4 tests/combat-followup.spec.ts:4:1 › 最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步 (5.6s)
+(node:75735) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   5 tests/combat.spec.ts:16:1 › 真实键鼠：三连、断连、风步、暂停和续玩 (9.1s)
+  ✓   7 tests/combat.spec.ts:115:1 › 隔离森林战斗夹具：三连命中、风步拉开、再进攻 (6.4s)
+(node:75755) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   8 tests/drop.spec.ts:4:1 › 隔离满包夹具：正常击杀、整理后领取、存档往返不重复 (9.1s)
+  ✓   6 tests/animation.spec.ts:11:1 › motion-directions-wall-stop-pause (22.5s)
+  ✓   2 tests/adventure.spec.ts:38:1 › adventure-loop (55.2s)
+(node:75895) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   9 tests/session.spec.ts:26:1 › session-sprint-recovery (23.4s)
+  ✓  11 tests/stability.spec.ts:3:1 › pause-input-and-save-file-validation (8.9s)
+  ✓  10 tests/animation.spec.ts:80:1 › companion-well-house-corners (28.6s)
+  ✓  13 tests/visual.spec.ts:2:1 › village-visual (3.5s)
+  ✓  12 tests/session.spec.ts:82:1 › session-title-continue-new-refresh (12.5s)
+
+
+  1) tests/combat-feel.spec.ts:3:1 › 固定早按与乱按：单击不自动续刀，最多预约一刀，停手收剑，移动立即退出 ────────────────────────────
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 749.2146153846152
+    Received:   747.5691499999998
+
+      59 |   expect(
+      60 |     await page.evaluate(() => (window as any).__farwind().state.player.x),
+    > 61 |   ).toBeGreaterThan(before + 10);
+         |     ^
+      62 |   await page.screenshot({ path: "docs/combat-feel/evidence/input-move.png" });
+      63 | });
+      64 |
+        at /Users/archer/Documents/ChatGPT/Game/farwind/tests/combat-feel.spec.ts:61:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/combat-feel-固定早按与乱按：单击不自动续刀，最多预约一刀，停手收剑，移动立即退出/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/combat-feel-固定早按与乱按：单击不自动续刀，最多预约一刀，停手收剑，移动立即退出/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/combat-feel-固定早按与乱按：单击不自动续刀，最多预约一刀，停手收剑，移动立即退出/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/combat-feel-固定早按与乱按：单击不自动续刀，最多预约一刀，停手收剑，移动立即退出/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/combat-feel-固定早按与乱按：单击不自动续刀，最多预约一刀，停手收剑，移动立即退出/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/combat-followup.spec.ts:4:1 › 最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步 ─────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "hero-combat-side"
+    Received: "hero-combat-action"
+
+      19 |   const ready = await page.evaluate(() => (window as any).__farwind());
+      20 |   expect(ready.session.combat.stage).toBe(0);
+    > 21 |   expect(ready.animation.hero.texture).toBe("hero-combat-side");
+         |                                        ^
+      22 |   await page.keyboard.press("j");
+      23 |   await page.waitForFunction(
+      24 |     () => (window as any).__farwind().session.combat.stage === 2,
+        at /Users/archer/Documents/ChatGPT/Game/farwind/tests/combat-followup.spec.ts:21:40
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/combat-followup-最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/combat-followup-最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/combat-followup-最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/combat-followup-最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/combat-followup-最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests/combat-feel.spec.ts:3:1 › 固定早按与乱按：单击不自动续刀，最多预约一刀，停手收剑，移动立即退出 ─────────────────────────────
+    tests/combat-followup.spec.ts:4:1 › 最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步 ──────────────────────────────
+  11 passed (1.2m)

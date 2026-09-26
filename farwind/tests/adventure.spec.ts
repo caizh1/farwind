@@ -1,3 +1,5 @@
+import { writeFile } from "node:fs/promises";
+import { captureGameAudio } from "../tools/capture-game-audio.mjs";
 import { test, expect, type Page } from "@playwright/test";
 test.use({ video: "on" });
 const snapshot = (p: Page) => p.evaluate(() => (window as any).__farwind());
@@ -37,6 +39,7 @@ test("adventure-loop", async ({ page, context }) => {
   test.setTimeout(300000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
+  await page.addInitScript(captureGameAudio);
   await page.goto("/");
   await page.getByRole("button", { name: "启程 · 新游戏" }).click();
   await move(page, 670, 690);
@@ -117,7 +120,18 @@ test("adventure-loop", async ({ page, context }) => {
   await page.getByRole("button", { name: "保存旅途", exact: true }).click();
   await expect(page.locator("#toast")).toContainText("已保存");
   const before = (await snapshot(page)).state;
+  const audio = await page.evaluate(() => (window as any).__finishAudio());
+  await writeFile(
+    "docs/combat-feel/evidence/forest-audio.webm",
+    Buffer.from(audio.base64, "base64"),
+  );
+  await writeFile(
+    "docs/combat-feel/evidence/forest-audio-offset.txt",
+    String(audio.offset),
+  );
+  const video = page.video();
   await page.close();
+  await video?.saveAs("docs/combat-feel/evidence/forest-journey.webm");
   const reopened = await context.newPage();
   await reopened.goto("/");
   await reopened.getByRole("button", { name: "继续旅途", exact: true }).click();

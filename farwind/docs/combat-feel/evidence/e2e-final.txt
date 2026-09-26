@@ -1,0 +1,36 @@
+
+> farwind@0.1.0 test:e2e
+> playwright test
+
+
+Running 15 tests using 3 workers
+
+(node:80313) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:80312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:80311) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   3 tests/combat-feel.spec.ts:3:1 › 固定早按与乱按：单击不自动续刀，最多预约一刀，停手收剑，移动立即退出 (8.4s)
+  ✓   1 tests/combat-action.spec.ts:5:1 › 四方向实机动作逐帧推进，三段收招与再次进攻 (10.8s)
+  ✓   4 tests/combat-feel.spec.ts:128:1 › 隔离河岸夹具：风步与普攻踏步不穿障碍，范围内隔岸敌人不受伤 (5.2s)
+  ✓   5 tests/combat-followup.spec.ts:4:1 › 最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步 (9.8s)
+  ✓   6 tests/combat-feel.spec.ts:161:1 › 隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次 (7.7s)
+(node:80377) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   7 tests/combat.spec.ts:16:1 › 真实键鼠：三连、断连、风步、暂停和续玩 (9.3s)
+  ✓   9 tests/combat.spec.ts:115:1 › 隔离森林战斗夹具：三连命中、风步拉开、再进攻 (6.8s)
+(node:80397) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   8 tests/animation.spec.ts:11:1 › motion-directions-wall-stop-pause (22.8s)
+  ✓  10 tests/drop.spec.ts:4:1 › 隔离满包夹具：正常击杀、整理后领取、存档往返不重复 (9.6s)
+  ✓   2 tests/adventure.spec.ts:38:1 › adventure-loop (56.6s)
+(node:80492) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  13 tests/stability.spec.ts:3:1 › pause-input-and-save-file-validation (8.4s)
+  ✓  14 tests/visual.spec.ts:2:1 › village-visual (3.7s)
+  ✓  12 tests/session.spec.ts:26:1 › session-sprint-recovery (23.5s)
+  ✓  11 tests/animation.spec.ts:80:1 › companion-well-house-corners (29.2s)
+  ✓  15 tests/session.spec.ts:82:1 › session-title-continue-new-refresh (11.4s)
+
+  15 passed (1.4m)

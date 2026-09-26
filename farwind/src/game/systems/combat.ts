@@ -44,6 +44,9 @@ export const COMBAT = {
   chainWindow: 100,
   restartWindow: 150,
   ready: 200,
+  settle: 160,
+  trailLife: 110,
+  hitStop: [36, 36, 58],
   dash: {
     distance: 90,
     duration: 200,
@@ -60,6 +63,8 @@ export type Attack = {
   facing: Facing;
   start: number;
   hit: Set<string>;
+  sounded?: boolean;
+  enter?: boolean;
 };
 export const facingVector = (d: Facing): [number, number] =>
   (
@@ -109,13 +114,19 @@ export class CombatController {
   serial = 0;
   bufferUntil = 0;
   requestedAt = 0;
+  reservationOwner: number | null = null;
+  hitStopRemaining = 0;
   readyUntil = 0;
+  settleUntil = 0;
+  carryUntil = 0;
+  epoch = 0;
   lastStage = 1;
   lastFacing: Facing = 0;
   pending = false;
   nextStage = 1;
   chainUntil = 0;
   dashStart = -1;
+  dashArmed = false;
   dashUntil = 0;
   dashCooldown = 0;
   dashX = 0;
@@ -125,10 +136,16 @@ export class CombatController {
     this.pending = false;
     this.bufferUntil = 0;
     this.requestedAt = 0;
+    this.reservationOwner = null;
+    this.hitStopRemaining = 0;
     this.readyUntil = 0;
+    this.settleUntil = 0;
+    this.carryUntil = 0;
+    this.epoch++;
     this.nextStage = 1;
     this.chainUntil = 0;
     this.dashStart = -1;
+    this.dashArmed = false;
     this.dashUntil = 0;
     this.dashCooldown = cooldown;
   }
@@ -142,7 +159,25 @@ export class CombatController {
       return;
     this.pending = true;
     this.requestedAt = now;
-    this.bufferUntil = now + COMBAT.buffer;
+    const a = this.attack;
+    this.reservationOwner = a?.id ?? null;
+    this.bufferUntil =
+      a && a.stage < 3
+        ? Math.max(now, a.start + this.total(a.stage) - COMBAT.chainWindow) +
+          COMBAT.buffer
+        : now + COMBAT.buffer;
+  }
+  // 表现停顿冻结整个世界模拟；使用未冻结的帧delta扣减，不累计多目标时长。
+  stopOnHit(stage: number) {
+    this.hitStopRemaining = Math.max(
+      this.hitStopRemaining,
+      COMBAT.hitStop[stage - 1],
+    );
+  }
+  advanceFrame(delta: number) {
+    const spent = Math.min(Math.max(0, delta), this.hitStopRemaining);
+    this.hitStopRemaining -= spent;
+    return Math.max(0, delta - spent);
   }
   requestDash(
     now: number,
@@ -164,11 +199,15 @@ export class CombatController {
         now - a.start < this.total(a.stage) - COMBAT.chainWindow)
     )
       return false;
+    this.dashArmed = !!a || now < this.settleUntil || now < this.carryUntil;
     this.attack = null;
     this.pending = false;
     this.nextStage = 1;
     this.chainUntil = 0;
     this.readyUntil = 0;
+    this.settleUntil = 0;
+    this.carryUntil = 0;
+    this.epoch++;
     const len = Math.hypot(axis.x, axis.y),
       [fx, fy] = facingVector(facing);
     this.dashX = len ? axis.x / len : fx;
@@ -176,16 +215,31 @@ export class CombatController {
     this.dashStart = now;
     this.dashUntil = now + COMBAT.dash.duration;
     this.dashCooldown = now + COMBAT.dash.cooldown;
+    if (this.dashArmed) {
+      this.lastFacing =
+        Math.abs(this.dashX) > Math.abs(this.dashY)
+          ? this.dashX < 0
+            ? 2
+            : 3
+          : this.dashY < 0
+            ? 1
+            : 0;
+      this.lastStage = 1;
+      this.readyUntil = this.dashUntil + COMBAT.ready;
+      this.settleUntil = this.readyUntil + COMBAT.settle;
+    }
     return true;
   }
   effectiveFacing(now: number, fallback: Facing): Facing {
     return (
       this.attack?.facing ??
-      (now < this.readyUntil ? this.lastFacing : fallback)
+      (now < this.settleUntil ? this.lastFacing : fallback)
     );
   }
-  leaveReady() {
+  leaveReady(now = 0) {
+    if (this.settleUntil > now) this.carryUntil = now + COMBAT.settle;
     this.readyUntil = 0;
+    this.settleUntil = 0;
   }
   total(stage: number) {
     const m = STRIKES[stage - 1];
@@ -219,6 +273,7 @@ export class CombatController {
     clearLine: (x: number, y: number, tx: number, ty: number) => boolean,
     hit: (target: Target, stage: number) => void,
     started: (stage: number) => void,
+    swung: (stage: number) => void = () => {},
   ) {
     // 按事件时刻推进：请求到达、可衔接、结束、到期，等于到期仍合法。
     let cursor = prev;
@@ -249,6 +304,10 @@ export class CombatController {
             }
         };
         if (stop >= from && cursor < until) {
+          if (!a.sounded) {
+            a.sounded = true;
+            swung(a.stage);
+          }
           resolve();
           const steps = Math.max(1, Math.ceil((m.step * overlap) / m.active));
           for (let i = 0; i < steps; i++) {
@@ -268,6 +327,7 @@ export class CombatController {
           this.lastStage = a.stage;
           this.lastFacing = a.facing;
           this.readyUntil = end + COMBAT.ready;
+          this.settleUntil = this.readyUntil + COMBAT.settle;
         }
       }
       if (consumeAt <= now && consumeAt <= end) {
@@ -284,11 +344,14 @@ export class CombatController {
           stage,
           facing,
           start: consumeAt,
+          enter: !a && consumeAt >= this.settleUntil,
           hit: new Set(),
         };
         this.lastFacing = facing;
         this.lastStage = stage;
         this.readyUntil = 0;
+        this.settleUntil = 0;
+        this.carryUntil = 0;
         this.nextStage = 1;
         this.chainUntil = 0;
         started(stage);
@@ -316,7 +379,9 @@ export class CombatController {
     return {
       phase: this.phase(now),
       effectiveFacing: this.effectiveFacing(now, this.lastFacing),
-      ready: !this.attack && now < this.readyUntil,
+      ready: !this.attack && now >= this.dashUntil && now < this.readyUntil,
+      reservationOwner: this.pending ? this.reservationOwner : null,
+      hitStopRemaining: this.hitStopRemaining,
       bufferArrivedAt: this.pending ? this.requestedAt : null,
       bufferExpiresAt: this.pending ? this.bufferUntil : null,
       stage: this.attack?.stage ?? 0,

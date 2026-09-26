@@ -137,12 +137,24 @@ test("隔离森林战斗夹具：三连命中、风步拉开、再进攻", async
     .poll(async () => (await read(page)).animation.hero.direction)
     .toBe(3);
   await page.keyboard.up("d");
+  await page.evaluate(() => {
+    (window as any).__stops = [];
+    (window as any).__stopTimer = setInterval(() => {
+      const s = (window as any).__farwind();
+      (window as any).__stops.push({
+        sim: s.session.sim,
+        stop: s.session.combat.hitStopRemaining,
+        player: [s.state.player.x, s.state.player.y],
+        enemies: s.enemies.map((e: any) => [e.x, e.y, e.hp]),
+      });
+    }, 8);
+  });
   for (let stage = 1; stage <= 3; stage++) {
     await page.keyboard.press("j");
     await expect
       .poll(async () => (await read(page)).session.combat.stage)
       .toBe(stage);
-    if (stage < 3) await finishWindow(page);
+    if (stage < 3) await page.waitForTimeout(60);
   }
   await expect
     .poll(
@@ -153,6 +165,22 @@ test("隔离森林战斗夹具：三连命中、风步拉开、再进攻", async
   await expect
     .poll(async () => (await read(page)).session.combat.stage)
     .toBe(0);
+  const stops = await page.evaluate(() => {
+    clearInterval((window as any).__stopTimer);
+    return (window as any).__stops;
+  });
+  expect(stops.some((s: any) => s.stop >= 45)).toBe(true);
+  expect(
+    stops.some(
+      (s: any, i: number) =>
+        i > 0 &&
+        s.stop > 0 &&
+        stops[i - 1].stop > 0 &&
+        s.sim === stops[i - 1].sim &&
+        JSON.stringify([s.player, s.enemies]) ===
+          JSON.stringify([stops[i - 1].player, stops[i - 1].enemies]),
+    ),
+  ).toBe(true);
   const beforeDash = (await read(page)).state.player.x;
   await page.keyboard.down("a");
   await page.keyboard.press("Space");

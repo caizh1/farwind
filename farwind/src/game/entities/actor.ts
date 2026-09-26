@@ -1,3 +1,4 @@
+import { COMBAT } from "../systems/combat";
 import Phaser from "phaser";
 import { Locomotion, type MotionSample } from "../systems/locomotion";
 import {
@@ -10,6 +11,7 @@ import type { Facing } from "../systems/locomotion";
 export class Actor {
   sprite: Phaser.GameObjects.Sprite;
   shadow: Phaser.GameObjects.Ellipse;
+  carrySword: Phaser.GameObjects.Image;
   motion: Locomotion;
   weapon: ReturnType<typeof weaponSample> | null = null;
   presentation = {
@@ -40,6 +42,9 @@ export class Actor {
       .sprite(x, y, cat ? "cat-motion" : "hero", 0)
       .setOrigin(0.5, 124 / 128);
     this.sprite.setDisplaySize(cat ? 55 : 86, cat ? 54 : 92);
+    this.carrySword = scene.add
+      .image(x, y, "hero-carry-sword")
+      .setVisible(false);
     this.place(x, y);
   }
   get direction() {
@@ -61,15 +66,53 @@ export class Actor {
     intentY = 0,
     combat?: CombatVisual,
     dashFacing?: Facing,
+    carryRemaining = 0,
+    armedDash = false,
   ) {
     this.motion.update({ dx, dy, dt, intentX, intentY, attack });
-    this.draw(x, y, combat, dashFacing);
+    this.draw(x, y, combat, dashFacing, carryRemaining, armedDash);
   }
   animate(sample: MotionSample) {
     this.motion.update(sample);
     this.draw(this.sprite.x, this.sprite.y);
   }
-  draw(x: number, y: number, combat?: CombatVisual, dashFacing?: Facing) {
+  draw(
+    x: number,
+    y: number,
+    combat?: CombatVisual,
+    dashFacing?: Facing,
+    carryRemaining = 0,
+    armedDash = false,
+  ) {
+    if (!this.cat && armedDash && dashFacing !== undefined && dashFacing >= 2)
+      combat = {
+        texture: "hero-combat-side",
+        frame: 0,
+        clip: `hero/dash/${dashFacing}`,
+        frameIndex: 0,
+        facing: dashFacing,
+        phase: "dash",
+        phaseProgress: 0,
+        provisional: false,
+      };
+    const carrying =
+      !this.cat &&
+      !combat &&
+      dashFacing === undefined &&
+      carryRemaining > 0 &&
+      this.motion.direction >= 2;
+    this.carrySword.setVisible(carrying);
+    if (carrying) {
+      const sign = this.motion.direction === 2 ? -1 : 1,
+        progress = 1 - carryRemaining / COMBAT.settle;
+      this.carrySword
+        .setOrigin(sign < 0 ? 1 : 0, 0.25)
+        .setScale(145 / 348)
+        .setFlipX(sign < 0)
+        .setPosition(x + sign * (12 - 8 * progress), y - 33 + 6 * progress)
+        .setRotation(sign * progress * 0.9)
+        .setDepth(y + 1);
+    }
     const clip = clipFor(this.cat, this.motion.direction, this.motion.action);
     const index =
         Math.floor(this.motion.phase * clip.frames.length) % clip.frames.length,

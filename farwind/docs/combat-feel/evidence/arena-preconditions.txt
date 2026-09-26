@@ -1,0 +1,87 @@
+
+Running 3 tests using 1 worker
+
+(node:79082) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/combat-feel.spec.ts:3:1 › 固定早按与乱按：单击不自动续刀，最多预约一刀，停手收剑，移动立即退出 (6.7s)
+  ✘  2 tests/combat-feel.spec.ts:112:1 › 隔离河岸夹具：风步与普攻踏步不穿障碍，范围内隔岸敌人不受伤 (2.9s)
+(node:79103) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 tests/combat-feel.spec.ts:141:1 › 隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次 (14.6s)
+
+
+  1) tests/combat-feel.spec.ts:112:1 › 隔离河岸夹具：风步与普攻踏步不穿障碍，范围内隔岸敌人不受伤 ───────────────────────────────
+
+    Error: expect(received).toBeLessThan(expected)
+
+    Expected: < 1980
+    Received:   1980.0540000000003
+
+      127 |   const before = await sample(page),
+      128 |     hp = before.enemies.find((e: any) => e.id === "slime-2").hp;
+    > 129 |   expect(before.state.player.x).toBeLessThan(1980);
+          |                                 ^
+      130 |   await page.keyboard.press("j");
+      131 |   await page.waitForTimeout(60);
+      132 |   await page.keyboard.press("j");
+        at /Users/archer/Documents/ChatGPT/Game/farwind/tests/combat-feel.spec.ts:129:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/combat-feel-隔离河岸夹具：风步与普攻踏步不穿障碍，范围内隔岸敌人不受伤/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/combat-feel-隔离河岸夹具：风步与普攻踏步不穿障碍，范围内隔岸敌人不受伤/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/combat-feel-隔离河岸夹具：风步与普攻踏步不穿障碍，范围内隔岸敌人不受伤/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/combat-feel-隔离河岸夹具：风步与普攻踏步不穿障碍，范围内隔岸敌人不受伤/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/combat-feel-隔离河岸夹具：风步与普攻踏步不穿障碍，范围内隔岸敌人不受伤/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/combat-feel.spec.ts:141:1 › 隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次 ─────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    Call Log:
+    - Timeout 7000ms exceeded while waiting on the predicate
+
+      164 |       { timeout: 7000, intervals: [50] },
+      165 |     )
+    > 166 |     .toBe(true);
+          |      ^
+      167 |   const before = await sample(page);
+      168 |   await page.keyboard.press("j");
+      169 |   await expect
+        at /Users/archer/Documents/ChatGPT/Game/farwind/tests/combat-feel.spec.ts:166:6
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/combat-feel-隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/combat-feel-隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/combat-feel-隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/combat-feel-隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/combat-feel-隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests/combat-feel.spec.ts:112:1 › 隔离河岸夹具：风步与普攻踏步不穿障碍，范围内隔岸敌人不受伤 ────────────────────────────────
+    tests/combat-feel.spec.ts:141:1 › 隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次 ──────────────────────────────────
+  1 passed (26.6s)

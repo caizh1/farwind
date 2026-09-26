@@ -6,7 +6,11 @@ test("最终显示：宽限内持剑，接招不插空手；缓退松键按有�
 }) => {
   await page.goto("/?animationDebug=1");
   await page.getByRole("button", { name: "启程 · 新游戏" }).click();
-  await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
+  await page.waitForFunction(
+    () =>
+      (window as any).__farwind?.().mode === "" &&
+      (window as any).__farwind().session.sim > 500,
+  );
   await page.keyboard.down("d");
   await page.waitForTimeout(100);
   await page.keyboard.up("d");
@@ -18,7 +22,7 @@ test("最终显示：宽限内持剑，接招不插空手；缓退松键按有�
   );
   const ready = await page.evaluate(() => (window as any).__farwind());
   expect(ready.session.combat.stage).toBe(0);
-  expect(ready.animation.hero.texture).toBe("hero-combat-action");
+  expect(ready.animation.hero.texture).toBe("hero-combat-side");
   await page.keyboard.press("j");
   await page.waitForFunction(
     () => (window as any).__farwind().session.combat.stage === 2,
@@ -28,7 +32,7 @@ test("最终显示：宽限内持剑，接招不插空手；缓退松键按有�
   expect(
     (await page.evaluate(() => (window as any).__farwind())).animation.hero
       .texture,
-  ).toBe("hero-combat-action");
+  ).toBe("hero-combat-side");
   await page.waitForTimeout(800);
   for (const [key, opposite, direction] of [
     ["d", "a", 3],

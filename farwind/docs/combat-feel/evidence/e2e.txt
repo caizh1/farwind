@@ -1,0 +1,34 @@
+
+> farwind@0.1.0 test:e2e
+> playwright test
+
+
+Running 13 tests using 3 workers
+
+(node:75116) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:75117) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:75115) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   3 tests/combat-feel.spec.ts:3:1 › 固定早按与乱按：单击不自动续刀，最多预约一刀，停手收剑，移动立即退出 (7.7s)
+  ✓   2 tests/combat-action.spec.ts:5:1 › 四方向实机动作逐帧推进，三段收招与再次进攻 (10.7s)
+  ✓   4 tests/combat-followup.spec.ts:4:1 › 最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步 (9.0s)
+(node:75232) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   5 tests/combat.spec.ts:16:1 › 真实键鼠：三连、断连、风步、暂停和续玩 (9.1s)
+  ✓   7 tests/combat.spec.ts:115:1 › 隔离森林战斗夹具：三连命中、风步拉开、再进攻 (6.7s)
+(node:75246) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   6 tests/animation.spec.ts:11:1 › motion-directions-wall-stop-pause (22.6s)
+  ✓   8 tests/drop.spec.ts:4:1 › 隔离满包夹具：正常击杀、整理后领取、存档往返不重复 (15.6s)
+  ✓   1 tests/adventure.spec.ts:38:1 › adventure-loop (55.6s)
+(node:75271) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 tests/stability.spec.ts:3:1 › pause-input-and-save-file-validation (8.4s)
+  ✓  10 tests/session.spec.ts:26:1 › session-sprint-recovery (23.1s)
+  ✓  12 tests/visual.spec.ts:2:1 › village-visual (3.5s)
+  ✓   9 tests/animation.spec.ts:80:1 › companion-well-house-corners (29.6s)
+  ✓  13 tests/session.spec.ts:82:1 › session-title-continue-new-refresh (11.3s)
+
+  13 passed (1.3m)
