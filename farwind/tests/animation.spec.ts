@@ -112,6 +112,9 @@ test("companion-well-house-corners", async ({ page }) => {
   await go(1180, 700);
   await go(1180, 390);
   await go(830, 390);
+  // 新训练木桩占据(850,650)：沿西侧绕行，保留原房屋转角与跟随断言。
+  await go(810, 390);
+  await go(810, 700);
   await go(830, 700);
   await page.waitForTimeout(3000);
   const s = await read(page);

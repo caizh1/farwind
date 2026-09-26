@@ -1,3 +1,8 @@
+import { solidPropAt } from "../../data/world";
+import { clearPath } from "../systems/combat";
+import { TRAINING, TrainingDummy } from "../systems/training";
+import { TrainingDummyView } from "../entities/trainingDummy";
+import type { Attack } from "../systems/combat";
 import { WeaponTrail } from "../systems/weaponTrail";
 import { Sprint } from "../systems/sprint";
 import { resetSessionTimers } from "../systems/session";
@@ -35,6 +40,7 @@ import { Follower } from "../systems/follower";
 import { Actor } from "../entities/actor";
 import { Interface } from "../ui/interface";
 type Enemy = {
+  kind: "enemy";
   id: string;
   x: number;
   y: number;
@@ -49,6 +55,7 @@ type Enemy = {
   sprite: Phaser.GameObjects.Sprite;
   shadow: Phaser.GameObjects.Ellipse;
 };
+type CombatTarget = Enemy | TrainingDummy;
 export class World extends Phaser.Scene {
   state: State = initialState();
   keys = new Input();
@@ -59,6 +66,8 @@ export class World extends Phaser.Scene {
   cat!: Actor;
   propImages = new Map<string, Phaser.GameObjects.Image>();
   enemies: Enemy[] = [];
+  training = new TrainingDummy();
+  trainingView!: TrainingDummyView;
   active = false;
   sim = 0;
   attackUntil = 0;
@@ -89,6 +98,8 @@ export class World extends Phaser.Scene {
     super("World");
   }
   preload() {
+    this.load.image("training-base", "/assets/training-base.png");
+    this.load.image("training-body", "/assets/training-body.png");
     this.ui.shell("风正在捎来故事", "<p>正在装载风铃村素材……</p>");
     const names = [
       "arch",
@@ -190,6 +201,7 @@ export class World extends Phaser.Scene {
         .setDepth(p.y);
       this.propImages.set(p.id, im);
     });
+    this.trainingView = new TrainingDummyView(this, this.training);
     this.hero = new Actor(this, 670, 720);
     this.cat = new Actor(this, 720, 740, true);
     this.cameras.main
@@ -243,6 +255,10 @@ export class World extends Phaser.Scene {
           attackSerial: this.attackSerial,
           ...(import.meta.env.DEV
             ? {
+                training: this.training.snapshot(this.sim),
+                trainingTargets: this.combatTargets().filter(
+                  (t) => t.kind === "trainingDummy",
+                ).length,
                 session: {
                   sim: this.sim,
                   attackUntil: this.attackUntil,
@@ -315,6 +331,8 @@ export class World extends Phaser.Scene {
     this.active = true;
     resetSessionTimers(this);
     this.combat.reset(this.state.dashCooldownRemaining);
+    this.training.reset();
+    this.trainingView.reset();
     this.pointerAttack = false;
     this.respawnInvulnerable = 0;
     this.gatherUntil = 0;
@@ -356,6 +374,8 @@ export class World extends Phaser.Scene {
       await this.persist();
       this.active = false;
       this.combat.reset();
+      this.training.reset();
+      this.trainingView.reset();
       this.pointerAttack = false;
       this.attackUntil = 0;
       this.slash?.clear();
@@ -376,29 +396,19 @@ export class World extends Phaser.Scene {
     }
     if (x < 30 || x > 3570 || y < 80 || y > 2170) return true;
     if (((x - 1240) / 160) ** 2 + ((y - 890) / 98) ** 2 < 1) return true;
-    return props.some(
-      (p) =>
-        p.id !== ignore &&
-        p.solid &&
-        Math.abs(x - p.x) < p.solid[0] / 2 + 12 &&
-        y > p.y - p.solid[1] - 10 &&
-        y < p.y + 10,
-    );
+    return solidPropAt(x, y, ignore);
   }
   clearLine(x: number, y: number, tx: number, ty: number, ignore?: string) {
-    const steps = Math.ceil(Math.hypot(tx - x, ty - y) / 12);
-    for (let i = 1; i <= steps; i++) {
-      if (
-        this.blocked(
-          x + ((tx - x) * i) / steps,
-          y + ((ty - y) * i) / steps,
-          ignore,
-        )
-      )
-        return false;
-    }
-    return true;
+    return clearPath(
+      x,
+      y,
+      tx,
+      ty,
+      (x, y, id) => this.blocked(x, y, id),
+      ignore,
+    );
   }
+
   refresh() {
     for (const p of props) {
       const im = this.propImages.get(p.id)!;
@@ -427,6 +437,7 @@ export class World extends Phaser.Scene {
     this.enemies = enemyDefs
       .filter((d) => !this.state.killed.includes(d.id))
       .map((d) => ({
+        kind: "enemy" as const,
         id: d.id,
         x: d.x,
         y: d.y,
@@ -572,15 +583,40 @@ export class World extends Phaser.Scene {
       onComplete: () => t.destroy(),
     });
   }
+  combatTargets(): CombatTarget[] {
+    return [...this.enemies, this.training];
+  }
+  hitFeedback(stage: number, material: "enemy" | "straw") {
+    this.combat.stopOnHit(stage);
+    this.soundFx.play(
+      material === "straw"
+        ? stage === 3
+          ? "straw-heavy"
+          : "straw"
+        : stage === 3
+          ? "finish"
+          : "hit",
+    );
+  }
+  strikeTarget(target: CombatTarget, stage: number, attack: Attack) {
+    if (target.kind === "enemy") {
+      this.strikeEnemy(target, stage);
+      return;
+    }
+    target.sync(this.combat.epoch);
+    if (target.hit(attack, this.sim)) {
+      this.hitFeedback(stage, "straw");
+      this.trainingView.hit(this.sim, STRIKES[stage - 1].damage);
+    }
+  }
   strikeEnemy(e: Enemy, stage: number) {
     if (e.hp <= 0) return;
     const move = STRIKES[stage - 1];
     e.hp = Math.max(0, e.hp - move.damage);
-    this.combat.stopOnHit(stage);
+    this.hitFeedback(stage, "enemy");
     e.flashUntil = this.sim + move.flash;
     e.staggerUntil = this.sim + move.stagger;
     this.float(e.x, e.y, String(move.damage));
-    this.soundFx.play(stage === 3 ? "finish" : "hit");
     const contact = Math.max(
       1,
       Math.hypot(this.state.player.x - e.x, this.state.player.y - e.y),
@@ -694,11 +730,14 @@ export class World extends Phaser.Scene {
       this.sim,
       nextFacing,
       p,
-      this.enemies,
+      this.combatTargets(),
       (x, y) => this.blocked(x, y),
-      (x, y, tx, ty) => this.clearLine(x, y, tx, ty),
-      (target, stage) => this.strikeEnemy(target as Enemy, stage),
-      () => {},
+      (x, y, tx, ty, targetId) => this.clearLine(x, y, tx, ty, targetId),
+      (target, stage, attack) => this.strikeTarget(target, stage, attack),
+      (_, attack) => {
+        this.training.sync(this.combat.epoch);
+        this.training.begin(attack);
+      },
       (stage) => this.soundFx.play(stage === 3 ? "attack-heavy" : "attack"),
     );
     if (!this.combat.attack && this.sim >= this.combat.dashUntil && length) {
@@ -743,11 +782,14 @@ export class World extends Phaser.Scene {
       this.sim,
       nextFacing,
       p,
-      this.enemies,
+      this.combatTargets(),
       (x, y) => this.blocked(x, y),
-      (x, y, tx, ty) => this.clearLine(x, y, tx, ty),
-      (target, stage) => this.strikeEnemy(target as Enemy, stage),
-      () => {},
+      (x, y, tx, ty, targetId) => this.clearLine(x, y, tx, ty, targetId),
+      (target, stage, attack) => this.strikeTarget(target, stage, attack),
+      (_, attack) => {
+        this.training.sync(this.combat.epoch);
+        this.training.begin(attack);
+      },
       (stage) => this.soundFx.play(stage === 3 ? "attack-heavy" : "attack"),
     );
     if (length && !this.combat.attack && this.sim >= this.combat.dashUntil)
@@ -992,6 +1034,15 @@ export class World extends Phaser.Scene {
     this.water.setScale(
       1 + Math.sin(this.sim / 1600) * 0.008,
       1 + Math.sin(this.sim / 1900) * 0.008,
+    );
+    if (this.training.epoch !== this.combat.epoch) {
+      this.training.sync(this.combat.epoch);
+      this.trainingView.reset();
+    }
+    this.trainingView.update(this.sim, p);
+    this.ui.training(
+      this.training.snapshot(this.sim),
+      Math.hypot(p.x - TRAINING.x, p.y - TRAINING.y) < TRAINING.near,
     );
     const hour = (this.state.time / 60) % 24;
     this.night.setAlpha(hour > 18 || hour < 6 ? 0.22 : 0);

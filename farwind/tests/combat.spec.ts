@@ -139,7 +139,8 @@ test("隔离森林战斗夹具：三连命中、风步拉开、再进攻", async
   await page.keyboard.up("d");
   await page.evaluate(() => {
     (window as any).__stops = [];
-    (window as any).__stopTimer = setInterval(() => {
+    // 按呈现帧采样：独立8ms定时器可能总落在停顿扣减后的相位，漏掉起始帧。
+    const sample = () => {
       const s = (window as any).__farwind();
       (window as any).__stops.push({
         sim: s.session.sim,
@@ -147,7 +148,9 @@ test("隔离森林战斗夹具：三连命中、风步拉开、再进攻", async
         player: [s.state.player.x, s.state.player.y],
         enemies: s.enemies.map((e: any) => [e.x, e.y, e.hp]),
       });
-    }, 8);
+      (window as any).__stopTimer = requestAnimationFrame(sample);
+    };
+    (window as any).__stopTimer = requestAnimationFrame(sample);
   });
   for (let stage = 1; stage <= 3; stage++) {
     await page.keyboard.press("j");
@@ -166,7 +169,7 @@ test("隔离森林战斗夹具：三连命中、风步拉开、再进攻", async
     .poll(async () => (await read(page)).session.combat.stage)
     .toBe(0);
   const stops = await page.evaluate(() => {
-    clearInterval((window as any).__stopTimer);
+    cancelAnimationFrame((window as any).__stopTimer);
     return (window as any).__stops;
   });
   expect(stops.some((s: any) => s.stop >= 45)).toBe(true);

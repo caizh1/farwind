@@ -1,3 +1,4 @@
+import { TRAINING, type TrainingDummy } from "../systems/training";
 import { items, objectives, type ItemId } from "../../data/content";
 import { count, craft, discard, parseSave, type State } from "../systems/state";
 import { region } from "../../data/world";
@@ -24,7 +25,7 @@ export class Interface {
   hud!: HTMLElement;
   toastEl!: HTMLElement;
   constructor() {
-    this.root.innerHTML = `<div id="hud" hidden><div class="top"><section class="vitals"><img class="portrait" src="/assets/portrait.png" alt="旅行者"><div><b>旅人 <small>与小黑同行</small></b><div class="meter health"><i></i><span></span></div><div class="meter stamina"><i></i><span></span></div></div></section><section class="location"><b id="region">风铃村</b><span id="clock"></span><canvas id="minimap" width="150" height="88" aria-label="位置小地图"></canvas></section></div><div class="quest-tracker"><small>风从这里开始</small><span id="objective"></span><button data-panel="quest">Q 旅途手记</button></div><div id="prompt"></div><div class="bottom"><span class="help">WASD 移动 · Shift 奔跑 · E 交互 · J/左键 三连斩 · <span id="combat-status">Space 风步 · 就绪</span></span><div id="hotbar"></div><div class="toolbar"><button data-panel="bag">Tab 行囊</button><button data-panel="map">M 地图</button><button data-panel="pause">Esc 暂停</button></div></div></div><div id="toast" role="status"></div><div id="modal"></div>`;
+    this.root.innerHTML = `<div id="hud" hidden><div class="top"><div class="vitals-stack"><section class="vitals"><img class="portrait" src="/assets/portrait.png" alt="旅行者"><div><b>旅人 <small>与小黑同行</small></b><div class="meter health"><i></i><span></span></div><div class="meter stamina"><i></i><span></span></div></div></section><section id="training-panel" hidden><b>广场练习</b><small>J / 左键：攻击；连按接三连；Space：风步</small><span id="training-stats"></span></section></div><section class="location"><b id="region">风铃村</b><span id="clock"></span><canvas id="minimap" width="150" height="88" aria-label="位置小地图"></canvas></section></div><div class="quest-tracker"><small>风从这里开始</small><span id="objective"></span><button data-panel="quest">Q 旅途手记</button></div><div id="prompt"></div><div class="bottom"><span class="help">WASD 移动 · Shift 奔跑 · E 交互 · J/左键 三连斩 · <span id="combat-status">Space 风步 · 就绪</span></span><div id="hotbar"></div><div class="toolbar"><button data-panel="bag">Tab 行囊</button><button data-panel="map">M 地图</button><button data-panel="pause">Esc 暂停</button></div></div></div><div id="toast" role="status"></div><div id="modal"></div>`;
     this.modal = this.root.querySelector("#modal")!;
     this.hud = this.root.querySelector("#hud")!;
     this.toastEl = this.root.querySelector("#toast")!;
@@ -33,6 +34,17 @@ export class Interface {
       if (b?.dataset.panel) this.open(b.dataset.panel);
       if (b?.dataset.use) this.actions.use(b.dataset.use as ItemId);
     });
+  }
+  training(s: ReturnType<TrainingDummy["snapshot"]>, near: boolean) {
+    const panel = this.root.querySelector<HTMLElement>("#training-panel")!;
+    panel.hidden = !near && !s.visible;
+    const stats = this.root.querySelector<HTMLElement>("#training-stats")!;
+    stats.textContent = s.visible
+      ? `第${s.lastStage}段 · ${s.lastDamage}伤害；本组命中${s.stages.length}/3；累计${s.damage}${s.complete ? " · 三连完成" : ""}`
+      : "";
+    stats.style.opacity = String(
+      Math.max(0, Math.min(1, (TRAINING.linger - s.age) / TRAINING.fade)),
+    );
   }
   get paused() {
     return this.mode !== "";

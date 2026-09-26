@@ -1,0 +1,80 @@
+
+Running 2 tests using 1 worker
+
+(node:95087) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/training.spec.ts:45:1 › 新游戏四面训练、风步底座、暂停和同页继续：真实输入 (21.8s)
+(node:95142) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 tests/training.spec.ts:151:1 › 隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度 (1.9m)
+
+
+  1) tests/training.spec.ts:45:1 › 新游戏四面训练、风步底座、暂停和同页继续：真实输入 ───────────────────────────────────────
+
+    TimeoutError: page.waitForFunction: Timeout 6000ms exceeded.
+
+      16 |       key = axis === "x" ? (sign > 0 ? "d" : "a") : sign > 0 ? "s" : "w";
+      17 |     await p.keyboard.down(key);
+    > 18 |     await p.waitForFunction(
+         |             ^
+      19 |       ({ axis, target, sign }) =>
+      20 |         sign * ((window as any).__farwind().state.player[axis] - target) > -3,
+      21 |       { axis, target, sign },
+        at walk (/Users/archer/Documents/ChatGPT/Game/farwind/tests/training.spec.ts:18:13)
+        at /Users/archer/Documents/ChatGPT/Game/farwind/tests/training.spec.ts:83:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/training-新游戏四面训练、风步底座、暂停和同页继续：真实输入/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/training-新游戏四面训练、风步底座、暂停和同页继续：真实输入/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/training-新游戏四面训练、风步底座、暂停和同页继续：真实输入/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/training-新游戏四面训练、风步底座、暂停和同页继续：真实输入/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/training-新游戏四面训练、风步底座、暂停和同页继续：真实输入/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/training.spec.ts:151:1 › 隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度 ──────────────────────────────────
+
+    Test was interrupted.
+
+    Error: page.waitForFunction: Test ended.
+
+      170 |     name: "legacy-full-bag-death.json",
+      171 |     mimeType: "application/json",
+    > 172 |     buffer: Buffer.from(JSON.stringify(fixture)),
+          |              ^
+      173 |   });
+      174 |   await expect.poll(async () => (await read(page)).state.bag[0]?.count).toBe(20);
+      175 |   await expect.poll(async () => (await read(page)).state.player.hp).toBe(100);
+        at /Users/archer/Documents/ChatGPT/Game/farwind/tests/training.spec.ts:172:14
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/training-隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/training-隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/training-隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/training-隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/training-隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/training.spec.ts:45:1 › 新游戏四面训练、风步底座、暂停和同页继续：真实输入 ────────────────────────────────────────
+  1 interrupted
+    tests/training.spec.ts:151:1 › 隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度 ───────────────────────────────────

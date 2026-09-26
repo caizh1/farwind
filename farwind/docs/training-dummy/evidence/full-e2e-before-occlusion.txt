@@ -1,0 +1,53 @@
+
+> farwind@0.1.0 test:e2e
+> playwright test --workers=1
+
+
+Running 18 tests using 1 worker
+
+(node:97112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/adventure.spec.ts:38:1 › adventure-loop (51.7s)
+  ✓   2 tests/combat-action.spec.ts:5:1 › 四方向实机动作逐帧推进，三段收招与再次进攻 (7.5s)
+  ✓   3 tests/combat-feel.spec.ts:3:1 › 固定早按与乱按：单击不自动续刀，最多预约一刀，停手收剑，移动立即退出 (5.2s)
+  ✓   4 tests/combat-feel.spec.ts:128:1 › 隔离河岸夹具：风步与普攻踏步不穿障碍，范围内隔岸敌人不受伤 (4.7s)
+  ✘   5 tests/combat-feel.spec.ts:161:1 › 隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次 (3.4s)
+
+
+  1) tests/combat-feel.spec.ts:161:1 › 隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次 ─────────────────────────────────
+
+    Test was interrupted.
+
+    Error: page.waitForTimeout: Test ended.
+
+      163 | }) => {
+      164 |   await importArena(page, 2080, 1100, ["leaf-1", "leaf-2"]);
+    > 165 |   await page.waitForTimeout(2800);
+          |              ^
+      166 |   await page.keyboard.down("s");
+      167 |   await page.waitForTimeout(700);
+      168 |   await page.keyboard.up("s");
+        at /Users/archer/Documents/ChatGPT/Game/farwind/tests/combat-feel.spec.ts:165:14
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/combat-feel-隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/combat-feel-隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/combat-feel-隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/combat-feel-隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/combat-feel-隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 interrupted
+    tests/combat-feel.spec.ts:161:1 › 隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次 ──────────────────────────────────
+  13 did not run
+  4 passed (1.2m)

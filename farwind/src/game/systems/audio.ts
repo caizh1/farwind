@@ -7,7 +7,16 @@ export class Sound {
   }
   play(kind = "pick") {
     if (!this.context || !this.volume) return;
-    if (["attack", "attack-heavy", "hit", "finish"].includes(kind)) {
+    if (
+      [
+        "attack",
+        "attack-heavy",
+        "hit",
+        "finish",
+        "straw",
+        "straw-heavy",
+      ].includes(kind)
+    ) {
       this.combatSound(kind);
       return;
     }
@@ -43,7 +52,8 @@ export class Sound {
   private combatSound(kind: string) {
     const c = this.context!;
     const swing = kind.startsWith("attack"),
-      heavy = kind === "finish" || kind === "attack-heavy";
+      heavy = kind === "finish" || kind.endsWith("heavy"),
+      straw = kind.startsWith("straw");
     const duration = swing ? (heavy ? 0.19 : 0.13) : heavy ? 0.22 : 0.12;
     const at = c.currentTime;
     // 短噪声带通塑造破风／接触，避免用同一个上升纯音代替所有反馈。
@@ -62,9 +72,12 @@ export class Sound {
       filter = c.createBiquadFilter(),
       gain = c.createGain();
     source.buffer = noise;
-    filter.type = swing ? "bandpass" : "lowpass";
+    filter.type = swing || straw ? "bandpass" : "lowpass";
     filter.Q.value = swing ? 0.7 : 0.5;
-    filter.frequency.setValueAtTime(swing ? 4200 : heavy ? 2300 : 3600, at);
+    filter.frequency.setValueAtTime(
+      straw ? 1400 : swing ? 4200 : heavy ? 2300 : 3600,
+      at,
+    );
     filter.frequency.exponentialRampToValueAtTime(
       swing ? 650 : 350,
       at + duration,
@@ -89,7 +102,7 @@ export class Sound {
       const body = c.createOscillator(),
         envelope = c.createGain();
       body.type = "triangle";
-      body.frequency.setValueAtTime(heavy ? 105 : 185, at);
+      body.frequency.setValueAtTime(straw ? 260 : heavy ? 105 : 185, at);
       body.frequency.exponentialRampToValueAtTime(
         heavy ? 42 : 75,
         at + duration * 0.8,

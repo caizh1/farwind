@@ -1,0 +1,114 @@
+
+> farwind@0.1.0 test:e2e
+> playwright test
+
+
+Running 18 tests using 3 workers
+
+(node:96566) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:96567) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:96568) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   2 tests/combat-feel.spec.ts:3:1 › 固定早按与乱按：单击不自动续刀，最多预约一刀，停手收剑，移动立即退出 (9.5s)
+  ✓   3 tests/combat-action.spec.ts:5:1 › 四方向实机动作逐帧推进，三段收招与再次进攻 (11.3s)
+  ✓   4 tests/combat-feel.spec.ts:128:1 › 隔离河岸夹具：风步与普攻踏步不穿障碍，范围内隔岸敌人不受伤 (5.9s)
+  ✓   6 tests/combat-feel.spec.ts:161:1 › 隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次 (8.9s)
+  ✓   7 tests/combat.spec.ts:16:1 › 真实键鼠：三连、断连、风步、暂停和续玩 (10.8s)
+  ✓   8 tests/combat.spec.ts:115:1 › 隔离森林战斗夹具：三连命中、风步拉开、再进攻 (7.5s)
+(node:96794) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/adventure.spec.ts:38:1 › adventure-loop (57.8s)
+(node:96835) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   9 tests/animation.spec.ts:11:1 › motion-directions-wall-stop-pause (23.9s)
+  ✘  10 tests/drop.spec.ts:4:1 › 隔离满包夹具：正常击杀、整理后领取、存档往返不重复 (23.9s)
+(node:96871) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 tests/animation.spec.ts:80:1 › companion-well-house-corners (32.1s)
+  ✓  13 tests/stability.spec.ts:3:1 › pause-input-and-save-file-validation (5.9s)
+  ✓  14 tests/visual.spec.ts:2:1 › village-visual (4.0s)
+(node:96920) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  12 tests/session.spec.ts:26:1 › session-sprint-recovery (27.5s)
+  ✓  15 tests/combat-contact.spec.ts:7:1 › 隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手 (12.3s)
+(node:96934) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  16 tests/session.spec.ts:82:1 › session-title-continue-new-refresh (13.7s)
+  ✓  17 tests/training.spec.ts:45:1 › 新游戏四面训练、风步底座、暂停和同页继续：真实输入 (27.5s)
+  ✓  18 tests/training.spec.ts:168:1 › 隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度 (10.7s)
+  ✘   5 tests/combat-followup.spec.ts:4:1 › 最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步 (2.7m)
+
+
+  1) tests/drop.spec.ts:4:1 › 隔离满包夹具：正常击杀、整理后领取、存档往返不重复 ────────────────────────────────────────────
+
+    Error: expect(received).toContain(expected) // indexOf
+
+    Expected value: "leaf-1"
+    Received array: ["slime-1", "slime-2"]
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      45 |   await expect
+      46 |     .poll(async () => (await read(page)).state.killed)
+    > 47 |     .toContain("leaf-1");
+         |      ^
+      48 |   const dead = await read(page);
+      49 |   expect(dead.state.pendingDrops.map((d: any) => d.enemyId)).toContain(
+      50 |     "leaf-1",
+        at /Users/archer/Documents/ChatGPT/Game/farwind/tests/drop.spec.ts:47:6
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/drop-隔离满包夹具：正常击杀、整理后领取、存档往返不重复/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/drop-隔离满包夹具：正常击杀、整理后领取、存档往返不重复/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/drop-隔离满包夹具：正常击杀、整理后领取、存档往返不重复/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/drop-隔离满包夹具：正常击杀、整理后领取、存档往返不重复/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/combat-followup.spec.ts:4:1 › 最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步 ─────────────────────────────
+
+    Test was interrupted.
+
+    Error: page.waitForFunction: Test ended.
+
+      45 |     await page.keyboard.up(key);
+      46 |     await page.keyboard.press("j");
+    > 47 |     await page.waitForFunction(
+         |                ^
+      48 |       () => {
+      49 |         const s = (window as any).__farwind();
+      50 |         return (
+        at /Users/archer/Documents/ChatGPT/Game/farwind/tests/combat-followup.spec.ts:47:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/combat-followup-最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/combat-followup-最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/combat-followup-最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/combat-followup-最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/combat-followup-最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/drop.spec.ts:4:1 › 隔离满包夹具：正常击杀、整理后领取、存档往返不重复 ─────────────────────────────────────────────
+  1 interrupted
+    tests/combat-followup.spec.ts:4:1 › 最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步 ──────────────────────────────
+  16 passed (2.9m)

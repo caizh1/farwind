@@ -1,3 +1,4 @@
+import { TRAINING } from "../game/systems/training";
 import type { ItemId } from "./content";
 export type Prop = {
   id: string;
@@ -13,6 +14,15 @@ export type Prop = {
   index?: number;
 };
 export const props: Prop[] = [
+  {
+    id: TRAINING.id,
+    art: "training-base",
+    x: TRAINING.x,
+    y: TRAINING.y,
+    w: 90,
+    h: 22,
+    solid: [26, 14],
+  },
   { id: "ruins-arch", art: "arch", x: 3150, y: 300, w: 330, h: 270 },
   {
     id: "ruins-pillar-left",
@@ -390,3 +400,15 @@ props.forEach((p) => {
   if (p.kind === "stone" || p.kind === "sign" || p.kind === "shortcut")
     p.solid = [35, 28];
 });
+
+// 只允许忽略明确目标的本体占地；其他实体仍参与碰撞。
+export function solidPropAt(x: number, y: number, ignore?: string) {
+  return props.some(
+    (p) =>
+      p.id !== ignore &&
+      p.solid &&
+      Math.abs(x - p.x) < p.solid[0] / 2 + 12 &&
+      y > p.y - p.solid[1] - 10 &&
+      y < p.y + 10,
+  );
+}

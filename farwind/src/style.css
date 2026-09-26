@@ -498,3 +498,40 @@ button:focus-visible {
     font-size: 10px;
   }
 }
+
+.vitals-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+#training-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-width: min(360px, 60vw);
+  padding: 10px 14px;
+  border: 1px solid #c8b07c;
+  border-radius: 10px;
+  background: #263e35e8;
+  color: #fff1ce;
+  pointer-events: none;
+}
+#training-panel[hidden] {
+  display: none;
+}
+#training-panel small {
+  font-size: 11px;
+  line-height: 1.5;
+}
+#training-stats {
+  font-size: 12px;
+  min-height: 0;
+}
+@media (max-width: 650px) {
+  #training-panel {
+    padding: 6px 9px;
+    max-width: 55vw;
+  }
+}

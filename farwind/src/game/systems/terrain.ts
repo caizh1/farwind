@@ -1,3 +1,4 @@
+import { TRAINING } from "./training";
 import Phaser from "phaser";
 import { roads } from "../../data/world";
 import type { World } from "../scenes/World";
@@ -65,6 +66,10 @@ export function makeTerrain(this: World) {
       c.strokeStyle = "#b1a06b";
       c.lineWidth = 6;
       c.stroke();
+      c.beginPath();
+      c.ellipse(TRAINING.x, TRAINING.y, 76, 52, 0, 0, Math.PI * 2);
+      c.fillStyle = "#b2a16a88";
+      c.fill();
       c.fillStyle = "#496c4030";
       for (let i = 0; i < 45; i++) {
         const x = cx + ((i * 137) % 600),

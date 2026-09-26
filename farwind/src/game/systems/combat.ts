@@ -59,6 +59,7 @@ export const COMBAT = {
 export type Target = { id: string; x: number; y: number; hp: number };
 export type Attack = {
   id: number;
+  comboId?: number;
   stage: number;
   facing: Facing;
   start: number;
@@ -87,11 +88,31 @@ export function sweepMove(
     if (!blocked(p.x, p.y + dy / n)) p.y += dy / n;
   }
 }
+export function clearPath(
+  x: number,
+  y: number,
+  tx: number,
+  ty: number,
+  blocked: (x: number, y: number, ignore?: string) => boolean,
+  ignore?: string,
+) {
+  const steps = Math.ceil(Math.hypot(tx - x, ty - y) / 12);
+  for (let i = 1; i <= steps; i++)
+    if (blocked(x + ((tx - x) * i) / steps, y + ((ty - y) * i) / steps, ignore))
+      return false;
+  return true;
+}
 export function inStrike(
   p: { x: number; y: number },
   e: Target,
   a: Attack,
-  clearLine: (x: number, y: number, tx: number, ty: number) => boolean,
+  clearLine: (
+    x: number,
+    y: number,
+    tx: number,
+    ty: number,
+    targetId: string,
+  ) => boolean,
 ) {
   const m = STRIKES[a.stage - 1],
     [vx, vy] = facingVector(a.facing);
@@ -103,7 +124,7 @@ export function inStrike(
     d <= m.range &&
     d > 0 &&
     (dx * vx + dy * vy) / d >= Math.cos(m.angle) &&
-    clearLine(p.x, p.y, e.x, e.y)
+    clearLine(p.x, p.y, e.x, e.y, e.id)
   );
 }
 export function enemyTint(now: number, flashUntil: number, windup: number) {
@@ -112,6 +133,7 @@ export function enemyTint(now: number, flashUntil: number, windup: number) {
 export class CombatController {
   attack: Attack | null = null;
   serial = 0;
+  comboSerial = 0;
   bufferUntil = 0;
   requestedAt = 0;
   reservationOwner: number | null = null;
@@ -263,16 +285,22 @@ export class CombatController {
       now < this.dashStart + COMBAT.dash.invulnEnd
     );
   }
-  update(
+  update<T extends Target>(
     prev: number,
     now: number,
     facing: Facing,
     p: { x: number; y: number },
-    targets: Target[],
+    targets: T[],
     blocked: (x: number, y: number) => boolean,
-    clearLine: (x: number, y: number, tx: number, ty: number) => boolean,
-    hit: (target: Target, stage: number) => void,
-    started: (stage: number) => void,
+    clearLine: (
+      x: number,
+      y: number,
+      tx: number,
+      ty: number,
+      targetId: string,
+    ) => boolean,
+    hit: (target: T, stage: number, attack: Attack) => void,
+    started: (stage: number, attack: Attack) => void,
     swung: (stage: number) => void = () => {},
   ) {
     // 按事件时刻推进：请求到达、可衔接、结束、到期，等于到期仍合法。
@@ -300,7 +328,7 @@ export class CombatController {
           for (const e of targets)
             if (!a.hit.has(e.id) && inStrike(p, e, a, clearLine)) {
               a.hit.add(e.id);
-              hit(e, a.stage);
+              hit(e, a.stage, a);
             }
         };
         if (stop >= from && cursor < until) {
@@ -341,6 +369,7 @@ export class CombatController {
         this.pending = false;
         this.attack = {
           id: ++this.serial,
+          comboId: stage === 1 ? ++this.comboSerial : this.comboSerial,
           stage,
           facing,
           start: consumeAt,
@@ -354,7 +383,7 @@ export class CombatController {
         this.carryUntil = 0;
         this.nextStage = 1;
         this.chainUntil = 0;
-        started(stage);
+        started(stage, this.attack);
       }
       cursor = stop;
       if (stop >= now) break;
@@ -386,6 +415,7 @@ export class CombatController {
       bufferExpiresAt: this.pending ? this.bufferUntil : null,
       stage: this.attack?.stage ?? 0,
       attackInstanceId: this.attack?.id ?? null,
+      comboId: this.attack?.comboId ?? null,
       facing: this.attack?.facing ?? null,
       hitRegion: m ? { range: m.range, halfAngle: m.angle } : null,
       hitTargets: [...(this.attack?.hit ?? [])],

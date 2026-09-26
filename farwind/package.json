@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run tests/logic.test.ts tests/motion.test.ts tests/combat.test.ts",
+    "test": "vitest run tests/logic.test.ts tests/motion.test.ts tests/combat.test.ts tests/training.test.ts",
     "test:e2e": "playwright test",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1"
