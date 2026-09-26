@@ -7,6 +7,7 @@ export class Sound {
   }
   play(kind = "pick") {
     if (!this.context || !this.volume) return;
+    if(["guard","parry","parry-perfect"].includes(kind)) {this.parrySound(kind);return;}
     if (
       [
         "attack",
@@ -48,6 +49,20 @@ export class Sound {
     g.connect(c.destination);
     o.start();
     o.stop(c.currentTime + 0.21);
+  }
+  private parrySound(kind:string) {
+    const c=this.context!,at=c.currentTime,perfect=kind==="parry-perfect",guard=kind==="guard";
+    // 起手是短促剑身轻响；接触用独立的衰减金属谐波，避免通用提示上升音。
+    const frequencies=guard?[620,930]:perfect?[780,1170,1950]:[650,1010];
+    const duration=guard?0.06:perfect?0.17:0.13;
+    frequencies.forEach((frequency,i)=>{
+      const o=c.createOscillator(),g=c.createGain(),begin=at+(perfect?i*0.006:0);
+      o.type="sine";o.frequency.setValueAtTime(frequency,begin);o.frequency.exponentialRampToValueAtTime(frequency*0.78,begin+duration);
+      g.gain.setValueAtTime(0.001,begin);g.gain.linearRampToValueAtTime(this.volume*(guard?0.1:perfect?0.26:0.3)/(i+1),begin+0.003);
+      g.gain.exponentialRampToValueAtTime(0.001,begin+duration);
+      o.connect(g);g.connect(c.destination);o.start(begin);o.stop(begin+duration);
+      o.onended=()=>{o.disconnect();g.disconnect();};
+    });
   }
   private combatSound(kind: string) {
     const c = this.context!;

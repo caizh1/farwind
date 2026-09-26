@@ -1,3 +1,6 @@
+import { CombatController } from "../src/game/systems/combat";
+import { adjudicateContact } from "../src/game/systems/contact";
+import { createEnemyAttack } from "../src/game/systems/enemyAttack";
 import { describe, it, expect } from "vitest";
 import {
   props,
@@ -141,7 +144,7 @@ function tickFor(
   const positions = [];
   for (let i = 1; i <= frames; i++) {
     const before = { x: e.x, y: e.y };
-    updateEnemy(e, p, from + (i * 1000) / 60, 1 / 60);
+    updateEnemy(e, p, from + (i * 1000) / 60, 1000 / 60);
     expect(motionBlocked(e.x, e.y)).toBe(false);
     expect(clearMotionLine(before, e)).toBe(true);
     positions.push({ x: e.x, y: e.y, ai: e.ai, windup: e.windup });
@@ -270,7 +273,7 @@ describe("敌人追击、前摇和出生校验", () => {
     e.homeX = 3170;
     e.homeY = 930;
     expect(clearMeleeLine(e, p)).toBe(false);
-    updateEnemy(e, p, 1, 1 / 60);
+    updateEnemy(e, p, 1, 1000 / 60);
     expect(e.windup).toBe(0);
     expect(e.nav.queries).toBe(1);
     const positions = tickFor(e, p, 240, 1);
@@ -284,26 +287,29 @@ describe("敌人追击、前摇和出生校验", () => {
     expect(e.recovered).toBe(false);
     expect(e.nav.queries).toBeLessThan(10);
   });
-  it("前摇结束重新核对通路、距离、安全区；普通硬直不重置前摇", () => {
-    const e = enemy(3130, 941),
-      p = { x: 3170, y: 941 };
-    updateEnemy(e, p, 1, 1 / 60);
-    expect(e.windup).toBe(0.65);
-    e.staggerUntil = 101;
-    updateEnemy(e, p, 50, 1 / 60);
-    expect(e.windup).toBe(0.65);
-    p.x = 3130;
-    p.y = 991;
-    expect(updateEnemy(e, p, 1000, 1)).toBe(false);
-    expect(e.rejection).toBe("tree-20");
-    e.windup = 0.1;
-    p.x = 3400;
-    expect(updateEnemy(e, p, 2000, 0.2)).toBe(false);
-    expect(e.rejection).toBe("结算距离");
-    e.windup = 0.1;
-    p.x = 2090;
-    expect(updateEnemy(e, p, 3000, 0.2)).toBe(false);
-    expect(e.rejection).toBe("村庄安全区");
+  it("实例接触交给裁决检查通路、距离、安全区；普通硬直暂停前摇", () => {
+    const e=enemy(3130,941),p={x:3170,y:941,stamina:100};
+    updateEnemy(e,p,1,1000/60);
+    expect(e.windup).toBe(650);
+    e.staggerUntil=101;
+    updateEnemy(e,p,50,49);
+    expect(e.windup).toBe(650);
+    updateEnemy(e,p,101,51);
+    expect(e.attack!.contactAt).toBe(751);
+    updateEnemy(e,p,601,500);
+    p.x=3130;p.y=991;
+    const contact=updateEnemy(e,p,751,150)!;
+    expect(contact.at).toBe(751);
+    expect(clearMeleeLine(contact.origin,p)).toBe(false);
+    expect(adjudicateContact(contact,new CombatController(),p,{valid:true,immune:false,clear:clearMeleeLine})).toBe("invalid");
+    e.attack=createEnemyAttack(e.id,2,e.type,1000,e,{x:3170,y:941},100);
+    p.x=3400;
+    const distant=updateEnemy(e,p,1100,100)!;
+    expect(adjudicateContact(distant,new CombatController(),p,{valid:true,immune:false,clear:clearMeleeLine})).toBe("invalid");
+    e.attack=createEnemyAttack(e.id,3,e.type,2000,e,p,100);
+    p.x=2090;
+    const unsafe=updateEnemy(e,p,2100,100)!;
+    expect(adjudicateContact(unsafe,new CombatController(),p,{valid:false,immune:false,clear:clearMeleeLine})).toBe("invalid");
   });
   it("四个正常出生点不变；非法夹具恢复最近连通点和home且保留ID、生命", () => {
     for (const d of enemyDefs) {

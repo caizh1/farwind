@@ -74,6 +74,8 @@ test("隔离实机树边反例：正常出生、换侧、绕障与真实命中�
     () => (window as any).__farwind().animation.hero.direction === 2,
   );
   await page.keyboard.up("a");
+  // 新的精确寻路时间轴可能使敌人尚在距离外；只读确认进入原有首刀范围，再实际出招。
+  await page.waitForFunction(() => {const s=(window as any).__farwind(),e=s.enemies[0],p=s.state.player;return Math.hypot(e.x-p.x,e.y-p.y)<85&&!e.meleeBlocker;});
   await page.keyboard.press("j");
   await expect.poll(async () => (await read(page)).enemies[0].hp).toBe(54);
   await page.screenshot({ path: "docs/obstacle-fix/evidence/edge-hit.png" });

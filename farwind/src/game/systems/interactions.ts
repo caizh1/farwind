@@ -7,24 +7,22 @@ export function interact(this: World, p: Prop) {
   const s = this.state;
   this.soundFx.play("talk");
   if (p.kind === "npc") {
+    const talk = (text: string) => this.ui.dialog(p.label!, text, p.id);
     if (p.id === "elder") {
       if (s.quest === 0) {
         s.quest = 1;
-        this.ui.dialog(
-          p.label!,
+        talk(
           "东边的森林昨夜传来奇怪的风声。替我去看看吧。先找些药草和浆果，路上记得照顾好自己。",
         );
       } else if (s.quest === 6) {
         if (reward(s)) {
-          this.ui.dialog(
-            p.label!,
+          talk(
             "风铃又响起来了！你和小黑做到了。带上这三瓶药剂，远方还有许多故事。",
           );
           void this.persist().catch(() => {});
         } else this.ui.message("请先腾出行囊空间领取奖励。");
       } else
-        this.ui.dialog(
-          p.label!,
+        talk(
           s.quest === 7
             ? "风会记住你的脚步。随时回来坐坐。"
             : "顺着东边的石路走。古碑说：晨风起，林风和，暮风归。",
@@ -40,34 +38,28 @@ export function interact(this: World, p: Prop) {
         s.bag = next.bag;
         s.crafted = true;
         if (s.quest === 2) s.quest = 3;
-        this.ui.dialog(
-          p.label!,
+        talk(
           "药草两株、浆果一份，替你调好了恢复药剂。药圃可以采药；出门前再检查一下行囊吧。",
         );
       } else
-        this.ui.dialog(
-          p.label!,
+        talk(
           "带来药草 ×2 和浆果 ×1，我可以替你调制一瓶恢复药剂。药草就在小院，浆果去南侧果园采；也可按 Tab 自行制作。采集点三个游戏小时后再生，兑换前请留出行囊空间。",
         );
     }
     if (p.id === "carpenter") {
       if (s.side === 0) {
         s.side = 1;
-        this.ui.dialog(
-          p.label!,
-          "栅栏要修一修。能替我带来四份木材吗？森林路边的枯枝就很好。",
-        );
+        talk("栅栏要修一修。能替我带来四份木材吗？森林路边的枯枝就很好。");
       } else if (s.side === 1 && count(s, "wood") >= 4) {
         const next = structuredClone(s);
         remove(next, "wood", 4);
         if (add(next, "berry", 5)) {
           s.bag = next.bag;
           s.side = 2;
-          this.ui.dialog(p.label!, "正好！这些浆果给你，路上慢慢吃。");
+          talk("正好！这些浆果给你，路上慢慢吃。");
         } else this.ui.message("行囊空间不足，尚未扣除木材。");
       } else
-        this.ui.dialog(
-          p.label!,
+        talk(
           s.side === 2
             ? "新的栅栏很结实。谢谢你，旅人。"
             : "四份木材就够了，不必砍活着的树。",
@@ -123,17 +115,39 @@ export function interact(this: World, p: Prop) {
   if (p.id === "village-guide")
     this.ui.dialog(
       "东村口路牌",
-      "向东：翡翠森林与风之遗迹。向西：风铃广场。北面练习场可练三连击与风步，南面环湖小径经过果园回到广场。",
+      "向东：翡翠森林与风之遗迹。向西：风铃广场。\n北面练习场可练三连击与风步，南面环湖小径经过果园回到广场。",
     );
   if (p.id === "training-guide")
     this.ui.dialog(
       "练习场须知",
       "J / 左键挥剑，连续按下接三连击；从木桩四面靠近练习朝向。L 风步可快速移动，不能穿过木桩与围栏。练习不消耗任务物品、不掉落战利品。",
     );
+  if (
+    [
+      "north-gate-sign",
+      "south-gate-sign",
+      "east-gate-sign",
+      "west-gate-sign",
+    ].includes(p.id)
+  )
+    this.ui.dialog(
+      p.label!,
+      p.id === "west-gate-sign"
+        ? "西侧预留出口尚未开放，木栅仍封闭。请走北门、南门或东门。"
+        : p.id === "east-gate-sign"
+          ? "沿石路穿过东门进入翡翠森林，原主线仍从这里出发。"
+          : "门外的山路与荒野尚未深入探明。谨慎前行，沿路返回。",
+    );
+  if (p.id.startsWith("parcel-") && p.id.endsWith("-sign"))
+    this.ui.dialog(
+      p.label!,
+      "这座小院留给未来村庄建设，目前可以散步，没有商店或委托服务。",
+    );
   if (p.id === "clue")
     this.ui.dialog(
       "被风磨亮的碑文",
       "晨风自西方醒来，林风在北方低吟，暮风向东方归去。循此顺序，三风相和。修复需要风之结晶、木材 ×2、石材 ×2。",
+      "rune",
     );
   if (p.id === "waymark") {
     if (s.quest === 5) {
@@ -152,6 +166,7 @@ export function interact(this: World, p: Prop) {
         this.ui.dialog(
           "风之路标",
           "沉睡的风再次流动。南面的归乡风径已经开放，回村告诉岚爷爷吧。",
+          "rune",
         );
         void this.persist().catch(() => {});
       } else this.ui.message("修复需要：木材 ×2、石材 ×2、风之结晶 ×1。");

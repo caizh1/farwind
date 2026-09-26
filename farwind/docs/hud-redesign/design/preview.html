@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+  <meta charset="utf-8" /><title>HUD 精确设计预览 · 非运行截图</title
+  ><link rel="stylesheet" href="preview.css" />
+  <body>
+    <div class="top">
+      <div class="left">
+        <img id="vitals" alt="沿用生命体力区域" /><span class="combat"
+          >L 风步 · 就绪</span
+        >
+      </div>
+      <div class="info">
+        <section class="location">
+          <button class="summary">
+            <b>风铃村</b><span>·</span><span>08:02</span
+            ><svg viewBox="0 0 24 24">
+              <path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2Zm6-2v16m6-14v16" /></svg
+            ><span class="chevron">▾</span>
+          </button>
+          <div class="details map-details" hidden>
+            <small>第 1 日 · 风铃村</small
+            ><img id="map" alt="小地图位置示意" /><button class="text-button">
+              M 完整地图
+            </button>
+          </div>
+        </section>
+        <section class="quest">
+          <button class="summary">
+            <span class="ellipsis">任务 · 与广场的守风人交谈</span
+            ><span class="chevron">▾</span>
+          </button>
+          <div class="details quest-details" hidden>
+            <small>主线 · 失落的风</small>
+            <p>与广场的守风人交谈</p>
+            <button class="text-button">Q 旅途手记</button>
+          </div>
+        </section>
+      </div>
+    </div>
+    <div class="bottom">
+      <span class="tooltip" hidden>浆果 · 快捷键 2 · 数量 0</span>
+      <div id="hotbar"></div>
+    </div>
+    <div id="modal" hidden>
+      <section class="pause-panel">
+        <header>
+          <small>远 风 之 地</small>
+          <h1>在风中歇一会儿</h1>
+        </header>
+        <p class="pause-note">世界与时间已暂停。</p>
+        <button class="resume">继续旅途 <kbd>Esc</kbd></button>
+        <div class="pause-grid">
+          <button>行囊 <kbd>Tab</kbd></button
+          ><button>完整地图 <kbd>M</kbd></button
+          ><button>旅途手记 <kbd>Q</kbd></button
+          ><button>操作说明 <span>查看操作</span></button>
+        </div>
+        <h2>存档与设置</h2>
+        <div class="pause-grid">
+          <button>保存旅途</button><button>导出备份</button
+          ><button>导入存档</button><button>设置</button
+          ><button class="wide">保存并返回标题</button>
+        </div>
+        <p class="backup-note">
+          备份需下载到站点之外；清理站点数据会删除本地存档。
+        </p>
+      </section>
+    </div>
+    <script>
+      const mode =
+        new URLSearchParams(location.search).get("mode") || "default";
+      const tag = innerWidth === 1280 ? "1280x720" : "1440x900";
+      document.body.style.backgroundImage = `url('../before/background-${tag}-dpr1.png')`;
+      document.querySelector("#vitals").src = "vitals.png";
+      document.querySelector("#map").src = "map.png";
+      document.querySelector("#hotbar").innerHTML = Array.from(
+        { length: 8 },
+        (_, i) =>
+          `<button class="hotbar-slot ${i < 2 ? "occupied" : ""}"><small>${i + 1}</small>${i < 2 ? `<img src="/assets/icon-${i ? "berry" : "potion"}.png" alt="">` : "<span>—</span>"}<strong>${i < 2 ? "0" : ""}</strong></button>`,
+      ).join("");
+      if (mode === "expanded") {
+        document
+          .querySelectorAll(".details")
+          .forEach((x) => (x.hidden = false));
+        document
+          .querySelectorAll(".chevron")
+          .forEach((x) => (x.textContent = "▴"));
+        document.querySelectorAll(".hotbar-slot")[1].classList.add("active");
+        document.querySelector(".tooltip").hidden = false;
+      }
+      if (mode === "pause") {
+        document.querySelector("#modal").hidden = false;
+        document.querySelector(".resume").focus();
+      }
+    </script>
+  </body>
+</html>

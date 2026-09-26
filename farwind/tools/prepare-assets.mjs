@@ -1,5 +1,4 @@
 import sharp from "sharp";
-import fs from "node:fs/promises";
 const root = new URL("../public/assets/", import.meta.url).pathname;
 const names = [
   "house",
@@ -108,14 +107,5 @@ await frames("cat", 836, 990, [0, 1, 2, 3, 4, 5]);
 await frames("elder", 990, 1254, [0, 1]);
 await frames("healer", 990, 1254, [2, 3]);
 await frames("carpenter", 990, 1254, [4, 5]);
-await fs.writeFile(
-  root + "manifest.json",
-  JSON.stringify(
-    {
-      说明: "素材生成不代表已完成商业权利审查。原始图保留以便复核。地表与敌人追加登记见文档。",
-      素材: manifest,
-    },
-    null,
-    2,
-  ),
-);
+// 统一登记器保留专项子目录资产，避免重新裁切时抹掉正式接入记录。
+await import("./asset-report.mjs");

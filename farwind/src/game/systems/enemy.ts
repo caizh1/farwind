@@ -1,4 +1,6 @@
-import { WORLD, enemyDefs } from "../../data/world";
+import { enemyDefs } from "../../data/world";
+import { regionAt } from "../../data/village";
+import { createEnemyAttack, advanceEnemyAttack, ENEMY_ATTACK, type EnemyAttack, type EnemyContact } from "./enemyAttack";
 import {
   clearMotionLine,
   clearMeleeLine,
@@ -14,6 +16,7 @@ export const NAV = {
   repairRadius: 160,
   repairCandidates: 512,
   repairPaths: 8,
+  queriesPerFrame: 2,
 } as const;
 const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 type Space = {
@@ -135,9 +138,9 @@ export function nearestStanding(
   return null;
 }
 export function repairEnemyPoint(origin: Point, home: Point) {
-  // 活动区仍受原420回家半径和村庄边界约束；不搬到玩家面前。
+  // 固定野怪仍受原420回家半径约束；安全来自实体，不再依赖玩家横坐标。
   const allowed = (p: Point) =>
-    p.x >= WORLD.forest + 50 && distance(p, home) <= 420;
+    distance(p, home) <= 420;
   const anchors = [
     home,
     ...enemyDefs.map((d) => ({ x: d.x, y: d.y })),
@@ -154,6 +157,9 @@ export type EnemyBody = Point & {
   cool: number;
   windup: number;
   staggerUntil: number;
+  staggerSince?: number;
+  attack?: EnemyAttack | null;
+  attackSerial?: number;
   nav: {
     path: Point[];
     target?: Point;
@@ -177,12 +183,18 @@ export const enemyNavigation = (): EnemyBody["nav"] => ({
   queries: 0,
   visited: 0,
 });
+export function staggerEnemy(e:Pick<EnemyBody,"staggerUntil"|"staggerSince">,now:number,duration:number) {
+  e.staggerUntil=Math.max(e.staggerUntil,now+duration);
+  e.staggerSince=now;
+}
 export function validateEnemyPosition(e: EnemyBody) {
   if (e.hp <= 0 || e.disabled) return;
   if (!motionBlocked(e.x, e.y) && !motionBlocked(e.homeX, e.homeY)) return;
   const point = repairEnemyPoint(e, { x: e.homeX, y: e.homeY });
   e.recovered = true;
   e.windup = 0;
+  if(e.attack)e.attack.cancelled=true;
+  e.attack=null;
   e.nav = enemyNavigation();
   if (!point) {
     e.disabled = true;
@@ -195,43 +207,50 @@ export function updateEnemy(
   e: EnemyBody,
   player: Point,
   now: number,
-  dt: number,
-) {
+  dtMs: number,
+  budget?: {queries:number},
+): EnemyContact | null {
+  const dt = dtMs/1000, prev=now-dtMs;
   if (e.hp <= 0 || e.disabled) {
     e.ai = e.hp <= 0 ? "死亡" : "无合法位置";
-    return false;
+    return null;
   }
   validateEnemyPosition(e);
-  if (e.disabled) return false;
+  if (e.disabled) return null;
   const d = distance(e, player),
     home = { x: e.homeX, y: e.homeY };
-  const safe = player.x > WORLD.forest + 50;
+  const safe = distance(player,home) <= 520 && regionAt(player).id !== "village";
   e.rejection = !safe
-    ? "村庄安全区"
+    ? "家园追击边界"
     : d >= 80
       ? "距离"
       : meleeBlocker(e, player);
+  if(e.attack&&!e.attack.cancelled&&!e.attack.emitted) {
+    const frozen=Math.max(0,Math.min(now,e.staggerUntil)-Math.max(prev,e.staggerSince??prev));
+    e.attack.lockAt+=frozen;
+    e.attack.contactAt+=frozen;
+    e.attack.recoveryUntil+=frozen;
+    e.windup=Math.max(0,e.attack.contactAt-now);
+  }
   if (now < e.staggerUntil) {
     e.ai = "硬直";
-    return false;
+    return null;
   }
-  if (e.windup > 0) {
-    e.ai = "前摇";
-    e.windup = Math.max(0, e.windup - dt);
-    if (e.windup > 0) return false;
-    e.cool = now + (e.type === "leaf" ? 1400 : 1100);
-    e.rejection = !safe
-      ? "村庄安全区"
-      : d >= 100
-        ? "结算距离"
-        : meleeBlocker(e, player);
-    return !e.rejection;
+  if (e.attack) {
+    const attack=e.attack;
+    const contact=advanceEnemyAttack(attack,e,player,now);
+    e.windup=attack.cancelled?0:Math.max(0,attack.contactAt-now);
+    e.ai=attack.cancelled?"攻击取消":now<attack.contactAt?(attack.locked?"锁向前摇":"蓄力"):"收招";
+    if(contact)e.cool=contact.at+(e.type==="leaf"?ENEMY_ATTACK.leaf.cooldown:ENEMY_ATTACK.slime.cooldown);
+    if(now>=attack.recoveryUntil||attack.cancelled)e.attack=null;
+    return contact;
   }
   if (d < 80 && now > e.cool && safe && clearMeleeLine(e, player)) {
-    e.windup = e.type === "leaf" ? 0.65 : 0.3;
+    e.attack=createEnemyAttack(e.id,e.attackSerial=(e.attackSerial??0)+1,e.type,now,e,player);
+    e.windup = e.attack.contactAt-now;
     e.ai = "前摇";
     e.nav.path = [];
-    return false;
+    return null;
   }
   const canChase = d < 380 && safe && distance(e, home) < 420;
   if (!canChase && distance(e, home) > 8) e.nav.returning = true;
@@ -246,10 +265,9 @@ export function updateEnemy(
   if (reached(e)) {
     e.ai = chase ? "等待冷却" : "家园";
     e.nav.path = [];
-    return false;
+    return null;
   }
   const allowed = (p: Point) =>
-    p.x >= WORLD.forest + 50 &&
     distance(p, home) <= (chase ? 420 : Math.max(420, distance(e, home) + 1));
   const changed =
     e.nav.mode !== mode ||
@@ -263,8 +281,10 @@ export function updateEnemy(
   } else {
     if (
       now >= e.nav.next &&
-      (changed || (!e.nav.failed && !e.nav.path.length))
+      (changed || (!e.nav.failed && !e.nav.path.length)) &&
+      (!budget||budget.queries>0)
     ) {
+      if(budget)budget.queries--;
       const result = localPath(
         e,
         chase
@@ -288,7 +308,7 @@ export function updateEnemy(
   }
   if (!waypoint) {
     e.ai = e.nav.failed ? "无路径等待" : "等待查询";
-    return false;
+    return null;
   }
   const length = distance(e, waypoint),
     step = Math.min(length, (e.type === "leaf" ? 95 : 60) * dt);
@@ -308,5 +328,5 @@ export function updateEnemy(
     e.nav.path = [];
     e.ai = "受阻等待";
   }
-  return false;
+  return null;
 }

@@ -1,0 +1,185 @@
+{
+  "世界": {
+    "width": 4200,
+    "height": 2200,
+    "forest": 2050,
+    "ruins": 3300
+  },
+  "村界": {
+    "left": 80,
+    "right": 2100,
+    "top": 220,
+    "bottom": 1820
+  },
+  "出口": [
+    {
+      "id": "east-gate",
+      "name": "东门",
+      "x": 2100,
+      "y": 1080,
+      "axis": "x",
+      "open": true,
+      "outsideRegion": "forest"
+    },
+    {
+      "id": "north-gate",
+      "name": "北门",
+      "x": 820,
+      "y": 220,
+      "axis": "y",
+      "open": true,
+      "outsideRegion": "north"
+    },
+    {
+      "id": "south-gate",
+      "name": "南门",
+      "x": 900,
+      "y": 1820,
+      "axis": "y",
+      "open": true,
+      "outsideRegion": "south"
+    },
+    {
+      "id": "west-gate",
+      "name": "西侧预留门",
+      "x": 80,
+      "y": 1430,
+      "axis": "x",
+      "open": false,
+      "outsideRegion": "west"
+    }
+  ],
+  "预留院": [
+    {
+      "id": "parcel-residents",
+      "name": "居民预留院",
+      "x": 200,
+      "y": 1660,
+      "w": 550,
+      "h": 140
+    },
+    {
+      "id": "parcel-workshop",
+      "name": "工坊预留院",
+      "x": 1050,
+      "y": 1560,
+      "w": 430,
+      "h": 230
+    },
+    {
+      "id": "parcel-guild",
+      "name": "委托所预留院",
+      "x": 1510,
+      "y": 1580,
+      "w": 450,
+      "h": 210
+    },
+    {
+      "id": "parcel-activities",
+      "name": "活动预留院",
+      "x": 1750,
+      "y": 1320,
+      "w": 250,
+      "h": 230
+    }
+  ],
+  "未来防御": [
+    {
+      "portalId": "east-gate",
+      "towerId": "east-gate-tower",
+      "tower": {
+        "x": 1990,
+        "y": 880
+      },
+      "posts": [
+        {
+          "x": 2010,
+          "y": 970
+        },
+        {
+          "x": 2010,
+          "y": 1160
+        }
+      ],
+      "route": [
+        {
+          "x": 2260,
+          "y": 1080
+        },
+        {
+          "x": 2100,
+          "y": 1080
+        },
+        {
+          "x": 1940,
+          "y": 1080
+        }
+      ]
+    },
+    {
+      "portalId": "north-gate",
+      "towerId": "north-gate-tower",
+      "tower": {
+        "x": 580,
+        "y": 350
+      },
+      "posts": [
+        {
+          "x": 780,
+          "y": 360
+        },
+        {
+          "x": 865,
+          "y": 360
+        }
+      ],
+      "route": [
+        {
+          "x": 820,
+          "y": 120
+        },
+        {
+          "x": 820,
+          "y": 220
+        },
+        {
+          "x": 820,
+          "y": 380
+        }
+      ]
+    },
+    {
+      "portalId": "south-gate",
+      "towerId": "south-gate-tower",
+      "tower": {
+        "x": 1140,
+        "y": 1750
+      },
+      "posts": [
+        {
+          "x": 810,
+          "y": 1720
+        },
+        {
+          "x": 990,
+          "y": 1720
+        }
+      ],
+      "route": [
+        {
+          "x": 900,
+          "y": 1980
+        },
+        {
+          "x": 900,
+          "y": 1820
+        },
+        {
+          "x": 900,
+          "y": 1660
+        }
+      ]
+    }
+  ],
+  "说明": "从正式数据导出；岗位与塔位仅为规划，未生成守卫或炮台。"
+}

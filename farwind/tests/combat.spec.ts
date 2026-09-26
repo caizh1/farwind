@@ -158,6 +158,7 @@ test("隔离森林战斗夹具：三连命中、风步拉开、再进攻", async
       (window as any).__stops.push({
         sim: s.session.sim,
         stop: s.session.combat.hitStopRemaining,
+        requestedStop: s.session.combat.lastHitStopRequested,
         player: [s.state.player.x, s.state.player.y],
         enemies: s.enemies.map((e: any) => [e.x, e.y, e.hp]),
       });
@@ -186,7 +187,9 @@ test("隔离森林战斗夹具：三连命中、风步拉开、再进攻", async
     cancelAnimationFrame((window as any).__stopTimer);
     return (window as any).__stops;
   });
-  expect(stops.some((s: any) => s.stop >= 45)).toBe(true);
+  // 停顿从帧内命中时刻扣预算，呈现帧剩余值不能代表完整请求时长。
+  // 仍核实第三刀完整58毫秒预算，并保留下方世界冻结断言。
+  expect(stops.some((s: any) => s.requestedStop === 58)).toBe(true);
   expect(
     stops.some(
       (s: any, i: number) =>

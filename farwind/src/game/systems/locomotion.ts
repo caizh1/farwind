@@ -31,6 +31,8 @@ export class Locomotion {
     this.speed = distance / s.dt;
     const moving =
       this.speed > (this.action === "walk" || this.action === "run" ? 1.5 : 4);
+    // 碰撞扫掠的数值残差不作为动画速度；实际脚底位移仍由碰撞系统决定。
+    if (!moving) this.speed = 0;
     const x = moving ? s.dx : (s.intentX ?? 0),
       y = moving ? s.dy : (s.intentY ?? 0),
       ax = Math.abs(x),

@@ -30,15 +30,27 @@ test("session-sprint-recovery", async ({ page }) => {
   await expect
     .poll(async () => (await read(page)).session.sim)
     .toBeGreaterThan(200);
-  await expect(page.locator(".help")).toContainText("空格 奔跑");
+  await page.keyboard.press("Escape");
+  await page.locator("#pause-help").click();
+  await expect(page.locator(".controls-guide")).toContainText("按住空格并移动");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("Escape");
   await page.keyboard.down("Shift");
-  const oldKey = await hold(page, "a", 180);
+  await page.keyboard.down("a");
+  await expect
+    .poll(async () => (await read(page)).animation.hero.speed)
+    .toBeCloseTo(150, 0);
+  const oldKey = await read(page);
   expect(oldKey.animation.hero.action).toBe("walk");
-  expect(oldKey.animation.hero.speed).toBeCloseTo(150, 0);
+  await page.keyboard.up("a");
   await page.keyboard.up("Shift");
+  await expect
+    .poll(async () => (await read(page)).animation.hero.action)
+    .toBe("idle");
   const stationary = await hold(page, "Space", 180);
   expect(stationary.animation.hero.action).toBe("idle");
   expect(stationary.session.combat.dashCooldownRemaining).toBe(0);
+  const sprintStart = (await read(page)).session.sim;
   const transitions: any[] = [];
   let last = "run",
     lastChange = 0;
@@ -91,7 +103,10 @@ test("session-sprint-recovery", async ({ page }) => {
   }
   await page.keyboard.up("Space");
   expect(transitions.length).toBeGreaterThan(4);
-  expect(transitions.length).toBeLessThan(18);
+  // 同机运行软件GPU时墙钟与模拟时长不同，以实际模拟时间约束切换数量。
+  expect(transitions.length).toBeLessThanOrEqual(
+    Math.ceil(((await read(page)).session.sim - sprintStart) / 800) + 1,
+  );
   await page.keyboard.press("Escape");
   await expect(page.getByText("世界与时间已暂停。")).toBeVisible();
   const paused = await read(page);
@@ -127,8 +142,9 @@ test("session-title-continue-new-refresh", async ({ page }) => {
   await expect
     .poll(async () => (await read(page)).state.collected["herb-v1"])
     .toBeDefined();
-  await page.waitForTimeout(400);
-  expect((await read(page)).animation.hero.action).toBe("idle");
+  await expect
+    .poll(async () => (await read(page)).animation.hero.action)
+    .toBe("idle");
   await title(page);
   await page.getByRole("button", { name: "启程 · 新游戏" }).click();
   await page.getByRole("button", { name: "确认新游戏" }).click();

@@ -1,4 +1,4 @@
-import { STRIKES, type Attack, type Target } from "./combat";
+import { attackConfig, type Attack, type Target } from "./combat";
 export const TRAINING = {
   id: "training-dummy",
   x: 850,
@@ -58,7 +58,7 @@ export class TrainingDummy implements Target {
     this.instances.add(a.id);
     this.stages.add(a.stage);
     this.lastStage = a.stage;
-    this.lastDamage = STRIKES[a.stage - 1].damage;
+    this.lastDamage = attackConfig(a).damage;
     this.damage += this.lastDamage;
     this.lastHit = now;
     this.facing = a.facing;

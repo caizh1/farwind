@@ -10,6 +10,7 @@ import {
   canDecorate,
   shoreFlowers,
   inReworkArea,
+  inVillageDecorArea,
   showLayoutLabels,
 } from "../../data/world";
 import type { World } from "../scenes/World";
@@ -20,56 +21,8 @@ export function makeTerrain(this: World) {
   gate.add("west", 0, 0, 0, 310, 1211);
   gate.add("east", 0, 1000, 0, 299, 1211);
   gate.add("beam", 0, 310, 0, 690, 420);
-  const fountain = this.textures.createCanvas("fountain", 150, 150)!;
-  const fc = fountain.context;
-  const ellipse = (
-    x: number,
-    y: number,
-    rx: number,
-    ry: number,
-    color: string,
-  ) => {
-    fc.beginPath();
-    fc.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
-    fc.fillStyle = color;
-    fc.fill();
-  };
-  ellipse(75, 120, 70, 26, "#4f655950");
-  ellipse(75, 113, 64, 29, "#7b8173");
-  ellipse(75, 105, 64, 29, "#d0c6a0");
-  ellipse(75, 105, 51, 21, "#59999b");
-  ellipse(75, 104, 42, 15, "#85bbad");
-  for (let i = 0; i < 12; i++) {
-    const a = (i * Math.PI) / 6;
-    fc.strokeStyle = "#929784";
-    fc.lineWidth = 2;
-    fc.beginPath();
-    fc.moveTo(75 + Math.cos(a) * 53, 105 + Math.sin(a) * 23);
-    fc.lineTo(75 + Math.cos(a) * 64, 105 + Math.sin(a) * 29);
-    fc.stroke();
-  }
-  fc.fillStyle = "#9ca38f";
-  fc.fillRect(65, 57, 20, 51);
-  fc.fillStyle = "#dad1ad";
-  fc.fillRect(66, 57, 7, 49);
-  ellipse(75, 60, 29, 12, "#777f70");
-  ellipse(75, 55, 30, 11, "#d5cda9");
-  ellipse(75, 54, 24, 7, "#79b9b4");
-  fc.strokeStyle = "#d6f0de";
-  fc.lineWidth = 3;
-  fc.beginPath();
-  fc.moveTo(75, 53);
-  fc.quadraticCurveTo(67, 14, 57, 48);
-  fc.moveTo(75, 53);
-  fc.quadraticCurveTo(86, 12, 95, 48);
-  fc.moveTo(75, 55);
-  fc.lineTo(75, 24);
-  fc.stroke();
-  for (const x of [48, 98]) {
-    fc.fillStyle = "#bce1d3";
-    fc.fillRect(x, 60, 3, 37);
-  }
-  fountain.refresh();
+  this.textures.get("fence").add("boundary",0,0,120,274,186);
+  this.textures.get("vertical-fence").add("trim",0,380,67,169,1446);
   const grass = this.textures.get("grass").getSourceImage() as HTMLImageElement,
     forest = this.textures.get("forest").getSourceImage() as HTMLImageElement,
     road = this.textures.get("road").getSourceImage() as HTMLImageElement,
@@ -77,11 +30,16 @@ export function makeTerrain(this: World) {
       .get("packed-earth")
       .getSourceImage() as HTMLImageElement,
     bridge = this.textures.get("bridge").getSourceImage() as HTMLImageElement,
-    herb = this.textures.get("herb").getSourceImage() as HTMLImageElement;
+    herb = this.textures.get("herb").getSourceImage() as HTMLImageElement,
+    rock = this.textures.get("rock").getSourceImage() as HTMLImageElement,
+    pond = this.textures.get("pond-water").getSourceImage() as HTMLImageElement;
+  const groundKeys: string[] = [];
+  this.events.once("shutdown", () => groundKeys.forEach(key => this.textures.remove(key)));
   for (let cy = 0; cy < WORLD.height; cy += 550)
     for (let cx = 0; cx < WORLD.width; cx += 600) {
       const key = `ground-${cx}-${cy}`,
         texture = this.textures.createCanvas(key, 600, 550)!;
+      groundKeys.push(key);
       const c = texture.context;
       c.translate(-cx, -cy);
       const gp = c.createPattern(grass, "repeat")!;
@@ -175,7 +133,7 @@ export function makeTerrain(this: World) {
       c.fillStyle = soil;
       c.fill();
       c.restore();
-      // 保留范围外的果园花床与木工台。
+      // 保留范围外的果园花床；木工台改为按落地点排序的独立物体。
       for (const [x, y, w, h] of [[230, 1480, 210, 80]]) {
         c.fillStyle = "#84613c";
         c.fillRect(x, y, w, h);
@@ -190,29 +148,43 @@ export function makeTerrain(this: World) {
           }
         }
       }
-      c.fillStyle = "#745436";
-      c.fillRect(360, 940, 105, 35);
-      c.fillStyle = "#c19a60";
-      c.fillRect(354, 930, 117, 25);
       for (let i = 0; i < 4; i++) {
         c.fillStyle = "#8b6541";
         c.fillRect(200 + i * 17, 1070, 12, 40);
       }
-      // 池塘盖住穿水的土路，桥面随后绘制，碰撞引用相同参数。
+      // 地面→岸底→整片池水→浅水过渡→荷叶→桥，角色仍按落地点独立排序。
       c.beginPath();
-      c.ellipse(POND.x, POND.y, POND.rx + 12, POND.ry + 12, 0, 0, Math.PI * 2);
+      for (let i = 0; i <= 96; i++) {
+        const a = i / 96 * Math.PI * 2,
+          edge = 10 + Math.sin(a * 7) * 2 + Math.sin(a * 13) * 1.8,
+          x = POND.x + Math.cos(a) * (POND.rx + edge),
+          y = POND.y + Math.sin(a) * (POND.ry + edge);
+        if (i) c.lineTo(x, y); else c.moveTo(x, y);
+      }
+      c.closePath();
       c.fillStyle = "#b2b57e";
       c.fill();
+      c.save();
       c.beginPath();
       c.ellipse(POND.x, POND.y, POND.rx, POND.ry, 0, 0, Math.PI * 2);
-      c.fillStyle = c.createPattern(
-        this.textures.get("water").getSourceImage() as HTMLImageElement,
-        "repeat",
-      )!;
-      c.fill();
-      c.strokeStyle = "#648f73";
-      c.lineWidth = 8;
-      c.stroke();
+      c.clip();
+      // 每个区块都从同一世界矩形采样，既不重复也不重新起算相位。
+      c.drawImage(pond, POND.x - POND.rx, POND.y - POND.ry, POND.rx * 2, POND.ry * 2);
+      for (const [inset, alpha] of [[2, 0.22], [5, 0.12], [8, 0.06]]) {
+        c.beginPath();
+        c.ellipse(POND.x, POND.y, POND.rx - inset, POND.ry - inset, 0, 0, Math.PI * 2);
+        c.strokeStyle = `rgba(176,204,163,${alpha})`;
+        c.lineWidth = 5;
+        c.stroke();
+      }
+      c.restore();
+      // 少量沿岸旧素材打散机械椭圆；只改装饰，不改变池水和桥的逻辑边界。
+      for (const [i, a] of [0.1, 0.5, 0.9, 1.5, 2.1, 2.6, 3.6, 4.2, 4.65, 5.3, 5.85].entries()) {
+        const x = POND.x + Math.cos(a) * (POND.rx + 7),
+          y = POND.y + Math.sin(a) * (POND.ry + 7);
+        if (BRIDGES.some(b => x > b.x - 12 && x < b.x + b.w + 12 && y > b.y - 12 && y < b.y + b.h + 12)) continue;
+        c.drawImage(i % 2 ? herb : rock, x - 8, y - 10, 16, 15);
+      }
       for (let i = 0; i < 18; i++) {
         const a = i * 2.4,
           x = POND.x + Math.cos(a) * (180 + (i % 4) * 9),
@@ -270,7 +242,7 @@ export function makeTerrain(this: World) {
       for (let i = 0; i < 45; i++) {
         const x = cx + ((i * 137) % 600),
           y = cy + ((i * 79) % 550);
-        if (inReworkArea(x, y) && !canDecorate(x, y, 7)) continue;
+        if ((inReworkArea(x, y) || inVillageDecorArea(x, y)) && !canDecorate(x, y, 7)) continue;
         c.beginPath();
         c.ellipse(x, y, 7, 2, 0.4, 0, 7);
         c.fill();

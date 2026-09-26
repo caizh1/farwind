@@ -56,6 +56,43 @@ export const COMBAT = {
     invulnEnd: 140,
   },
 } as const;
+export const PARRY = {
+  precise: 70,
+  active: 180,
+  recovery: 260,
+  cooldown: 400,
+  buffer: 120,
+  speed: 60,
+  halfAngle: (80 * Math.PI) / 180,
+  cost: 12,
+  bonus: 6,
+  regenPause: 300,
+  resume: 60,
+  afterguard: 80,
+  opportunity: 600,
+  normal: { stagger: 420, stop: 55, knock: 6, damage: 24 },
+  perfect: { stagger: 600, stop: 75, knock: 8, damage: 30 },
+  counter: { windup: 55, step: 18 },
+} as const;
+export type CounterKind = "normal" | "perfect";
+export type StrikeConfig = { [K in keyof typeof STRIKES[0]]: number };
+// 一个攻击实例解析一次；动画、剑风、命中和木桩读取同一份配置。
+export function resolveStrike(stage: number, counter?: CounterKind): StrikeConfig {
+  const base = STRIKES[stage - 1];
+  return stage === 1 && counter
+    ? { ...base, ...PARRY.counter, damage: PARRY[counter].damage }
+    : { ...base };
+}
+export const attackConfig = (a: Pick<Attack, "stage" | "counter" | "config">) =>
+  a.config ?? resolveStrike(a.stage, a.counter);
+export const strikeDuration = (m: StrikeConfig) => m.windup + m.active + m.recovery;
+export type ParryAction = {
+  id: number; start: number; facing: Facing; actionUntil: number;
+  successAt?: number; quality?: CounterKind;
+};
+export type ActionKind = "attack" | "parry" | "dash";
+export const actionPriority = { attack: 1, parry: 2, dash: 3 } as const;
+export type ActionRequest = { kind: ActionKind; at: number; sequence: number; axis: {x:number;y:number} };
 export type Target = { id: string; x: number; y: number; hp: number };
 export type Attack = {
   id: number;
@@ -66,6 +103,8 @@ export type Attack = {
   hit: Set<string>;
   sounded?: boolean;
   enter?: boolean;
+  counter?: CounterKind;
+  config?: StrikeConfig;
 };
 export const facingVector = (d: Facing): [number, number] =>
   (
@@ -108,7 +147,7 @@ export function inStrike(
     targetId: string,
   ) => boolean,
 ) {
-  const m = STRIKES[a.stage - 1],
+  const m = attackConfig(a),
     [vx, vy] = facingVector(a.facing);
   const dx = e.x - p.x,
     dy = e.y - p.y,
@@ -125,6 +164,18 @@ export function enemyTint(now: number, flashUntil: number, windup: number) {
   return now < flashUntil ? 0xff8585 : windup > 0 ? 0xffce84 : null;
 }
 export class CombatController {
+  parry: ParryAction | null = null;
+  lastParry: ParryAction | null = null;
+  parrySerial = 0;
+  parryCooldown = 0;
+  lastParryRequestAt: number | null = null;
+  regenUntil = 0;
+  actionLockUntil = 0;
+  parryPending: {at:number;until:number;facing:Facing} | null = null;
+  dashPending: {at:number;until:number;axis:{x:number;y:number};facing:Facing} | null = null;
+  afterguard: {until:number;facing:Facing} | null = null;
+  counter: {until:number;kind:CounterKind} | null = null;
+  lastRejection = "";
   attack: Attack | null = null;
   serial = 0;
   comboSerial = 0;
@@ -132,6 +183,7 @@ export class CombatController {
   requestedAt = 0;
   reservationOwner: number | null = null;
   hitStopRemaining = 0;
+  lastHitStopRequested = 0;
   readyUntil = 0;
   settleUntil = 0;
   carryUntil = 0;
@@ -147,13 +199,160 @@ export class CombatController {
   dashCooldown = 0;
   dashX = 0;
   dashY = 0;
+  clearInputs() {
+    this.pending = false;
+    this.bufferUntil = 0;
+    this.reservationOwner = null;
+    this.parryPending = null;
+    this.dashPending = null;
+  }
+  cancelAttack() {
+    this.attack = null;
+    this.clearInputs();
+    this.nextStage = 1;
+    this.chainUntil = 0;
+    this.readyUntil = 0;
+    this.settleUntil = 0;
+    this.carryUntil = 0;
+    this.epoch++;
+  }
+  hurt() {
+    this.cancelAttack();
+    this.parry = null;
+    this.actionLockUntil=0;
+    this.counter = null;
+    this.afterguard = null;
+    this.dashUntil = 0;
+    this.dashStart = -1;
+    this.dashArmed = false;
+    // 受伤不重置风步冷却、恢复暂停或模拟时钟。
+  }
+  parryLegalAt(now: number) {
+    const a = this.attack;
+    let legal = Math.max(now, this.dashUntil, this.parryCooldown, this.actionLockUntil);
+    if (a) {
+      const m = attackConfig(a), elapsed = now-a.start;
+      if (a.stage === 3) legal = Math.max(legal,a.start+strikeDuration(m)-120);
+      else if (elapsed >= m.windup && elapsed < m.windup+m.active)
+        legal = Math.max(legal,a.start+m.windup+m.active);
+    }
+    return legal;
+  }
+  requestParry(now: number, facing: Facing) {
+    if (this.parryPending && now > this.parryPending.until) this.parryPending = null;
+    if (this.parryPending || (this.parry && this.parry.successAt === undefined && now < this.parry.actionUntil)) return false;
+    this.lastParryRequestAt=now;
+    this.parryPending = {at:now,until:now+PARRY.buffer,facing};
+    this.lastRejection = "";
+    return true;
+  }
+  // 同时输入在共同入口只取最高优先级；拒绝不会转为下一种动作。
+  requestActions(requests: ActionRequest[], now: number, p: {stamina:number}, fallback: Facing) {
+    const top = [...requests].sort((a,b)=>actionPriority[b.kind]-actionPriority[a.kind] || a.sequence-b.sequence)[0];
+    if (!top) return;
+    const {axis} = top, facing: Facing = Math.hypot(axis.x,axis.y)
+      ? Math.abs(axis.x)>Math.abs(axis.y) ? axis.x<0?2:3 : axis.y<0?1:0
+      : this.effectiveFacing(now,fallback);
+    if (top.kind === "parry") this.requestParry(now,facing);
+    else if (top.kind === "attack") this.requestAttack(now);
+    else {
+      if (this.dashPending && now <= this.dashPending.until) return;
+      this.parryPending = null;
+      this.pending = false;
+      this.dashPending = {at:now,until:now+COMBAT.buffer,axis:{...axis},facing};
+    }
+  }
+  flushActions(now: number, p: {stamina:number}) {
+    const started: ActionKind[] = [];
+    if (this.counter && now >= this.counter.until) this.counter = null;
+    if (this.afterguard && now >= this.afterguard.until) this.afterguard = null;
+    if (this.parry && now >= this.parry.actionUntil) this.parry = null;
+    const dash = this.dashPending;
+    if (dash) {
+      if (now > dash.until) this.dashPending = null;
+      else if (this.requestDash(now,p.stamina,dash.axis,dash.facing)) {
+        p.stamina -= COMBAT.dash.cost;
+        this.dashPending = null;
+        started.push("dash");
+      } else if (!(this.parry && now < this.parry.actionUntil) && this.hitStopRemaining <= 0) {
+        this.lastRejection = p.stamina < COMBAT.dash.cost ? "体力不足" : "风步尚不可用";
+        this.dashPending = null;
+      }
+    }
+    const request = this.parryPending;
+    if (request && !this.dashPending) {
+      if (now > request.until) this.parryPending = null;
+      else if (now >= this.parryLegalAt(now) && p.stamina >= PARRY.cost) {
+        this.cancelAttack();
+        this.parry = {id:++this.parrySerial,start:now,facing:request.facing,actionUntil:now+PARRY.recovery};
+        this.actionLockUntil=now+PARRY.recovery;
+        this.lastParry = this.parry;
+        this.parryCooldown = now+PARRY.cooldown;
+        this.regenUntil = now+PARRY.regenPause;
+        this.afterguard = null;
+        this.lastFacing = request.facing;
+        p.stamina -= PARRY.cost;
+        started.push("parry");
+      } else this.lastRejection = p.stamina < PARRY.cost ? "体力不足" : "动作不可取消";
+    }
+    return started;
+  }
+  parryQuality(now: number): CounterKind | null {
+    const a = this.parry;
+    if (!a || a.successAt !== undefined || now < a.start || now >= a.start+PARRY.active) return null;
+    return now < a.start+PARRY.precise ? "perfect" : "normal";
+  }
+  succeedParry(now: number, kind: CounterKind, p: {stamina:number}) {
+    const a = this.parry;
+    if (!a || a.successAt !== undefined) return false;
+    a.successAt = now;
+    a.quality = kind;
+    a.actionUntil = now+PARRY.resume;
+    this.actionLockUntil=a.actionUntil;
+    this.parryCooldown = a.actionUntil;
+    this.afterguard = {until:now+PARRY.afterguard,facing:a.facing};
+    this.counter = {until:now+PARRY.opportunity,kind};
+    p.stamina = Math.min(100,p.stamina+PARRY.cost+(kind==="perfect"?PARRY.bonus:0));
+    this.hitStopRemaining = Math.max(this.hitStopRemaining,PARRY[kind].stop);
+    this.lastHitStopRequested=PARRY[kind].stop;
+    this.readyUntil = a.actionUntil+COMBAT.ready;
+    this.settleUntil = this.readyUntil+COMBAT.settle;
+    this.lastStage = 1;
+    this.lastFacing = a.facing;
+    return true;
+  }
+  nextBoundary(now: number) {
+    const boundaries: number[] = [];
+    const a = this.attack;
+    if(a) {
+      const m=attackConfig(a),end=a.start+strikeDuration(m);
+      boundaries.push(a.start+m.windup,a.start+m.windup+m.active,end,end-(a.stage<3?COMBAT.chainWindow:0),end-120);
+    }
+    if(this.parryPending) boundaries.push(this.parryLegalAt(now),this.parryPending.until);
+    if(this.pending) boundaries.push(this.requestedAt,this.bufferUntil);
+    if(this.dashPending) boundaries.push(this.parry?.actionUntil??0,this.dashPending.until);
+    if(this.parry)boundaries.push(this.parry.actionUntil,this.parry.start+PARRY.precise,this.parry.start+PARRY.active);
+    boundaries.push(this.dashUntil,this.dashStart+COMBAT.dash.invulnStart,this.dashStart+COMBAT.dash.invulnEnd,this.regenUntil);
+    return Math.min(...boundaries.filter(t=>t>now+1e-7));
+  }
   reset(cooldown = 0) {
+    this.parry = null;
+    this.lastParry = null;
+    this.parryCooldown = 0;
+    this.lastParryRequestAt=null;
+    this.regenUntil = 0;
+    this.actionLockUntil=0;
+    this.parryPending = null;
+    this.dashPending = null;
+    this.afterguard = null;
+    this.counter = null;
     this.attack = null;
     this.pending = false;
     this.bufferUntil = 0;
     this.requestedAt = 0;
     this.reservationOwner = null;
     this.hitStopRemaining = 0;
+    this.lastHitStopRequested = 0;
     this.readyUntil = 0;
     this.settleUntil = 0;
     this.carryUntil = 0;
@@ -178,13 +377,16 @@ export class CombatController {
     const a = this.attack;
     this.reservationOwner = a?.id ?? null;
     this.bufferUntil =
-      a && a.stage < 3
+      this.parry && now < this.parry.actionUntil
+        ? Math.max(now, this.parry.actionUntil) + COMBAT.buffer
+        : a && a.stage < 3
         ? Math.max(now, a.start + this.total(a.stage) - COMBAT.chainWindow) +
           COMBAT.buffer
         : now + COMBAT.buffer;
   }
   // 表现停顿冻结整个世界模拟；使用未冻结的帧delta扣减，不累计多目标时长。
   stopOnHit(stage: number) {
+    this.lastHitStopRequested=COMBAT.hitStop[stage-1];
     this.hitStopRemaining = Math.max(
       this.hitStopRemaining,
       COMBAT.hitStop[stage - 1],
@@ -207,6 +409,7 @@ export class CombatController {
       now < this.dashCooldown ||
       now < this.dashUntil ||
       stamina < COMBAT.dash.cost
+      || now < this.actionLockUntil
     )
       return false;
     if (
@@ -216,6 +419,9 @@ export class CombatController {
     )
       return false;
     this.dashArmed = !!a || now < this.settleUntil || now < this.carryUntil;
+    this.afterguard = null;
+    this.parry = null;
+    this.parryPending = null;
     this.attack = null;
     this.pending = false;
     this.nextStage = 1;
@@ -248,6 +454,7 @@ export class CombatController {
   }
   effectiveFacing(now: number, fallback: Facing): Facing {
     return (
+      (this.parry && now < this.parry.actionUntil ? this.parry.facing : undefined) ??
       this.attack?.facing ??
       (now < this.settleUntil ? this.lastFacing : fallback)
     );
@@ -258,14 +465,13 @@ export class CombatController {
     this.settleUntil = 0;
   }
   total(stage: number) {
-    const m = STRIKES[stage - 1];
-    return m.windup + m.active + m.recovery;
+    return strikeDuration(this.attack?.stage === stage ? attackConfig(this.attack) : resolveStrike(stage));
   }
   phase(now: number) {
     const a = this.attack;
     if (!a) return "idle";
     const t = now - a.start,
-      m = STRIKES[a.stage - 1];
+      m = attackConfig(a);
     return t < m.windup
       ? "windup"
       : t < m.windup + m.active
@@ -307,13 +513,13 @@ export class CombatController {
       const a = this.attack;
       const end = a ? a.start + this.total(a.stage) : Infinity;
       const legal = a ? end - (a.stage < 3 ? COMBAT.chainWindow : 0) : cursor;
-      const startAt = this.pending
-        ? Math.max(cursor, this.requestedAt, legal)
+      const startAt = this.pending && !this.parryPending && !this.dashPending
+        ? Math.max(cursor, this.requestedAt, legal, this.actionLockUntil, this.dashUntil)
         : Infinity;
       const consumeAt = startAt <= this.bufferUntil ? startAt : Infinity;
       const stop = Math.min(now, end, consumeAt);
       if (a) {
-        const m = STRIKES[a.stage - 1];
+        const m = attackConfig(a);
         const from = a.start + m.windup,
           until = from + m.active;
         const overlap = Math.max(
@@ -358,7 +564,8 @@ export class CombatController {
         }
       }
       if (consumeAt <= now && consumeAt <= end) {
-        const stage = a
+        const counter = this.counter && consumeAt < this.counter.until ? this.counter.kind : undefined;
+        const stage = counter ? 1 : a
           ? a.stage < 3
             ? a.stage + 1
             : 1
@@ -374,7 +581,12 @@ export class CombatController {
           start: consumeAt,
           enter: !a && consumeAt >= this.settleUntil,
           hit: new Set(),
+          counter,
+          config: resolveStrike(stage, counter),
         };
+        this.counter = null;
+        this.afterguard = null;
+        this.parry = null;
         this.lastFacing = facing;
         this.lastStage = stage;
         this.readyUntil = 0;
@@ -404,13 +616,24 @@ export class CombatController {
     if (this.dashUntil <= now) this.dashStart = -1;
   }
   diagnostic(now: number) {
-    const m = this.attack ? STRIKES[this.attack.stage - 1] : null;
+    const m = this.attack ? attackConfig(this.attack) : null;
     return {
+      parry: this.parry ? {...this.parry, elapsed:now-this.parry.start, remaining:Math.max(0,this.parry.actionUntil-now)} : null,
+      parrySerial: this.parrySerial,
+      parryBuffered: this.parryPending,
+      parryCooldownRemaining: Math.max(0,this.parryCooldown-now),
+      regenPaused: now < this.regenUntil,
+      afterguard: this.afterguard && now < this.afterguard.until ? this.afterguard : null,
+      counter: this.counter && now < this.counter.until ? this.counter : null,
+      attackConfig: m,
+      counterAttack: this.attack?.counter ?? null,
+      lastRejection: this.lastRejection,
       phase: this.phase(now),
       effectiveFacing: this.effectiveFacing(now, this.lastFacing),
       ready: !this.attack && now >= this.dashUntil && now < this.readyUntil,
       reservationOwner: this.pending ? this.reservationOwner : null,
       hitStopRemaining: this.hitStopRemaining,
+      lastHitStopRequested: this.lastHitStopRequested,
       bufferArrivedAt: this.pending ? this.requestedAt : null,
       bufferExpiresAt: this.pending ? this.bufferUntil : null,
       stage: this.attack?.stage ?? 0,

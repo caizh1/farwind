@@ -1,5 +1,5 @@
 import { weaponSample } from "../../data/animation";
-import { COMBAT, STRIKES, type Attack } from "./combat";
+import { COMBAT, attackConfig, type Attack } from "./combat";
 type Point = { x: number; y: number };
 type Sample = {
   id: number;
@@ -30,7 +30,7 @@ export class WeaponTrail {
     this.epoch = epoch;
     this.samples = this.samples.filter((s) => now - s.at < COMBAT.trailLife);
     if (attack) {
-      const m = STRIKES[attack.stage - 1],
+      const m = attackConfig(attack),
         from = attack.start + m.windup,
         until = from + m.active;
       const fresh = this.id !== attack.id;
@@ -53,6 +53,7 @@ export class WeaponTrail {
             attack.stage,
             attack.facing,
             at - attack.start,
+            m,
           );
           const t =
             this.previous >= 0 && now > this.previous && !fresh

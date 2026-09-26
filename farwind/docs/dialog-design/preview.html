@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>提示框固定样本检查</title>
+    <style>
+      #samples {
+        position: fixed;
+        inset: 12px 12px auto;
+        z-index: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      #samples button {
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="samples" aria-label="组件检查样本">
+      <button data-sample="sign">路牌</button>
+      <button data-sample="healer">长对话</button>
+      <button data-sample="rune">碑文</button>
+      <button id="hide">隐藏检查栏</button>
+    </nav>
+    <div id="ui"></div>
+    <script type="module">
+      import "../../src/style.css";
+      import { Interface } from "../../src/game/ui/interface.ts";
+      import { initialState } from "../../src/game/systems/state.ts";
+      // 独立组件固定样本，不连接游戏实例、不写入存档、不作为通关证据。
+      const ui = new Interface();
+      ui.actions = {
+        pause() {},
+        start() {},
+        async save() {},
+        async import() {},
+        use() {},
+        volume() {},
+        getVolume() {
+          return 0;
+        },
+        title() {},
+      };
+      ui.state = initialState();
+      const samples = {
+        sign: [
+          "东村口路牌",
+          "向东：翡翠森林与风之遗迹。向西：风铃广场。\n北面练习场可练三连击与风步，南面环湖小径经过果园回到广场。",
+          "sign",
+        ],
+        healer: [
+          "药师 · 小满",
+          "带来药草 ×2 和浆果 ×1，我可以替你调制一瓶恢复药剂。药草就在小院，浆果去南侧果园采；也可按 Tab 自行制作。采集点三个游戏小时后再生，兑换前请留出行囊空间。",
+          "healer",
+        ],
+        rune: [
+          "被风磨亮的碑文",
+          "晨风自西方醒来，林风在北方低吟，暮风向东方归去。循此顺序，三风相和。修复需要风之结晶、木材 ×2、石材 ×2。",
+          "rune",
+        ],
+      };
+      document
+        .querySelectorAll("[data-sample]")
+        .forEach((button) =>
+          button.addEventListener("click", () =>
+            ui.dialog(...samples[button.dataset.sample]),
+          ),
+        );
+      document.querySelector("#hide").addEventListener("click", () => {
+        document.querySelector("#samples").hidden = true;
+        document.querySelector("#samples").style.display = "none";
+      });
+      window.addEventListener("keydown", (event) => {
+        if (ui.mode === "dialog" && ["e", "Escape"].includes(event.key))
+          ui.close();
+      });
+      ui.dialog(...samples.sign);
+      // 运行真实组件的布局检查，窄屏出现横向裁切时直接报错。
+      function checkLayout() {
+        requestAnimationFrame(() => {
+          const panel = document.querySelector(".dialog-panel");
+          if (!panel || ui.mode !== "dialog") return;
+          const button = panel.querySelector("button").getBoundingClientRect();
+          if (panel.scrollWidth > panel.clientWidth + 1 || button.right > innerWidth || button.left < 0)
+            throw new Error("提示框布局检查失败：内容或继续按钮横向溢出。");
+          panel.dataset.layoutCheck = "通过";
+        });
+      }
+      window.addEventListener("resize", checkLayout);
+      document.querySelector("#samples").addEventListener("click", checkLayout);
+      checkLayout();
+    </script>
+  </body>
+</html>

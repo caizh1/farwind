@@ -1,5 +1,5 @@
 import type { Facing, MotionAction } from "../game/systems/locomotion";
-import { COMBAT, STRIKES } from "../game/systems/combat";
+import { COMBAT, PARRY, resolveStrike, type StrikeConfig, type ParryAction } from "../game/systems/combat";
 export const COMBAT_ACTION_ART = {
   frameSize: 160,
   displaySize: 145,
@@ -12,17 +12,36 @@ export type CombatVisual = {
   clip: string;
   frameIndex: number;
   facing: Facing;
-  phase: "windup" | "active" | "recovery" | "ready" | "settle" | "dash";
+  phase: "windup" | "active" | "recovery" | "ready" | "settle" | "dash" | "guard" | "brace" | "deflect";
   phaseProgress: number;
   provisional: boolean;
 };
+// 独立防御图集，固定根[80,154]；左向镜像仍只由 Actor 设置。
+const parryPoints=[
+  [[160,217,80,123],[543,239,484,164],[1000,222,1090,157],[1325,256,1325,318]],
+  [[253,518,321,430],[637,541,692,462],[1001,516,1086,447],[1387,540,1455,447]],
+  [[263,839,330,731],[653,865,697,778],[1007,844,1115,792],[1390,867,1470,779]],
+] as const;
+const parryRoots=[[[194,334],[578,334],[960,334],[1344,334]],[[194,660],[578,660],[960,660],[1344,660]],[[194,972],[578,972],[960,972],[1344,972]]] as const;
+export function parryWeapon(facing:Facing,pose:number) {
+  const view=facing===0?0:facing===1?1:2,p=parryPoints[view][pose],r=parryRoots[view][pose];
+  const point=(i:number)=>({x:(p[i]-r[0])*(145/460)*(facing===2?-1:1),y:(p[i+1]-r[1])*(145/460)});
+  return {grip:point(0),tip:point(2),visible:false,progress:0,alpha:0,provisional:true};
+}
+export function parryVisual(a:ParryAction,now:number,ready=false):CombatVisual {
+  const elapsed=now-a.start,success=a.successAt!==undefined?now-a.successAt:null;
+  const pose=ready?3:success!==null?success<25?1:success<PARRY.resume?2:3:elapsed<PARRY.active?0:3;
+  const view=a.facing===0?0:a.facing===1?1:2;
+  return {texture:"hero-parry",frame:view*4+pose,clip:`hero/parry/${a.facing}`,frameIndex:pose,facing:a.facing,
+    phase:pose===0?"guard":pose===1?"brace":pose===2?"deflect":"ready",phaseProgress:success!==null?Math.min(1,success/PARRY.resume):Math.min(1,elapsed/PARRY.recovery),provisional:true,weapon:parryWeapon(a.facing,pose)};
+}
 export function combatVisual(
   stage: number,
   facing: Facing,
   elapsed: number,
   enter = false,
+  move: StrikeConfig = resolveStrike(stage),
 ): CombatVisual {
-  const move = STRIKES[stage - 1];
   const activeEnd = move.windup + move.active;
   const total = activeEnd + move.recovery;
   const t = Math.max(0, Math.min(elapsed, total));
@@ -38,7 +57,7 @@ export function combatVisual(
         : move.recovery;
   const phaseProgress = Math.min(1, (t - phaseStart) / phaseDuration);
   const view = facing === 0 ? 0 : facing === 1 ? 1 : 2;
-  const boundaries = combatPoseTimes(stage, facing);
+  const boundaries = combatPoseTimes(stage, facing,move);
   let frameIndex = 0;
   for (let i = 1; i < boundaries.length; i++)
     if (t >= boundaries[i]) frameIndex = i;
@@ -231,8 +250,8 @@ const backWeapons = [
 ];
 // 第二刀保持低位蓄势；90–175ms穿过前方，210ms后才带到侧上方。
 // 控制器时长和伤害不变，选帧与武器插值共同读取这些姿态时刻。
-export function combatPoseTimes(stage: number, facing: Facing) {
-  const m = STRIKES[stage - 1],
+export function combatPoseTimes(stage: number, facing: Facing,m:StrikeConfig=resolveStrike(stage)) {
+  const
     end = m.windup + m.active;
   if (facing >= 2 && stage === 2)
     return [
@@ -261,8 +280,8 @@ export function combatPoseTimes(stage: number, facing: Facing) {
     end + m.recovery * 0.5,
   ];
 }
-function poseWeapon(stage: number, facing: Facing, elapsed: number) {
-  const times = combatPoseTimes(stage, facing);
+function poseWeapon(stage: number, facing: Facing, elapsed: number,m:StrikeConfig) {
+  const times = combatPoseTimes(stage, facing,m);
   let i = 0;
   while (i < 4 && elapsed >= times[i + 1]) i++;
   const t = Math.max(
@@ -332,8 +351,8 @@ const activeWeaponPoints = [
     ],
   ],
 ] as const;
-export function weaponSample(stage: number, facing: Facing, elapsed: number) {
-  const sample = combatVisual(stage, facing, elapsed);
+export function weaponSample(stage: number, facing: Facing, elapsed: number,m:StrikeConfig=resolveStrike(stage)) {
+  const sample = combatVisual(stage, facing, elapsed,false,m);
   const view = facing === 0 ? 0 : facing === 1 ? 1 : 2;
   const index = sample.frameIndex < 3 ? 0 : 1;
   const [gx, gy, tx, ty] = activeWeaponPoints[view][stage - 1][index];
@@ -344,7 +363,7 @@ export function weaponSample(stage: number, facing: Facing, elapsed: number) {
   });
   return {
     ...(facing >= 1
-      ? poseWeapon(stage, facing, elapsed)
+      ? poseWeapon(stage, facing, elapsed,m)
       : { grip: point(gx, gy), tip: point(tx, ty) }),
     visible: sample.phase === "active",
     progress: sample.phaseProgress,

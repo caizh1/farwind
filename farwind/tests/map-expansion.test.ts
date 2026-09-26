@@ -108,6 +108,6 @@ describe("地图扩展的通行与兼容性", () => {
     const village = initialState();
     delete village.map_version;
     expect(validate(village).player).toEqual(village.player);
-    expect(() => validate({ ...old, map_version: 3 })).toThrow();
+    expect(() => validate({ ...old, map_version: 4 })).toThrow();
   });
 });

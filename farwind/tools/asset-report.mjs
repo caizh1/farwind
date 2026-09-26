@@ -1,6 +1,8 @@
 import sharp from "sharp";
 import fs from "node:fs/promises";
 const root = "public/assets/";
+const previous = JSON.parse(await fs.readFile(root + "manifest.json", "utf8"));
+const retained = (previous.资源 ?? []).filter(r => r.文件?.includes("/"));
 const records = [];
 let pixels = 0;
 for (const file of (await fs.readdir(root)).filter(
@@ -52,16 +54,22 @@ for (const file of (await fs.readdir(root)).filter(
     是否临时: false,
   });
 }
+for (const record of retained) {
+  const m = await sharp(root + record.文件).metadata();
+  pixels += m.width * m.height;
+}
 const report = {
+  ...previous,
   说明: "原始生成图带 -source 后缀，不由运行场景加载。商业权利与最终美术质量分别待复核。运行生成的地表区块、水面及特效见代码。",
-  资源: records,
+  // 子目录的正式素材由各专项处理脚本登记，不让根目录扫描覆盖它们。
+  资源: [...records, ...retained],
   运行解码纹理估算: {
     素材RGBA字节: pixels * 4,
-    地表区块RGBA字节: 3600 * 2200 * 4,
+    地表区块RGBA字节: 4200 * 2200 * 4,
     说明: "保守估算包括物品图标；不含 WebGL 驱动副本、帧缓冲及浏览器缓存。地表按 600×550 区块绘制，不是一张大陆大纹理。",
   },
 };
 await fs.writeFile(root + "manifest.json", JSON.stringify(report, null, 2));
 console.log(
-  `登记 ${records.length} 项素材，静态素材解码约 ${((pixels * 4) / 1024 ** 2).toFixed(1)} MiB`,
+  `登记 ${records.length + retained.length} 项素材，静态素材解码约 ${((pixels * 4) / 1024 ** 2).toFixed(1)} MiB`,
 );

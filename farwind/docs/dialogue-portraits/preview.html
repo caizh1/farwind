@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>对话立绘 · 固定预览</title>
+    <style>
+      body.portrait-preview { background: #254c40 url("./evidence/preview-world.png") center / cover no-repeat; }
+      .preview-controls { position: relative; z-index: 2; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px; background: #173c32; color: #f7edcf; }
+      .preview-controls select, .preview-controls button { padding: 8px; }
+      .preview-controls small { flex: 1 1 200px; }
+    </style>
+  </head>
+  <body class="portrait-preview">
+    <header class="preview-controls">
+      <label>预览对象 <select id="sample"><option value="healer">药师 · 小满</option><option value="elder">守风人 · 岚爷爷</option><option value="carpenter">木匠 · 阿禾</option><option value="sign">路牌文字</option><option value="rune">碑文文字</option><option value="unknown">未知说话者</option><option value="__proto__">异常标识</option></select></label>
+      <label><input id="long-text" type="checkbox">长台词</label>
+      <button id="show-sample">显示对话</button>
+      <small>固定预览使用正式界面组件；不推进游戏或任务。素材仍待用户美术验收。</small>
+    </header>
+    <div id="ui"></div>
+    <script type="module">
+      import "/src/style.css";
+      import { Interface } from "/src/game/ui/interface.ts";
+      const ui = new Interface();
+      ui.actions = { pause() {} };
+      const samples = {
+        healer: ["药师 · 小满", "带来药草 ×2 和浆果 ×1，我可以替你调制一瓶恢复药剂。药草就在小院，浆果去南侧果园采；也可按 Tab 自行制作。采集点三个游戏小时后再生，兑换前请留出行囊空间。"],
+        elder: ["守风人 · 岚爷爷", "东边的森林昨夜传来奇怪的风声。替我去看看吧。先找些药草和浆果，路上记得照顾好自己。"],
+        carpenter: ["木匠 · 阿禾", "栅栏要修一修。能替我带来四份木材吗？森林路边的枯枝就很好。"],
+        sign: ["东村口路牌", "向东：翡翠森林与风之遗迹。向西：风铃广场。\n北面练习场可练三连击与风步，南面环湖小径经过果园回到广场。"],
+        rune: ["被风磨亮的碑文", "晨风自西方醒来，林风在北方低吟，暮风向东方归去。循此顺序，三风相和。"],
+        unknown: ["未记录的旅人", "未知说话者保留姓名和台词，人物区域不显示其他居民的脸。"],
+      };
+      function show() {
+        const source = document.querySelector("#sample").value;
+        const [name, text] = source === "__proto__" ? ["异常说话者", "异常标识也应保持文本对话。"] : samples[source];
+        ui.dialog(name, document.querySelector("#long-text").checked ? Array(16).fill(text).join("\n") + "\n台词末尾：愿风带你平安归来。" : text, source);
+      }
+      document.querySelector("#show-sample").addEventListener("click", show);
+      document.querySelector("#sample").addEventListener("change", show);
+      document.querySelector("#long-text").addEventListener("change", show);
+      show();
+    </script>
+  </body>
+</html>
