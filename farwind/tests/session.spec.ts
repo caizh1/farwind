@@ -1,3 +1,4 @@
+import { move } from "./map-navigation";
 import { test, expect, type Page } from "@playwright/test";
 const read = (p: Page) => p.evaluate(() => (window as any).__farwind());
 async function hold(p: Page, key: string, ms: number) {
@@ -119,22 +120,8 @@ test("session-title-continue-new-refresh", async ({ page }) => {
   expect((await read(page)).session.attackUntil).toBe(0);
   expect((await read(page)).state.bag).toEqual(saved.bag);
   await moving(page);
-  // 真实移动到广场药草，不设置任何游戏状态。
-  for (const [axis, target] of [
-    ["x", 790],
-    ["y", 790],
-  ] as const) {
-    for (let i = 0; i < 30; i++) {
-      const p = (await read(page)).state.player,
-        d = target - p[axis];
-      if (Math.abs(d) < 5) break;
-      await hold(
-        page,
-        axis === "x" ? (d > 0 ? "d" : "a") : d > 0 ? "s" : "w",
-        Math.min(200, (Math.abs(d) / 150) * 1000),
-      );
-    }
-  }
+  // 当前地图的药草位于药师小院，通过正常通行路线到达，不设置游戏状态。
+  await move(page, 1180, 560);
   await expect.poll(async () => (await read(page)).target).toBe("herb-v1");
   await page.keyboard.press("e");
   await expect

@@ -1,5 +1,17 @@
-import { solidPropAt, terrainBlocked, WORLD } from "../../data/world";
-import { clearPath } from "../systems/combat";
+import { WORLD, propBounds, FOOT } from "../../data/world";
+import {
+  motionBlocked,
+  clearMotionLine,
+  clearMeleeLine,
+  meleeBlocker,
+} from "../systems/obstacles";
+import {
+  updateEnemy,
+  validateEnemyPosition,
+  repairEnemyPoint,
+  enemyNavigation,
+  type EnemyBody,
+} from "../systems/enemy";
 import { FIELD_TARGETS, TRAINING, TrainingDummy } from "../systems/training";
 import { TrainingDummyView } from "../entities/trainingDummy";
 import type { Attack } from "../systems/combat";
@@ -39,19 +51,9 @@ import { Sound } from "../systems/audio";
 import { Follower } from "../systems/follower";
 import { Actor } from "../entities/actor";
 import { Interface } from "../ui/interface";
-type Enemy = {
+type Enemy = EnemyBody & {
   kind: "enemy";
-  id: string;
-  x: number;
-  y: number;
-  homeX: number;
-  homeY: number;
-  type: string;
-  hp: number;
-  cool: number;
-  windup: number;
   flashUntil: number;
-  staggerUntil: number;
   sprite: Phaser.GameObjects.Sprite;
   shadow: Phaser.GameObjects.Ellipse;
 };
@@ -89,6 +91,8 @@ export class World extends Phaser.Scene {
   failed: string[] = [];
   lastRegion = "风铃村";
   fps: number[] = [];
+  obstacleDebug?: Phaser.GameObjects.Text;
+  obstacleRoots?: Phaser.GameObjects.Graphics;
   motionDebug?: Phaser.GameObjects.Text;
   motionRoots?: Phaser.GameObjects.Graphics;
   dropImages = new Map<string, Phaser.GameObjects.Text>();
@@ -99,6 +103,8 @@ export class World extends Phaser.Scene {
     super("World");
   }
   preload() {
+    for (const key of ["village-gate", "bridge", "herb-bed", "packed-earth"])
+      this.load.image(key, `/assets/level-rework/${key}-candidate.png`);
     this.load.image("training-base", "/assets/training-base.png");
     this.load.image("training-body", "/assets/training-body.png");
     this.ui.shell("风正在捎来故事", "<p>正在装载风铃村素材……</p>");
@@ -176,10 +182,10 @@ export class World extends Phaser.Scene {
     this.makeTerrain();
     props.forEach((p) => {
       const im = this.add
-        .image(p.x, p.y, p.art, 0)
+        .image(p.x, p.y, p.art, p.frame ?? 0)
         .setOrigin(0.5, 1)
         .setDisplaySize(p.w, p.h)
-        .setDepth(p.y);
+        .setDepth(p.depth ?? p.y);
       this.propImages.set(p.id, im);
     });
     this.trainingView = new TrainingDummyView(this, this.training);
@@ -239,6 +245,14 @@ export class World extends Phaser.Scene {
           attackSerial: this.attackSerial,
           ...(import.meta.env.DEV
             ? {
+                layoutLabels: this.data.get("layoutLabelCount") ?? 0,
+                obstacles: props
+                  .filter((p) => p.solid)
+                  .map((p) => ({
+                    id: p.id,
+                    raw: propBounds(p),
+                    motion: propBounds(p, true),
+                  })),
                 training: this.training.snapshot(this.sim),
                 fieldTraining: this.fieldTargets.map((t) =>
                   t.snapshot(this.sim),
@@ -290,6 +304,22 @@ export class World extends Phaser.Scene {
                   flashRemaining: Math.max(0, e.flashUntil - this.sim),
                   windup: e.windup,
                   staggerRemaining: Math.max(0, e.staggerUntil - this.sim),
+                  home: { x: e.homeX, y: e.homeY },
+                  footprint: {
+                    left: e.x - FOOT.halfWidth,
+                    right: e.x + FOOT.halfWidth,
+                    top: e.y - FOOT.halfHeight,
+                    bottom: e.y + FOOT.halfHeight,
+                  },
+                  ai: e.ai,
+                  attackRejected: e.rejection ?? null,
+                  meleeBlocker: meleeBlocker(this.state.player, e) ?? null,
+                  waypoint: e.nav.path[0] ?? null,
+                  path: e.nav.path,
+                  queries: e.nav.queries,
+                  visited: e.nav.visited,
+                  recovered: e.recovered,
+                  disabled: e.disabled,
                 }
               : {}),
           })),
@@ -376,18 +406,16 @@ export class World extends Phaser.Scene {
   }
   makeTerrain = makeTerrain;
   blocked(x: number, y: number, ignore?: string) {
-    return terrainBlocked(x, y) || solidPropAt(x, y, ignore);
+    return motionBlocked(x, y, ignore);
   }
 
+  // 身体通路：黑猫、交互和领取掉落沿用脚底扩张范围。
   clearLine(x: number, y: number, tx: number, ty: number, ignore?: string) {
-    return clearPath(
-      x,
-      y,
-      tx,
-      ty,
-      (x, y, id) => this.blocked(x, y, id),
-      ignore,
-    );
+    return clearMotionLine({ x, y }, { x: tx, y: ty }, ignore);
+  }
+  // 双方近战独立查询原实体，只豁免明确训练目标自身底座。
+  meleeLine(x: number, y: number, tx: number, ty: number, targetId?: string) {
+    return clearMeleeLine({ x, y }, { x: tx, y: ty }, targetId);
   }
 
   refresh() {
@@ -430,12 +458,28 @@ export class World extends Phaser.Scene {
         windup: 0,
         flashUntil: 0,
         staggerUntil: 0,
+        nav: enemyNavigation(),
+        ai: "家园",
+        disabled: false,
+        recovered: false,
         sprite: this.add
           .sprite(d.x, d.y, d.type, 0)
           .setOrigin(0.5, 1)
           .setDisplaySize(75, 75),
         shadow: this.add.ellipse(d.x, d.y, 45, 15, 0x18392d, 0.2),
       }));
+    this.enemies.forEach((e) => {
+      validateEnemyPosition(e);
+      e.sprite.setPosition(e.x, e.y).setVisible(!e.disabled);
+      e.shadow.setPosition(e.x, e.y - 3).setVisible(!e.disabled);
+    });
+    // 已死亡敌人的异常待领取掉落独立修复，不创建或复活敌人。
+    for (const drop of this.state.pendingDrops)
+      if (this.blocked(drop.x, drop.y)) {
+        const definition = enemyDefs.find((d) => d.id === drop.enemyId);
+        const point = repairEnemyPoint(drop, definition ?? drop);
+        if (point) Object.assign(drop, point);
+      }
   }
   syncDrops() {
     for (const [id, image] of this.dropImages)
@@ -462,6 +506,11 @@ export class World extends Phaser.Scene {
             .setOrigin(0.5)
             .setDepth(d.y + 1),
         );
+    for (const d of this.state.pendingDrops)
+      this.dropImages
+        .get(d.enemyId)
+        ?.setPosition(d.x, d.y - 32)
+        .setDepth(d.y + 1);
   }
   claimDrop() {
     const p = this.state.player;
@@ -623,9 +672,15 @@ export class World extends Phaser.Scene {
       onComplete: () => spark.destroy(),
     });
     const [vx, vy] = facingVector(this.combat.attack!.facing);
-    sweepMove(e, vx * move.knock, vy * move.knock, (x, y) =>
-      this.blocked(x, y),
+    sweepMove(
+      e,
+      vx * move.knock,
+      vy * move.knock,
+      (x, y) => this.blocked(x, y),
+      clearMotionLine,
     );
+    e.nav.path = [];
+    e.nav.failed = false;
     if (stage === 3 && e.windup > 0) {
       e.windup = 0;
       e.cool = this.sim + 420;
@@ -651,6 +706,50 @@ export class World extends Phaser.Scene {
       this.ui.message("背包已满：掉落留在敌人原位置，整理行囊后按 E 领取。");
     }
     void this.persist().catch(() => {});
+  }
+  drawObstacleDebug() {
+    if (
+      !import.meta.env.DEV ||
+      !new URLSearchParams(location.search).has("obstacleDebug")
+    )
+      return;
+    this.obstacleRoots ??= this.add.graphics().setDepth(99998);
+    const ink = this.obstacleRoots.clear();
+    for (const p of props.filter((p) => p.solid)) {
+      for (const motion of [false, true]) {
+        const r = propBounds(p, motion);
+        ink
+          .lineStyle(1, motion ? 0xffc864 : 0xff6578, 0.8)
+          .strokeRect(r.left, r.top, r.right - r.left, r.bottom - r.top);
+      }
+    }
+    for (const e of this.enemies.filter((e) => e.hp > 0)) {
+      ink.lineStyle(1, 0x70e8d5).strokeRect(e.x - 12, e.y - 10, 24, 20);
+      let previous = e;
+      for (const point of e.nav.path) {
+        ink.lineBetween(previous.x, previous.y, point.x, point.y);
+        previous = { ...e, ...point };
+      }
+    }
+    this.obstacleDebug ??= this.add
+      .text(18, 150, "", {
+        fontSize: "12px",
+        color: "#ffffff",
+        backgroundColor: "#263c36",
+        padding: { x: 6, y: 4 },
+      })
+      .setScrollFactor(0)
+      .setDepth(99999);
+    this.obstacleDebug.setText(
+      "红：实体；黄：脚底扩张；青：脚底及路径（只读）\n" +
+        this.enemies
+          .filter((e) => e.hp > 0)
+          .map(
+            (e) =>
+              `${e.id} (${e.x.toFixed(1)},${e.y.toFixed(1)}) ${e.ai} 拒绝:${e.rejection ?? "无"} 目标:${e.nav.path[0] ? `${e.nav.path[0].x.toFixed(0)},${e.nav.path[0].y.toFixed(0)}` : "无"}`,
+          )
+          .join("\n"),
+    );
   }
   update(_time: number, delta: number) {
     if (!this.hero) return;
@@ -717,13 +816,14 @@ export class World extends Phaser.Scene {
       p,
       this.combatTargets(),
       (x, y) => this.blocked(x, y),
-      (x, y, tx, ty, targetId) => this.clearLine(x, y, tx, ty, targetId),
+      (x, y, tx, ty, targetId) => this.meleeLine(x, y, tx, ty, targetId),
       (target, stage, attack) => this.strikeTarget(target, stage, attack),
       (_, attack) => {
         this.training.sync(this.combat.epoch);
         this.training.begin(attack);
       },
       (stage) => this.soundFx.play(stage === 3 ? "attack-heavy" : "attack"),
+      clearMotionLine,
     );
     if (!this.combat.attack && this.sim >= this.combat.dashUntil && length) {
       this.hero.motion.direction = nextFacing;
@@ -761,7 +861,7 @@ export class World extends Phaser.Scene {
       dy = length ? (a.y / length) * speed * dt : 0;
     const oldX = p.x,
       oldY = p.y;
-    sweepMove(p, dx, dy, (x, y) => this.blocked(x, y));
+    sweepMove(p, dx, dy, (x, y) => this.blocked(x, y), clearMotionLine);
     this.combat.update(
       this.sim,
       this.sim,
@@ -769,13 +869,14 @@ export class World extends Phaser.Scene {
       p,
       this.combatTargets(),
       (x, y) => this.blocked(x, y),
-      (x, y, tx, ty, targetId) => this.clearLine(x, y, tx, ty, targetId),
+      (x, y, tx, ty, targetId) => this.meleeLine(x, y, tx, ty, targetId),
       (target, stage, attack) => this.strikeTarget(target, stage, attack),
       (_, attack) => {
         this.training.sync(this.combat.epoch);
         this.training.begin(attack);
       },
       (stage) => this.soundFx.play(stage === 3 ? "attack-heavy" : "attack"),
+      clearMotionLine,
     );
     if (length && !this.combat.attack && this.sim >= this.combat.dashUntil)
       this.combat.leaveReady(this.sim);
@@ -931,57 +1032,28 @@ export class World extends Phaser.Scene {
         im.setRotation(Math.sin(this.sim / 1100 + o.x) * 0.018);
     }
     for (const e of this.enemies) {
-      if (e.hp <= 0 || Math.hypot(e.x - p.x, e.y - p.y) > 650) continue;
-      const d = Math.hypot(e.x - p.x, e.y - p.y);
-      if (this.sim < e.staggerUntil) {
-        // 短硬直不重置普通攻击前摇。
-      } else if (e.windup > 0) {
-        e.windup -= dt;
-        e.sprite.setFrame(1);
-        if (e.windup <= 0) {
-          e.cool = this.sim + (e.type === "leaf" ? 1400 : 1100);
-          if (
-            p.x > WORLD.forest + 50 &&
-            d < 100 &&
-            this.sim > this.invulnerable &&
-            this.sim > this.respawnInvulnerable &&
-            !this.combat.invulnerable(this.sim) &&
-            this.clearLine(e.x, e.y, p.x, p.y)
-          ) {
-            p.hp -= e.type === "leaf" ? 18 : 10;
-            this.invulnerable = this.sim + 850;
-            this.combat.reset(this.combat.dashCooldown);
-            this.soundFx.play("hit");
-            this.float(p.x, p.y, e.type === "leaf" ? "-18" : "-10");
-          }
-        }
-      } else if (d < 80 && this.sim > e.cool && p.x > WORLD.forest + 50) {
-        e.windup = e.type === "leaf" ? 0.65 : 0.3;
-      } else {
-        const chase =
-          d < 380 &&
-          p.x > WORLD.forest + 50 &&
-          Math.hypot(e.x - e.homeX, e.y - e.homeY) < 420;
-        const tx = chase ? p.x : e.homeX,
-          ty = chase ? p.y : e.homeY,
-          l = Math.hypot(tx - e.x, ty - e.y);
-        if (l > 8) {
-          const step = (e.type === "leaf" ? 95 : 60) * dt,
-            nx = e.x + ((tx - e.x) / l) * step,
-            ny = e.y + ((ty - e.y) / l) * step;
-          if (!this.blocked(nx, ny)) {
-            e.x = nx;
-            e.y = ny;
-          }
-        }
-        e.sprite.setFrame(Math.floor(this.sim / 240) % 2);
+      const landed = updateEnemy(e, p, this.sim, dt);
+      if (e.hp <= 0 || e.disabled) continue;
+      if (
+        landed &&
+        this.sim > this.invulnerable &&
+        this.sim > this.respawnInvulnerable &&
+        !this.combat.invulnerable(this.sim)
+      ) {
+        p.hp -= e.type === "leaf" ? 18 : 10;
+        this.invulnerable = this.sim + 850;
+        this.combat.reset(this.combat.dashCooldown);
+        this.soundFx.play("hit");
+        this.float(p.x, p.y, e.type === "leaf" ? "-18" : "-10");
       }
+      e.sprite.setFrame(e.windup > 0 ? 1 : Math.floor(this.sim / 240) % 2);
       const tint = enemyTint(this.sim, e.flashUntil, e.windup);
       if (tint === null) e.sprite.clearTint();
       else e.sprite.setTint(tint);
       e.sprite.setPosition(e.x, e.y).setDepth(e.y);
       e.shadow.setPosition(e.x, e.y - 3).setDepth(e.y - 0.5);
     }
+    this.drawObstacleDebug();
     if (p.hp <= 0) {
       this.combat.reset(this.combat.dashCooldown);
       this.attackUntil = 0;

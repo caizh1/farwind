@@ -11,6 +11,7 @@ export const BRIDGES = [
   { x: 1030, y: 900, w: 120, h: 550 },
   { x: 1260, y: 1300, w: 100, h: 200 },
 ];
+export const VILLAGE_GATE = { x: 1870, y: 1010, postOffset: 88 } as const;
 export const villageAreas = [
   { id: "A", name: "风铃广场", x: 670, y: 780, detail: "接任务、辨方向、回村" },
   { id: "B", name: "西侧生活巷", x: 320, y: 990, detail: "木匠委托、收集木材" },
@@ -39,6 +40,9 @@ export type Prop = {
   y: number;
   w: number;
   h: number;
+  frame?: string;
+  depth?: number;
+  role?: "boundary" | "decoration";
   solid?: [number, number];
   kind?: "npc" | "resource" | "chest" | "stone" | "sign" | "shortcut";
   item?: ItemId;
@@ -326,7 +330,7 @@ const trees = [
   [680, 1560],
   [830, 330],
   [1300, 350],
-  [1430, 760],
+  [1440, 260],
   [1660, 1040],
   [1800, 1290],
   [1530, 1510],
@@ -388,12 +392,44 @@ props.push(
     h: 210,
     solid: [150, 75],
   },
-  { id: "village-gate", art: "village-gate", x: 1870, y: 960, w: 230, h: 215 },
+  // 横梁与两柱分层，碰撞只落在两个柱脚上，门洞沿南北主路通行。
+  {
+    id: "village-gate",
+    art: "village-gate",
+    frame: "beam",
+    x: 1871,
+    y: 870,
+    w: 122,
+    h: 75,
+    depth: 1050,
+  },
+  {
+    id: "village-gate-post-west",
+    art: "village-gate",
+    frame: "west",
+    x: VILLAGE_GATE.x - VILLAGE_GATE.postOffset,
+    y: VILLAGE_GATE.y,
+    w: 55,
+    h: 215,
+    solid: [38, 26],
+  },
+  {
+    id: "village-gate-post-east",
+    art: "village-gate",
+    frame: "east",
+    x: VILLAGE_GATE.x + VILLAGE_GATE.postOffset,
+    y: VILLAGE_GATE.y,
+    w: 53,
+    h: 215,
+    solid: [38, 26],
+  },
+  { id: "herb-bed-west", art: "herb-bed", x: 1220, y: 510, w: 132, h: 99 },
+  { id: "herb-bed-east", art: "herb-bed", x: 1310, y: 565, w: 132, h: 99 },
   {
     id: "village-guide",
     art: "sign",
-    x: 1950,
-    y: 1100,
+    x: 2000,
+    y: 1210,
     w: 75,
     h: 110,
     kind: "sign",
@@ -402,8 +438,8 @@ props.push(
   {
     id: "training-guide",
     art: "sign",
-    x: 1400,
-    y: 680,
+    x: 1740,
+    y: 700,
     w: 70,
     h: 100,
     kind: "sign",
@@ -500,10 +536,6 @@ for (const [i, x] of [230, 390, 550, 710].entries())
 const fences: number[][] = [
   ...[180, 290, 400, 510, 620, 730].map((x) => [x, 1620]),
   ...[1480, 1590, 1700, 1810].map((x) => [x, 330]),
-  [1480, 750],
-  [1810, 750],
-  [930, 500],
-  [1270, 620],
 ];
 fences.forEach(([x, y], i) =>
   props.push({
@@ -516,28 +548,58 @@ fences.forEach(([x, y], i) =>
     solid: [108, 15],
   }),
 );
-for (let i = 0; i < 45; i++) {
-  const x = 120 + ((i * 337) % 3900),
-    y = 280 + ((i * 193) % 1600);
-  if (x < 2050 && y < 1600) continue;
+// 连续低栏围合院落与练习场，南侧各留一个入口；复用现有木栏和树篱。
+function lowFence(id: string, x: number, y: number, w = 110) {
   props.push({
-    id: `bush-${i}`,
-    art: "bush",
+    id,
+    art: "fence",
     x,
     y,
-    w: 65 + (i % 3) * 12,
-    h: 65,
+    w,
+    h: 68,
+    solid: [w - 2, 15],
+    role: "boundary",
   });
 }
+function hedgeLine(id: string, a: number[], b: number[]) {
+  const n = Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 30);
+  for (let i = 0; i <= n; i++)
+    props.push({
+      id: `${id}-${i}`,
+      art: "bush",
+      x: a[0] + ((b[0] - a[0]) * i) / n,
+      y: a[1] + ((b[1] - a[1]) * i) / n,
+      w: 55,
+      h: 45,
+      solid: [30, 30],
+      role: "boundary",
+    });
+}
+for (const [i, x] of [950, 1058, 1166, 1274, 1360].entries())
+  lowFence(`court-back-${i}`, x, 350, i === 4 ? 60 : 110);
+lowFence("court-front-west", 1000, 600, 100);
+lowFence("court-front-east", 1280, 650, 220);
+hedgeLine("court-west", [900, 350], [900, 540]);
+hedgeLine("court-corner", [900, 540], [950, 600]);
+hedgeLine("court-gate-west", [1040, 600], [1040, 650]);
+hedgeLine("court-east", [1390, 350], [1390, 650]);
+for (const [i, x] of [1460, 1568, 1742, 1850].entries())
+  lowFence(`field-front-${i}`, x, 760, i === 1 || i === 2 ? 70 : 110);
+hedgeLine("field-west", [1400, 330], [1400, 760]);
+hedgeLine("field-east", [1900, 330], [1900, 760]);
+lowFence("gate-fence-west", 1707, 1010, 110);
+lowFence("gate-fence-east", 2009, 1010, 100);
 export const roads = [
   [
     [650, 200],
     [650, 780],
     [900, 780],
-    [990, 720],
-    [1230, 720],
-    [1480, 840],
-    [1870, 980],
+    [1120, 750],
+    [1390, 860],
+    [1600, 860],
+    [1760, 900],
+    [1870, 920],
+    [1870, 1080],
     [2170, 1080],
     [2800, 1100],
     [3160, 1000],
@@ -556,7 +618,7 @@ export const roads = [
     [1280, 1480],
     [1550, 1400],
     [1680, 1210],
-    [1870, 980],
+    [1870, 1080],
   ],
   [
     [650, 780],
@@ -569,19 +631,15 @@ export const roads = [
     [670, 1440],
   ],
   [
-    [990, 720],
-    [1110, 570],
-    [1230, 570],
-    [1400, 570],
-    [1640, 620],
-    [1730, 750],
-    [1870, 980],
+    [1110, 750],
+    [1110, 640],
   ],
   [
     [860, 1470],
     [1090, 1450],
     [1090, 900],
-    [900, 780],
+    [1090, 820],
+    [1120, 750],
   ],
   [
     [1280, 1480],
@@ -601,20 +659,98 @@ export const roads = [
     [3740, 600],
     [3970, 570],
   ],
+  [
+    [1640, 860],
+    [1640, 710],
+  ],
 ] as number[][][];
+export const roadWidth = (index: number) =>
+  index === 0 ? 170 : index === 4 || index === 10 ? 80 : 115;
+export const showLayoutLabels = (development: boolean, search: string) =>
+  development && new URLSearchParams(search).get("layoutDebug") === "1";
+export const inReworkArea = (x: number, y: number) =>
+  x >= 880 && x <= 2120 && y >= 250 && y <= 1110;
+
+// 生成装饰使用同一套路宽与保留空间；结构性围栏不属于随机装饰。
+export function canDecorate(x: number, y: number, radius = 12) {
+  for (const [i, path] of roads.entries())
+    for (let j = 1; j < path.length; j++) {
+      const [ax, ay] = path[j - 1],
+        [bx, by] = path[j];
+      const dx = bx - ax,
+        dy = by - ay;
+      const t = Math.max(
+        0,
+        Math.min(1, ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy)),
+      );
+      if (
+        Math.hypot(x - ax - t * dx, y - ay - t * dy) <
+        roadWidth(i) / 2 + 8 + radius
+      )
+        return false;
+    }
+  if (
+    BRIDGES.some(
+      (b) =>
+        x > b.x - radius &&
+        x < b.x + b.w + radius &&
+        y > b.y - radius &&
+        y < b.y + b.h + radius,
+    )
+  )
+    return false;
+  if (
+    Math.abs(x - VILLAGE_GATE.x) < 75 + radius &&
+    Math.abs(y - VILLAGE_GATE.y) < 115 + radius
+  )
+    return false;
+  if (
+    props.some(
+      (p) => p.kind === "npc" && Math.hypot(x - p.x, y - p.y) < 65 + radius,
+    )
+  )
+    return false;
+  return [TRAINING, ...FIELD_TARGETS].every(
+    (t) => Math.hypot(x - t.x, y - t.y) >= 105 + radius,
+  );
+}
+export const shoreFlowers = Array.from({ length: 75 }, (_, i) => {
+  const a = i * 2.399;
+  return {
+    x: 1280 + Math.cos(a) * 320,
+    y: 1120 + Math.sin(a) * 300,
+    pink: i % 2 === 1,
+  };
+}).filter((p) => canDecorate(p.x, p.y, 12));
+for (let i = 0; i < 45; i++) {
+  const x = 120 + ((i * 337) % 3900),
+    y = 280 + ((i * 193) % 1600);
+  if (x < 2050 && y < 1600) continue;
+  // 只清理东村口过渡区的生成装饰，森林与遗迹内部的旧布置保留。
+  if (inReworkArea(x, y) && !canDecorate(x, y, (65 + (i % 3) * 12) / 2))
+    continue;
+  props.push({
+    id: `bush-${i}`,
+    art: "bush",
+    x,
+    y,
+    w: 65 + (i % 3) * 12,
+    h: 65,
+  });
+}
 export const villageRoutes = [
   {
     name: "主线出发路线",
     points: [
       [670, 780],
       [900, 780],
-      [990, 720],
-      [1110, 570],
-      [1400, 570],
-      [1640, 620],
-      [1730, 750],
-      [1870, 980],
-      [2110, 1050],
+      [1120, 750],
+      [1390, 860],
+      [1600, 860],
+      [1760, 900],
+      [1870, 920],
+      [1870, 1080],
+      [2110, 1080],
     ],
   },
   {
@@ -630,10 +766,12 @@ export const villageRoutes = [
       [1280, 1480],
       [1550, 1400],
       [1680, 1210],
-      [1870, 980],
-      [1480, 840],
-      [1230, 720],
-      [990, 720],
+      [1870, 1080],
+      [1870, 920],
+      [1760, 900],
+      [1600, 860],
+      [1390, 860],
+      [1120, 750],
       [900, 780],
       [670, 780],
     ],
@@ -644,6 +782,8 @@ export const villageRoutes = [
       [1280, 1480],
       [1090, 1450],
       [1090, 900],
+      [1090, 820],
+      [1120, 750],
       [900, 780],
       [670, 780],
     ],
@@ -680,15 +820,28 @@ props.forEach((p) => {
     p.solid = [35, 28];
 });
 
+// 24×20脚底占地；近战使用原实体矩形，二者均与树冠无关。
+export const FOOT = { halfWidth: 12, halfHeight: 10 } as const;
+export function propBounds(p: Prop, motion = false) {
+  const [w, h] = p.solid!;
+  const x = motion ? FOOT.halfWidth : 0,
+    y = motion ? FOOT.halfHeight : 0;
+  return {
+    left: p.x - w / 2 - x,
+    right: p.x + w / 2 + x,
+    top: p.y - h - y,
+    bottom: p.y + y,
+  };
+}
 // 只允许忽略明确目标的本体占地；其他实体仍参与碰撞。
 export function solidPropAt(x: number, y: number, ignore?: string) {
   return props.some(
     (p) =>
       p.id !== ignore &&
       p.solid &&
-      Math.abs(x - p.x) < p.solid[0] / 2 + 12 &&
-      y > p.y - p.solid[1] - 10 &&
-      y < p.y + 10,
+      Math.abs(x - p.x) < p.solid[0] / 2 + FOOT.halfWidth &&
+      y > p.y - p.solid[1] - FOOT.halfHeight &&
+      y < p.y + FOOT.halfHeight,
   );
 }
 

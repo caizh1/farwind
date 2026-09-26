@@ -1,42 +1,25 @@
 import { TRAINING } from "./training";
 import Phaser from "phaser";
-import { roads, WORLD, POND, BRIDGES, villageAreas } from "../../data/world";
+import {
+  roads,
+  roadWidth,
+  WORLD,
+  POND,
+  BRIDGES,
+  villageAreas,
+  canDecorate,
+  shoreFlowers,
+  inReworkArea,
+  showLayoutLabels,
+} from "../../data/world";
 import type { World } from "../scenes/World";
 
 export function makeTerrain(this: World) {
-  // 小型地图构件由原生画布绘制，保持地面锚点与碰撞分别定义。
-  const gate = this.textures.createCanvas("village-gate", 230, 215)!;
-  const gc = gate.context;
-  gc.fillStyle = "#523c2b";
-  gc.fillRect(20, 40, 24, 175);
-  gc.fillRect(186, 40, 24, 175);
-  gc.fillRect(10, 35, 210, 30);
-  gc.fillStyle = "#ac7d49";
-  gc.fillRect(24, 43, 14, 167);
-  gc.fillRect(190, 43, 14, 167);
-  gc.fillRect(13, 38, 204, 18);
-  gc.fillStyle = "#dcaf6b";
-  gc.fillRect(24, 43, 4, 167);
-  gc.fillRect(190, 43, 4, 167);
-  gc.fillRect(13, 38, 204, 4);
-  for (const x of [20, 186])
-    for (const y of [80, 170]) {
-      gc.fillStyle = "#615d48";
-      gc.fillRect(x - 3, y, 30, 10);
-    }
-  gc.fillStyle = "#415e3e";
-  gc.fillRect(79, 64, 75, 29);
-  gc.font = "bold 16px serif";
-  gc.textAlign = "center";
-  gc.fillStyle = "#fff0bd";
-  gc.fillText("风铃村", 116, 85);
-  for (const x of [64, 164]) {
-    gc.fillStyle = "#bfc5ac";
-    gc.fillRect(x, 57, 2, 35);
-    gc.fillStyle = "#e7c374";
-    gc.fillRect(x - 5, 85, 12, 9);
-  }
-  gate.refresh();
+  // 候选手绘门只在资源层切帧，柱脚与横梁各自排序，门洞不产生矩形碰撞。
+  const gate = this.textures.get("village-gate");
+  gate.add("west", 0, 0, 0, 310, 1211);
+  gate.add("east", 0, 1000, 0, 299, 1211);
+  gate.add("beam", 0, 310, 0, 690, 420);
   const fountain = this.textures.createCanvas("fountain", 150, 150)!;
   const fc = fountain.context;
   const ellipse = (
@@ -89,7 +72,12 @@ export function makeTerrain(this: World) {
   fountain.refresh();
   const grass = this.textures.get("grass").getSourceImage() as HTMLImageElement,
     forest = this.textures.get("forest").getSourceImage() as HTMLImageElement,
-    road = this.textures.get("road").getSourceImage() as HTMLImageElement;
+    road = this.textures.get("road").getSourceImage() as HTMLImageElement,
+    earth = this.textures
+      .get("packed-earth")
+      .getSourceImage() as HTMLImageElement,
+    bridge = this.textures.get("bridge").getSourceImage() as HTMLImageElement,
+    herb = this.textures.get("herb").getSourceImage() as HTMLImageElement;
   for (let cy = 0; cy < WORLD.height; cy += 550)
     for (let cx = 0; cx < WORLD.width; cx += 600) {
       const key = `ground-${cx}-${cy}`,
@@ -132,41 +120,63 @@ export function makeTerrain(this: World) {
       c.stroke();
       c.lineCap = "round";
       c.lineJoin = "round";
-      for (const [index, path] of roads.entries()) {
-        c.beginPath();
-        path.forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y)));
-        c.strokeStyle = "#9f9d62";
-        c.lineWidth = index === 0 ? 185 : 130;
-        c.stroke();
-        c.strokeStyle = rp;
-        c.lineWidth = index === 0 ? 170 : 115;
-        c.stroke();
+      // 全部外轮廓先画，随后全部路面覆盖，交叉点内部没有后画的描边。
+      for (const outline of [true, false]) {
+        for (const [index, path] of roads.entries()) {
+          c.beginPath();
+          path.forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y)));
+          c.strokeStyle = outline ? "#9f9d62" : rp;
+          c.lineWidth = roadWidth(index) + (outline ? 15 : 0);
+          c.stroke();
+        }
+        if (outline) {
+          c.beginPath();
+          c.ellipse(670, 760, 245, 150, 0, 0, Math.PI * 2);
+          c.fillStyle = rp;
+          c.fill();
+          c.strokeStyle = "#b1a06b";
+          c.lineWidth = 6;
+          c.stroke();
+        }
       }
-      c.beginPath();
-      c.ellipse(670, 760, 245, 150, 0, 0, Math.PI * 2);
-      c.fillStyle = rp;
-      c.fill();
-      c.strokeStyle = "#b1a06b";
-      c.lineWidth = 6;
-      c.stroke();
       c.beginPath();
       c.ellipse(TRAINING.x, TRAINING.y, 76, 52, 0, 0, Math.PI * 2);
       c.fillStyle = "#b2a16a88";
       c.fill();
-      // 独立练习土场：480×420，边缘保留练习和绕靶空间。
-      c.fillStyle = "#ad8b55";
-      c.fillRect(1400, 330, 480, 420);
-      c.fillStyle = "#cfb17a";
-      c.fillRect(1410, 340, 460, 400);
-      for (let i = 0; i < 100; i++) {
-        c.fillStyle = i % 2 ? "#b99b65" : "#dbc18e";
-        c.fillRect(1420 + ((i * 73) % 440), 350 + ((i * 97) % 380), 3, 2);
-      }
-      // 药圃、果园花床与木工台均是地图原生细节。
-      for (const [x, y, w, h] of [
-        [1190, 400, 160, 160],
-        [230, 1480, 210, 80],
-      ]) {
+      // 草地中的夯土边缘略有起伏，低饱和土色上叠手绘土粒，不铺石板。
+      const soil = c.createPattern(earth, "repeat")!;
+      soil.setTransform(new DOMMatrix().scale(0.32));
+      c.save();
+      c.beginPath();
+      c.moveTo(1430, 343);
+      c.bezierCurveTo(1530, 327, 1760, 342, 1876, 340);
+      c.bezierCurveTo(1890, 440, 1875, 605, 1883, 715);
+      c.quadraticCurveTo(1780, 736, 1660, 723);
+      c.quadraticCurveTo(1540, 738, 1422, 717);
+      c.bezierCurveTo(1406, 612, 1428, 466, 1418, 367);
+      c.closePath();
+      c.clip();
+      c.fillStyle = "#b69b70";
+      c.fillRect(1400, 330, 500, 410);
+      c.globalAlpha = 0.6;
+      c.fillStyle = soil;
+      c.fillRect(1400, 330, 500, 410);
+      c.restore();
+      // 院内仅是门前与药床旁磨出的土，保留草地，不铺满方形石路。
+      c.save();
+      c.beginPath();
+      c.moveTo(1060, 406);
+      c.bezierCurveTo(1150, 403, 1200, 473, 1188, 540);
+      c.quadraticCurveTo(1178, 610, 1120, 650);
+      c.quadraticCurveTo(1060, 632, 1034, 570);
+      c.bezierCurveTo(1010, 510, 1010, 443, 1060, 406);
+      c.closePath();
+      c.globalAlpha = 0.42;
+      c.fillStyle = soil;
+      c.fill();
+      c.restore();
+      // 保留范围外的果园花床与木工台。
+      for (const [x, y, w, h] of [[230, 1480, 210, 80]]) {
         c.fillStyle = "#84613c";
         c.fillRect(x, y, w, h);
         for (let row = 0; row < h; row += 24) {
@@ -217,27 +227,26 @@ export function makeTerrain(this: World) {
         }
       }
       for (const b of BRIDGES) {
-        c.fillStyle = "#6e553a";
-        c.fillRect(b.x - 4, b.y, b.w + 8, b.h);
-        for (let y = b.y + 3; y < b.y + b.h; y += 18) {
-          c.fillStyle = (y - b.y) % 36 < 18 ? "#c39355" : "#b38249";
-          c.fillRect(b.x + 5, y, b.w - 10, 15);
-          c.fillStyle = "#dfb575";
-          c.fillRect(b.x + 5, y, b.w - 10, 2);
-        }
-        for (const x of [b.x, b.x + b.w - 7]) {
-          c.fillStyle = "#765238";
-          c.fillRect(x, b.y, 7, b.h);
-          for (let y = b.y; y < b.y + b.h; y += 65) {
-            c.fillStyle = "#d5ae70";
-            c.fillRect(x - 3, y, 13, 12);
-          }
-        }
+        // 透明桥素材横向存放，裁掉画布留白后转为原来的南北桥轴线。
+        c.save();
+        c.translate(b.x + b.w / 2, b.y + b.h / 2);
+        c.rotate(Math.PI / 2);
+        c.drawImage(
+          bridge,
+          0,
+          92,
+          1983,
+          601,
+          -b.h / 2,
+          -(b.w + 8) / 2,
+          b.h,
+          b.w + 8,
+        );
+        c.restore();
       }
       for (const [x, y] of [
         [900, 1350],
         [1500, 1320],
-        [1720, 830],
       ]) {
         c.fillStyle = "#624d32";
         c.fillRect(x, y, 9, 30);
@@ -247,19 +256,21 @@ export function makeTerrain(this: World) {
         c.fillRect(x - 5, y + 15, 90, 12);
       }
       // 沿湖岸与主路之外点缀花簇，避免覆盖通行信息。
-      for (let i = 0; i < 75; i++) {
-        const a = i * 2.399,
-          x = 1280 + Math.cos(a) * 320,
-          y = 1120 + Math.sin(a) * 300;
+      for (const { x, y, pink } of shoreFlowers) {
+        if (inReworkArea(x, y)) {
+          c.drawImage(herb, x - 12, y - 19, 24, 24);
+          continue;
+        }
         c.fillStyle = "#668b43";
         c.fillRect(x, y, 8, 8);
-        c.fillStyle = i % 2 ? "#efb0ac" : "#f1d18d";
+        c.fillStyle = pink ? "#efb0ac" : "#f1d18d";
         c.fillRect(x + 2, y - 3, 4, 5);
       }
       c.fillStyle = "#496c4030";
       for (let i = 0; i < 45; i++) {
         const x = cx + ((i * 137) % 600),
           y = cy + ((i * 79) % 550);
+        if (inReworkArea(x, y) && !canDecorate(x, y, 7)) continue;
         c.beginPath();
         c.ellipse(x, y, 7, 2, 0.4, 0, 7);
         c.fill();
@@ -267,23 +278,26 @@ export function makeTerrain(this: World) {
       texture.refresh();
       this.add.image(cx, cy, key).setOrigin(0).setDepth(-20);
     }
-  villageAreas.forEach((area) => {
-    this.add
-      .text(
-        area.x,
-        area.y + (area.id === "A" ? 180 : 90),
-        `${area.id}  ${area.name}`,
-        {
-          fontFamily: "serif",
-          fontSize: "18px",
-          color: "#fff4cf",
-          stroke: "#375a3c",
-          strokeThickness: 4,
-          backgroundColor: "#294f3ac0",
-          padding: { x: 9, y: 5 },
-        },
-      )
-      .setOrigin(0.5)
-      .setDepth(1900);
-  });
+  const debug = showLayoutLabels(import.meta.env.DEV, window.location.search);
+  this.data.set("layoutLabelCount", debug ? villageAreas.length : 0);
+  if (debug)
+    villageAreas.forEach((area) => {
+      this.add
+        .text(
+          area.x,
+          area.y + (area.id === "A" ? 180 : 90),
+          `${area.id}  ${area.name}`,
+          {
+            fontFamily: "serif",
+            fontSize: "18px",
+            color: "#fff4cf",
+            stroke: "#375a3c",
+            strokeThickness: 4,
+            backgroundColor: "#294f3ac0",
+            padding: { x: 9, y: 5 },
+          },
+        )
+        .setOrigin(0.5)
+        .setDepth(1900);
+    });
 }

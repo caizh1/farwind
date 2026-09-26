@@ -145,9 +145,10 @@ test("隔离森林战斗夹具：三连命中、风步拉开、再进攻", async
     .poll(async () => (await read(page)).state.player.x)
     .toBeGreaterThan(2200);
   await page.keyboard.down("d");
-  await expect
-    .poll(async () => (await read(page)).animation.hero.direction)
-    .toBe(3);
+  // 逐呈现帧确认朝向，避免轮询延迟导致持续前进并提前触发敌人前摇。
+  await page.waitForFunction(
+    () => (window as any).__farwind().animation.hero.direction === 3,
+  );
   await page.keyboard.up("d");
   await page.evaluate(() => {
     (window as any).__stops = [];
@@ -166,9 +167,10 @@ test("隔离森林战斗夹具：三连命中、风步拉开、再进攻", async
   });
   for (let stage = 1; stage <= 3; stage++) {
     await page.keyboard.press("j");
-    await expect
-      .poll(async () => (await read(page)).session.combat.stage)
-      .toBe(stage);
+    await page.waitForFunction(
+      (stage) => (window as any).__farwind().session.combat.stage === stage,
+      stage,
+    );
     if (stage < 3) await page.waitForTimeout(60);
   }
   await expect

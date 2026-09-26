@@ -2,16 +2,16 @@ import { describe, it, expect } from "vitest";
 import {
   CombatController,
   STRIKES,
-  clearPath,
   sweepMove,
   inStrike,
   type Attack,
 } from "../src/game/systems/combat";
 import { TrainingDummy, TRAINING } from "../src/game/systems/training";
 import { solidPropAt } from "../src/data/world";
+import { clearMotionLine, clearMeleeLine } from "../src/game/systems/obstacles";
 import { initialState, parseSave } from "../src/game/systems/state";
 const line = (x: number, y: number, tx: number, ty: number, id: string) =>
-  clearPath(x, y, tx, ty, solidPropAt, id);
+  clearMeleeLine({ x, y }, { x: tx, y: ty }, id);
 function arena() {
   const c = new CombatController(),
     t = new TrainingDummy(),
@@ -105,7 +105,7 @@ describe("训练对象共享战斗链", () => {
           start: 0,
           hit: new Set<string>(),
         };
-      expect(clearPath(p.x, p.y, dummy.x, dummy.y, solidPropAt)).toBe(false);
+      expect(clearMotionLine(p, dummy)).toBe(false);
       expect(inStrike(p, dummy, a, line)).toBe(true);
       expect(
         inStrike(

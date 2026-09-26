@@ -81,26 +81,20 @@ export function sweepMove(
   dx: number,
   dy: number,
   blocked: (x: number, y: number) => boolean,
+  clear: (
+    a: { x: number; y: number },
+    b: { x: number; y: number },
+  ) => boolean = () => true,
 ) {
   const n = Math.max(1, Math.ceil(Math.hypot(dx, dy) / 6));
   for (let i = 0; i < n; i++) {
-    if (!blocked(p.x + dx / n, p.y)) p.x += dx / n;
-    if (!blocked(p.x, p.y + dy / n)) p.y += dy / n;
+    const horizontal = { x: p.x + dx / n, y: p.y };
+    if (!blocked(horizontal.x, horizontal.y) && clear(p, horizontal))
+      p.x = horizontal.x;
+    const vertical = { x: p.x, y: p.y + dy / n };
+    if (!blocked(vertical.x, vertical.y) && clear(p, vertical))
+      p.y = vertical.y;
   }
-}
-export function clearPath(
-  x: number,
-  y: number,
-  tx: number,
-  ty: number,
-  blocked: (x: number, y: number, ignore?: string) => boolean,
-  ignore?: string,
-) {
-  const steps = Math.ceil(Math.hypot(tx - x, ty - y) / 12);
-  for (let i = 1; i <= steps; i++)
-    if (blocked(x + ((tx - x) * i) / steps, y + ((ty - y) * i) / steps, ignore))
-      return false;
-  return true;
 }
 export function inStrike(
   p: { x: number; y: number },
@@ -302,6 +296,10 @@ export class CombatController {
     hit: (target: T, stage: number, attack: Attack) => void,
     started: (stage: number, attack: Attack) => void,
     swung: (stage: number) => void = () => {},
+    motionClear: (
+      a: { x: number; y: number },
+      b: { x: number; y: number },
+    ) => boolean = () => true,
   ) {
     // 按事件时刻推进：请求到达、可衔接、结束、到期，等于到期仍合法。
     let cursor = prev;
@@ -344,6 +342,7 @@ export class CombatController {
               (vx * m.step * overlap) / m.active / steps,
               (vy * m.step * overlap) / m.active / steps,
               blocked,
+              motionClear,
             );
             resolve();
           }
@@ -399,6 +398,7 @@ export class CombatController {
           this.dashX * COMBAT.dash.distance * fraction,
           this.dashY * COMBAT.dash.distance * fraction,
           blocked,
+          motionClear,
         );
     }
     if (this.dashUntil <= now) this.dashStart = -1;

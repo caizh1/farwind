@@ -4,6 +4,7 @@ import {
   POND,
   roads,
   villageAreas,
+  showLayoutLabels,
   villageRoutes,
   routeSeconds,
 } from "../../data/world";
@@ -176,7 +177,7 @@ export class Interface {
     if (mode === "map" && s) {
       this.shell(
         "风的足迹",
-        `<p>风铃村 → 翡翠森林 → 风之遗迹</p><canvas id="world-map" width="840" height="440"></canvas><div class="map-guide">${villageAreas.map((a) => `<p><b>${a.id} ${a.name}</b> · ${a.detail}</p>`).join("")}</div><div class="map-routes">${villageRoutes.map((r) => `<p><b>${r.name}</b> · 约 ${routeSeconds(r.points)} 秒（步行、不含停留）</p>`).join("")}</div><p class="muted">世界 4200 × 2200 · 金点是你的位置。临水木桥可步行，池水不可通行；遗迹南侧的归乡风径修复后开放。</p><button id="close">收起地图</button>`,
+        `<p>风铃村 → 翡翠森林 → 风之遗迹</p><canvas id="world-map" width="840" height="440"></canvas><div class="map-guide">${villageAreas.map((a) => `<p><b>${showLayoutLabels(import.meta.env.DEV, window.location.search) ? `${a.id} ` : ""}${a.name}</b> · ${a.detail}</p>`).join("")}</div><div class="map-routes">${villageRoutes.map((r) => `<p><b>${r.name}</b> · 约 ${routeSeconds(r.points)} 秒（步行、不含停留）</p>`).join("")}</div><p class="muted">世界 4200 × 2200 · 金点是你的位置。临水木桥可步行，池水不可通行；遗迹南侧的归乡风径修复后开放。</p><button id="close">收起地图</button>`,
       );
       this.drawMap(this.modal.querySelector("canvas")!, s);
     }
@@ -318,12 +319,13 @@ export class Interface {
     if (w > 200) {
       ctx.font = "bold 14px serif";
       ctx.textAlign = "center";
-      villageAreas.forEach((a) => {
-        ctx.fillStyle = "#284b3b";
-        ctx.fillRect(a.x * sx - 10, a.y * sy - 11, 20, 22);
-        ctx.fillStyle = "#fff4cf";
-        ctx.fillText(a.id, a.x * sx, a.y * sy + 5);
-      });
+      if (showLayoutLabels(import.meta.env.DEV, window.location.search))
+        villageAreas.forEach((a) => {
+          ctx.fillStyle = "#284b3b";
+          ctx.fillRect(a.x * sx - 10, a.y * sy - 11, 20, 22);
+          ctx.fillStyle = "#fff4cf";
+          ctx.fillText(a.id, a.x * sx, a.y * sy + 5);
+        });
       ctx.font = "18px serif";
       ctx.fillStyle = "#fff4cf";
       ctx.fillText("风铃村", 200, h * 0.16);

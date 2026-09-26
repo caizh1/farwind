@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>风铃村局部返修 · 候选视觉对照</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: #172820;
+      color: #f5edda;
+      font:
+        16px/1.6 system-ui,
+        sans-serif;
+    }
+    main {
+      padding: 20px;
+      max-width: 1360px;
+      margin: auto;
+    }
+    h1 {
+      font-size: 24px;
+      margin: 0 0 8px;
+    }
+    p {
+      margin: 8px 0 16px;
+    }
+    .controls {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+    label {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+    }
+    select,
+    button {
+      font: inherit;
+      padding: 8px 12px;
+      border: 1px solid #94ab87;
+      border-radius: 7px;
+      background: #254332;
+      color: #fff7dc;
+      cursor: pointer;
+    }
+    button[aria-pressed="true"] {
+      background: #e2c480;
+      color: #15291d;
+    }
+    .viewport {
+      overflow: auto;
+      border: 1px solid #678567;
+    }
+    img {
+      display: block;
+      width: 1280px;
+      height: 720px;
+      max-width: none;
+    }
+    a {
+      color: #f1d495;
+    }
+    small {
+      color: #c2cdb7;
+    }
+  </style>
+  <main>
+    <h1>风铃村局部返修 · 候选视觉对照</h1>
+    <p>
+      四处实机画面均为 1280×720、原镜头和角色尺寸、早晨
+      08:00。图片按原始尺寸显示，窄窗口可横向滚动。这里不是全村缩略图。
+    </p>
+    <div class="controls">
+      <label
+        >检查位置
+        <select id="scene">
+          <option value="healer-court">药师小院</option>
+          <option value="training-field">东北练习场</option>
+          <option value="north-shore">池塘北岸</option>
+          <option value="village-gate">东村口</option>
+        </select></label
+      >
+      <button id="before" aria-pressed="false">修复前</button
+      ><button id="after" aria-pressed="true">修复后 · 候选</button>
+      <label><input id="clean" type="checkbox" checked />无 HUD 检查</label>
+      <a id="original" href="after/healer-court-clean.png" target="_blank"
+        >打开原图</a
+      >
+    </div>
+    <p id="caption"></p>
+    <div class="viewport">
+      <img
+        id="frame"
+        src="after/healer-court-clean.png"
+        alt="药师小院修复后无HUD实机截图"
+      />
+    </div>
+    <p>
+      修复后仍是待人工确认的视觉候选。截图留存、代码检查和功能回归都不等于美术验收；门、桥、药床和夯土的尺寸、光照、笔触需结合旧房屋、树木与角色人工判断。
+    </p>
+    <small
+      >固定站位通过合法存档导入后暂停建立，只用于视觉对照；功能证明见真实输入通行和训练证据。按左右方向键可切换修复前后。</small
+    >
+  </main>
+  <script>
+    let phase = "after";
+    const scene = document.querySelector("#scene"),
+      clean = document.querySelector("#clean"),
+      frame = document.querySelector("#frame");
+    function show() {
+      const name = scene.selectedOptions[0].textContent;
+      const path = `${phase}/${scene.value}${clean.checked ? "-clean" : ""}.png`;
+      frame.src = path;
+      frame.alt = `${name}${phase === "before" ? "修复前" : "修复后候选"}${clean.checked ? "无HUD" : "含HUD"}实机截图`;
+      document.querySelector("#original").href = path;
+      document.querySelector("#caption").textContent = frame.alt;
+      for (const mode of ["before", "after"])
+        document
+          .querySelector(`#${mode}`)
+          .setAttribute("aria-pressed", String(phase === mode));
+    }
+    for (const mode of ["before", "after"])
+      document.querySelector(`#${mode}`).onclick = () => {
+        phase = mode;
+        show();
+      };
+    scene.onchange = clean.onchange = show;
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        phase = event.key === "ArrowLeft" ? "before" : "after";
+        show();
+      }
+    });
+    show();
+  </script>
+</html>

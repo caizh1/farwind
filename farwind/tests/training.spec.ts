@@ -3,7 +3,9 @@ import { writeFile } from "node:fs/promises";
 import { captureGameAudio } from "../tools/capture-game-audio.mjs";
 import { initialState } from "../src/game/systems/state";
 test.use({ video: { mode: "on", size: { width: 1280, height: 720 } } });
-const dir = "docs/map-expansion/training",
+const dir = process.env.FARWIND_EVIDENCE_ROOT
+    ? `${process.env.FARWIND_EVIDENCE_ROOT}/training`
+    : "docs/map-expansion/training",
   read = (p: Page) => p.evaluate(() => (window as any).__farwind());
 async function walk(p: Page, x: number, y: number) {
   for (const [axis, target] of [
@@ -33,14 +35,24 @@ async function face(p: Page, key: string, d: number) {
   await p.keyboard.up(key);
 }
 async function combo(p: Page) {
+  await p.waitForFunction(
+    () => (window as any).__farwind().session.combat.phase === "idle",
+  );
   await p.keyboard.press("j");
-  await p.waitForTimeout(60);
+  // 用只读动作阶段确认上一按键已消费，软件渲染慢帧时两个按键也不会并进同一帧。
+  await p.waitForFunction(
+    () => (window as any).__farwind().session.combat.stage === 1,
+  );
   await p.keyboard.press("j");
-  await p.waitForTimeout(400);
+  await p.waitForFunction(
+    () => (window as any).__farwind().session.combat.stage === 2,
+  );
   await p.keyboard.press("j");
   await expect.poll(async () => (await read(p)).training.complete).toBe(true);
   await expect(p.locator("#training-stats")).toContainText("累计68");
-  await p.waitForTimeout(800);
+  await p.waitForFunction(
+    () => (window as any).__farwind().session.combat.phase === "idle",
+  );
 }
 test("新游戏四面训练、风步底座、暂停和同页继续：真实输入", async ({ page }) => {
   await page.addInitScript(captureGameAudio);
@@ -81,8 +93,9 @@ test("新游戏四面训练、风步底座、暂停和同页继续：真实输�
   await combo(page);
   await page.screenshot({ path: `${dir}/left-combo.png` });
   await walk(page, 960, 650);
-  await walk(page, 960, 610);
-  await walk(page, 850, 610);
+  // 院落矮栏的脚底外沿为610；绕桩路径留10像素余量，不要求停在碰撞边界。
+  await walk(page, 960, 620);
+  await walk(page, 850, 620);
   await walk(page, 850, 570);
   await face(page, "s", 0);
   await combo(page);
@@ -100,6 +113,9 @@ test("新游戏四面训练、风步底座、暂停和同页继续：真实输�
   await page.keyboard.press("l");
   await page.waitForTimeout(300);
   await page.keyboard.up("w");
+  await page.waitForFunction(
+    () => (window as any).__farwind().session.combat.dashRemaining === 0,
+  );
   const dash = await read(page);
   expect(dash.state.player.y).toBeGreaterThanOrEqual(660);
   expect(dash.state.player.stamina).toBeLessThan(stamina - 10);

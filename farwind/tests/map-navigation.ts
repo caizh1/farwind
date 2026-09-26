@@ -1,5 +1,6 @@
 import { expect, type Page } from "@playwright/test";
 import { terrainBlocked, solidPropAt, WORLD } from "../src/data/world";
+import { clearMotionLine } from "../src/game/systems/obstacles";
 const read = (p: Page) => p.evaluate(() => (window as any).__farwind());
 // 只读取诊断状态，所有推进通过真实键盘输入；寻路使用正式地图碰撞。
 export async function move(page: Page, tx: number, ty: number) {
@@ -37,6 +38,10 @@ export async function move(page: Page, tx: number, ty: number) {
         ny < 8 ||
         ny >= 217 ||
         prev.has(k) ||
+        !clearMotionLine(
+          { x: x * step, y: y * step },
+          { x: nx * step, y: ny * step },
+        ) ||
         !safe(nx * step, ny * step) ||
         !safe(((x + nx) * step) / 2, ((y + ny) * step) / 2)
       )

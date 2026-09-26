@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { move } from "./map-navigation";
 const read = (page: any) => page.evaluate(() => (window as any).__farwind());
 async function hold(page: any, keys: string[], ms: number) {
   for (const k of keys) await page.keyboard.down(k);
@@ -75,7 +76,11 @@ test("motion-directions-wall-stop-pause", async ({ page }) => {
   await page.keyboard.press("Escape");
   await expect(page.locator("#modal")).toBeHidden();
   expect((await hold(page, ["d"], 300)).animation.hero.action).toBe("walk");
-  await page.screenshot({ path: "docs/combat/regression/debug-runtime.png" });
+  await page.screenshot({
+    path: process.env.FARWIND_EVIDENCE_ROOT
+      ? `${process.env.FARWIND_EVIDENCE_ROOT}/debug-runtime.png`
+      : "docs/combat/regression/debug-runtime.png",
+  });
 });
 test("companion-well-house-corners", async ({ page }) => {
   await page.goto("/?animationDebug=1");
@@ -110,7 +115,13 @@ test("companion-well-house-corners", async ({ page }) => {
   await page.waitForTimeout(2500);
   expect((await read(page)).animation.cat.action).toBe("idle");
   await go(1180, 700);
-  await go(1180, 390);
+  // 当前房屋(1120,400)占地覆盖(1180,390)，经栅栏和树干外侧绕到屋后。
+  await go(1360, 700);
+  // 小院现已连续围合，从院外绕到屋后，保留原房屋转角与黑猫跟随检查。
+  await move(page, 1360, 270);
+  // 西侧树干与院篱之间较窄，从树干外侧绕行，保留稳定的脚底余量。
+  await go(790, 270);
+  await go(790, 390);
   await go(830, 390);
   // 新训练木桩占据(850,650)：沿西侧绕行，保留原房屋转角与跟随断言。
   await go(810, 390);
@@ -126,5 +137,9 @@ test("companion-well-house-corners", async ({ page }) => {
       s.companion.y - s.state.player.y,
     ),
   ).toBeLessThan(130);
-  await page.screenshot({ path: "docs/combat/regression/corner-runtime.png" });
+  await page.screenshot({
+    path: process.env.FARWIND_EVIDENCE_ROOT
+      ? `${process.env.FARWIND_EVIDENCE_ROOT}/corner-runtime.png`
+      : "docs/combat/regression/corner-runtime.png",
+  });
 });

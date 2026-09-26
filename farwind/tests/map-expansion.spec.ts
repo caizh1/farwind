@@ -1,7 +1,9 @@
 import { move } from "./map-navigation";
 import { test, expect, type Page } from "@playwright/test";
 import { props } from "../src/data/world";
-const dir = "docs/map-expansion";
+const dir = process.env.FARWIND_EVIDENCE_ROOT
+  ? `${process.env.FARWIND_EVIDENCE_ROOT}/journey`
+  : "docs/map-expansion";
 const read = (p: Page) => p.evaluate(() => (window as any).__farwind());
 async function closeDialog(page: Page) {
   await page.getByRole("button", { name: "继续 · E" }).click();
@@ -50,7 +52,8 @@ test("map-expansion-player-journey", async ({ page }) => {
   const before = (await read(page)).state.bag
     .filter((p: any) => p?.id === "potion")
     .reduce((n: number, p: any) => n + p.count, 0);
-  await interact(page, "healer", 1080, 600);
+  // 新围栏覆盖旧站位，沿院门中线到药师南侧；交互与药剂断言保持不变。
+  await interact(page, "healer", 1110, 600);
   await expect(page.locator("#modal")).toContainText("替你调好了");
   await closeDialog(page);
   expect(
@@ -72,6 +75,7 @@ test("map-expansion-player-journey", async ({ page }) => {
   expect((await read(page)).state.killed).toEqual([]);
   await page.screenshot({ path: `${dir}/training-field.png` });
   await move(page, 1880, 980);
+  await move(page, 1880, 1120);
   await page.screenshot({ path: `${dir}/village-gate.png` });
   expect((await read(page)).state.quest).toBe(1);
   await page.keyboard.press("m");
