@@ -6,12 +6,13 @@ export const COMBAT_ACTION_ART = {
   footY: 154,
 } as const;
 export type CombatVisual = {
+  weapon?: ReturnType<typeof weaponSample>;
   texture: string;
   frame: number;
   clip: string;
   frameIndex: number;
   facing: Facing;
-  phase: "windup" | "active" | "recovery";
+  phase: "windup" | "active" | "recovery" | "ready";
   phaseProgress: number;
   provisional: boolean;
 };
@@ -90,5 +91,75 @@ export function clipFor(cat: boolean, d: Facing, action: MotionAction): Clip {
     flip: d === 2,
     name: `${cat ? "cat" : "hero"}/${action}/${d}`,
     provisional: false,
+  };
+}
+
+// 当前图集有效期两姿态的手工标注（160×160，原点为画布左上）。
+// 正背视图独立标注；左向只在根局部坐标下水平镜像。仍为待美术校准原型。
+const activeWeaponPoints = [
+  [
+    [
+      [72, 119, 42, 89],
+      [75, 137, 76, 166],
+    ],
+    [
+      [82, 139, 49, 108],
+      [83, 88, 115, 40],
+    ],
+    [
+      [74, 68, 47, 26],
+      [83, 150, 109, 180],
+    ],
+  ],
+  [
+    [
+      [67, 106, 35, 74],
+      [64, 98, 32, 66],
+    ],
+    [
+      [72, 110, 46, 72],
+      [76, 102, 42, 52],
+    ],
+    [
+      [76, 83, 76, 38],
+      [66, 104, 36, 62],
+    ],
+  ],
+  [
+    [
+      [76, 104, 44, 74],
+      [100, 122, 139, 117],
+    ],
+    [
+      [91, 128, 130, 96],
+      [94, 81, 120, 40],
+    ],
+    [
+      [73, 78, 35, 43],
+      [92, 150, 122, 170],
+    ],
+  ],
+] as const;
+export function weaponSample(stage: number, facing: Facing, elapsed: number) {
+  const sample = combatVisual(stage, facing, elapsed);
+  const view = facing === 0 ? 0 : facing === 1 ? 1 : 2;
+  const index = sample.frameIndex < 3 ? 0 : 1;
+  const [gx, gy, tx, ty] = activeWeaponPoints[view][stage - 1][index];
+  const scale = COMBAT_ACTION_ART.displaySize / COMBAT_ACTION_ART.frameSize;
+  const point = (x: number, y: number) => ({
+    x: (x - 80) * scale * (facing === 2 ? -1 : 1),
+    y: (y - COMBAT_ACTION_ART.footY) * scale,
+  });
+  return {
+    grip: point(gx, gy),
+    tip: point(tx, ty),
+    visible: sample.phase === "active",
+    progress: sample.phaseProgress,
+    // 每个实际姿态内短暂亮起后衰减，不独立旋转一条悬空圆弧。
+    alpha:
+      sample.phase === "active"
+        ? 0.5 * (1 - ((sample.phaseProgress * 2) % 1))
+        : 0,
+    provisional: true,
   };
 }

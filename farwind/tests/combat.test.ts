@@ -7,7 +7,11 @@ import {
   sweepMove,
 } from "../src/game/systems/combat";
 import { add, count, initialState, parseSave } from "../src/game/systems/state";
-import { combatVisual, COMBAT_ACTION_ART } from "../src/data/animation";
+import {
+  combatVisual,
+  COMBAT_ACTION_ART,
+  weaponSample,
+} from "../src/data/animation";
 import sharp from "sharp";
 import { createHash } from "node:crypto";
 
@@ -298,5 +302,123 @@ it("受击闪色覆盖前摇预警直到期限，30/60/120 Hz 命中与阶段一
       a.tick((frame * 1000) / hz, ((frame + 1) * 1000) / hz);
     expect(a.hits).toEqual(["1:a", "1:b"]);
     expect(a.c.attack).toBeNull();
+  }
+});
+
+describe("本轮连段事件边界", () => {
+  function third() {
+    const a = arena();
+    a.c.requestAttack(0);
+    a.tick(0, 0, 3);
+    a.c.requestAttack(235);
+    a.tick(0, 235, 3);
+    a.c.requestAttack(520);
+    a.tick(235, 520, 3);
+    expect(a.c.attack?.stage).toBe(3);
+    return a;
+  }
+  it("1030 完成，1031 到期，1040 更新：合法旧请求按1030启动一次", () => {
+    const a = third();
+    a.c.requestAttack(881);
+    a.tick(520, 1000, 3);
+    a.tick(1000, 1040, 3);
+    expect(a.starts).toEqual([1, 2, 3, 1]);
+    expect(a.c.attack?.start).toBe(1030);
+    a.tick(1040, 1100, 3);
+    expect(a.starts).toHaveLength(4);
+  });
+  it("本步新输入不能倒用到上段完成时刻", () => {
+    const a = third();
+    a.tick(520, 1040, 3);
+    a.c.requestAttack(1040);
+    a.tick(1040, 1040, 3);
+    expect(a.c.attack?.start).toBe(1040);
+  });
+  it("等于到期合法，超过到期不能续招", () => {
+    for (const request of [879, 880]) {
+      const a = third();
+      a.c.requestAttack(request);
+      a.tick(520, 1040, 3);
+      expect(a.starts).toHaveLength(request === 880 ? 4 : 3);
+    }
+  });
+  it("持剑等待独立于攻击实例，松键风步沿锁定面向，有输入优先", () => {
+    for (const axis of [
+      { x: 0, y: 0 },
+      { x: -1, y: 0 },
+    ]) {
+      const a = arena();
+      a.c.requestAttack(0);
+      a.tick(0, 0, 3);
+      a.tick(0, 250, 2);
+      expect(a.c.requestDash(250, 100, axis, 2)).toBe(true);
+      expect(a.c.dashX).toBe(axis.x || 1);
+    }
+    const a = arena();
+    a.c.requestAttack(0);
+    a.tick(0, 335, 3);
+    expect(a.c.attack).toBeNull();
+    expect(a.c.readyUntil).toBe(535);
+    expect(a.c.effectiveFacing(351, 2)).toBe(3);
+    a.c.requestAttack(351);
+    a.tick(335, 351, 3);
+    expect(a.c.attack?.stage).toBe(2);
+    a.c.reset();
+    expect(a.c.readyUntil).toBe(0);
+  });
+  it("30/60/120Hz及抖动步长推进同一输入事件，命中与位移一致", () => {
+    const results = [];
+    for (const steps of [
+      [1000 / 30],
+      [1000 / 60],
+      [1000 / 120],
+      [7, 41, 13, 29],
+    ]) {
+      const a = arena();
+      let prev = 0,
+        i = 0;
+      const inputs = [0, 235, 520, 881];
+      a.c.requestAttack(inputs.shift()!);
+      a.tick(0, 0);
+      while (prev < 1500) {
+        const now = Math.min(
+          1500,
+          prev + steps[i++ % steps.length],
+          inputs[0] ?? Infinity,
+        );
+        a.tick(prev, now);
+        if (now === inputs[0]) {
+          a.c.requestAttack(inputs.shift()!);
+          a.tick(now, now);
+        }
+        prev = now;
+      }
+      results.push({ starts: a.starts, hits: a.hits, y: a.p.y });
+    }
+    for (const r of results) {
+      expect(r.starts).toEqual(results[0].starts);
+      expect(r.hits).toEqual(results[0].hits);
+      expect(r.y).toBeCloseTo(results[0].y, 7);
+    }
+  });
+});
+
+it("左右武器局部坐标严格水平镜像，正背视图独立，非有效期无刀光", () => {
+  for (let stage = 1; stage <= 3; stage++) {
+    for (const t of [
+      0,
+      STRIKES[stage - 1].windup,
+      STRIKES[stage - 1].windup + 80,
+      600,
+    ]) {
+      const left = weaponSample(stage, 2, t),
+        right = weaponSample(stage, 3, t);
+      expect(left.tip.x).toBe(-right.tip.x);
+      expect(left.tip.y).toBe(right.tip.y);
+      expect(left.grip.x).toBe(-right.grip.x);
+      expect(left.grip.y).toBe(right.grip.y);
+      expect(left.visible).toBe(right.visible);
+      if (t === 0 || t === 600) expect(left.visible).toBe(false);
+    }
   }
 });

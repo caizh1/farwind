@@ -4,12 +4,14 @@ import {
   clipFor,
   COMBAT_ACTION_ART,
   type CombatVisual,
+  weaponSample,
 } from "../../data/animation";
 import type { Facing } from "../systems/locomotion";
 export class Actor {
   sprite: Phaser.GameObjects.Sprite;
   shadow: Phaser.GameObjects.Ellipse;
   motion: Locomotion;
+  weapon: ReturnType<typeof weaponSample> | null = null;
   presentation = {
     key: "",
     frameIndex: 0,
@@ -99,6 +101,7 @@ export class Actor {
         art ? art.displaySize : this.cat ? 55 : 86,
         art ? art.displaySize : this.cat ? 54 : 92,
       );
+    this.weapon = combat?.weapon ?? null;
     this.presentation = {
       key:
         combat?.clip ??
@@ -117,6 +120,8 @@ export class Actor {
   debug() {
     return {
       action: this.motion.action,
+      presentationState: this.presentation.phase,
+      weapon: this.weapon,
       key: this.presentation.key,
       texture: this.sprite.texture.key,
       frame: this.sprite.frame.name,

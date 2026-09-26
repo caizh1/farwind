@@ -13,7 +13,11 @@ import { makeTerrain } from "../systems/terrain";
 import Phaser from "phaser";
 import { props, roads, enemyDefs, region, type Prop } from "../../data/world";
 import { items, type ItemId } from "../../data/content";
-import { COMBAT_ACTION_ART, combatVisual } from "../../data/animation";
+import {
+  COMBAT_ACTION_ART,
+  combatVisual,
+  weaponSample,
+} from "../../data/animation";
 import {
   initialState,
   add,
@@ -473,36 +477,20 @@ export class World extends Phaser.Scene {
     this.slash.clear();
     const a = this.combat.attack;
     if (!a || this.combat.phase(this.sim) !== "active") return;
-    const m = STRIKES[a.stage - 1],
-      [vx, vy] = facingVector(a.facing);
-    const angle = Math.atan2(vy, vx);
-    const progress = Math.max(
-      0,
-      Math.min(1, (this.sim - a.start - m.windup) / m.active),
-    );
-    const reverse = a.stage === 2;
-    const sweep =
-      angle +
-      (reverse
-        ? m.angle - 2 * m.angle * progress
-        : -m.angle + 2 * m.angle * progress);
-    const tail = 0.24;
-    this.slash.setDepth(this.state.player.y + 1);
-    this.slash.lineStyle(
-      a.stage === 3 ? 5 : 3,
-      a.stage === 3 ? 0xffe3a3 : 0xe5f8e8,
-      0.65,
-    );
+    const weapon = this.hero.weapon;
+    if (!weapon?.visible) return;
+    const p = this.state.player;
+    this.slash.setDepth(p.y + 1);
+    this.slash.lineStyle(a.stage === 3 ? 3 : 2, 0xe5f8e8, weapon.alpha);
     this.slash.beginPath();
-    this.slash.arc(
-      this.state.player.x,
-      this.state.player.y - 8,
-      m.range * COMBAT.slashRadiusScale,
-      reverse ? sweep : sweep - tail,
-      reverse ? sweep + tail : sweep,
+    this.slash.moveTo(
+      p.x + weapon.grip.x * 0.3 + weapon.tip.x * 0.7,
+      p.y + weapon.grip.y * 0.3 + weapon.tip.y * 0.7,
     );
+    this.slash.lineTo(p.x + weapon.tip.x, p.y + weapon.tip.y);
     this.slash.strokePath();
   }
+
   drawDashTrail() {
     this.windTrail ??= this.add.graphics();
     this.windTrail.clear();
@@ -646,7 +634,7 @@ export class World extends Phaser.Scene {
       a = this.keys.axis();
     const length = Math.hypot(a.x, a.y);
     const nextFacing = !length
-      ? this.hero.direction
+      ? this.combat.effectiveFacing(this.sim, this.hero.direction)
       : Math.abs(a.x) > Math.abs(a.y)
         ? a.x < 0
           ? 2
@@ -654,6 +642,17 @@ export class World extends Phaser.Scene {
         : a.y < 0
           ? 1
           : 0;
+    this.combat.update(
+      prevSim,
+      this.sim,
+      nextFacing,
+      p,
+      this.enemies,
+      (x, y) => this.blocked(x, y),
+      (x, y, tx, ty) => this.clearLine(x, y, tx, ty),
+      (target, stage) => this.strikeEnemy(target as Enemy, stage),
+      () => this.soundFx.play("attack"),
+    );
     if (!this.combat.attack && this.sim >= this.combat.dashUntil && length) {
       this.hero.motion.direction = nextFacing;
     }
@@ -661,9 +660,7 @@ export class World extends Phaser.Scene {
     const attackRequested = this.keys.take("j") || this.pointerAttack;
     this.pointerAttack = false;
     if (dashRequested) {
-      if (
-        this.combat.requestDash(this.sim, p.stamina, a, this.hero.direction)
-      ) {
+      if (this.combat.requestDash(this.sim, p.stamina, a, nextFacing)) {
         p.stamina -= COMBAT.dash.cost;
         this.sprint.reset(p.stamina);
         this.soundFx.play("dash");
@@ -693,27 +690,8 @@ export class World extends Phaser.Scene {
     const oldX = p.x,
       oldY = p.y;
     sweepMove(p, dx, dy, (x, y) => this.blocked(x, y));
-    const active = this.combat.attack;
-    if (active) {
-      const m = STRIKES[active.stage - 1];
-      const from = active.start + m.windup,
-        until = from + m.active;
-      const overlap = Math.max(
-        0,
-        Math.min(this.sim, until) - Math.max(prevSim, from),
-      );
-      if (overlap) {
-        const [vx, vy] = facingVector(active.facing);
-        sweepMove(
-          p,
-          (vx * m.step * overlap) / m.active,
-          (vy * m.step * overlap) / m.active,
-          (x, y) => this.blocked(x, y),
-        );
-      }
-    }
     this.combat.update(
-      prevSim,
+      this.sim,
       this.sim,
       nextFacing,
       p,
@@ -723,6 +701,9 @@ export class World extends Phaser.Scene {
       (target, stage) => this.strikeEnemy(target as Enemy, stage),
       () => this.soundFx.play("attack"),
     );
+    if (length && !this.combat.attack) this.combat.leaveReady();
+    if (!length && !this.combat.attack && this.sim < this.combat.readyUntil)
+      this.hero.motion.direction = this.combat.lastFacing;
     const striking = this.combat.attack;
     this.attackSerial = this.combat.serial;
     this.attackUntil = striking
@@ -741,12 +722,30 @@ export class World extends Phaser.Scene {
       striking ? 0 : a.x,
       striking ? 0 : a.y,
       striking
-        ? combatVisual(
-            striking.stage,
-            striking.facing,
-            this.sim - striking.start,
-          )
-        : undefined,
+        ? {
+            ...combatVisual(
+              striking.stage,
+              striking.facing,
+              this.sim - striking.start,
+            ),
+            weapon: weaponSample(
+              striking.stage,
+              striking.facing,
+              this.sim - striking.start,
+            ),
+          }
+        : this.sim < this.combat.readyUntil &&
+            this.sim >= this.combat.dashUntil &&
+            this.sim >= this.gatherUntil
+          ? {
+              ...combatVisual(
+                this.combat.lastStage,
+                this.combat.lastFacing,
+                this.combat.total(this.combat.lastStage),
+              ),
+              phase: "ready" as const,
+            }
+          : undefined,
       !striking && this.sim < this.combat.dashUntil
         ? Math.abs(this.combat.dashX) > Math.abs(this.combat.dashY)
           ? this.combat.dashX < 0

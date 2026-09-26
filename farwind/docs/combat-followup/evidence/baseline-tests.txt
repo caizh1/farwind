@@ -1,0 +1,107 @@
+修复前定向反例运行结果
+
+> farwind@0.1.0 test
+> vitest run tests/logic.test.ts tests/motion.test.ts tests/combat.test.ts
+
+
+ RUN  v5.0.1 /Users/archer/Documents/ChatGPT/Game/farwind
+
+ ❯ tests/combat.test.ts (15 tests | 4 failed) 141ms
+   ❯ 本轮连段事件边界 (5)
+     × 1030 完成，1031 到期，1040 更新：合法旧请求按1030启动一次 3ms
+     × 等于到期合法，超过到期不能续招 1ms
+     × 持剑等待独立于攻击实例，松键风步沿锁定面向，有输入优先 0ms
+     × 30/60/120Hz及抖动步长推进同一输入事件，命中与位移一致 0ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  4 failed | 35 passed (39)
+   Start at  09:05:00
+   Duration  299ms (tests 52%, transform 29%, import 17%, worker 1%)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/combat.test.ts > 本轮连段事件边界 > 1030 完成，1031 到期，1040 更新：合法旧请求按1030启动一次
+AssertionError: expected [ 1, 2, 3 ] to deeply equal [ 1, 2, 3, 1 ]
+
+- Expected
++ Received
+
+  [
+    1,
+    2,
+    3,
+-   1,
+  ]
+
+ ❯ tests/combat.test.ts:316:22
+    314|     const a = third();
+    315|     a.c.requestAttack(881); a.tick(520, 1000, 3); a.tick(1000, 1040, 3…
+    316|     expect(a.starts).toEqual([1, 2, 3, 1]);
+       |                      ^
+    317|     expect(a.c.attack?.start).toBe(1030);
+    318|     a.tick(1040, 1100, 3);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/combat.test.ts > 本轮连段事件边界 > 等于到期合法，超过到期不能续招
+AssertionError: expected [ 1, 2, 3 ] to have a length of 4 but got 3
+
+- Expected
++ Received
+
+- 4
++ 3
+
+ ❯ tests/combat.test.ts:329:24
+    327|     for (const request of [879, 880]) {
+    328|       const a = third(); a.c.requestAttack(request); a.tick(520, 1040,…
+    329|       expect(a.starts).toHaveLength(request === 880 ? 4 : 3);
+       |                        ^
+    330|     }
+    331|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/combat.test.ts > 本轮连段事件边界 > 持剑等待独立于攻击实例，松键风步沿锁定面向，有输入优先
+AssertionError: expected -1 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ -1
+
+ ❯ tests/combat.test.ts:337:25
+    335|       a.tick(0, 250, 2);
+    336|       expect(a.c.requestDash(250, 100, axis, 2)).toBe(true);
+    337|       expect(a.c.dashX).toBe(axis.x || 1);
+       |                         ^
+    338|     }
+    339|     const a = arena(); a.c.requestAttack(0); a.tick(0, 335, 3);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/combat.test.ts > 本轮连段事件边界 > 30/60/120Hz及抖动步长推进同一输入事件，命中与位移一致
+AssertionError: expected [ 1, 2, 3, 1 ] to deeply equal [ 1, 2, 3 ]
+
+- Expected
++ Received
+
+  [
+    1,
+    2,
+    3,
++   1,
+  ]
+
+ ❯ tests/combat.test.ts:362:24
+    360|     }
+    361|     for (const r of results) {
+    362|       expect(r.starts).toEqual(results[0].starts);
+       |                        ^
+    363|       expect(r.hits).toEqual(results[0].hits);
+    364|       expect(r.y).toBeCloseTo(results[0].y, 7);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

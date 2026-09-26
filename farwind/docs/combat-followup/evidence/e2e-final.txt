@@ -1,0 +1,33 @@
+
+> farwind@0.1.0 test:e2e
+> playwright test
+
+
+Running 12 tests using 3 workers
+
+(node:69734) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:69736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:69735) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   2 tests/combat-followup.spec.ts:4:1 › 最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步 (10.7s)
+  ✓   1 tests/combat-action.spec.ts:5:1 › 四方向实机动作逐帧推进，三段收招与再次进攻 (10.9s)
+(node:69830) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   4 tests/combat.spec.ts:16:1 › 真实键鼠：三连、断连、风步、暂停和续玩 (9.1s)
+  ✓   6 tests/combat.spec.ts:115:1 › 隔离森林战斗夹具：三连命中、风步拉开、再进攻 (6.2s)
+(node:69870) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   5 tests/animation.spec.ts:11:1 › motion-directions-wall-stop-pause (22.4s)
+  ✓   7 tests/drop.spec.ts:4:1 › 隔离满包夹具：正常击杀、整理后领取、存档往返不重复 (11.9s)
+  ✓   3 tests/adventure.spec.ts:36:1 › adventure-loop (55.1s)
+(node:69931) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   9 tests/session.spec.ts:26:1 › session-sprint-recovery (23.1s)
+  ✓   8 tests/animation.spec.ts:80:1 › companion-well-house-corners (29.3s)
+  ✓  10 tests/stability.spec.ts:3:1 › pause-input-and-save-file-validation (8.2s)
+  ✓  12 tests/visual.spec.ts:2:1 › village-visual (3.3s)
+  ✓  11 tests/session.spec.ts:82:1 › session-title-continue-new-refresh (11.0s)
+
+  12 passed (1.2m)

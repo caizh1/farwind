@@ -43,7 +43,7 @@ export const COMBAT = {
   grace: 200,
   chainWindow: 100,
   restartWindow: 150,
-  slashRadiusScale: 0.72,
+  ready: 200,
   dash: {
     distance: 90,
     duration: 200,
@@ -108,6 +108,10 @@ export class CombatController {
   attack: Attack | null = null;
   serial = 0;
   bufferUntil = 0;
+  requestedAt = 0;
+  readyUntil = 0;
+  lastStage = 1;
+  lastFacing: Facing = 0;
   pending = false;
   nextStage = 1;
   chainUntil = 0;
@@ -120,6 +124,8 @@ export class CombatController {
     this.attack = null;
     this.pending = false;
     this.bufferUntil = 0;
+    this.requestedAt = 0;
+    this.readyUntil = 0;
     this.nextStage = 1;
     this.chainUntil = 0;
     this.dashStart = -1;
@@ -135,6 +141,7 @@ export class CombatController {
     )
       return;
     this.pending = true;
+    this.requestedAt = now;
     this.bufferUntil = now + COMBAT.buffer;
   }
   requestDash(
@@ -144,6 +151,7 @@ export class CombatController {
     facing: Facing,
   ) {
     const a = this.attack;
+    facing = this.effectiveFacing(now, facing);
     if (
       now < this.dashCooldown ||
       now < this.dashUntil ||
@@ -160,6 +168,7 @@ export class CombatController {
     this.pending = false;
     this.nextStage = 1;
     this.chainUntil = 0;
+    this.readyUntil = 0;
     const len = Math.hypot(axis.x, axis.y),
       [fx, fy] = facingVector(facing);
     this.dashX = len ? axis.x / len : fx;
@@ -168,6 +177,15 @@ export class CombatController {
     this.dashUntil = now + COMBAT.dash.duration;
     this.dashCooldown = now + COMBAT.dash.cooldown;
     return true;
+  }
+  effectiveFacing(now: number, fallback: Facing): Facing {
+    return (
+      this.attack?.facing ??
+      (now < this.readyUntil ? this.lastFacing : fallback)
+    );
+  }
+  leaveReady() {
+    this.readyUntil = 0;
   }
   total(stage: number) {
     const m = STRIKES[stage - 1];
@@ -202,52 +220,83 @@ export class CombatController {
     hit: (target: Target, stage: number) => void,
     started: (stage: number) => void,
   ) {
-    const a = this.attack;
-    if (a) {
-      const m = STRIKES[a.stage - 1],
-        from = a.start + m.windup,
-        until = from + m.active;
-      if (now >= from && prev < until) {
-        for (const e of targets)
-          if (!a.hit.has(e.id) && inStrike(p, e, a, clearLine)) {
-            a.hit.add(e.id);
-            hit(e, a.stage);
+    // 按事件时刻推进：请求到达、可衔接、结束、到期，等于到期仍合法。
+    let cursor = prev;
+    for (let guard = 0; guard < 8; guard++) {
+      const a = this.attack;
+      const end = a ? a.start + this.total(a.stage) : Infinity;
+      const legal = a ? end - (a.stage < 3 ? COMBAT.chainWindow : 0) : cursor;
+      const startAt = this.pending
+        ? Math.max(cursor, this.requestedAt, legal)
+        : Infinity;
+      const consumeAt = startAt <= this.bufferUntil ? startAt : Infinity;
+      const stop = Math.min(now, end, consumeAt);
+      if (a) {
+        const m = STRIKES[a.stage - 1];
+        const from = a.start + m.windup,
+          until = from + m.active;
+        const overlap = Math.max(
+          0,
+          Math.min(stop, until) - Math.max(cursor, from),
+        );
+        const [vx, vy] = facingVector(a.facing);
+        // 移动前后都检测，避免长步长先越过目标才检测扇形。
+        const resolve = () => {
+          for (const e of targets)
+            if (!a.hit.has(e.id) && inStrike(p, e, a, clearLine)) {
+              a.hit.add(e.id);
+              hit(e, a.stage);
+            }
+        };
+        if (stop >= from && cursor < until) {
+          resolve();
+          const steps = Math.max(1, Math.ceil((m.step * overlap) / m.active));
+          for (let i = 0; i < steps; i++) {
+            sweepMove(
+              p,
+              (vx * m.step * overlap) / m.active / steps,
+              (vy * m.step * overlap) / m.active / steps,
+              blocked,
+            );
+            resolve();
           }
+        }
+        if (stop >= end) {
+          this.attack = null;
+          this.nextStage = a.stage < 3 ? a.stage + 1 : 1;
+          this.chainUntil = a.stage < 3 ? end + COMBAT.grace : 0;
+          this.lastStage = a.stage;
+          this.lastFacing = a.facing;
+          this.readyUntil = end + COMBAT.ready;
+        }
       }
-      if (now >= a.start + this.total(a.stage)) {
-        this.attack = null;
-        this.nextStage = a.stage < 3 ? a.stage + 1 : 1;
-        this.chainUntil =
-          a.stage < 3 ? a.start + this.total(a.stage) + COMBAT.grace : 0;
+      if (consumeAt <= now && consumeAt <= end) {
+        const stage = a
+          ? a.stage < 3
+            ? a.stage + 1
+            : 1
+          : consumeAt <= this.chainUntil
+            ? this.nextStage
+            : 1;
+        this.pending = false;
+        this.attack = {
+          id: ++this.serial,
+          stage,
+          facing,
+          start: consumeAt,
+          hit: new Set(),
+        };
+        this.lastFacing = facing;
+        this.lastStage = stage;
+        this.readyUntil = 0;
+        this.nextStage = 1;
+        this.chainUntil = 0;
+        started(stage);
       }
+      cursor = stop;
+      if (stop >= now) break;
     }
     if (this.pending && now > this.bufferUntil) this.pending = false;
-    const current = this.attack;
-    if (
-      this.pending &&
-      (!current ||
-        (current.stage < 3 &&
-          now >=
-            current.start + this.total(current.stage) - COMBAT.chainWindow))
-    ) {
-      this.pending = false;
-      const stage =
-        !current && now > this.chainUntil
-          ? 1
-          : current
-            ? current.stage + 1
-            : this.nextStage;
-      this.attack = {
-        id: ++this.serial,
-        stage,
-        facing,
-        start: now,
-        hit: new Set(),
-      };
-      this.nextStage = 1;
-      this.chainUntil = 0;
-      started(stage);
-    }
     if (this.dashUntil > prev) {
       const fraction =
         (Math.min(now, this.dashUntil) - Math.max(prev, this.dashStart)) /
@@ -266,6 +315,10 @@ export class CombatController {
     const m = this.attack ? STRIKES[this.attack.stage - 1] : null;
     return {
       phase: this.phase(now),
+      effectiveFacing: this.effectiveFacing(now, this.lastFacing),
+      ready: !this.attack && now < this.readyUntil,
+      bufferArrivedAt: this.pending ? this.requestedAt : null,
+      bufferExpiresAt: this.pending ? this.bufferUntil : null,
       stage: this.attack?.stage ?? 0,
       attackInstanceId: this.attack?.id ?? null,
       facing: this.attack?.facing ?? null,

@@ -1,0 +1,655 @@
+diff --git a/farwind/src/data/animation.ts b/farwind/src/data/animation.ts
+index 7166df5..c032274 100644
+--- a/farwind/src/data/animation.ts
++++ b/farwind/src/data/animation.ts
+@@ -6,12 +6,13 @@ export const COMBAT_ACTION_ART = {
+   footY: 154,
+ } as const;
+ export type CombatVisual = {
++  weapon?: ReturnType<typeof weaponSample>;
+   texture: string;
+   frame: number;
+   clip: string;
+   frameIndex: number;
+   facing: Facing;
+-  phase: "windup" | "active" | "recovery";
++  phase: "windup" | "active" | "recovery" | "ready";
+   phaseProgress: number;
+   provisional: boolean;
+ };
+@@ -92,3 +93,73 @@ export function clipFor(cat: boolean, d: Facing, action: MotionAction): Clip {
+     provisional: false,
+   };
+ }
++
++// 当前图集有效期两姿态的手工标注（160×160，原点为画布左上）。
++// 正背视图独立标注；左向只在根局部坐标下水平镜像。仍为待美术校准原型。
++const activeWeaponPoints = [
++  [
++    [
++      [72, 119, 42, 89],
++      [75, 137, 76, 166],
++    ],
++    [
++      [82, 139, 49, 108],
++      [83, 88, 115, 40],
++    ],
++    [
++      [74, 68, 47, 26],
++      [83, 150, 109, 180],
++    ],
++  ],
++  [
++    [
++      [67, 106, 35, 74],
++      [64, 98, 32, 66],
++    ],
++    [
++      [72, 110, 46, 72],
++      [76, 102, 42, 52],
++    ],
++    [
++      [76, 83, 76, 38],
++      [66, 104, 36, 62],
++    ],
++  ],
++  [
++    [
++      [76, 104, 44, 74],
++      [100, 122, 139, 117],
++    ],
++    [
++      [91, 128, 130, 96],
++      [94, 81, 120, 40],
++    ],
++    [
++      [73, 78, 35, 43],
++      [92, 150, 122, 170],
++    ],
++  ],
++] as const;
++export function weaponSample(stage: number, facing: Facing, elapsed: number) {
++  const sample = combatVisual(stage, facing, elapsed);
++  const view = facing === 0 ? 0 : facing === 1 ? 1 : 2;
++  const index = sample.frameIndex < 3 ? 0 : 1;
++  const [gx, gy, tx, ty] = activeWeaponPoints[view][stage - 1][index];
++  const scale = COMBAT_ACTION_ART.displaySize / COMBAT_ACTION_ART.frameSize;
++  const point = (x: number, y: number) => ({
++    x: (x - 80) * scale * (facing === 2 ? -1 : 1),
++    y: (y - COMBAT_ACTION_ART.footY) * scale,
++  });
++  return {
++    grip: point(gx, gy),
++    tip: point(tx, ty),
++    visible: sample.phase === "active",
++    progress: sample.phaseProgress,
++    // 每个实际姿态内短暂亮起后衰减，不独立旋转一条悬空圆弧。
++    alpha:
++      sample.phase === "active"
++        ? 0.5 * (1 - ((sample.phaseProgress * 2) % 1))
++        : 0,
++    provisional: true,
++  };
++}
+diff --git a/farwind/src/game/entities/actor.ts b/farwind/src/game/entities/actor.ts
+index e59ce30..b840966 100644
+--- a/farwind/src/game/entities/actor.ts
++++ b/farwind/src/game/entities/actor.ts
+@@ -4,12 +4,14 @@ import {
+   clipFor,
+   COMBAT_ACTION_ART,
+   type CombatVisual,
++  weaponSample,
+ } from "../../data/animation";
+ import type { Facing } from "../systems/locomotion";
+ export class Actor {
+   sprite: Phaser.GameObjects.Sprite;
+   shadow: Phaser.GameObjects.Ellipse;
+   motion: Locomotion;
++  weapon: ReturnType<typeof weaponSample> | null = null;
+   presentation = {
+     key: "",
+     frameIndex: 0,
+@@ -99,6 +101,7 @@ export class Actor {
+         art ? art.displaySize : this.cat ? 55 : 86,
+         art ? art.displaySize : this.cat ? 54 : 92,
+       );
++    this.weapon = combat?.weapon ?? null;
+     this.presentation = {
+       key:
+         combat?.clip ??
+@@ -117,6 +120,8 @@ export class Actor {
+   debug() {
+     return {
+       action: this.motion.action,
++      presentationState: this.presentation.phase,
++      weapon: this.weapon,
+       key: this.presentation.key,
+       texture: this.sprite.texture.key,
+       frame: this.sprite.frame.name,
+diff --git a/farwind/src/game/scenes/World.ts b/farwind/src/game/scenes/World.ts
+index 71f77b3..7b8ae25 100644
+--- a/farwind/src/game/scenes/World.ts
++++ b/farwind/src/game/scenes/World.ts
+@@ -13,7 +13,11 @@ import { makeTerrain } from "../systems/terrain";
+ import Phaser from "phaser";
+ import { props, roads, enemyDefs, region, type Prop } from "../../data/world";
+ import { items, type ItemId } from "../../data/content";
+-import { COMBAT_ACTION_ART, combatVisual } from "../../data/animation";
++import {
++  COMBAT_ACTION_ART,
++  combatVisual,
++  weaponSample,
++} from "../../data/animation";
+ import {
+   initialState,
+   add,
+@@ -473,36 +477,20 @@ export class World extends Phaser.Scene {
+     this.slash.clear();
+     const a = this.combat.attack;
+     if (!a || this.combat.phase(this.sim) !== "active") return;
+-    const m = STRIKES[a.stage - 1],
+-      [vx, vy] = facingVector(a.facing);
+-    const angle = Math.atan2(vy, vx);
+-    const progress = Math.max(
+-      0,
+-      Math.min(1, (this.sim - a.start - m.windup) / m.active),
+-    );
+-    const reverse = a.stage === 2;
+-    const sweep =
+-      angle +
+-      (reverse
+-        ? m.angle - 2 * m.angle * progress
+-        : -m.angle + 2 * m.angle * progress);
+-    const tail = 0.24;
+-    this.slash.setDepth(this.state.player.y + 1);
+-    this.slash.lineStyle(
+-      a.stage === 3 ? 5 : 3,
+-      a.stage === 3 ? 0xffe3a3 : 0xe5f8e8,
+-      0.65,
+-    );
++    const weapon = this.hero.weapon;
++    if (!weapon?.visible) return;
++    const p = this.state.player;
++    this.slash.setDepth(p.y + 1);
++    this.slash.lineStyle(a.stage === 3 ? 3 : 2, 0xe5f8e8, weapon.alpha);
+     this.slash.beginPath();
+-    this.slash.arc(
+-      this.state.player.x,
+-      this.state.player.y - 8,
+-      m.range * COMBAT.slashRadiusScale,
+-      reverse ? sweep : sweep - tail,
+-      reverse ? sweep + tail : sweep,
++    this.slash.moveTo(
++      p.x + weapon.grip.x * 0.3 + weapon.tip.x * 0.7,
++      p.y + weapon.grip.y * 0.3 + weapon.tip.y * 0.7,
+     );
++    this.slash.lineTo(p.x + weapon.tip.x, p.y + weapon.tip.y);
+     this.slash.strokePath();
+   }
++
+   drawDashTrail() {
+     this.windTrail ??= this.add.graphics();
+     this.windTrail.clear();
+@@ -646,7 +634,7 @@ export class World extends Phaser.Scene {
+       a = this.keys.axis();
+     const length = Math.hypot(a.x, a.y);
+     const nextFacing = !length
+-      ? this.hero.direction
++      ? this.combat.effectiveFacing(this.sim, this.hero.direction)
+       : Math.abs(a.x) > Math.abs(a.y)
+         ? a.x < 0
+           ? 2
+@@ -654,6 +642,17 @@ export class World extends Phaser.Scene {
+         : a.y < 0
+           ? 1
+           : 0;
++    this.combat.update(
++      prevSim,
++      this.sim,
++      nextFacing,
++      p,
++      this.enemies,
++      (x, y) => this.blocked(x, y),
++      (x, y, tx, ty) => this.clearLine(x, y, tx, ty),
++      (target, stage) => this.strikeEnemy(target as Enemy, stage),
++      () => this.soundFx.play("attack"),
++    );
+     if (!this.combat.attack && this.sim >= this.combat.dashUntil && length) {
+       this.hero.motion.direction = nextFacing;
+     }
+@@ -661,9 +660,7 @@ export class World extends Phaser.Scene {
+     const attackRequested = this.keys.take("j") || this.pointerAttack;
+     this.pointerAttack = false;
+     if (dashRequested) {
+-      if (
+-        this.combat.requestDash(this.sim, p.stamina, a, this.hero.direction)
+-      ) {
++      if (this.combat.requestDash(this.sim, p.stamina, a, nextFacing)) {
+         p.stamina -= COMBAT.dash.cost;
+         this.sprint.reset(p.stamina);
+         this.soundFx.play("dash");
+@@ -693,27 +690,8 @@ export class World extends Phaser.Scene {
+     const oldX = p.x,
+       oldY = p.y;
+     sweepMove(p, dx, dy, (x, y) => this.blocked(x, y));
+-    const active = this.combat.attack;
+-    if (active) {
+-      const m = STRIKES[active.stage - 1];
+-      const from = active.start + m.windup,
+-        until = from + m.active;
+-      const overlap = Math.max(
+-        0,
+-        Math.min(this.sim, until) - Math.max(prevSim, from),
+-      );
+-      if (overlap) {
+-        const [vx, vy] = facingVector(active.facing);
+-        sweepMove(
+-          p,
+-          (vx * m.step * overlap) / m.active,
+-          (vy * m.step * overlap) / m.active,
+-          (x, y) => this.blocked(x, y),
+-        );
+-      }
+-    }
+     this.combat.update(
+-      prevSim,
++      this.sim,
+       this.sim,
+       nextFacing,
+       p,
+@@ -723,6 +701,9 @@ export class World extends Phaser.Scene {
+       (target, stage) => this.strikeEnemy(target as Enemy, stage),
+       () => this.soundFx.play("attack"),
+     );
++    if (length && !this.combat.attack) this.combat.leaveReady();
++    if (!length && !this.combat.attack && this.sim < this.combat.readyUntil)
++      this.hero.motion.direction = this.combat.lastFacing;
+     const striking = this.combat.attack;
+     this.attackSerial = this.combat.serial;
+     this.attackUntil = striking
+@@ -741,12 +722,30 @@ export class World extends Phaser.Scene {
+       striking ? 0 : a.x,
+       striking ? 0 : a.y,
+       striking
+-        ? combatVisual(
+-            striking.stage,
+-            striking.facing,
+-            this.sim - striking.start,
+-          )
+-        : undefined,
++        ? {
++            ...combatVisual(
++              striking.stage,
++              striking.facing,
++              this.sim - striking.start,
++            ),
++            weapon: weaponSample(
++              striking.stage,
++              striking.facing,
++              this.sim - striking.start,
++            ),
++          }
++        : this.sim < this.combat.readyUntil &&
++            this.sim >= this.combat.dashUntil &&
++            this.sim >= this.gatherUntil
++          ? {
++              ...combatVisual(
++                this.combat.lastStage,
++                this.combat.lastFacing,
++                this.combat.total(this.combat.lastStage),
++              ),
++              phase: "ready" as const,
++            }
++          : undefined,
+       !striking && this.sim < this.combat.dashUntil
+         ? Math.abs(this.combat.dashX) > Math.abs(this.combat.dashY)
+           ? this.combat.dashX < 0
+diff --git a/farwind/src/game/systems/combat.ts b/farwind/src/game/systems/combat.ts
+index bc270cd..d18ebdc 100644
+--- a/farwind/src/game/systems/combat.ts
++++ b/farwind/src/game/systems/combat.ts
+@@ -43,7 +43,7 @@ export const COMBAT = {
+   grace: 200,
+   chainWindow: 100,
+   restartWindow: 150,
+-  slashRadiusScale: 0.72,
++  ready: 200,
+   dash: {
+     distance: 90,
+     duration: 200,
+@@ -108,6 +108,10 @@ export class CombatController {
+   attack: Attack | null = null;
+   serial = 0;
+   bufferUntil = 0;
++  requestedAt = 0;
++  readyUntil = 0;
++  lastStage = 1;
++  lastFacing: Facing = 0;
+   pending = false;
+   nextStage = 1;
+   chainUntil = 0;
+@@ -120,6 +124,8 @@ export class CombatController {
+     this.attack = null;
+     this.pending = false;
+     this.bufferUntil = 0;
++    this.requestedAt = 0;
++    this.readyUntil = 0;
+     this.nextStage = 1;
+     this.chainUntil = 0;
+     this.dashStart = -1;
+@@ -135,6 +141,7 @@ export class CombatController {
+     )
+       return;
+     this.pending = true;
++    this.requestedAt = now;
+     this.bufferUntil = now + COMBAT.buffer;
+   }
+   requestDash(
+@@ -144,6 +151,7 @@ export class CombatController {
+     facing: Facing,
+   ) {
+     const a = this.attack;
++    facing = this.effectiveFacing(now, facing);
+     if (
+       now < this.dashCooldown ||
+       now < this.dashUntil ||
+@@ -160,6 +168,7 @@ export class CombatController {
+     this.pending = false;
+     this.nextStage = 1;
+     this.chainUntil = 0;
++    this.readyUntil = 0;
+     const len = Math.hypot(axis.x, axis.y),
+       [fx, fy] = facingVector(facing);
+     this.dashX = len ? axis.x / len : fx;
+@@ -169,6 +178,15 @@ export class CombatController {
+     this.dashCooldown = now + COMBAT.dash.cooldown;
+     return true;
+   }
++  effectiveFacing(now: number, fallback: Facing): Facing {
++    return (
++      this.attack?.facing ??
++      (now < this.readyUntil ? this.lastFacing : fallback)
++    );
++  }
++  leaveReady() {
++    this.readyUntil = 0;
++  }
+   total(stage: number) {
+     const m = STRIKES[stage - 1];
+     return m.windup + m.active + m.recovery;
+@@ -202,52 +220,83 @@ export class CombatController {
+     hit: (target: Target, stage: number) => void,
+     started: (stage: number) => void,
+   ) {
+-    const a = this.attack;
+-    if (a) {
+-      const m = STRIKES[a.stage - 1],
+-        from = a.start + m.windup,
+-        until = from + m.active;
+-      if (now >= from && prev < until) {
+-        for (const e of targets)
+-          if (!a.hit.has(e.id) && inStrike(p, e, a, clearLine)) {
+-            a.hit.add(e.id);
+-            hit(e, a.stage);
++    // 按事件时刻推进：请求到达、可衔接、结束、到期，等于到期仍合法。
++    let cursor = prev;
++    for (let guard = 0; guard < 8; guard++) {
++      const a = this.attack;
++      const end = a ? a.start + this.total(a.stage) : Infinity;
++      const legal = a ? end - (a.stage < 3 ? COMBAT.chainWindow : 0) : cursor;
++      const startAt = this.pending
++        ? Math.max(cursor, this.requestedAt, legal)
++        : Infinity;
++      const consumeAt = startAt <= this.bufferUntil ? startAt : Infinity;
++      const stop = Math.min(now, end, consumeAt);
++      if (a) {
++        const m = STRIKES[a.stage - 1];
++        const from = a.start + m.windup,
++          until = from + m.active;
++        const overlap = Math.max(
++          0,
++          Math.min(stop, until) - Math.max(cursor, from),
++        );
++        const [vx, vy] = facingVector(a.facing);
++        // 移动前后都检测，避免长步长先越过目标才检测扇形。
++        const resolve = () => {
++          for (const e of targets)
++            if (!a.hit.has(e.id) && inStrike(p, e, a, clearLine)) {
++              a.hit.add(e.id);
++              hit(e, a.stage);
++            }
++        };
++        if (stop >= from && cursor < until) {
++          resolve();
++          const steps = Math.max(1, Math.ceil((m.step * overlap) / m.active));
++          for (let i = 0; i < steps; i++) {
++            sweepMove(
++              p,
++              (vx * m.step * overlap) / m.active / steps,
++              (vy * m.step * overlap) / m.active / steps,
++              blocked,
++            );
++            resolve();
+           }
++        }
++        if (stop >= end) {
++          this.attack = null;
++          this.nextStage = a.stage < 3 ? a.stage + 1 : 1;
++          this.chainUntil = a.stage < 3 ? end + COMBAT.grace : 0;
++          this.lastStage = a.stage;
++          this.lastFacing = a.facing;
++          this.readyUntil = end + COMBAT.ready;
++        }
+       }
+-      if (now >= a.start + this.total(a.stage)) {
+-        this.attack = null;
+-        this.nextStage = a.stage < 3 ? a.stage + 1 : 1;
+-        this.chainUntil =
+-          a.stage < 3 ? a.start + this.total(a.stage) + COMBAT.grace : 0;
++      if (consumeAt <= now && consumeAt <= end) {
++        const stage = a
++          ? a.stage < 3
++            ? a.stage + 1
++            : 1
++          : consumeAt <= this.chainUntil
++            ? this.nextStage
++            : 1;
++        this.pending = false;
++        this.attack = {
++          id: ++this.serial,
++          stage,
++          facing,
++          start: consumeAt,
++          hit: new Set(),
++        };
++        this.lastFacing = facing;
++        this.lastStage = stage;
++        this.readyUntil = 0;
++        this.nextStage = 1;
++        this.chainUntil = 0;
++        started(stage);
+       }
++      cursor = stop;
++      if (stop >= now) break;
+     }
+     if (this.pending && now > this.bufferUntil) this.pending = false;
+-    const current = this.attack;
+-    if (
+-      this.pending &&
+-      (!current ||
+-        (current.stage < 3 &&
+-          now >=
+-            current.start + this.total(current.stage) - COMBAT.chainWindow))
+-    ) {
+-      this.pending = false;
+-      const stage =
+-        !current && now > this.chainUntil
+-          ? 1
+-          : current
+-            ? current.stage + 1
+-            : this.nextStage;
+-      this.attack = {
+-        id: ++this.serial,
+-        stage,
+-        facing,
+-        start: now,
+-        hit: new Set(),
+-      };
+-      this.nextStage = 1;
+-      this.chainUntil = 0;
+-      started(stage);
+-    }
+     if (this.dashUntil > prev) {
+       const fraction =
+         (Math.min(now, this.dashUntil) - Math.max(prev, this.dashStart)) /
+@@ -266,6 +315,10 @@ export class CombatController {
+     const m = this.attack ? STRIKES[this.attack.stage - 1] : null;
+     return {
+       phase: this.phase(now),
++      effectiveFacing: this.effectiveFacing(now, this.lastFacing),
++      ready: !this.attack && now < this.readyUntil,
++      bufferArrivedAt: this.pending ? this.requestedAt : null,
++      bufferExpiresAt: this.pending ? this.bufferUntil : null,
+       stage: this.attack?.stage ?? 0,
+       attackInstanceId: this.attack?.id ?? null,
+       facing: this.attack?.facing ?? null,
+diff --git a/farwind/tests/combat.test.ts b/farwind/tests/combat.test.ts
+index f1a76e3..7db254f 100644
+--- a/farwind/tests/combat.test.ts
++++ b/farwind/tests/combat.test.ts
+@@ -7,7 +7,11 @@ import {
+   sweepMove,
+ } from "../src/game/systems/combat";
+ import { add, count, initialState, parseSave } from "../src/game/systems/state";
+-import { combatVisual, COMBAT_ACTION_ART } from "../src/data/animation";
++import {
++  combatVisual,
++  COMBAT_ACTION_ART,
++  weaponSample,
++} from "../src/data/animation";
+ import sharp from "sharp";
+ import { createHash } from "node:crypto";
+ 
+@@ -300,3 +304,121 @@ it("受击闪色覆盖前摇预警直到期限，30/60/120 Hz 命中与阶段一
+     expect(a.c.attack).toBeNull();
+   }
+ });
++
++describe("本轮连段事件边界", () => {
++  function third() {
++    const a = arena();
++    a.c.requestAttack(0);
++    a.tick(0, 0, 3);
++    a.c.requestAttack(235);
++    a.tick(0, 235, 3);
++    a.c.requestAttack(520);
++    a.tick(235, 520, 3);
++    expect(a.c.attack?.stage).toBe(3);
++    return a;
++  }
++  it("1030 完成，1031 到期，1040 更新：合法旧请求按1030启动一次", () => {
++    const a = third();
++    a.c.requestAttack(881);
++    a.tick(520, 1000, 3);
++    a.tick(1000, 1040, 3);
++    expect(a.starts).toEqual([1, 2, 3, 1]);
++    expect(a.c.attack?.start).toBe(1030);
++    a.tick(1040, 1100, 3);
++    expect(a.starts).toHaveLength(4);
++  });
++  it("本步新输入不能倒用到上段完成时刻", () => {
++    const a = third();
++    a.tick(520, 1040, 3);
++    a.c.requestAttack(1040);
++    a.tick(1040, 1040, 3);
++    expect(a.c.attack?.start).toBe(1040);
++  });
++  it("等于到期合法，超过到期不能续招", () => {
++    for (const request of [879, 880]) {
++      const a = third();
++      a.c.requestAttack(request);
++      a.tick(520, 1040, 3);
++      expect(a.starts).toHaveLength(request === 880 ? 4 : 3);
++    }
++  });
++  it("持剑等待独立于攻击实例，松键风步沿锁定面向，有输入优先", () => {
++    for (const axis of [
++      { x: 0, y: 0 },
++      { x: -1, y: 0 },
++    ]) {
++      const a = arena();
++      a.c.requestAttack(0);
++      a.tick(0, 0, 3);
++      a.tick(0, 250, 2);
++      expect(a.c.requestDash(250, 100, axis, 2)).toBe(true);
++      expect(a.c.dashX).toBe(axis.x || 1);
++    }
++    const a = arena();
++    a.c.requestAttack(0);
++    a.tick(0, 335, 3);
++    expect(a.c.attack).toBeNull();
++    expect(a.c.readyUntil).toBe(535);
++    expect(a.c.effectiveFacing(351, 2)).toBe(3);
++    a.c.requestAttack(351);
++    a.tick(335, 351, 3);
++    expect(a.c.attack?.stage).toBe(2);
++    a.c.reset();
++    expect(a.c.readyUntil).toBe(0);
++  });
++  it("30/60/120Hz及抖动步长推进同一输入事件，命中与位移一致", () => {
++    const results = [];
++    for (const steps of [
++      [1000 / 30],
++      [1000 / 60],
++      [1000 / 120],
++      [7, 41, 13, 29],
++    ]) {
++      const a = arena();
++      let prev = 0,
++        i = 0;
++      const inputs = [0, 235, 520, 881];
++      a.c.requestAttack(inputs.shift()!);
++      a.tick(0, 0);
++      while (prev < 1500) {
++        const now = Math.min(
++          1500,
++          prev + steps[i++ % steps.length],
++          inputs[0] ?? Infinity,
++        );
++        a.tick(prev, now);
++        if (now === inputs[0]) {
++          a.c.requestAttack(inputs.shift()!);
++          a.tick(now, now);
++        }
++        prev = now;
++      }
++      results.push({ starts: a.starts, hits: a.hits, y: a.p.y });
++    }
++    for (const r of results) {
++      expect(r.starts).toEqual(results[0].starts);
++      expect(r.hits).toEqual(results[0].hits);
++      expect(r.y).toBeCloseTo(results[0].y, 7);
++    }
++  });
++});
++
++it("左右武器局部坐标严格水平镜像，正背视图独立，非有效期无刀光", () => {
++  for (let stage = 1; stage <= 3; stage++) {
++    for (const t of [
++      0,
++      STRIKES[stage - 1].windup,
++      STRIKES[stage - 1].windup + 80,
++      600,
++    ]) {
++      const left = weaponSample(stage, 2, t),
++        right = weaponSample(stage, 3, t);
++      expect(left.tip.x).toBe(-right.tip.x);
++      expect(left.tip.y).toBe(right.tip.y);
++      expect(left.grip.x).toBe(-right.grip.x);
++      expect(left.grip.y).toBe(right.grip.y);
++      expect(left.visible).toBe(right.visible);
++      if (t === 0 || t === 600) expect(left.visible).toBe(false);
++    }
++  }
++});
