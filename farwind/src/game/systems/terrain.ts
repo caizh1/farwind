@@ -32,7 +32,8 @@ export function makeTerrain(this: World) {
     bridge = this.textures.get("bridge").getSourceImage() as HTMLImageElement,
     herb = this.textures.get("herb").getSourceImage() as HTMLImageElement,
     rock = this.textures.get("rock").getSourceImage() as HTMLImageElement,
-    pond = this.textures.get("pond-water").getSourceImage() as HTMLImageElement;
+    pond = this.textures.get("pond-water").getSourceImage() as HTMLImageElement,
+    flowerBed = this.textures.get("orchard-flower-bed").getSourceImage() as HTMLImageElement;
   const groundKeys: string[] = [];
   this.events.once("shutdown", () => groundKeys.forEach(key => this.textures.remove(key)));
   for (let cy = 0; cy < WORLD.height; cy += 550)
@@ -133,21 +134,8 @@ export function makeTerrain(this: World) {
       c.fillStyle = soil;
       c.fill();
       c.restore();
-      // 保留范围外的果园花床；木工台改为按落地点排序的独立物体。
-      for (const [x, y, w, h] of [[230, 1480, 210, 80]]) {
-        c.fillStyle = "#84613c";
-        c.fillRect(x, y, w, h);
-        for (let row = 0; row < h; row += 24) {
-          c.fillStyle = "#b29259";
-          c.fillRect(x + 5, y + row, w - 10, 7);
-          for (let col = 10; col < w; col += 23) {
-            c.fillStyle = "#5b823a";
-            c.fillRect(x + col, y + row + 9, 9, 9);
-            c.fillStyle = x < 500 ? "#f1b6ab" : "#a1bb62";
-            c.fillRect(x + col + 2, y + row + 8, 4, 4);
-          }
-        }
-      }
+      // 低矮花床保持地面装饰和原区域，所有区块从同一世界坐标采样。
+      c.drawImage(flowerBed, 230, 1480, 210, 80);
       for (let i = 0; i < 4; i++) {
         c.fillStyle = "#8b6541";
         c.fillRect(200 + i * 17, 1070, 12, 40);
@@ -215,17 +203,6 @@ export function makeTerrain(this: World) {
           b.w + 8,
         );
         c.restore();
-      }
-      for (const [x, y] of [
-        [900, 1350],
-        [1500, 1320],
-      ]) {
-        c.fillStyle = "#624d32";
-        c.fillRect(x, y, 9, 30);
-        c.fillRect(x + 70, y, 9, 30);
-        c.fillStyle = "#bb9058";
-        c.fillRect(x - 5, y - 3, 90, 13);
-        c.fillRect(x - 5, y + 15, 90, 12);
       }
       // 沿湖岸与主路之外点缀花簇，避免覆盖通行信息。
       for (const { x, y, pink } of shoreFlowers) {

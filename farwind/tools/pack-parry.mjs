@@ -15,5 +15,5 @@ for(let view=0;view<3;view++)for(let pose=0;pose<4;pose++) {
 }
 await sharp({create:{width:640,height:480,channels:4,background:'#00000000'}}).composite(frames).png().toFile('public/assets/animation/hero-parry.png');
 await sharp('public/assets/animation/hero-parry.png').flatten({background:'#e7e4d6'}).png().toFile('docs/parry/evidence/fixed-preview.png');
-await writeFile('docs/parry/assets/manifest.json',JSON.stringify({说明:'内置图像生成的新弹反动作，正面、背面、右侧各四姿态；左向仅运行时镜像。打包不按含剑包围盒逐帧缩放。',源图:source,地面根:roots,裁切尺寸:crop,图集帧尺寸:160,图集根:[80,154],显示尺寸:145,姿态:['架剑','受力','拨开','持剑就绪'],状态:'固定预览与游戏运行核查中，美术未获用户认可'},null,2));
+await writeFile('docs/parry/assets/manifest.json',JSON.stringify({说明:'内置图像生成的新弹反动作，正面、背面、右侧各四姿态；左向仅运行时镜像。打包不按含剑包围盒逐帧缩放。',源图:source,地面根:roots,裁切尺寸:crop,图集帧尺寸:160,图集根:[80,154],显示尺寸:145,姿态:['架剑','受力','拨开','持剑就绪'],状态:'已完成固定预览与真实运行核查；保留临时标记，用户主观美术验收未完成'},null,2));
 console.log('已打包十二个固定根弹反姿态');

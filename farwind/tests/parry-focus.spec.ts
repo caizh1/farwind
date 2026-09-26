@@ -7,7 +7,7 @@ const dir=process.env.FARWIND_PARRY_NATIVE?'docs/parry/evidence/native':'docs/pa
 async function loadFixture(page:Page,x=850,y=720,stamina=100,hp=100,killed:string[]=[]) {
  await mkdir(dir,{recursive:true});const state=initialState();Object.assign(state.player,{x,y,stamina,hp});state.quest=3;state.killed=killed;
  await mkdir(`${dir}/fixtures`,{recursive:true});await writeFile(`${dir}/fixtures/${x===850?'training':x===1640?'field':x===2380?'adventure':'two-enemies'}.json`,JSON.stringify(state,null,2));
- page.on('dialog',d=>d.accept());await page.goto('/?animationDebug=1');await page.waitForFunction(()=>typeof (window as any).__farwind==='function');
+ page.on('dialog',d=>d.accept());await page.goto('/');await page.waitForFunction(()=>typeof (window as any).__farwind==='function');
  const chooser=page.waitForEvent('filechooser');await page.getByRole('button',{name:'导入存档',exact:true}).click();await(await chooser).setFiles({name:'parry-fixture.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(state))});
  await page.waitForFunction(()=>(window as any).__farwind().mode==='');
 }
@@ -34,7 +34,7 @@ async function saveEvidence(page:Page,name:string) {
  const audio=await page.evaluate(()=>(window as any).__finishAudio?.());if(audio){await writeFile(`${raw}/${name}-audio.webm`,Buffer.from(audio.base64,'base64'));await writeFile(`${dir}/${name}-media.json`,JSON.stringify({说明:'旁路录制真实游戏音轨，视频正常速度',音频偏移秒:audio.offset},null,2));}
  const video=page.video();await page.close();await video?.saveAs(`${raw}/${name}-video.webm`);
 }
-test.afterEach(async({page},info)=>{if(info.status!==info.expectedStatus&&!page.isClosed()){await mkdir('.parry-local/failures',{recursive:true});const snapshot=await page.evaluate(()=>(window as any).__farwind?.());const samples=await page.evaluate(()=>(window as any).__parrySamples);await writeFile(`.parry-local/failures/${info.title}.json`,JSON.stringify({说明:'失败时只读首因快照',snapshot,samples}));}});
+test.afterEach(async({page},info)=>{if(info.status!==info.expectedStatus&&!page.isClosed()){await mkdir('.parry-local/failures',{recursive:true});const snapshot=await page.evaluate(()=>(window as any).__farwind?.());const samples=await page.evaluate(()=>(window as any).__parrySamples);await writeFile(`.parry-local/failures/${info.title}-${Date.now()}.json`,JSON.stringify({说明:'失败时只读首因快照',snapshot,samples}));}});
 // 四方向动作、普通攻击取消、长按、暂停／失焦和界面右键边界。
  test('PARRY-03',async({page})=>{
  await loadFixture(page,1640,620);await sample(page);

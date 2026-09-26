@@ -377,6 +377,9 @@ props.push(
     h: 66,
     role: "decoration",
   },
+  // 沿用原地面长椅的脚底中心；无交互、无新增阻挡。
+  { id: "pond-bench-west", art: "village-bench", x: 940, y: 1380, w: 90, h: 50, role: "decoration" },
+  { id: "pond-bench-east", art: "village-bench", x: 1540, y: 1350, w: 90, h: 50, role: "decoration" },
   {
     id: "plaza-fountain",
     art: "fountain",

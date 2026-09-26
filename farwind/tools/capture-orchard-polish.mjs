@@ -6,9 +6,30 @@ if (!["before", "after"].includes(phase))
   throw Error("请指定修改前或修改后阶段：before / after");
 const view = process.argv[3] ?? "orchard";
 const locations = {
-  "orchard": { x: 660, y: 1510, left: 20, top: 960, crops: [["flower-bed", 210, 1440, 255, 155], ["bench", 880, 1300, 145, 110]] },
-  "west-bench": { x: 940, y: 1400, left: 300, top: 850, crops: [["bench", 880, 1300, 145, 130]] },
-  "east-bench": { x: 1570, y: 1400, left: 930, top: 850, crops: [["bench", 1475, 1275, 145, 135]] },
+  orchard: {
+    x: 660,
+    y: 1510,
+    left: 20,
+    top: 960,
+    crops: [
+      ["flower-bed", 210, 1440, 255, 155],
+      ["bench", 880, 1300, 145, 110],
+    ],
+  },
+  "west-bench": {
+    x: 940,
+    y: 1400,
+    left: 300,
+    top: 850,
+    crops: [["bench", 880, 1300, 145, 130]],
+  },
+  "east-bench": {
+    x: 1570,
+    y: 1400,
+    left: 930,
+    top: 850,
+    crops: [["bench", 1475, 1275, 145, 135]],
+  },
 };
 const location = locations[view];
 if (!location) throw Error("未知截图机位");

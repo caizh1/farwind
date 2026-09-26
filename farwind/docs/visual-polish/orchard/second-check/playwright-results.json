@@ -1,0 +1,196 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "tests/orchard-polish.spec.ts",
+      "--config",
+      "tools/playwright-orchard-polish.config.ts"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/tools/playwright-orchard-polish.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/visual-polish/orchard/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "*.spec.ts"
+        ],
+        "timeout": 240000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/visual-polish/orchard/playwright-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "orchard-polish.spec.ts",
+      "file": "orchard-polish.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "orchard-polish-movement",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 69348,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T10:31:58.959Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0edfedbd8a17d65d53fd-3a24a4c1a36715ae0be8",
+          "file": "orchard-polish.spec.ts",
+          "line": 40,
+          "column": 1
+        },
+        {
+          "title": "orchard-polish-assets-lifecycle",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 4210,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0.95\u001b[39m\nReceived:   \u001b[31m0.2846386845521419\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0.95\u001b[39m\nReceived:   \u001b[31m0.2846386845521419\u001b[39m\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/orchard-polish.spec.ts:241:47",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/orchard-polish.spec.ts",
+                      "column": 47,
+                      "line": 241
+                    },
+                    "snippet": "  239 |   ]);\n  240 |   expect(render.花床地面核对.样本).toBeGreaterThan(1000);\n> 241 |   expect(render.花床地面核对.相同 / render.花床地面核对.样本).toBeGreaterThan(\n      |                                               ^\n  242 |     0.95,\n  243 |   );\n  244 |   expect(render.长椅).toEqual(["
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/orchard-polish.spec.ts",
+                        "column": 47,
+                        "line": 241
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0.95\u001b[39m\nReceived:   \u001b[31m0.2846386845521419\u001b[39m\n\n  239 |   ]);\n  240 |   expect(render.花床地面核对.样本).toBeGreaterThan(1000);\n> 241 |   expect(render.花床地面核对.相同 / render.花床地面核对.样本).toBeGreaterThan(\n      |                                               ^\n  242 |     0.95,\n  243 |   );\n  244 |   expect(render.长椅).toEqual([\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/orchard-polish.spec.ts:241:47"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T10:33:08.397Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/visual-polish/orchard/test-results/orchard-polish-orchard-polish-assets-lifecycle/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/visual-polish/orchard/test-results/orchard-polish-orchard-polish-assets-lifecycle/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/visual-polish/orchard/test-results/orchard-polish-orchard-polish-assets-lifecycle/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/orchard-polish.spec.ts",
+                    "column": 47,
+                    "line": 241
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "0edfedbd8a17d65d53fd-f17eaf06fccf9714bac0",
+          "file": "orchard-polish.spec.ts",
+          "line": 161,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-26T10:31:58.704Z",
+    "duration": 74778.298,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

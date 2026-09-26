@@ -7,7 +7,7 @@ const dir=process.env.FARWIND_PARRY_NATIVE?'docs/parry/evidence/native':'docs/pa
 async function loadFixture(page:Page,x=850,y=720,stamina=100,hp=100,killed:string[]=[]) {
  await mkdir(dir,{recursive:true});const state=initialState();Object.assign(state.player,{x,y,stamina,hp});state.quest=3;state.killed=killed;
  await mkdir(`${dir}/fixtures`,{recursive:true});await writeFile(`${dir}/fixtures/${x===850?'training':x===1640?'field':x===2380?'adventure':'two-enemies'}.json`,JSON.stringify(state,null,2));
- page.on('dialog',d=>d.accept());await page.goto('/?animationDebug=1');await page.waitForFunction(()=>typeof (window as any).__farwind==='function');
+ page.on('dialog',d=>d.accept());await page.goto('/');await page.waitForFunction(()=>typeof (window as any).__farwind==='function');
  const chooser=page.waitForEvent('filechooser');await page.getByRole('button',{name:'导入存档',exact:true}).click();await(await chooser).setFiles({name:'parry-fixture.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(state))});
  await page.waitForFunction(()=>(window as any).__farwind().mode==='');
 }
@@ -34,7 +34,7 @@ async function saveEvidence(page:Page,name:string) {
  const audio=await page.evaluate(()=>(window as any).__finishAudio?.());if(audio){await writeFile(`${raw}/${name}-audio.webm`,Buffer.from(audio.base64,'base64'));await writeFile(`${dir}/${name}-media.json`,JSON.stringify({说明:'旁路录制真实游戏音轨，视频正常速度',音频偏移秒:audio.offset},null,2));}
  const video=page.video();await page.close();await video?.saveAs(`${raw}/${name}-video.webm`);
 }
-test.afterEach(async({page},info)=>{if(info.status!==info.expectedStatus&&!page.isClosed()){await mkdir('.parry-local/failures',{recursive:true});const snapshot=await page.evaluate(()=>(window as any).__farwind?.());const samples=await page.evaluate(()=>(window as any).__parrySamples);await writeFile(`.parry-local/failures/${info.title}.json`,JSON.stringify({说明:'失败时只读首因快照',snapshot,samples}));}});
+test.afterEach(async({page},info)=>{if(info.status!==info.expectedStatus&&!page.isClosed()){await mkdir('.parry-local/failures',{recursive:true});const snapshot=await page.evaluate(()=>(window as any).__farwind?.());const samples=await page.evaluate(()=>(window as any).__parrySamples);await writeFile(`.parry-local/failures/${info.title}-${Date.now()}.json`,JSON.stringify({说明:'失败时只读首因快照',snapshot,samples}));}});
 // 普通／精准由正式接触结果断言，不强制成功；停顿中只按真实J。
 test('PARRY-01',async({page})=>{
  await page.addInitScript(captureGameAudio);await loadFixture(page);await face(page,'w',1);await mode(page,'慢速教学 · 900毫秒');await sample(page);
@@ -60,7 +60,7 @@ test('PARRY-02',async({page})=>{
  let id=await coming(page,330);await page.keyboard.press('k');expect((await outcome(page,id)).result).toBe('hurt');await expect(page.locator('#parry-feedback')).toContainText('按早');await page.screenshot({path:`${dir}/early.png`});
  id=await coming(page,200);await outcome(page,id);await page.keyboard.press('k');await expect(page.locator('#parry-feedback')).toContainText('按晚');await page.screenshot({path:`${dir}/late.png`});
  await face(page,'s',0);id=await coming(page,45);await page.keyboard.press('k');expect((await outcome(page,id)).result).toBe('hurt');await expect(page.locator('#parry-feedback')).toContainText('朝向错误');await page.screenshot({path:`${dir}/back-failure.png`});
- await mode(page,'结束弹反练习');const start=(await read(page)).state.player;await page.keyboard.press('k');await page.waitForFunction(()=>(window as any).__farwind().session.combat.parry!==null);await page.waitForFunction(()=>(window as any).__farwind().session.combat.parry===null);await page.keyboard.down('d');await page.keyboard.press('l');await page.waitForFunction(()=>(window as any).__farwind().session.combat.dashRemaining>0);await page.keyboard.up('d');await page.waitForFunction(()=>(window as any).__farwind().session.combat.dashRemaining===0);expect((await read(page)).state.player.x).toBeGreaterThan(start.x+60);
+ await mode(page,'结束弹反练习');await page.waitForFunction(()=>(window as any).__farwind().session.combat.parryCooldownRemaining===0);const start=(await read(page)).state.player;await page.keyboard.press('k');await page.waitForFunction(()=>(window as any).__farwind().session.combat.parry!==null);await page.waitForFunction(()=>(window as any).__farwind().session.combat.parry===null);await page.keyboard.down('d');await page.keyboard.press('l');await page.waitForFunction(()=>(window as any).__farwind().session.combat.dashRemaining>0);await page.keyboard.up('d');await page.waitForFunction(()=>(window as any).__farwind().session.combat.dashRemaining===0);expect((await read(page)).state.player.x).toBeGreaterThan(start.x+60);
  expect((await read(page)).state.player.hp).toBe(100);await saveEvidence(page,'failure-rescue');
 });
 // 正式森林敌人生命、攻击伤害与追击强度均不改，只导入合法起始站位。

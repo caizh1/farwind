@@ -127,6 +127,8 @@ export class World extends Phaser.Scene {
       ["carpenter-workbench", "carpenter-workbench"],
       ["fountain", "plaza-fountain"],
       ["pond-water", "pond-water"],
+      ["orchard-flower-bed", "orchard-flower-bed"],
+      ["village-bench", "village-bench"],
     ]) this.load.image(key, `/assets/village-polish/${file}.png`);
     this.load.image(
       "vertical-fence",
