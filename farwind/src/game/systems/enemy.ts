@@ -1,6 +1,5 @@
 import { enemyDefs } from "../../data/world";
-import { regionAt } from "../../data/village";
-import { createEnemyAttack, advanceEnemyAttack, ENEMY_ATTACK, type EnemyAttack, type EnemyContact } from "./enemyAttack";
+import { createEnemyAttack, advanceEnemyAttack, ENEMY_ATTACK, delayEnemyAttack, sampleEnemyAttack, type EnemyAttack, type EnemyContact } from "./enemyAttack";
 import {
   clearMotionLine,
   clearMeleeLine,
@@ -160,6 +159,9 @@ export type EnemyBody = Point & {
   staggerSince?: number;
   attack?: EnemyAttack | null;
   attackSerial?: number;
+  targetId?: string | null;
+  playerAggroUntil?: number;
+  parried?: {at:number;until:number;direction:Point;perfect:boolean};
   nav: {
     path: Point[];
     target?: Point;
@@ -183,6 +185,10 @@ export const enemyNavigation = (): EnemyBody["nav"] => ({
   queries: 0,
   visited: 0,
 });
+export function enemyAttackSpace(e:Pick<EnemyBody,"homeX"|"homeY">) {
+  return {blocked:(x:number,y:number)=>motionBlocked(x,y)||distance({x,y},{x:e.homeX,y:e.homeY})>420,clear:clearMotionLine,melee:clearMeleeLine};
+}
+export const enemyAttackPermitted=(e:Pick<EnemyBody,"homeX"|"homeY">,player:Point)=>distance(player,{x:e.homeX,y:e.homeY})<=520;
 export function staggerEnemy(e:Pick<EnemyBody,"staggerUntil"|"staggerSince">,now:number,duration:number) {
   e.staggerUntil=Math.max(e.staggerUntil,now+duration);
   e.staggerSince=now;
@@ -219,17 +225,15 @@ export function updateEnemy(
   if (e.disabled) return null;
   const d = distance(e, player),
     home = { x: e.homeX, y: e.homeY };
-  const safe = distance(player,home) <= 520 && regionAt(player).id !== "village";
+  const safe = enemyAttackPermitted(e,player);
   e.rejection = !safe
     ? "家园追击边界"
     : d >= 80
       ? "距离"
       : meleeBlocker(e, player);
-  if(e.attack&&!e.attack.cancelled&&!e.attack.emitted) {
+  if(e.attack&&!e.attack.cancelled) {
     const frozen=Math.max(0,Math.min(now,e.staggerUntil)-Math.max(prev,e.staggerSince??prev));
-    e.attack.lockAt+=frozen;
-    e.attack.contactAt+=frozen;
-    e.attack.recoveryUntil+=frozen;
+    delayEnemyAttack(e.attack,frozen);
     e.windup=Math.max(0,e.attack.contactAt-now);
   }
   if (now < e.staggerUntil) {
@@ -238,15 +242,16 @@ export function updateEnemy(
   }
   if (e.attack) {
     const attack=e.attack;
-    const contact=advanceEnemyAttack(attack,e,player,now);
+    const contact=advanceEnemyAttack(attack,e,player,now,enemyAttackSpace(e));
     e.windup=attack.cancelled?0:Math.max(0,attack.contactAt-now);
-    e.ai=attack.cancelled?"攻击取消":now<attack.contactAt?(attack.locked?"锁向前摇":"蓄力"):"收招";
+    e.ai=attack.cancelled?"攻击取消":({charge:"蓄力",commit:"锁向承诺",active:"真正出手",recovery:"收招"}[sampleEnemyAttack(attack,now,e).phase]);
     if(contact)e.cool=contact.at+(e.type==="leaf"?ENEMY_ATTACK.leaf.cooldown:ENEMY_ATTACK.slime.cooldown);
     if(now>=attack.recoveryUntil||attack.cancelled)e.attack=null;
     return contact;
   }
   if (d < 80 && now > e.cool && safe && clearMeleeLine(e, player)) {
     e.attack=createEnemyAttack(e.id,e.attackSerial=(e.attackSerial??0)+1,e.type,now,e,player);
+    e.cool=e.attack.contactAt+(e.type==="leaf"?ENEMY_ATTACK.leaf.cooldown:ENEMY_ATTACK.slime.cooldown);
     e.windup = e.attack.contactAt-now;
     e.ai = "前摇";
     e.nav.path = [];

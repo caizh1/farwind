@@ -1,0 +1,54 @@
+{
+  "说明": "首轮两个暂停竞态失败完整保留；另一次复测启动前归档路径错误，测试未应用修复即启动，已主动中止，不能视为有效复测。",
+  "记录": [
+    {
+      "原路径": "tools/.parry-local/m5/browser-output/village-integration-east-watch真实致死后关闭浏览器，活跃事件恢复与多次结算幂等",
+      "归档": ".parry-local/m5/browser-first/case-01",
+      "文件": [
+        {
+          "文件": "test-failed-2.png",
+          "SHA256": "2ffbb65318d4293c5066d8797a6e5618cd0a59c9dcc3328b79d6e04841b7eba7"
+        },
+        {
+          "文件": "test-failed-1.png",
+          "SHA256": "1e0625b9b8ede6ae8279de5ad11e3b285615a3a0daeb1197bf3f3f4b526202de"
+        },
+        {
+          "文件": "trace.zip",
+          "SHA256": "b403f663c161f689381218440156a6bdd2da10b914d02ccbb9d3091f9793bda0"
+        },
+        {
+          "文件": "error-context.md",
+          "SHA256": "5fb298d72449ed5270aaa860869b6516b3e2a81ea8a618b93a46811678c3a3e6"
+        }
+      ]
+    },
+    {
+      "原路径": "tools/.parry-local/m5/browser-output/village-integration-south-watch真实致死后关闭浏览器，活跃事件恢复与多次结算幂等",
+      "归档": ".parry-local/m5/browser-first/case-02",
+      "文件": [
+        {
+          "文件": "test-failed-2.png",
+          "SHA256": "fb838aa0f7beb700141967e7f728df3f2ee003f2da6de862613b10226ac973c4"
+        },
+        {
+          "文件": "test-failed-1.png",
+          "SHA256": "5ea0fb48907ee59336f6eb1a410cc7b50bd35cb4bbb5da38c83f0e9421929484"
+        },
+        {
+          "文件": "trace.zip",
+          "SHA256": "68b7aa180e985a67b83d63cb6eef6c266970055a5e02886290838b188da06eee"
+        },
+        {
+          "文件": "error-context.md",
+          "SHA256": "8e94d73482d4b5a24bc2ab4a1228867e62666d1e29b842092b2fd3bd765af446"
+        }
+      ]
+    }
+  ],
+  "补充": {
+    "图表检查首因": "performance-page-first.json",
+    "误启动中断报告": "recovery-fixed/browser-results.json",
+    "中断追踪": "中断期间有截断追踪，不将其作为完整通过证据"
+  }
+}

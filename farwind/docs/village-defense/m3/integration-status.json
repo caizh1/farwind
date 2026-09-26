@@ -1,0 +1,13 @@
+{
+  "说明": "共享目录在隔离快照后仍有新改动，本轮不向共享目录写回M3，避免覆盖。隔离版本已经包含快照时的生活服务、弹反和剑风；后续集成要以此版本与最新共享代码重新三方合并。",
+  "隔离目录": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind",
+  "共享目录": "/Users/archer/Documents/ChatGPT/Game/farwind",
+  "共享再次变化": [
+    "src/game/scenes/World.ts",
+    "src/game/systems/state.ts",
+    "package.json"
+  ],
+  "是否写回共享": false,
+  "开发预览": "http://127.0.0.1:5203/",
+  "生产预览": "http://127.0.0.1:5204/"
+}

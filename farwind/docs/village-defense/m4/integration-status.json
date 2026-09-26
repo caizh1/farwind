@@ -1,0 +1,202 @@
+{
+  "说明": "安全合入M3/M4；所有覆盖文件在写入前逐一比对共享快照，保留最新剑风独立代码与测试。无提交、推送或部署。",
+  "共享目录": "/Users/archer/Documents/ChatGPT/Game/farwind",
+  "回退备份": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/.parry-local/m4/shared-rollback.zip",
+  "记录": [
+    {
+      "文件": "src/game/scenes/World.ts",
+      "原SHA256": "745d9418acd01bc6237a7cf36796cf9168ad44637db78d911db53245b3cc2095",
+      "合并SHA256": "a3203dd6a9d15dd5750bc1c5e92b3f7040200ab402379481e8977a209082a992"
+    },
+    {
+      "文件": "src/game/systems/state.ts",
+      "原SHA256": "5c896703747bcbf913d4acf61dd8a7fe8911e450d9d654825bf2c50c06e3c9bf",
+      "合并SHA256": "21c70a2c1a4816eb1b59fdf2022f23a36976168d9619d310f748de85b73aae51"
+    },
+    {
+      "文件": "src/game/systems/enemy.ts",
+      "原SHA256": "485fc1e96c0b5ee8135872e9c788b59206f4336512b8766bd75075ec440aa1d4",
+      "合并SHA256": "1501588ca668a3bd5ee6d144a70ed0b1a5ebf2f59d563236e47d71c6669389ab"
+    },
+    {
+      "文件": "src/game/systems/interactions.ts",
+      "原SHA256": "0669fe76d2ffdc3a4e51a22338f26cc0b3ff475f4f0287d1867be593eda8ed98",
+      "合并SHA256": "eea231d3035031ca23829a57e1ccca649da21daac1d89dc22c3a3856e7bf6853"
+    },
+    {
+      "文件": "src/game/systems/damage.ts",
+      "原SHA256": null,
+      "合并SHA256": "ae5878a9e6fdc19beabed74db598df2a719122d47fe6f4d1b594cf87f41680d7"
+    },
+    {
+      "文件": "src/game/systems/obstacles.ts",
+      "原SHA256": "368f9c83016ed18dfae96b0277eaeda85fbe33c1b8cb617b4b013197ba226ac0",
+      "合并SHA256": "d1875d91fbfdd96c064bab7e5b3e729e61a718fbdaaa4e194b011232bcc672cc"
+    },
+    {
+      "文件": "src/game/systems/defenseState.ts",
+      "原SHA256": null,
+      "合并SHA256": "6f4f4f3a726c8168f6583f2d534f958716c675252b907fbdd248beaef96c3abe"
+    },
+    {
+      "文件": "src/game/systems/defense.ts",
+      "原SHA256": null,
+      "合并SHA256": "9935ac8a1da76ad0aad1c19f7b200f65e2a9be62276d8d79004306c4961158c4"
+    },
+    {
+      "文件": "src/game/entities/actor.ts",
+      "原SHA256": "91ba38b55b375f16c5f7a74117ab2bf27173eb8e5f3bbeafb59fe092f5b0be07",
+      "合并SHA256": "df64fb5bda4664767c9d9916f830f05ecc74bf4e9e2ed65f1e1b4ebeffc12eda"
+    },
+    {
+      "文件": "src/game/entities/defenders.ts",
+      "原SHA256": null,
+      "合并SHA256": "357606bdc78bb73c1bd83d123dfc54555059bf9e7fc7c7a10322f3830a44d26c"
+    },
+    {
+      "文件": "src/data/village.ts",
+      "原SHA256": "91566d9a190d89415d41320ea22fc3a06ffb24ed2c4133fcddc27bccc866f90f",
+      "合并SHA256": "66f73c7ccb480850beb4a407a6ffcce75bfb01a8a44d730828606b3fd4f57262"
+    },
+    {
+      "文件": "src/data/world.ts",
+      "原SHA256": "f2781d1bfa6b93cafe0d3136d93862e135198efdf6343252a79703d7fd4587c9",
+      "合并SHA256": "3a7471502e335435b53f9193965edb9108c3d5f851ce027cf8a35d981809056e"
+    },
+    {
+      "文件": "src/data/defense.ts",
+      "原SHA256": null,
+      "合并SHA256": "7d1a1e452e5f9e54090dafd1b76f34781eb228271f99c511f1e6ccbfa042b0e2"
+    },
+    {
+      "文件": "src/data/defense-art.json",
+      "原SHA256": null,
+      "合并SHA256": "09f23452f4cb75e6e352927ec3d5689e0e0eaf234cdb93881ba8747277c64dd2"
+    },
+    {
+      "文件": "tests/village-raids.test.ts",
+      "原SHA256": null,
+      "合并SHA256": "30422300cb4087e5de6a43c001726a0e93585db9cb3e7144bd350232863765af"
+    },
+    {
+      "文件": "tests/village-raids.spec.ts",
+      "原SHA256": null,
+      "合并SHA256": "ae78867d19d3510e9175fc86e0cdb2cd7dc079c244aa2cbc63feb22d5dee2a7e"
+    },
+    {
+      "文件": "tests/village-defense.test.ts",
+      "原SHA256": "01ba79e12195b6c9c63636d9bbb63317acf45a0985aeecaddfb49d842a5e7e45",
+      "合并SHA256": "0ce04b2a2c89a81ff267ad249dd420e02d9b5f2de1d5c5cac57b2351c420eee3"
+    },
+    {
+      "文件": "tests/parry.test.ts",
+      "原SHA256": "40c35ed4ee2baf868945b1ea0b5dcbcbd14ed7bdf12779ebc93b6cf48d45384c",
+      "合并SHA256": "0b11a04bee0e370cc2d4621445aa84cbd86ee2248f477554c2117783be14b745"
+    },
+    {
+      "文件": "tests/hud.spec.ts",
+      "原SHA256": "d1cd1614587972a197b66dde6b617577b3748932fea98f5c659c05f7b45bc11d",
+      "合并SHA256": "091ec8ff43a46afdd2a6172bf97e538996bfdd65b4ce2fac9068b5a08bdb5ff7"
+    },
+    {
+      "文件": "tests/parry.spec.ts",
+      "原SHA256": "e3e0041aebef845daf12245c75d9d6a6f15f0eb41c6d6d35bbf96384c89ce7b8",
+      "合并SHA256": "16a8b1e8c1c5930516e0d1b9b6d60542dfd4d2db94ef4cac52d7b9fae0ba7e8e"
+    },
+    {
+      "文件": "tests/village-defense.spec.ts",
+      "原SHA256": "33197bea68962be34783b2cca6f40a0aa18db1ac428f712af242ed7b45b09e0d",
+      "合并SHA256": "41387c304e8696850d10036e6f4b043cf24b7579fe1e8db701cc65f3a5ef3e1e"
+    },
+    {
+      "文件": "tests/east-defense-recovery.spec.ts",
+      "原SHA256": null,
+      "合并SHA256": "83dd37f8115a591bc63e8d2e5537f2f4a99e93cda9db32d538fce10c5e2f21e5"
+    },
+    {
+      "文件": "tests/economy-production.spec.ts",
+      "原SHA256": "1f1ef47cdabe11a9c815bd4486d0efed743c5782699cc115df6e0af1a733c234",
+      "合并SHA256": "564907c5fd5018d56283ae4ee087fbfca1b6a385a062d89a5b2c45a40c504151"
+    },
+    {
+      "文件": "tests/logic.test.ts",
+      "原SHA256": "61c470b403b075e36aabd698f56ebf30f561a48760b422a3075754bf2d88a993",
+      "合并SHA256": "152b51ce117c48e89630f55161340a5ded4a2a0bda87aaaf4458ce65f38541c9"
+    },
+    {
+      "文件": "tests/economy.test.ts",
+      "原SHA256": "503c5182295eed3a69908a0900ba0ca142c4f7fea88e88e9d93b392a18b0475c",
+      "合并SHA256": "474be15ff818283c693b5a18554330209fe424aec2c657e73ec8edb8d504d683"
+    },
+    {
+      "文件": "tests/economy.spec.ts",
+      "原SHA256": "a30d936ca2f9c3ef69472e980e6be7fc6aa4d3ede609626fcdc9182eb90029e7",
+      "合并SHA256": "d466b443a5165371bab5c6c04cced18ad6565b40adbcebe47dac7ae0236ea541"
+    },
+    {
+      "文件": "tests/east-defense.test.ts",
+      "原SHA256": null,
+      "合并SHA256": "bc33effaadfa96840bfd467530702cbb606faafd67f195b0efe41fd12408b910"
+    },
+    {
+      "文件": "tests/map-expansion.test.ts",
+      "原SHA256": "71d6baeb5f002d8db7bfb404908a9a2d70acec4db1d4d4e86fe4352998247faf",
+      "合并SHA256": "63251e39e63ca9ad55e78cfaed6a4a6b1ce20565aafa8b6bdc633603ccd567ac"
+    },
+    {
+      "文件": "tests/east-defense.spec.ts",
+      "原SHA256": null,
+      "合并SHA256": "5ad4eeec01fa2767e6b9c4ed49ffd57276e466e7146c7324e80782e48a26d746"
+    },
+    {
+      "文件": "tests/parry-v2.test.ts",
+      "原SHA256": "054711d80bf0004c53a1ef65021a8307fbb9f802a1b1ce43f4de488d1133f6ef",
+      "合并SHA256": "cbe20c8369ee728f13d5099bc673dd332dfe06ebdc72f17aa7e89080d804a9bf"
+    },
+    {
+      "文件": "tools/capture-village-raids.mjs",
+      "原SHA256": null,
+      "合并SHA256": "4b8e4a7c3bf7c370c13fe812cd8fd0c294cd1123367c02cdb4878db1925ea2fd"
+    },
+    {
+      "文件": "tools/capture-east-defense.mjs",
+      "原SHA256": null,
+      "合并SHA256": "da1f7980a5f2bbf309e88b1cd88ed17ed7ab9799b0d02f82d3564531eb79fd59"
+    },
+    {
+      "文件": "tools/playwright-east-defense.config.ts",
+      "原SHA256": null,
+      "合并SHA256": "73a614320e29b6faf80ae679e0ebfab903e411935d281a5d52e2f619382a8126"
+    },
+    {
+      "文件": "public/assets/village-defense/m3/archer-source.png",
+      "原SHA256": null,
+      "合并SHA256": "4b72f503f734cfdda668a0c5397a542b6315a6555cdd571197ab16aae2ad49df"
+    },
+    {
+      "文件": "public/assets/village-defense/m3/guard-source.png",
+      "原SHA256": null,
+      "合并SHA256": "ded658714ec1ff8410571f0d5983eeab1aee4d8305407a01ce3925d3c6d706d5"
+    },
+    {
+      "文件": "public/assets/village-defense/m3/watchtower-candidate.png",
+      "原SHA256": null,
+      "合并SHA256": "2d959fc3711a108394cdf89cba55fd66bd66ff58dda515869a97cc77f7d9a29a"
+    },
+    {
+      "文件": "public/assets/village-defense/m4/archer-vertical-candidate.png",
+      "原SHA256": null,
+      "合并SHA256": "1409cf9dc204dfd8c0c8a9b91ddc9d9a5e58a24c7b845f56207e392d76fab448"
+    },
+    {
+      "文件": "public/assets/manifest.json",
+      "原SHA256": "51cb5349e6c2f47e15189dbe27f7d9583f551405097a4a8bc1562cd2f09db4c0",
+      "合并SHA256": "fdbcd8c7ba0bcfc77c338c1c5912ffbd68f9b0f3e9af7bca712e1922d0b50cf1"
+    },
+    {
+      "文件": "package.json",
+      "原SHA256": "ce8092d6909a91637a0bde0b39ee45715371d922669ff7fc08fa2b520e4754d8",
+      "合并SHA256": "ce760c546dde6af132c3fe85377c5c0bb1be8ae483aa4130b2d54447066489b7"
+    }
+  ]
+}

@@ -1,12 +1,19 @@
 export class Sound {
   context?: AudioContext;
   volume = 0.25;
+  output?: DynamicsCompressorNode;
+  lastPlayed=new Map<string,number>();
   start() {
     this.context ??= new AudioContext();
+    if(!this.output){this.output=this.context.createDynamicsCompressor();this.output.threshold.value=-9;this.output.knee.value=6;this.output.ratio.value=8;this.output.attack.value=.003;this.output.release.value=.1;this.output.connect(this.context.destination);}
     void this.context.resume();
   }
   play(kind = "pick") {
     if (!this.context || !this.volume) return;
+    const at=this.context.currentTime;
+    if(at-(this.lastPlayed.get(kind)??-Infinity)<.025)return;this.lastPlayed.set(kind,at);
+    if(kind.startsWith('wind-')){this.swordWindSound(kind);return;}
+    if(["enemy-charge","enemy-strike","enemy-stagger","deflect","counter"].includes(kind)){this.motionSound(kind);return;}
     if(["guard","parry","parry-perfect"].includes(kind)) {this.parrySound(kind);return;}
     if (
       [
@@ -46,13 +53,32 @@ export class Sound {
     g.gain.setValueAtTime(this.volume * 0.3, c.currentTime);
     g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.2);
     o.connect(g);
-    g.connect(c.destination);
+    g.connect(this.output??c.destination);
     o.start();
     o.stop(c.currentTime + 0.21);
+  }
+  private swordWindSound(kind:string){
+    const c=this.context!,at=c.currentTime,charge=kind==='wind-charge',hit=kind==='wind-hit',dissolve=kind==='wind-dissolve',duration=charge?.11:hit?.13:dissolve?.06:.14;
+    const noise=c.createBuffer(1,Math.ceil(c.sampleRate*duration),c.sampleRate),samples=noise.getChannelData(0);let seed=hit?941:charge?307:1709;
+    for(let i=0;i<samples.length;i++){seed=seed*16807%2147483647;samples[i]=seed/1073741824-1;}
+    const source=c.createBufferSource(),filter=c.createBiquadFilter(),gain=c.createGain();source.buffer=noise;filter.type=hit?'highpass':'bandpass';filter.Q.value=.7;
+    filter.frequency.setValueAtTime(charge?700:hit?1600:dissolve?1100:5400,at);filter.frequency.exponentialRampToValueAtTime(charge?1500:hit?500:dissolve?350:850,at+duration);
+    gain.gain.setValueAtTime(.001,at);gain.gain.linearRampToValueAtTime(this.volume*(charge?.2:hit?.8:dissolve?.15:.75),at+(charge?.045:.006));gain.gain.exponentialRampToValueAtTime(.001,at+duration);
+    source.connect(filter);filter.connect(gain);gain.connect(this.output??c.destination);source.start(at);source.stop(at+duration);source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect();};
+  }
+  private motionSound(kind:string) {
+    const c=this.context!,at=c.currentTime,charge=kind==="enemy-charge",contact=kind==="enemy-stagger",duration=charge?.23:contact?.14:.12;
+    const buffer=c.createBuffer(1,Math.ceil(c.sampleRate*duration),c.sampleRate),samples=buffer.getChannelData(0);let seed=701;
+    for(let i=0;i<samples.length;i++){seed=seed*16807%2147483647;samples[i]=seed/1073741824-1;}
+    const source=c.createBufferSource(),filter=c.createBiquadFilter(),gain=c.createGain();source.buffer=buffer;filter.type="bandpass";filter.Q.value=.65;
+    filter.frequency.setValueAtTime(charge?220:contact?420:3200,at);filter.frequency.exponentialRampToValueAtTime(charge?450:contact?110:650,at+duration);
+    gain.gain.setValueAtTime(.001,at);gain.gain.linearRampToValueAtTime(this.volume*(charge?.18:contact?.35:.42),at+(charge?.1:.012));gain.gain.exponentialRampToValueAtTime(.001,at+duration);
+    source.connect(filter);filter.connect(gain);gain.connect(this.output??c.destination);source.start(at);source.stop(at+duration);source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect();};
   }
   private parrySound(kind:string) {
     const c=this.context!,at=c.currentTime,perfect=kind==="parry-perfect",guard=kind==="guard";
     // 起手是短促剑身轻响；接触用独立的衰减金属谐波，避免通用提示上升音。
+    if(!guard)this.motionSound("enemy-stagger");
     const frequencies=guard?[620,930]:perfect?[780,1170,1950]:[650,1010];
     const duration=guard?0.06:perfect?0.17:0.13;
     frequencies.forEach((frequency,i)=>{
@@ -60,7 +86,7 @@ export class Sound {
       o.type="sine";o.frequency.setValueAtTime(frequency,begin);o.frequency.exponentialRampToValueAtTime(frequency*0.78,begin+duration);
       g.gain.setValueAtTime(0.001,begin);g.gain.linearRampToValueAtTime(this.volume*(guard?0.1:perfect?0.26:0.3)/(i+1),begin+0.003);
       g.gain.exponentialRampToValueAtTime(0.001,begin+duration);
-      o.connect(g);g.connect(c.destination);o.start(begin);o.stop(begin+duration);
+      o.connect(g);g.connect(this.output??c.destination);o.start(begin);o.stop(begin+duration);
       o.onended=()=>{o.disconnect();g.disconnect();};
     });
   }
@@ -105,7 +131,7 @@ export class Sound {
     gain.gain.exponentialRampToValueAtTime(0.001, at + duration);
     source.connect(filter);
     filter.connect(gain);
-    gain.connect(c.destination);
+    gain.connect(this.output??c.destination);
     source.start(at);
     source.stop(at + duration);
     source.onended = () => {
@@ -125,7 +151,7 @@ export class Sound {
       envelope.gain.setValueAtTime(this.volume * (heavy ? 0.65 : 0.38), at);
       envelope.gain.exponentialRampToValueAtTime(0.001, at + duration);
       body.connect(envelope);
-      envelope.connect(c.destination);
+      envelope.connect(this.output??c.destination);
       body.start(at);
       body.stop(at + duration);
       body.onended = () => {

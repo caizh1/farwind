@@ -1,0 +1,987 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "tests/combat.spec.ts",
+      "tests/level-rework.spec.ts",
+      "tests/training.spec.ts",
+      "tests/adventure.spec.ts",
+      "tests/economy.spec.ts",
+      "tests/parry.spec.ts",
+      "--config",
+      "tools/playwright-east-defense.config.ts"
+    ],
+    "configFile": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tools/playwright-east-defense.config.ts",
+    "rootDir": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "*.spec.ts"
+        ],
+        "timeout": 240000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "adventure.spec.ts",
+      "file": "adventure.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "adventure-loop",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 60489,
+                  "error": {
+                    "message": "Error: page.waitForFunction: DataCloneError: Failed to execute 'structuredClone' on 'Window': function() {\n\t\t\t\tthis.scene.sys.updateList.add(this);\n\t\t\t} could not be cloned.\n    at value (http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226:293:17)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:6:28)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)",
+                    "stack": "Error: page.waitForFunction: DataCloneError: Failed to execute 'structuredClone' on 'Window': function() {\n\t\t\t\tthis.scene.sys.updateList.add(this);\n\t\t\t} could not be cloned.\n    at value (http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226:293:17)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:6:28)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at value (http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226:293:17)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:6:28)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at move (/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/map-navigation.ts:78:22)\n    at /Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/adventure.spec.ts:46:3",
+                    "location": {
+                      "file": "http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226",
+                      "column": 17,
+                      "line": 293
+                    }
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226",
+                        "column": 17,
+                        "line": 293
+                      },
+                      "message": "Error: page.waitForFunction: DataCloneError: Failed to execute 'structuredClone' on 'Window': function() {\n\t\t\t\tthis.scene.sys.updateList.add(this);\n\t\t\t} could not be cloned.\n    at value (http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226:293:17)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:6:28)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at value (http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226:293:17)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:6:28)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at move (/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/map-navigation.ts:78:22)\n    at /Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/adventure.spec.ts:46:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:25:43.904Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/adventure-adventure-loop/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/adventure-adventure-loop/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/adventure-adventure-loop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/adventure-adventure-loop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226",
+                    "column": 17,
+                    "line": 293
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "0e432c2735e1cb75ffbd-09fa87c054fbf0880b19",
+          "file": "adventure.spec.ts",
+          "line": 19,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "combat.spec.ts",
+      "file": "combat.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "真实键鼠：三连、断连、风步、暂停和续玩",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15381,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:26:49.545Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/combat-真实键鼠：三连、断连、风步、暂停和续玩/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6b51ea54a95aff327696-0e3e47aa2a6ce0e4cc4f",
+          "file": "combat.spec.ts",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "title": "隔离森林战斗夹具：三连命中、风步拉开、再进攻",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8890,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:27:05.058Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/combat-隔离森林战斗夹具：三连命中、风步拉开、再进攻/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6b51ea54a95aff327696-9802f2f4c0898e97e798",
+          "file": "combat.spec.ts",
+          "line": 126,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "economy.spec.ts",
+      "file": "economy.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 32499,
+                  "error": {
+                    "message": "Error: page.waitForFunction: TypeError: window.__farwind is not a function\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:6:28)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:311:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                    "stack": "Error: page.waitForFunction: TypeError: window.__farwind is not a function\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:6:28)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:311:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:6:28)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:311:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at move (/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/map-navigation.ts:78:22)\n    at /Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/economy.spec.ts:71:5",
+                    "location": {
+                      "file": "eval at predicate (eval at evaluate (:311:30)), <anonymous>",
+                      "column": 28,
+                      "line": 6
+                    }
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "eval at predicate (eval at evaluate (:311:30)), <anonymous>",
+                        "column": 28,
+                        "line": 6
+                      },
+                      "message": "Error: page.waitForFunction: TypeError: window.__farwind is not a function\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:6:28)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:311:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:6:28)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:311:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at move (/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/map-navigation.ts:78:22)\n    at /Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/economy.spec.ts:71:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:27:14.292Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/economy-新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/economy-新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/economy-新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "eval at predicate (eval at evaluate (:311:30)), <anonymous>",
+                    "column": 28,
+                    "line": 6
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-355bb8774f27f76b1f3d",
+          "file": "economy.spec.ts",
+          "line": 54,
+          "column": 1
+        },
+        {
+          "title": "商店实际负向检查、双击只成交一次以及窄屏可操作",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8729,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:27:48.989Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-8c56afd759fdb79b832d",
+          "file": "economy.spec.ts",
+          "line": 174,
+          "column": 1
+        },
+        {
+          "title": "满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 32384,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:27:57.822Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-68c098f29f896f6d0d48",
+          "file": "economy.spec.ts",
+          "line": 213,
+          "column": 1
+        },
+        {
+          "title": "IDB写请求成功后事务中止，钱物库存与上次有效档完全保留",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9447,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:28:30.213Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-87114cfa589a5d0316c1",
+          "file": "economy.spec.ts",
+          "line": 251,
+          "column": 1
+        },
+        {
+          "title": "交易待保存时不能Esc关闭，世界和输入全部暂停",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5626,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:28:39.666Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-912daf1358a217cd2f2e",
+          "file": "economy.spec.ts",
+          "line": 287,
+          "column": 1
+        },
+        {
+          "title": "正式森林战斗实际扣血及铁剑增伤，默认战斗数值保持",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8409,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:28:45.300Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-ae852512ccbee111e5eb",
+          "file": "economy.spec.ts",
+          "line": 337,
+          "column": 1
+        },
+        {
+          "title": "真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复迁移",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 4779,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 2\u001b[39m\n\u001b[31m+ Received  + 2\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[32m-   3,\u001b[39m\n\u001b[32m-   5,\u001b[39m\n\u001b[31m+   4,\u001b[39m\n\u001b[31m+   6,\u001b[39m\n\u001b[2m    120,\u001b[22m\n\u001b[2m    3,\u001b[22m\n\u001b[2m  ]\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 2\u001b[39m\n\u001b[31m+ Received  + 2\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[32m-   3,\u001b[39m\n\u001b[32m-   5,\u001b[39m\n\u001b[31m+   4,\u001b[39m\n\u001b[31m+   6,\u001b[39m\n\u001b[2m    120,\u001b[22m\n\u001b[2m    3,\u001b[22m\n\u001b[2m  ]\u001b[22m\n    at /Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/economy.spec.ts:409:6",
+                    "location": {
+                      "file": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/economy.spec.ts",
+                      "column": 6,
+                      "line": 409
+                    },
+                    "snippet": "  407 |     restored.coins,\n  408 |     restored.quest,\n> 409 |   ]).toEqual([4, 6, 120, 3]);\n      |      ^\n  410 |   expect(restored.bag).toEqual(old.bag);\n  411 |   expect(\n  412 |     Math.hypot(restored.player.x - 930, restored.player.y - 1100),"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/economy.spec.ts",
+                        "column": 6,
+                        "line": 409
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 2\u001b[39m\n\u001b[31m+ Received  + 2\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[32m-   3,\u001b[39m\n\u001b[32m-   5,\u001b[39m\n\u001b[31m+   4,\u001b[39m\n\u001b[31m+   6,\u001b[39m\n\u001b[2m    120,\u001b[22m\n\u001b[2m    3,\u001b[22m\n\u001b[2m  ]\u001b[22m\n\n  407 |     restored.coins,\n  408 |     restored.quest,\n> 409 |   ]).toEqual([4, 6, 120, 3]);\n      |      ^\n  410 |   expect(restored.bag).toEqual(old.bag);\n  411 |   expect(\n  412 |     Math.hypot(restored.player.x - 930, restored.player.y - 1100),\n    at /Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/economy.spec.ts:409:6"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:28:53.719Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/economy-真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复迁移/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/economy-真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复迁移/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/economy-真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复迁移/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/economy.spec.ts",
+                    "column": 6,
+                    "line": 409
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-e28817f61f58dbcabc54",
+          "file": "economy.spec.ts",
+          "line": 388,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "level-rework.spec.ts",
+      "file": "level-rework.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "局部入口真实步行、黑猫跟随、双门柱阻挡和存档重载",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 52970,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:28:59.874Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "437233f640a31e9384ba-7558133e1b85704d7b8a",
+          "file": "level-rework.spec.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "title": "普通画面和地图无工程标号，开发开关显式开启才出现",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7446,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:29:52.956Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "437233f640a31e9384ba-37cade9838e4cbb01419",
+          "file": "level-rework.spec.ts",
+          "line": 160,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "parry.spec.ts",
+      "file": "parry.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "PARRY-01",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 281095,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 240000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 240000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/parry.spec.ts",
+                        "column": 13,
+                        "line": 49
+                      },
+                      "message": "Error: page.waitForFunction: Test timeout of 240000ms exceeded.\n\n  47 |  await page.keyboard.down('s');await page.waitForFunction(()=>(window as any).__farwind().state.player.y>=720);await page.keyboard.up('s');await face(page,'w',1);\n  48 |  id=await coming(page,65);await page.mouse.click(650,390,{button:'right'});result=await outcome(page,id,true);expect(result.result).toBe('perfect');expect(result.parryAge).toBeLessThan(90);await page.screenshot({path:`${dir}/perfect.png`});\n> 49 |  await page.waitForFunction(()=>(window as any).__farwind().session.combat.counterAttack==='perfect');await page.keyboard.press('j');await page.waitForFunction(()=>(window as any).__farwind().session.combat.stage===2);await page.keyboard.press('j');\n     |             ^\n  50 |  await expect.poll(async()=>(await read(page)).training.damage).toBe(80);await page.waitForFunction(()=>(window as any).__farwind().session.combat.stage===0);\n  51 |  const after=(await read(page)).state;for(const key of ['bag','killed','pendingDrops','quest','side','stones'])expect(after[key]).toEqual(before[key]);expect(after.player.hp).toBe(before.player.hp);\n  52 |  const samples=await page.evaluate(()=>(window as any).__parrySamples);\n    at /Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/parry.spec.ts:49:13"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:30:00.962Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/parry-PARRY-01/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/parry-PARRY-01/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/parry-PARRY-01/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/parry-PARRY-01/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cbd37935917ac18407ed-f881e4af76385c56edf2",
+          "file": "parry.spec.ts",
+          "line": 39,
+          "column": 1
+        },
+        {
+          "title": "PARRY-02",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13524,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:34:53.637Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/parry-PARRY-02/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbd37935917ac18407ed-375c732cd0ba4f4c94bd",
+          "file": "parry.spec.ts",
+          "line": 58,
+          "column": 1
+        },
+        {
+          "title": "PARRY-04",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4318,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:35:07.264Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/parry-PARRY-04/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbd37935917ac18407ed-c4ec7bdd5da6d5d436bd",
+          "file": "parry.spec.ts",
+          "line": 67,
+          "column": 1
+        },
+        {
+          "title": "PARRY-05",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8713,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:35:11.589Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/parry-PARRY-05/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbd37935917ac18407ed-585cdee085ce7dc8aa8b",
+          "file": "parry.spec.ts",
+          "line": 74,
+          "column": 1
+        },
+        {
+          "title": "PARRY-06",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12116,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:35:20.310Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/parry-PARRY-06/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbd37935917ac18407ed-c39c884dbc0791b45b33",
+          "file": "parry.spec.ts",
+          "line": 81,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "training.spec.ts",
+      "file": "training.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "新游戏四面训练、风步底座、暂停和同页继续：真实输入",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 33011,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:35:32.961Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/training-新游戏四面训练、风步底座、暂停和同页继续：真实输入/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2410163d751908292b1d-73d06569bc94940db20c",
+          "file": "training.spec.ts",
+          "line": 57,
+          "column": 1
+        },
+        {
+          "title": "隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16168,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:36:06.131Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/legacy-regression/browser-output/training-隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2410163d751908292b1d-6af5aa60b753508dc014",
+          "file": "training.spec.ts",
+          "line": 184,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-26T13:25:43.567Z",
+    "duration": 638871.773,
+    "expected": 15,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}

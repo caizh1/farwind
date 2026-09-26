@@ -1,0 +1,514 @@
+{
+  "说明": "部署准备完成；目标待指定，未进行上传或公开部署。复用已执行M5生产验证的逐字节相同产物，发布包采用明确文件清单消除macOS资源叉元数据。",
+  "HEAD": "10cf7466798171df204fdb735e7cf72294752beb",
+  "正式包": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/deployment/20260926T143447Z/farwind-production.tar.gz",
+  "字节": 68973120,
+  "SHA256": "666d7b8c442eea0e465c3e5cc17f324f2e1e310e5ce4af527b81d3425a8999ac",
+  "正式文件数": 123,
+  "包内清单核对": "通过",
+  "验收构建一致性": "与dist和M5固定正式包123个文件逐字节一致",
+  "原包核对首因": {
+    "原包": "/Users/archer/Documents/ChatGPT/Game/farwind/.sword-wind-local/deployment/farwind-production.tar.gz",
+    "原包摘要": "bbb541b8348adc16b9cb451457968fc546a02b7e15774506f44dadfe686d78f3",
+    "实际原包文件数": 261,
+    "额外macOS元数据文件数": 138,
+    "实际游戏文件差异": [],
+    "处理": "保留原包与历史报告，新包只含明确清单里的123个游戏文件"
+  },
+  "功能复用证据": "../latest-production/browser-results.json",
+  "部署状态": "目标待指定，未部署",
+  "文件": [
+    {
+      "路径": "assets/animation/cat-motion.png",
+      "SHA256": "904fa4144c27b386c08c2eae8bffd8f548844a93b52164fa2591e7c1ee47e5bb"
+    },
+    {
+      "路径": "assets/animation/cat-side-source.png",
+      "SHA256": "7d4b295f449af0dc168be181f00bd60aa655376e53da70ca132079919aa3936c"
+    },
+    {
+      "路径": "assets/animation/hero-carry-sword.png",
+      "SHA256": "74c473c5b2ff7f5f2bc2fa2a90a916f014b410ccf9d5ba9a22e5d21a51622990"
+    },
+    {
+      "路径": "assets/animation/hero-combat-action.png",
+      "SHA256": "d29789879c44668523cb150035409b8d14b59acdf4da810f57823c104aa6d2b1"
+    },
+    {
+      "路径": "assets/animation/hero-combat-back.png",
+      "SHA256": "262ca5d7da1c8ea7a9c81431963787c1b23af34346c24c12c5e04f92416260bf"
+    },
+    {
+      "路径": "assets/animation/hero-combat-side.png",
+      "SHA256": "e506f46f6548388a8ffea32a55acfedecf95c70179cc899d45ed50a1b8310916"
+    },
+    {
+      "路径": "assets/animation/hero-combat.png",
+      "SHA256": "2395e77d5fedd208362df00f8ed2acd8cc9abca1351982113fb726b896324edb"
+    },
+    {
+      "路径": "assets/animation/hero-motion.png",
+      "SHA256": "f7fb378863e5f9ec87e65cb55ce554b586c915ee0a60f5d63d636d7eb9a9a7c1"
+    },
+    {
+      "路径": "assets/animation/hero-parry-v2.png",
+      "SHA256": "53a93e50ad5cefe534da2f7d902342f52479ed31dcd1a04ef66a6cee8f91e2fc"
+    },
+    {
+      "路径": "assets/animation/hero-parry.png",
+      "SHA256": "ca1eaf215ee938cf21a8b07b8c9e2eeb9713f5dd38671bc26d797eeb4c09d164"
+    },
+    {
+      "路径": "assets/animation/hero-side-source.png",
+      "SHA256": "22fd35b1ff5b4820169198bac399bb57922c588ce47adba9d708a12ae5c83b89"
+    },
+    {
+      "路径": "assets/animation/manifest.json",
+      "SHA256": "069bc9a3936a7346974522b6c64ff3cf4405257c37ddca314f7ad4a3683d3af3"
+    },
+    {
+      "路径": "assets/animation/round-three/cat-down-run-source.png",
+      "SHA256": "e4b6d14b4f083025efbb56815881eeae7d1062b1b793b198054d523954ecb708"
+    },
+    {
+      "路径": "assets/animation/round-three/cat-motion.png",
+      "SHA256": "f4336eda1122da68c63c6bf951092ab37fac9e8074d79eb85876fccddd1a533b"
+    },
+    {
+      "路径": "assets/animation/round-three/cat-up-run-source.png",
+      "SHA256": "4dc491fc583d503908040e078f83171acb965f7038693b32552e3f0db0dff35b"
+    },
+    {
+      "路径": "assets/animation/round-three/hero-down-run-source.png",
+      "SHA256": "71bac141f516c558748c1e15364fb2c0c8375fc145af7abbaa60d899eeecae8b"
+    },
+    {
+      "路径": "assets/animation/round-three/hero-motion.png",
+      "SHA256": "cf7bbe438ecfe2b43b1375aa985e8df5f7c480db2c51dc615d578df2ffc46acc"
+    },
+    {
+      "路径": "assets/animation/round-three/hero-up-run-source.png",
+      "SHA256": "9dd0ee14d7f544da9238128063274c357f7efca847795657129b036438423db5"
+    },
+    {
+      "路径": "assets/animation/round-three/manifest.json",
+      "SHA256": "3914b2aa87c3cc4587ca90e669cbb37f0715b651a66eb72b35e265f98e8553c5"
+    },
+    {
+      "路径": "assets/animation/round-three/prompts.json",
+      "SHA256": "b5aefdd75ea869217822a82e1f960ad64a6bf296043e2fdc9faaf282627c4194"
+    },
+    {
+      "路径": "assets/animation/round-two/cat-motion.png",
+      "SHA256": "c56666190d4f090f9a4a5a9e45921cd8b1939d529243d0064f4da0e830472545"
+    },
+    {
+      "路径": "assets/animation/round-two/cat-run-source.png",
+      "SHA256": "86fa8c03cbbe788fda0350a8d7cfc422e877e0d5fb7c6c6a3af119ae78f86753"
+    },
+    {
+      "路径": "assets/animation/round-two/cat-vertical-source.png",
+      "SHA256": "1dfae754099c5e169952b501fdb911c261214f55ae58786e6bde2546c57232cd"
+    },
+    {
+      "路径": "assets/animation/round-two/cat-walk-source.png",
+      "SHA256": "36657f55348ec86193c7d3c81af07cd9b85f1989e94298cb05506ccc0c93fc74"
+    },
+    {
+      "路径": "assets/animation/round-two/hero-down-source.png",
+      "SHA256": "596eadb30628eafb9d398ec03d26b2bf137406f75c7d9dc840d2c6905bc45f1b"
+    },
+    {
+      "路径": "assets/animation/round-two/hero-motion.png",
+      "SHA256": "a3ea5593a50f3491ed7e2399831c40093c14a65c33a0d0a8ac15cd924f7b5952"
+    },
+    {
+      "路径": "assets/animation/round-two/hero-run-source.png",
+      "SHA256": "ac166f0dd0eb9e157d5c7264583a0d8eeacc6a899564c35f13c8a164532ffd9e"
+    },
+    {
+      "路径": "assets/animation/round-two/hero-up-source.png",
+      "SHA256": "d192703f4ef4cb10b3c0ec07fefe46cc66828ae5dd65cefac5031baae76af99e"
+    },
+    {
+      "路径": "assets/animation/round-two/hero-walk-source.png",
+      "SHA256": "068b5b4c866c5e03c064eaaeac26cb4d12de447f48825acc909275ce2aab06fd"
+    },
+    {
+      "路径": "assets/animation/round-two/manifest.json",
+      "SHA256": "c944c765c1177db042f9c94138413b297db6be30f5b61fc54318f345ee8fde65"
+    },
+    {
+      "路径": "assets/animation/round-two/prompts.json",
+      "SHA256": "30cc785f817be4599faecf1794f6f5bb8a2c8983e5a174dd207e92cd1b13a2f6"
+    },
+    {
+      "路径": "assets/animation/round-two/refinement-prompts.json",
+      "SHA256": "8d161ffcf3ef1d90521e75627e479d3fb3663f48fb2ce2aa027fd971eb5d7c3a"
+    },
+    {
+      "路径": "assets/animation/sword-wind/hero-sword-wind.png",
+      "SHA256": "2088d238d450f5e9cb5991c78fd5f300f8f401098df1fb7da4c6557a1350ddc5"
+    },
+    {
+      "路径": "assets/animation/sword-wind/sword-wind-dissolve.png",
+      "SHA256": "e872e526ac2c464d96aa4da075761a52238173f9a2445e7c5dc0f10ff5518999"
+    },
+    {
+      "路径": "assets/animation/sword-wind/sword-wind-flight.png",
+      "SHA256": "dd9af0ba6372f2ef9420c16c13da737202a50ce3d4db7b550cec6be2f790b350"
+    },
+    {
+      "路径": "assets/animation/sword-wind/sword-wind-ground.png",
+      "SHA256": "4a15ccc755b0fcfdfe258bea4477b4556b080fb3aa487f6d6018a44b89138e3d"
+    },
+    {
+      "路径": "assets/animation/sword-wind/sword-wind-hit.png",
+      "SHA256": "9b090f9d6347187b02c5450f0b4c9add5d7b3f93dbc1201154dd662f61ea0f27"
+    },
+    {
+      "路径": "assets/animation/sword-wind/sword-wind-release.png",
+      "SHA256": "5300ae1045ae24573ef847386581483b5f3185f12714aa62163a5f53abb7e404"
+    },
+    {
+      "路径": "assets/arch-source.png",
+      "SHA256": "d730a60334e7e7d09cc52379f8b4d9f01591c383e6e279aae833dd9d1b9eab72"
+    },
+    {
+      "路径": "assets/arch.png",
+      "SHA256": "35ec734da8383189df31367a86d663863aab3ab0104cf1a7377a1d4f789c128a"
+    },
+    {
+      "路径": "assets/berry.png",
+      "SHA256": "f275d921f7139ae2b4028dfe50dbe2107042138370d7bddecff41eadf622e671"
+    },
+    {
+      "路径": "assets/branding/favicon-source.png",
+      "SHA256": "c5ae18f387fd641e9842413712b68ad27511c6c25b3e4e7472c7dce5c9edd5d7"
+    },
+    {
+      "路径": "assets/branding/manifest.json",
+      "SHA256": "c0f943b54cbe2af4ed44e2228d63e23a60331851c4aa24349fc98706c4c1d827"
+    },
+    {
+      "路径": "assets/bush.png",
+      "SHA256": "d27d126660b361429339826d29a972d7b0d8240eb98297678aba85f4bfc6ab8d"
+    },
+    {
+      "路径": "assets/carpenter.png",
+      "SHA256": "77098adee26a33ca92c2792861e275fb6ee6108499408cd6d9c7ef5d7cbc2921"
+    },
+    {
+      "路径": "assets/cat.png",
+      "SHA256": "7f9841eb94286e1d48d9cfadf3f304e4e874ecaa29bb57593453f63923211f19"
+    },
+    {
+      "路径": "assets/characters-source.png",
+      "SHA256": "6201292418b3f99320560dd8f209bd10da3bae690848eace1e023d3bfb582cf7"
+    },
+    {
+      "路径": "assets/chest-open.png",
+      "SHA256": "0c63a2ea202ab43466e25baf9bba147f41abb13bf8d2f6e77b289e46b3e6a328"
+    },
+    {
+      "路径": "assets/chest.png",
+      "SHA256": "d5877fa5e1ad1ab01048127bdd1e1d01d76f85c0b1b9bc34d16b2875b9f981db"
+    },
+    {
+      "路径": "assets/elder.png",
+      "SHA256": "dfb05b012f699dbdee89c24db54a517aab47d3ed54aceef89c4592a651b902cb"
+    },
+    {
+      "路径": "assets/enemies-source.png",
+      "SHA256": "bb81730e31d322b0c79c9952b4026a2d79966d909f23b12c8f313fc915ab2689"
+    },
+    {
+      "路径": "assets/environment-source.png",
+      "SHA256": "a422b158522270464cf489a066e1993a7cba41144a5f20994664e96b0a77da62"
+    },
+    {
+      "路径": "assets/fence.png",
+      "SHA256": "ac84624d529bd01e78772261fecf577686d4ce8eb4e505ab6e6745efe04bfe2a"
+    },
+    {
+      "路径": "assets/forest.png",
+      "SHA256": "acca7c18b0f361518bd9e6b313e86e2d8dc31b30a59ee9b5a09a1ec3c4ed9b69"
+    },
+    {
+      "路径": "assets/grass.png",
+      "SHA256": "e1b5e57876dd2e6217541630bab86489eb40e2b4b1b35230bb3453de314a9e7c"
+    },
+    {
+      "路径": "assets/ground-source.png",
+      "SHA256": "b8fefb75e82b5d822f358cf4bd77b3898509333ac8058966a65e098de5a6a4b6"
+    },
+    {
+      "路径": "assets/healer.png",
+      "SHA256": "1f127613b13a02650e85d21eff1f1bfb9d41f7520a79e32b066230f9396c8bb2"
+    },
+    {
+      "路径": "assets/herb.png",
+      "SHA256": "b1c01945e0465c52239266134bf3b0b385617467cb706733bae5301a036f7d70"
+    },
+    {
+      "路径": "assets/hero.png",
+      "SHA256": "d37147d65f12144e1966957fdc22fa1b16e6576eaadc0e0cb2388aaca4faa358"
+    },
+    {
+      "路径": "assets/house.png",
+      "SHA256": "2259da2e1678987996ab99799d0f51b9a041968ae261ba1fd19239f66f440149"
+    },
+    {
+      "路径": "assets/icon-berry.png",
+      "SHA256": "0a28315d9997a04b9fa413f40dc315a9c88f6ec637e91498be4147fe1b457bd2"
+    },
+    {
+      "路径": "assets/icon-charm.png",
+      "SHA256": "d13fb2888fb57a2ef5bde7fe5588ea52e1d97266841c807ec7536a92ef32a782"
+    },
+    {
+      "路径": "assets/icon-crystal.png",
+      "SHA256": "5546e7b1b3ea0da2fdaf0ffa3d0681d0fcb863afc1b76139e124477125da0c1a"
+    },
+    {
+      "路径": "assets/icon-herb.png",
+      "SHA256": "1e4e8892d44ceec8c9bbb0e195f74501f607fbdf2f45d0774bd0abd9eeb33a89"
+    },
+    {
+      "路径": "assets/icon-potion.png",
+      "SHA256": "133ddda3a970d13b90ef10c95cfc16134cfc8b0e3386487dfb090044eaaab20f"
+    },
+    {
+      "路径": "assets/icon-stone.png",
+      "SHA256": "75deaf8686b9bf9ccb7862d44c095a1ad037763d72467ff95f0964d1a41eb8aa"
+    },
+    {
+      "路径": "assets/icon-sword.png",
+      "SHA256": "95a68b6f48826cdc66533dd838d5b3787faefed8216b9031749d1fcd01e73d57"
+    },
+    {
+      "路径": "assets/icon-wood.png",
+      "SHA256": "8f26a6f9f340d14783e56d25c15e7da83f304864cc63ff882733a800337f7194"
+    },
+    {
+      "路径": "assets/index-BOpGoSeT.css",
+      "SHA256": "70189272eda03537b77f9ac741909b62f1a3ae33ddede74efcd388b11afe29d4"
+    },
+    {
+      "路径": "assets/index-D_xwNzwn.js",
+      "SHA256": "ac17302526788aa1772101767d0c2f31a6b0624c2b3ccf395074adf96e012428"
+    },
+    {
+      "路径": "assets/items-source.png",
+      "SHA256": "6727a25f2777b4c759a691f4b2ea14567725b7f5f56311d074ae1ad3c9818445"
+    },
+    {
+      "路径": "assets/leaf.png",
+      "SHA256": "0a7cdd9cd6ac2231e88d4264b6b33c7960ff7ced17869e55686559f9a499d15c"
+    },
+    {
+      "路径": "assets/level-rework/bridge-candidate.png",
+      "SHA256": "adb3c328d0a2c06d1132a7fa734ba75efe0ead39be5e927d6e3ad7c559247248"
+    },
+    {
+      "路径": "assets/level-rework/herb-bed-candidate.png",
+      "SHA256": "f65bfb01d973a2d2fff8c96ac93208c41014992485779853768eea09484269e6"
+    },
+    {
+      "路径": "assets/level-rework/packed-earth-candidate.png",
+      "SHA256": "9477cf0f2e0fb0f0bc0d464906a718af141803a2d10831df1fe462f0d3c4b9ba"
+    },
+    {
+      "路径": "assets/level-rework/village-gate-candidate.png",
+      "SHA256": "8012a36f18a01a64ac9458c6bcba0b8cb453793f39ba79fc4b869302a92d132d"
+    },
+    {
+      "路径": "assets/manifest.json",
+      "SHA256": "00c14331a12ce4802b6c5898967b7bb48fdd712ce054fa34a13ba661bd066563"
+    },
+    {
+      "路径": "assets/pink.png",
+      "SHA256": "bb470ff35e8b446340c1d23bf9c3d7b3b0841fc621c54c857b4d88fa1272422a"
+    },
+    {
+      "路径": "assets/portrait.png",
+      "SHA256": "2d1da770defb7b38d72f99d70cff7f489c2f0689e3fc08bb021bba3c5224e7ed"
+    },
+    {
+      "路径": "assets/portraits/carpenter-neutral.webp",
+      "SHA256": "90a2f03e8afa9d97503ab62b49ee41bbad36950f111d6c44c3135fa02174055b"
+    },
+    {
+      "路径": "assets/portraits/elder-neutral.webp",
+      "SHA256": "7cfec4b0547242f84380f3c0073deb6f147d4a711153f66bdf4b9f48c20628e3"
+    },
+    {
+      "路径": "assets/portraits/healer-neutral.webp",
+      "SHA256": "8d2eeff314e366610e5deb93b74dd9f87692fdd1913cba6c917d46175ba83462"
+    },
+    {
+      "路径": "assets/road.png",
+      "SHA256": "c0cf828fe256a6e224f674b91175170577491120216072a7aff66ab317e402f2"
+    },
+    {
+      "路径": "assets/rock.png",
+      "SHA256": "4cd9e0fd54747e5fbaf56f1ac12279ecccdef65fd5a9cd2e4bab97b2e7ba7d1f"
+    },
+    {
+      "路径": "assets/rune.png",
+      "SHA256": "8e9afd11c8f51d2e1235a087413b28eda6449bfa2d42f2806122f9809aa39a86"
+    },
+    {
+      "路径": "assets/shop.png",
+      "SHA256": "04493777c90a89a66df40fc1c3626d0f456d76656841eef73ca4fa3cd277090a"
+    },
+    {
+      "路径": "assets/sign.png",
+      "SHA256": "94683f927f29ab7fb5eec032da1cfdd34323bdfbc3bdc3a384ddf30f0ddf246a"
+    },
+    {
+      "路径": "assets/slime.png",
+      "SHA256": "aa6477dafbce50764f6b24f50f2e8fa96e743df38f4c665362c7d82ba6df8a2c"
+    },
+    {
+      "路径": "assets/tower.png",
+      "SHA256": "e10df65d35ea289bb8c8164b51cd31436e5d5a8823c8789b9c2b5ee2fc6f9b85"
+    },
+    {
+      "路径": "assets/training-base.png",
+      "SHA256": "f9488ae9a16feff89df96ed4a9cee6cc0af2684ef77970522301768d74637fb2"
+    },
+    {
+      "路径": "assets/training-body.png",
+      "SHA256": "4373c314439978efcc35e7be7682b72a71d549658edb334a0502daff68d8770d"
+    },
+    {
+      "路径": "assets/tree.png",
+      "SHA256": "86edfade258f876a7d02a5291169c3eb54f486e1dd54c6f868ef8a077bffdb2a"
+    },
+    {
+      "路径": "assets/ui/dialog-button.png",
+      "SHA256": "5b546d8a3f74ff470dd592abe4ba53cb7dbe5116ba81b8fbf4fa625d3ea4a7e3"
+    },
+    {
+      "路径": "assets/ui/dialog-frame.png",
+      "SHA256": "a3bff904bedf4a19633ab5fb2e90fd26e5e6dac2d10ef5ea8dc4b16f4842bcf6"
+    },
+    {
+      "路径": "assets/ui/dialog-sign.png",
+      "SHA256": "306d1553cbccb8b65c819b4b60c90f05c8338002375ec560adc810172cc71537"
+    },
+    {
+      "路径": "assets/ui/manifest.json",
+      "SHA256": "406318c11333c7ff8fc9dda7b215e88b1f8e58c9d8306e5b1b33e674df8b07c0"
+    },
+    {
+      "路径": "assets/village-defense/m3/archer-source.png",
+      "SHA256": "4b72f503f734cfdda668a0c5397a542b6315a6555cdd571197ab16aae2ad49df"
+    },
+    {
+      "路径": "assets/village-defense/m3/guard-source.png",
+      "SHA256": "ded658714ec1ff8410571f0d5983eeab1aee4d8305407a01ce3925d3c6d706d5"
+    },
+    {
+      "路径": "assets/village-defense/m3/watchtower-candidate.png",
+      "SHA256": "2d959fc3711a108394cdf89cba55fd66bd66ff58dda515869a97cc77f7d9a29a"
+    },
+    {
+      "路径": "assets/village-defense/m4/archer-vertical-candidate.png",
+      "SHA256": "1409cf9dc204dfd8c0c8a9b91ddc9d9a5e58a24c7b845f56207e392d76fab448"
+    },
+    {
+      "路径": "assets/village-defense/vertical-fence-candidate.png",
+      "SHA256": "de09018a827630f65265000d28ed3927b55940bd35eabc449282f48c5dd3ffec"
+    },
+    {
+      "路径": "assets/village-economy/inn-candidate.png",
+      "SHA256": "32ea86dba9c3b9145c66729b4b69b39fc5904f396d010896ed9f9d2e09e0175b"
+    },
+    {
+      "路径": "assets/village-economy/smith-candidate.png",
+      "SHA256": "e906eac54d77a373809bfd56a87015c8dfab9ca36e1e38a077227a8dbf4119d5"
+    },
+    {
+      "路径": "assets/village-polish/carpenter-workbench-source.png",
+      "SHA256": "40c232bb342e3b905acddb03ecc7a2d213282c68e595839f9263f4ec53e0aa8e"
+    },
+    {
+      "路径": "assets/village-polish/carpenter-workbench.png",
+      "SHA256": "ed6fd68551ccfbb42f61edf1e6cce2ce566ce1bdfab1c7ac5f100a6a2525686d"
+    },
+    {
+      "路径": "assets/village-polish/orchard-flower-bed-source.png",
+      "SHA256": "102609e8a3a33786c73ad5e23d0d0719b478f5438d176312bd05beba68165094"
+    },
+    {
+      "路径": "assets/village-polish/orchard-flower-bed.png",
+      "SHA256": "458e4d100f98492b5565e5e4791e245b505597c005d767312b0db23d54a28c9c"
+    },
+    {
+      "路径": "assets/village-polish/plaza-fountain-source.png",
+      "SHA256": "6734b86e49c6fa83b00fa68f439fb9e46c2b220b83893492b2df7d47f028efd2"
+    },
+    {
+      "路径": "assets/village-polish/plaza-fountain.png",
+      "SHA256": "3d33705b078cf5cdca681bcb99208606a1ab21f1c25ff563f1c04661f251ad62"
+    },
+    {
+      "路径": "assets/village-polish/pond-water-source.png",
+      "SHA256": "96251031890105d46ab470e42ad4384dfcf4a33aed6683a4ff0ea9b1968540d9"
+    },
+    {
+      "路径": "assets/village-polish/pond-water.png",
+      "SHA256": "3a9790d6e4fe69ef35d72f7a2ceeee9380d29687bde3387f851e06d3cef5c38e"
+    },
+    {
+      "路径": "assets/village-polish/village-bench-source.png",
+      "SHA256": "b74cb2798f280d1b020ece12613cc1f819329a016f2abb3edb28ec6074bcf10f"
+    },
+    {
+      "路径": "assets/village-polish/village-bench.png",
+      "SHA256": "8759b121192e8fdceaf4254e92ef2cba07720b1cd24af3df0e76c4fdbf820742"
+    },
+    {
+      "路径": "assets/water.png",
+      "SHA256": "9d1203ad665921bed5800d7614136f3bd7b0893b15f38b7034c7a024bb695059"
+    },
+    {
+      "路径": "assets/well.png",
+      "SHA256": "71f1e3bfd09b3a1dc613e15f888130e0f8675eadd1334e3e4da68252453e7787"
+    },
+    {
+      "路径": "assets/wood.png",
+      "SHA256": "f3a8d46779a53b773942d2be9ae463000827aa003f29ff9492f4187dce502438"
+    },
+    {
+      "路径": "favicon-16.png",
+      "SHA256": "eca98f40aa4e64d2cec8011b50de9c7d7c772d4a48f715d15c66ee84e6bb5742"
+    },
+    {
+      "路径": "favicon-180.png",
+      "SHA256": "afa0c601b8788fd4bdfdc90235aaa169893e419a1b8ca4ed8187b45412814291"
+    },
+    {
+      "路径": "favicon-192.png",
+      "SHA256": "18a7bf754f82af44cdea62b4f1f5d8ed00aae8195e9964839d526c3c1e31c9d0"
+    },
+    {
+      "路径": "favicon-32.png",
+      "SHA256": "f5da6efc43b3314bd9324500bf0d5e94e54821f0a6d18c6684b4dd8808d8bca7"
+    },
+    {
+      "路径": "favicon-48.png",
+      "SHA256": "00182d7d7afbb21c6be32d473a1002be22c86ae53fc6f595af7205f1c06365e6"
+    },
+    {
+      "路径": "favicon.ico",
+      "SHA256": "52c8872221ac2ec70433f42a2646bf58632ec3ac9d0fd3e20acba13740b44f59"
+    },
+    {
+      "路径": "index.html",
+      "SHA256": "329041dceacb68d226923cae14d657a6fef4cc3d846c29df71c8afd764027926"
+    }
+  ]
+}

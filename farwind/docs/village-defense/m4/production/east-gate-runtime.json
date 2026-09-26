@@ -1,0 +1,1292 @@
+{
+  "说明": "正式导入只建立时间边界和有效历史；未修改运行状态，自动调度、正式AI与箭矢完成防御。玩家离屏，无离线推进。",
+  "预警": {
+    "guards": [
+      {
+        "id": "east-watch",
+        "x": 2010,
+        "y": 970,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-north-post",
+        "mode": "post",
+        "peaceMs": 883.306666666666,
+        "cooldownMs": 0
+      },
+      {
+        "id": "east-patrol",
+        "x": 1972.8988235320649,
+        "y": 1163.180313858255,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-south-post",
+        "mode": "patrol",
+        "peaceMs": 883.306666666666,
+        "cooldownMs": 0
+      },
+      {
+        "id": "east-archer",
+        "x": 2030,
+        "y": 900,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "east-gate-tower",
+        "mode": "post",
+        "peaceMs": 883.306666666666,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-watch",
+        "x": 740,
+        "y": 300,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-west-post",
+        "mode": "post",
+        "peaceMs": 883.306666666666,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-patrol",
+        "x": 880.5802420228358,
+        "y": 300.25876064955486,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-east-post",
+        "mode": "patrol",
+        "peaceMs": 883.306666666666,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-archer",
+        "x": 680,
+        "y": 350,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "north-gate-tower",
+        "mode": "post",
+        "peaceMs": 883.306666666666,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-watch",
+        "x": 810,
+        "y": 1720,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-west-post",
+        "mode": "post",
+        "peaceMs": 883.306666666666,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-patrol",
+        "x": 1006.5229164351323,
+        "y": 1690.4250386945976,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-east-post",
+        "mode": "patrol",
+        "peaceMs": 883.306666666666,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-archer",
+        "x": 1140,
+        "y": 1750,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "south-gate-tower",
+        "mode": "post",
+        "peaceMs": 883.306666666666,
+        "cooldownMs": 0
+      }
+    ],
+    "sequence": 1,
+    "completedSequence": 0,
+    "raid": {
+      "id": "raid-1",
+      "sequence": 1,
+      "gateId": "east-gate",
+      "spawns": [
+        {
+          "x": 2370,
+          "y": 1090
+        },
+        {
+          "x": 2390,
+          "y": 1140
+        }
+      ],
+      "phase": "warning",
+      "ageMs": 66.66666666666652,
+      "members": [
+        {
+          "id": "raid-1:1",
+          "type": "slime",
+          "x": 2370,
+          "y": 1090,
+          "hp": 48,
+          "cooldownMs": 0,
+          "targetId": null
+        },
+        {
+          "id": "raid-1:2",
+          "type": "slime",
+          "x": 2390,
+          "y": 1140,
+          "hp": 48,
+          "cooldownMs": 0,
+          "targetId": null
+        }
+      ]
+    },
+    "protectionMs": 0,
+    "cooldownMs": 0,
+    "retryMs": 0,
+    "seed": 134253570
+  },
+  "运行": {
+    "guards": [
+      {
+        "id": "east-watch",
+        "x": 2010,
+        "y": 970,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-north-post",
+        "mode": "post",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0
+      },
+      {
+        "id": "east-patrol",
+        "x": 1949.815314647632,
+        "y": 1171.8436746581701,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-south-post",
+        "mode": "patrol",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0
+      },
+      {
+        "id": "east-archer",
+        "x": 2030,
+        "y": 900,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "east-gate-tower",
+        "mode": "attack",
+        "peaceMs": 0,
+        "cooldownMs": 1010.4366666666615
+      },
+      {
+        "id": "north-watch",
+        "x": 740,
+        "y": 300,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-west-post",
+        "mode": "post",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-patrol",
+        "x": 864.396708565406,
+        "y": 375.95459433139547,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-east-post",
+        "mode": "patrol",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-archer",
+        "x": 680,
+        "y": 350,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "north-gate-tower",
+        "mode": "post",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-watch",
+        "x": 810,
+        "y": 1720,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-west-post",
+        "mode": "post",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-patrol",
+        "x": 974.4162125141742,
+        "y": 1646.1707009169916,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-east-post",
+        "mode": "patrol",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-archer",
+        "x": 1140,
+        "y": 1750,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "south-gate-tower",
+        "mode": "post",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0
+      }
+    ],
+    "sequence": 1,
+    "completedSequence": 0,
+    "raid": {
+      "id": "raid-1",
+      "sequence": 1,
+      "gateId": "east-gate",
+      "spawns": [
+        {
+          "x": 2370,
+          "y": 1090
+        },
+        {
+          "x": 2390,
+          "y": 1140
+        }
+      ],
+      "phase": "approach",
+      "ageMs": 489.5633333333385,
+      "members": [
+        {
+          "id": "raid-1:1",
+          "type": "slime",
+          "x": 2337.5497800000057,
+          "y": 1090,
+          "hp": 48,
+          "cooldownMs": 0,
+          "targetId": "east-watch"
+        },
+        {
+          "id": "raid-1:2",
+          "type": "slime",
+          "x": 2360.378846905997,
+          "y": 1126.7484315105705,
+          "hp": 48,
+          "cooldownMs": 0,
+          "targetId": "east-watch"
+        }
+      ]
+    },
+    "protectionMs": 0,
+    "cooldownMs": 0,
+    "retryMs": 0,
+    "seed": 134253570,
+    "arrows": [
+      {
+        "id": "east-archer:1",
+        "sourceId": "east-archer",
+        "eventId": "raid-1",
+        "x": 2140.6583352879506,
+        "y": 761.9245431711806,
+        "origin": {
+          "x": 2130,
+          "y": 746
+        },
+        "vx": 239.17275685430263,
+        "vy": 357.34631994566934,
+        "age": 44.563333333338505,
+        "travelled": 19.16223333333486,
+        "damage": 22,
+        "hit": []
+      }
+    ],
+    "units": [
+      {
+        "id": "east-watch",
+        "x": 2010,
+        "y": 970,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-north-post",
+        "mode": "post",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 834,
+        "facing": 3,
+        "moved": 0,
+        "distance": 0,
+        "flashUntil": 0,
+        "definition": {
+          "id": "east-watch",
+          "name": "岑风",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-north-post",
+          "post": {
+            "x": 2010,
+            "y": 970
+          },
+          "cover": {
+            "x": 1920,
+            "y": 1060
+          },
+          "patrol": [
+            {
+              "x": 2010,
+              "y": 970
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "east-patrol",
+        "x": 1949.815314647632,
+        "y": 1171.8436746581701,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-south-post",
+        "mode": "patrol",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 1370,
+          "failed": false,
+          "returning": false,
+          "queries": 1,
+          "visited": 18,
+          "target": {
+            "x": 1960,
+            "y": 1210
+          }
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 2,
+        "facing": 1,
+        "moved": 0.2053500000002546,
+        "distance": 153.80804999998813,
+        "flashUntil": 0,
+        "definition": {
+          "id": "east-patrol",
+          "name": "青禾",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-south-post",
+          "post": {
+            "x": 2010,
+            "y": 1160
+          },
+          "cover": {
+            "x": 1910,
+            "y": 1190
+          },
+          "patrol": [
+            {
+              "x": 2010,
+              "y": 1160
+            },
+            {
+              "x": 1960,
+              "y": 1210
+            },
+            {
+              "x": 1940,
+              "y": 1140
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "east-archer",
+        "x": 2030,
+        "y": 900,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "east-gate-tower",
+        "mode": "attack",
+        "peaceMs": 0,
+        "cooldownMs": 1010.4366666666615,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": {
+          "id": "east-archer:1",
+          "start": 2935,
+          "contact": 3385,
+          "end": 3605,
+          "targetId": "raid-1:1",
+          "hit": true,
+          "direction": {
+            "x": 0.8728584913942377,
+            "y": 0.4879734152604787
+          }
+        },
+        "serial": 1,
+        "patrol": 724,
+        "facing": 3,
+        "moved": 0,
+        "distance": 0,
+        "flashUntil": 0,
+        "definition": {
+          "id": "east-archer",
+          "name": "弦雨",
+          "role": "archer",
+          "maxHP": 100,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "east-gate-tower",
+          "post": {
+            "x": 2030,
+            "y": 900
+          },
+          "cover": {
+            "x": 2030,
+            "y": 900
+          },
+          "patrol": [
+            {
+              "x": 2030,
+              "y": 900
+            }
+          ],
+          "leash": 0
+        }
+      },
+      {
+        "id": "north-watch",
+        "x": 740,
+        "y": 300,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-west-post",
+        "mode": "post",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 834,
+        "facing": 3,
+        "moved": 0,
+        "distance": 0,
+        "flashUntil": 0,
+        "definition": {
+          "id": "north-watch",
+          "name": "松岚",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-west-post",
+          "post": {
+            "x": 740,
+            "y": 300
+          },
+          "cover": {
+            "x": 760,
+            "y": 486
+          },
+          "patrol": [
+            {
+              "x": 740,
+              "y": 300
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "north-patrol",
+        "x": 864.396708565406,
+        "y": 375.95459433139547,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-east-post",
+        "mode": "patrol",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 1416.5733333333333,
+          "failed": false,
+          "returning": false,
+          "queries": 1,
+          "visited": 31,
+          "target": {
+            "x": 860,
+            "y": 410
+          }
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 1,
+        "facing": 0,
+        "moved": 0.20535000000024337,
+        "distance": 153.87975000000242,
+        "flashUntil": 0,
+        "definition": {
+          "id": "north-patrol",
+          "name": "石泉",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-east-post",
+          "post": {
+            "x": 920,
+            "y": 300
+          },
+          "cover": {
+            "x": 860,
+            "y": 450
+          },
+          "patrol": [
+            {
+              "x": 920,
+              "y": 300
+            },
+            {
+              "x": 860,
+              "y": 410
+            },
+            {
+              "x": 860,
+              "y": 450
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "north-archer",
+        "x": 680,
+        "y": 350,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "north-gate-tower",
+        "mode": "post",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 834,
+        "facing": 3,
+        "moved": 0,
+        "distance": 0,
+        "flashUntil": 0,
+        "definition": {
+          "id": "north-archer",
+          "name": "林弦",
+          "role": "archer",
+          "maxHP": 100,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "north-gate-tower",
+          "post": {
+            "x": 680,
+            "y": 350
+          },
+          "cover": {
+            "x": 680,
+            "y": 350
+          },
+          "patrol": [
+            {
+              "x": 680,
+              "y": 350
+            }
+          ],
+          "leash": 0
+        }
+      },
+      {
+        "id": "south-watch",
+        "x": 810,
+        "y": 1720,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-west-post",
+        "mode": "post",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 834,
+        "facing": 3,
+        "moved": 0,
+        "distance": 0,
+        "flashUntil": 0,
+        "definition": {
+          "id": "south-watch",
+          "name": "麦川",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-west-post",
+          "post": {
+            "x": 810,
+            "y": 1720
+          },
+          "cover": {
+            "x": 790,
+            "y": 1592
+          },
+          "patrol": [
+            {
+              "x": 810,
+              "y": 1720
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "south-patrol",
+        "x": 974.4162125141742,
+        "y": 1646.1707009169916,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-east-post",
+        "mode": "patrol",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 1299.9333333333332,
+          "failed": false,
+          "returning": false,
+          "queries": 1,
+          "visited": 13,
+          "target": {
+            "x": 1030,
+            "y": 1680
+          }
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 2,
+        "facing": 2,
+        "moved": 0.20535000000021028,
+        "distance": 153.65475000001027,
+        "flashUntil": 0,
+        "definition": {
+          "id": "south-patrol",
+          "name": "望禾",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-east-post",
+          "post": {
+            "x": 990,
+            "y": 1720
+          },
+          "cover": {
+            "x": 1020,
+            "y": 1590
+          },
+          "patrol": [
+            {
+              "x": 990,
+              "y": 1720
+            },
+            {
+              "x": 1030,
+              "y": 1680
+            },
+            {
+              "x": 950,
+              "y": 1630
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "south-archer",
+        "x": 1140,
+        "y": 1750,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "south-gate-tower",
+        "mode": "post",
+        "peaceMs": 4307.870000000004,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 834,
+        "facing": 3,
+        "moved": 0,
+        "distance": 0,
+        "flashUntil": 0,
+        "definition": {
+          "id": "south-archer",
+          "name": "晴羽",
+          "role": "archer",
+          "maxHP": 100,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "south-gate-tower",
+          "post": {
+            "x": 1140,
+            "y": 1750
+          },
+          "cover": {
+            "x": 1140,
+            "y": 1750
+          },
+          "patrol": [
+            {
+              "x": 1140,
+              "y": 1750
+            }
+          ],
+          "leash": 0
+        }
+      }
+    ],
+    "enemies": [
+      {
+        "id": "raid-1:1",
+        "type": "slime",
+        "x": 2337.5497800000057,
+        "y": 1090,
+        "hp": 48,
+        "cooldownMs": 0,
+        "targetId": "east-watch",
+        "kind": "defense-enemy",
+        "maxHP": 48,
+        "homeX": 2370,
+        "homeY": 1090,
+        "eventId": "raid-1",
+        "cool": 2935,
+        "windup": 0,
+        "staggerUntil": 0,
+        "nav": {
+          "path": [
+            {
+              "x": 2330,
+              "y": 1090
+            },
+            {
+              "x": 2310,
+              "y": 1090
+            },
+            {
+              "x": 2290,
+              "y": 1090
+            },
+            {
+              "x": 2270,
+              "y": 1090
+            },
+            {
+              "x": 2250,
+              "y": 1070
+            },
+            {
+              "x": 2230,
+              "y": 1070
+            },
+            {
+              "x": 2210,
+              "y": 1070
+            },
+            {
+              "x": 2190,
+              "y": 1050
+            },
+            {
+              "x": 2170,
+              "y": 1050
+            },
+            {
+              "x": 2150,
+              "y": 1030
+            },
+            {
+              "x": 2130,
+              "y": 1030
+            },
+            {
+              "x": 2110,
+              "y": 1010
+            },
+            {
+              "x": 2090,
+              "y": 1010
+            },
+            {
+              "x": 2070,
+              "y": 1010
+            },
+            {
+              "x": 2050,
+              "y": 990
+            },
+            {
+              "x": 2030,
+              "y": 970
+            },
+            {
+              "id": "east-watch",
+              "x": 2010,
+              "y": 970,
+              "hp": 180,
+              "dead": false,
+              "weaponId": "watch-blade",
+              "armorId": "watch-mail",
+              "postId": "east-north-post",
+              "mode": "post",
+              "peaceMs": 4307.870000000004,
+              "cooldownMs": 0
+            }
+          ],
+          "next": 3535,
+          "failed": false,
+          "returning": false,
+          "queries": 1,
+          "visited": 178,
+          "target": {
+            "id": "east-watch",
+            "x": 2010,
+            "y": 970,
+            "hp": 180,
+            "dead": false,
+            "weaponId": "watch-blade",
+            "armorId": "watch-mail",
+            "postId": "east-north-post",
+            "mode": "post",
+            "peaceMs": 3816.2000000000044,
+            "cooldownMs": 0
+          }
+        },
+        "ai": "接近目标",
+        "disabled": false,
+        "recovered": false,
+        "flashUntil": 0,
+        "playerAggroUntil": 0
+      },
+      {
+        "id": "raid-1:2",
+        "type": "slime",
+        "x": 2360.378846905997,
+        "y": 1126.7484315105705,
+        "hp": 48,
+        "cooldownMs": 0,
+        "targetId": "east-watch",
+        "kind": "defense-enemy",
+        "maxHP": 48,
+        "homeX": 2390,
+        "homeY": 1140,
+        "eventId": "raid-1",
+        "cool": 2935,
+        "windup": 0,
+        "staggerUntil": 0,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "ai": "接近目标",
+        "disabled": false,
+        "recovered": false,
+        "flashUntil": 0,
+        "playerAggroUntil": 0
+      }
+    ],
+    "history": [
+      {
+        "kind": "started",
+        "id": "东门",
+        "at": 2935
+      },
+      {
+        "kind": "shot",
+        "id": "east-archer:1",
+        "sourceId": "east-archer",
+        "at": 3385
+      }
+    ],
+    "critical": false,
+    "awaitingCheckpoint": false
+  },
+  "结束": {
+    "guards": [
+      {
+        "id": "east-watch",
+        "x": 2108.213274644126,
+        "y": 1011.6494786507246,
+        "hp": 176,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-north-post",
+        "mode": "post",
+        "peaceMs": 849.3433333333342,
+        "cooldownMs": 0
+      },
+      {
+        "id": "east-patrol",
+        "x": 2097.16653990102,
+        "y": 1096.3791537038335,
+        "hp": 176,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-south-post",
+        "mode": "patrol",
+        "peaceMs": 854.3433333333342,
+        "cooldownMs": 0
+      },
+      {
+        "id": "east-archer",
+        "x": 2030,
+        "y": 900,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "east-gate-tower",
+        "mode": "post",
+        "peaceMs": 3284.343333333334,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-watch",
+        "x": 740,
+        "y": 300,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-west-post",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-patrol",
+        "x": 890.1631346848777,
+        "y": 306.26093850579707,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-east-post",
+        "mode": "patrol",
+        "peaceMs": 8000,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-archer",
+        "x": 680,
+        "y": 350,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "north-gate-tower",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-watch",
+        "x": 810,
+        "y": 1720,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-west-post",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-patrol",
+        "x": 980.8316571978472,
+        "y": 1650.4021236618196,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-east-post",
+        "mode": "patrol",
+        "peaceMs": 8000,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-archer",
+        "x": 1140,
+        "y": 1750,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "south-gate-tower",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0
+      }
+    ],
+    "sequence": 1,
+    "completedSequence": 1,
+    "raid": null,
+    "protectionMs": 0,
+    "cooldownMs": 438997.6566666667,
+    "retryMs": 0,
+    "seed": 697882754
+  },
+  "重载": {
+    "guards": [
+      {
+        "id": "east-watch",
+        "x": 2134.286164283201,
+        "y": 1022.7062554899046,
+        "hp": 176,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-north-post",
+        "mode": "attack",
+        "peaceMs": 26.043333333334886,
+        "cooldownMs": 693.9566666666651
+      },
+      {
+        "id": "east-patrol",
+        "x": 2132.865571855065,
+        "y": 1086.4710524834973,
+        "hp": 176,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-south-post",
+        "mode": "patrol",
+        "peaceMs": 31.043333333334886,
+        "cooldownMs": 123.95666666666511
+      },
+      {
+        "id": "east-archer",
+        "x": 2030,
+        "y": 900,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "east-gate-tower",
+        "mode": "post",
+        "peaceMs": 2461.043333333335,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-watch",
+        "x": 740,
+        "y": 300,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-west-post",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-patrol",
+        "x": 860.0240843664502,
+        "y": 318.83833721581567,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-east-post",
+        "mode": "patrol",
+        "peaceMs": 8000,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-archer",
+        "x": 680,
+        "y": 350,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "north-gate-tower",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-watch",
+        "x": 810,
+        "y": 1720,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-west-post",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-patrol",
+        "x": 1011.7281382023332,
+        "y": 1670.847142952336,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-east-post",
+        "mode": "patrol",
+        "peaceMs": 8000,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-archer",
+        "x": 1140,
+        "y": 1750,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "south-gate-tower",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0
+      }
+    ],
+    "sequence": 1,
+    "completedSequence": 1,
+    "raid": null,
+    "protectionMs": 0,
+    "cooldownMs": 439820.95666666667,
+    "retryMs": 0,
+    "seed": 697882754
+  },
+  "页面错误": []
+}

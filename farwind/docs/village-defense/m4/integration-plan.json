@@ -1,0 +1,103 @@
+{
+  "说明": "在已通过M3基础上三方合并共享目录新改动；保存原始M3源码，仅在最终校验后安全写回。",
+  "共享变化": [
+    {
+      "文件": "src/game/ui/interface.ts",
+      "状态": "仅共享更新",
+      "共享SHA": "d87b25d8fcbb004182b8b21074f482366d8a41d7eff1f2ea0bc457f3c0acea89"
+    },
+    {
+      "文件": "src/game/scenes/World.ts",
+      "状态": "自动合并",
+      "共享SHA": "2706fec65d31f0faa264066757266750997f5669b7fc9104aa5dd06de3cdc43d"
+    },
+    {
+      "文件": "src/game/systems/state.ts",
+      "状态": "冲突",
+      "共享SHA": "5c896703747bcbf913d4acf61dd8a7fe8911e450d9d654825bf2c50c06e3c9bf"
+    },
+    {
+      "文件": "src/game/systems/training.ts",
+      "状态": "仅共享更新",
+      "共享SHA": "b06d1142b93c4ceb25efc0938c80793b184ba0c217df2a79a9d31748b5674785"
+    },
+    {
+      "文件": "src/game/systems/audio.ts",
+      "状态": "仅共享更新",
+      "共享SHA": "f610dfc2ceaaa6f55790951f8a27b5d251c4d2b49c1844d3748ae688d6e3a41c"
+    },
+    {
+      "文件": "src/game/systems/swordWind.ts",
+      "状态": "仅共享更新",
+      "共享SHA": "51867efdecc06fc13a1baec306d638db13fc4cba889fe431fddcb2b5faa4b4b8"
+    },
+    {
+      "文件": "src/game/systems/combat.ts",
+      "状态": "仅共享更新",
+      "共享SHA": "8dc4cb3b00be45103efe02dae7fea0f4a2469add40effb994ae8d543e5ca6e69"
+    },
+    {
+      "文件": "src/game/systems/swordWindGeometry.ts",
+      "状态": "仅共享更新",
+      "共享SHA": "020c33891534843e6849c6d5538323404f00b0933f3b3e93e2da29392eb68966"
+    },
+    {
+      "文件": "src/game/systems/skills.ts",
+      "状态": "仅共享更新",
+      "共享SHA": "59c34b5527748a66e97939cdf94e3d59fef064a6818ab9388e56acb7f5a31238"
+    },
+    {
+      "文件": "src/game/systems/enemyAttack.ts",
+      "状态": "仅共享更新",
+      "共享SHA": "1ab9920fcf04bf29578297b787c07a955acdefd9a8f5f4cafb1db5fe08049bfd"
+    },
+    {
+      "文件": "src/game/entities/swordWindView.ts",
+      "状态": "仅共享更新",
+      "共享SHA": "b7e273f6ed4ec2c7128b106c7f09561caee08197c48aafa3925993b9a1235dbe"
+    },
+    {
+      "文件": "src/data/swordWind.ts",
+      "状态": "仅共享更新",
+      "共享SHA": "e588da427301b6edbcdd4b07e85c67cf51895d4d2e28ed02e18a9d9ea90c1a90"
+    },
+    {
+      "文件": "tests/parry-v2.test.ts",
+      "状态": "仅共享更新",
+      "共享SHA": "054711d80bf0004c53a1ef65021a8307fbb9f802a1b1ce43f4de488d1133f6ef"
+    },
+    {
+      "文件": "tools/mux-parry-v2-evidence.mjs",
+      "状态": "仅共享更新",
+      "共享SHA": "dca3578cf85cb0379e43662c4f76c1be74924c87053ab7dc06a19ce81350cd13"
+    },
+    {
+      "文件": "tools/pack-sword-wind.mjs",
+      "状态": "仅共享更新",
+      "共享SHA": "d42099f0afa65581f3c9b78121a70088e05d72df0eb8d2bb7180f995a599990d"
+    },
+    {
+      "文件": "public/assets/manifest.json",
+      "状态": "冲突",
+      "共享SHA": "a1f181ef78c53b03759288a54256c742d0df749b30184d069440da4fffc7bd9e"
+    },
+    {
+      "文件": "package.json",
+      "状态": "冲突",
+      "共享SHA": "a3a38de732a0bd448097ec03df18cf9c8f442db614901b4246209bcc185f76e5"
+    }
+  ],
+  "补入新文件": [
+    "tests/sword-wind-focus.spec.ts",
+    "tests/sword-wind.spec.ts",
+    "tests/sword-wind.test.ts",
+    "tests/sword-wind-fixtures.ts",
+    "tests/sword-wind-production.browser.ts",
+    "tools/serve-sword-wind-runtime.mjs",
+    "tools/mux-sword-wind-evidence.mjs",
+    "tools/sword-wind-arena.html",
+    "tools/playwright-sword-wind-production.config.ts",
+    "tools/sword-wind-arena.ts",
+    "tools/playwright-sword-wind.config.ts"
+  ]
+}

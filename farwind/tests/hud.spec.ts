@@ -1,3 +1,4 @@
+import { isEquipment } from "../src/data/economy";
 import { test, expect, type Page } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
 import { initialState, type State } from "../src/game/systems/state";
@@ -146,7 +147,7 @@ test("hud-navigation", async ({ page }) => {
 test("hud-hotbar", async ({ page }) => {
   await start(page);
   const fixture = initialState();
-  const ids = Object.keys(items) as ItemId[];
+  const ids = Object.keys(items).filter(id=>!isEquipment(id)) as ItemId[];
   fixture.player.hp = 30;
   fixture.bag = [
     ...ids.map((id) => ({ id, count: 3 })),
@@ -371,7 +372,7 @@ test("hud-backup", async ({ page }) => {
   const { readFile } = await import("node:fs/promises");
   const saved = JSON.parse(await readFile((await exported.path())!, "utf8"));
   expect(saved).toEqual(before);
-  expect(saved.schema_version).toBe(1);
+  expect(saved.schema_version).toBe(4);
   expect(saved).not.toHaveProperty("hudPreferences");
   const chooser = page.waitForEvent("filechooser");
   await page.getByRole("button", { name: "导入存档", exact: true }).click();

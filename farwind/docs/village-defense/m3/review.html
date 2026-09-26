@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>东门防御切片候选验收</title>
+<style>
+body{margin:0;background:#132d2a;color:#edf0df;font:16px/1.6 system-ui}main{max-width:1600px;margin:auto;padding:24px}h1{font-size:27px}h2{font-size:19px}p{max-width:1050px}.controls{display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:16px;background:#213f36;border-radius:12px}label{display:inline-flex;align-items:center;gap:9px}select,input,button{font:inherit}select,button{padding:7px 12px;background:#e8dcc0;color:#213c34;border:0;border-radius:6px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px}figure{margin:0;min-width:0}img{width:100%;display:block}figcaption{padding:8px}a{color:#b3dacf}.single .pair{grid-template-columns:1fr}.view[hidden]{display:none}@media(max-width:900px){.pair{grid-template-columns:1fr}main{padding:14px}}
+</style>
+<main>
+<h1>东门防御切片 · 候选视觉基线</h1>
+<p>两名近战守卫、一名平台弓手和北侧小木塔。以下均为实际运行截图：1280×720、相同角色站位、原镜头缩放、早晨08时。点击图可打开原尺寸。概念图用于空间关系，图中工程文字不进入正常画面。</p>
+<p>候选尚未人工批准。新守卫、弓手与木塔保持临时标记。重点查看身体尺度、左上光照、脚点、动作切换、弓口对齐以及门柱前后遮挡；保存截图不能代表视觉通过。</p>
+<div class="controls"><label>检查位置<select id="view"><option value="east-gate">东门与木塔</option><option value="gate-watch">门内值守</option><option value="outside">城外道路</option></select></label><label><input id="clean" type="checkbox">无HUD检查</label><label><input id="single" type="checkbox">逐张全宽查看</label></div>
+<section class="view" data-view="east-gate"><h2>东门与北侧木塔</h2><div class="pair"><figure><figcaption>修改前 · 原M2／弹反基线</figcaption><a target="_blank"><img data-prefix="before/east-gate" alt="修改前东门"></a></figure><figure><figcaption>修改后 · M3候选</figcaption><a target="_blank"><img data-prefix="after-v3/east-gate" alt="修改后东门"></a></figure></div></section>
+<section class="view" data-view="gate-watch"><h2>门内值守与道路净空</h2><div class="pair"><figure><figcaption>修改前</figcaption><a target="_blank"><img data-prefix="before/gate-watch" alt="修改前门内"></a></figure><figure><figcaption>修改后 · M3候选</figcaption><a target="_blank"><img data-prefix="after-v3/gate-watch" alt="修改后门内"></a></figure></div></section>
+<section class="view" data-view="outside"><h2>城外接近方向</h2><div class="pair"><figure><figcaption>修改前</figcaption><a target="_blank"><img data-prefix="before/outside" alt="修改前城外"></a></figure><figure><figcaption>修改后 · M3候选</figcaption><a target="_blank"><img data-prefix="after-v3/outside" alt="修改后城外"></a></figure></div></section>
+<p>功能记录、失败首因与保存回归结论见 <a href="REPORT.md">交付报告</a>；资源与最终提示见 <a href="ASSET-PROMPTS.md">素材生成记录</a>。30波平衡与目标设备帧率尚未验证。</p>
+</main>
+<script>
+function refresh(){const v=document.querySelector('#view').value,s=document.querySelector('#clean').checked?'-clean':'';document.querySelectorAll('.view').forEach(n=>n.hidden=n.dataset.view!==v);document.querySelectorAll('img').forEach(n=>{n.src=n.dataset.prefix+s+'.png';n.parentElement.href=n.src});document.querySelector('main').classList.toggle('single',document.querySelector('#single').checked)}document.querySelectorAll('select,input').forEach(n=>n.addEventListener('change',refresh));refresh();
+</script></html>

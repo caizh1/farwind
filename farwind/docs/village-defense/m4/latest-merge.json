@@ -1,0 +1,95 @@
+{
+  "说明": "M3与M4只修改驻防入口；剑风独立文件全部取共享最新，World三方合并无冲突，state共享未再次变更故保留已融合结构4。",
+  "记录": [
+    {
+      "路径": "src/game/scenes/World.ts",
+      "状态": "三方合并",
+      "共享SHA256": "745d9418acd01bc6237a7cf36796cf9168ad44637db78d911db53245b3cc2095"
+    },
+    {
+      "路径": "src/game/systems/state.ts",
+      "状态": "冲突",
+      "共享SHA256": "5c896703747bcbf913d4acf61dd8a7fe8911e450d9d654825bf2c50c06e3c9bf"
+    },
+    {
+      "路径": "src/game/systems/swordWind.ts",
+      "状态": "冲突",
+      "共享SHA256": "1722caa915c9f8b02b1026dae045f0d7e3f1ac657ca3422828f500c50efc90f8"
+    },
+    {
+      "路径": "src/game/systems/swordWindGeometry.ts",
+      "状态": "冲突",
+      "共享SHA256": "9a3514b7e8520640728732728720510fbbbd7206d6d2c46fb11b914f6742a068"
+    },
+    {
+      "路径": "src/game/entities/swordWindView.ts",
+      "状态": "冲突",
+      "共享SHA256": "c54fc8b2f30b4b510c679be50da437d2cefb9beb46c941c23d6f137fc763b2c2"
+    },
+    {
+      "路径": "src/data/swordWind.ts",
+      "状态": "冲突",
+      "共享SHA256": "c48bc0264e695e91497beff15fd32735e789a48a9c4264ed3749e352bd834494"
+    },
+    {
+      "路径": "src/data/swordWindArt.ts",
+      "状态": "保留共享最新",
+      "共享SHA256": "ab13d38a5993a078322c364ac65626f3789c344eb2f615ffebd2dcf04ce7129f"
+    },
+    {
+      "路径": "tests/sword-wind-rise.spec.ts",
+      "状态": "保留共享最新",
+      "共享SHA256": "9842bb347e0f06af6080457dcabfa3e62341403c25e170f9ff9081b1ed53581d"
+    },
+    {
+      "路径": "tests/sword-wind-assets.test.ts",
+      "状态": "保留共享最新",
+      "共享SHA256": "6573cb27e4dbe21621796f1e8881d18d7c836d7d6a61013feab945c88b4dc2a2"
+    },
+    {
+      "路径": "tests/sword-wind-assets.spec.ts",
+      "状态": "保留共享最新",
+      "共享SHA256": "cd5b5255002b9f9e70f8612c7dff59da359842d8d1992d061e6df2be445d3e03"
+    },
+    {
+      "路径": "tests/sword-wind.spec.ts",
+      "状态": "保留共享最新",
+      "共享SHA256": "0e709cf43c5d33e35cac434e2305c59539ec57d239e9588d77570df735f8d135"
+    },
+    {
+      "路径": "tests/sword-wind.test.ts",
+      "状态": "保留共享最新",
+      "共享SHA256": "5f0194e472885305d75e23c76ad48184817b4867c524c2c49822726c86efde27"
+    },
+    {
+      "路径": "tests/sword-wind-fixtures.ts",
+      "状态": "保留共享最新",
+      "共享SHA256": "2fbc80dc856550c97410b8b9e76c30854a58dd84a9f8288464c2df1b28af47fc"
+    },
+    {
+      "路径": "tests/parry-v2.test.ts",
+      "状态": "三方合并",
+      "共享SHA256": "054711d80bf0004c53a1ef65021a8307fbb9f802a1b1ce43f4de488d1133f6ef"
+    },
+    {
+      "路径": "tools/serve-sword-wind-runtime.mjs",
+      "状态": "保留共享最新",
+      "共享SHA256": "6f3095223b0c5eddda77121313234a3bc8618d33255cc16e9b11235381768e7a"
+    },
+    {
+      "路径": "tools/mux-sword-wind-evidence.mjs",
+      "状态": "保留共享最新",
+      "共享SHA256": "4b6f650c6653492b369fa0db2c74159b21374eb673ade5862339d6706c1acfee"
+    },
+    {
+      "路径": "tools/pack-sword-wind.mjs",
+      "状态": "冲突",
+      "共享SHA256": "5a43359a01975d6c9b5c155fcf169bb74f5143f08e04be4fd801fed9615deb43"
+    },
+    {
+      "路径": "tools/playwright-sword-wind.config.ts",
+      "状态": "保留共享最新",
+      "共享SHA256": "48355f0ec468c3fd9d7817c403e15ba9061def6604f0d2b0af494b32d479ba67"
+    }
+  ]
+}

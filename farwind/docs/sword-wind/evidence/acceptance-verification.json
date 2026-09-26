@@ -1,0 +1,154 @@
+{
+  "说明": "仅本次认可状态收尾的实际验证，旧录像与历史报告保留；测试不变更运行中生命、位置或计时器。完整逻辑结果另见本轮报告。",
+  "日期": "2026-09-26",
+  "HEAD": "10cf7466798171df204fdb735e7cf72294752beb",
+  "认可记录": "assets/acceptance.json",
+  "图集像素一致": [
+    {
+      "ID": "hero-sword-wind",
+      "图集SHA256": "2088d238d450f5e9cb5991c78fd5f300f8f401098df1fb7da4c6557a1350ddc5",
+      "保持一致": true
+    },
+    {
+      "ID": "sword-wind-release",
+      "图集SHA256": "5300ae1045ae24573ef847386581483b5f3185f12714aa62163a5f53abb7e404",
+      "保持一致": true
+    },
+    {
+      "ID": "sword-wind-flight",
+      "图集SHA256": "dd9af0ba6372f2ef9420c16c13da737202a50ce3d4db7b550cec6be2f790b350",
+      "保持一致": true
+    },
+    {
+      "ID": "sword-wind-hit",
+      "图集SHA256": "9b090f9d6347187b02c5450f0b4c9add5d7b3f93dbc1201154dd662f61ea0f27",
+      "保持一致": true
+    },
+    {
+      "ID": "sword-wind-dissolve",
+      "图集SHA256": "e872e526ac2c464d96aa4da075761a52238173f9a2445e7c5dc0f10ff5518999",
+      "保持一致": true
+    },
+    {
+      "ID": "sword-wind-ground",
+      "图集SHA256": "4a15ccc755b0fcfdfe258bea4477b4556b080fb3aa487f6d6018a44b89138e3d",
+      "保持一致": true
+    }
+  ],
+  "受测冻结副本": {
+    "说明": "当前工作区等内容冻结副本，防止并行任务热更新扰动；未修改运行中角色、敌人或计时器",
+    "端口": 5193,
+    "开发授予": true,
+    "时间": "2026-09-26T14:01:32.634Z",
+    "文件": [
+      {
+        "路径": "src/game/scenes/World.ts",
+        "摘要": "a3203dd6a9d15dd5750bc1c5e92b3f7040200ab402379481e8977a209082a992"
+      },
+      {
+        "路径": "src/game/systems/combat.ts",
+        "摘要": "8dc4cb3b00be45103efe02dae7fea0f4a2469add40effb994ae8d543e5ca6e69"
+      },
+      {
+        "路径": "src/game/systems/swordWind.ts",
+        "摘要": "1722caa915c9f8b02b1026dae045f0d7e3f1ac657ca3422828f500c50efc90f8"
+      },
+      {
+        "路径": "src/game/systems/swordWindGeometry.ts",
+        "摘要": "9a3514b7e8520640728732728720510fbbbd7206d6d2c46fb11b914f6742a068"
+      },
+      {
+        "路径": "src/game/entities/swordWindView.ts",
+        "摘要": "c54fc8b2f30b4b510c679be50da437d2cefb9beb46c941c23d6f137fc763b2c2"
+      },
+      {
+        "路径": "src/game/systems/skills.ts",
+        "摘要": "59c34b5527748a66e97939cdf94e3d59fef064a6818ab9388e56acb7f5a31238"
+      },
+      {
+        "路径": "src/game/systems/state.ts",
+        "摘要": "21c70a2c1a4816eb1b59fdf2022f23a36976168d9619d310f748de85b73aae51"
+      },
+      {
+        "路径": "src/game/systems/timeline.ts",
+        "摘要": "3210afbff36a3d9dfba319f65945e62032b262c56126cc678dc46091c6a467e2"
+      },
+      {
+        "路径": "src/game/systems/enemy.ts",
+        "摘要": "1501588ca668a3bd5ee6d144a70ed0b1a5ebf2f59d563236e47d71c6669389ab"
+      },
+      {
+        "路径": "src/game/systems/contact.ts",
+        "摘要": "9f0efaab5f9154cfcdcd2a92ff8c9642569035e5dd203e5a4eab1fb8ade80f18"
+      },
+      {
+        "路径": "src/data/animation.ts",
+        "摘要": "83fec97212c47c43e1ffba7c8034fea3448b4caaa0e2d89fd98a7d1a76387979"
+      },
+      {
+        "路径": "src/data/swordWind.ts",
+        "摘要": "c48bc0264e695e91497beff15fd32735e789a48a9c4264ed3749e352bd834494"
+      },
+      {
+        "路径": "src/data/swordWindArt.ts",
+        "摘要": "f488b2de6a918624fd40936cd60d9c553bc0b83dad8967fe993899ded911ab8a"
+      },
+      {
+        "路径": "public/assets/animation/sword-wind/hero-sword-wind.png",
+        "摘要": "2088d238d450f5e9cb5991c78fd5f300f8f401098df1fb7da4c6557a1350ddc5"
+      },
+      {
+        "路径": "public/assets/animation/sword-wind/sword-wind-release.png",
+        "摘要": "5300ae1045ae24573ef847386581483b5f3185f12714aa62163a5f53abb7e404"
+      },
+      {
+        "路径": "public/assets/animation/sword-wind/sword-wind-flight.png",
+        "摘要": "dd9af0ba6372f2ef9420c16c13da737202a50ce3d4db7b550cec6be2f790b350"
+      },
+      {
+        "路径": "public/assets/animation/sword-wind/sword-wind-hit.png",
+        "摘要": "9b090f9d6347187b02c5450f0b4c9add5d7b3f93dbc1201154dd662f61ea0f27"
+      },
+      {
+        "路径": "public/assets/animation/sword-wind/sword-wind-dissolve.png",
+        "摘要": "e872e526ac2c464d96aa4da075761a52238173f9a2445e7c5dc0f10ff5518999"
+      },
+      {
+        "路径": "public/assets/animation/sword-wind/sword-wind-ground.png",
+        "摘要": "4a15ccc755b0fcfdfe258bea4477b4556b080fb3aa487f6d6018a44b89138e3d"
+      }
+    ]
+  },
+  "当前与受测摘要差异": [],
+  "浏览器": {
+    "通过": 2,
+    "失败": 0,
+    "跳过": 0,
+    "重试后通过": 0
+  },
+  "生产构建": "npm run build 通过；保留已有主块体积提示",
+  "未验收": [
+    "四个原剑风效果的最终美术认可",
+    "音色主观试听",
+    "手感认可",
+    "设备长期性能"
+  ],
+  "操作边界": "未提交、未推送、未部署",
+  "逻辑基线": {
+    "类型检查": "通过",
+    "文件数": 16,
+    "通过": 289,
+    "失败": 0
+  },
+  "逻辑收尾": {
+    "类型检查": "通过",
+    "文件数": 16,
+    "通过": 291,
+    "失败": 0,
+    "新增": "认可范围及摘要不匹配或记录缺失时恢复临时状态，两项"
+  },
+  "审查": {
+    "结论": "PASS",
+    "阻塞": "没有成立的P0或P1问题"
+  }
+}

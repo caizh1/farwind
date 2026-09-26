@@ -162,13 +162,17 @@ export function meleeBlocker(a: Point, b: Point, targetId?: string) {
 export const clearMeleeLine = (a: Point, b: Point, targetId?: string) =>
   !meleeBlocker(a, b, targetId);
 
-export type FiringPort = {origin: Point; lowCoverIds: readonly string[]};
+export type FiringPort = {origin: Point; lowCoverIds: readonly string[]; structureId?: string};
 // 高处射击独立于脚底／水域。仅登记的射击口可越过己方低墙，高墙不能豁免。
 export function shotLineBlocker(a:Point,b:Point,port?:FiringPort,objects:readonly Prop[]=props) {
   if([a,b].some(p=>p.x<30||p.x>WORLD.width-30||p.y<80||p.y>WORLD.height-30))return "world-edge";
   return objects.find(p=>{
     if(!p.solid)return false;
-    const permitted=port && Math.hypot(a.x-port.origin.x,a.y-port.origin.y)<=2 && p.owner==="village" && p.cover==="low" && port.lowCoverIds.includes(p.id);
-    return !permitted && !!rectInterval(a,b,propBounds(p));
+    const fromPort=port && Math.hypot(a.x-port.origin.x,a.y-port.origin.y)<=2;
+    const permitted=fromPort && p.owner==="village" &&
+      (p.cover==="low" && port.lowCoverIds.includes(p.id) || p.id===port.structureId);
+    const high=p.cover==="high" || ["house","shop","tower","smith-building","inn-building"].includes(p.art);
+    const bounds=high ? {left:p.x-p.w/2,right:p.x+p.w/2,top:p.y-p.h,bottom:p.y} : propBounds(p);
+    return !permitted && !!rectInterval(a,b,bounds);
   })?.id;
 }

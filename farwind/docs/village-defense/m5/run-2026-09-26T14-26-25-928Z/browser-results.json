@@ -1,0 +1,197 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "tests/village-integration.spec.ts",
+      "tests/economy-production.spec.ts",
+      "--config",
+      "tools/playwright-village-integration.config.ts",
+      "--list"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/tools/playwright-village-integration.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/m5/run-2026-09-26T14-26-25-928Z/browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "village-integration.spec.ts",
+          "economy-production.spec.ts",
+          "village-raids.spec.ts",
+          "east-defense-recovery.spec.ts"
+        ],
+        "timeout": 240000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/m5/run-2026-09-26T14-26-25-928Z/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "economy-production.spec.ts",
+      "file": "economy-production.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "生产构建的服务、暂停、实际成交和重载",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "5a7c2d504b4e19f31485-f06d6cd6076f7f415804",
+          "file": "economy-production.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "village-integration.spec.ts",
+      "file": "village-integration.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "east-watch真实致死后关闭浏览器，活跃事件恢复与多次结算幂等",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "9134127ceda879b559d2-338fef417ed1c84963a6",
+          "file": "village-integration.spec.ts",
+          "line": 10,
+          "column": 73
+        },
+        {
+          "title": "north-watch真实致死后关闭浏览器，活跃事件恢复与多次结算幂等",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "9134127ceda879b559d2-8b91c126d0f16416ad2b",
+          "file": "village-integration.spec.ts",
+          "line": 10,
+          "column": 73
+        },
+        {
+          "title": "south-watch真实致死后关闭浏览器，活跃事件恢复与多次结算幂等",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "9134127ceda879b559d2-b9d2e5a509c86807f844",
+          "file": "village-integration.spec.ts",
+          "line": 10,
+          "column": 73
+        },
+        {
+          "title": "结构1旧地图从正式导入迁移，保存及重开不重复坐标迁移",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "9134127ceda879b559d2-c188a730c64689636eb9",
+          "file": "village-integration.spec.ts",
+          "line": 28,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-26T14:26:25.931Z",
+    "duration": 18.49599999999998,
+    "expected": 0,
+    "skipped": 5,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

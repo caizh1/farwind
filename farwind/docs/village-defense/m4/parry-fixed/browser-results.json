@@ -1,0 +1,130 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "tests/parry.spec.ts",
+      "--config",
+      "tools/playwright-east-defense.config.ts",
+      "--grep",
+      "PARRY-01"
+    ],
+    "configFile": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tools/playwright-east-defense.config.ts",
+    "rootDir": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/parry-fixed/browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "*.spec.ts"
+        ],
+        "timeout": 240000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/parry-fixed/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "parry.spec.ts",
+      "file": "parry.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "PARRY-01",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17857,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:37:31.962Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/parry-fixed/browser-output/parry-PARRY-01/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbd37935917ac18407ed-f881e4af76385c56edf2",
+          "file": "parry.spec.ts",
+          "line": 39,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-26T13:37:31.477Z",
+    "duration": 18555.944,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

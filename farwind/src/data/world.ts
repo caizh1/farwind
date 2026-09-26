@@ -1,6 +1,20 @@
+import {
+  serviceBuildings,
+  serviceEntrances,
+  serviceRoads,
+  serviceClearance,
+} from "./village-economy";
+import { TOWERS } from "./defense";
 import { FIELD_TARGETS, TRAINING } from "../game/systems/training";
 import type { ItemId } from "./content";
-import { VILLAGE_WALLS, VILLAGE_PORTALS, GATE_POST_OFFSET, RESERVED_PARCELS, villageClearance, regionAt } from "./village";
+import {
+  VILLAGE_WALLS,
+  VILLAGE_PORTALS,
+  GATE_POST_OFFSET,
+  RESERVED_PARCELS,
+  villageClearance,
+  regionAt,
+} from "./village";
 export const WORLD = {
   width: 4200,
   height: 2200,
@@ -378,8 +392,24 @@ props.push(
     role: "decoration",
   },
   // 沿用原地面长椅的脚底中心；无交互、无新增阻挡。
-  { id: "pond-bench-west", art: "village-bench", x: 940, y: 1380, w: 90, h: 50, role: "decoration" },
-  { id: "pond-bench-east", art: "village-bench", x: 1540, y: 1350, w: 90, h: 50, role: "decoration" },
+  {
+    id: "pond-bench-west",
+    art: "village-bench",
+    x: 940,
+    y: 1380,
+    w: 90,
+    h: 50,
+    role: "decoration",
+  },
+  {
+    id: "pond-bench-east",
+    art: "village-bench",
+    x: 1540,
+    y: 1350,
+    w: 90,
+    h: 50,
+    role: "decoration",
+  },
   {
     id: "plaza-fountain",
     art: "fountain",
@@ -527,6 +557,19 @@ props.push(
     label: "木工区 · 木材",
   },
 );
+props.push(...serviceBuildings, ...serviceEntrances);
+props.push(...TOWERS.map(t => ({id:t.id,art:"east-watchtower",x:t.x,y:t.y,
+  w:t.w,h:t.h,solid:[90,70] as [number,number],cover:"high" as const,owner:"village" as const,role:"boundary" as const})));
+// 保留树的稳定ID，只让湖东新旅馆门前有站位。
+const innTree = props.find((p) => p.id === "tree-12")!;
+innTree.x = 1455;
+innTree.y = 1590;
+const barracksTree = props.find((p) => p.id === "tree-14")!;
+barracksTree.x = 1990;
+barracksTree.y = 350;
+const residentTree = props.find((p) => p.id === "tree-1")!;
+residentTree.x = 450;
+residentTree.y = 300;
 FIELD_TARGETS.forEach((t) =>
   props.push({
     id: t.id,
@@ -540,39 +583,111 @@ FIELD_TARGETS.forEach((t) =>
 );
 // 闭合村界和三门来自同一组数据，西侧没有通行缺口。
 for (const run of VILLAGE_WALLS) {
-  const horizontal=run.a.y===run.b.y;
-  const length=Math.hypot(run.b.x-run.a.x,run.b.y-run.a.y),n=Math.ceil(length/150);
-  for(let i=0;i<n;i++) {
-    const start=i*length/n,end=(i+1)*length/n;
+  const horizontal = run.a.y === run.b.y;
+  const length = Math.hypot(run.b.x - run.a.x, run.b.y - run.a.y),
+    n = Math.ceil(length / 150);
+  for (let i = 0; i < n; i++) {
+    const start = (i * length) / n,
+      end = ((i + 1) * length) / n;
     props.push({
-      id:`${run.id}-${i}`,art:horizontal?"fence":"vertical-fence",frame:horizontal?"boundary":"trim",
-      x:horizontal?run.a.x+(start+end)/2:run.a.x,
-      y:horizontal?run.a.y+11:run.a.y+end,
-      w:horizontal?end-start+2:38,h:horizontal?72:end-start+2,
-      solid:horizontal?[end-start+2,22]:[22,end-start+2],
-      role:"boundary",cover:"low",owner:"village",
+      id: `${run.id}-${i}`,
+      art: horizontal ? "fence" : "vertical-fence",
+      frame: horizontal ? "boundary" : "trim",
+      x: horizontal ? run.a.x + (start + end) / 2 : run.a.x,
+      y: horizontal ? run.a.y + 11 : run.a.y + end,
+      w: horizontal ? end - start + 2 : 38,
+      h: horizontal ? 72 : end - start + 2,
+      solid: horizontal ? [end - start + 2, 22] : [22, end - start + 2],
+      role: "boundary",
+      cover: "low",
+      owner: "village",
     });
   }
 }
-for(const portal of VILLAGE_PORTALS) {
-  for(const [index,offset] of [-GATE_POST_OFFSET,GATE_POST_OFFSET].entries()) {
-    const x=portal.x+(portal.axis==="y"?offset:0),y=portal.y+(portal.axis==="x"?offset:0)+13;
-    props.push({id:`${portal.id}-post-${index}`,art:"village-gate",frame:index?"east":"west",x,y,w:55,h:215,solid:[38,26],role:"boundary",cover:"high",owner:"village"});
+for (const portal of VILLAGE_PORTALS) {
+  for (const [index, offset] of [
+    -GATE_POST_OFFSET,
+    GATE_POST_OFFSET,
+  ].entries()) {
+    const x = portal.x + (portal.axis === "y" ? offset : 0),
+      y = portal.y + (portal.axis === "x" ? offset : 0) + 13;
+    props.push({
+      id: `${portal.id}-post-${index}`,
+      art: "village-gate",
+      frame: index ? "east" : "west",
+      x,
+      y,
+      w: 55,
+      h: 215,
+      solid: [38, 26],
+      role: "boundary",
+      cover: "high",
+      owner: "village",
+    });
   }
   // 南北门的高横梁在背景层；东西门两柱沿道路两侧排序，保留横向通行。
-  if(portal.axis==="y") props.push({id:`${portal.id}-beam`,art:"village-gate",frame:"beam",x:portal.x,y:portal.y-135,w:165,h:76,depth:portal.y-30});
-  const signX=portal.axis==="x"?portal.x+(portal.id==="west-gate"?100:-100):portal.x+155;
-  const signY=portal.axis==="x"?portal.y+(portal.id==="west-gate"?70:175):portal.y+100*(portal.id==="north-gate"?1:-1);
-  props.push({id:`${portal.id}-sign`,art:"sign",x:signX,y:signY,w:65,h:90,kind:"sign",label:portal.open?`${portal.name}路牌`:`${portal.name} · 暂不开放`});
+  if (portal.axis === "y")
+    props.push({
+      id: `${portal.id}-beam`,
+      art: "village-gate",
+      frame: "beam",
+      x: portal.x,
+      y: portal.y - 135,
+      w: 165,
+      h: 76,
+      depth: portal.y - 30,
+    });
+  const signX =
+    portal.axis === "x"
+      ? portal.x + (portal.id === "west-gate" ? 100 : -100)
+      : portal.x + 155;
+  const signY =
+    portal.axis === "x"
+      ? portal.y + (portal.id === "west-gate" ? 70 : 175)
+      : portal.y + 100 * (portal.id === "north-gate" ? 1 : -1);
+  props.push({
+    id: `${portal.id}-sign`,
+    art: "sign",
+    x: signX,
+    y: signY,
+    w: 65,
+    h: 90,
+    kind: "sign",
+    label: portal.open ? `${portal.name}路牌` : `${portal.name} · 暂不开放`,
+  });
 }
-for(const parcel of RESERVED_PARCELS) {
-  props.push({id:`${parcel.id}-sign`,art:"sign",x:parcel.x+30,y:parcel.y+40,w:52,h:72,kind:"sign",label:parcel.name});
+for (const parcel of RESERVED_PARCELS) {
+  props.push({
+    id: `${parcel.id}-sign`,
+    art: "sign",
+    x: parcel.x + 30,
+    y: parcel.y + 40,
+    w: 52,
+    h: 72,
+    kind: "sign",
+    label: parcel.name,
+  });
   // 短栏及空院保留生活尺度，入口开放，不伪造未实现的交互。
-  for(const [part,a,b] of [[0,0,parcel.w/2-60],[1,parcel.w/2+60,parcel.w]] as const){
-    const n=Math.ceil((b-a)/125);
-    for(let i=0;i<n;i++){
-      const w=(b-a)/n;
-      props.push({id:`${parcel.id}-rim-${part}-${i}`,art:"fence",frame:"boundary",x:parcel.x+a+w*(i+0.5),y:parcel.y+parcel.h,w:w+2,h:40,solid:[w+2,15],role:"boundary",cover:"low",owner:"village"});
+  for (const [part, a, b] of [
+    [0, 0, parcel.w / 2 - 60],
+    [1, parcel.w / 2 + 60, parcel.w],
+  ] as const) {
+    const n = Math.ceil((b - a) / 125);
+    for (let i = 0; i < n; i++) {
+      const w = (b - a) / n;
+      props.push({
+        id: `${parcel.id}-rim-${part}-${i}`,
+        art: "fence",
+        frame: "boundary",
+        x: parcel.x + a + w * (i + 0.5),
+        y: parcel.y + parcel.h,
+        w: w + 2,
+        h: 40,
+        solid: [w + 2, 15],
+        role: "boundary",
+        cover: "low",
+        owner: "village",
+      });
     }
   }
 }
@@ -599,7 +714,8 @@ fences.forEach(([x, y], i) =>
     w: 110,
     h: 68,
     solid: [108, 15],
-    cover:"low",owner:"village",
+    cover: "low",
+    owner: "village",
   }),
 );
 // 连续低栏围合院落与练习场，南侧各留一个入口；复用现有木栏和树篱。
@@ -612,7 +728,8 @@ function lowFence(id: string, x: number, y: number, w = 110) {
     w,
     h: 68,
     solid: [w - 2, 15],
-    cover:"low",owner:"village",
+    cover: "low",
+    owner: "village",
     role: "boundary",
   });
 }
@@ -627,7 +744,8 @@ function hedgeLine(id: string, a: number[], b: number[]) {
       w: 55,
       h: 45,
       solid: [30, 30],
-      cover:"low",owner:"village",
+      cover: "low",
+      owner: "village",
       role: "boundary",
     });
 }
@@ -723,10 +841,15 @@ export const roads = [
     [1640, 860],
     [1640, 710],
   ],
-  [[860,1470],[900,1640],[900,2100]],
+  [
+    [860, 1470],
+    [900, 1640],
+    [900, 2100],
+  ],
+  ...serviceRoads,
 ] as number[][][];
 export const roadWidth = (index: number) =>
-  index === 0 ? 170 : index === 4 || index === 10 ? 80 : 115;
+  index >= 12 ? 65 : index === 0 ? 170 : index === 4 || index === 10 ? 80 : 115;
 export const showLayoutLabels = (development: boolean, search: string) =>
   development && new URLSearchParams(search).get("layoutDebug") === "1";
 export const inReworkArea = (x: number, y: number) =>
@@ -737,7 +860,8 @@ export const inVillageDecorArea = (x: number, y: number) =>
   ["village", "north", "south", "west"].includes(regionAt({ x, y }).id);
 // 生成装饰使用同一套路宽与保留空间；结构性围栏不属于随机装饰。
 export function canDecorate(x: number, y: number, radius = 12) {
-  if(!villageClearance(x,y,radius))return false;
+  if (!villageClearance(x, y, radius) || !serviceClearance(x, y, radius))
+    return false;
   for (const [i, path] of roads.entries())
     for (let j = 1; j < path.length; j++) {
       const [ax, ay] = path[j - 1],
@@ -792,7 +916,10 @@ for (let i = 0; i < 45; i++) {
     y = 280 + ((i * 193) % 1600);
   if (x < 2050 && y < 1600) continue;
   // 只清理东村口过渡区的生成装饰，森林与遗迹内部的旧布置保留。
-  if ((inReworkArea(x, y) || inVillageDecorArea(x, y)) && !canDecorate(x, y, (65 + (i % 3) * 12) / 2))
+  if (
+    (inReworkArea(x, y) || inVillageDecorArea(x, y)) &&
+    !canDecorate(x, y, (65 + (i % 3) * 12) / 2)
+  )
     continue;
   props.push({
     id: `bush-${i}`,
@@ -871,7 +998,7 @@ export const enemyDefs = [
   { id: "leaf-2", x: 3170, y: 930, type: "leaf" },
 ] as const;
 export function region(x: number, y: number) {
-  return regionAt({x,y}).name;
+  return regionAt({ x, y }).name;
 }
 
 // 交互物只阻挡实际占地，互动视线忽略目标本体。

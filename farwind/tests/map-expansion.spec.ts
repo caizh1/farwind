@@ -54,8 +54,12 @@ test("map-expansion-player-journey", async ({ page }) => {
     .reduce((n: number, p: any) => n + p.count, 0);
   // 新围栏覆盖旧站位，沿院门中线到药师南侧；交互与药剂断言保持不变。
   await interact(page, "healer", 1110, 600);
-  await expect(page.locator("#modal")).toContainText("替你调好了");
-  await closeDialog(page);
+  await page.getByRole("button", { name:"查看药师服务" }).click();
+  await page.getByRole("button", { name:"调制药剂" }).click();
+  await page.getByRole("button", { name:"核对交易" }).click();
+  await page.getByRole("button", { name:"确认兑换" }).click();
+  await expect(page.locator("#shop-feedback")).toContainText("交易已完成");
+  await page.getByRole("button", { name:"离开商店" }).click();
   expect(
     (await read(page)).state.bag
       .filter((p: any) => p?.id === "potion")

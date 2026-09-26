@@ -31,7 +31,9 @@ export class TrainingDummy implements Target {
   lastDamage = 0;
   lastHit = -TRAINING.linger;
   facing = 0;
+  windHits:{attackId:number;comboId:number;damage:number;at:number;firstTarget:string}[]=[];
   reset() {
+    this.windHits=[];
     this.comboId = -1;
     this.stages.clear();
     this.instances.clear();
@@ -52,13 +54,14 @@ export class TrainingDummy implements Target {
       this.comboId = a.comboId ?? a.id;
     }
   }
-  hit(a: Attack, now: number) {
+  hit(a: Attack, now: number, damage = attackConfig(a).damage) {
+    if(a.stage===4){if(this.windHits.some(h=>h.attackId===a.id))return false;this.windHits.push({attackId:a.id,comboId:a.comboId??a.id,damage,at:now,firstTarget:this.id});if(this.windHits.length>32)this.windHits.shift();return true;}
     this.begin(a);
     if (this.instances.has(a.id)) return false;
     this.instances.add(a.id);
     this.stages.add(a.stage);
     this.lastStage = a.stage;
-    this.lastDamage = attackConfig(a).damage;
+    this.lastDamage = damage;
     this.damage += this.lastDamage;
     this.lastHit = now;
     this.facing = a.facing;
@@ -78,8 +81,10 @@ export class TrainingDummy implements Target {
       lastDamage: this.lastDamage,
       lastHit: this.lastStage ? this.lastHit : null,
       complete: [1, 2, 3].every((s) => this.stages.has(s)),
-      visible: now - this.lastHit < TRAINING.linger,
-      age: now - this.lastHit,
+      swordWind:this.windHits.at(-1)??null,
+      windDamage:this.windHits.reduce((n,h)=>n+h.damage,0),
+      visible: now - Math.max(this.lastHit,this.windHits.at(-1)?.at??-Infinity) < TRAINING.linger,
+      age: now - Math.max(this.lastHit,this.windHits.at(-1)?.at??-Infinity),
     };
   }
 }

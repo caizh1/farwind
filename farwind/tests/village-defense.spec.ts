@@ -88,14 +88,14 @@ test("真实输入通过三门，北南不触发森林任务，主角和黑猫�
   expect(snapshot.state.player.x).toBeGreaterThanOrEqual(103 - 0.1);
   expect(snapshot.state.player.x).toBeLessThan(110);
   await page.screenshot({ path: `${directory}/west-gate-blocked.png` });
-  expect(snapshot.state.map_version).toBe(3);
+  expect(snapshot.state.map_version).toBe(6);
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "保存旅途", exact: true }).click();
   await page.reload();
   await page.getByRole("button", { name: "继续旅途", exact: true }).click();
   snapshot = await read(page);
   expect(snapshot.state.quest).toBe(2);
-  expect(snapshot.state.map_version).toBe(3);
+  expect(snapshot.state.map_version).toBe(6);
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "保存并返回标题" }).click();
   for (const gate of VILLAGE_PORTALS.filter((p) => p.open))
@@ -160,7 +160,7 @@ test("版本2被村墙占用的位置就近恢复，任务背包保持，正常�
     Math.hypot(s.state.player.x - 2100, s.state.player.y - 1400),
   ).toBeLessThan(160);
   expect(s.state.player.x).toBeLessThan(2100);
-  expect(s.state.map_version).toBe(3);
+  expect(s.state.map_version).toBe(6);
   expect(s.state.quest).toBe(2);
   expect(s.state.side).toBe(1);
   expect(s.state.bag).toEqual(fixture.bag);

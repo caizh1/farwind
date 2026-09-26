@@ -6,10 +6,16 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run tests/logic.test.ts tests/motion.test.ts tests/combat.test.ts tests/training.test.ts tests/map-expansion.test.ts tests/obstacles.test.ts tests/level-rework.test.ts tests/village-defense.test.ts tests/parry.test.ts tests/dialogue-portraits.test.ts",
+    "test": "vitest run tests/logic.test.ts tests/motion.test.ts tests/combat.test.ts tests/training.test.ts tests/map-expansion.test.ts tests/obstacles.test.ts tests/level-rework.test.ts tests/village-defense.test.ts tests/parry.test.ts tests/parry-v2.test.ts tests/dialogue-portraits.test.ts tests/economy.test.ts tests/sword-wind-assets.test.ts tests/sword-wind.test.ts tests/east-defense.test.ts tests/village-raids.test.ts tests/village-integration.test.ts",
     "test:e2e": "playwright test",
+    "assets:sword-wind": "node tools/pack-sword-wind.mjs",
+    "test:sword-wind": "playwright test tests/sword-wind.spec.ts tests/sword-wind-focus.spec.ts tests/sword-wind-rise.spec.ts --config tools/playwright-sword-wind.config.ts --grep 'WIND-0[1-6]|WIND-0[89]|WIND-1[012]'",
+    "test:sword-wind:off": "VITE_DEV_GRANT_SWORD_WIND=0 playwright test tests/sword-wind.spec.ts tests/sword-wind-focus.spec.ts --config tools/playwright-sword-wind.config.ts --grep 'WIND-02|WIND-07|WIND-08'",
+    "test:sword-wind:production": "npm run build -- --outDir .sword-wind-local/production && playwright test --config tools/playwright-sword-wind-production.config.ts",
     "build": "tsc --noEmit && vite build",
-    "preview": "vite preview --host 127.0.0.1"
+    "preview": "vite preview --host 127.0.0.1",
+    "test:village-integration": "vitest run tests/village-integration.test.ts && playwright test tests/village-integration.spec.ts tests/economy-production.spec.ts --config tools/playwright-village-integration.config.ts",
+    "test:village-soak": "vitest run tests/village-integration.test.ts && node tools/soak-village-defense.mjs"
   },
   "dependencies": {
     "phaser": "4.2.1"

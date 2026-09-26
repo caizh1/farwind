@@ -2,24 +2,24 @@ import { CombatController, facingVector, PARRY, type CounterKind } from "./comba
 import { attackTouches, type EnemyContact } from "./enemyAttack";
 import type { Point } from "./obstacles";
 export type ContactResult = "invalid"|"immune"|"afterguard"|"normal"|"perfect"|"hurt";
-export function defends(facing:0|1|2|3,origin:Point,player:Point) {
+export function defends(facing:0|1|2|3,origin:Point,player:Point,incoming?:Point) {
   const [x,y]=facingVector(facing),dx=origin.x-player.x,dy=origin.y-player.y,d=Math.hypot(dx,dy);
-  return d>1e-7&&(dx*x+dy*y)/d>=Math.cos(PARRY.halfAngle);
+  return d>1e-7 ? (dx*x+dy*y)/d>=Math.cos(PARRY.halfAngle)-1e-9 : !!incoming&&(-incoming.x*x-incoming.y*y)>=Math.cos(PARRY.halfAngle)-1e-9;
 }
 export function adjudicateContact(contact:EnemyContact,c:CombatController,p:Point&{stamina:number},rules:{valid:boolean;immune:boolean;clear:(a:Point,b:Point,id:string)=>boolean}):ContactResult {
   const a=contact.attack,now=contact.at;
   if(a.cancelled||a.resolved)return "invalid";
-  // 空间判定先于所有保护与奖励；即使挥空，本次唯一接触也已结算。
-  a.resolved=true;
   if(!rules.valid||!attackTouches(contact,p)||!rules.clear(contact.origin,p,a.attackerId))return "invalid";
+  // 只有首次真实接触才消费实例；无接触候选仍可继续扫描有效段。
+  a.resolved=true;
   if(rules.immune||c.invulnerable(now))return "immune";
-  if(a.parryable&&c.afterguard&&now<c.afterguard.until&&defends(c.afterguard.facing,contact.origin,p)) {
+  if(a.parryable&&c.afterguard&&now<c.afterguard.until&&defends(c.afterguard.facing,contact.origin,p,a.direction)) {
     a.cancelled=true;
     return "afterguard";
   }
   const quality=c.parryQuality(now);
-  if(a.parryable&&quality&&defends(c.parry!.facing,contact.origin,p)) {
-    c.succeedParry(now,quality as CounterKind,p);
+  if(a.parryable&&quality&&defends(c.parry!.facing,contact.origin,p,a.direction)) {
+    c.succeedParry(now,quality as CounterKind,p,a.attackerId,contact.origin);
     a.cancelled=true;
     return quality;
   }

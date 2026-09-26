@@ -1,0 +1,95 @@
+{
+  "说明": "真实键鼠输入；仅导入合法起始存档，诊断只读；未改运行中生命、位置、计时器或判定",
+  "帧数": 346,
+  "接触": [
+    {
+      "at": 1499.86,
+      "id": "practice-training-dummy:1",
+      "result": "normal",
+      "parryAge": 128.29500996386355,
+      "stamina": 100,
+      "hp": 100,
+      "inputAt": 1371.5649900361364,
+      "startAt": 1371.5649900361364,
+      "phase": "active",
+      "predicted": 1499.86,
+      "direction": {
+        "attack": {
+          "x": 0,
+          "y": 1
+        },
+        "guard": 1
+      },
+      "rejection": ""
+    },
+    {
+      "at": 4159.86,
+      "id": "practice-training-dummy:2",
+      "result": "perfect",
+      "parryAge": 55.85193612168587,
+      "stamina": 100,
+      "hp": 100,
+      "inputAt": 4104.008063878314,
+      "startAt": 4104.008063878314,
+      "phase": "active",
+      "predicted": 4159.86,
+      "direction": {
+        "attack": {
+          "x": 0,
+          "y": 1
+        },
+        "guard": 1
+      },
+      "rejection": ""
+    }
+  ],
+  "最终练习": {
+    "mode": "slow",
+    "next": 5919.86,
+    "target": {
+      "id": "training-dummy",
+      "x": 850,
+      "y": 650,
+      "kind": "trainingDummy",
+      "hp": 1,
+      "comboId": 2,
+      "epoch": 4,
+      "stages": {},
+      "instances": {},
+      "damage": 80,
+      "lastStage": 3,
+      "lastDamage": 30,
+      "lastHit": 4844.86,
+      "facing": 1,
+      "windHits": []
+    },
+    "projection": {
+      "id": "practice-training-dummy",
+      "x": 850,
+      "y": 676,
+      "hp": 1,
+      "kind": "trainingProjection",
+      "staggerUntil": 5014.86,
+      "type": "slime",
+      "parried": {
+        "at": 4159.86,
+        "until": 4959.86,
+        "direction": {
+          "x": 0,
+          "y": 1
+        },
+        "perfect": true
+      },
+      "staggerSince": 4844.86
+    },
+    "attack": null,
+    "indicators": true,
+    "pose": null,
+    "predictedContact": null,
+    "feedback": "精准成功 · 提前 56 毫秒",
+    "lastContact": {
+      "at": 4159.86,
+      "result": "perfect"
+    }
+  }
+}

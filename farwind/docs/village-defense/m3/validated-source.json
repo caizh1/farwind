@@ -1,0 +1,680 @@
+{
+  "说明": "最终固定回归与生产截图的隔离源码快照；保留合入时共享快照中的弹反／剑风，后续共享改动不覆盖。",
+  "构建": "index-DHV38r4n.js",
+  "逻辑测试": 224,
+  "类型检查": "通过",
+  "文件": [
+    {
+      "路径": "package-lock.json",
+      "SHA256": "2609c89f1f9d5e3e5c770eee20eac5f6eced41d47f6b57cd5592ecd3002bd9be"
+    },
+    {
+      "路径": "package.json",
+      "SHA256": "df5e5fc0274b84a25c4d361c062733a79134e5f05dcf9e59f8f6e0884b7dcc5e"
+    },
+    {
+      "路径": "public/assets/manifest.json",
+      "SHA256": "c487f0b6e63c7a5d1bd13ae4199f23d9cddd3f9035df9ef19c544a0b14ba6dd8"
+    },
+    {
+      "路径": "public/assets/village-defense/m3/archer-source.png",
+      "SHA256": "4b72f503f734cfdda668a0c5397a542b6315a6555cdd571197ab16aae2ad49df"
+    },
+    {
+      "路径": "public/assets/village-defense/m3/guard-source.png",
+      "SHA256": "ded658714ec1ff8410571f0d5983eeab1aee4d8305407a01ce3925d3c6d706d5"
+    },
+    {
+      "路径": "public/assets/village-defense/m3/watchtower-candidate.png",
+      "SHA256": "2d959fc3711a108394cdf89cba55fd66bd66ff58dda515869a97cc77f7d9a29a"
+    },
+    {
+      "路径": "src/animation-preview.ts",
+      "SHA256": "bff96bf93330785f23d029445efe7ad73ac6d001897e237edf4187035ff2355f"
+    },
+    {
+      "路径": "src/data/animation.ts",
+      "SHA256": "b26f19ba02b6457966ffefc83c70adb3e1fbfc48e96e4e4bafb4d8fcc8428a49"
+    },
+    {
+      "路径": "src/data/content.ts",
+      "SHA256": "83a36f5e6d62feff7fdda9bb67f3946607739ba8ae5d69fe360bc76421062db7"
+    },
+    {
+      "路径": "src/data/defense-art.json",
+      "SHA256": "4b08d41aa304fb190cd540e6e2c47a183b2e68632e9c15e8f2cd6e8dfbed068d"
+    },
+    {
+      "路径": "src/data/defense.ts",
+      "SHA256": "3466d32436ee92187ddfb8537c7e8a7e98fa96be138bd1f3e0ae82e4fb7b722c"
+    },
+    {
+      "路径": "src/data/dialoguePortraits.ts",
+      "SHA256": "a81f4e94a0b4e8378c3a8ae65efd02c53a5c61f100b0b318d8c64490c028c338"
+    },
+    {
+      "路径": "src/data/economy.ts",
+      "SHA256": "671f7469b5e7d5e5092cd39ebca3b46ccf0e75e02fb736cab26652c6171f9c60"
+    },
+    {
+      "路径": "src/data/swordWind.ts",
+      "SHA256": "16a406f32a4929aa8d19aaae4bab36e12d2db8ee130410a8ac8f3742ee253b01"
+    },
+    {
+      "路径": "src/data/swordWindArt.ts",
+      "SHA256": "c7864eb35803e63587d128511a50b7e4b0a744de97ccb172a021548c8d6adb8c"
+    },
+    {
+      "路径": "src/data/village-economy.ts",
+      "SHA256": "eb8e97c44eb687c2b08bbe4e27e02e6c5ce0ebbd33315f30371254f1f76ab8c2"
+    },
+    {
+      "路径": "src/data/village.ts",
+      "SHA256": "9629790076946637d7515189153cd14b4e6c36a15318f30019bd864b76552ad3"
+    },
+    {
+      "路径": "src/data/world.ts",
+      "SHA256": "4252a28ab5f904764e1948feb468ac9d79ac6a97e848e6d38a7513b95c715da5"
+    },
+    {
+      "路径": "src/game/entities/actor.ts",
+      "SHA256": "df64fb5bda4664767c9d9916f830f05ecc74bf4e9e2ed65f1e1b4ebeffc12eda"
+    },
+    {
+      "路径": "src/game/entities/defenders.ts",
+      "SHA256": "6b4c1de8f6a4253c98025a859da86176241574ed7afc4bdab9e42a24edacf4e2"
+    },
+    {
+      "路径": "src/game/entities/swordWindView.ts",
+      "SHA256": "3ea74faab05bdb13688a1a64a9caf0dca71ee8733484946e2b27276ca4f5abb0"
+    },
+    {
+      "路径": "src/game/entities/trainingDummy.ts",
+      "SHA256": "e715b12e9fd2d837b8dea6badc7d192a87f232ce3b62da42b3dcd4efe1e066ed"
+    },
+    {
+      "路径": "src/game/scenes/World.ts",
+      "SHA256": "bbd084caa3b6ab4284c6f5111cc23fd4606b95cd2095d3b2aecc0d800f8c8818"
+    },
+    {
+      "路径": "src/game/systems/audio.ts",
+      "SHA256": "f295ead102a34e8e619d0257b84110aa8423526fbdff82cda5966d20a4d14210"
+    },
+    {
+      "路径": "src/game/systems/combat.ts",
+      "SHA256": "01ea745572eefd7c9538d061dd9bcb53fde5e66788ea3a0bcbd009d09cf2433a"
+    },
+    {
+      "路径": "src/game/systems/contact.ts",
+      "SHA256": "9f0efaab5f9154cfcdcd2a92ff8c9642569035e5dd203e5a4eab1fb8ade80f18"
+    },
+    {
+      "路径": "src/game/systems/damage.ts",
+      "SHA256": "ae5878a9e6fdc19beabed74db598df2a719122d47fe6f4d1b594cf87f41680d7"
+    },
+    {
+      "路径": "src/game/systems/defense.ts",
+      "SHA256": "07bc81c6a31708d3a31dd34cad7b54ecc4be24778184bee9bc1e7c1b6d3f1126"
+    },
+    {
+      "路径": "src/game/systems/defenseState.ts",
+      "SHA256": "3fd7472b419c5433b8508ffe52cf5d416db97a0de1075be9a0ea84e00c7d0d94"
+    },
+    {
+      "路径": "src/game/systems/economy.ts",
+      "SHA256": "f82322320d166262938f24f0a730478b023016caa134a5f302e9c524cd729c0b"
+    },
+    {
+      "路径": "src/game/systems/enemy.ts",
+      "SHA256": "485fc1e96c0b5ee8135872e9c788b59206f4336512b8766bd75075ec440aa1d4"
+    },
+    {
+      "路径": "src/game/systems/enemyAttack.ts",
+      "SHA256": "55a2a53bd9de0d6827d6c6bb30ebc569bed3c22fcdc265a397524f72c5446dc2"
+    },
+    {
+      "路径": "src/game/systems/follower.ts",
+      "SHA256": "e49e5a233692725321f04e1f8a43f9cef57bc410eda9f75690b6e495ca7eba5a"
+    },
+    {
+      "路径": "src/game/systems/input.ts",
+      "SHA256": "d98ece078bea7edee14ac61ccee0a18725a6901c129d869a9ea022bbb9711add"
+    },
+    {
+      "路径": "src/game/systems/interactions.ts",
+      "SHA256": "5a919e99a5abee47a635d2aed3318768098ed04b48753c16497c8bdb49b50ce7"
+    },
+    {
+      "路径": "src/game/systems/locomotion.ts",
+      "SHA256": "0164326f5c729c5d895dca3f89c648a9b7d4d6836b4fe8b876d22808cd74df64"
+    },
+    {
+      "路径": "src/game/systems/obstacles.ts",
+      "SHA256": "d1875d91fbfdd96c064bab7e5b3e729e61a718fbdaaa4e194b011232bcc672cc"
+    },
+    {
+      "路径": "src/game/systems/parryTraining.ts",
+      "SHA256": "921dcdd3226e8f25ae40e25e0a0b77e167843421aea7f4b6f190d52f795b64fe"
+    },
+    {
+      "路径": "src/game/systems/save.ts",
+      "SHA256": "6efb6b37298618760ff4d8f1f9c886281df48d89f594ad8056a36457119e6d9d"
+    },
+    {
+      "路径": "src/game/systems/session.ts",
+      "SHA256": "b5b3fec49f3168ddf45d700c25154efcdc92a9b38ff3fef2226187f83561fa9a"
+    },
+    {
+      "路径": "src/game/systems/skills.ts",
+      "SHA256": "7894096488b7eed99e56e944ae2188070a8bb37674a6d6b8ae04823fd6123f52"
+    },
+    {
+      "路径": "src/game/systems/sprint.ts",
+      "SHA256": "3aacf45e404221f6bc28938cb2dd37529f3b4b57b9a509b30c6def2701ca3dbb"
+    },
+    {
+      "路径": "src/game/systems/state.ts",
+      "SHA256": "e2fa951c6a22c1106326796f0e0fd1bcd72a67ac105e492662efa0dd66a72f25"
+    },
+    {
+      "路径": "src/game/systems/swordWind.ts",
+      "SHA256": "4a4bbfea8694a1023834167c7b97f5fc2515cb13ab44a3228fa4751500be751a"
+    },
+    {
+      "路径": "src/game/systems/swordWindGeometry.ts",
+      "SHA256": "70c40b4524fc18f19835b3e150b59b706cd61f7dbd4fd2ed662c4a5e6c116c33"
+    },
+    {
+      "路径": "src/game/systems/terrain.ts",
+      "SHA256": "175a44201ec6be625b3d965447137688b2c3382d62c7ba8d2b21795cccc1b4f1"
+    },
+    {
+      "路径": "src/game/systems/timeline.ts",
+      "SHA256": "3210afbff36a3d9dfba319f65945e62032b262c56126cc678dc46091c6a467e2"
+    },
+    {
+      "路径": "src/game/systems/training.ts",
+      "SHA256": "e19f7ad86b67ddf86eb2d28056a844ca06504f8d35bc46883d68a9b24d23cc70"
+    },
+    {
+      "路径": "src/game/systems/weaponTrail.ts",
+      "SHA256": "75fd4882beb188b22a11673df2a9289d0bcb40a0095d2c20a6b9b84f092b64bc"
+    },
+    {
+      "路径": "src/game/ui/interface.ts",
+      "SHA256": "e8d12da17dc38353d6e6c0bfb27c387741ef373fef1c514342541a55bc4920d4"
+    },
+    {
+      "路径": "src/game/ui/shop.ts",
+      "SHA256": "3dcae35a56a5d377091d045944fa7f1f46593b10399cb52c2a71dfae78265895"
+    },
+    {
+      "路径": "src/main.ts",
+      "SHA256": "1c9509d16ed5566e77b10c0edfe41a46a3f2188d0ab30de71f2e835202ace4ac"
+    },
+    {
+      "路径": "src/style.css",
+      "SHA256": "283c7590fca4987a065925320f132dab383338f6d9daca6b9d3119284a30cd3d"
+    },
+    {
+      "路径": "tests/adventure.spec.ts",
+      "SHA256": "c2963d5df754106dd84d0ea2807d544d6f712da9b0b16c3e9a4888c3cbe16652"
+    },
+    {
+      "路径": "tests/animation.spec.ts",
+      "SHA256": "a40253deaef465004585ad157eb265ea10f233cd575e9fec5e6cad7f6397d7d4"
+    },
+    {
+      "路径": "tests/chest.spec.ts",
+      "SHA256": "9a6e36fe2bc6eef19bde98165cd5c952018c7fc6de3713871c2ce2a0c7b2d00c"
+    },
+    {
+      "路径": "tests/combat-action.spec.ts",
+      "SHA256": "5299d994663047cad50dde2d36ffc1fa9d5b0f2f8c71dfa26e3827ba307200ae"
+    },
+    {
+      "路径": "tests/combat-contact.spec.ts",
+      "SHA256": "5348caaec178567edd879a045a10dbda8c8c9aaf652296e1d081f6b54f60b6e9"
+    },
+    {
+      "路径": "tests/combat-feel.spec.ts",
+      "SHA256": "8d99d41b5c3c8e074b0694da55269d467b78bfbcadf6880f17c713282c0ed242"
+    },
+    {
+      "路径": "tests/combat-followup.spec.ts",
+      "SHA256": "f4b5f3c979a3c885d0ddf3956bf735953006d4575582b4ede97994038db11e69"
+    },
+    {
+      "路径": "tests/combat.spec.ts",
+      "SHA256": "a8b858ccae31bf748bac334f56b4c91073e6bca6ace6cc6403b879c283eb3192"
+    },
+    {
+      "路径": "tests/combat.test.ts",
+      "SHA256": "e6f610dec7a2e0bd8f1d67765220aa2f98334e5f16e0792f005fbf8a6acb39fa"
+    },
+    {
+      "路径": "tests/dialogue-portraits.production.ts",
+      "SHA256": "45ffa7f366bf996d53d6ae1799d7547593255c09ced1a0ab0b946b5289a9df69"
+    },
+    {
+      "路径": "tests/dialogue-portraits.spec.ts",
+      "SHA256": "85ac06b5e9a0d8b4346f80906743c9c3dae39f1a15744a5ce2365b3554879ed1"
+    },
+    {
+      "路径": "tests/dialogue-portraits.test.ts",
+      "SHA256": "0700085e094533ffe3a1afdf7e89559ea30d7e40f462b530776aa8494896d3bc"
+    },
+    {
+      "路径": "tests/drop.spec.ts",
+      "SHA256": "2a7b1f87e9797f10f580f3352910b6549402873080e363a0f5fff683b3fc3c1a"
+    },
+    {
+      "路径": "tests/east-defense-recovery.spec.ts",
+      "SHA256": "c0c35cd4539566308e5b202d9185ffefb481dcf0f79b767dcaabef7555573532"
+    },
+    {
+      "路径": "tests/east-defense.spec.ts",
+      "SHA256": "5ad4eeec01fa2767e6b9c4ed49ffd57276e466e7146c7324e80782e48a26d746"
+    },
+    {
+      "路径": "tests/east-defense.test.ts",
+      "SHA256": "66215452ec33610b882b3279a760e56f7f69c6b2a0fc507a0746248568a9c7d0"
+    },
+    {
+      "路径": "tests/economy-production.spec.ts",
+      "SHA256": "564907c5fd5018d56283ae4ee087fbfca1b6a385a062d89a5b2c45a40c504151"
+    },
+    {
+      "路径": "tests/economy.spec.ts",
+      "SHA256": "66b86d50db94ea3987dfb06d43792093f3608f1a51c1ad860919162f409572ca"
+    },
+    {
+      "路径": "tests/economy.test.ts",
+      "SHA256": "b0ed0028fad69a7abf3314e59cdbdc16fc21364058c04422b4338180e13651b8"
+    },
+    {
+      "路径": "tests/hud.spec.ts",
+      "SHA256": "487d44cd9fe4bb85465e9122c35a985e137294bb2e521119c32d7ef2a86a62c6"
+    },
+    {
+      "路径": "tests/level-rework.spec.ts",
+      "SHA256": "0178a1aece063935a42d16e2f2ccc8febe07bd1a254139236314e3097eb9ec88"
+    },
+    {
+      "路径": "tests/level-rework.test.ts",
+      "SHA256": "5d926e6ab008070edc33d576c5a31c752ab892ef582f74af5c2b8fc7f2b07cf4"
+    },
+    {
+      "路径": "tests/logic.test.ts",
+      "SHA256": "844c7244596f8112822f0487ae3f7a97ee80eba28ca17b61aae150cfa9f511e1"
+    },
+    {
+      "路径": "tests/map-expansion.spec.ts",
+      "SHA256": "8b3fd56c47585a2d96087aedf927bcc8edadaddd001ee426efaed5e87c070c9e"
+    },
+    {
+      "路径": "tests/map-expansion.test.ts",
+      "SHA256": "42d648a20981ee818d6c8a48482660ae72e4162f6b3aa90e284502b45b871c45"
+    },
+    {
+      "路径": "tests/map-navigation.ts",
+      "SHA256": "a3828e98601be8fed656b48e6f714fe83cc675f025b6e28ed0e65a13e1ec50c1"
+    },
+    {
+      "路径": "tests/motion.test.ts",
+      "SHA256": "70f95965c971e15cbb293b0aedbf79b726cb760f138d3d9b8ece2caef551feda"
+    },
+    {
+      "路径": "tests/obstacles.spec.ts",
+      "SHA256": "249e03730cc02e1c4e184b48aedac795da4ffe09eaba9ebe3bb3a87f48160d12"
+    },
+    {
+      "路径": "tests/obstacles.test.ts",
+      "SHA256": "658d715c97ef29116370b3febf5e60821d7956db68e833b97133aa8d5c3f31b2"
+    },
+    {
+      "路径": "tests/orchard-polish.spec.ts",
+      "SHA256": "f2e0a7e75698168c3a45220ac2aea44497120a6a2cb7bd07d6b72775d1fbc9bb"
+    },
+    {
+      "路径": "tests/parry-contextmenu.spec.ts",
+      "SHA256": "26285df7e71771a830e4dd62db755fa1582d8371685469cf47b0f5ad1573b7cf"
+    },
+    {
+      "路径": "tests/parry-focus.spec.ts",
+      "SHA256": "abbe8c19acf102cb65433e6ff0286da7691ed2cf97925209e573f56ec84dd793"
+    },
+    {
+      "路径": "tests/parry-production.spec.ts",
+      "SHA256": "277374a1ef7306a34a8292d9383452ca2838326a7ed310334c72772e58e08a82"
+    },
+    {
+      "路径": "tests/parry-v2-visual.spec.ts",
+      "SHA256": "bd48da66d07a59633f789198b235846c2db6532bbbfb68fa0a437176916ab580"
+    },
+    {
+      "路径": "tests/parry-v2.test.ts",
+      "SHA256": "d2bec062da0729b87fa999b055a35bbdb5388bc0d71cb283fa262285453e4b87"
+    },
+    {
+      "路径": "tests/parry.spec.ts",
+      "SHA256": "e3e0041aebef845daf12245c75d9d6a6f15f0eb41c6d6d35bbf96384c89ce7b8"
+    },
+    {
+      "路径": "tests/parry.test.ts",
+      "SHA256": "40c35ed4ee2baf868945b1ea0b5dcbcbd14ed7bdf12779ebc93b6cf48d45384c"
+    },
+    {
+      "路径": "tests/session.spec.ts",
+      "SHA256": "ea9b01de445a74f0bc492b62318fc2772f04808442899d1b891835c62a8f1f07"
+    },
+    {
+      "路径": "tests/stability.spec.ts",
+      "SHA256": "c98ded37862dd372805e8ca47a04b8a1c16a82bbfc86a6f02b4d2d467c862889"
+    },
+    {
+      "路径": "tests/sword-wind-assets.spec.ts",
+      "SHA256": "e5807fda6f4a45a37d7e1c7f54b4ca90ba52d535a59fdc4cfc3679550ac8bdfa"
+    },
+    {
+      "路径": "tests/sword-wind-assets.test.ts",
+      "SHA256": "6cd076265a94a4628f63c3df708c61ab38add4888aa4b59781518cfe9e8257b1"
+    },
+    {
+      "路径": "tests/training.spec.ts",
+      "SHA256": "f1ff02dc127681f4e5627a5a8acfd7682049be87b9c09dcde632a801a948b0e8"
+    },
+    {
+      "路径": "tests/training.test.ts",
+      "SHA256": "bf16f7eb8a1721a7f110ca9e5df8ae3c96973b98d1a8725fc70e7daaa07b49be"
+    },
+    {
+      "路径": "tests/village-boundary.spec.ts",
+      "SHA256": "079810f7f8444abefa07019d54ae1e085740122d4a5ef9146fe7493220c1366c"
+    },
+    {
+      "路径": "tests/village-defense.spec.ts",
+      "SHA256": "e2ebe3afea2acc25f986f51024b9372e7fbb335149b608b575b9ed88596d737a"
+    },
+    {
+      "路径": "tests/village-defense.test.ts",
+      "SHA256": "cd382140a0e4767be9fab51f1ef8b82e0fa17d9db2f0ed6d8fa428047ab86605"
+    },
+    {
+      "路径": "tests/visual-polish.spec.ts",
+      "SHA256": "ca5ab032f69de413fe9e6aaa65721a5f7ac0b17149fb8e3457eddec29706ff8b"
+    },
+    {
+      "路径": "tests/visual.spec.ts",
+      "SHA256": "958fb5e535d5ed4f7e7062421e76e236d12463d58738fb598edb0d3b7dfd31f6"
+    },
+    {
+      "路径": "tools/after-contact.mjs",
+      "SHA256": "bd36ab2beed82e2999b474237dc014b092badf92778a20ce9aea41e3830f4c94"
+    },
+    {
+      "路径": "tools/animation-contact.mjs",
+      "SHA256": "46bb6ce1125f6c1f05420008abf83f095cf510e93eb2e409138c9e1ae329a941"
+    },
+    {
+      "路径": "tools/asset-report.mjs",
+      "SHA256": "ceed9938cab3b0d4eeb13d4f3828626b6d935d15e93c42c573c759dda1188ba1"
+    },
+    {
+      "路径": "tools/capture-east-defense.mjs",
+      "SHA256": "da1f7980a5f2bbf309e88b1cd88ed17ed7ab9799b0d02f82d3564531eb79fd59"
+    },
+    {
+      "路径": "tools/capture-game-audio.mjs",
+      "SHA256": "25d4478c022abaeea3a605090edf83236ac89af397c262492f4eb244441d316d"
+    },
+    {
+      "路径": "tools/capture-hud-legibility.mjs",
+      "SHA256": "5b4273ed4348ed2f0ce01a3af5cd126366e9a9cd74ded5465a64bc14d4910ec3"
+    },
+    {
+      "路径": "tools/capture-hud.mjs",
+      "SHA256": "412fcec89c0d8ae05480f32e146a9aeb20719b0be47bc095c4e02a4d7439f2a5"
+    },
+    {
+      "路径": "tools/capture-level-review.mjs",
+      "SHA256": "ccd279c84c3738290ea0d3d27add1c5582c0dedb5848b96b30fdf9aa34fe689c"
+    },
+    {
+      "路径": "tools/capture-orchard-polish.mjs",
+      "SHA256": "6f7d026e2b4dbe7308de7b1f19378c918fe9c1ef05104f2eb7393a01cc4a6c50"
+    },
+    {
+      "路径": "tools/capture-village-defense.mjs",
+      "SHA256": "be67227f620eefac8c1481eb30cf7941f79747308b81c45ba2c7f7c2fec4fd9c"
+    },
+    {
+      "路径": "tools/capture-village-economy.mjs",
+      "SHA256": "b9bb80821fabaa79fb02a0077afcc812c81817bae5337dcd71db83feb84cdc79"
+    },
+    {
+      "路径": "tools/capture-visual-polish.mjs",
+      "SHA256": "bb84b388dc0a9b8bcf89f212e20e1d5c7ed8cf0a5445ca4f3ba7491b88ba9b88"
+    },
+    {
+      "路径": "tools/check-preview.mjs",
+      "SHA256": "adb40578a0bcaf650f9a42bf00122a7ce8b18efcac96b81e86c2481e0ea55fe0"
+    },
+    {
+      "路径": "tools/combat-contact-preview.html",
+      "SHA256": "07fb3801dc75041eb4244897e3aaa408efa2f2e45fa951a580da98e5fb32de88"
+    },
+    {
+      "路径": "tools/combat-feel-preview.html",
+      "SHA256": "418b16edbab35140ed32fbb671b15c0bf7aad743f4c8954fcdd9cd86c9589bb6"
+    },
+    {
+      "路径": "tools/contact-motion-v2.mjs",
+      "SHA256": "c4fe84e4b615f772d537dca713ac58675ab07506be5e81690607e79ec66a6e0d"
+    },
+    {
+      "路径": "tools/diagnose-pond-water.mjs",
+      "SHA256": "04e64c7401a7e1490d81dec62fba8894e22bd57d0bc4ae869dd927f36cbd3eda"
+    },
+    {
+      "路径": "tools/generate-economy-layout.mjs",
+      "SHA256": "704e8d8251f8df577bb597ad60ce2b857b330fa189141f4554d87c7869f43df7"
+    },
+    {
+      "路径": "tools/generate-economy-review.mjs",
+      "SHA256": "aafa94bc3b26e02c4d19bf1a4c97160de9fd9c2d3db33f64a643431257af2f12"
+    },
+    {
+      "路径": "tools/generate-village-layout.mjs",
+      "SHA256": "7922dc1df78077e754e332dace2be4cec725fd0b210dadc33e33860642692a26"
+    },
+    {
+      "路径": "tools/generate-village-review.mjs",
+      "SHA256": "640da9feff5d923fffe284b7f31cf67144bba27c963e5609d20671ad0c90c318"
+    },
+    {
+      "路径": "tools/inspect-combat-settle.mjs",
+      "SHA256": "6519a250445ae8231a52611bad7b3e3af5ca1265b889e15ed3a2e35164fbb84b"
+    },
+    {
+      "路径": "tools/isolate-sprite.mjs",
+      "SHA256": "2b28057350870a26aca443a93632d16aa5f0c368dd845647e4d4e6f9273b3021"
+    },
+    {
+      "路径": "tools/measure-performance.mjs",
+      "SHA256": "4bc60aa67cccdb19570c9b9f48ae18d7b4b23e7ae90d966c870caa61afcfff2d"
+    },
+    {
+      "路径": "tools/mux-parry-evidence.mjs",
+      "SHA256": "9f62961881fa83dfa5bafe14c1f02366d54f2faf6be92f10ce63b72861106e35"
+    },
+    {
+      "路径": "tools/mux-parry-v2-evidence.mjs",
+      "SHA256": "19c27b859747b023e946b7257b0a513eaaca22c50f4389aa698649c0bd45bacf"
+    },
+    {
+      "路径": "tools/pack-combat-action.mjs",
+      "SHA256": "3bc7a45143010a16092c5bfb957fa419676745f8f84065a6d133433808555652"
+    },
+    {
+      "路径": "tools/pack-combat-back.mjs",
+      "SHA256": "40399f95d8c9deaf4fc2190dc34d638ee7a1f4dd7c80d0b5ab9f5d4c514a0bca"
+    },
+    {
+      "路径": "tools/pack-combat-feel.mjs",
+      "SHA256": "5f6138245ef70b1af21e9b31bb8cf2cbaa70c55e4761f0e4aee336737a8c68bc"
+    },
+    {
+      "路径": "tools/pack-parry-v2.mjs",
+      "SHA256": "fa5bddb413e45d5885827c99c25abf51303b0a76be75cb922d4f1863c15945c5"
+    },
+    {
+      "路径": "tools/pack-parry.mjs",
+      "SHA256": "6d3c1b9aba8e7aa76bc2cd5c8dae94856271b5bb03952d8cfbf03c5bbedf47ff"
+    },
+    {
+      "路径": "tools/pack-sword-wind.mjs",
+      "SHA256": "b1acb5d0d1077245e3d9352496b584263dcb5fe234ec0ceaaf998b1bfe8797ca"
+    },
+    {
+      "路径": "tools/pack-training-dummy.mjs",
+      "SHA256": "fbcc64e4b5fd9d21093a5747f6b4c89e0438985acb3ad99dcd0b4a4081b833eb"
+    },
+    {
+      "路径": "tools/playwright-dialogue.config.ts",
+      "SHA256": "8dc67c4b31d850d829a3a346aa42aec57f1fcb39584e2a0c14fb7080d646dc6a"
+    },
+    {
+      "路径": "tools/playwright-east-defense.config.ts",
+      "SHA256": "73a614320e29b6faf80ae679e0ebfab903e411935d281a5d52e2f619382a8126"
+    },
+    {
+      "路径": "tools/playwright-economy.config.ts",
+      "SHA256": "df950e327de5f5f0d22fb61449f0effcf10f4e055dddd6d1a0d36b26fb05eebb"
+    },
+    {
+      "路径": "tools/playwright-hud.config.ts",
+      "SHA256": "c355156f60a7418604cdeb5c9296ce7ffc51bdb2341ef9ed86f9cbffe3d8f951"
+    },
+    {
+      "路径": "tools/playwright-orchard-polish.config.ts",
+      "SHA256": "71f949247f6274b61b074d4eebe5f3118adbf6adc99104095a066364b8e4e797"
+    },
+    {
+      "路径": "tools/playwright-parry-v2.config.ts",
+      "SHA256": "95ef0124cfd6a21f2bc5b3c5d3853a5ef90fb7c734d6486285b39868cb4686d1"
+    },
+    {
+      "路径": "tools/playwright-parry.config.ts",
+      "SHA256": "10665ab2d382d08867359461595f228dbdbb1d46534a079f1ad951126b4e90ee"
+    },
+    {
+      "路径": "tools/playwright-village.config.ts",
+      "SHA256": "d14abb3ab8e447327ce14e9a6ceef332a1bd8d5eef04941a7efc4e71bb23ddfc"
+    },
+    {
+      "路径": "tools/playwright-visual-polish.config.ts",
+      "SHA256": "8c958b306e8b65b74b827bb998ecf63ddb80b7d7274850e23ef0b521bf457f39"
+    },
+    {
+      "路径": "tools/prepare-assets.mjs",
+      "SHA256": "b862c206dcd1b97a8b8c2e914d3bf3781b84d81b38ef3378c461b58fe9104e97"
+    },
+    {
+      "路径": "tools/prepare-enemies.mjs",
+      "SHA256": "2926ce10b1b91a2a2ae386aa1e31de4ac7640e13bc8eb3bd63981109961429a8"
+    },
+    {
+      "路径": "tools/prepare-items.mjs",
+      "SHA256": "afe6e90ac7fc98f6a15dbd897e2f3a6c122f0021643d3f57f2b6b6c0b3bf1abe"
+    },
+    {
+      "路径": "tools/prepare-motion-v2.mjs",
+      "SHA256": "5a20879ec441cf38577b991d5cb8e44b0b1af36d3225bad3139084eb8cbba250"
+    },
+    {
+      "路径": "tools/prepare-motion-v3.mjs",
+      "SHA256": "46363d6ba86e0a7b941f529c4ca7790dbafa9333d622ffe2b5f71ee83957627e"
+    },
+    {
+      "路径": "tools/prepare-motion.mjs",
+      "SHA256": "d56efd180b1f4a0abe062df225f6b3e220cc1d46930aae52cc6eff999db739ee"
+    },
+    {
+      "路径": "tools/prepare-orchard-polish.mjs",
+      "SHA256": "fd54a16644b8653de07a7e01aace9f6c0031bd2ea4dba31829b068a3c4145360"
+    },
+    {
+      "路径": "tools/prepare-village-polish.mjs",
+      "SHA256": "8ee411a385ed9f62366cee7873688ba51de4821f6c53d72f08c78392503acb7c"
+    },
+    {
+      "路径": "tools/preview-enemy-parry-v2.mjs",
+      "SHA256": "57390d9339c6ba818e9d8e3e7fb0c4ca3ae82797bfa35bc55c699e1d68661193"
+    },
+    {
+      "路径": "tools/record-animation.mjs",
+      "SHA256": "e09352556b5bd1e15ee20cccaf97743284f74fbecfd6908b345657dad5e59dba"
+    },
+    {
+      "路径": "tools/record-combat-contact.mjs",
+      "SHA256": "d1276d3caa9bb1e07a5ac79ba19861ece7192c04d15692dcd289fb73d20c2979"
+    },
+    {
+      "路径": "tools/record-combat-feel.mjs",
+      "SHA256": "f395fa157e27768d1c69b5c3b2485ba7d090374e6521ffb74127c8e2c557dd1e"
+    },
+    {
+      "路径": "tools/record-combat-followup.mjs",
+      "SHA256": "e21465a237795e73cd25e808c864a2ca6504d4138132aebfb91fd142f1935530"
+    },
+    {
+      "路径": "tools/record-combat-review.mjs",
+      "SHA256": "a78f5323a1237cf023d1c7fc8833aedb92e296a7fe312d25d2bd52cb92ef305b"
+    },
+    {
+      "路径": "tools/record-directions.mjs",
+      "SHA256": "bf65600106ab118e29156665059e5eed1b32327f04e50b092156d794e5d3ca9f"
+    },
+    {
+      "路径": "tools/record-loops.mjs",
+      "SHA256": "e84d4d76a868666551fcf78254186c7f3888bb854fa26352a1484cab295fd022"
+    },
+    {
+      "路径": "tools/record-motion-set.mjs",
+      "SHA256": "8317d53ae2d2d78d14c3ed34b65382e75168c9a93bd823273ee180c20caec438"
+    },
+    {
+      "路径": "tools/record-obstacle-baseline.mjs",
+      "SHA256": "1d9b7fd141ae288a220e33f163a907db8b8d11cd33a8f7cb1e6486883eb1ebc2"
+    },
+    {
+      "路径": "tools/record-obstacle-journey.mjs",
+      "SHA256": "0fabfa9fddb7ceb45cb75ea6fd3be95c09abd259e8c5c02aec68ea014350f43c"
+    },
+    {
+      "路径": "tools/record-session.mjs",
+      "SHA256": "d184118a093b59ca7bdf9e69a461ee6ff43437df5dbe5db62e428b0877ee8bbb"
+    },
+    {
+      "路径": "tools/record-vertical.mjs",
+      "SHA256": "72569bd7fd347f17042af455f101d0d37c73cc778bea9e1cf10a291429ffd486"
+    },
+    {
+      "路径": "tools/serve-dialogue-runtime.mjs",
+      "SHA256": "5a3567caf242c9072ee6db4d2f9f36233dfc4814807ef832125f6df04d064d5b"
+    },
+    {
+      "路径": "tools/serve-hud-runtime.mjs",
+      "SHA256": "5e90c911090a1c87e4d57e55e506b69b529f6c51ff3806df1c17bb7e4efd209b"
+    },
+    {
+      "路径": "tools/serve-parry-runtime.mjs",
+      "SHA256": "d59188f49b8aa54a240fe809dcf8c3169259745375de5a441c71edba5e515309"
+    },
+    {
+      "路径": "tools/verify-level-preview.mjs",
+      "SHA256": "5779fd19d41fae8e4efb4a8960bd41e70df853e54a675ba8a5b9e26aafbb0b66"
+    }
+  ]
+}

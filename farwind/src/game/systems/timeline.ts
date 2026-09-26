@@ -1,7 +1,7 @@
 import type { CombatController } from "./combat";
 import type { InputEvent } from "./input";
 export const TIMELINE = {frameLimit:50,quantum:5} as const;
-type Hooks={boundary:(now:number)=>number;advance:(prev:number,now:number)=>void;input:(events:InputEvent[],now:number)=>void;resolve:(now:number)=>void};
+type Hooks={beforeInput?:(now:number)=>void;boundary:(now:number)=>number;advance:(prev:number,now:number)=>void;input:(events:InputEvent[],now:number)=>void;resolve:(now:number)=>void};
 // 顺序推进，不回滚。墙钟预算同时承载模拟和停顿，输入在接触同刻先提交。
 export class CombatTimeline {
   wall=0;
@@ -14,6 +14,7 @@ export class CombatTimeline {
     const inputs=()=>{
       const batch:InputEvent[]=[];
       while(index<queued.length&&queued[index].offset<=spent+1e-7)batch.push(queued[index++].e);
+      hooks.beforeInput?.(sim);
       if(batch.length)hooks.input(batch,sim);
       hooks.resolve(sim);
     };

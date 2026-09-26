@@ -1,0 +1,1626 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "--config",
+      "tools/playwright-economy.config.ts",
+      "tests/economy.spec.ts",
+      "tests/adventure.spec.ts",
+      "tests/training.spec.ts",
+      "tests/combat.spec.ts",
+      "tests/level-rework.spec.ts",
+      "tests/village-defense.spec.ts",
+      "tests/village-boundary.spec.ts",
+      "tests/map-expansion.spec.ts",
+      "tests/parry.spec.ts",
+      "tests/hud.spec.ts",
+      "tests/dialogue-portraits.spec.ts"
+    ],
+    "configFile": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tools/playwright-economy.config.ts",
+    "rootDir": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "*.spec.ts"
+        ],
+        "timeout": 240000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "adventure.spec.ts",
+      "file": "adventure.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "adventure-loop",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 81476,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:05:56.625Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/adventure-adventure-loop/video-1.webm"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/adventure-adventure-loop/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0e432c2735e1cb75ffbd-09fa87c054fbf0880b19",
+          "file": "adventure.spec.ts",
+          "line": 19,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "combat.spec.ts",
+      "file": "combat.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "真实键鼠：三连、断连、风步、暂停和续玩",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8230,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:07:18.205Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/combat-真实键鼠：三连、断连、风步、暂停和续玩/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6b51ea54a95aff327696-0e3e47aa2a6ce0e4cc4f",
+          "file": "combat.spec.ts",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "title": "隔离森林战斗夹具：三连命中、风步拉开、再进攻",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6135,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:07:26.441Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/combat-隔离森林战斗夹具：三连命中、风步拉开、再进攻/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6b51ea54a95aff327696-9802f2f4c0898e97e798",
+          "file": "combat.spec.ts",
+          "line": 126,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "dialogue-portraits.spec.ts",
+      "file": "dialogue-portraits.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "dialogue-residents",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22018,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:07:32.926Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ff5849eb6de7732585b5-4ebf41e2a45002ebfd5e",
+          "file": "dialogue-portraits.spec.ts",
+          "line": 42,
+          "column": 1
+        },
+        {
+          "title": "dialogue-sign-and-inscription",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 33235,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:07:55.039Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ff5849eb6de7732585b5-a12761cb3bf9b849beed",
+          "file": "dialogue-portraits.spec.ts",
+          "line": 110,
+          "column": 1
+        },
+        {
+          "title": "dialogue-fallback-and-long-text",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3509,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:08:28.280Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ff5849eb6de7732585b5-92445b6ac9f028abc3e8",
+          "file": "dialogue-portraits.spec.ts",
+          "line": 127,
+          "column": 1
+        },
+        {
+          "title": "dialogue-late-image-failure",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 686,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:08:31.795Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ff5849eb6de7732585b5-9cc16b877bcd28c86785",
+          "file": "dialogue-portraits.spec.ts",
+          "line": 169,
+          "column": 1
+        },
+        {
+          "title": "dialogue-missing-runtime",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7889,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:08:32.485Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ff5849eb6de7732585b5-ea07ed654700f72c3f41",
+          "file": "dialogue-portraits.spec.ts",
+          "line": 186,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "economy.spec.ts",
+      "file": "economy.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 110823,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:08:40.388Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-355bb8774f27f76b1f3d",
+          "file": "economy.spec.ts",
+          "line": 54,
+          "column": 1
+        },
+        {
+          "title": "商店实际负向检查、双击只成交一次以及窄屏可操作",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3626,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:10:31.216Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-8c56afd759fdb79b832d",
+          "file": "economy.spec.ts",
+          "line": 174,
+          "column": 1
+        },
+        {
+          "title": "满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 25973,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:10:34.848Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-68c098f29f896f6d0d48",
+          "file": "economy.spec.ts",
+          "line": 213,
+          "column": 1
+        },
+        {
+          "title": "IDB写请求成功后事务中止，钱物库存与上次有效档完全保留",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5407,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:11:00.827Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-87114cfa589a5d0316c1",
+          "file": "economy.spec.ts",
+          "line": 251,
+          "column": 1
+        },
+        {
+          "title": "交易待保存时不能Esc关闭，世界和输入全部暂停",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4254,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:11:06.239Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-912daf1358a217cd2f2e",
+          "file": "economy.spec.ts",
+          "line": 287,
+          "column": 1
+        },
+        {
+          "title": "正式森林战斗实际扣血及铁剑增伤，默认战斗数值保持",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5459,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:11:10.498Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-ae852512ccbee111e5eb",
+          "file": "economy.spec.ts",
+          "line": 337,
+          "column": 1
+        },
+        {
+          "title": "真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复迁移",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 3091,
+                  "error": {
+                    "message": "Error: 可到达 930,1220\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                    "stack": "Error: 可到达 930,1220\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at move (/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/map-navigation.ts:53:44)\n    at open (/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/economy.spec.ts:23:3)\n    at /Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/economy.spec.ts:415:3",
+                    "location": {
+                      "file": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/map-navigation.ts",
+                      "column": 44,
+                      "line": 53
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mmap-navigation.ts:53\n\n  51 |     }\n  52 |   }\n> 53 |   expect(prev.has(end), `可到达 ${tx},${ty}`).toBe(true);\n     |                                            ^\n  54 |   const path: number[][] = [];\n  55 |   for (let n = end; n !== startKey; n = prev.get(n)!)\n  56 |     path.unshift([(n % cols) * step, Math.floor(n / cols) * step]);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/map-navigation.ts",
+                        "column": 44,
+                        "line": 53
+                      },
+                      "message": "Error: 可到达 930,1220\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n   at map-navigation.ts:53\n\n  51 |     }\n  52 |   }\n> 53 |   expect(prev.has(end), `可到达 ${tx},${ty}`).toBe(true);\n     |                                            ^\n  54 |   const path: number[][] = [];\n  55 |   for (let n = end; n !== startKey; n = prev.get(n)!)\n  56 |     path.unshift([(n % cols) * step, Math.floor(n / cols) * step]);\n    at move (/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/map-navigation.ts:53:44)\n    at open (/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/economy.spec.ts:23:3)\n    at /Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/economy.spec.ts:415:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:11:15.962Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/economy-真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复迁移/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/economy-真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复迁移/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/economy-真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复迁移/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/map-navigation.ts",
+                    "column": 44,
+                    "line": 53
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-e28817f61f58dbcabc54",
+          "file": "economy.spec.ts",
+          "line": 388,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "hud.spec.ts",
+      "file": "hud.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "hud-folds",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10516,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:11:19.996Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6688962e6db485c2fb1e-4af9fcdede0ada608b16",
+          "file": "hud.spec.ts",
+          "line": 28,
+          "column": 1
+        },
+        {
+          "title": "hud-navigation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4240,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:11:30.612Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6688962e6db485c2fb1e-70f52b41f05d5f7c935d",
+          "file": "hud.spec.ts",
+          "line": 87,
+          "column": 1
+        },
+        {
+          "title": "hud-hotbar",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7864,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeHidden\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('#modal')\nExpected: hidden\nReceived: visible\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeHidden\" locator('#modal') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#modal')\u001b[22m\n\u001b[2m    14 × locator resolved to <div id=\"modal\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"visible\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeHidden\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('#modal')\nExpected: hidden\nReceived: visible\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeHidden\" locator('#modal') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#modal')\u001b[22m\n\u001b[2m    14 × locator resolved to <div id=\"modal\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"visible\"\u001b[22m\n\n    at importFixture (/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/hud.spec.ts:25:40)\n    at /Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/hud.spec.ts:155:3",
+                    "location": {
+                      "file": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/hud.spec.ts",
+                      "column": 40,
+                      "line": 25
+                    },
+                    "snippet": "  23 |     buffer: Buffer.from(JSON.stringify(state)),\n  24 |   });\n> 25 |   await expect(page.locator(\"#modal\")).toBeHidden();\n     |                                        ^\n  26 | }\n  27 |\n  28 | test(\"hud-folds\", async ({ page }) => {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/hud.spec.ts",
+                        "column": 40,
+                        "line": 25
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeHidden\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('#modal')\nExpected: hidden\nReceived: visible\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeHidden\" locator('#modal') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#modal')\u001b[22m\n\u001b[2m    14 × locator resolved to <div id=\"modal\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"visible\"\u001b[22m\n\n\n  23 |     buffer: Buffer.from(JSON.stringify(state)),\n  24 |   });\n> 25 |   await expect(page.locator(\"#modal\")).toBeHidden();\n     |                                        ^\n  26 | }\n  27 |\n  28 | test(\"hud-folds\", async ({ page }) => {\n    at importFixture (/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/hud.spec.ts:25:40)\n    at /Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/hud.spec.ts:155:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:11:34.858Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/hud-hud-hotbar/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/hud-hud-hotbar/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/hud-hud-hotbar/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/hud.spec.ts",
+                    "column": 40,
+                    "line": 25
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "6688962e6db485c2fb1e-66b0eb0913182462f1b7",
+          "file": "hud.spec.ts",
+          "line": 146,
+          "column": 1
+        },
+        {
+          "title": "hud-pointer",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5269,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:11:43.599Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6688962e6db485c2fb1e-222f538633f568e1ee5d",
+          "file": "hud.spec.ts",
+          "line": 201,
+          "column": 1
+        },
+        {
+          "title": "hud-storage",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5875,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:11:48.956Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6688962e6db485c2fb1e-3e85af6bc57e935de763",
+          "file": "hud.spec.ts",
+          "line": 238,
+          "column": 1
+        },
+        {
+          "title": "hud-dialog-training",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5789,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:11:54.837Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6688962e6db485c2fb1e-19fb6da505b0b6db0cd1",
+          "file": "hud.spec.ts",
+          "line": 264,
+          "column": 1
+        },
+        {
+          "title": "hud-responsive",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14441,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:12:00.632Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6688962e6db485c2fb1e-d204b2bd1c0dd9cf00aa",
+          "file": "hud.spec.ts",
+          "line": 291,
+          "column": 1
+        },
+        {
+          "title": "hud-backup",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 3063,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m2\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m2\u001b[39m\n    at /Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/hud.spec.ts:374:32",
+                    "location": {
+                      "file": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/hud.spec.ts",
+                      "column": 32,
+                      "line": 374
+                    },
+                    "snippet": "  372 |   const saved = JSON.parse(await readFile((await exported.path())!, \"utf8\"));\n  373 |   expect(saved).toEqual(before);\n> 374 |   expect(saved.schema_version).toBe(1);\n      |                                ^\n  375 |   expect(saved).not.toHaveProperty(\"hudPreferences\");\n  376 |   const chooser = page.waitForEvent(\"filechooser\");\n  377 |   await page.getByRole(\"button\", { name: \"导入存档\", exact: true }).click();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/hud.spec.ts",
+                        "column": 32,
+                        "line": 374
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m2\u001b[39m\n\n  372 |   const saved = JSON.parse(await readFile((await exported.path())!, \"utf8\"));\n  373 |   expect(saved).toEqual(before);\n> 374 |   expect(saved.schema_version).toBe(1);\n      |                                ^\n  375 |   expect(saved).not.toHaveProperty(\"hudPreferences\");\n  376 |   const chooser = page.waitForEvent(\"filechooser\");\n  377 |   await page.getByRole(\"button\", { name: \"导入存档\", exact: true }).click();\n    at /Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/hud.spec.ts:374:32"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:12:15.081Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/hud-hud-backup/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/hud-hud-backup/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/hud-hud-backup/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/hud.spec.ts",
+                    "column": 32,
+                    "line": 374
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "6688962e6db485c2fb1e-0d32f711dde43cdf1ba9",
+          "file": "hud.spec.ts",
+          "line": 362,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "level-rework.spec.ts",
+      "file": "level-rework.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "局部入口真实步行、黑猫跟随、双门柱阻挡和存档重载",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 42646,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:12:18.963Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "437233f640a31e9384ba-7558133e1b85704d7b8a",
+          "file": "level-rework.spec.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "title": "普通画面和地图无工程标号，开发开关显式开启才出现",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4632,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:13:01.705Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "437233f640a31e9384ba-37cade9838e4cbb01419",
+          "file": "level-rework.spec.ts",
+          "line": 160,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "map-expansion.spec.ts",
+      "file": "map-expansion.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "map-expansion-player-journey",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 58808,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:13:06.348Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7cb28b81e8fb67e2bab6-5425036775ae37024b89",
+          "file": "map-expansion.spec.ts",
+          "line": 24,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "parry.spec.ts",
+      "file": "parry.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "PARRY-01",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11034,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:15:33.938Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/parry-PARRY-01/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbd37935917ac18407ed-f881e4af76385c56edf2",
+          "file": "parry.spec.ts",
+          "line": 39,
+          "column": 1
+        },
+        {
+          "title": "PARRY-02",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9387,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:15:45.060Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/parry-PARRY-02/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbd37935917ac18407ed-375c732cd0ba4f4c94bd",
+          "file": "parry.spec.ts",
+          "line": 58,
+          "column": 1
+        },
+        {
+          "title": "PARRY-04",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3408,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:15:54.452Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/parry-PARRY-04/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbd37935917ac18407ed-c4ec7bdd5da6d5d436bd",
+          "file": "parry.spec.ts",
+          "line": 67,
+          "column": 1
+        },
+        {
+          "title": "PARRY-05",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6112,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:15:57.866Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/parry-PARRY-05/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbd37935917ac18407ed-585cdee085ce7dc8aa8b",
+          "file": "parry.spec.ts",
+          "line": 74,
+          "column": 1
+        },
+        {
+          "title": "PARRY-06",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6714,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:16:03.984Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/parry-PARRY-06/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbd37935917ac18407ed-c39c884dbc0791b45b33",
+          "file": "parry.spec.ts",
+          "line": 81,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "training.spec.ts",
+      "file": "training.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "新游戏四面训练、风步底座、暂停和同页继续：真实输入",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23206,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:16:10.994Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/training-新游戏四面训练、风步底座、暂停和同页继续：真实输入/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2410163d751908292b1d-73d06569bc94940db20c",
+          "file": "training.spec.ts",
+          "line": 57,
+          "column": 1
+        },
+        {
+          "title": "隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8520,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m20\u001b[39m\nReceived: \u001b[31mundefined\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m20\u001b[39m\nReceived: \u001b[31mundefined\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n    at /Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/training.spec.ts:209:6",
+                    "location": {
+                      "file": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/training.spec.ts",
+                      "column": 6,
+                      "line": 209
+                    },
+                    "snippet": "  207 |   await expect\n  208 |     .poll(async () => (await read(page)).state.bag[0]?.count)\n> 209 |     .toBe(20);\n      |      ^\n  210 |   await expect.poll(async () => (await read(page)).state.player.hp).toBe(100);\n  211 |   expect((await read(page)).state.player.x).toBe(670);\n  212 |   await page.waitForFunction("
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/training.spec.ts",
+                        "column": 6,
+                        "line": 209
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m20\u001b[39m\nReceived: \u001b[31mundefined\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  207 |   await expect\n  208 |     .poll(async () => (await read(page)).state.bag[0]?.count)\n> 209 |     .toBe(20);\n      |      ^\n  210 |   await expect.poll(async () => (await read(page)).state.player.hp).toBe(100);\n  211 |   expect((await read(page)).state.player.x).toBe(670);\n  212 |   await page.waitForFunction(\n    at /Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/training.spec.ts:209:6"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:16:34.291Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/training-隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/training-隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/training-隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated/browser-output/training-隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests/training.spec.ts",
+                    "column": 6,
+                    "line": 209
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2410163d751908292b1d-6af5aa60b753508dc014",
+          "file": "training.spec.ts",
+          "line": 184,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "village-boundary.spec.ts",
+      "file": "village-boundary.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "四个村墙角真实斜走与风步仍由连续碰撞阻挡",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7171,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:14:05.167Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "83adbbfd5ff9cb087faf-4b52db1d5aad55f963c6",
+          "file": "village-boundary.spec.ts",
+          "line": 6,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "village-defense.spec.ts",
+      "file": "village-defense.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "真实输入通过三门，北南不触发森林任务，主角和黑猫返回，西门与两柱实际阻挡",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 78512,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:14:12.352Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "74c4b038013cf4e3109a-3903610313560f412259",
+          "file": "village-defense.spec.ts",
+          "line": 27,
+          "column": 1
+        },
+        {
+          "title": "版本2被村墙占用的位置就近恢复，任务背包保持，正常模式无工程标签",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2662,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:15:30.869Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "74c4b038013cf4e3109a-944354c7f53ab2c2a223",
+          "file": "village-defense.spec.ts",
+          "line": 145,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-26T11:05:56.252Z",
+    "duration": 647336.89,
+    "expected": 32,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}

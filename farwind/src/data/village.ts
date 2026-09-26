@@ -192,26 +192,26 @@ export const RESERVED_PARCELS = [
   {
     id: "parcel-workshop",
     name: "工坊预留院",
-    x: 1050,
-    y: 1560,
-    w: 430,
-    h: 230,
+    x: 1100,
+    y: 1640,
+    w: 250,
+    h: 150,
   },
   {
     id: "parcel-guild",
     name: "委托所预留院",
-    x: 1510,
-    y: 1580,
-    w: 450,
-    h: 210,
+    x: 1400,
+    y: 1650,
+    w: 250,
+    h: 140,
   },
   {
     id: "parcel-activities",
     name: "活动预留院",
-    x: 1750,
-    y: 1320,
-    w: 250,
-    h: 230,
+    x: 1810,
+    y: 1650,
+    w: 190,
+    h: 140,
   },
 ] as const;
 // 岗位、塔位及来袭路线属于设计数据，M3接入单位前不生成自动炮台。
@@ -221,9 +221,9 @@ export const DEFENSE_LAYOUT = VILLAGE_PORTALS.filter((p) => p.open).map(
     towerId: `${portal.id}-tower`,
     tower:
       portal.id === "east-gate"
-        ? { x: 1990, y: 880 }
+        ? { x: 2030, y: 900 }
         : portal.id === "north-gate"
-          ? { x: 580, y: 350 }
+          ? { x: 680, y: 350 }
           : { x: 1140, y: 1750 },
     posts:
       portal.id === "east-gate"
@@ -233,8 +233,8 @@ export const DEFENSE_LAYOUT = VILLAGE_PORTALS.filter((p) => p.open).map(
           ]
         : portal.id === "north-gate"
           ? [
-              { x: 780, y: 360 },
-              { x: 865, y: 360 },
+              { x: 740, y: 300 },
+              { x: 920, y: 300 },
             ]
           : [
               { x: 810, y: 1720 },

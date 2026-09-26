@@ -1,0 +1,646 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "tests/village-raids.spec.ts",
+      "tests/east-defense.spec.ts",
+      "tests/east-defense-recovery.spec.ts",
+      "--config",
+      "tools/playwright-east-defense.config.ts"
+    ],
+    "configFile": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tools/playwright-east-defense.config.ts",
+    "rootDir": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/browser-final/browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "*.spec.ts"
+        ],
+        "timeout": 240000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/browser-final/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "east-defense-recovery.spec.ts",
+      "file": "east-defense-recovery.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "实际守卫死亡后IDB请求成功但事务中止，暂停反馈与手动重存可恢复",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9426,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:24:14.763Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-4dadc449ad3c7a8dd94c",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "title": "玩家真实攻击来袭怪并在村门内实际受击，不污染固定主线结算",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8567,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:24:24.281Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-cb0b4aff485f20135c56",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 46,
+          "column": 1
+        },
+        {
+          "title": "保留新剑风与弹反入口，真实第四刀和K可命中动态来袭怪",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6454,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:24:32.855Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-20faea33154a53568f63",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 66,
+          "column": 1
+        },
+        {
+          "title": "生产构建恢复活跃演练并自主结算，查询开关不暴露开发按钮",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "单独在冻结生产预览运行",
+                  "location": {
+                    "file": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/east-defense-recovery.spec.ts",
+                    "line": 90,
+                    "column": 7
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 58,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:24:39.315Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "单独在冻结生产预览运行",
+                      "location": {
+                        "file": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/east-defense-recovery.spec.ts",
+                        "line": 90,
+                        "column": 7
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-b0e545349b3b3ff4c96e",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 89,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "east-defense.spec.ts",
+      "file": "east-defense.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "新游戏实走东门演练，真实放箭、自主击退和离屏持续按键不受停顿",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 32113,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:24:39.385Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1ed3b2f565e3d1eca452-dba024f67a6c3e3949c2",
+          "file": "east-defense.spec.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "title": "受控低血守卫被实际怪物致死，关键保存与重载不复活",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16275,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:25:11.502Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1ed3b2f565e3d1eca452-096f38caf43ea7af536d",
+          "file": "east-defense.spec.ts",
+          "line": 43,
+          "column": 1
+        },
+        {
+          "title": "活跃波次保存重载、商店与失焦全体暂停，射手死亡塔停火",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14941,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:25:27.784Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1ed3b2f565e3d1eca452-2c0911cb8fc7cc2747b3",
+          "file": "east-defense.spec.ts",
+          "line": 59,
+          "column": 1
+        },
+        {
+          "title": "正常模式不显示开发演练，玩家攻击不会伤守卫，主角黑猫通过门口",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 27229,
+                  "error": {
+                    "message": "Error: page.waitForFunction: DataCloneError: Failed to execute 'structuredClone' on 'Window': function() {\n\t\t\t\tthis.scene.sys.updateList.add(this);\n\t\t\t} could not be cloned.\n    at value (http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226:293:17)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:6:28)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)",
+                    "stack": "Error: page.waitForFunction: DataCloneError: Failed to execute 'structuredClone' on 'Window': function() {\n\t\t\t\tthis.scene.sys.updateList.add(this);\n\t\t\t} could not be cloned.\n    at value (http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226:293:17)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:6:28)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at value (http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226:293:17)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:6:28)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at move (/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/map-navigation.ts:78:22)\n    at /Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/east-defense.spec.ts:85:30",
+                    "location": {
+                      "file": "http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226",
+                      "column": 17,
+                      "line": 293
+                    }
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226",
+                        "column": 17,
+                        "line": 293
+                      },
+                      "message": "Error: page.waitForFunction: DataCloneError: Failed to execute 'structuredClone' on 'Window': function() {\n\t\t\t\tthis.scene.sys.updateList.add(this);\n\t\t\t} could not be cloned.\n    at value (http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226:293:17)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:6:28)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at value (http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226:293:17)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:6:28)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at move (/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/map-navigation.ts:78:22)\n    at /Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/east-defense.spec.ts:85:30"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:25:42.730Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/browser-final/browser-output/east-defense-正常模式不显示开发演练，玩家攻击不会伤守卫，主角黑猫通过门口/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/browser-final/browser-output/east-defense-正常模式不显示开发演练，玩家攻击不会伤守卫，主角黑猫通过门口/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/browser-final/browser-output/east-defense-正常模式不显示开发演练，玩家攻击不会伤守卫，主角黑猫通过门口/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "http://127.0.0.1:5203/src/game/scenes/World.ts?t=1790429008226",
+                    "column": 17,
+                    "line": 293
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1ed3b2f565e3d1eca452-9839fc66383126e6958a",
+          "file": "east-defense.spec.ts",
+          "line": 77,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "village-raids.spec.ts",
+      "file": "village-raids.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "东门按有效时间自动预警、离屏自主击退和保存恢复",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 29241,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:26:13.244Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ed411b8f4bd61e90f8c4-9375da10a0f0dbfbc79a",
+          "file": "village-raids.spec.ts",
+          "line": 12,
+          "column": 43
+        },
+        {
+          "title": "北门按有效时间自动预警、离屏自主击退和保存恢复",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23273,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:26:42.600Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ed411b8f4bd61e90f8c4-d52d2f344b706e324b0f",
+          "file": "village-raids.spec.ts",
+          "line": 12,
+          "column": 43
+        },
+        {
+          "title": "南门按有效时间自动预警、离屏自主击退和保存恢复",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23458,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:27:05.879Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ed411b8f4bd61e90f8c4-79f93fd4127c4d558043",
+          "file": "village-raids.spec.ts",
+          "line": 12,
+          "column": 43
+        },
+        {
+          "title": "自动预警保存事务中止时不生成小怪，手动重存可继续",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 16951,
+                  "error": {
+                    "message": "Error: page.waitForFunction: TypeError: window.__farwind is not a function\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:1:14)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:311:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                    "stack": "Error: page.waitForFunction: TypeError: window.__farwind is not a function\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:1:14)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:311:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:1:14)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:311:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at /Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/village-raids.spec.ts:41:97",
+                    "location": {
+                      "file": "eval at predicate (eval at evaluate (:311:30)), <anonymous>",
+                      "column": 14,
+                      "line": 1
+                    }
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "eval at predicate (eval at evaluate (:311:30)), <anonymous>",
+                        "column": 14,
+                        "line": 1
+                      },
+                      "message": "Error: page.waitForFunction: TypeError: window.__farwind is not a function\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:1:14)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:311:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:1:14)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:311:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at /Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/tests/village-raids.spec.ts:41:97"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:27:29.347Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/browser-final/browser-output/village-raids-自动预警保存事务中止时不生成小怪，手动重存可继续/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/browser-final/browser-output/village-raids-自动预警保存事务中止时不生成小怪，手动重存可继续/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/.codex/worktrees/farwind-east-defense-m3/Game/farwind/docs/village-defense/m4/browser-final/browser-output/village-raids-自动预警保存事务中止时不生成小怪，手动重存可继续/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "eval at predicate (eval at evaluate (:311:30)), <anonymous>",
+                    "column": 14,
+                    "line": 1
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ed411b8f4bd61e90f8c4-bbcff688266806bc2fdc",
+          "file": "village-raids.spec.ts",
+          "line": 35,
+          "column": 1
+        },
+        {
+          "title": "主角与黑猫实际往返三门，正常模式无开发分区和按钮",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 51151,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T13:27:47.767Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ed411b8f4bd61e90f8c4-aade11b32d8aa8458392",
+          "file": "village-raids.spec.ts",
+          "line": 44,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-26T13:24:14.421Z",
+    "duration": 264676.569,
+    "expected": 10,
+    "skipped": 1,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

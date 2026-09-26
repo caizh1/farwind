@@ -9,6 +9,10 @@ import {
 } from "../../data/animation";
 import type { Facing } from "../systems/locomotion";
 export class Actor {
+  // 镜像集中在角色表现层，其他视图只提交方向决定。
+  static mirror(sprite: Phaser.GameObjects.Sprite | Phaser.GameObjects.Image, flip: boolean) {
+    sprite.setFlipX(flip);
+  }
   sprite: Phaser.GameObjects.Sprite;
   shadow: Phaser.GameObjects.Ellipse;
   carrySword: Phaser.GameObjects.Image;
@@ -105,10 +109,10 @@ export class Actor {
     if (carrying) {
       const sign = this.motion.direction === 2 ? -1 : 1,
         progress = 1 - carryRemaining / COMBAT.settle;
+      Actor.mirror(this.carrySword, sign < 0);
       this.carrySword
         .setOrigin(sign < 0 ? 1 : 0, 0.25)
         .setScale(145 / 348)
-        .setFlipX(sign < 0)
         .setPosition(x + sign * (12 - 8 * progress), y - 33 + 6 * progress)
         .setRotation(sign * progress * 0.9)
         .setDepth(y + 1);
@@ -128,15 +132,14 @@ export class Actor {
       this.sprite.setTexture(texture, frame);
     else if (String(this.sprite.frame.name) !== String(frame))
       this.sprite.setFrame(frame);
-    this.sprite
-      .setFlipX(
+    Actor.mirror(this.sprite,
         combat
           ? combat.facing === 2
           : dashFacing !== undefined
             ? false
             : clip.flip,
-      )
-      .setPosition(x, y)
+      );
+    this.sprite.setPosition(x, y)
       .setDepth(y);
     this.sprite
       .setOrigin(0.5, art ? art.footY / art.frameSize : 124 / 128)

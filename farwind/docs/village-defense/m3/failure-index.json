@@ -1,0 +1,95 @@
+{
+  "说明": "失败证据保留到既有忽略目录，避免把大追踪包当作交付源码；原始结果中的附件路径请按此映射查找。",
+  "归档": [
+    {
+      "说明": "首次切片用例",
+      "原位置": "docs/village-defense/m3/evidence/browser-output",
+      "保留位置": ".parry-local/m3/failures/evidence",
+      "追踪摘要": [
+        {
+          "文件": "docs/village-defense/m3/evidence/browser-output/east-defense-新游戏实走东门演练，真实放箭、自主击退和离屏持续按键不受停顿/trace.zip",
+          "SHA256": "6eca9f390c967d4ebf832dddedf41fae8661094ea27c1bd94dc0f9b9904e6ddd"
+        },
+        {
+          "文件": "docs/village-defense/m3/evidence/browser-output/east-defense-正常模式不显示开发演练，玩家攻击不会伤守卫，主角黑猫通过门口/trace.zip",
+          "SHA256": "e2e0a16421c13edffcd35ff64dbed649cf51b771241186b7612688ac9e666023"
+        }
+      ]
+    },
+    {
+      "说明": "扩展回归首次",
+      "原位置": "docs/village-defense/m3/validated-v2/browser-output",
+      "保留位置": ".parry-local/m3/failures/validated-v2",
+      "追踪摘要": [
+        {
+          "文件": "docs/village-defense/m3/validated-v2/browser-output/economy-真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复迁移/trace.zip",
+          "SHA256": "e4842e2f42d2971689b27fc02fac86250f6ac97713c929469cc1ef79813a69db"
+        },
+        {
+          "文件": "docs/village-defense/m3/validated-v2/browser-output/parry-v2-visual-V2-VISUAL-03-motion-muted/trace.zip",
+          "SHA256": "6e539c36206002656d7b0cd90cdb4073bd4a82403b715cc658bdbe14e935f76a"
+        },
+        {
+          "文件": "docs/village-defense/m3/validated-v2/browser-output/parry-v2-visual-V2-VISUAL-02-perfect-combo/trace.zip",
+          "SHA256": "6614220143b220bcd9f022339bae59e875205138f13627dc8ffcff8296ff96a7"
+        },
+        {
+          "文件": "docs/village-defense/m3/validated-v2/browser-output/parry-v2-visual-V2-VISUAL-04-dash-cancel/trace.zip",
+          "SHA256": "c1c3ecc3fa0d3c71df1ef7d0b506d9679d1d2dec169f5362e94dbe10303f9e9a"
+        }
+      ]
+    },
+    {
+      "说明": "生产首次",
+      "原位置": "docs/village-defense/m3/production-v1/browser-output",
+      "保留位置": ".parry-local/m3/failures/production-v1",
+      "追踪摘要": [
+        {
+          "文件": "docs/village-defense/m3/production-v1/browser-output/east-defense-recovery-生产构建恢复活跃演练并自主结算，查询开关不暴露开发按钮/trace.zip",
+          "SHA256": "803e33d7669d2f3601a683f26646bf34ee723f7c8e30f7a94663453723422988"
+        }
+      ]
+    },
+    {
+      "说明": "最终全量回归首轮，27通过、2失败、1生产专用跳过。",
+      "原位置": "docs/village-defense/m3/final-regression/browser-output",
+      "保留位置": ".parry-local/m3/failures/final-regression",
+      "追踪摘要": [
+        {
+          "文件": "docs/village-defense/m3/final-regression/browser-output/combat-真实键鼠：三连、断连、风步、暂停和续玩/trace.zip",
+          "SHA256": "0a2b76a2d40d69563b620f26cb4ff4a30b074e69faded63e200d825934bbffa4"
+        },
+        {
+          "文件": "docs/village-defense/m3/final-regression/browser-output/east-defense-recovery-保留新剑风与弹反入口，真实第四刀和K可命中动态来袭怪/trace.zip",
+          "SHA256": "ea18a95c009fc8e60e007c84f4698916f17eca199cd5804fe40f8a0dcfe51f98"
+        }
+      ]
+    }
+  ],
+  "首因": [
+    {
+      "用例": "首次自主防御",
+      "原因": "实机箭矢已经飞行，测试误读combat而不是session.combat；只修正诊断字段。"
+    },
+    {
+      "用例": "正常村门通行",
+      "原因": "攻击夹具站位过近门柱边界，测试寻路附加6像素净空不接受起点；移到合法1060站位，未弱化正式碰撞。"
+    },
+    {
+      "用例": "旧经济迁移",
+      "原因": "重载断言遗留地图4；实机已正确为地图5，改断言后通过。"
+    },
+    {
+      "用例": "弹反B类画面",
+      "原因": "两项截图识别输入晚于接触约23毫秒；一项弹反正常成功，但HUD轮询漏过短暂成功文字。保留为未通过，不调整窗口或自动重试。"
+    },
+    {
+      "用例": "生产恢复",
+      "原因": "第一条E尚未处理就做不存在元素的空断言，再次E合并在同帧；实际只有一次打开对话，双方按菜单规则暂停。增加实际对话可见等待并点击继续后通过。"
+    },
+    {
+      "用例": "标准三连与剑风衔接回归",
+      "原因": "旧三连用例按未学习技能预期第三刀后返回第一刀，开发临时授予却会接第四刀。M3预览关闭临时授予，已学习技能单独验证。另一用例固定墙钟等待和瞬时方向键未保证正式朝向及动作预约窗口，改为只读实际动作窗口和朝向作为工程输入前提；首次失败保留。"
+    }
+  ]
+}

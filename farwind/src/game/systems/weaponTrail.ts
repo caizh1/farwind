@@ -1,5 +1,5 @@
-import { weaponSample } from "../../data/animation";
-import { COMBAT, attackConfig, type Attack } from "./combat";
+import { weaponSample, counterVisual } from "../../data/animation";
+import { COMBAT, PARRY, attackConfig, type Attack } from "./combat";
 type Point = { x: number; y: number };
 type Sample = {
   id: number;
@@ -8,6 +8,7 @@ type Sample = {
   tip: Point;
   stage: number;
   facing: number;
+  counter?: string;
 };
 // 只承载表现历史，不参与伤害；不同实例永不连接。数量受110ms寿命及8ms采样间隔约束。
 export class WeaponTrail {
@@ -28,7 +29,7 @@ export class WeaponTrail {
       this.sampledAt = -1;
     }
     this.epoch = epoch;
-    this.samples = this.samples.filter((s) => now - s.at < COMBAT.trailLife);
+    this.samples = this.samples.filter((s) => now - s.at < (s.counter ? PARRY.visual.trailLife : COMBAT.trailLife));
     if (attack) {
       const m = attackConfig(attack),
         from = attack.start + m.windup,
@@ -44,12 +45,12 @@ export class WeaponTrail {
           let at = Math.max(
             from - 8,
             this.sampledAt + 8,
-            now - COMBAT.trailLife,
+            now - (attack.counter ? PARRY.visual.trailLife : COMBAT.trailLife),
           );
           at <= to;
           at += 8
         ) {
-          const w = weaponSample(
+          const w = attack.counter ? counterVisual(attack,at).weapon! : weaponSample(
             attack.stage,
             attack.facing,
             at - attack.start,
@@ -69,6 +70,7 @@ export class WeaponTrail {
             at,
             stage: attack.stage,
             facing: attack.facing,
+            counter: attack.counter,
             inner: {
               x: x + w.grip.x * 0.7 + w.tip.x * 0.3,
               y: y + w.grip.y * 0.7 + w.tip.y * 0.3,
@@ -91,7 +93,7 @@ export class WeaponTrail {
               a,
               b,
               alpha:
-                Math.max(0, 1 - (now - b.at) / COMBAT.trailLife) *
+                Math.max(0, 1 - (now - b.at) / (b.counter ? PARRY.visual.trailLife : COMBAT.trailLife)) *
                 (b.stage === 3 ? 0.86 : 0.68),
             },
           ]

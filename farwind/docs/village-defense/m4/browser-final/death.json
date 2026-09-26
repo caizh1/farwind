@@ -1,0 +1,357 @@
+{
+  "说明": "低血存档只建立前提；正式史莱姆接触造成一次死亡。",
+  "致死": {
+    "guards": [
+      {
+        "id": "east-watch",
+        "x": 1959,
+        "y": 970,
+        "hp": 0,
+        "dead": true,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-north-post",
+        "mode": "dead",
+        "peaceMs": 0,
+        "cooldownMs": 0
+      },
+      {
+        "id": "east-patrol",
+        "x": 2010,
+        "y": 1101.696,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-south-post",
+        "mode": "intercept",
+        "peaceMs": 0,
+        "cooldownMs": 0
+      },
+      {
+        "id": "east-archer",
+        "x": 2030,
+        "y": 900,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "east-gate-tower",
+        "mode": "attack",
+        "peaceMs": 0,
+        "cooldownMs": 921.9599999999995
+      },
+      {
+        "id": "north-watch",
+        "x": 740,
+        "y": 300,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-west-post",
+        "mode": "post",
+        "peaceMs": 583.0400000000005,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-patrol",
+        "x": 894.5128999999984,
+        "y": 300,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-east-post",
+        "mode": "patrol",
+        "peaceMs": 583.0400000000005,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-archer",
+        "x": 680,
+        "y": 350,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "north-gate-tower",
+        "mode": "post",
+        "peaceMs": 583.0400000000005,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-watch",
+        "x": 810,
+        "y": 1720,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-west-post",
+        "mode": "post",
+        "peaceMs": 583.0400000000005,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-patrol",
+        "x": 994.4447518593112,
+        "y": 1696.2938890986545,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-east-post",
+        "mode": "patrol",
+        "peaceMs": 583.0400000000005,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-archer",
+        "x": 1140,
+        "y": 1750,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "south-gate-tower",
+        "mode": "post",
+        "peaceMs": 583.0400000000005,
+        "cooldownMs": 0
+      }
+    ],
+    "sequence": 1,
+    "completedSequence": 0,
+    "raid": {
+      "id": "east-raid-1",
+      "sequence": 1,
+      "gateId": "east-gate",
+      "spawns": [
+        {
+          "x": 2370,
+          "y": 1090
+        },
+        {
+          "x": 2390,
+          "y": 1140
+        },
+        {
+          "x": 2470,
+          "y": 1140
+        }
+      ],
+      "phase": "fighting",
+      "ageMs": 583.0400000000005,
+      "members": [
+        {
+          "id": "east-raid-1:1",
+          "type": "slime",
+          "x": 1994.2867186772294,
+          "y": 973.743344565095,
+          "hp": 48,
+          "cooldownMs": 183.3800000000001,
+          "targetId": "east-patrol"
+        },
+        {
+          "id": "east-raid-1:2",
+          "type": "slime",
+          "x": 2351.574248762556,
+          "y": 1138.9947650180948,
+          "hp": 48,
+          "cooldownMs": 0,
+          "targetId": "east-patrol"
+        },
+        {
+          "id": "east-raid-1:3",
+          "type": "slime",
+          "x": 2431.556007751481,
+          "y": 1139.1842704708354,
+          "hp": 48,
+          "cooldownMs": 0,
+          "targetId": "east-patrol"
+        }
+      ]
+    },
+    "protectionMs": 300000,
+    "cooldownMs": 360000,
+    "retryMs": 0,
+    "seed": 1729
+  },
+  "重载": {
+    "guards": [
+      {
+        "id": "east-watch",
+        "x": 1959,
+        "y": 970,
+        "hp": 0,
+        "dead": true,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-north-post",
+        "mode": "dead",
+        "peaceMs": 0,
+        "cooldownMs": 0
+      },
+      {
+        "id": "east-patrol",
+        "x": 2054.955452186848,
+        "y": 1058.7785415068265,
+        "hp": 160,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-south-post",
+        "mode": "attack",
+        "peaceMs": 0,
+        "cooldownMs": 164.723333333337
+      },
+      {
+        "id": "east-archer",
+        "x": 2030,
+        "y": 900,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "east-gate-tower",
+        "mode": "post",
+        "peaceMs": 4610.276666666663,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-watch",
+        "x": 740,
+        "y": 300,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-west-post",
+        "mode": "post",
+        "peaceMs": 7981.696666666663,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-patrol",
+        "x": 860.0253139955182,
+        "y": 319.8859102003335,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-east-post",
+        "mode": "patrol",
+        "peaceMs": 7981.696666666663,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-archer",
+        "x": 680,
+        "y": 350,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "north-gate-tower",
+        "mode": "post",
+        "peaceMs": 7981.696666666663,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-watch",
+        "x": 810,
+        "y": 1720,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-west-post",
+        "mode": "post",
+        "peaceMs": 7981.696666666663,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-patrol",
+        "x": 1016.8231509675944,
+        "y": 1674.2165399997925,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-east-post",
+        "mode": "patrol",
+        "peaceMs": 7981.696666666663,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-archer",
+        "x": 1140,
+        "y": 1750,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "south-gate-tower",
+        "mode": "post",
+        "peaceMs": 7981.696666666663,
+        "cooldownMs": 0
+      }
+    ],
+    "sequence": 1,
+    "completedSequence": 0,
+    "raid": {
+      "id": "east-raid-1",
+      "sequence": 1,
+      "gateId": "east-gate",
+      "spawns": [
+        {
+          "x": 2370,
+          "y": 1090
+        },
+        {
+          "x": 2390,
+          "y": 1140
+        },
+        {
+          "x": 2470,
+          "y": 1140
+        }
+      ],
+      "phase": "fighting",
+      "ageMs": 7981.696666666663,
+      "members": [
+        {
+          "id": "east-raid-1:1",
+          "type": "slime",
+          "x": 2020.8228012706898,
+          "y": 1040.6131346177326,
+          "hp": 0,
+          "cooldownMs": 0,
+          "targetId": "east-patrol"
+        },
+        {
+          "id": "east-raid-1:2",
+          "type": "slime",
+          "x": 2059.6788236245156,
+          "y": 1060.106754291616,
+          "hp": 0,
+          "cooldownMs": 0,
+          "targetId": "east-patrol"
+        },
+        {
+          "id": "east-raid-1:3",
+          "type": "slime",
+          "x": 2059.63441962291,
+          "y": 1059.7710799640486,
+          "hp": 30,
+          "cooldownMs": 659.723333333337,
+          "targetId": "east-patrol"
+        }
+      ]
+    },
+    "protectionMs": 300000,
+    "cooldownMs": 360000,
+    "retryMs": 0,
+    "seed": 1729
+  }
+}

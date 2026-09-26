@@ -1,3 +1,4 @@
+import type { ShopId } from "../../data/economy";
 import { type Prop } from "../../data/world";
 import { items } from "../../data/content";
 import { add, remove, count, reward } from "./state";
@@ -6,6 +7,32 @@ import type { World } from "../scenes/World";
 export function interact(this: World, p: Prop) {
   const s = this.state;
   this.soundFx.play("talk");
+  if (p.id === "healer" || p.id.startsWith("service-")) {
+    this.state.dashCooldownRemaining = Math.max(
+      0,
+      this.combat.dashCooldown - this.sim,
+    );
+    if (p.id === "healer") {
+      this.ui.dialog(
+        p.label!,
+        "带来药草×2和浆果×1，我可以替你调制恢复药剂。先查看药师服务，核对材料并确认后才调药；只是交谈不会消耗材料。",
+        p.id,
+      );
+      this.ui.offerShop("healer");
+    } else this.ui.shop(p.id.slice(8) as ShopId);
+    return;
+  }
+  if (p.id === "barracks-sign") {
+    this.ui.dialog(
+      "风铃营房",
+      "这里是卫队驻地。九名卫兵分守东、北、南门。遇到普通来袭会自行拦截；目前没有招募或复活服务。",
+    );
+    return;
+  }
+  if(p.id === "east-gate-sign") { this.openDefenseDrill(); return; }
+  if (p.id === "north-gate-sign" || p.id === "south-gate-sign") {
+    this.ui.dialog(p.label!,p.id === "north-gate-sign" ? "松岚、石泉与林弦守望山路。门外有危险，卫队不会追进深林。" : "麦川、望禾与晴羽照看果园外通路。普通来袭由卫队拦截，门洞保持开放。");return;
+  }
   if (p.kind === "npc") {
     const talk = (text: string) => this.ui.dialog(p.label!, text, p.id);
     if (p.id === "elder") {
@@ -26,24 +53,6 @@ export function interact(this: World, p: Prop) {
           s.quest === 7
             ? "风会记住你的脚步。随时回来坐坐。"
             : "顺着东边的石路走。古碑说：晨风起，林风和，暮风归。",
-        );
-    }
-    if (p.id === "healer") {
-      const next = structuredClone(s);
-      if (
-        remove(next, "herb", 2) &&
-        remove(next, "berry", 1) &&
-        add(next, "potion", 1)
-      ) {
-        s.bag = next.bag;
-        s.crafted = true;
-        if (s.quest === 2) s.quest = 3;
-        talk(
-          "药草两株、浆果一份，替你调好了恢复药剂。药圃可以采药；出门前再检查一下行囊吧。",
-        );
-      } else
-        talk(
-          "带来药草 ×2 和浆果 ×1，我可以替你调制一瓶恢复药剂。药草就在小院，浆果去南侧果园采；也可按 Tab 自行制作。采集点三个游戏小时后再生，兑换前请留出行囊空间。",
         );
     }
     if (p.id === "carpenter") {

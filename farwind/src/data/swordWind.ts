@@ -1,0 +1,50 @@
+// 当前只开放一个目标；升级上限不从存档读取。
+export const SWORD_WIND = {
+  name: "剑风·一线斩",
+  strike: {
+    windup: 110,
+    active: 100,
+    recovery: 190,
+    range: 0,
+    angle: 0,
+    damage: 36,
+    step: 8,
+    knock: 12,
+    flash: 120,
+    stagger: 120,
+  },
+  speed: 900,
+  distance: 300,
+  width: 28,
+  lifetime: 450,
+  hitStop: 32,
+  maxTargets: 1 as number | "all",
+  spawnForward: 8,
+  cancelTail: 120,
+  art: {
+    release: 64,
+    flight: 108,
+    hit: 160,
+    dissolve: 96,
+    flightSize: 128,
+    hitSize: 144,
+    frontEdge: 41,
+    bodyHeight: 28,
+    groundStep: 36,
+    groundHeight: 52,
+    groundFrame: 110,
+    groundLifetime: 850,
+    groundFade: 200,
+    attachments: [
+      [-40, -23],
+      [26, 23],
+      [28, -32],
+    ],
+  },
+} as const;
+export type SwordWindConfig = typeof SWORD_WIND & { damage: number };
+export const resolveSwordWindConfig = (): SwordWindConfig => ({
+  ...structuredClone(SWORD_WIND),
+  damage: SWORD_WIND.strike.damage,
+  maxTargets: 1,
+});

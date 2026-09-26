@@ -996,3 +996,18 @@ kbd {
     transition: none;
   }
 }
+
+/* 商店只使用正常文档流；数量和确认页在窄屏保持可读。 */
+.shop-summary, .shop-tabs, .shop-form { display:flex; gap:12px; align-items:center; justify-content:center; flex-wrap:wrap; }
+.shop-summary { color:#47664f; }
+.shop-form { margin:18px 0; }
+.shop-form label { display:flex; gap:8px; align-items:center; min-width:0; flex-wrap:wrap; }
+.shop-form select { max-width:100%; min-width:0; }
+.shop-form input { width:76px; font:inherit; padding:8px; }
+.shop-tabs button[aria-pressed="true"] { outline:2px solid #47664f; }
+.trade-review { padding:14px; background:#ded2ae; border-radius:8px; }
+#shop-feedback { min-height:24px; color:#795437; }
+
+/* 弹反状态与练习开关留在正常布局中，窄屏可换行。 */
+#parry-status { font-size: 12px; color: #ecedd4; padding: 3px 7px; background: #284437cc; border-radius: 5px; max-width: 100%; }
+.practice-toggle { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 8px 0 16px; }

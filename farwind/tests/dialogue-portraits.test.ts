@@ -45,7 +45,7 @@ describe("独立立绘与资源边界", () => {
 
 function fixture() {
   return {
-    state: initialState(), ui: { dialog: vi.fn(), message: vi.fn() },
+    state: initialState(), ui: { dialog: vi.fn(), message: vi.fn(), offerShop: vi.fn() }, combat: { dashCooldown: 0 }, sim: 0,
     soundFx: { play: vi.fn() }, persist: vi.fn().mockResolvedValue(undefined),
   };
 }
@@ -54,17 +54,18 @@ function talk(world: ReturnType<typeof fixture>, id: string) {
 }
 
 describe("立绘展示参数不增加任务副作用", () => {
-  it("药师兑换一次，继续交谈材料不足时不重复扣除或奖励", () => {
+  it("药师只交谈不自动兑换，保留立绘来源与明确服务入口", () => {
     const w = fixture();
     w.state.quest = 2;
     add(w.state, "herb", 2); add(w.state, "berry", 1);
     talk(w, "healer");
-    expect([count(w.state, "herb"), count(w.state, "berry"), count(w.state, "potion"), w.state.quest]).toEqual([0, 0, 1, 3]);
+    expect([count(w.state, "herb"), count(w.state, "berry"), count(w.state, "potion"), w.state.quest]).toEqual([2, 1, 0, 2]);
     expect(w.ui.dialog).toHaveBeenLastCalledWith("药师 · 小满", expect.any(String), "healer");
     const before = structuredClone(w.state);
     talk(w, "healer");
     expect(w.state).toEqual(before);
-    expect(w.persist).toHaveBeenCalledTimes(2);
+    expect(w.persist).not.toHaveBeenCalled();
+    expect(w.ui.offerShop).toHaveBeenCalledWith("healer");
   });
   it("药剂没有空间时保留材料与任务", () => {
     const w = fixture();

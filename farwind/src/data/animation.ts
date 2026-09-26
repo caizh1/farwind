@@ -1,4 +1,5 @@
 import type { Facing, MotionAction } from "../game/systems/locomotion";
+import {SWORD_WIND_WEAPONS, SWORD_WIND_HERO_PROVISIONAL} from './swordWindArt';
 import { COMBAT, PARRY, resolveStrike, type StrikeConfig, type ParryAction } from "../game/systems/combat";
 export const COMBAT_ACTION_ART = {
   frameSize: 160,
@@ -6,7 +7,7 @@ export const COMBAT_ACTION_ART = {
   footY: 154,
 } as const;
 export type CombatVisual = {
-  weapon?: ReturnType<typeof weaponSample>;
+  weapon?: WeaponPose;
   texture: string;
   frame: number;
   clip: string;
@@ -16,24 +17,42 @@ export type CombatVisual = {
   phaseProgress: number;
   provisional: boolean;
 };
+export type WeaponPose={grip:{x:number;y:number};tip:{x:number;y:number};visible:boolean;progress:number;alpha:number;provisional:boolean};
+export function swordWindVisual(facing:Facing,elapsed:number,m:StrikeConfig):CombatVisual {
+ const end=m.windup+m.active,total=end+m.recovery,t=Math.max(0,Math.min(total,elapsed));
+ const phase=t<m.windup?'windup':t<end?'active':'recovery',start=phase==='windup'?0:phase==='active'?m.windup:end,duration=phase==='windup'?m.windup:phase==='active'?m.active:m.recovery,progress=Math.min(1,(t-start)/duration);
+ const times=[0,m.windup*35/110,m.windup*70/110,m.windup,m.windup+m.active*.25,end,end+m.recovery*60/190,end+m.recovery*130/190];let pose=0;for(let i=1;i<times.length;i++)if(t>=times[i])pose=i;
+ const view=facing===0?0:facing===1?1:2,sample=SWORD_WIND_WEAPONS[view][pose],point=(p:{x:number;y:number})=>({x:p.x*(facing===2?-1:1),y:p.y});
+ return {texture:'hero-sword-wind',frame:view*8+pose,clip:`hero/sword-wind/${facing}`,frameIndex:pose,facing,phase,phaseProgress:progress,provisional:SWORD_WIND_HERO_PROVISIONAL,weapon:{grip:point(sample.grip),tip:point(sample.tip),visible:phase==='active',progress,alpha:phase==='active'?.45:0,provisional:SWORD_WIND_HERO_PROVISIONAL}};
+}
 // 独立防御图集，固定根[80,154]；左向镜像仍只由 Actor 设置。
 const parryPoints=[
-  [[160,217,80,123],[543,239,484,164],[1000,222,1090,157],[1325,256,1325,318]],
-  [[253,518,321,430],[637,541,692,462],[1001,516,1086,447],[1387,540,1455,447]],
-  [[263,839,330,731],[653,865,697,778],[1007,844,1115,792],[1390,867,1470,779]],
+ [[125,220,45,116],[433,183,330,94],[634,168,532,54],[858,139,960,54],[1174,225,1302,220],[1382,210,1344,120]],
+ [[182,522,258,445],[414,522,466,440],[681,463,723,374],[894,431,1006,375],[1190,520,1310,490],[1430,518,1501,425]],
+ [[166,853,247,755],[425,824,488,720],[662,775,551,683],[928,752,805,672],[1205,849,1328,814],[1446,855,1492,745]],
 ] as const;
-const parryRoots=[[[194,334],[578,334],[960,334],[1344,334]],[[194,660],[578,660],[960,660],[1344,660]],[[194,972],[578,972],[960,972],[1344,972]]] as const;
+const parryRoots=[[[143,334],[408,334],[658,334],[907,334],[1167,334],[1416,334]],[[143,659],[408,659],[658,659],[907,659],[1167,659],[1416,659]],[[143,964],[408,964],[658,964],[907,964],[1167,964],[1416,964]]] as const;
 export function parryWeapon(facing:Facing,pose:number) {
-  const view=facing===0?0:facing===1?1:2,p=parryPoints[view][pose],r=parryRoots[view][pose];
-  const point=(i:number)=>({x:(p[i]-r[0])*(145/460)*(facing===2?-1:1),y:(p[i+1]-r[1])*(145/460)});
-  return {grip:point(0),tip:point(2),visible:false,progress:0,alpha:0,provisional:true};
+ const view=facing===0?0:facing===1?1:2,p=parryPoints[view][pose],r=parryRoots[view][pose];
+ const point=(i:number)=>({x:(p[i]-r[0])*(145/460)*(facing===2?-1:1),y:(p[i+1]-r[1])*(145/460)});
+ return {grip:point(0),tip:point(2),visible:false,progress:0,alpha:0,provisional:true};
+}
+function defensivePose(facing:Facing,pose:number,phase:CombatVisual["phase"],progress:number):CombatVisual {
+ return {texture:"hero-parry-v2",frame:(facing===0?0:facing===1?1:2)*6+pose,clip:`hero/parry-v2/${facing}`,frameIndex:pose,facing,phase,phaseProgress:progress,provisional:true,weapon:parryWeapon(facing,pose)};
 }
 export function parryVisual(a:ParryAction,now:number,ready=false):CombatVisual {
-  const elapsed=now-a.start,success=a.successAt!==undefined?now-a.successAt:null;
-  const pose=ready?3:success!==null?success<25?1:success<PARRY.resume?2:3:elapsed<PARRY.active?0:3;
-  const view=a.facing===0?0:a.facing===1?1:2;
-  return {texture:"hero-parry",frame:view*4+pose,clip:`hero/parry/${a.facing}`,frameIndex:pose,facing:a.facing,
-    phase:pose===0?"guard":pose===1?"brace":pose===2?"deflect":"ready",phaseProgress:success!==null?Math.min(1,success/PARRY.resume):Math.min(1,elapsed/PARRY.recovery),provisional:true,weapon:parryWeapon(a.facing,pose)};
+ const elapsed=now-a.start,success=a.successAt!==undefined?now-a.successAt:null;
+ const pose=ready?5:success!==null?success<20?1:2:elapsed<PARRY.active?0:5;
+ return defensivePose(a.facing,pose,pose===0?"guard":pose===1?"brace":pose===2?"deflect":"ready",success!==null?Math.min(1,success/PARRY.resume):Math.min(1,elapsed/PARRY.recovery));
+}
+export function counterVisual(a:import("../game/systems/combat").Attack,now:number):CombatVisual {
+ const m=a.config??resolveStrike(1,a.counter),elapsed=now-a.start,pose=elapsed<20?2:elapsed<m.windup?3:elapsed<m.windup+m.active?4:5;
+ const phase=elapsed<m.windup?"windup":elapsed<m.windup+m.active?"active":"recovery";
+ const start=phase==="windup"?0:phase==="active"?m.windup:m.windup+m.active,duration=phase==="windup"?m.windup:phase==="active"?m.active:m.recovery;
+ const result=defensivePose(a.facing,pose,phase,Math.min(1,(elapsed-start)/duration));
+ result.clip=`hero/counter/${a.facing}`;
+ result.weapon={...parryWeapon(a.facing,pose),visible:phase==="active",progress:result.phaseProgress,alpha:phase==="active"?.85:0};
+ return result;
 }
 export function combatVisual(
   stage: number,
@@ -42,6 +61,7 @@ export function combatVisual(
   enter = false,
   move: StrikeConfig = resolveStrike(stage),
 ): CombatVisual {
+  if(stage===4)return swordWindVisual(facing,elapsed,move);
   const activeEnd = move.windup + move.active;
   const total = activeEnd + move.recovery;
   const t = Math.max(0, Math.min(elapsed, total));
@@ -351,7 +371,8 @@ const activeWeaponPoints = [
     ],
   ],
 ] as const;
-export function weaponSample(stage: number, facing: Facing, elapsed: number,m:StrikeConfig=resolveStrike(stage)) {
+export function weaponSample(stage: number, facing: Facing, elapsed: number,m:StrikeConfig=resolveStrike(stage)):WeaponPose {
+  if(stage===4)return swordWindVisual(facing,elapsed,m).weapon!;
   const sample = combatVisual(stage, facing, elapsed,false,m);
   const view = facing === 0 ? 0 : facing === 1 ? 1 : 2;
   const index = sample.frameIndex < 3 ? 0 : 1;

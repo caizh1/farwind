@@ -1,0 +1,250 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "--config",
+      "tools/playwright-economy.config.ts",
+      "tests/economy.spec.ts",
+      "tests/hud.spec.ts",
+      "tests/training.spec.ts",
+      "-g",
+      "旧结构|hud-hotbar|hud-backup|旧档满包"
+    ],
+    "configFile": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tools/playwright-economy.config.ts",
+    "rootDir": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated-fixes/browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "*.spec.ts"
+        ],
+        "timeout": 240000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated-fixes/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "economy.spec.ts",
+      "file": "economy.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复迁移",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8251,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:21:20.445Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-e28817f61f58dbcabc54",
+          "file": "economy.spec.ts",
+          "line": 388,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "hud.spec.ts",
+      "file": "hud.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "hud-hotbar",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5119,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:21:28.796Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6688962e6db485c2fb1e-66b0eb0913182462f1b7",
+          "file": "hud.spec.ts",
+          "line": 147,
+          "column": 1
+        },
+        {
+          "title": "hud-backup",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2887,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:21:33.919Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6688962e6db485c2fb1e-0d32f711dde43cdf1ba9",
+          "file": "hud.spec.ts",
+          "line": 363,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "training.spec.ts",
+      "file": "training.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10772,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-26T11:21:37.078Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/.codex/worktrees/farwind-village-m2/Game/farwind/docs/village-defense/m2/validated-fixes/browser-output/training-隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2410163d751908292b1d-6af5aa60b753508dc014",
+          "file": "training.spec.ts",
+          "line": 184,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-26T11:21:20.122Z",
+    "duration": 27858.59,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -79,7 +79,7 @@ describe("结构化存档", () => {
       "{",
       "null",
       "{}",
-      JSON.stringify({ ...initialState(), schema_version: 2 }),
+      JSON.stringify({ ...initialState(), schema_version: 5 }),
       JSON.stringify({ ...initialState(), bag: [{ id: "unknown", count: 1 }] }),
       "x".repeat(200001),
     ])

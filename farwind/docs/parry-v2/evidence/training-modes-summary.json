@@ -1,0 +1,95 @@
+{
+  "说明": "真实键鼠输入；仅导入合法起始存档，诊断只读；未改运行中生命、位置、计时器或判定",
+  "帧数": 190,
+  "接触": [
+    {
+      "at": 1247.9012031555176,
+      "id": "practice-training-dummy:1",
+      "result": "normal",
+      "parryAge": 106.77788978635385,
+      "stamina": 100,
+      "hp": 100,
+      "inputAt": 1141.1233133691637,
+      "startAt": 1141.1233133691637,
+      "phase": "active",
+      "predicted": 1247.9012027994813,
+      "direction": {
+        "attack": {
+          "x": 0,
+          "y": 1
+        },
+        "guard": 1
+      },
+      "rejection": ""
+    },
+    {
+      "at": 1781.9213745566287,
+      "id": "practice-training-dummy:2",
+      "result": "normal",
+      "parryAge": 117.14123483898402,
+      "stamina": 100,
+      "hp": 100,
+      "inputAt": 1664.7801397176447,
+      "startAt": 1664.7801397176447,
+      "phase": "active",
+      "predicted": 1781.9213745566287,
+      "direction": {
+        "attack": {
+          "x": 0,
+          "y": 1
+        },
+        "guard": 1
+      },
+      "rejection": ""
+    }
+  ],
+  "最终练习": {
+    "mode": "chain",
+    "next": 3541.9213745566285,
+    "target": {
+      "id": "training-dummy",
+      "x": 850,
+      "y": 650,
+      "kind": "trainingDummy",
+      "hp": 1,
+      "comboId": 2,
+      "epoch": 5,
+      "stages": {},
+      "instances": {},
+      "damage": 74,
+      "lastStage": 3,
+      "lastDamage": 30,
+      "lastHit": 2466.9213745566285,
+      "facing": 1,
+      "windHits": []
+    },
+    "projection": {
+      "id": "practice-training-dummy",
+      "x": 850,
+      "y": 678,
+      "hp": 1,
+      "kind": "trainingProjection",
+      "staggerUntil": 2221.9213745566285,
+      "type": "slime",
+      "staggerSince": 2146.9213745566285,
+      "parried": {
+        "at": 1781.9213745566287,
+        "until": 2381.9213745566285,
+        "direction": {
+          "x": 0,
+          "y": 1
+        },
+        "perfect": false
+      }
+    },
+    "attack": null,
+    "indicators": true,
+    "pose": null,
+    "predictedContact": null,
+    "feedback": "普通成功 · 提前 117 毫秒",
+    "lastContact": {
+      "at": 1781.9213745566287,
+      "result": "normal"
+    }
+  }
+}

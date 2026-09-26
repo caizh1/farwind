@@ -1,3 +1,7 @@
+import { EconomyCommit, outgoingDamage, incomingDamage, type EconomyRequest } from "../systems/economy";
+import { EastDefense, prepareEastRaid, type DefenseEnemy } from "../systems/defense";
+import { resolveDamage } from "../systems/damage";
+import { DefendersView } from "../entities/defenders";
 import { WORLD, propBounds, FOOT } from "../../data/world";
 import { regionAt, portalAnchor, VILLAGE_PORTALS } from "../../data/village";
 import {
@@ -14,6 +18,8 @@ import {
   nearestStanding,
   NAV,
   staggerEnemy,
+  enemyAttackSpace,
+  enemyAttackPermitted,
   type EnemyBody,
 } from "../systems/enemy";
 import { FIELD_TARGETS, TRAINING, TrainingDummy } from "../systems/training";
@@ -21,9 +27,12 @@ import { TrainingDummyView } from "../entities/trainingDummy";
 import type { Attack } from "../systems/combat";
 import { CombatTimeline } from "../systems/timeline";
 import { adjudicateContact, orderedContacts } from "../systems/contact";
-import type { EnemyContact } from "../systems/enemyAttack";
+import {sampleEnemyAttack,predictEnemyContact,warningQuality,type EnemyContact} from "../systems/enemyAttack";
 import { ParryTraining, type PracticeMode } from "../systems/parryTraining";
 import { WeaponTrail } from "../systems/weaponTrail";
+import {SwordWindSystem,type WindMotion,type WindEvent} from '../systems/swordWind';
+import {SwordWindView} from '../entities/swordWindView';
+import {hasSwordWind,swordWindSource} from '../systems/skills';
 import { Sprint } from "../systems/sprint";
 import { resetSessionTimers } from "../systems/session";
 import {
@@ -47,6 +56,7 @@ import {
   weaponSample,
   settleVisual,
   parryVisual,
+  counterVisual,
   parryWeapon,
 } from "../../data/animation";
 import {
@@ -69,13 +79,20 @@ type Enemy = EnemyBody & {
   sprite: Phaser.GameObjects.Sprite;
   shadow: Phaser.GameObjects.Ellipse;
 };
-type CombatTarget = Enemy | TrainingDummy;
+type CombatTarget = Enemy | DefenseEnemy | TrainingDummy | NonNullable<ParryTraining["projection"]>;
 export class World extends Phaser.Scene {
   state: State = initialState();
   keys = new Input();
   soundFx = new Sound();
   weaponTrail = new WeaponTrail();
+  swordWind=new SwordWindSystem();
+  swordWindView?:SwordWindView;
   ui = new Interface();
+  economy = new EconomyCommit();
+  defense = new EastDefense(this.state.defense, 0);
+  defenseView!: DefendersView;
+  defenseSaving = false;
+  defenseCheckpointPending = false;
   hero!: Actor;
   cat!: Actor;
   propImages = new Map<string, Phaser.GameObjects.Image>();
@@ -96,10 +113,15 @@ export class World extends Phaser.Scene {
   practice = new ParryTraining();
   battleAxis = {x:0,y:0};
   runIntent = false;
-  contactHistory: {at:number;id:string;result:string;parryAge:number|null;stamina:number;hp:number}[] = [];
+  contactHistory: {at:number;id:string;result:string;parryAge:number|null;stamina:number;hp:number;inputAt:number|null;startAt:number|null;phase:string;predicted:number|null;direction:unknown;rejection:string}[] = [];
   parryEffects: {at:number;x:number;y:number;perfect:boolean}[]=[];
   parryInk?: Phaser.GameObjects.Graphics;
   warningInk?: Phaser.GameObjects.Graphics;
+  practiceSprite?: Phaser.GameObjects.Sprite;
+  enemyBlades=new Map<string,Phaser.GameObjects.Graphics>();
+  practiceLabel?: Phaser.GameObjects.Text;
+  warnings: {id:string;predicted:number|null;lead:number|null;quality:string;phase:string}[]=[];
+  inputHistory: {at:number;wall:number;sequence:number;kind:string;facing:number;rejection:string}[]=[];
   pointerAttack = false;
   gatherUntil = 0;
   target?: Prop;
@@ -123,6 +145,14 @@ export class World extends Phaser.Scene {
     super("World");
   }
   preload() {
+    this.load.image("defender-guard","/assets/village-defense/m3/guard-source.png");
+    this.load.image("defender-archer","/assets/village-defense/m3/archer-source.png");
+    this.load.image("defender-vertical", "/assets/village-defense/m4/archer-vertical-candidate.png");
+    this.load.image("east-watchtower","/assets/village-defense/m3/watchtower-candidate.png");
+    this.load.spritesheet('hero-sword-wind','/assets/animation/sword-wind/hero-sword-wind.png',{frameWidth:160,frameHeight:160});
+    for(const name of ['release','flight','hit','dissolve','ground'])this.load.spritesheet(`sword-wind-${name}`,`/assets/animation/sword-wind/sword-wind-${name}.png`,{frameWidth:128,frameHeight:128});
+    this.load.image("smith-building","/assets/village-economy/smith-candidate.png");
+    this.load.image("inn-building","/assets/village-economy/inn-candidate.png");
     for (const [key, file] of [
       ["carpenter-workbench", "carpenter-workbench"],
       ["fountain", "plaza-fountain"],
@@ -194,7 +224,7 @@ export class World extends Phaser.Scene {
       "/assets/animation/hero-combat-side.png",
       { frameWidth: 160, frameHeight: 160 },
     );
-    this.load.spritesheet("hero-parry","/assets/animation/hero-parry.png",{frameWidth:160,frameHeight:160});
+    this.load.spritesheet("hero-parry-v2","/assets/animation/hero-parry-v2.png",{frameWidth:160,frameHeight:160});
     this.load.image(
       "hero-carry-sword",
       "/assets/animation/hero-carry-sword.png",
@@ -212,6 +242,7 @@ export class World extends Phaser.Scene {
       return;
     }
     this.makeTerrain();
+    this.defenseView = new DefendersView(this);
     props.forEach((p) => {
       const im = this.add
         .image(p.x, p.y, p.art, p.frame ?? 0)
@@ -233,6 +264,8 @@ export class World extends Phaser.Scene {
       (t) => new TrainingDummyView(this, t),
     );
     this.hero = new Actor(this, 670, 720);
+    this.swordWindView=new SwordWindView(this,this.swordWind);
+    this.events.once('shutdown',()=>this.clearSwordWind());
     this.cat = new Actor(this, 720, 740, true);
     this.cameras.main
       .setBounds(0, 0, WORLD.width, WORLD.height)
@@ -250,9 +283,11 @@ export class World extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(10000);
     this.ui.actions = {
+      trade: (r) => this.trade(r),
       start: (c) => void this.start(c).catch(() => {}),
       save: () => this.persist(true),
       import: async (s) => {
+        if(this.economy.busy) throw Error("交易正在保存，请稍候。");
         await save(s);
         this.loaded = s;
         this.ui.available = true;
@@ -267,11 +302,13 @@ export class World extends Phaser.Scene {
         this.timeline.reset(performance.now());
       },
       practice: (mode) => this.selectPractice(mode),
+      indicators:(value)=>this.practice.indicators=value,
+      getIndicators:()=>this.practice.indicators,
       volume: (v) => (this.soundFx.volume = v),
       getVolume: () => this.soundFx.volume,
       title: () => void this.toTitle(),
     };
-    this.keys.enabled=()=>this.active&&!this.ui.paused;
+    this.keys.enabled=()=>this.active&&!this.ui.paused&&!this.defenseSaving;
     this.keys.uiKey=(e)=>this.ui.handleKey(e);
     this.keys.focusCanvas=()=>this.ui.focusGame();
     const unbindCanvas=this.keys.bindCanvas(this.game.canvas);
@@ -292,6 +329,9 @@ export class World extends Phaser.Scene {
       value: () =>
         structuredClone({
           state: this.state,
+          defense: this.defense.snapshot(),
+          defenseSaving: this.defenseSaving,
+          defenseCheckpointPending: this.defenseCheckpointPending,
           attackSerial: this.attackSerial,
           ...(import.meta.env.DEV
             ? {
@@ -304,7 +344,10 @@ export class World extends Phaser.Scene {
                     motion: propBounds(p, true),
                   })),
                 training: this.training.snapshot(this.sim),
-                parryTraining: this.practice.snapshot(),
+                swordWind:{ground:this.swordWindView?.snapshot()??[],source:swordWindSource(this.state),effective:hasSwordWind(this.state),entities:this.swordWind.snapshot(),events:this.swordWind.events.map(e=>({id:e.wind.id,attackId:e.wind.attackId,comboId:e.wind.comboId,at:e.at,point:e.point,reason:e.reason,target:e.target?.id,damage:e.wind.config.damage}))},
+                parryTraining: this.practice.snapshot(this.sim,this.state.player),
+                warnings:this.warnings,
+                inputs:this.inputHistory,
                 contacts: this.contactHistory,
                 fieldTraining: this.fieldTargets.map((t) =>
                   t.snapshot(this.sim),
@@ -356,6 +399,8 @@ export class World extends Phaser.Scene {
                   flashRemaining: Math.max(0, e.flashUntil - this.sim),
                   windup: e.windup,
                   attack: e.attack ?? null,
+                  pose:e.attack?sampleEnemyAttack(e.attack,this.sim,e):null,
+                  parried:e.parried??null,
                   staggerRemaining: Math.max(0, e.staggerUntil - this.sim),
                   staggerUntil:e.staggerUntil,
                   home: { x: e.homeX, y: e.homeY },
@@ -391,6 +436,7 @@ export class World extends Phaser.Scene {
       .catch((e) => this.ui.title((e as Error).message));
   }
   async start(continued: boolean) {
+    if(this.economy.busy || this.defenseSaving) return;
     this.state =
       continued && this.loaded ? structuredClone(this.loaded) : initialState();
     if (this.blocked(this.state.player.x, this.state.player.y)) {
@@ -410,16 +456,20 @@ export class World extends Phaser.Scene {
       this.state.player.y = safe?.y ?? 720;
       this.ui.message(
         safe
-          ? "存档站位被新村界占用，已移到同一区域可走位置，其他进度保留。"
+          ? "存档站位被新建筑或村界占用，已移到同一区域可走位置，其他进度保留。"
           : "存档位置无法站立，已返回安全广场，其他进度保留。",
       );
     }
     this.ui.state = this.state;
     this.active = true;
     resetSessionTimers(this);
+    this.defense = new EastDefense(this.state.defense, this.sim);
     this.combat.reset(this.state.dashCooldownRemaining);
+    this.clearSwordWind();
+    this.combat.swordWindEnabled=hasSwordWind(this.state);
     this.practice.reset();
     this.contactHistory=[];
+    this.inputHistory=[];
     this.parryEffects=[];
     this.timeline.reset(performance.now());
     this.battleAxis={x:0,y:0};
@@ -449,7 +499,20 @@ export class World extends Phaser.Scene {
     if (!continued) await this.persist();
     this.ui.message("风铃村欢迎你。向北走几步，按 E 与守风人交谈。");
   }
+  async trade(request: EconomyRequest) {
+    await this.economy.run(() => this.state,request,save,next => {
+      this.state = next;
+      this.loaded = structuredClone(next);
+      this.ui.available = true;
+      this.ui.state = next;
+      this.defense.rebind(next.defense);
+      if(request.kind === "rest") this.sprint.reset(next.player.stamina);
+      this.refresh();
+      this.ui.update(next, "");
+    });
+  }
   async persist(notify = false) {
+    if(this.economy.busy) throw Error("交易正在保存，请稍候。");
     try {
       this.state.dashCooldownRemaining = Math.max(
         0,
@@ -458,6 +521,7 @@ export class World extends Phaser.Scene {
       const snapshot = structuredClone(this.state);
       await save(snapshot);
       this.loaded = snapshot;
+      this.defense.acknowledged(snapshot.defense.sequence);
       this.ui.available = true;
       if (notify) this.ui.message("旅途已保存");
     } catch (e) {
@@ -465,11 +529,41 @@ export class World extends Phaser.Scene {
       throw e;
     }
   }
+  openDefenseDrill() {
+    this.ui.dialog("东门驻防", "岑风和青禾守住通路两侧，弦雨在塔上警戒。门洞保持畅通，穿过村门便是森林。");
+    if (!import.meta.env.DEV || !new URLSearchParams(location.search).has("defenseDebug")) return;
+    const button=document.createElement("button"); button.id="defense-drill";
+    button.textContent="启动东门演练 · 3只普通怪";
+    this.ui.modal.querySelector("#dialog-text")!.after(button);
+    button.onclick=()=>void this.startDefenseDrill();
+  }
+  async startDefenseDrill() {
+    if (!import.meta.env.DEV || !new URLSearchParams(location.search).has("defenseDebug") || this.defenseSaving || this.economy.busy) return;
+    this.defenseSaving=true; this.ui.economyBusy=true;
+    this.ui.modal.querySelectorAll<HTMLButtonElement>("button").forEach(b=>b.disabled=true);
+    try {
+      const next=structuredClone(this.state); next.defense=prepareEastRaid(next.defense,next.player);
+      await save(next);
+      this.state=next;this.ui.state=next;this.loaded=structuredClone(next);
+      this.defense=new EastDefense(next.defense,this.sim);
+      this.ui.economyBusy=false;this.ui.close();this.ui.message("东门演练开始；可以观战或远离，驻防会继续运行。");
+    } catch(e) { this.ui.economyBusy=false;this.openDefenseDrill();this.ui.message(`演练未开始：${(e as Error).message}`); }
+    finally {this.defenseSaving=false;}
+  }
+  async checkpointDefense() {
+    if (this.defenseSaving || this.defenseCheckpointPending || !this.defense.critical) return;
+    const defense=this.defense;
+    defense.critical=false;this.defenseCheckpointPending=true;
+    try {await this.persist();}
+    catch(e) {if(this.defense===defense){defense.critical=true;this.ui.open("pause");this.ui.message(`驻防变化尚未保存：${(e as Error).message}`);}}
+    finally {this.defenseCheckpointPending=false;}
+  }
   async toTitle() {
     try {
       await this.persist(true);
       this.active = false;
       this.combat.reset();
+      this.clearSwordWind();
       this.practice.reset();
       this.keys.clear();
       this.parryEffects=[];
@@ -630,7 +724,7 @@ export class World extends Phaser.Scene {
     this.slash.setDepth(this.state.player.y + 1);
     for (const { a, b, alpha } of this.weaponTrail.segments(this.sim)) {
       const ink = b.facing === 1 ? this.slashBack : this.slash;
-      ink.fillStyle(b.stage === 3 ? 0xffdfa3 : 0xdaf9ed, alpha);
+      ink.fillStyle(b.counter ? b.counter==="perfect"?0xfff0bb:0xdcffff : b.stage === 3 ? 0xffdfa3 : 0xdaf9ed, b.counter?Math.min(1,alpha*1.3):alpha);
       ink.beginPath();
       ink.moveTo(a.inner.x, a.inner.y);
       ink.lineTo(a.tip.x, a.tip.y);
@@ -638,7 +732,7 @@ export class World extends Phaser.Scene {
       ink.lineTo(b.inner.x, b.inner.y);
       ink.closePath();
       ink.fillPath();
-      ink.lineStyle(b.stage === 3 ? 2.4 : 1.6, 0xfff8dc, alpha);
+      ink.lineStyle(b.counter?2.8:b.stage === 3 ? 2.4 : 1.6, 0xfff8dc, alpha);
       ink.lineBetween(a.tip.x, a.tip.y, b.tip.x, b.tip.y);
     }
   }
@@ -696,10 +790,12 @@ export class World extends Phaser.Scene {
     });
   }
   combatTargets(): CombatTarget[] {
-    return [...this.enemies, this.training, ...this.fieldTargets];
+    return [...this.enemies,...this.defense.enemies, this.training, ...this.fieldTargets,...(this.practice.projection?[this.practice.projection]:[])];
   }
-  hitFeedback(stage: number, material: "enemy" | "straw") {
+  hitFeedback(stage: number, material: "enemy" | "straw",stop?:number) {
     this.combat.stopOnHit(stage);
+    if(stop!==undefined){this.combat.lastHitStopRequested=stop;this.combat.hitStopRemaining=Math.max(this.combat.hitStopRemaining,stop);}
+    if(stage===4){this.soundFx.play('wind-hit');return;}
     this.soundFx.play(
       material === "straw"
         ? stage === 3
@@ -710,34 +806,56 @@ export class World extends Phaser.Scene {
           : "hit",
     );
   }
-  strikeTarget(target: CombatTarget, stage: number, attack: Attack) {
-    if (target.kind === "enemy") {
-      this.strikeEnemy(target, stage,attack);
+  strikeTarget(target: CombatTarget, stage: number, attack: Attack,feedback?:{damage:number;stop:number}) {
+    if (target.kind === "defense-enemy") {
+      const move=attackConfig(attack);
+      if(this.defense.damageEnemy(target,{sourceId:"player",targetId:target.id,attackId:`player:${this.combat.epoch}:${attack.start}:${stage}`,
+        amount:feedback?.damage??outgoingDamage(this.state,move.damage),sourceType:stage===4?"player-wind":"player-melee",eventId:target.eventId},this.state.player.hp)) {
+        this.hitFeedback(stage,"enemy",feedback?.stop);staggerEnemy(target,this.sim,move.stagger);
+        if(stage===3&&target.attack)target.attack.cancelled=true;
+      }
       return;
     }
+    if (target.kind === "enemy") {
+      this.strikeEnemy(target, stage,attack,feedback);
+      return;
+    }
+    if(target.kind==="trainingProjection") {
+      const dummy=[this.training,...this.fieldTargets].find(t=>t===this.practice.target||t.id===this.practice.target?.id);
+      staggerEnemy(target,this.sim,attackConfig(attack).stagger);
+      if(dummy)this.strikeTarget(dummy,stage,attack,feedback);
+      return;
+    }
+    // 同帧风步改变 epoch 时先同步，再记录旧发射快照；帧末同步不能擦掉刚收到的远程命中。
     target.sync(this.combat.epoch);
-    if (target.hit(attack, this.sim)) {
-      this.hitFeedback(stage, "straw");
+    const damage = feedback?.damage??outgoingDamage(this.state,attackConfig(attack).damage);
+    if (target.hit(attack, this.sim,damage)) {
+      this.hitFeedback(stage, "straw",feedback?.stop);
       const view =
         target === this.training
           ? this.trainingView
           : this.fieldViews[this.fieldTargets.indexOf(target)];
-      view.hit(this.sim, attackConfig(attack).damage);
+      view.hit(this.sim, damage);
     }
   }
-  strikeEnemy(e: Enemy, stage: number,attack:Attack) {
+  strikeEnemy(e: Enemy, stage: number,attack:Attack,feedback?:{damage:number;stop:number}) {
     if (e.hp <= 0) return;
     const move = attackConfig(attack);
-    e.hp = Math.max(0, e.hp - move.damage);
-    this.hitFeedback(stage, "enemy");
+    const damage = feedback?.damage??outgoingDamage(this.state,move.damage);
+    const hit=resolveDamage({sourceId:"player",targetId:e.id,attackId:`player:${this.combat.epoch}:${attack.start}:${stage}`,
+      amount:damage,sourceType:stage===4?"player-wind":"player-melee",eventId:null},
+      {id:"player",faction:"village",hp:this.state.player.hp,armor:0},{id:e.id,faction:"hostile",hp:e.hp,armor:0});
+    if(!hit.applied)return;
+    e.hp = hit.hp; e.playerAggroUntil=this.sim+2500;
+    this.hitFeedback(stage, "enemy",feedback?.stop);
     e.flashUntil = this.sim + move.flash;
     staggerEnemy(e,this.sim,move.stagger);
-    this.float(e.x, e.y, String(move.damage));
+    this.float(e.x, e.y, String(damage));
     const contact = Math.max(
       1,
       Math.hypot(this.state.player.x - e.x, this.state.player.y - e.y),
     );
-    const spark = this.add
+    if(stage!==4){const spark = this.add
       .circle(
         e.x + ((this.state.player.x - e.x) / contact) * 12,
         e.y - 28 + ((this.state.player.y - e.y) / contact) * 6,
@@ -752,7 +870,7 @@ export class World extends Phaser.Scene {
       alpha: 0,
       duration: stage === 3 ? 120 : 90,
       onComplete: () => spark.destroy(),
-    });
+    });}
     const [vx, vy] = facingVector(attack.facing);
     sweepMove(
       e,
@@ -795,16 +913,21 @@ export class World extends Phaser.Scene {
     const a=this.battleAxis;
     return Math.hypot(a.x,a.y)
       ? Math.abs(a.x)>Math.abs(a.y)?a.x<0?2:3:a.y<0?1:0
-      : this.combat.effectiveFacing(this.sim,this.hero.direction);
+      : this.combat.effectiveFacing(this.sim,this.combat.intentFacing);
   }
   tickAttack(prev:number,now:number) {
+    this.combat.swordWindEnabled=hasSwordWind(this.state);
     this.combat.update(prev,now,this.battleFacing(),this.state.player,this.combatTargets(),
       (x,y)=>this.blocked(x,y),(x,y,tx,ty,id)=>this.meleeLine(x,y,tx,ty,id),
       (target,stage,attack)=>this.strikeTarget(target,stage,attack),
-      (_,attack)=>{this.training.sync(this.combat.epoch);this.training.begin(attack);},
-      stage=>this.soundFx.play(stage===3?"attack-heavy":"attack"),clearMotionLine);
+      (stage,attack)=>{this.training.sync(this.combat.epoch);this.training.begin(attack);if(stage===4)this.soundFx.play('wind-charge');},
+      stage=>this.soundFx.play(stage===4?'wind-release':this.combat.attack?.counter?"counter":stage===3?"attack-heavy":"attack"),clearMotionLine,
+      (attack,root,at)=>this.swordWind.launch(attack,root,at,outgoingDamage(this.state,attack.swordWind!.damage)));
   }
+  clearSwordWind(){this.swordWind.clear();this.swordWindView?.clear();}
+  resolveSwordWind(events:WindEvent[]){for(const event of events){if(event.target)this.strikeTarget(event.target as CombatTarget,4,event.wind.attack,{damage:event.wind.config.damage,stop:event.wind.config.hitStop});else this.soundFx.play('wind-dissolve');}}
   advanceBattle(prev:number,now:number,contacts:EnemyContact[],budget:{queries:number}) {
+    const motion:WindMotion[]=this.combatTargets().map(target=>({target,previous:{x:target.x,y:target.y},current:{x:target.x,y:target.y}}));
     this.sim=now;
     const p=this.state.player,a=this.battleAxis,dt=(now-prev)/1000,length=Math.hypot(a.x,a.y);
     this.state.time+=dt*1.5;
@@ -816,12 +939,20 @@ export class World extends Phaser.Scene {
     const speed=guard?PARRY.speed:busy?this.combat.attack?55:0:movement.speed;
     if(length)sweepMove(p,a.x/length*speed*dt,a.y/length*speed*dt,(x,y)=>this.blocked(x,y),clearMotionLine);
     this.tickAttack(prev,now);
+    this.defense.external=this.enemies;
+    const view = this.cameras.main.worldView;
+    contacts.push(...this.defense.update(now,now-prev,p,budget,
+      {left:view.x,right:view.right,top:view.y,bottom:view.bottom},this.enemies.filter(e=>e.hp>0&&!e.disabled)));
     for(const e of [...this.enemies].sort((a,b)=>a.id.localeCompare(b.id))) {
-      const event=updateEnemy(e,p,now,now-prev,budget);
+      const event=this.defense.manages(e)?null:updateEnemy(e,p,now,now-prev,budget);
+      this.playEnemyAttack(e.attack,now);
       if(event)contacts.push(event);
     }
     const training=this.practice.update(now,p,this.combat);
+    this.playEnemyAttack(this.practice.attack,now);
     if(training)contacts.push(training);
+    for(const m of motion)m.current={x:m.target.x,y:m.target.y};
+    this.resolveSwordWind(this.swordWind.advance(prev,now,motion));
   }
   resolveBattle(now:number,contacts:EnemyContact[],budget:{queries:number}) {
     this.sim=now;
@@ -831,42 +962,61 @@ export class World extends Phaser.Scene {
       else {this.sprint.update(p.stamina,false,0);this.practice.started(now);}
       this.soundFx.play(action==="parry"?"guard":"dash");
     }
+    if(this.combat.autoCounter&&now>=this.combat.autoCounter.at)this.soundFx.play("deflect");
     this.tickAttack(now,now);
+    this.resolveSwordWind(this.swordWind.advance(now,now,this.combatTargets().map(target=>({target,previous:{x:target.x,y:target.y},current:{x:target.x,y:target.y}}))));
     for(const e of [...this.enemies].sort((a,b)=>a.id.localeCompare(b.id))) {
-      const event=updateEnemy(e,p,now,0,budget);
+      const event=this.defense.manages(e)?null:updateEnemy(e,p,now,0,budget);
+      this.playEnemyAttack(e.attack,now);
       if(event)contacts.push(event);
     }
     const training=this.practice.update(now,p,this.combat);
+    this.playEnemyAttack(this.practice.attack,now);
     if(training)contacts.push(training);
-    for(const contact of orderedContacts(contacts.splice(0))) {
-      const e=this.enemies.find(e=>e.id===contact.attack.attackerId);
-      const valid=contact.training?this.practice.mode!=="off":!!e&&e.hp>0&&!e.disabled&&e.attack?.attackId===contact.attack.attackId&&Math.hypot(p.x-e.homeX,p.y-e.homeY)<=520&&regionAt(p).id!=="village";
+    this.resolveContacts(now,contacts);
+  }
+  resolveContacts(now:number,contacts:EnemyContact[],beforeInput=false) {
+    const p=this.state.player,ready=contacts.filter(c=>!beforeInput||c.at<now-1e-7);
+    for(const c of ready)contacts.splice(contacts.indexOf(c),1);
+    for(const contact of orderedContacts(ready)) {
+      const e=[...this.enemies,...this.defense.enemies].find(e=>e.id===contact.attack.attackerId);
+      const body=e??(contact.training?this.practice.projection:null);
+      const valid=contact.training?this.practice.mode!=="off":!!e&&e.hp>0&&!e.disabled&&e.attack?.attackId===contact.attack.attackId&&
+        (e.kind==="defense-enemy" || enemyAttackPermitted(e,p));
       const result=adjudicateContact(contact,this.combat,p,{valid,immune:now<this.invulnerable||now<this.respawnInvulnerable,clear:(a,b,id)=>clearMeleeLine(a,b,id)});
       if(contact.training)this.practice.observe(contact,result,this.combat,p);
       if(result==="normal"||result==="perfect") {
+        if(body) {
+          body.parried={at:contact.at,until:contact.at+PARRY[result].stagger,direction:{...contact.attack.direction},perfect:result==="perfect"};
+          sweepMove(body,-contact.attack.direction.x*PARRY[result].knock,-contact.attack.direction.y*PARRY[result].knock,(x,y)=>this.blocked(x,y),clearMotionLine);
+        }
         if(e) {
           e.windup=0;
-          staggerEnemy(e,now,PARRY[result].stagger);
-          const [x,y]=facingVector(this.combat.parry!.facing);
-          sweepMove(e,x*PARRY[result].knock,y*PARRY[result].knock,(x,y)=>this.blocked(x,y),clearMotionLine);
+          staggerEnemy(e,contact.at,PARRY[result].stagger);
+
           e.nav.path=[];
         }
         const w=parryWeapon(this.combat.parry!.facing,1),dx=w.tip.x-w.grip.x,dy=w.tip.y-w.grip.y;
         const u=Math.max(0.25,Math.min(0.85,((contact.origin.x-p.x-w.grip.x)*dx+(contact.origin.y-p.y-28-w.grip.y)*dy)/(dx*dx+dy*dy)));
         this.parryEffects.push({at:now,x:p.x+w.grip.x+dx*u,y:p.y+w.grip.y+dy*u,perfect:result==="perfect"});
         this.sprint.update(p.stamina,false,0);
+        this.ui.update(this.state,this.target?`E · ${this.target.label}`:"");
         this.soundFx.play(result==="perfect"?"parry-perfect":"parry");
-        if(!contact.training)this.ui.message(result==="perfect"?"精准弹反 · J 反击":"弹反成功 · J 反击");
+
       } else if(result==="afterguard") {
         if(e)e.windup=0;
       } else if(result==="hurt"&&!contact.training) {
-        p.hp-=contact.attack.damage;
+        const damage=incomingDamage(this.state,contact.attack.damage);
+        const hit=resolveDamage({sourceId:contact.attack.attackerId,targetId:"player",attackId:contact.attack.attackId,
+          amount:damage,sourceType:"enemy-melee",eventId:e?.kind==="defense-enemy"?e.eventId:null},
+          {id:contact.attack.attackerId,hp:e?.hp??1,faction:"hostile",armor:0},{id:"player",hp:p.hp,faction:"village",armor:0});
+        p.hp=hit.hp;
         this.invulnerable=now+850;
         this.combat.hurt();
         this.soundFx.play("hit");
-        this.float(p.x,p.y,`-${contact.attack.damage}`);
+        this.float(p.x,p.y,`-${damage}`);
       }
-      this.contactHistory.push({at:contact.at,id:contact.attack.attackId,result,parryAge:this.combat.lastParry?contact.at-this.combat.lastParry.start:null,stamina:p.stamina,hp:p.hp});
+      this.contactHistory.push({at:contact.at,id:contact.attack.attackId,result,parryAge:this.combat.lastParry?contact.at-this.combat.lastParry.start:null,stamina:p.stamina,hp:p.hp,inputAt:this.combat.lastParryRequestAt,startAt:this.combat.lastParry?.start??null,phase:sampleEnemyAttack(contact.attack,contact.at,contact.origin).phase,predicted:this.warnings.find(w=>w.id===contact.attack.attackId)?.predicted??null,direction:{attack:contact.attack.direction,guard:this.combat.lastParry?.facing},rejection:this.combat.lastRejection});
       if(this.contactHistory.length>80)this.contactHistory.shift();
     }
   }
@@ -874,34 +1024,56 @@ export class World extends Phaser.Scene {
     const target=[this.training,...this.fieldTargets].sort((a,b)=>Math.hypot(a.x-this.state.player.x,a.y-this.state.player.y)-Math.hypot(b.x-this.state.player.x,b.y-this.state.player.y))[0];
     if(Math.hypot(target.x-this.state.player.x,target.y-this.state.player.y)>TRAINING.near){this.ui.message("请先靠近练习木桩");return;}
     this.combat.hurt();
-    this.practice.select(mode,target,this.sim);
+    this.practice.select(mode,target,this.sim,this.state.player);
   }
   drawParry() {
-    this.parryInk??=this.add.graphics();
-    const ink=this.parryInk.clear().setDepth(this.state.player.y+2);
-    this.parryEffects=this.parryEffects.filter(e=>this.sim-e.at<100);
-    for(const e of this.parryEffects) {
-      const u=(this.sim-e.at)/100,r=4+u*5,n=e.perfect?6:4;
-      ink.lineStyle(e.perfect?2:1.5,e.perfect?0xffedac:0xb9f2e5,1-u);
-      for(let i=0;i<n;i++) {
-        const a=i*Math.PI*2/n;
-        ink.lineBetween(e.x+Math.cos(a)*2,e.y+Math.sin(a)*2,e.x+Math.cos(a)*r,e.y+Math.sin(a)*r);
-      }
+    this.parryInk??=this.add.graphics();const ink=this.parryInk.clear().setDepth(this.state.player.y+2);
+    this.parryEffects=this.parryEffects.filter(e=>this.sim-e.at<PARRY.visual.flashLife);
+    for(const e of this.parryEffects){const u=(this.sim-e.at)/PARRY.visual.flashLife,alpha=1-u,r=PARRY.visual.rayStart+u*PARRY.visual.rayTravel;
+      ink.fillStyle(0xfffff1,alpha).fillCircle(e.x,e.y,u<.2?PARRY.visual.core:2.5*(1-u));
+      ink.lineStyle(e.perfect?2.8:2.2,e.perfect?0xffe6a7:0xd9ffff,alpha);
+      for(let i=0;i<4;i++){const a=i*Math.PI/2+.4;ink.lineBetween(e.x+Math.cos(a)*5,e.y+Math.sin(a)*5,e.x+Math.cos(a)*r,e.y+Math.sin(a)*r);}
+      if(e.perfect)ink.lineStyle(1,0xffffff,alpha).strokeRect(e.x-5-u*3,e.y-5-u*3,10+u*6,10+u*6);
+    }
+    const guard=this.combat.parry;
+    if(guard&&guard.successAt===undefined){const p=this.state.player,w=parryWeapon(guard.facing,0),active=this.combat.parryQuality(this.sim)!==null;
+      ink.lineStyle(active?1.6:1,active?0xbdf5f1:0x839389,active?.7:.35).lineBetween(p.x+w.grip.x,p.y+w.grip.y,p.x+w.tip.x,p.y+w.tip.y);
+    }
+  }
+  playEnemyAttack(attack:EnemyBody["attack"],now:number) {
+    if(!attack||attack.cancelled)return;
+    if(!attack.chargeSound){this.soundFx.play("enemy-charge");attack.chargeSound=true;}
+    if(now>=attack.contactAt&&!attack.strikeSound){this.soundFx.play("enemy-strike");attack.strikeSound=true;}
+  }
+  drawEnemyPose(body:{id:string;x:number;y:number;type:string;parried?:EnemyBody["parried"]},attack:EnemyBody["attack"],sprite:Phaser.GameObjects.Sprite) {
+    const pose=attack&&!attack.cancelled?sampleEnemyAttack(attack,this.sim,body):null,parried=body.parried;
+    let x=pose?.offset.x??0,y=pose?.offset.y??0,rotation=0,frame=pose?.frame??Math.floor(this.sim/240)%2;
+    if(parried&&this.sim<parried.until){const u=(this.sim-parried.at)/(parried.until-parried.at),strength=u<.15?Math.sin(u/.15*Math.PI/2):u<.7?1:1-(u-.7)/.3;
+      frame=u<.78?3:0;x-=parried.direction.x*11*strength;y-=parried.direction.y*7*strength;
+      rotation=(parried.direction.x<0?-1:1)*(body.type==="leaf"?.22:.13)*strength+Math.sin(u*19)*.045*(1-u);
+    }
+    sprite.setTexture(body.type,frame).setDisplaySize(75,75).setPosition(body.x+x,body.y+y).setDepth(body.y).setRotation(rotation);
+    if(pose||parried)sprite.setFlipX((pose?.direction??parried!.direction).x<0);
+    if(pose?.phase==="active"&&body.type==="leaf"){
+      if(!this.enemyBlades.has(body.id))this.enemyBlades.set(body.id,this.add.graphics());
+      const g=pose.geometry,ink=this.enemyBlades.get(body.id)!.setDepth(body.y+.1);ink.lineStyle(3,0xe5f1af,.85).lineBetween(g.a.x,g.a.y-30,g.b.x,g.b.y-30);ink.lineStyle(1,0xffffff,.8).lineBetween(g.a.x,g.a.y-30,g.b.x,g.b.y-30);
     }
   }
   drawWarnings() {
-    this.warningInk??=this.add.graphics();
-    const ink=this.warningInk.clear().setDepth(8998);
-    const sources=[...this.enemies.filter(e=>e.attack).map(e=>({root:e,attack:e.attack!})),
-      ...(this.practice.target&&this.practice.attack?[{root:this.practice.target,attack:this.practice.attack}]:[])];
-    for(const {root,attack:a} of sources) {
-      if(a.cancelled||this.sim>=a.contactAt)continue;
-      const u=Math.max(0,Math.min(1,(this.sim-a.startedAt)/(a.contactAt-a.startedAt))),r=34-u*24;
-      ink.lineStyle(a.locked?2:1.5,0xf6d99a,0.5+u*0.35);
-      for(const sign of [-1,1])ink.beginPath().arc(root.x,root.y-30,r,Math.atan2(a.direction.y,a.direction.x)+sign*0.3,Math.atan2(a.direction.y,a.direction.x)+sign*1.2,sign<0).strokePath();
-      const x=root.x+a.direction.x*24,y=root.y-30+a.direction.y*12;
-      ink.lineBetween(root.x,root.y-32,x,y);
-      if(this.practice.target===root)ink.lineStyle(3,0xded7b9).lineBetween(root.x,root.y-34,x,y);
+    this.warningInk??=this.add.graphics();const ink=this.warningInk.clear().setDepth(8998);
+    const sources=[...this.enemies.filter(e=>e.attack&&!e.attack.cancelled&&e.hp>0&&enemyAttackPermitted(e,this.state.player)&&(!this.defense.manages(e)||e.targetId==="player")).map(e=>({root:e,attack:e.attack!})),...this.defense.enemies.filter(e=>e.attack&&!e.attack.cancelled&&e.hp>0&&e.targetId==="player").map(e=>({root:e,attack:e.attack!})),...(this.practice.projection&&this.practice.attack?[{root:this.practice.projection,attack:this.practice.attack}]:[])];
+    const threats=sources.map(source=>({...source,predicted:predictEnemyContact(source.attack,source.root,this.state.player,this.sim,"homeX" in source.root&&source.root.kind!=="defense-enemy"?enemyAttackSpace(source.root):undefined,Math.max(0,source.root.staggerUntil-this.sim))})).sort((a,b)=>(a.predicted??Infinity)-(b.predicted??Infinity)||a.attack.attackerId.localeCompare(b.attack.attackerId));
+    this.warnings=threats.map(({attack:a,root,predicted})=>({id:a.attackId,predicted,lead:predicted===null?null:predicted-this.sim,quality:warningQuality(predicted===null?null:predicted-this.sim),phase:sampleEnemyAttack(a,this.sim,root).phase}));
+    if(!this.practice.indicators)return;
+    for(let i=0;i<threats.length;i++){
+      const {root,attack:a,predicted}=threats[i],hint=this.warnings[i];if(a.cancelled||a.emitted||this.sim>=a.activeUntil)continue;
+      const pose=sampleEnemyAttack(a,this.sim,root),perfect=hint.quality==="perfect",normal=hint.quality==="normal",alpha=(i===0?1:.35)*(hint.quality==="none"?.25:1);
+      const pause=Math.max(0,root.staggerUntil-this.sim),x=root.x,y=root.y-66,u=predicted===null?pose.warningProgress:Math.max(0,Math.min(1,1-(predicted-this.sim-pause)/(predicted-a.startedAt-pause))),r=10+(1-u)*20;
+      ink.lineStyle(1,0xc8d3b5,.4*alpha).strokeCircle(x,y,9);
+      ink.lineStyle(perfect?3:normal?2.5:1.2,perfect?0xfff4c7:normal?0xb9f7e5:0xdac49b,(perfect?.95:normal?.85:.45)*alpha).strokeCircle(x,y,r);
+      ink.lineStyle(1,0xfff4c7,.6*alpha);for(const sign of [-1,1])ink.lineBetween(x+sign*8,y-3,x+sign*8,y+3);
+      if(normal){ink.lineStyle(2,0xb9f7e5,.7*alpha).lineBetween(x-10,y+12,x+10,y+12);}
+      if(perfect){ink.lineStyle(1.5,0xffffff,alpha).strokeCircle(x,y,r+3);ink.fillStyle(0xfff5cc,.95*alpha).beginPath().moveTo(x,y-5).lineTo(x+5,y).lineTo(x,y+5).lineTo(x-5,y).closePath().fillPath();}
     }
   }
   drawObstacleDebug() {
@@ -955,7 +1127,7 @@ export class World extends Phaser.Scene {
       this.tweens.pauseAll();
       return;
     }
-    if (!this.active || this.ui.paused) {
+    if (!this.active || this.ui.paused || this.defenseSaving) {
       this.pointerAttack = false;
       this.combat.clearInputs();
       this.keys.drain();
@@ -977,14 +1149,15 @@ export class World extends Phaser.Scene {
     const contacts:EnemyContact[]=[];
     const navigationBudget={queries:NAV.queriesPerFrame};
     this.sim=this.timeline.frame(this.sim,performance.now(),delta,this.keys.drain(),this.combat,{
+      beforeInput:(now)=>this.resolveContacts(now,contacts,true),
       boundary:(now)=>Math.min(this.combat.nextBoundary(now),this.practice.boundary(now),
-        ...this.enemies.flatMap(e=>[e.attack?.lockAt??Infinity,e.attack?.contactAt??Infinity,e.attack?.recoveryUntil??Infinity,e.staggerUntil]).filter(t=>t>now+1e-7)),
+        ...this.enemies.flatMap(e=>[e.attack?.lockAt??Infinity,e.attack?.contactAt??Infinity,e.attack?.activeUntil??Infinity,e.attack?.recoveryUntil??Infinity,e.staggerUntil]).filter(t=>t>now+1e-7)),
       advance:(prev,now)=>this.advanceBattle(prev,now,contacts,navigationBudget),
       input:(events,now)=>{
         this.sim=now;
-        for(const event of events){this.battleAxis=event.axis;this.runIntent=!!event.running;}
+        for(const event of events){this.battleAxis=event.axis;this.runIntent=!!event.running;this.combat.setIntent(event.axis);this.inputHistory.push({at:now,wall:event.at,sequence:event.sequence,kind:event.kind,facing:this.combat.intentFacing,rejection:this.combat.lastRejection});}if(this.inputHistory.length>160)this.inputHistory.splice(0,this.inputHistory.length-160);
         const actions=events.filter((e):e is typeof e & {kind:"attack"|"parry"|"dash"}=>e.kind!=="axis");
-        this.combat.requestActions(actions,now,p,this.hero.direction);
+        this.combat.requestActions(actions,now,p,this.combat.intentFacing);
       },
       resolve:(now)=>this.resolveBattle(now,contacts,navigationBudget),
     });
@@ -992,6 +1165,7 @@ export class World extends Phaser.Scene {
     if(delta<200)this.fps.push(1000/delta);
     if(this.fps.length>1200)this.fps.shift();
     if(this.combat.hitStopRemaining>0)this.tweens.pauseAll();
+    this.swordWindView?.draw(this.sim);
     if (!this.combat.attack && !this.combat.parry && this.sim>=this.combat.dashUntil && length)
       this.hero.motion.direction=nextFacing;
     if(length&&!this.combat.attack&&!this.combat.parry&&this.sim>=this.combat.dashUntil)this.combat.leaveReady(this.sim);
@@ -1016,7 +1190,7 @@ export class World extends Phaser.Scene {
       this.combat.parry
         ? parryVisual(this.combat.parry,this.sim)
         : striking
-        ? {
+        ? striking.counter ? counterVisual(striking,this.sim) : {
             ...combatVisual(
               striking.stage,
               striking.facing,
@@ -1031,8 +1205,6 @@ export class World extends Phaser.Scene {
               attackConfig(striking),
             ),
           }
-        : this.combat.counter && this.combat.lastParry?.successAt !== undefined && this.sim < this.combat.readyUntil
-          ? parryVisual(this.combat.lastParry,this.sim,true)
         : this.sim < this.combat.readyUntil &&
             this.sim >= this.combat.dashUntil &&
             this.sim >= this.gatherUntil
@@ -1151,21 +1323,40 @@ export class World extends Phaser.Scene {
       if (o.art === "herb" || o.art === "bush")
         im.setRotation(Math.sin(this.sim / 1100 + o.x) * 0.018);
     }
-    for (const e of this.enemies) {
-      if(e.hp<=0||e.disabled)continue;
-      e.sprite.setFrame(e.windup>0?1:Math.floor(this.sim/240)%2);
-      const tint=enemyTint(this.sim,e.flashUntil,e.windup);
-      if(tint===null)e.sprite.clearTint();else e.sprite.setTint(tint);
-      const wind=e.attack&&!e.attack.cancelled&&this.sim<e.attack.contactAt;
-      const progress=wind?Math.max(0,Math.min(1,(this.sim-e.attack!.startedAt)/(e.attack!.contactAt-e.attack!.startedAt))):0;
-      e.sprite.setScale(75/128*(1+progress*0.08),75/128*(1-progress*0.1));
-      e.sprite.setPosition(e.x,e.y).setDepth(e.y);
-      e.shadow.setPosition(e.x,e.y-3).setDepth(e.y-0.5);
+    for(const ink of this.enemyBlades.values())ink.clear();
+    for(const e of this.enemies){if(e.hp<=0||e.disabled)continue;this.drawEnemyPose(e,e.attack,e.sprite);
+      if(this.sim<e.flashUntil)e.sprite.setTint(0xff8585);else e.sprite.clearTint();
+      e.shadow.setPosition(e.x,e.y-3).setDepth(e.y-.5);
     }
+    this.defenseView.update(this.defense,this.sim,(e,sprite)=>{
+      if(Math.hypot(e.x-p.x,e.y-p.y)<650)this.drawEnemyPose(e,e.attack,sprite);
+      else sprite.setFrame(e.attack?sampleEnemyAttack(e.attack,this.sim,e).frame:Math.floor(this.sim/240)%2)
+        .setDisplaySize(75,75).setPosition(e.x,e.y).setDepth(e.y);
+    });
+    for(const event of this.defense.notices.splice(0)) {
+      if(event.kind==="hit"&&event.x!==undefined&&Math.hypot(event.x-p.x,event.y!-p.y)<600)
+        this.float(event.x,event.y!,`-${event.damage}`);
+      if(event.kind==="death"&&this.state.defense.guards.some(g=>g.id===event.id))this.ui.message("守卫阵亡；不会因读档自动复活。");
+      if(event.kind==="death"){const enemy=this.enemies.find(e=>e.id===event.id);
+        if(enemy){enemy.sprite.setVisible(false);enemy.shadow.setVisible(false);
+          // 常驻野怪被卫队击倒只记录世界状态，不代领采集或主线奖励。
+          if(!this.state.killed.includes(enemy.id))this.state.killed.push(enemy.id);}}
+      if(event.kind==="warning")this.ui.message(`${event.id}外发现动静，卫队正在戒备。`);
+      if(event.kind==="started")this.ui.message(`${event.id}有小怪接近；卫队会自行拦截。`);
+      if(event.kind==="delayed")this.ui.message("来袭路径或生成点不合法，本轮已延后。");
+      if(event.kind==="ended")this.ui.message("村门来袭已结束，驻防变化正在保存。");
+    }
+    this.practiceSprite??=this.add.sprite(0,0,"slime",0).setOrigin(.5,1);
+    this.practiceSprite.setVisible(!!this.practice.projection);
+    if(this.practice.projection)this.drawEnemyPose(this.practice.projection,this.practice.attack,this.practiceSprite);
+    this.practiceLabel??=this.add.text(0,0,"练习投影",{fontSize:"10px",color:"#a1adaf"}).setOrigin(.5,1);
+    this.practiceLabel.setVisible(!!this.practice.projection);
+    if(this.practice.projection)this.practiceLabel.setPosition(this.practice.projection.x,this.practice.projection.y-82).setDepth(8996);
     this.drawParry();
     this.drawWarnings();
     this.drawObstacleDebug();
     if (p.hp <= 0) {
+      this.clearSwordWind();
       this.combat.reset(this.combat.dashCooldown);
       this.keys.clear();
       this.battleAxis={x:0,y:0};
@@ -1225,6 +1416,12 @@ export class World extends Phaser.Scene {
       Math.hypot(p.x - nearest.x, p.y - nearest.y) < TRAINING.near,
     );
     this.ui.practiceFeedback(this.practice.feedback,this.practice.mode);
+    const combat=this.combat,attack=combat.attack;
+    const windWindow=hasSwordWind(this.state)&&(attack?.stage===3&&this.sim>=attack.start+combat.total(3)-COMBAT.restartWindow||!attack&&combat.nextStage===4&&this.sim<=combat.chainUntil);
+    const status=windWindow?combat.pending?'已预约第四击·剑风':'J 接第四击·剑风':attack&&attack.stage<3 ? combat.pending?`已预约第${attack.stage+1}刀`:`J 接第${attack.stage+1}刀` : !attack&&this.sim<=combat.chainUntil&&combat.nextStage>1&&combat.nextStage<=combat.maxStage?`J 接第${combat.nextStage}刀`:combat.autoCounter?"成功 · 自动反斩；J 接第二刀":p.stamina<PARRY.cost?"K · 体力不足":combat.diagnostic(this.sim).status;
+    this.ui.parryStatus(status);
+    this.ui.swordWind(swordWindSource(this.state));
+
     const hour = (this.state.time / 60) % 24;
     this.night.setAlpha(hour > 18 || hour < 6 ? 0.22 : 0);
     this.hudTimer += dt;
@@ -1240,5 +1437,6 @@ export class World extends Phaser.Scene {
       this.ui.update(this.state, this.target ? `E · ${this.target.label}` : "");
       this.refresh();
     }
+    if(this.defense.critical)void this.checkpointDefense();
   }
 }

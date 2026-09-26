@@ -131,7 +131,7 @@ describe("围合、合法出口、区域与查询分层", () => {
       for (const p of d.posts)
         expect(motionBlocked(p.x, p.y), `${d.portalId} 岗位`).toBe(false);
       for (const dx of [-40, 0, 40]) for (const dy of [-40, 0])
-        expect(motionBlocked(d.tower.x + dx, d.tower.y + dy), `${d.portalId} 规划塔基地面`).toBe(false);
+        expect(motionBlocked(d.tower.x + dx, d.tower.y + dy, d.towerId), `${d.portalId} 塔基外无其他阻挡`).toBe(false);
       for (let i = 1; i < d.route.length; i++)
         expect(clearMotionLine(d.route[i - 1], d.route[i])).toBe(true);
       const a = d.route[0],
@@ -221,7 +221,7 @@ describe("版本迁移与正式敌人预算", () => {
       { enemyId: "leaf-1", item: "crystal", x: 2320, y: 1070 },
     ];
     const moved = validate(old);
-    expect(moved.map_version).toBe(3);
+    expect(moved.map_version).toBe(6);
     expect(moved.player.x).toBe(2900);
     expect(moved.pendingDrops[0].x).toBe(2920);
     expect(validate(moved)).toEqual(moved);
@@ -234,7 +234,7 @@ describe("版本迁移与正式敌人预算", () => {
     expect(next.quest).toBe(3);
     expect(next.bag).toEqual(v2.bag);
     expect(v2.map_version).toBe(2);
-    expect(() => validate({ ...next, map_version: 4 })).toThrow();
+    expect(() => validate({ ...next, map_version: 7 })).toThrow();
     expect(WORLD).toEqual({
       width: 4200,
       height: 2200,
@@ -271,8 +271,8 @@ describe("版本迁移与正式敌人预算", () => {
     expect(
       updateEnemy(protectedBody, { x: 900, y: 1750 }, 1000, 20),
     ).toBeNull();
-    expect(protectedBody.windup).toBe(0);
-    expect(protectedBody.rejection).toBe("家园追击边界");
+    expect(protectedBody.windup).toBeGreaterThan(0);
+    expect(protectedBody.rejection).toBeUndefined();
     const body = enemy();
     body.x = 2050;
     body.y = 1400;

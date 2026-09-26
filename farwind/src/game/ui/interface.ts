@@ -1,3 +1,6 @@
+import { showShop } from "./shop";
+import { equipment, isEquipment, type ShopId } from "../../data/economy";
+import type { EconomyRequest } from "../systems/economy";
 import {
   WORLD,
   BRIDGES,
@@ -9,7 +12,7 @@ import {
   routeSeconds,
 } from "../../data/world";
 import { TRAINING, type TrainingDummy } from "../systems/training";
-import { items, objectives, type ItemId } from "../../data/content";
+import { items, itemIcon, objectives, type ItemId } from "../../data/content";
 import {
   MAP_REGIONS,
   VILLAGE_WALLS,
@@ -21,6 +24,7 @@ import { region } from "../../data/world";
 import type { PracticeMode } from "../systems/parryTraining";
 import { dialoguePortraitFor } from "../../data/dialoguePortraits";
 export type Actions = {
+  trade: (request: EconomyRequest) => Promise<void>;
   start: (continued: boolean) => void;
   save: () => Promise<void>;
   import: (s: State) => Promise<void>;
@@ -30,10 +34,13 @@ export type Actions = {
   getVolume: () => number;
   title: () => void;
   practice: (mode: PracticeMode) => void;
+  indicators: (value:boolean)=>void;
+  getIndicators: ()=>boolean;
 };
 export class Interface {
   root = document.querySelector<HTMLDivElement>("#ui")!;
   mode = "title";
+  economyBusy = false;
   available = false;
   selected: ItemId | null = null;
   hudPreferences = this.readPreferences();
@@ -51,7 +58,7 @@ export class Interface {
   constructor() {
     this.root.innerHTML = `<div id="hud" hidden>
       <div class="top"><div class="vitals-stack"><section class="vitals"><img class="portrait" src="/assets/portrait.png" alt="旅行者"><div><b>旅人 <small>与小黑同行</small></b><div class="meter health"><i></i><span></span></div><div class="meter stamina"><i></i><span></span></div></div></section>
-      <span id="combat-status">L 风步 · 就绪</span>
+      <span id="combat-status">L 风步 · 就绪</span><span id="parry-status" role="status">K 架剑就绪</span><small id="sword-wind-status" hidden></small>
       <section id="training-panel" hidden><b>木桩练习</b><small>J / 左键：攻击；连按接三连；L：风步</small><span id="training-stats"></span><button data-practice-menu="true">迎风架剑练习</button><span id="parry-feedback" hidden></span></section></div>
       <div class="hud-info"><section class="location"><button id="minimap-toggle" class="hud-summary" aria-expanded="false" aria-controls="minimap-details" aria-label="展开小地图"><b id="region">风铃村</b><span>·</span><span id="clock"></span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2Zm6-2v16m6-14v16"/></svg><span class="chevron" aria-hidden="true">▾</span></button><div id="minimap-details" class="hud-details map-details" hidden><small id="day"></small><canvas id="minimap" width="192" height="101" aria-label="位置小地图"></canvas><button class="text-button" data-panel="map">M 完整地图</button></div></section>
       <section class="quest-tracker"><button id="quest-toggle" class="hud-summary" aria-expanded="false" aria-controls="quest-details"><span id="objective-summary" class="ellipsis"></span><span class="chevron" aria-hidden="true">▾</span></button><div id="quest-details" class="hud-details quest-details" hidden><small>主线 · 失落的风</small><p id="objective"></p><button class="text-button" data-panel="quest">Q 旅途手记</button></div></section></div></div>
@@ -238,6 +245,7 @@ export class Interface {
       return true;
     return false;
   }
+  parryStatus(text:string) {this.root.querySelector("#parry-status")!.textContent=text;}
   practiceFeedback(feedback: string, mode: PracticeMode) {
     const text = this.root.querySelector<HTMLElement>("#parry-feedback");
     if (text) {
@@ -250,7 +258,7 @@ export class Interface {
     panel.hidden = !near && !s.visible;
     const stats = this.root.querySelector<HTMLElement>("#training-stats")!;
     stats.textContent = s.visible
-      ? `第${s.lastStage}段 · ${s.lastDamage}伤害；本组命中${s.stages.length}/3；累计${s.damage}${s.complete ? " · 三连完成" : ""}`
+      ? `${s.lastStage?`第${s.lastStage}段 · ${s.lastDamage}伤害；本组命中${s.stages.length}/3；累计${s.damage}${s.complete ? " · 三连完成" : ""}`:''}${s.swordWind?` · 剑风 ${s.swordWind.damage}伤害 · 首靶 ${s.swordWind.firstTarget}`:''}`
       : "";
     stats.style.opacity = String(
       Math.max(0, Math.min(1, (TRAINING.linger - s.age) / TRAINING.fade)),
@@ -259,6 +267,7 @@ export class Interface {
   get paused() {
     return this.mode !== "";
   }
+  swordWind(source:string){const badge=this.root.querySelector<HTMLElement>('#sword-wind-status')!;badge.hidden=source==='未学习';badge.textContent=`剑风：${source}`;}
   message(s: string) {
     this.toastEl.textContent = s;
     this.toastEl.classList.add("show");
@@ -309,6 +318,7 @@ export class Interface {
       ?.focus({ preventScroll: true });
   }
   close(toGame = false) {
+    if (this.economyBusy) return;
     if (!toGame && this.returnTo === "pause" && this.mode !== "pause") {
       this.open("pause");
       this.focusPanel(this.pauseFocus);
@@ -333,7 +343,11 @@ export class Interface {
       this.returnFocus.focus({ preventScroll: true });
     this.returnFocus = null;
   }
+  shop(id: ShopId) {
+    showShop(this, id);
+  }
   open(mode: string) {
+    if (this.economyBusy) return;
     if (!this.state && mode !== "settings") return;
     if (this.mode !== mode) {
       if (this.mode === "pause" && mode !== "pause") {
@@ -353,8 +367,9 @@ export class Interface {
     if (mode === "practice") {
       this.shell(
         "迎风架剑练习",
-        `<p>K／画布右键架剑；接触成功后主动 J／左键反击，可继续二、三刀。来招风纹持续收拢，锁向后绕背可令其挥空。练习不扣生命、不掉落、不推进任务。</p><div class="practice-options"><button data-practice="slow">慢速教学 · 900毫秒</button><button data-practice="slime">史莱姆节奏 · 450毫秒</button><button data-practice="leaf">叶灵节奏 · 650毫秒</button><button data-practice="chain">轻击收手 → 弹反 → 三连</button><button data-practice="off">结束弹反练习</button></div><button id="close">返回木桩练习</button>`,
+        `<p>K／画布右键架剑；成功自动反斩，J／左键接第二刀，再按接第三刀。收拢外圈进入宽容区可普通弹反，中心菱形与双线表示精准时机。投影与正式怪物共用攻击动作，锁向后不追踪绕背。练习不扣生命、不掉落、不推进任务。</p><label class="practice-toggle"><input id="parry-indicators" type="checkbox" ${this.actions.getIndicators()?"checked":""}>显示来招指示器（关闭后只看怪物动作）</label><div class="practice-options"><button data-practice="slow">慢速教学 · 900毫秒</button><button data-practice="slime">史莱姆节奏 · 450毫秒</button><button data-practice="leaf">叶灵节奏 · 650毫秒</button><button data-practice="chain">轻击收手 → 弹反 → 自动反斩 → 连击</button><button data-practice="off">结束弹反练习</button></div><button id="close">返回木桩练习</button>`,
       );
+      this.modal.querySelector<HTMLInputElement>("#parry-indicators")!.onchange=e=>this.actions.indicators((e.target as HTMLInputElement).checked);
       this.modal.querySelectorAll<HTMLButtonElement>("[data-practice]").forEach(
         (b) =>
           (b.onclick = () => {
@@ -366,7 +381,7 @@ export class Interface {
     if (mode === "bag" && s) {
       this.shell(
         "旅人的行囊",
-        `<p class="muted">24 格 · 每格最多 20 件 · 选择物品查看说明并绑定快捷栏</p><div class="bag">${s.bag.map((a, i) => `<button class="slot" data-slot="${i}">${a ? `<img class="item-icon" src="/assets/icon-${a.id}.png" alt="">${items[a.id].name}<strong>×${a.count}</strong>` : "·"}</button>`).join("")}</div><p id="item-info">恢复药剂：药草 ×2 + 浆果 ×1，恢复 50 生命。</p><div class="row"><button id="craft">制作恢复药剂</button><button id="consume">使用选中物品</button><button id="discard">丢弃一件</button><select id="bind" aria-label="快捷栏位置">${Array.from({ length: 8 }, (_, i) => `<option value="${i}">快捷栏 ${i + 1}</option>`).join("")}</select><button id="bind-button">绑定</button></div><button id="close">收好行囊</button>`,
+        `<p class="muted">铜币 ${s.coins} · 24 格 · 材料20件/格，装备1件/格 · 选择物品后使用或穿戴</p><div class="bag">${s.bag.map((a, i) => `<button class="slot" data-slot="${i}">${a ? `${itemIcon(a.id) ? `<img class="item-icon" src="${itemIcon(a.id)}" alt="">` : ""}${items[a.id].name}<strong>×${a.count}</strong>` : "·"}</button>`).join("")}</div><p id="item-info">恢复药剂：药草 ×2 + 浆果 ×1，恢复 50 生命。</p><div class="row"><button id="craft">制作恢复药剂</button><button id="consume">使用选中物品</button><button id="equip">穿戴选中装备</button><button id="discard">丢弃一件</button><select id="bind" aria-label="快捷栏位置">${Array.from({ length: 8 }, (_, i) => `<option value="${i}">快捷栏 ${i + 1}</option>`).join("")}</select><button id="bind-button">绑定</button></div><p>武器：${s.equipment.weapon ? items[s.equipment.weapon].name : "原有佩剑"} · 护甲：${s.equipment.armor ? items[s.equipment.armor].name : "原有衣物"}</p><div class="row"><button id="unequip-weapon" ${!s.equipment.weapon ? "disabled" : ""}>卸下武器</button><button id="unequip-armor" ${!s.equipment.armor ? "disabled" : ""}>卸下护甲</button></div><button id="close">收好行囊</button>`,
       );
       this.modal.querySelectorAll<HTMLButtonElement>("[data-slot]").forEach(
         (b) =>
@@ -381,6 +396,41 @@ export class Interface {
             b.classList.add("selected");
           }),
       );
+      const changeEquipment = async (
+        slot: "weapon" | "armor",
+        item: ItemId | null,
+      ) => {
+        if (this.economyBusy) return;
+        this.economyBusy = true;
+        this.modal
+          .querySelectorAll<HTMLButtonElement | HTMLSelectElement>(
+            "button,select",
+          )
+          .forEach((b) => (b.disabled = true));
+        try {
+          await this.actions.trade({
+            sequence: s.economyRevision + 1,
+            kind: "equip",
+            slot,
+            item,
+          });
+          this.message("装备已更新并保存");
+        } catch (e) {
+          this.message(`装备未更改：${(e as Error).message}`);
+        } finally {
+          this.economyBusy = false;
+        }
+        this.open("bag");
+      };
+      this.button("equip", () => {
+        if (!this.selected || !isEquipment(this.selected)) {
+          this.message("请先选择武器或护甲。");
+          return;
+        }
+        void changeEquipment(equipment[this.selected].slot, this.selected);
+      });
+      this.button("unequip-weapon", () => void changeEquipment("weapon", null));
+      this.button("unequip-armor", () => void changeEquipment("armor", null));
       this.button("craft", () => {
         if (craft(s)) {
           this.message("制作成功：恢复药剂 ×1");
@@ -451,7 +501,7 @@ export class Interface {
     if (mode === "help")
       this.shell(
         "操作说明",
-        `<dl class="controls-guide"><dt>移动</dt><dd>WASD / 方向键</dd><dt>奔跑</dt><dd>按住空格并移动，消耗体力</dd><dt>交互 / 继续对话</dt><dd>E</dd><dt>攻击 / 三连斩</dt><dd>J / 游戏画布左键；连按衔接</dd><dt>迎风架剑 / 弹反</dt><dd>K / 游戏画布右键</dd><dt>风步</dt><dd>L</dd><dt>使用快捷道具</dt><dd>1–8 / 点击对应格子</dd><dt>行囊 / 完整地图 / 手记</dt><dd>Tab / M / Q（游戏中）</dd><dt>暂停 / 返回</dt><dd>Esc；子页面先返回菜单</dd><dt>菜单焦点与操作</dt><dd>Tab / Shift + Tab 切换；Enter / 空格确认</dd></dl><button id="close">返回暂停菜单</button>`,
+        `<dl class="controls-guide"><dt>移动</dt><dd>WASD / 方向键</dd><dt>奔跑</dt><dd>按住空格并移动，消耗体力</dd><dt>交互 / 继续对话</dt><dd>E</dd><dt>攻击 / 三连斩</dt><dd>J / 游戏画布左键；连按衔接</dd><dt>迎风架剑 / 弹反</dt><dd>K / 游戏画布右键；成功自动反斩，J 接第二、第三刀</dd><dt>风步</dt><dd>L</dd><dt>使用快捷道具</dt><dd>1–8 / 点击对应格子</dd><dt>行囊 / 完整地图 / 手记</dt><dd>Tab / M / Q（游戏中）</dd><dt>暂停 / 返回</dt><dd>Esc；子页面先返回菜单</dd><dt>菜单焦点与操作</dt><dd>Tab / Shift + Tab 切换；Enter / 空格确认</dd></dl><button id="close">返回暂停菜单</button>`,
       );
     if (mode === "settings") {
       this.shell(
@@ -470,6 +520,12 @@ export class Interface {
     }
     this.button("close", () => this.close());
     this.focusPanel();
+  }
+  offerShop(id: ShopId) {
+    const button = document.createElement("button");
+    button.textContent = "查看药师服务";
+    button.onclick = () => this.shop(id);
+    this.modal.querySelector(".dialog-copy")?.append(button);
   }
   dialog(name: string, text: string, source: string = "sign") {
     this.returnTo = "";
@@ -599,11 +655,15 @@ export class Interface {
       button.classList.toggle("occupied", !!item);
       if (item) {
         button.dataset.use = item;
-        const src = `/assets/icon-${item}.png`;
-        if (icon.getAttribute("src") !== src) icon.src = src;
+        const src = itemIcon(item);
+        if (src && icon.getAttribute("src") !== src) icon.src = src;
       } else delete button.dataset.use;
-      icon.hidden = !item;
-      button.querySelector<HTMLElement>("span")!.hidden = !!item;
+      icon.hidden = !item || !itemIcon(item);
+      button.querySelector<HTMLElement>("span")!.hidden =
+        !!item && !!itemIcon(item);
+      if (item && !itemIcon(item))
+        button.querySelector<HTMLElement>("span")!.textContent =
+          items[item].name;
       button.querySelector("strong")!.textContent = String(amount);
       if (document.activeElement === button || button.matches(":hover"))
         this.root.querySelector("#hotbar-info")!.textContent = name;
