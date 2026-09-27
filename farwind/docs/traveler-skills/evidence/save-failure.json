@@ -1,0 +1,35 @@
+{
+  "说明": "通过一次真实IndexedDB事务中断测试。重试只重新提交刚才命中的证据，没有重复解谜或直接赋予技能。",
+  "失败": {
+    "swordWindStage": 0,
+    "legacySwordWind": false,
+    "completedLessons": [],
+    "discoveredLessons": [
+      "windLessonResolved"
+    ],
+    "devices": {
+      "serialValve": 0,
+      "leakClosed": false,
+      "splitLeft": 0,
+      "splitRight": 0
+    }
+  },
+  "重试后": {
+    "swordWindStage": 1,
+    "legacySwordWind": false,
+    "completedLessons": [
+      "windLessonResolved"
+    ],
+    "discoveredLessons": [
+      "windLessonResolved",
+      "serialWindCircuitRestored"
+    ],
+    "devices": {
+      "serialValve": 0,
+      "leakClosed": false,
+      "splitLeft": 0,
+      "splitRight": 0
+    }
+  },
+  "页面异常": []
+}

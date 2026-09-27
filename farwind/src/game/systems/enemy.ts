@@ -1,6 +1,7 @@
 import {inProtected} from "../../data/defenseZones";
 import { enemyDefs } from "../../data/world";
 import { createEnemyAttack, advanceEnemyAttack, ENEMY_ATTACK, delayEnemyAttack, sampleEnemyAttack, type EnemyAttack, type EnemyContact } from "./enemyAttack";
+import { enemyKind, enemyProfile } from '../../data/enemies';
 import {
   clearMotionLine,
   clearMeleeLine,
@@ -172,6 +173,7 @@ export type EnemyBody = Point & {
   targetId?: string | null;
   playerAggroUntil?: number;
   parried?: {at:number;until:number;direction:Point;perfect:boolean};
+  wallHit?: {at:number;until:number};
   nav: {
     path: Point[];
     target?: Point;
@@ -196,7 +198,9 @@ export const enemyNavigation = (): EnemyBody["nav"] => ({
   visited: 0,
 });
 export function enemyAttackSpace(e:Pick<EnemyBody,"homeX"|"homeY">) {
-  return {blocked:(x:number,y:number)=>motionBlocked(x,y)||distance({x,y},{x:e.homeX,y:e.homeY})>420,clear:clearMotionLine,melee:clearMeleeLine};
+  return {blocked:(x:number,y:number)=>motionBlocked(x,y)||distance({x,y},{x:e.homeX,y:e.homeY})>420,clear:clearMotionLine,melee:clearMeleeLine,
+    // 家园边界只停止追击；只有真正的地形或障碍接触才播放撞墙失衡。
+    wall:(a:Point,b:Point)=>motionBlocked(b.x,b.y)||!clearMotionLine(a,b)};
 }
 export const enemyAttackPermitted=(e:Pick<EnemyBody,"homeX"|"homeY">,player:Point)=>distance(player,{x:e.homeX,y:e.homeY})<=520;
 export function staggerEnemy(e:Pick<EnemyBody,"staggerUntil"|"staggerSince">,now:number,duration:number) {
@@ -238,7 +242,7 @@ export function updateEnemy(
   const safe = enemyAttackPermitted(e,player);
   e.rejection = !safe
     ? "家园追击边界"
-    : d >= 80
+    : d >= enemyProfile(e.type).reach
       ? "距离"
       : meleeBlocker(e, player);
   if(e.attack&&!e.attack.cancelled) {
@@ -257,14 +261,16 @@ export function updateEnemy(
     const contact=advanceEnemyAttack(attack,e,player,now,enemyAttackSpace(e));
     e.windup=attack.cancelled?0:Math.max(0,attack.contactAt-now);
     e.ai=attack.cancelled?"攻击取消":({charge:"蓄力",commit:"锁向承诺",active:"真正出手",recovery:"收招"}[sampleEnemyAttack(attack,now,e).phase]);
-    if(contact)e.cool=contact.at+(e.type==="leaf"?ENEMY_ATTACK.leaf.cooldown:ENEMY_ATTACK.slime.cooldown);
+    if(contact)e.cool=contact.at+ENEMY_ATTACK[enemyKind(e.type)].cooldown;
+    if(attack.wallAt!==undefined){e.wallHit={at:attack.wallAt,until:attack.wallAt+850};staggerEnemy(e,attack.wallAt,850);e.cool=attack.wallAt+1400;e.ai='撞墙失衡';}
     if(now>=attack.recoveryUntil||attack.cancelled)e.attack=null;
     return contact;
   }
-  if (d < 80 && now > e.cool && safe && clearMeleeLine(e, player)) {
+  const profile=enemyProfile(e.type);
+  if (d < profile.reach && now > e.cool && safe && clearMeleeLine(e, player)) {
     e.targetId="player";
     e.attack=createEnemyAttack(e.id,e.attackSerial=(e.attackSerial??0)+1,e.type,now,e,player);
-    e.cool=e.attack.contactAt+(e.type==="leaf"?ENEMY_ATTACK.leaf.cooldown:ENEMY_ATTACK.slime.cooldown);
+    e.cool=e.attack.contactAt+ENEMY_ATTACK[enemyKind(e.type)].cooldown;
     e.windup = e.attack.contactAt-now;
     e.ai = "前摇";
     e.nav.path = [];
@@ -276,11 +282,18 @@ export function updateEnemy(
   if (!canChase && distance(e, home) > 8) e.nav.returning = true;
   if (e.nav.returning && distance(e, home) <= 8) e.nav.returning = false;
   const chase = canChase && !e.nav.returning;
-  const target = chase ? player : home,
+  let target = chase ? player : home;
+  // 镰灵远处侧向接近；近身仍走向真实目标，不改攻击方向与碰撞。
+  if(chase&&e.type==='leaf'&&d>145){const sign=e.id.endsWith('2')?-1:1,dx=(e.x-player.x)/d,dy=(e.y-player.y)/d;
+    const flank={x:player.x-dy*75*sign,y:player.y+dx*75*sign};if(!motionBlocked(flank.x,flank.y)&&distance(flank,home)<420)target=flank;}
+  // 孢卫进入中距离后等待喷射冷却，玩家过近时只在合法空间后撤。
+  if(chase&&e.type==='spore'&&d<155){const retreat={x:e.x+(e.x-player.x)/(d||1)*65,y:e.y+(e.y-player.y)/(d||1)*65};
+    if(distance(retreat,home)<420&&!motionBlocked(retreat.x,retreat.y)&&clearMotionLine(e,retreat))target=retreat;}
+  const
     mode = chase ? "chase" : "return";
   const reached = (p: Point) =>
     chase
-      ? distance(p, player) < 70 && clearMeleeLine(p, player)
+      ? (e.type==='spore'?distance(p,player)>=155&&distance(p,player)<270:distance(p, player) < Math.max(70,profile.reach-10)) && clearMeleeLine(p, player)
       : distance(p, home) <= 8;
   if (reached(e)) {
     e.ai = chase ? "等待冷却" : "家园";
@@ -331,7 +344,7 @@ export function updateEnemy(
     return null;
   }
   const length = distance(e, waypoint),
-    step = Math.min(length, (e.type === "leaf" ? 95 : 60) * dt);
+    step = Math.min(length, profile.speed * dt);
   const next = {
     x: e.x + ((waypoint.x - e.x) / length) * step,
     y: e.y + ((waypoint.y - e.y) / length) * step,

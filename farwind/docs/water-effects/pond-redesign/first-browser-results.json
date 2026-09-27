@@ -1,0 +1,287 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "--config",
+      ".water-local/pond-redesign.config.ts",
+      "tests/water-effects.spec.ts"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "water-effects.spec.ts"
+        ],
+        "timeout": 240000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/water-effects/pond-redesign/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "water-effects.spec.ts",
+      "file": "water-effects.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "water-motion-local",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 9481,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m0.003\u001b[39m\nReceived:   \u001b[31m0.0038974358974358976\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m0.003\u001b[39m\nReceived:   \u001b[31m0.0038974358974358976\u001b[39m\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts:35:89",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                      "column": 89,
+                      "line": 35
+                    },
+                    "snippet": "  33 |   // 少量像素变化不足以证明默认视口可读；水面变化强度也必须达到最低门槛。\n  34 |   expect(results.喷泉流水.平均通道差).toBeGreaterThan(0.75);\n> 35 |   for(const r of [results.前池沿,results.空桥面,results.池外草地,results.固定岸内水带])expect(r.变化像素比例).toBeLessThan(0.003);\n     |                                                                                         ^\n  36 |   expect((await readWater(page)).stone).toEqual(state.stone);\n  37 |   expect(errors).toEqual([]); await writeFile(`${directory}/local-motion.json`,JSON.stringify({说明:\"固定相机，临时隐藏HUD及既有昼夜覆盖；只比较指定水面与静态控制区域，未以全图差异代替动画检查。\",结果:results},null,2));\n  38 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                        "column": 89,
+                        "line": 35
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m0.003\u001b[39m\nReceived:   \u001b[31m0.0038974358974358976\u001b[39m\n\n  33 |   // 少量像素变化不足以证明默认视口可读；水面变化强度也必须达到最低门槛。\n  34 |   expect(results.喷泉流水.平均通道差).toBeGreaterThan(0.75);\n> 35 |   for(const r of [results.前池沿,results.空桥面,results.池外草地,results.固定岸内水带])expect(r.变化像素比例).toBeLessThan(0.003);\n     |                                                                                         ^\n  36 |   expect((await readWater(page)).stone).toEqual(state.stone);\n  37 |   expect(errors).toEqual([]); await writeFile(`${directory}/local-motion.json`,JSON.stringify({说明:\"固定相机，临时隐藏HUD及既有昼夜覆盖；只比较指定水面与静态控制区域，未以全图差异代替动画检查。\",结果:results},null,2));\n  38 | });\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts:35:89"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T10:55:23.915Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-motion-local/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-motion-local/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-motion-local/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-motion-local/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                    "column": 89,
+                    "line": 35
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-68e9e06de44fde4efebc",
+          "file": "water-effects.spec.ts",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "title": "water-lifecycle",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9141,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T10:55:35.996Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-lifecycle/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-1645f9b13a73179ce238",
+          "file": "water-effects.spec.ts",
+          "line": 40,
+          "column": 1
+        },
+        {
+          "title": "water-navigation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 43249,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T10:55:45.390Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-navigation/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-49134a7c3e0143dccac5",
+          "file": "water-effects.spec.ts",
+          "line": 70,
+          "column": 1
+        },
+        {
+          "title": "water-hitstop-culling",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6259,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T10:56:28.649Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-hitstop-culling/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-6ca2e5c5a6c6de8fdbc5",
+          "file": "water-effects.spec.ts",
+          "line": 84,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-27T10:55:23.590Z",
+    "duration": 71534.02200000001,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

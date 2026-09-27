@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>敌人被弹反连续帧审阅</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eee8d8;color:#243e35;font:16px/1.65 system-ui,sans-serif}
+main{max-width:1480px;margin:auto;padding:24px}h1{font-size:29px;margin:0}p{margin:12px 0}
+a{color:#166b68}label,button,select{font:inherit}button,select{padding:7px 14px;border:1px solid #829581;border-radius:7px;background:#fffaf0;color:#243e35}
+.controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:18px 0}.controls label{display:inline-flex;align-items:center;gap:8px}
+input[type=range]{width:220px;max-width:100%}.status{padding:10px 14px;background:#ddd9c7;border-radius:8px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:18px 0}
+.card{min-width:0;background:#f8f2e5;border:1px solid #bac1a9;border-radius:10px;padding:12px}
+.card h2{font-size:20px;margin:0}.card canvas{max-width:100%;height:auto;display:block;margin:auto}.links{display:flex;gap:10px;flex-wrap:wrap;font-size:14px}
+.scene{overflow:auto}.scene canvas{display:block;width:1280px;height:720px;border:1px solid #7b927c}
+small{color:#52654e}.board-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+</style>
+<main>
+<h1>敌人被弹反 · 连续帧审阅</h1>
+<p>五种敌人 × 朝下、朝上、朝右 × 每组十二帧，共一百八十张透明单帧。状态：<strong>pending-review（待用户审阅）</strong>。左向仅镜像朝右。所有姿态由图像工具绘制；此页只播放和排版。</p>
+<p><a href="../index.html">返回怪物设计总索引</a> · <a href="README.md">交付说明</a> · <a href="animation-config.json">时序与锚点</a> · <a href="review/generation-prompts.json">实际生成输入</a> · <a href="review/frame-manifest.json">单帧清单</a></p>
+<div class="controls">
+<label>朝向<select id="direction"><option value="down">朝下</option><option value="up">朝上</option><option value="right" selected>朝右</option><option value="left">朝左（镜像）</option></select></label>
+<label>弹反<select id="mode"><option value="normal">普通 · 六百毫秒</option><option value="perfect">精准 · 八百毫秒</option></select></label>
+<label>速度<select id="speed"><option value="1">原速</option><option value=".5" selected>半速审阅</option><option value=".25">四分之一速</option></select></label>
+<button id="play">暂停</button><button id="reset">从头播放</button>
+<label>逐帧<input id="scrub" type="range" min="0" max="11" value="0"></label>
+</div>
+<div class="status" id="status">正在载入透明帧……</div>
+<div class="cards" id="cards"></div>
+<p>上排卡片显示放大角色和游戏建议尺寸。候选锚点固定在画布足底包围盒中心，正式接入前仍需校准承重足；世界击退尚未模拟。片段结束后额外待机九百毫秒，供循环审阅，不计入硬直。孢子弹远处打散与本体近身失衡为独立反馈，尚未新增触发规则。</p>
+<div class="controls"><label>场景背景<select id="scene-mode"><option value="forest-day">森林白天</option><option value="village-night">村庄夜间</option></select></label><strong>真实场景背景上的设计合成；尚未游戏接入</strong></div>
+<p>下面画布固定为 1280 × 720 像素，保持建议的一倍显示尺寸。窄窗口可横向滚动，避免缩小实际尺寸。</p>
+<div class="scene"><canvas id="scene" width="1280" height="720"></canvas></div>
+<h2>逐方向设计板与可分享的播放预览</h2>
+<div class="board-list" id="boards"></div>
+<p>参考提交：70e11595e1d2cdf0472c3c40b80270cf73eaa7a5。造型、动作、停滞力度和建议尺寸均待确认；本页没有替换生产素材、改动正式战斗参数或连接游戏状态。</p>
+</main>
+<script>
+(async()=>{
+const cfg=await fetch('animation-config.json').then(r=>r.json());
+const metrics=await fetch('review/display-metrics.json').then(r=>r.json());
+const manifest=await fetch('review/frame-manifest.json',{cache:'no-store'}).then(r=>r.json());
+const versions=new Map(manifest['帧'].map(x=>[x['文件'],x['摘要']]));
+const $=id=>document.getElementById(id);
+let frame=0,playing=true,clock=0,last=performance.now(),ready=false,generation=0;
+const images=new Map(),canvases=[],backgrounds=new Map();
+const srcDir=()=>$('direction').value==='left'?'right':$('direction').value;
+const durations=()=>cfg[$('mode').value==='perfect'?'精准逐帧毫秒':'正常逐帧毫秒'];
+function loadImage(path){if(images.has(path))return images.get(path);const p=new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=()=>reject(new Error('图片未能载入：'+path));i.src=path;});images.set(path,p);return p;}
+for(const obj of cfg['怪物']){
+ const box=document.createElement('section');box.className='card';
+ const h=document.createElement('h2');h.textContent=obj['中文名'];box.append(h);
+ const c=document.createElement('canvas');c.width=300;c.height=520;box.append(c);canvases.push(c);
+ const small=document.createElement('small');small.textContent='放大姿态；下排建议可见高 '+obj['建议可见高度']+' 像素';box.append(small);$('cards').append(box);
+ const list=document.createElement('section');const heading=document.createElement('strong');heading.textContent=obj['中文名'];list.append(heading);
+ for(const [dir,cn] of [['down','朝下'],['up','朝上'],['right','朝右']]){
+  const links=document.createElement('div');links.className='links';
+  for(const [label,url] of [[cn+'标注板','boards/'+obj['文件前缀']+'-'+dir+'-frames.png'],['干净板','boards/'+obj['文件前缀']+'-'+dir+'-clean.png'],['播放样片','previews/'+obj['文件前缀']+'-'+dir+'-normal.gif']]){
+   const a=document.createElement('a');a.textContent=label;a.href=url;links.append(a);
+  }list.append(links);
+ }$('boards').append(list);
+}
+for(const name of ['forest-day','village-night'])backgrounds.set(name,await loadImage('../references/'+name+'.webp'));
+let loaded=[];
+async function selectDirection(){
+ ready=false;clock=0;frame=0;const version=++generation;const d=srcDir();
+ const groups=await Promise.all(cfg['怪物'].map(obj=>Promise.all(Array.from({length:12},(_,k)=>{const path='frames/'+obj['文件前缀']+'/'+d+'/frame-'+String(k+1).padStart(2,'0')+'.png';return loadImage(path+'?v='+versions.get(path));}))));
+ if(version!==generation)return;loaded=groups;ready=true;render();
+}
+function paste(ctx,img,x,foot,s){
+ ctx.save();ctx.translate(x,foot);if($('direction').value==='left')ctx.scale(-1,1);
+ ctx.drawImage(img,-256*s,-440*s,512*s,512*s);ctx.restore();
+}
+function render(){
+ if(!ready)return;const d=srcDir();$('scrub').value=frame;
+ const times=durations(),start=times.slice(0,frame).reduce((a,b)=>a+b,0);
+ $('status').textContent=String(frame+1).padStart(2,'0')+'／12 · '+cfg['阶段'][frame]+' · '+start+'–'+(start+times[frame])+' 毫秒 · 单帧持续 '+times[frame]+' 毫秒 · 待用户审阅';
+ const scene=$('scene').getContext('2d');scene.clearRect(0,0,1280,720);scene.drawImage(backgrounds.get($('scene-mode').value),0,0,1280,720);
+ scene.fillStyle='rgba(25,47,39,.84)';scene.fillRect(20,18,650,68);scene.fillStyle='#fff4c9';scene.font='22px system-ui';scene.fillText('被弹反动画 · 设计合成 · 尚未游戏实现',36,48);scene.font='16px system-ui';scene.fillText('十二帧连续样片 · 世界击退与碰撞未模拟 · 待用户审阅',36,73);
+ const roots=$('scene-mode').value==='village-night'?[[460,545],[595,590],[745,550],[950,570],[1110,585]]:[[280,550],[500,548],[720,538],[930,570],[1110,580]];
+ cfg['怪物'].forEach((obj,i)=>{
+  const standard=metrics.find(x=>x['角色']===obj['文件前缀']&&x['方向']===d)['末帧可见高度'];
+  const ctx=canvases[i].getContext('2d');ctx.clearRect(0,0,300,520);ctx.fillStyle='#f8f2e5';ctx.fillRect(0,0,300,520);
+  paste(ctx,loaded[i][frame],150,275,.75);
+  ctx.strokeStyle='#b0b89e';ctx.beginPath();ctx.moveTo(16,276);ctx.lineTo(284,276);ctx.stroke();
+  // 补偿卡片画布的响应式缩小，使下排仍保持建议的一倍尺寸。
+  paste(ctx,loaded[i][frame],150,490,obj['建议可见高度']/standard*300/Math.max(1,canvases[i].clientWidth));
+  paste(scene,loaded[i][frame],roots[i][0],roots[i][1],obj['建议可见高度']/standard);
+  scene.fillStyle='rgba(22,42,36,.88)';scene.fillRect(roots[i][0]-60,roots[i][1]+10,120,26);
+  scene.fillStyle='#fff4c9';scene.font='15px system-ui';scene.textAlign='center';scene.fillText(obj['中文名'],roots[i][0],roots[i][1]+29);scene.textAlign='left';
+ });
+}
+$('play').onclick=()=>{playing=!playing;$('play').textContent=playing?'暂停':'播放';};
+$('reset').onclick=()=>{clock=0;frame=0;render();};
+$('scrub').oninput=()=>{playing=false;$('play').textContent='播放';frame=Number($('scrub').value);clock=durations().slice(0,frame).reduce((a,b)=>a+b,0);render();};
+$('direction').onchange=()=>selectDirection().catch(e=>$('status').textContent=e.message);
+$('mode').onchange=()=>{clock=0;frame=0;render();};
+$('scene-mode').onchange=render;
+window.addEventListener('resize',render);
+function tick(now){
+ const dt=Math.min(now-last,100);last=now;
+ if(ready&&playing){const times=durations(),sum=times.reduce((a,b)=>a+b,0);clock=(clock+dt*Number($('speed').value))%(sum+900);let t=0,next=11;
+ for(let k=0;k<12;k++){t+=times[k];if(clock<t){next=k;break;}}
+ if(next!==frame){frame=next;render();}}
+ requestAnimationFrame(tick);
+}
+await selectDirection();requestAnimationFrame(tick);
+})().catch(e=>document.getElementById('status').textContent='预览载入失败：'+e.message);
+</script></html>

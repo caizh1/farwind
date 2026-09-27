@@ -185,7 +185,7 @@ test("隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练�
   page,
 }) => {
   const fixture: any = initialState();
-  fixture.schema_version = 1;
+  fixture.schema_version = 1;fixture.skills={swordWind:false};
   for (const key of ["coins", "equipment", "shopStock", "economyRevision"])
     delete fixture[key];
   fixture.player.hp = 1;

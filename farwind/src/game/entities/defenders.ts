@@ -4,7 +4,7 @@ import art from "../../data/defense-art.json";
 import { GUARD_DEFS, TOWERS } from "../../data/defense";
 import type { EastDefense, DefenseEnemy } from "../systems/defense";
 import type { NpcLife } from "../systems/npcLife";
-type View = { sprite: Phaser.GameObjects.Sprite; shadow: Phaser.GameObjects.Ellipse; name?: Phaser.GameObjects.Text };
+type View = { sprite: Phaser.GameObjects.Sprite; shadow: Phaser.GameObjects.Ellipse; name?: Phaser.GameObjects.Text; body?:DefenseEnemy; deathAt?:number };
 export class DefendersView {
   guards = new Map<string, View>();
   enemies = new Map<string, View>();
@@ -57,18 +57,20 @@ export class DefendersView {
       if(base){v.sprite.setDepth(base+g.y);v.shadow.setDepth(base+g.y-.5);v.name?.setDepth(base+g.y+1);}
     }
     this.arrows.setVisible(activeSpace==="village");
-    for (const [id, v] of this.enemies) if (!defense.enemies.some(e => e.id === id && e.hp > 0)) {
-      v.sprite.destroy(); v.shadow.destroy(); this.enemies.delete(id);
+    for(const [id,v] of this.enemies){
+      const e=defense.enemies.find(e=>e.id===id)??v.body;
+      if(!e||(!defense.enemies.includes(e)&&e.hp>0)){v.sprite.destroy();v.shadow.destroy();this.enemies.delete(id);continue;}
+      if(e.hp<=0){v.deathAt??=now;if(now-v.deathAt>=2400){v.sprite.destroy();v.shadow.destroy();this.enemies.delete(id);continue;}}
     }
-    for (const e of defense.enemies.filter(e => e.hp > 0)) {
-      let v = this.enemies.get(e.id);
-      if (!v) {
-        v = { sprite:this.scene.add.sprite(e.x,e.y,e.type,0).setOrigin(.5,1),
-          shadow:this.scene.add.ellipse(e.x,e.y-3,40,12,0x173b30,.2) }; this.enemies.set(e.id,v);
-      }
-      drawEnemy(e,v.sprite);v.sprite.setVisible(activeSpace==="village");v.shadow.setVisible(activeSpace==="village");
-      v.shadow.setPosition(e.x,e.y-3).setDepth(e.y-.5);
-      if (now < e.flashUntil) v.sprite.setTint(0xffaaaa); else v.sprite.clearTint();
+    for(const e of defense.enemies){
+      let v=this.enemies.get(e.id);
+      if(!v&&e.hp<=0)continue;
+      if(!v){v={sprite:this.scene.add.sprite(e.x,e.y,`enemy-${e.type}`,0).setOrigin(.5,1),shadow:this.scene.add.ellipse(e.x,e.y-3,40,12,0x173b30,.2)};this.enemies.set(e.id,v);}
+      v.body=e;
+    }
+    for(const v of this.enemies.values())if(v.body){
+      drawEnemy(v.body,v.sprite);v.sprite.setVisible(activeSpace==="village"&&v.sprite.alpha>0);
+      v.shadow.setVisible(v.sprite.visible).setAlpha(.2*v.sprite.alpha).setPosition(v.body.x,v.body.y-3).setDepth(v.body.y-.5);
     }
     this.arrows.clear();
     for (const a of defense.arrows) {

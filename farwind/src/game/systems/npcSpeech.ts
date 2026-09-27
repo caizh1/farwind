@@ -1,5 +1,6 @@
 import {
   LIFE,
+  MAINTENANCE,
   person,
   type Activity,
   type ResidentId,
@@ -118,10 +119,36 @@ const memoryLine = (n: PersonState, m: Memory): Line | null => {
       priority: 90,
       memory: m,
     };
+  if (m.kind === "company")
+    return {
+      text: `${m.source === "report" ? "听同伴说，" : "刚才，"}${m.result}。慢慢恢复就好。`,
+      priority: 80,
+      memory: m,
+    };
   if (m.kind === "care")
     return {
       text: `${heard}${name}已经接受救治，让伤员慢慢休养。`,
       priority: 90,
+      memory: m,
+    };
+  if (
+    m.kind === "damage" &&
+    !n.memories.some(
+      (later) =>
+        later.sequence > m.sequence &&
+        later.kind === "repair" &&
+        later.subjects[0] === m.subjects[0],
+    )
+  )
+    return {
+      text: `${heard}${MAINTENANCE.find((f) => f.id === m.subjects[0])?.name ?? "设施"}受损了，安全后再去检查。`,
+      priority: 75,
+      memory: m,
+    };
+  if (m.kind === "repair")
+    return {
+      text: `${heard}${m.result}。日常可以慢慢恢复了。`,
+      priority: 70,
       memory: m,
     };
   if (m.kind === "clear" && n.alarm === 0)

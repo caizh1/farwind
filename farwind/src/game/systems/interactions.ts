@@ -1,3 +1,4 @@
+import {LESSON_IDS,type LessonId} from '../../data/windLessons';
 import {lifeInteract,offerHelp} from '../ui/npcLife';
 import type {ResidentId} from '../../data/npcLife';
 import type { ShopId } from "../../data/economy";
@@ -7,6 +8,7 @@ import { add, remove, count, reward } from "./state";
 import type { World } from "../scenes/World";
 
 export function interact(this: World, p: Prop) {
+  if(p.id.startsWith("lesson-")&&LESSON_IDS.includes(p.id.slice(7) as LessonId)){this.lessons?.open(p.id.slice(7) as LessonId);return;}
   if(p.id==="waterside-night"){void this.discoverNight();return;}
   if(lifeInteract(this,p))return;
   const s = this.state;
@@ -43,7 +45,7 @@ export function interact(this: World, p: Prop) {
       if (s.quest === 0) {
         s.quest = 1;
         talk(
-          "东边的森林昨夜传来奇怪的风声。替我去看看吧。先找些药草和浆果，路上记得照顾好自己。",
+          "东边的森林昨夜传来奇怪的风声。替我去看看吧。先找些药草和浆果，路上记得照顾好自己。南侧木桥的守风教本记着送风之法：面向北方，三连斩后再送出第四击，便能触到水面远铃。你也可以先去读教本，不必等我。",
         );
       } else if (s.quest === 6) {
         if (reward(s)) {

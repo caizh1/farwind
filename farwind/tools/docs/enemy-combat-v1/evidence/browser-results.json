@@ -1,0 +1,443 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "--config",
+      "tools/playwright-enemy-review.config.ts"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/tools/playwright-enemy-review.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "enemy-combat-v1.spec.ts",
+          "parry-contextmenu.spec.ts"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/enemy-combat-v1/evidence/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "cwd": "/Users/archer/Documents/ChatGPT/Game/farwind",
+      "command": "npx vite --config tools/vite-enemy-review.config.ts",
+      "url": "http://127.0.0.1:5175",
+      "reuseExistingServer": true
+    }
+  },
+  "suites": [
+    {
+      "title": "enemy-combat-v1.spec.ts",
+      "file": "enemy-combat-v1.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "fixed-all-directions-actions",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 3273,
+                  "error": {
+                    "message": "Error: browserContext.close: ENOENT: no such file or directory, open '/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/.playwright-artifacts-0/traces/2cc2f0849e8074b7f98e-14b3da90e87c67de0faf.trace'",
+                    "stack": "Error: browserContext.close: ENOENT: no such file or directory, open '/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/.playwright-artifacts-0/traces/2cc2f0849e8074b7f98e-14b3da90e87c67de0faf.trace'"
+                  },
+                  "errors": [
+                    {
+                      "message": "Error: browserContext.close: ENOENT: no such file or directory, open '/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/.playwright-artifacts-0/traces/2cc2f0849e8074b7f98e-14b3da90e87c67de0faf.trace'"
+                    },
+                    {
+                      "message": "Error: ENOENT: no such file or directory, open '/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/.playwright-artifacts-0/24142647dcdeda0e745582074c647ccd.zip'"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T13:47:24.609Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/enemy-combat-v1-fixed-all-directions-actions/error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2cc2f0849e8074b7f98e-14b3da90e87c67de0faf",
+          "file": "enemy-combat-v1.spec.ts",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "title": "training-five-enemy-parry-recovery",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 250,
+                  "error": {
+                    "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:5175/\", waiting until \"load\"\u001b[22m\n",
+                    "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:5175/\", waiting until \"load\"\u001b[22m\n\n    at start (/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts:5:44)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts:20:81",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts",
+                      "column": 44,
+                      "line": 5
+                    },
+                    "snippet": "  3 | import {move} from './map-navigation';\n  4 | const dir='docs/enemy-combat-v1/evidence',read=(p:Page)=>p.evaluate(()=>(window as any).__farwind());\n> 5 | async function start(page:Page){await page.goto('/');await page.getByRole('button',{name:'启程 · 新游戏',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().mode==='');}\n    |                                            ^\n  6 | async function sample(page:Page){await page.evaluate(()=>{const w=window as any;w.__enemyObservations=[];let last='';const frame=()=>{const s=w.__farwind?.();if(s?.animation){const data={at:s.session.sim,enemies:s.animation.enemies,practice:s.animation.practice,projectiles:s.animation.projectiles,contacts:s.contacts.slice(-1)},key=JSON.stringify([data.enemies.map((e:any)=>[e.id,e.art?.pose?.action,e.art?.pose?.frame]),data.practice?.pose?.action,data.practice?.pose?.frame,data.projectiles.map((s:any)=>s.state)]);if(key!==last){w.__enemyObservations.push(data);last=key;if(w.__enemyObservations.length>3000)w.__enemyObservations.shift();}}w.__enemyObserver=requestAnimationFrame(frame);};frame();});}\n  7 | async function exportSample(page:Page,name:string){const frames=await page.evaluate(()=>{const w=window as any;cancelAnimationFrame(w.__enemyObserver);return w.__enemyObservations;});await writeFile(`${dir}/${name}-validation.json`,JSON.stringify({说明:'正式游戏入口，新游戏正常键盘行走和可见按钮；诊断只读，不注入角色、生命、进度或计时器。弹反输入读取接触预测用于集成检查，不能替代玩家可读性验收。',状态:'技术验证，美术待审阅',帧:frames,最终世界:await read(page)},null,2));}\n  8 | async function parry(page:Page,prefix:string,lead:number){await page.waitForFunction(({prefix,lead})=>{const s=(window as any).__farwind();return s.warnings.some((w:any)=>w.id.startsWith(prefix)&&w.lead!==null&&w.lead<=lead+30&&w.lead>lead);},{prefix,lead},{polling:5,timeout:18000});const s=await read(page),a=s.parryTraining?.projection??s.enemies.find((e:any)=>e.id===prefix),dx=a.x-s.state.player.x,dy=a.y-s.state.player.y;const key=Math.abs(dx)>Math.abs(dy)?dx<0?'a':'d':dy<0?'w':'s';await page.keyboard.down(key);await page.waitForTimeout(18);await page.keyboard.up(key);await page.keyboard.press('k');}"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts",
+                        "column": 44,
+                        "line": 5
+                      },
+                      "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:5175/\", waiting until \"load\"\u001b[22m\n\n\n  3 | import {move} from './map-navigation';\n  4 | const dir='docs/enemy-combat-v1/evidence',read=(p:Page)=>p.evaluate(()=>(window as any).__farwind());\n> 5 | async function start(page:Page){await page.goto('/');await page.getByRole('button',{name:'启程 · 新游戏',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().mode==='');}\n    |                                            ^\n  6 | async function sample(page:Page){await page.evaluate(()=>{const w=window as any;w.__enemyObservations=[];let last='';const frame=()=>{const s=w.__farwind?.();if(s?.animation){const data={at:s.session.sim,enemies:s.animation.enemies,practice:s.animation.practice,projectiles:s.animation.projectiles,contacts:s.contacts.slice(-1)},key=JSON.stringify([data.enemies.map((e:any)=>[e.id,e.art?.pose?.action,e.art?.pose?.frame]),data.practice?.pose?.action,data.practice?.pose?.frame,data.projectiles.map((s:any)=>s.state)]);if(key!==last){w.__enemyObservations.push(data);last=key;if(w.__enemyObservations.length>3000)w.__enemyObservations.shift();}}w.__enemyObserver=requestAnimationFrame(frame);};frame();});}\n  7 | async function exportSample(page:Page,name:string){const frames=await page.evaluate(()=>{const w=window as any;cancelAnimationFrame(w.__enemyObserver);return w.__enemyObservations;});await writeFile(`${dir}/${name}-validation.json`,JSON.stringify({说明:'正式游戏入口，新游戏正常键盘行走和可见按钮；诊断只读，不注入角色、生命、进度或计时器。弹反输入读取接触预测用于集成检查，不能替代玩家可读性验收。',状态:'技术验证，美术待审阅',帧:frames,最终世界:await read(page)},null,2));}\n  8 | async function parry(page:Page,prefix:string,lead:number){await page.waitForFunction(({prefix,lead})=>{const s=(window as any).__farwind();return s.warnings.some((w:any)=>w.id.startsWith(prefix)&&w.lead!==null&&w.lead<=lead+30&&w.lead>lead);},{prefix,lead},{polling:5,timeout:18000});const s=await read(page),a=s.parryTraining?.projection??s.enemies.find((e:any)=>e.id===prefix),dx=a.x-s.state.player.x,dy=a.y-s.state.player.y;const key=Math.abs(dx)>Math.abs(dy)?dx<0?'a':'d':dy<0?'w':'s';await page.keyboard.down(key);await page.waitForTimeout(18);await page.keyboard.up(key);await page.keyboard.press('k');}\n    at start (/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts:5:44)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts:20:81"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T13:47:28.214Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/enemy-combat-v1-training-five-enemy-parry-recovery/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/enemy-combat-v1-training-five-enemy-parry-recovery/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/enemy-combat-v1-training-five-enemy-parry-recovery/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts",
+                    "column": 44,
+                    "line": 5
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2cc2f0849e8074b7f98e-237c2c9b4228d3908ec8",
+          "file": "enemy-combat-v1.spec.ts",
+          "line": 19,
+          "column": 1
+        },
+        {
+          "title": "wild-new-enemies-real-movement",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 246,
+                  "error": {
+                    "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:5175/\", waiting until \"load\"\u001b[22m\n",
+                    "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:5175/\", waiting until \"load\"\u001b[22m\n\n    at start (/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts:5:44)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts:30:81",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts",
+                      "column": 44,
+                      "line": 5
+                    },
+                    "snippet": "  3 | import {move} from './map-navigation';\n  4 | const dir='docs/enemy-combat-v1/evidence',read=(p:Page)=>p.evaluate(()=>(window as any).__farwind());\n> 5 | async function start(page:Page){await page.goto('/');await page.getByRole('button',{name:'启程 · 新游戏',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().mode==='');}\n    |                                            ^\n  6 | async function sample(page:Page){await page.evaluate(()=>{const w=window as any;w.__enemyObservations=[];let last='';const frame=()=>{const s=w.__farwind?.();if(s?.animation){const data={at:s.session.sim,enemies:s.animation.enemies,practice:s.animation.practice,projectiles:s.animation.projectiles,contacts:s.contacts.slice(-1)},key=JSON.stringify([data.enemies.map((e:any)=>[e.id,e.art?.pose?.action,e.art?.pose?.frame]),data.practice?.pose?.action,data.practice?.pose?.frame,data.projectiles.map((s:any)=>s.state)]);if(key!==last){w.__enemyObservations.push(data);last=key;if(w.__enemyObservations.length>3000)w.__enemyObservations.shift();}}w.__enemyObserver=requestAnimationFrame(frame);};frame();});}\n  7 | async function exportSample(page:Page,name:string){const frames=await page.evaluate(()=>{const w=window as any;cancelAnimationFrame(w.__enemyObserver);return w.__enemyObservations;});await writeFile(`${dir}/${name}-validation.json`,JSON.stringify({说明:'正式游戏入口，新游戏正常键盘行走和可见按钮；诊断只读，不注入角色、生命、进度或计时器。弹反输入读取接触预测用于集成检查，不能替代玩家可读性验收。',状态:'技术验证，美术待审阅',帧:frames,最终世界:await read(page)},null,2));}\n  8 | async function parry(page:Page,prefix:string,lead:number){await page.waitForFunction(({prefix,lead})=>{const s=(window as any).__farwind();return s.warnings.some((w:any)=>w.id.startsWith(prefix)&&w.lead!==null&&w.lead<=lead+30&&w.lead>lead);},{prefix,lead},{polling:5,timeout:18000});const s=await read(page),a=s.parryTraining?.projection??s.enemies.find((e:any)=>e.id===prefix),dx=a.x-s.state.player.x,dy=a.y-s.state.player.y;const key=Math.abs(dx)>Math.abs(dy)?dx<0?'a':'d':dy<0?'w':'s';await page.keyboard.down(key);await page.waitForTimeout(18);await page.keyboard.up(key);await page.keyboard.press('k');}"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts",
+                        "column": 44,
+                        "line": 5
+                      },
+                      "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:5175/\", waiting until \"load\"\u001b[22m\n\n\n  3 | import {move} from './map-navigation';\n  4 | const dir='docs/enemy-combat-v1/evidence',read=(p:Page)=>p.evaluate(()=>(window as any).__farwind());\n> 5 | async function start(page:Page){await page.goto('/');await page.getByRole('button',{name:'启程 · 新游戏',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().mode==='');}\n    |                                            ^\n  6 | async function sample(page:Page){await page.evaluate(()=>{const w=window as any;w.__enemyObservations=[];let last='';const frame=()=>{const s=w.__farwind?.();if(s?.animation){const data={at:s.session.sim,enemies:s.animation.enemies,practice:s.animation.practice,projectiles:s.animation.projectiles,contacts:s.contacts.slice(-1)},key=JSON.stringify([data.enemies.map((e:any)=>[e.id,e.art?.pose?.action,e.art?.pose?.frame]),data.practice?.pose?.action,data.practice?.pose?.frame,data.projectiles.map((s:any)=>s.state)]);if(key!==last){w.__enemyObservations.push(data);last=key;if(w.__enemyObservations.length>3000)w.__enemyObservations.shift();}}w.__enemyObserver=requestAnimationFrame(frame);};frame();});}\n  7 | async function exportSample(page:Page,name:string){const frames=await page.evaluate(()=>{const w=window as any;cancelAnimationFrame(w.__enemyObserver);return w.__enemyObservations;});await writeFile(`${dir}/${name}-validation.json`,JSON.stringify({说明:'正式游戏入口，新游戏正常键盘行走和可见按钮；诊断只读，不注入角色、生命、进度或计时器。弹反输入读取接触预测用于集成检查，不能替代玩家可读性验收。',状态:'技术验证，美术待审阅',帧:frames,最终世界:await read(page)},null,2));}\n  8 | async function parry(page:Page,prefix:string,lead:number){await page.waitForFunction(({prefix,lead})=>{const s=(window as any).__farwind();return s.warnings.some((w:any)=>w.id.startsWith(prefix)&&w.lead!==null&&w.lead<=lead+30&&w.lead>lead);},{prefix,lead},{polling:5,timeout:18000});const s=await read(page),a=s.parryTraining?.projection??s.enemies.find((e:any)=>e.id===prefix),dx=a.x-s.state.player.x,dy=a.y-s.state.player.y;const key=Math.abs(dx)>Math.abs(dy)?dx<0?'a':'d':dy<0?'w':'s';await page.keyboard.down(key);await page.waitForTimeout(18);await page.keyboard.up(key);await page.keyboard.press('k');}\n    at start (/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts:5:44)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts:30:81"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T13:47:28.778Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/enemy-combat-v1-wild-new-enemies-real-movement/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/enemy-combat-v1-wild-new-enemies-real-movement/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/enemy-combat-v1-wild-new-enemies-real-movement/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts",
+                    "column": 44,
+                    "line": 5
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2cc2f0849e8074b7f98e-d0231112d98429614653",
+          "file": "enemy-combat-v1.spec.ts",
+          "line": 29,
+          "column": 1
+        },
+        {
+          "title": "assets-legacy-save-and-normal-entry",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 249,
+                  "error": {
+                    "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:5175/\", waiting until \"load\"\u001b[22m\n",
+                    "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:5175/\", waiting until \"load\"\u001b[22m\n\n    at start (/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts:5:44)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts:38:149",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts",
+                      "column": 44,
+                      "line": 5
+                    },
+                    "snippet": "  3 | import {move} from './map-navigation';\n  4 | const dir='docs/enemy-combat-v1/evidence',read=(p:Page)=>p.evaluate(()=>(window as any).__farwind());\n> 5 | async function start(page:Page){await page.goto('/');await page.getByRole('button',{name:'启程 · 新游戏',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().mode==='');}\n    |                                            ^\n  6 | async function sample(page:Page){await page.evaluate(()=>{const w=window as any;w.__enemyObservations=[];let last='';const frame=()=>{const s=w.__farwind?.();if(s?.animation){const data={at:s.session.sim,enemies:s.animation.enemies,practice:s.animation.practice,projectiles:s.animation.projectiles,contacts:s.contacts.slice(-1)},key=JSON.stringify([data.enemies.map((e:any)=>[e.id,e.art?.pose?.action,e.art?.pose?.frame]),data.practice?.pose?.action,data.practice?.pose?.frame,data.projectiles.map((s:any)=>s.state)]);if(key!==last){w.__enemyObservations.push(data);last=key;if(w.__enemyObservations.length>3000)w.__enemyObservations.shift();}}w.__enemyObserver=requestAnimationFrame(frame);};frame();});}\n  7 | async function exportSample(page:Page,name:string){const frames=await page.evaluate(()=>{const w=window as any;cancelAnimationFrame(w.__enemyObserver);return w.__enemyObservations;});await writeFile(`${dir}/${name}-validation.json`,JSON.stringify({说明:'正式游戏入口，新游戏正常键盘行走和可见按钮；诊断只读，不注入角色、生命、进度或计时器。弹反输入读取接触预测用于集成检查，不能替代玩家可读性验收。',状态:'技术验证，美术待审阅',帧:frames,最终世界:await read(page)},null,2));}\n  8 | async function parry(page:Page,prefix:string,lead:number){await page.waitForFunction(({prefix,lead})=>{const s=(window as any).__farwind();return s.warnings.some((w:any)=>w.id.startsWith(prefix)&&w.lead!==null&&w.lead<=lead+30&&w.lead>lead);},{prefix,lead},{polling:5,timeout:18000});const s=await read(page),a=s.parryTraining?.projection??s.enemies.find((e:any)=>e.id===prefix),dx=a.x-s.state.player.x,dy=a.y-s.state.player.y;const key=Math.abs(dx)>Math.abs(dy)?dx<0?'a':'d':dy<0?'w':'s';await page.keyboard.down(key);await page.waitForTimeout(18);await page.keyboard.up(key);await page.keyboard.press('k');}"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts",
+                        "column": 44,
+                        "line": 5
+                      },
+                      "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:5175/\", waiting until \"load\"\u001b[22m\n\n\n  3 | import {move} from './map-navigation';\n  4 | const dir='docs/enemy-combat-v1/evidence',read=(p:Page)=>p.evaluate(()=>(window as any).__farwind());\n> 5 | async function start(page:Page){await page.goto('/');await page.getByRole('button',{name:'启程 · 新游戏',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().mode==='');}\n    |                                            ^\n  6 | async function sample(page:Page){await page.evaluate(()=>{const w=window as any;w.__enemyObservations=[];let last='';const frame=()=>{const s=w.__farwind?.();if(s?.animation){const data={at:s.session.sim,enemies:s.animation.enemies,practice:s.animation.practice,projectiles:s.animation.projectiles,contacts:s.contacts.slice(-1)},key=JSON.stringify([data.enemies.map((e:any)=>[e.id,e.art?.pose?.action,e.art?.pose?.frame]),data.practice?.pose?.action,data.practice?.pose?.frame,data.projectiles.map((s:any)=>s.state)]);if(key!==last){w.__enemyObservations.push(data);last=key;if(w.__enemyObservations.length>3000)w.__enemyObservations.shift();}}w.__enemyObserver=requestAnimationFrame(frame);};frame();});}\n  7 | async function exportSample(page:Page,name:string){const frames=await page.evaluate(()=>{const w=window as any;cancelAnimationFrame(w.__enemyObserver);return w.__enemyObservations;});await writeFile(`${dir}/${name}-validation.json`,JSON.stringify({说明:'正式游戏入口，新游戏正常键盘行走和可见按钮；诊断只读，不注入角色、生命、进度或计时器。弹反输入读取接触预测用于集成检查，不能替代玩家可读性验收。',状态:'技术验证，美术待审阅',帧:frames,最终世界:await read(page)},null,2));}\n  8 | async function parry(page:Page,prefix:string,lead:number){await page.waitForFunction(({prefix,lead})=>{const s=(window as any).__farwind();return s.warnings.some((w:any)=>w.id.startsWith(prefix)&&w.lead!==null&&w.lead<=lead+30&&w.lead>lead);},{prefix,lead},{polling:5,timeout:18000});const s=await read(page),a=s.parryTraining?.projection??s.enemies.find((e:any)=>e.id===prefix),dx=a.x-s.state.player.x,dy=a.y-s.state.player.y;const key=Math.abs(dx)>Math.abs(dy)?dx<0?'a':'d':dy<0?'w':'s';await page.keyboard.down(key);await page.waitForTimeout(18);await page.keyboard.up(key);await page.keyboard.press('k');}\n    at start (/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts:5:44)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts:38:149"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T13:47:29.326Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/enemy-combat-v1-assets-legacy-save-and-normal-entry/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/enemy-combat-v1-assets-legacy-save-and-normal-entry/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/enemy-combat-v1-assets-legacy-save-and-normal-entry/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts",
+                    "column": 44,
+                    "line": 5
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2cc2f0849e8074b7f98e-432a5b0f63e2c25d3324",
+          "file": "enemy-combat-v1.spec.ts",
+          "line": 37,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "parry-contextmenu.spec.ts",
+      "file": "parry-contextmenu.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "PARRY-03-contextmenu",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 159,
+                  "error": {
+                    "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:5175/\", waiting until \"load\"\u001b[22m\n",
+                    "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:5175/\", waiting until \"load\"\u001b[22m\n\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/parry-contextmenu.spec.ts:8:45",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/parry-contextmenu.spec.ts",
+                      "column": 45,
+                      "line": 8
+                    },
+                    "snippet": "   6 | test('PARRY-03-contextmenu',async({page})=>{\n   7 |  const state=initialState();state.player.x=1640;state.player.y=620;state.quest=3;\n>  8 |  page.on('dialog',d=>d.accept());await page.goto('/');const chooser=page.waitForEvent('filechooser');await page.getByRole('button',{name:'导入存档',exact:true}).click();await(await chooser).setFiles({name:'contextmenu-fixture.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(state))});\n     |                                             ^\n   9 |  await page.evaluate(()=>{(window as any).__menus=[];document.addEventListener('contextmenu',e=>(window as any).__menus.push({画布:e.target instanceof HTMLCanvasElement,已阻止:e.defaultPrevented}));});\n  10 |  await page.mouse.click(650,400,{button:'right'});await page.keyboard.press('Escape');await page.getByText('世界与时间已暂停。').click({button:'right'});\n  11 |  const menus=await page.evaluate(()=>(window as any).__menus);expect(menus).toContainEqual({画布:true,已阻止:true});expect(menus).toContainEqual({画布:false,已阻止:false});"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/parry-contextmenu.spec.ts",
+                        "column": 45,
+                        "line": 8
+                      },
+                      "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:5175/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:5175/\", waiting until \"load\"\u001b[22m\n\n\n   6 | test('PARRY-03-contextmenu',async({page})=>{\n   7 |  const state=initialState();state.player.x=1640;state.player.y=620;state.quest=3;\n>  8 |  page.on('dialog',d=>d.accept());await page.goto('/');const chooser=page.waitForEvent('filechooser');await page.getByRole('button',{name:'导入存档',exact:true}).click();await(await chooser).setFiles({name:'contextmenu-fixture.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(state))});\n     |                                             ^\n   9 |  await page.evaluate(()=>{(window as any).__menus=[];document.addEventListener('contextmenu',e=>(window as any).__menus.push({画布:e.target instanceof HTMLCanvasElement,已阻止:e.defaultPrevented}));});\n  10 |  await page.mouse.click(650,400,{button:'right'});await page.keyboard.press('Escape');await page.getByText('世界与时间已暂停。').click({button:'right'});\n  11 |  const menus=await page.evaluate(()=>(window as any).__menus);expect(menus).toContainEqual({画布:true,已阻止:true});expect(menus).toContainEqual({画布:false,已阻止:false});\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/parry-contextmenu.spec.ts:8:45"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T13:47:29.881Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/parry-contextmenu-PARRY-03-contextmenu/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/test-results/enemy-combat-v1/parry-contextmenu-PARRY-03-contextmenu/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/parry-contextmenu.spec.ts",
+                    "column": 45,
+                    "line": 8
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1b2be48c86fdb8b50c15-1882dd4c7359bae8836d",
+          "file": "parry-contextmenu.spec.ts",
+          "line": 6,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-27T13:47:24.294Z",
+    "duration": 5842.854,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 5,
+    "flaky": 0
+  }
+}

@@ -14,7 +14,7 @@ import {
 } from "../../data/npcLife";
 import { GUARD_DEFS, RAID_GATES, type GuardId } from "../../data/defense";
 import type { State } from "./state";
-import type { EastDefense, DefenseNotice } from "./defense";
+import type { EastDefense, DefenseNotice, DefenseHostile } from "./defense";
 import type { GuardState } from "./defenseState";
 import {
   type PersonState,
@@ -32,7 +32,15 @@ import {
   type LifeNav,
 } from "./npcNavigation";
 import { resolveDamage } from "./damage";
+import { attackTouches, type EnemyContact } from "./enemyAttack";
+import { clearMeleeLine } from "./obstacles";
 import { chooseSpeech, type LifeSpeech } from "./npcSpeech";
+import {
+  socialCandidate,
+  updateSocial,
+  socialReady,
+  finishSocial,
+} from "./npcSocial";
 export type Candidate = {
   kind: Activity;
   target: Place;
@@ -40,6 +48,7 @@ export type Candidate = {
   task: string | null;
   score: number;
   label: string;
+  social?: Action["social"];
 };
 export class NpcLife {
   debugAlarmUntil = 0;
@@ -79,6 +88,13 @@ export class NpcLife {
     if (n?.body) return n.body.hp;
     const g = this.state.defense.guards.find((g) => g.id === id);
     return g ? (g.hp / GUARD_DEFS.find((d) => d.id === id)!.maxHP) * 100 : 100;
+  }
+  needsTreatment(id: string) {
+    const body = this.data.people.find((n) => n.id === id)?.body;
+    return body
+      ? body.health === "hurt" || body.health === "down"
+      : !this.state.defense.guards.find((g) => g.id === id)?.dead &&
+          this.health(id) < 85;
   }
   nav(id: string) {
     let r = this.navigation.get(id);
@@ -188,6 +204,31 @@ export class NpcLife {
       : null;
   }
   restore() {
+    this.defense.eventTime = () => this.data.elapsed;
+    this.defense.civilianTargets = () =>
+      this.data.people.flatMap((n) =>
+        n.body &&
+        n.body.space === "village" &&
+        n.body.hp > 0 &&
+        n.body.health !== "down"
+          ? [{ id: n.id, x: n.body.x, y: n.body.y, hp: n.body.hp }]
+          : [],
+      );
+    this.defense.civilianContact = (id, source, contact) =>
+      this.receiveHostileContact(id, source, contact);
+    this.defense.facilityTargets = () =>
+      MAINTENANCE.flatMap((f) =>
+        this.data.facilities[f.id] > 0
+          ? [
+              {
+                id: f.id,
+                x: f.place.x,
+                y: f.place.y,
+                hp: this.data.facilities[f.id],
+              },
+            ]
+          : [],
+      );
     for (const n of this.data.people) {
       if (n.body && spaceBlocked(n.body.space, n.body.x, n.body.y)) {
         // 新空间只修复非法站位；已有室外阻挡由有限局部搜索恢复，不更改伤情。
@@ -346,6 +387,18 @@ export class NpcLife {
         r.lastPositive = e.time;
       }
     }
+    if (e.kind === "company" && e.subjects.includes(n.id)) {
+      const partner =
+        e.source === n.id ? e.subjects.find((id) => id !== n.id) : e.source;
+      if (partner && person(partner)) {
+        const r = this.relation(n, partner);
+        if (e.time - r.lastPositive >= LIFE.socialRelationMinutes) {
+          r.trust = Math.min(100, r.trust + LIFE.socialTrustGain);
+          r.familiar = Math.min(100, r.familiar + LIFE.socialFamiliarGain);
+          r.lastPositive = e.time;
+        }
+      }
+    }
     if (e.kind === "visit" && e.subjects.includes(n.id)) {
       const r = this.relation(n, "player");
       r.wariness = Math.min(100, r.wariness + 3);
@@ -388,6 +441,11 @@ export class NpcLife {
         spaceClear(p.space, p, place);
       if (heard || seen || subjects.includes(n.id)) {
         this.remember(n, e, heard ? "alarm" : "seen");
+        if (seen && ["injury", "down"].includes(kind)) {
+          for (const id of subjects)
+            n.known[id] = { ...place, time: this.state.time };
+          n.nextDecision = l.elapsed;
+        }
         if (heard) {
           n.alarm = l.alarm;
           n.nextDecision = l.elapsed;
@@ -411,7 +469,42 @@ export class NpcLife {
     )
       return false;
     this.remember(receiver, e, "report");
+    if (["injury", "down"].includes(e.kind))
+      for (const id of e.subjects)
+        receiver.known[id] = { ...e.place, time: e.time };
     return true;
+  }
+  treatmentPlace(n: PersonState, t: LifeTask): Place | null {
+    const known = n.known[t.subject];
+    if (
+      !known ||
+      known.time + LIFE.injuryKnownMinutes < this.state.time ||
+      !n.memories.some(
+        (m) =>
+          ["injury", "down"].includes(m.kind) && m.subjects.includes(t.subject),
+      )
+    )
+      return null;
+    const observer = this.body(n.id)!,
+      target = this.body(t.subject);
+    if (
+      target &&
+      target.space === observer.space &&
+      distance(observer, target) < LIFE.observation &&
+      spaceClear(observer.space, observer, target)
+    ) {
+      n.known[t.subject] = { ...target, time: this.state.time };
+      return { ...target };
+    }
+    if (
+      n.action?.task === t.id &&
+      n.action.kind === "treat" &&
+      n.action.failures === 1
+    )
+      return {
+        ...FACILITIES.find((f) => f.id === person(t.subject)!.bed)!.place,
+      };
+    return { space: known.space, x: known.x, y: known.y };
   }
   consumeDefense(events: readonly DefenseNotice[]) {
     for (const e of events) {
@@ -584,6 +677,7 @@ export class NpcLife {
       started: this.data.elapsed,
       failures: 0,
       label: c.label,
+      social: c.social ?? null,
     };
     if (!collect) this.travelPhase(n, n.action);
     n.reason = `${c.label}（评分 ${Math.round(c.score)}）`;
@@ -650,13 +744,10 @@ export class NpcLife {
         for (const t of l.tasks.filter(
           (t) => t.kind === "treat" && (!t.owner || t.owner === n.id),
         ))
-          if (
-            this.materialReady(n, "treat") &&
-            n.memories.some((m) => m.subjects.includes(t.subject))
-          )
+          if (this.materialReady(n, "treat") && this.treatmentPlace(n, t))
             add(
               "treat",
-              t.place,
+              this.treatmentPlace(n, t)!,
               205 + d.traits.compassion * 35 - d.traits.fear * 20,
               "安全路线救护",
               null,
@@ -680,11 +771,11 @@ export class NpcLife {
         t.kind === "treat" &&
         d.ability.medicine &&
         this.materialReady(n, "treat") &&
-        n.memories.some((m) => m.subjects.includes(t.subject))
+        this.treatmentPlace(n, t)
       )
         add(
           "treat",
-          t.place,
+          this.treatmentPlace(n, t)!,
           140 + d.traits.compassion * 30 - d.traits.fear * 10,
           "带药箱救护",
           null,
@@ -726,6 +817,8 @@ export class NpcLife {
           bed.id,
         );
     const window = d.schedule.find((s) => minute >= s.from && minute < s.to);
+    const company = socialCandidate(this, n);
+    if (company) list.push(company);
     if (window) {
       let allowed = true;
       if (
@@ -901,21 +994,7 @@ export class NpcLife {
           };
       }
       if (window.activity === "habit" && d.traits.compassion > 0.7) {
-        const friend = l.people.find(
-          (o) =>
-            o.body?.health === "convalescent" &&
-            n.known[o.id] &&
-            n.known[o.id].time + 120 > this.state.time,
-        );
-        if (friend && this.routeSafe(this.body(n.id)!, n.known[friend.id]))
-          c = {
-            kind: "rest",
-            target: n.known[friend.id],
-            facility: null,
-            task: null,
-            score: 100,
-            label: "休班探望曾照护的居民",
-          };
+        c = socialCandidate(this, n) ?? c;
       }
       if (
         window.activity === "habit" &&
@@ -997,6 +1076,7 @@ export class NpcLife {
       a.id <= n.committed ||
       a.phase !== "perform" ||
       a.progress < a.duration ||
+      (a.social && !socialReady(this, n, a)) ||
       this.body(n.id)?.space !== a.target.space ||
       distance(this.body(n.id)!, a.target) > (a.kind === "treat" ? 45 : 35) ||
       (a.kind === "treat" &&
@@ -1065,13 +1145,16 @@ export class NpcLife {
         spaceClear(target.space, this.body(n.id)!, target) &&
         this.safe(target) &&
         (!guard || !guard.dead) &&
-        this.health(t.subject) < 85
+        this.needsTreatment(t.subject)
       ) {
         n.supplies.medicine--;
         if (patient?.body) {
-          patient.body.hp = Math.min(85, patient.body.hp + 45);
+          patient.body.hp = Math.max(
+            patient.body.hp,
+            Math.min(85, patient.body.hp + 45),
+          );
           patient.body.health = "convalescent";
-          patient.body.recoverAt = this.state.time + 180;
+          patient.body.recoverAt = this.state.time + LIFE.convalescentMinutes;
         } else if (guard) this.defense.healGuard(guard.id, 30);
         const care = this.emit(
           "care",
@@ -1138,8 +1221,21 @@ export class NpcLife {
       distance(this.body(n.id)!, a.target) < 35 &&
       this.safe(a.target)
     ) {
-      const t = l.tasks.find((t) => t.id === a.task);
-      if (t && n.supplies.wood >= 2 && l.facilities[t.subject] < 100) {
+      const t = l.tasks.find((t) => t.id === a.task),
+        f = MAINTENANCE.find((f) => f.id === t?.subject),
+        p = this.body(n.id)!;
+      if (
+        t &&
+        f &&
+        t.kind === "repair" &&
+        person(n.id)!.ability.repair &&
+        p.space === f.place.space &&
+        distance(p, f.place) < 35 &&
+        spaceClear(p.space, p, f.place) &&
+        this.safe(f.place) &&
+        n.supplies.wood >= 2 &&
+        l.facilities[t.subject] < 100
+      ) {
         n.supplies.wood -= 2;
         l.facilities[t.subject] = Math.min(100, l.facilities[t.subject] + 50);
         this.emit(
@@ -1147,7 +1243,7 @@ export class NpcLife {
           t.place,
           n.id,
           [t.subject],
-          "到场维修，消耗从工坊带来的两份木料",
+          `到场维修，消耗从工坊带来的两份木料，${f.name}恢复至${l.facilities[t.subject]}%`,
         );
         l.tasks = l.tasks.filter((x) => x.id !== t.id);
       }
@@ -1167,6 +1263,7 @@ export class NpcLife {
           if (id !== n.id) this.report(n.id, id, memory.eventId);
     }
     if (a.kind === "talk") {
+      if (a.social) finishSocial(this, n, a);
       const me = this.body(n.id)!;
       for (const other of l.people) {
         const p = this.body(other.id);
@@ -1301,8 +1398,7 @@ export class NpcLife {
     l.tasks = l.tasks.filter((t) =>
       t.kind === "repair"
         ? l.facilities[t.subject] < 100
-        : !this.state.defense.guards.find((g) => g.id === t.subject)?.dead &&
-          this.health(t.subject) < 85,
+        : this.needsTreatment(t.subject),
     );
     for (const f of MAINTENANCE)
       if (l.facilities[f.id] < 100) this.ensureTask("repair", f.id, f.place);
@@ -1322,6 +1418,31 @@ export class NpcLife {
       if (n.body && (n.body.health === "hurt" || n.body.health === "down"))
         this.ensureTask("treat", n.id, p);
       if (l.elapsed >= n.nextDecision) {
+        // 巡视发现是真实认知事件；离开现场取料后仍保留维修事实，不能因失去视线取消。
+        if (person(n.id)!.ability.repair)
+          for (const f of MAINTENANCE) {
+            const known = [...n.memories]
+              .reverse()
+              .find(
+                (m) =>
+                  m.subjects.includes(f.id) &&
+                  ["damage", "repair"].includes(m.kind),
+              );
+            if (
+              l.facilities[f.id] < 100 &&
+              known?.kind !== "damage" &&
+              p.space === f.place.space &&
+              distance(p, f.place) < LIFE.observation &&
+              spaceClear(p.space, p, f.place)
+            )
+              this.emit(
+                "damage",
+                f.place,
+                n.id,
+                [f.id],
+                `巡视确认${f.name}仍受损，完整度${l.facilities[f.id]}%`,
+              );
+          }
         for (const other of l.people) {
           const q = this.body(other.id)!;
           if (
@@ -1329,8 +1450,28 @@ export class NpcLife {
             q.space === p.space &&
             distance(q, p) < LIFE.observation &&
             spaceClear(p.space, p, q)
-          )
+          ) {
             n.known[other.id] = { ...q, time: this.state.time };
+            const latest = [...n.memories]
+              .reverse()
+              .find(
+                (m) =>
+                  m.subjects.includes(other.id) &&
+                  ["injury", "down", "care", "help"].includes(m.kind),
+              );
+            if (
+              other.body &&
+              ["hurt", "down"].includes(other.body.health) &&
+              (!latest || !["injury", "down"].includes(latest.kind))
+            )
+              this.emit(
+                other.body.health === "down" ? "down" : "injury",
+                q,
+                n.id,
+                [other.id],
+                "近处目击仍需救护的伤员",
+              );
+          }
         }
       }
       const aware = n.memories.at(-1);
@@ -1385,7 +1526,30 @@ export class NpcLife {
       }
       if (task) {
         task.expires = l.elapsed + LIFE.taskLeaseMs;
-        a.target = { ...task.place };
+        const target =
+          task.kind === "treat" ? this.treatmentPlace(n, task) : task.place;
+        if (!target) {
+          this.cancel(n, "伤员去向尚未确认，释放救护任务并等待报告");
+          continue;
+        }
+        a.target = { ...target };
+        if (
+          task.kind === "treat" &&
+          l.elapsed - a.started >
+            LIFE.treatmentSearchMs + LIFE.treatMs + LIFE.transferMs * 2
+        ) {
+          delete n.known[task.subject];
+          this.cancel(n, "救护寻找超过时间预算，报告未确认下落并等待新消息");
+          continue;
+        }
+      }
+      if (a.social && !updateSocial(this, n, a)) {
+        n.social.cooldownUntil = l.elapsed + LIFE.socialRetryMs;
+        this.cancel(
+          n,
+          "没有在安全已知位置见到清醒同伴，结束探访并重新安排日程",
+        );
+        continue;
       }
       if ((a.phase === "collect" || a.phase === "stock") && a.pickup) {
         if (
@@ -1475,6 +1639,33 @@ export class NpcLife {
         p.space === a.target.space &&
         distance(p, a.target) < (a.kind === "treat" ? 35 : 6) &&
         (a.kind !== "treat" || spaceClear(p.space, p, a.target));
+      if (reached && a.kind === "treat" && task) {
+        const patient = this.body(task.subject);
+        const visible =
+          patient &&
+          patient.space === p.space &&
+          distance(patient, p) < LIFE.observation &&
+          spaceClear(p.space, p, patient);
+        if (!visible) {
+          if (a.failures === 0) {
+            a.failures = 1;
+            a.phase = "travel";
+            a.progress = 0;
+            a.target = {
+              ...FACILITIES.find((f) => f.id === person(task.subject)!.bed)!
+                .place,
+            };
+            n.reason = "已知位置未见伤员，沿安全路线到其住所核对一次";
+          } else {
+            delete n.known[task.subject];
+            this.cancel(
+              n,
+              "已知位置与住所均未见伤员，报告未知下落并等待新消息",
+            );
+          }
+          continue;
+        }
+      }
       if (a.kind === "escort") {
         const patient = l.people.find((o) => o.id === a.label.split(" ")[1]);
         if (patient?.body && patient.body.health !== "down") {
@@ -1600,7 +1791,7 @@ export class NpcLife {
         a.kind === "treat" &&
         (!this.safe(p, LIFE.dangerRadius) ||
           !task ||
-          this.health(task.subject) >= 85)
+          !this.needsTreatment(task.subject))
       ) {
         this.cancel(n, "路线或伤情变化，等待安全救护");
         continue;
@@ -1631,7 +1822,85 @@ export class NpcLife {
       else this.defense.peaceOrders.delete(g.id);
     }
   }
-  // 调试伤情公开标记；自然平民攻击本轮不扩展，真实驻防伤情沿现有命中链进入。
+  // 平民与有限维护点复用同一攻击接触，生活系统拥有各自生命或完整度。
+  receiveHostileContact(
+    id: string,
+    source: DefenseHostile,
+    contact: EnemyContact,
+  ) {
+    const n = this.data.people.find((n) => n.id === id),
+      facility = MAINTENANCE.find((f) => f.id === id),
+      body =
+        n?.body ??
+        (facility ? { ...facility.place, hp: this.data.facilities[id] } : null),
+      attack = contact.attack;
+    if (
+      !body ||
+      body.space !== "village" ||
+      body.hp <= 0 ||
+      n?.body?.health === "down" ||
+      source.hp <= 0 ||
+      source.disabled ||
+      !this.defense.allHostiles().includes(source) ||
+      source.targetId !== id ||
+      source.attack !== attack ||
+      attack.attackerId !== source.id ||
+      attack.cancelled ||
+      attack.resolved ||
+      !attack.emitted ||
+      !attackTouches(contact, body) ||
+      !clearMeleeLine(contact.origin, body, source.id)
+    )
+      return false;
+    const hit = resolveDamage(
+      {
+        sourceId: source.id,
+        targetId: id,
+        attackId: attack.attackId,
+        amount: attack.damage,
+        sourceType: "enemy-melee",
+        eventId: source.eventId ?? null,
+      },
+      { id: source.id, faction: "hostile", hp: source.hp, armor: 0 },
+      { id, faction: "village", hp: body.hp, armor: 0 },
+    );
+    if (!hit.applied) return false;
+    attack.resolved = true;
+    if (facility) return this.damageFacility(id, hit.damage, false, source.id);
+    if (!n?.body) return false;
+    n.body.hp = hit.hp;
+    n.body.health = hit.hp === 0 ? "down" : "hurt";
+    n.body.recoverAt = 0;
+    n.body.episode++;
+    this.cancel(n, "真实攻击受伤，中止行动并等待救护");
+    n.nextDecision = this.data.elapsed;
+    const event = this.emit(
+      hit.hp === 0 ? "down" : "injury",
+      body,
+      source.id,
+      [id],
+      hit.hp === 0
+        ? "敌人实际命中，失去行动能力，等待到场急救"
+        : "敌人实际命中，需要休养与救护",
+    );
+    // 呼救只传到近处；隔墙、室内外及远方同伴不能得到伤员坐标。
+    for (const observer of this.data.people) {
+      const p = this.body(observer.id)!;
+      if (
+        p.space === body.space &&
+        distance(p, body) <= LIFE.injuryCallRadius &&
+        spaceClear(p.space, p, body)
+      ) {
+        this.remember(observer, event, "report");
+        observer.known[id] = { ...body, time: this.state.time };
+        observer.nextDecision = this.data.elapsed;
+      }
+    }
+    this.ensureTask("treat", id, body);
+    this.defense.critical = true;
+    return true;
+  }
+  // 调试伤情公开标记，不作为自然战斗验收证据。
   debugInjury(id: ResidentId, amount = 55) {
     const n = this.data.people.find((n) => n.id === id),
       p = this.body(id);
@@ -1679,12 +1948,27 @@ export class NpcLife {
       e,
       "report",
     );
+    this.data.people.find((n) => n.id === "healer")!.known[id] = {
+      ...p,
+      time: this.state.time,
+    };
     this.ensureTask("treat", id, p);
     return true;
   }
-  damageFacility(id: string, amount: number, debug = false) {
+  damageFacility(
+    id: string,
+    amount: number,
+    debug = false,
+    source = "maintenance",
+  ) {
     const f = MAINTENANCE.find((f) => f.id === id);
-    if (!f || amount <= 0 || !Number.isFinite(amount)) return false;
+    if (
+      !f ||
+      this.data.facilities[id] <= 0 ||
+      amount <= 0 ||
+      !Number.isFinite(amount)
+    )
+      return false;
     this.data.facilities[id] = Math.max(
       0,
       this.data.facilities[id] - Math.min(100, amount),
@@ -1692,12 +1976,15 @@ export class NpcLife {
     this.emit(
       "damage",
       f.place,
-      debug ? "debug-damage" : "maintenance",
+      debug ? "debug-damage" : source,
       [id],
-      debug ? "开发调试损坏" : "实际设施受损",
+      debug
+        ? "开发调试损坏"
+        : `${f.name}实际受损，完整度${this.data.facilities[id]}%`,
       debug,
     );
     this.ensureTask("repair", id, f.place);
+    this.defense.critical = true;
     return true;
   }
   observePlayer() {
@@ -1727,24 +2014,38 @@ export class NpcLife {
       memory = [...n.memories]
         .reverse()
         .find((m) =>
-          ["care", "help", "injury", "alarm", "death"].includes(m.kind),
+          [
+            "care",
+            "help",
+            "injury",
+            "down",
+            "alarm",
+            "death",
+            "company",
+            "damage",
+            "repair",
+          ].includes(m.kind),
         );
+    if (n.body?.health === "down")
+      return "暂时无法行动，救护者正在寻找安全路线。";
     if (n.alarm === 2)
       return n.id === "healer"
         ? "先到安全集结处！我带着药箱，会沿安全路线救护。"
         : n.id === "elder"
           ? n.reason
           : "先走安全通道，财物等安全了再说。";
-    if (n.body?.health === "down")
-      return "暂时无法行动，救护者正在寻找安全路线。";
+    if (memory?.kind === "company")
+      return `${memory.source === "report" ? "听同伴说，" : "我记得，"}${memory.result}。日常会慢慢恢复，不必急着补完所有工作。`;
     if (memory?.kind === "care")
       return `${memory.source === "report" ? "听同伴说，" : "我记得，"}${person(memory.subjects[0])?.name ?? "同伴"}已经接受救治。药箱还得留些药，慢慢恢复。`;
     if (memory?.kind === "help")
       return memory.source === "report"
         ? "听小满说，你帮忙照护了伤员。谢谢。"
         : "谢谢你到场帮忙。我会记住这次照护。";
-    if (memory?.kind === "injury")
+    if (memory?.kind === "injury" || memory?.kind === "down")
       return "刚才确实有人受伤，先处理伤情，再继续工作。";
+    if (memory?.kind === "damage" || memory?.kind === "repair")
+      return `${memory.source === "report" ? "听同伴说，" : "我记得，"}${memory.result}。先保证安全，再安排检查与维修。`;
     const stage =
       n.project >= 66
         ? "已接近完成"
@@ -1762,7 +2063,7 @@ export class NpcLife {
       p.space !== this.data.playerSpace ||
       distance(p, this.state.player) > 90 ||
       !spaceClear(p.space, p, this.state.player) ||
-      this.health(id) >= 85 ||
+      !this.needsTreatment(id) ||
       this.data.stores.medicine <= 0 ||
       !this.safe(p)
     )
@@ -1771,9 +2072,9 @@ export class NpcLife {
     if (g?.dead) return false;
     this.data.stores.medicine--;
     if (n.body) {
-      n.body.hp = Math.min(85, n.body.hp + 30);
+      n.body.hp = Math.max(n.body.hp, Math.min(85, n.body.hp + 30));
       n.body.health = "convalescent";
-      n.body.recoverAt = this.state.time + 180;
+      n.body.recoverAt = this.state.time + LIFE.convalescentMinutes;
     } else this.defense.healGuard(id, 30);
     this.emit("help", p, "player", [id], "玩家到场使用公共药箱照护");
     return true;

@@ -35,7 +35,7 @@ test("WIND-01", async ({ page }) => {
   expect(s.swordWind.events[0].target).toBe("wind-arena-A");
   expect(s.enemies.find((e: any) => e.id === "wind-arena-A").hp).toBe(12);
   expect(s.enemies.find((e: any) => e.id === "wind-arena-B").hp).toBe(48);
-  expect(s.state.skills.swordWind).toBe(false);
+  expect(s.state.skills.swordWindStage).toBe(0);
   await page.screenshot({ path: `${dir}/two-targets-game.png` });
   await page.waitForTimeout(350);
   expect((await read(page)).swordWind.events).toHaveLength(1);

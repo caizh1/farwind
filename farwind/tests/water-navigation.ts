@@ -3,6 +3,8 @@ export const readWater = (page: Page) => page.evaluate(() => {
   const s = (window as any).__waterGame.scene.getScene("World");
   const f = s.propImages.get("plaza-fountain");
   return { water: s.waterEffects.snapshot(), objects: s.children.length, textures: s.textures.getTextureKeys().length,
+    gpu: { buffers: s.game.renderer.glBufferWrappers.length, vaos: s.game.renderer.glVAOWrappers.length, programs: s.game.renderer.glProgramWrappers.length },
+    bridges: s.children.list.filter((o: any) => o.texture?.key==="bridge").map((o: any) => ({x:o.x,y:o.y,width:o.displayWidth,height:o.displayHeight,rotation:o.rotation,depth:o.depth})),
     mode: s.ui.mode, state: (window as any).__farwind().state, camera: { x: s.cameras.main.worldView.x, y: s.cameras.main.worldView.y, zoom: s.cameras.main.zoom },
     stone: { x:f.x,y:f.y,w:f.displayWidth,h:f.displayHeight,depth:f.depth,alpha:f.alpha,rotation:f.rotation }, hitstop:s.combat.hitStopRemaining };
 });

@@ -14,6 +14,7 @@ import type { NpcLife } from "../systems/npcLife";
 import { TOWERS, GUARD_DEFS } from "../../data/defense";
 import { distance, spaceClear } from "../systems/npcNavigation";
 import { Actor } from "./actor";
+import { LIFE_ART, residentPose } from "../systems/npcAnimation";
 export class NpcLifeView {
   residents = new Map<
     string,
@@ -30,6 +31,8 @@ export class NpcLifeView {
   ink: Phaser.GameObjects.Graphics;
   roomLabel: Phaser.GameObjects.Text;
   furnitureLabels = new Map<string, Phaser.GameObjects.Text>();
+  furniture: { space: SpaceId; sprite: Phaser.GameObjects.Image }[] = [];
+  workInk: Phaser.GameObjects.Graphics;
   doorLights = new Map<string, Phaser.GameObjects.Graphics>();
   doors = new Map<string, Phaser.GameObjects.Text>();
   maintenance = new Map<
@@ -77,14 +80,67 @@ export class NpcLifeView {
       });
     }
     this.ink = scene.add.graphics();
-    this.roomLabel = scene.add.text(420, 444, "", {
-      fontSize: "19px",
-      color: "#5b3b2b",
-    });
+    this.workInk = scene.add.graphics().setDepth(8283.1).setVisible(false);
+    this.roomLabel = scene.add
+      .text(700, ROOM.top - 62, "", {
+        fontSize: "15px",
+        align: "center",
+        color: "#eee0bb",
+      })
+      .setOrigin(0.5, 0);
     this.room = scene.add
       .container(0, 0, [this.ink, this.roomLabel])
       .setDepth(7000)
       .setVisible(false);
+    // 家具与人物按脚底排序，避免所有桌椅都绘制在人物背后。
+    const addFurniture = (
+      space: SpaceId,
+      texture: string,
+      x: number,
+      y: number,
+      width: number,
+      height: number,
+    ) => {
+      const source = scene.textures.get(texture).getSourceImage();
+      this.furniture.push({
+        space,
+        sprite: scene.add
+          .image(x, y, texture)
+          .setOrigin(0.5, 1)
+          .setScale(Math.min(width / source.width, height / source.height))
+          .setDepth(7500 + y)
+          .setVisible(false),
+      });
+    };
+    for (const f of FACILITIES.filter((f) => f.place.space !== "village")) {
+      if (f.kind === "bed")
+        addFurniture(
+          f.place.space,
+          LIFE_ART.bed,
+          f.place.x,
+          f.place.y - 15,
+          64,
+          110,
+        );
+      else if (f.id !== "pharmacy")
+        addFurniture(
+          f.place.space,
+          LIFE_ART.table,
+          f.place.x,
+          f.place.y - 17,
+          88,
+          55,
+        );
+    }
+    for (const h of HOMES)
+      addFurniture(
+        h.id,
+        LIFE_ART.table,
+        830,
+        h.id === "healer-home" ? 783 : 778,
+        104,
+        62,
+      );
     for (const f of FACILITIES.filter((f) => f.kind === "bed")) {
       const label = scene.add
         .text(f.place.x, f.place.y + 12, f.label, {
@@ -146,34 +202,15 @@ export class NpcLifeView {
       for (let x = 400 + (y % 56); x < 1000; x += 115)
         g.lineBetween(x, y - 26, x, y);
     }
-    g.fillStyle(0xeee0bb).fillRoundedRect(400, 430, 600, 70, 8);
-    g.lineStyle(3, 0x674d35).strokeRoundedRect(400, 430, 600, 70, 8);
     for (const f of FACILITIES.filter((f) => f.place.space === space)) {
       const x = f.place.x,
         y = f.place.y;
       if (f.kind === "bed") {
-        g.fillStyle(0x72513a).fillRoundedRect(x - 40, y - 78, 80, 76, 5);
-        g.fillStyle(0xe8d4ac).fillRoundedRect(x - 34, y - 72, 68, 63, 5);
-        g.fillStyle(0x809b91).fillRoundedRect(x - 32, y - 48, 64, 40, 4);
-        g.fillStyle(0xf3e7cf).fillRoundedRect(x - 26, y - 67, 52, 16, 5);
-        g.lineStyle(2, 0x506c61, 0.6).strokeRoundedRect(
-          x - 32,
-          y - 48,
-          64,
-          40,
-          4,
-        );
-        const n = life.data.people.find((n) => n.action?.facility === f.id);
-        if (n?.action?.kind === "sleep" && n.action.phase === "perform")
-          g.fillStyle(0x536f65, 0.65).fillEllipse(x, y - 34, 44, 22);
         if (life.data.unavailable.facilities.includes(f.id))
-          g.lineStyle(3, 0x9b5742)
+          this.workInk
+            .lineStyle(3, 0x9b5742)
             .lineBetween(x - 20, y - 44, x + 20, y - 16)
             .lineBetween(x + 20, y - 44, x - 20, y - 16);
-      } else {
-        g.fillStyle(0x6d4c35).fillRoundedRect(x - 44, y - 55, 88, 40, 7);
-        g.fillStyle(0xb99160).fillRoundedRect(x - 42, y - 57, 84, 30, 5);
-        g.lineStyle(2, 0x66503c).strokeRoundedRect(x - 42, y - 57, 84, 30, 5);
       }
     }
     for (const box of PRIVATE_STORAGE.filter((box) => box.space === space)) {
@@ -204,16 +241,14 @@ export class NpcLifeView {
           `${person(box.owner)!.name} · ${stored ? box.item : "已取出"}`,
         );
     }
-    g.fillStyle(0x896e49).fillRect(810, 725, 100, 45);
-    g.lineStyle(2, 0x624833).strokeRect(810, 725, 100, 45);
+    const work = this.workInk;
     if (space === "healer-home") {
       for (let i = 0; i < 6; i++) {
-        g.fillStyle(
-          i < life.data.stores.medicine ? 0x75a58f : 0xab967a,
-        ).fillRoundedRect(817 + i * 13, 733, 9, 24, 2);
+        work
+          .fillStyle(i < life.data.stores.medicine ? 0x75a58f : 0xab967a)
+          .fillRoundedRect(794 + i * 13, 746, 9, 15, 2);
       }
-      g.fillStyle(0xf0e3bc).fillRect(814, 779, 50, 15);
-      g.lineStyle(1, 0x587559).lineBetween(836, 780, 840, 792);
+      work.fillStyle(0xf0e3bc).fillRect(802, 739, 20, 8);
       const n = life.data.people.find((n) => n.id === "healer")!,
         a = n.action;
       if (
@@ -223,18 +258,16 @@ export class NpcLifeView {
       ) {
         // 未完成的药草与研钵跟随真实进度；只有事务完成后公共药瓶数量才改变。
         const stroke = Math.sin(a.progress / 180) * 5;
-        g.fillStyle(0x65885f)
+        work
+          .fillStyle(0x65885f)
           .fillEllipse(803, 757, 17, 6)
           .fillEllipse(801, 749, 12, 5);
-        g.fillStyle(0xb3a180).fillEllipse(850, 761, 23, 10);
-        g.lineStyle(4, 0x66513b).lineBetween(848, 757, 852 + stroke, 742);
-        g.fillStyle(0xe4d7ad).fillRect(873, 751, 19, 12);
-        g.lineStyle(2, 0x799367).lineBetween(
-          876,
-          756,
-          876 + (13 * a.progress) / a.duration,
-          756,
-        );
+        work.fillStyle(0xb3a180).fillEllipse(850, 761, 23, 10);
+        work.lineStyle(4, 0x66513b).lineBetween(848, 757, 852 + stroke, 742);
+        work.fillStyle(0xe4d7ad).fillRect(873, 751, 19, 12);
+        work
+          .lineStyle(2, 0x799367)
+          .lineBetween(876, 756, 876 + (13 * a.progress) / a.duration, 756);
       }
     }
     if (space === "elder-home") {
@@ -242,15 +275,16 @@ export class NpcLifeView {
         .lineBetween(930, 590, 930, 640)
         .lineBetween(916, 601, 944, 601);
       g.fillStyle(0xad986c).fillEllipse(930, 616, 22, 18);
-      g.fillStyle(0xe4d5b2).fillRect(909, 718, 43, 25);
-      g.lineStyle(1, 0x698579)
-        .lineBetween(916, 724, 945, 724)
-        .lineBetween(916, 732, 945, 732);
+      work.fillStyle(0xe4d5b2).fillRect(817, 740, 32, 17);
+      work
+        .lineStyle(1, 0x698579)
+        .lineBetween(823, 745, 843, 745)
+        .lineBetween(823, 751, 843, 751);
     }
     if (space === "carpenter-home") {
       const stage = life.data.people.find((n) => n.id === "carpenter")!.project;
-      g.fillStyle(0x9b693c).fillEllipse(850, 740, stage >= 33 ? 28 : 15, 13);
-      if (stage >= 66) g.fillTriangle(861, 738, 875, 730, 875, 743);
+      work.fillStyle(0x9b693c).fillEllipse(850, 748, stage >= 33 ? 28 : 15, 13);
+      if (stage >= 66) work.fillTriangle(861, 746, 875, 738, 875, 751);
     }
     g.fillStyle(0x3b5147).fillRect(ROOM.entry.x - 36, ROOM.bottom - 18, 72, 20);
     g.lineStyle(2, 0x9e784b).strokeRect(
@@ -263,16 +297,63 @@ export class NpcLifeView {
       `${HOMES.find((h) => h.id === space)!.name}\n${HOMES.find((h) => h.id === space)!.private}　·　南侧门口 E 返回`,
     );
   }
+  snapshot() {
+    return {
+      residents: [...this.residents].map(([id, v]) => ({
+        id,
+        texture: v.sprite.texture.key,
+        frame: v.sprite.frame.name,
+        visible: v.sprite.visible,
+        depth: v.sprite.depth,
+        cropped: v.sprite.isCropped,
+        x: v.sprite.x,
+        y: v.sprite.y,
+      })),
+      furniture: this.furniture
+        .filter((f) => f.sprite.visible)
+        .map((f) => ({
+          space: f.space,
+          texture: f.sprite.texture.key,
+          x: f.sprite.x,
+          y: f.sprite.y,
+          depth: f.sprite.depth,
+        })),
+    };
+  }
   update(life: NpcLife, now: number) {
     const space = life.data.playerSpace,
       indoor = space !== "village";
     this.room.setVisible(indoor);
+    this.workInk.clear().setVisible(indoor);
+    for (const f of this.furniture) f.sprite.setVisible(f.space === space);
     for (const f of MAINTENANCE) {
       const v = this.maintenance.get(f.id)!,
         hp = life.data.facilities[f.id],
         show = !indoor && hp < 100;
-      v.mark.clear().setVisible(show);
+      v.mark.clear().setVisible(!indoor && (show || f.id === "wind-bell"));
       v.label.setVisible(show).setText(`${f.name} · 待维修 ${Math.round(hp)}%`);
+      // 小型公共挂架沿用场景线绘，不更换人物素材；损坏不改变既有通行几何。
+      if (f.id === "wind-bell") {
+        const x = f.place.x,
+          y = f.place.y;
+        v.mark
+          .lineStyle(5, 0x806345, 1)
+          .lineBetween(x - 24, y - 4, x - 22, y - 62)
+          .lineBetween(x + 24, y - 4, x + 22, y - 62)
+          .lineBetween(x - 26, y - 59, x + 26, y - 61)
+          .lineStyle(1, 0xc5a274, 0.8)
+          .lineBetween(x - 23, y - 6, x - 21, y - 55)
+          .lineStyle(2, 0x705943, 1)
+          .lineBetween(x, y - 59, x, y - 49)
+          .fillStyle(hp > 0 ? 0xb5b7a0 : 0x8c8170, 1)
+          .fillEllipse(x, y - 40, 22, 19)
+          .lineStyle(2, 0x626e66, 1)
+          .strokeEllipse(x, y - 40, 22, 19)
+          .lineBetween(x - 13, y - 32, x + 13, y - 32)
+          .lineBetween(x, y - 31, x, y - 18)
+          .fillStyle(0xc5ad83, 1)
+          .fillRect(x - 3, y - 23, 6, 13);
+      }
       if (show)
         v.mark
           .lineStyle(3, 0x6f3e2d, 0.85)
@@ -296,8 +377,18 @@ export class NpcLifeView {
           );
     }
     if (indoor) this.drawRoom(space, life);
-    for (const f of FACILITIES.filter((f) => f.kind === "bed"))
-      this.furnitureLabels.get(f.id)!.setVisible(f.place.space === space);
+    for (const f of FACILITIES.filter((f) => f.kind === "bed")) {
+      const sleeping = life.data.people.some(
+        (n) =>
+          n.action?.facility === f.id &&
+          n.action.kind === "sleep" &&
+          n.action.phase === "perform",
+      );
+      this.furnitureLabels
+        .get(f.id)!
+        .setVisible(f.place.space === space)
+        .setText(`${f.label}${sleeping ? " · 休息中" : ""}`);
+    }
     for (const box of PRIVATE_STORAGE)
       this.furnitureLabels.get(box.id)!.setVisible(box.space === space);
     for (const [id, t] of this.doors) {
@@ -336,32 +427,43 @@ export class NpcLifeView {
           n.action?.phase === "perform" &&
           ["work", "repair", "treat", "habit"].includes(n.action.kind),
         sleeping = n.action?.kind === "sleep" && n.action.phase === "perform",
-        depth = (indoor ? 7500 : 0) + p.y;
-      // 两帧为既有轻动作素材，行走只切换帧并保留侧向朝向；没有宣称专用职业动画。
+        depth = (indoor ? 7500 : 0) + p.y,
+        pose = residentPose(n, moved, now),
+        bed =
+          sleeping &&
+          FACILITIES.find(
+            (f) =>
+              f.id === n.action?.facility &&
+              f.kind === "bed" &&
+              distance(f.place, p) < 6,
+          );
+      // 职业四帧按真实进度推进；睡眠仅露出原角色头部，身体由被褥遮挡。
       v.sprite
-        .setPosition(p.x, p.y)
+        .setTexture(pose.texture, bed ? 1 : pose.frame)
+        .setCrop()
+        .setPosition(p.x, p.y - (bed ? 29 : 0))
         .setDepth(depth)
-        .setFrame(moved || working ? Math.floor(now / 350) % 2 : 0)
         .setVisible(visible)
         .setAlpha(p.health === "down" ? 0.65 : 1)
-        .setRotation(sleeping || p.health === "down" ? 0.35 : 0);
+        .setRotation(p.health === "down" ? 0.35 : 0);
+      if (bed) v.sprite.setCrop(0, 0, 128, 54);
       Actor.mirror(v.sprite, v.facing === 2);
       if (p.health !== "healthy") v.sprite.setTint(0xd5b4a1);
       else v.sprite.clearTint();
       v.shadow
-        .setVisible(visible)
+        .setVisible(visible && !bed)
         .setPosition(p.x, p.y - 3)
         .setDepth(depth - 0.5);
       v.label
-        .setVisible(visible)
+        .setVisible(visible && !bed)
         .setPosition(p.x, p.y + 6)
         .setDepth(depth + 1)
         .setText(
-          `${person(id)!.name} · ${p.health === "down" ? "需救护" : p.health === "convalescent" ? "休养" : n.action ? (n.action.phase === "stock" ? (id === "healer" ? "装药" : "取木料") : n.action.phase === "collect" ? "取物" : ACTION_LABELS[n.action.kind]) : "等待"}`,
+          `${person(id)!.name} · ${p.health === "hurt" ? "受伤 · " : ""}${p.health === "down" ? "需救护" : p.health === "convalescent" ? "休养" : n.action ? (n.action.phase === "stock" ? (id === "healer" ? "装药" : "取木料") : n.action.phase === "collect" ? "取物" : ACTION_LABELS[n.action.kind]) : "等待"}`,
         );
       v.tool
         .clear()
-        .setVisible(visible)
+        .setVisible(visible && !bed)
         .setDepth(depth + 2);
       if (life.carrying(n) && id === "healer") {
         v.tool
@@ -395,13 +497,13 @@ export class NpcLifeView {
               p.x - 20 - i * 6,
               p.y - 48,
             );
-      if (life.carrying(n) && id === "elder")
+      if (life.carrying(n) && id === "elder" && pose.texture !== "elder-work")
         v.tool
           .fillStyle(0xe2d5af)
           .fillRoundedRect(p.x + 18, p.y - 33, 15, 20, 2)
           .lineStyle(1, 0x748875)
           .lineBetween(p.x + 21, p.y - 27, p.x + 30, p.y - 27);
-      if (working && n.action) {
+      if (working && n.action && !pose.texture.endsWith("-work")) {
         const phase = Math.sin(n.action.progress / 160),
           x = p.x + (v.facing === 2 ? -23 : 23);
         if (id === "healer" && n.action.kind === "treat")

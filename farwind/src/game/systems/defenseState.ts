@@ -1,5 +1,5 @@
 import {isSpace,validPlace} from './npcLifeState';
-import type {SpaceId} from '../../data/npcLife';
+import { CIVILIAN_IDS, MAINTENANCE, type SpaceId } from '../../data/npcLife';
 import { GUARD_DEFS, RAID_TIMING, raidInterval, type GateId, type GuardId } from "../../data/defense";
 export type GuardMode = "post" | "patrol" | "intercept" | "attack" | "retreat" | "recover" | "dead" | "life" | "return";
 export type GuardState = {
@@ -44,7 +44,7 @@ export function validateDefense(raw: unknown): DefenseState {
     new Set(r.members.map(m => m?.id)).size !== r.members.length || !r.members.every((m, i) =>
       m && m.id === `${r.id}:${i + 1}` && ["slime", "leaf"].includes(m.type) && point(m) &&
       num(m.hp, m.type === "slime" ? 48 : 72) && num(m.cooldownMs, 5000) &&
-      (m.targetId === null || m.targetId === "player" || GUARD_DEFS.some(g => g.id === m.targetId)))))
+      (m.targetId === null || m.targetId === "player" || GUARD_DEFS.some(g => g.id === m.targetId) || CIVILIAN_IDS.some(id => id === m.targetId) || MAINTENANCE.some(f=>f.id===m.targetId)))))
     throw Error("来袭存档损坏，请使用有效备份。");
   if (r === null && s.completedSequence !== s.sequence) throw Error("来袭结算序号不一致。");
   return structuredClone(s);

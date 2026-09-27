@@ -35,7 +35,7 @@ test("WIND-08", async ({ page }) => {
   const file = await download;
   await file.saveAs(`${raw}/save-export.json`);
   const saved = JSON.parse(await readFile(`${raw}/save-export.json`, "utf8"));
-  expect(saved.skills).toEqual({ swordWind: false });
+  expect(saved.skills.swordWindStage).toBe(0);expect(saved.skills.completedLessons).toEqual([]);
   expect(saved).not.toHaveProperty("swordWind");
   expect(saved).not.toHaveProperty("attack");
   await page
@@ -44,7 +44,7 @@ test("WIND-08", async ({ page }) => {
   await page.getByRole("button", { name: "继续旅途", exact: true }).click();
   await page.waitForFunction(() => (window as any).__farwind().mode === "");
   const s = await read(page);
-  expect(s.state.skills.swordWind).toBe(false);
+  expect(s.state.skills.swordWindStage).toBe(0);
   expect(s.swordWind.effective).toBe(!off);
   expect(s.swordWind.entities).toEqual([]);
   expect(s.session.combat.buffered).toBe(false);

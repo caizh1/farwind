@@ -9,14 +9,14 @@ const observer={x:930,y:1220,hp:100};
 const stable=(s:State)=>[s.player,s.bag,s.hotbar,s.quest,s.killed,s.pendingDrops,s.collected,s.equipment,s.coins,s.economyRevision,s.defense.guards.map(g=>[g.id,g.hp,g.dead])];
 describe('M5集成迁移与恢复',()=>{
  it('真实旧结构和地图组合反复序列化不重复平移、不丢物品装备与伤亡',()=>{
-  for(const schema of [1,2,3,4])for(const map of [undefined,2,3,4,5,6]){
-   const old:any=initialState();old.schema_version=schema;old.map_version=map;old.player.x=2300;
+  for(const schema of [1,2,3,4,5,6])for(const map of [undefined,2,3,4,5,6]){
+   const old:any=initialState();old.schema_version=schema;old.skills={swordWind:false};old.map_version=map;old.player.x=2300;
    old.bag[0]={id:'herb',count:7};old.quest=3;old.crafted=true;old.killed=['leaf-1'];old.pendingDrops=[{enemyId:'leaf-1',item:'crystal',x:2320,y:1070}];
    if(schema===1){for(const k of ['coins','equipment','shopStock','economyRevision','defense','skills'])delete old[k];}
    if(schema===2)delete old.defense;
    if(schema===3){old.defense={guards:old.defense.guards.slice(0,3),sequence:0,completedSequence:0,raid:null};Object.assign(old.defense.guards[0],{hp:0,dead:true,mode:'dead'});old.defense.guards[1].hp=73;}
    let next=validate(old);expect(next.player.x).toBe(map===undefined?2900:2300);expect(next.pendingDrops[0].x).toBe(map===undefined?2920:2320);
-   expect([next.schema_version,next.map_version]).toEqual([6,6]);expect(next.bag[0]).toEqual(old.bag[0]);
+   expect([next.schema_version,next.map_version]).toEqual([7,6]);expect(next.bag[0]).toEqual(old.bag[0]);
    if(schema===3){expect(next.defense.guards[0].dead).toBe(true);expect(next.defense.guards[1].hp).toBe(73);}
    const first=stable(next);for(let n=0;n<10;n++)next=validate(JSON.parse(JSON.stringify(next)));expect(stable(next)).toEqual(first);
   }

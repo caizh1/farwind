@@ -47,7 +47,7 @@ function fixture() {
   return {
     state: initialState(), ui: { dialog: vi.fn(), message: vi.fn(), offerShop: vi.fn() }, combat: { dashCooldown: 0 }, sim: 0,
     soundFx: { play: vi.fn() }, persist: vi.fn().mockResolvedValue(undefined),
-    life: { dialogue: vi.fn().mockReturnValue("时段对白"), health: vi.fn().mockReturnValue(100) },
+    life: { dialogue: vi.fn().mockReturnValue("时段对白"), health: vi.fn().mockReturnValue(100), needsTreatment: vi.fn().mockReturnValue(false) },
   };
 }
 function talk(world: ReturnType<typeof fixture>, id: string) {

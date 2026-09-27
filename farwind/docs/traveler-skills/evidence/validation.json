@@ -1,0 +1,186 @@
+{
+  "说明": "真实验证汇总；自然生产路线与固定边界夹具分别记录。源码摘要用于识别本次已验证快照，不代表提交。",
+  "记录时间": "2026-09-27T23:01:24.058315+08:00",
+  "存档版本": 7,
+  "地图版本": 6,
+  "生产构建": {
+    "文件": ".skill-growth-local/production/assets/index-5j8NfTPl.js",
+    "摘要": "5630ea614643fb51dc5e72350be3365d4b7f826c7753cdbfd7ec03b2666b77ee"
+  },
+  "冻结基线": {
+    "文件": ".skill-growth-local/baseline/assets/index-CGbnrT4Y.js",
+    "摘要": "0a6b48f44da20b5fc1606d0c33ea11ff915640c618d92a2a3546c8547b95d694"
+  },
+  "类型检查": "通过",
+  "完整单测": {
+    "文件数": 33,
+    "通过": 570,
+    "失败": 0,
+    "耗时秒": 100.79,
+    "命令": "npm test -- --maxWorkers=1"
+  },
+  "生产浏览器": {
+    "成长和水迹": 7,
+    "战斗补充回归": 1,
+    "失败": 0,
+    "工作进程": 1,
+    "自动重试": 0,
+    "说明": "同一生产构建，分两批执行，均通过。"
+  },
+  "自然路线": {
+    "阶段": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "最终阶段": 5,
+    "主线": 0,
+    "开发授予": false,
+    "存档夹具": false,
+    "页面异常": []
+  },
+  "原生性能": {
+    "performance-stream.json": {
+      "退化百分比": 0,
+      "页面异常": [],
+      "采样": {
+        "改动前": {
+          "GPU": {
+            "渲染器": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)",
+            "供应商": "Google Inc. (Apple)"
+          },
+          "样本数": 1321,
+          "P95": 16.700000000000728,
+          "对象峰值": 450,
+          "水迹峰值": 0,
+          "水迹池峰值": 0,
+          "空闲数量": {
+            "stage": 0,
+            "objects": 440,
+            "textures": 159,
+            "gpu": {
+              "buffers": 11,
+              "vaos": 21,
+              "programs": 21
+            }
+          }
+        },
+        "改动后": {
+          "GPU": {
+            "渲染器": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)",
+            "供应商": "Google Inc. (Apple)"
+          },
+          "样本数": 1321,
+          "P95": 16.700000000000728,
+          "对象峰值": 530,
+          "水迹峰值": 40,
+          "水迹池峰值": 40,
+          "空闲数量": {
+            "stage": 0,
+            "objects": 499,
+            "textures": 192,
+            "gpu": {
+              "buffers": 11,
+              "vaos": 21,
+              "programs": 21
+            },
+            "water": {
+              "active": 0,
+              "allocated": 40,
+              "capacity": 256,
+              "samples": [],
+              "disposed": false
+            }
+          }
+        }
+      }
+    },
+    "performance.json": {
+      "退化百分比": 0.5988023952008481,
+      "页面异常": [],
+      "采样": {
+        "改动前": {
+          "GPU": {
+            "渲染器": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)",
+            "供应商": "Google Inc. (Apple)"
+          },
+          "样本数": 1322,
+          "P95": 16.700000000000728,
+          "对象峰值": 441,
+          "水迹峰值": 0,
+          "水迹池峰值": 0,
+          "空闲数量": {
+            "stage": 0,
+            "objects": 440,
+            "textures": 159,
+            "gpu": {
+              "buffers": 11,
+              "vaos": 21,
+              "programs": 21
+            }
+          }
+        },
+        "改动后": {
+          "GPU": {
+            "渲染器": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)",
+            "供应商": "Google Inc. (Apple)"
+          },
+          "样本数": 1321,
+          "P95": 16.799999999999272,
+          "对象峰值": 506,
+          "水迹峰值": 144,
+          "水迹池峰值": 144,
+          "空闲数量": {
+            "stage": 0,
+            "objects": 499,
+            "textures": 192,
+            "gpu": {
+              "buffers": 11,
+              "vaos": 21,
+              "programs": 21
+            },
+            "water": {
+              "active": 0,
+              "allocated": 144,
+              "capacity": 256,
+              "samples": [],
+              "disposed": false
+            }
+          }
+        }
+      }
+    }
+  },
+  "审查": "PASS",
+  "阻塞项": [],
+  "美术验收": "待用户试玩",
+  "源码摘要": {
+    "src/data/swordWind.ts": "d166b9ba0ae7c59c6714917cfe5367e76c64e88f278f5d9e4409dd14719f1722",
+    "src/data/windLessons.ts": "f1d058dfe1f649501bb974fbded0103e4e55b2e003f7f345827c66739e21cae6",
+    "src/data/world.ts": "7a3bace8d798061033e3e08f773c31a18678776d69d0faf2fcaabbca3c78a358",
+    "src/game/systems/skills.ts": "ae16ff77adb52f3fc1971b90763d4d9221dfbab0ee61a235e1a068c3c6b99f12",
+    "src/game/systems/state.ts": "ab298ee5c8140b7c5b59fed2d992fc99146243f49e31a5d1284dbe4792b50e35",
+    "src/game/systems/stateCommit.ts": "7f27d1c94b393a848e25bbe629f38b667e2302757c4cbec9028dc8e09c12c71d",
+    "src/game/systems/save.ts": "3bca98408349b3bb508cd011bf18ff026ae7d5153bc1228c910d4952ae9c9196",
+    "src/game/systems/combat.ts": "d19dd8e432d9ed0eb4042c6905dc314344eb1a9c4867a82ddbcc14de6dd18e10",
+    "src/game/systems/swordWind.ts": "1b81bf3ce4d312d1e14ecf508b0490ab8ab5088df9188cc892bfd6cf9ae6dd13",
+    "src/game/systems/swordWindGeometry.ts": "f5554751c5df11c20239c4f0faebc5d4223bc251b74713fd6270c292d02a963d",
+    "src/game/systems/swordWindWater.ts": "9df893e65bcb3cd62203706a2b8306f5dd20ac9ccaea458f97cb6042fd90b790",
+    "src/game/systems/windLessons.ts": "796ccba9c08e6e9fd5cfee85560c08311d85420165abb0e1c8826a405e9a367d",
+    "src/game/entities/swordWindView.ts": "53b65277124e1620db63405a5c050033a6551cb262187fa187094319bd5b935e",
+    "src/game/entities/swordWindWaterView.ts": "52b9997835d4d8c5e3e433a5e42a08ef8677ed62431b758d83196f416b9069c1",
+    "src/game/scenes/World.ts": "01b8b79cb54aef7e1c88244931af8beb65f736fd71f49a19ed5552709f40bd15",
+    "src/game/systems/interactions.ts": "50162f9341380db159314e829ce54fe417cd4723b0a0b5ff98a87dd4aa97e1b8",
+    "src/game/ui/interface.ts": "61f86cd8820217e96ecfa808b76237dea8d57987f067bc99d38df41bf2cb1f98",
+    "src/style.css": "e69e04d4c510a7829dee66def0f39240d06b7dee67d299c2ae74b9f75582813c",
+    "tests/skill-growth.test.ts": "6f492a9a97f46fe5f1647ce5581282615d78383c12f07d41434639b7b4fe8b10",
+    "tests/skill-location.test.ts": "0eb9c5e8d1cfd70ad9b51275a93566be0dd3f6cffd7f89fa1799329fbeff6cfb",
+    "tests/skill-growth.spec.ts": "370b92f0ead350987c3c7760945322048295ef5cb01a2aa7864fc14291b92f96",
+    "tests/skill-navigation.ts": "c1840f57b1d8c0442306cdbcbe127aee877bf321d52aa5d0c5ed80d89c272117",
+    "tests/skill-performance.spec.ts": "d21205d6529c1dd3cebfccaec13cb92398a4b3ddaf8d54f2cfac0e0692e820c4",
+    "tools/playwright-skill-growth.config.ts": "c82832a07b10b50072677e1d9aded9d323e5f72fef476468a0f37c605b21e4a5",
+    "tools/playwright-skill-performance.config.ts": "ce17a55e821901d55f7abf1edc5818f58bdb2e562bf7920fe34e1e5612be830a"
+  }
+}

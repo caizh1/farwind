@@ -12,7 +12,7 @@ test("WIND-PRODUCTION-01", async ({ page }) => {
   await page.keyboard.press("d");
   await page.waitForTimeout(60);
   const before = await page.evaluate(() => (window as any).__farwind());
-  expect(before.state.skills.swordWind).toBe(false);
+  expect(before.state.skills.swordWindStage).toBe(0);
   expect(before).not.toHaveProperty("swordWind");
   await page.keyboard.press("j");
   await page.waitForTimeout(240);
@@ -26,7 +26,7 @@ test("WIND-PRODUCTION-01", async ({ page }) => {
   const after = await page.evaluate(() => (window as any).__farwind());
   expect(after.attackSerial - before.attackSerial).toBe(4);
   expect(after.state.player.x - before.state.player.x).toBeCloseTo(63, 0);
-  expect(after.state.skills.swordWind).toBe(false);
+  expect(after.state.skills.swordWindStage).toBe(0);
   expect(errors).toEqual([]);
   await page.screenshot({
     path: "docs/sword-wind/evidence/production-three-chain.png",

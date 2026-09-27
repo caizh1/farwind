@@ -12,7 +12,7 @@ async function start(page: Page) {
   await page.goto("/?npcDebug=1");
   await page.getByRole("button", { name: "启程 · 新游戏" }).click();
   await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
-  expect((await read(page)).state.schema_version).toBe(6);
+  expect((await read(page)).state.schema_version).toBe(7);
   expect((await read(page)).state.life.people.length).toBe(12);
 }
 async function advance(page: Page) {
@@ -195,7 +195,7 @@ test("居民真实日常、动态位置、药房室内与存档恢复", async ({
 });
 test("和平轮休真实进入营房，森林敌人不取消全村日常", async ({ page }) => {
   const old: any = initialState();
-  old.schema_version = 5;
+  old.schema_version = 5;old.skills={swordWind:false};
   delete old.life;
   old.time = 1140;
   await page.goto("/?npcDebug=1");
@@ -292,7 +292,7 @@ test("旧档真实导入、死亡保留、夜间床位、暂停与失焦冻结",
   context,
 }) => {
   const old: any = initialState();
-  old.schema_version = 5;
+  old.schema_version = 5;old.skills={swordWind:false};
   delete old.life;
   old.time = 1320;
   old.coins = 73;
@@ -311,7 +311,7 @@ test("旧档真实导入、死亡保留、夜间床位、暂停与失焦冻结",
   });
   await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
   let snap = await read(page);
-  expect(snap.state.schema_version).toBe(6);
+  expect(snap.state.schema_version).toBe(7);
   expect(snap.state.coins).toBe(73);
   expect(snap.state.defense.guards[0].dead).toBe(true);
   expect(snap.state.defense.guards[1].hp).toBeLessThan(75);
@@ -539,7 +539,7 @@ test("私人储物真实查看、物品随身、午饭前归还与读档", async
   await page.reload();
   await page.getByRole("button", { name: "继续旅途" }).click();
   await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
-  expect((await read(page)).state.life.version).toBe(3);
+  expect((await read(page)).state.life.version).toBe(4);
   expect((await read(page)).state.life.people[1].gear).toBe("locker");
 });
 
@@ -547,7 +547,7 @@ test("床位演练：小满沿路入住旅馆备用床，室内存档保留而�
   page,
 }) => {
   const old: any = initialState();
-  old.schema_version = 5;
+  old.schema_version = 5;old.skills={swordWind:false};
   delete old.life;
   old.time = 1310;
   await page.goto("/?npcDebug=1");

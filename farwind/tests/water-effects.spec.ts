@@ -22,14 +22,20 @@ test("water-motion-local",async({page})=>{
   const a=await page.screenshot({path:`${directory}/time-a.png`});await page.waitForTimeout(2300);
   const b=await page.screenshot({path:`${directory}/time-b.png`});
   const results={喷泉流水:await difference(a,b,rect(647,789,69,63)),池塘中心:await difference(a,b,rect(1240,1090,110,42)),
-    前池沿:await difference(a,b,rect(638,860,85,18)),空桥面:await difference(a,b,rect(1045,920,75,130)),池外草地:await difference(a,b,rect(1475,940,35,25))};
+    池水上部:await difference(a,b,rect(1190,1015,150,70)),池水下部:await difference(a,b,rect(1200,1230,140,40)),
+    // 只取不透明木板。旧桥PNG的板缝透明，透过缝隙看到动态水面是正确遮挡。
+    前池沿:await difference(a,b,rect(638,860,85,18)),空桥面:await difference(a,b,rect(1045,940,75,20)),池外草地:await difference(a,b,rect(1475,940,35,25)),
+    固定岸内水带:await difference(a,b,rect(1532,1110,4,20))};
   expect(results.喷泉流水.变化像素比例).toBeGreaterThan(0.005);
-  expect(results.池塘中心.变化像素比例).toBeGreaterThan(0.008);
+  for(const r of [results.池塘中心,results.池水上部,results.池水下部]) {
+    expect(r.变化像素比例).toBeGreaterThan(0.25);
+    expect(r.平均通道差).toBeGreaterThan(2);
+  }
   // 少量像素变化不足以证明默认视口可读；水面变化强度也必须达到最低门槛。
   expect(results.喷泉流水.平均通道差).toBeGreaterThan(0.75);
-  expect(results.池塘中心.平均通道差).toBeGreaterThan(0.35);
-  for(const r of [results.前池沿,results.空桥面,results.池外草地])expect(r.变化像素比例).toBeLessThan(0.003);
+  for(const r of [results.前池沿,results.空桥面,results.池外草地,results.固定岸内水带])expect(r.变化像素比例).toBeLessThan(0.003);
   expect((await readWater(page)).stone).toEqual(state.stone);
+  expect((await readWater(page)).bridges).toEqual(state.bridges);
   expect(errors).toEqual([]); await writeFile(`${directory}/local-motion.json`,JSON.stringify({说明:"固定相机，临时隐藏HUD及既有昼夜覆盖；只比较指定水面与静态控制区域，未以全图差异代替动画检查。",结果:results},null,2));
 });
 
@@ -54,8 +60,31 @@ test("water-lifecycle",async({page})=>{
   });
   expect(lifecycle.destroyed).toBe(true);expect(lifecycle.owned.every((v:boolean)=>!v)).toBe(true);expect(lifecycle.shared).toBe(true);
   await page.getByRole("button",{name:"继续旅途"}).click();await page.waitForTimeout(600);
-  expect((await readWater(page)).water.counts).toEqual(initial.water.counts);expect(errors).toEqual([]);
-  await writeFile(`${directory}/lifecycle.json`,JSON.stringify({说明:"通过正式菜单返回与继续；另执行真实场景stop/start检查资源清理。",暂停:paused.water,恢复:resumed.water,停止:lifecycle,重启:(await readWater(page)).water},null,2));
+  const restarted=await readWater(page);
+  expect(restarted.water.counts).toEqual(initial.water.counts);
+  expect(restarted.gpu).toEqual(initial.gpu);
+  // 再次关闭游戏本体也必须正常，不能让已销毁VAO留在渲染器清理列表中。
+  const gameDestroyed=await page.evaluate(()=>{const game=(window as any).__waterGame;game.destroy(true);return true;});
+  await page.waitForTimeout(100);expect(gameDestroyed).toBe(true);expect(errors).toEqual([]);
+  await writeFile(`${directory}/lifecycle.json`,JSON.stringify({说明:"通过正式菜单返回与继续；另执行真实场景stop/start以及game.destroy检查资源清理，比较重启前后GPU缓冲/VAO/程序数量。",暂停:paused.water,恢复:resumed.water,停止:lifecycle,重启:restarted.water,GPU重启前:initial.gpu,GPU重启后:restarted.gpu,游戏销毁:gameDestroyed},null,2));
+});
+
+test("water-tab-focus",async({page,context})=>{
+  const errors=await startWater(page);
+  // Playwright默认强制焦点；关闭模拟后验证真实标签失焦。当前Chromium仍将
+  // document.hidden报告为false，因此这里不将失焦测试包装成visibilitychange验收。
+  const cdp=await context.newCDPSession(page);await cdp.send("Emulation.setFocusEmulationEnabled",{enabled:false});
+  await page.bringToFront();await page.waitForFunction(()=>document.hasFocus(),undefined,{timeout:10000});
+  const tab=await context.newPage();await tab.goto("about:blank");await tab.bringToFront();
+  await page.waitForFunction(()=>!document.hasFocus(),undefined,{timeout:10000});
+  const hidden=await readWater(page);await page.waitForTimeout(600);const later=await readWater(page);
+  expect(later.water.time).toBe(hidden.water.time);expect(later.water.surface.time).toBe(hidden.water.surface.time);
+  await tab.close();await page.bringToFront();await page.waitForFunction(()=>document.hasFocus(),undefined,{timeout:10000});
+  expect((await readWater(page)).mode).toBe("pause");
+  await page.getByRole("button",{name:"继续旅途"}).click();await page.waitForTimeout(200);
+  const resumed=await readWater(page);expect(resumed.water.time).toBeGreaterThan(hidden.water.time);
+  expect(resumed.water.time-hidden.water.time).toBeLessThan(350);expect(errors).toEqual([]);
+  await writeFile(`${directory}/tab-focus.json`,JSON.stringify({说明:"原生浏览器实际切换标签页，关闭默认焦点模拟后确认document.hasFocus变化，恢复通过正式继续菜单；未验证visibilitychange分支，没有伪造document.hidden。",失焦:hidden.water,失焦半秒后:later.water,恢复:resumed.water,错误:errors},null,2));
 });
 
 test("water-navigation",async({page})=>{

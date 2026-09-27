@@ -1,3 +1,5 @@
+import {WIND_NAMES,WIND_EFFECTS,WIND_LESSONS} from '../../data/windLessons';
+import {windLearningSource} from '../systems/skills';
 import { showShop } from "./shop";
 import { clockLabel } from "../systems/worldClock";
 import { equipment, isEquipment, type ShopId } from "../../data/economy";
@@ -273,7 +275,7 @@ export class Interface {
   get paused() {
     return this.mode !== "";
   }
-  swordWind(source:string){const badge=this.root.querySelector<HTMLElement>('#sword-wind-status')!;badge.hidden=source==='未学习';badge.textContent=`剑风：${source}`;}
+  swordWind(source:string,name="剑风",trial=false){const badge=this.root.querySelector<HTMLElement>('#sword-wind-status')!;badge.hidden=source==='未学习'&&!trial;badge.textContent=`${name}：${trial?'教学试用':source}`;}
   message(s: string) {
     this.toastEl.textContent = s;
     this.toastEl.classList.add("show");
@@ -373,7 +375,7 @@ export class Interface {
     if (mode === "practice") {
       this.shell(
         "迎风架剑练习",
-        `<p>K／画布右键架剑；成功自动反斩，J／左键接第二刀，再按接第三刀。收拢外圈进入宽容区可普通弹反，中心菱形与双线表示精准时机。投影与正式怪物共用攻击动作，锁向后不追踪绕背。练习不扣生命、不掉落、不推进任务。</p><label class="practice-toggle"><input id="parry-indicators" type="checkbox" ${this.actions.getIndicators()?"checked":""}>显示来招指示器（关闭后只看怪物动作）</label><div class="practice-options"><button data-practice="slow">慢速教学 · 900毫秒</button><button data-practice="slime">史莱姆节奏 · 450毫秒</button><button data-practice="leaf">叶灵节奏 · 650毫秒</button><button data-practice="chain">轻击收手 → 弹反 → 自动反斩 → 连击</button><button data-practice="off">结束弹反练习</button></div><button id="close">返回木桩练习</button>`,
+        `<p>K／画布右键架剑；成功自动反斩，J／左键接第二刀，再按接第三刀。收拢外圈进入宽容区可普通弹反，中心菱形与双线表示精准时机。投影与正式怪物共用攻击动作，锁向后不追踪绕背。练习不扣生命、不掉落、不推进任务。</p><label class="practice-toggle"><input id="parry-indicators" type="checkbox" ${this.actions.getIndicators()?"checked":""}>显示来招指示器（关闭后只看怪物动作）</label><div class="practice-options"><button data-practice="slow">慢速教学 · 900毫秒</button><button data-practice="slime">史莱姆节奏 · 450毫秒</button><button data-practice="leaf">裂枝镰灵 · 650毫秒</button><button data-practice="spore">灰冠孢卫 · 孢子喷射</button><button data-practice="boar">棘甲林豕 · 直线冲锋</button><button data-practice="raven">暮羽鸦妖 · 跃扑</button><button data-practice="chain">轻击收手 → 弹反 → 自动反斩 → 连击</button><button data-practice="off">结束弹反练习</button></div><button id="close">返回木桩练习</button>`,
       );
       this.modal.querySelector<HTMLInputElement>("#parry-indicators")!.onchange=e=>this.actions.indicators((e.target as HTMLInputElement).checked);
       this.modal.querySelectorAll<HTMLButtonElement>("[data-practice]").forEach(
@@ -484,7 +486,7 @@ export class Interface {
           )
           .join(
             "",
-          )}</ol><h2>支线 · 木匠的托付</h2><p>${["与西南方的木匠阿禾交谈", "为阿禾收集 4 份木材", "已交付，收到浆果与谢意"][s.side]}</p><button id="close">合上手记</button>`,
+          )}</ol><h2>支线 · 木匠的托付</h2><p>${["与西南方的木匠阿禾交谈", "为阿禾收集 4 份木材", "已交付，收到浆果与谢意"][s.side]}</p>${this.skillJournal(s)}<button id="close">合上手记</button>`,
       );
     if (mode === "map" && s) {
       this.shell(
@@ -507,7 +509,7 @@ export class Interface {
     if (mode === "help")
       this.shell(
         "操作说明",
-        `<dl class="controls-guide"><dt>移动</dt><dd>WASD / 方向键</dd><dt>奔跑</dt><dd>按住空格并移动，消耗体力</dd><dt>交互 / 继续对话</dt><dd>E</dd><dt>攻击 / 三连斩</dt><dd>J / 游戏画布左键；连按衔接</dd><dt>迎风架剑 / 弹反</dt><dd>K / 游戏画布右键；成功自动反斩，J 接第二、第三刀</dd><dt>风步</dt><dd>L</dd><dt>使用快捷道具</dt><dd>1–8 / 点击对应格子</dd><dt>行囊 / 完整地图 / 手记</dt><dd>Tab / M / Q（游戏中）</dd><dt>暂停 / 返回</dt><dd>Esc；子页面先返回菜单</dd><dt>菜单焦点与操作</dt><dd>Tab / Shift + Tab 切换；Enter / 空格确认</dd></dl><button id="close">返回暂停菜单</button>`,
+        `<dl class="controls-guide"><dt>移动</dt><dd>WASD / 方向键</dd><dt>奔跑</dt><dd>按住空格并移动，消耗体力</dd><dt>交互 / 继续对话</dt><dd>E</dd><dt>攻击 / 连斩</dt><dd>J / 游戏画布左键；连按衔接，正式学习剑风后接第四击；可越水，不能穿实体障碍</dd><dt>迎风架剑 / 弹反</dt><dd>K / 游戏画布右键；成功自动反斩，J 接第二、第三刀</dd><dt>风步</dt><dd>L</dd><dt>使用快捷道具</dt><dd>1–8 / 点击对应格子</dd><dt>行囊 / 完整地图 / 手记</dt><dd>Tab / M / Q（游戏中）</dd><dt>暂停 / 返回</dt><dd>Esc；子页面先返回菜单</dd><dt>菜单焦点与操作</dt><dd>Tab / Shift + Tab 切换；Enter / 空格确认</dd></dl><button id="close">返回暂停菜单</button>`,
       );
     if (mode === "settings") {
       this.shell(
@@ -527,6 +529,12 @@ export class Interface {
     }
     this.button("close", () => this.close());
     this.focusPanel();
+  }
+  skillJournal(s:State){
+    const skills=s.skills,stage=skills.swordWindStage;
+    const next=WIND_LESSONS.find(l=>skills.discoveredLessons.includes(l.id)&&l.stage>stage);
+    const records=WIND_LESSONS.filter(l=>skills.completedLessons.includes(l.id)).map(l=>`<li>${l.name} · ${l.source}${l.stage>stage?'（经历已保存，等待前置）':''}</li>`).join('');
+    return `<section class="skill-journal"><h2>旅人技艺</h2><h3>${WIND_NAMES[stage]}</h3><p>${WIND_EFFECTS[stage]}</p><p>学习来源：${windLearningSource(skills)}</p><p>${stage?'':'学会剑风后，'}J／左键连按三连斩后接第四击；剑风可越过水面，实体障碍会截断。</p>${records?`<ul>${records}</ul>`:''}<p>${next?`已发现的线索：${next.name} · ${next.hint}`:stage===5?'五段传承已掌握。能力永久保留，不占技法位置。':'尚未发现新的传承线索，可观察旅途中的教本与风敏装置。'}</p></section>`;
   }
   offerShop(id: ShopId) {
     const button = document.createElement("button");

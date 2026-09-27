@@ -114,7 +114,7 @@ describe("环境短句的认知、频率与读档", () => {
     Object.assign(old.defense.guards[0], { hp: 0, dead: true, mode: "dead" });
     const next = validate(old),
       life = new NpcLife(next, new EastDefense(next.defense, 0));
-    expect(next.life.version).toBe(3);
+    expect(next.life.version).toBe(4);
     expect(next.life.stores).toEqual(s.life.stores);
     expect(next.defense.guards[0].dead).toBe(true);
     expect(chooseSpeech(life)).toBeNull();

@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>苔团史莱姆 · 完整动画样片</title></head>
+<body class="slime-preview"><main>
+<h1>苔团史莱姆 · 完整动画样片</h1>
+<p>候选 · 待美术验收。固定根检查形变，右侧按实际游戏大小与现有主角对照。左右允许镜像；上下独立绘制。</p>
+<div class="controls">
+<label>动作<select id="action"><option value="idle">待机</option><option value="walk">移动</option><option value="attack">短跳扑击</option><option value="hurt">普通受击</option><option value="parry">普通弹反</option><option value="perfect">精准弹反</option><option value="death">死亡</option></select></label>
+<label>方向<select id="direction"><option value="0">朝下</option><option value="1">朝上</option><option value="2">朝左（镜像）</option><option value="3">朝右</option></select></label>
+<label>速度<select id="speed"><option value="1">正常</option><option value="0.25">四分之一</option></select></label>
+<label>背景<select id="background"><option value="forest-day">白天森林</option><option value="village-night">夜间村庄</option></select></label>
+<button id="pause">暂停</button><button id="restart">从头播放</button><button id="next">前进少量时间</button>
+</div>
+<div id="preview"></div><p id="info" aria-live="polite">正在装载真实动画帧……</p>
+<div class="controls"><label for="scrub">时间</label><input id="scrub" type="range" min="0" max="1000" value="0" step="1"><a href="http://127.0.0.1:5174/slime-preview.html?mode=game">进入真实游戏试玩</a><a href="/docs/enemy-design-v2/slime-animation/README.md">样片说明</a></div>
+<p>试玩使用独立本地端口与存档。保留现有追击、攻击、弹反、碰撞和伤害规则，仅在此页面显示史莱姆候选动画。原尺寸预览背景为仓库真实截图；试玩页为实际运行。</p>
+</main><script type="module" src="/src/slime-preview.ts"></script></body></html>

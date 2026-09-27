@@ -1,0 +1,26 @@
+{
+  "说明": "最终朝上方向修正的真实工具输入与原始输出。其他生成输入见generation-records.json；所有候选仍待审阅。",
+  "状态": "pending-review",
+  "修正": [
+    {
+      "角色": "棘甲林豕",
+      "输出": "source/armored-boar-up-fix.png",
+      "原始生成工具输出": "Generated images are saved to /Users/archer/.codex/generated_images/01a0e248-dfc1-7b62-a9b2-21c5c443c8c8 as /Users/archer/.codex/generated_images/01a0e248-dfc1-7b62-a9b2-21c5c443c8c8/exec-d26746f7-ebb8-4fe6-8e26-f9d378b05944.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "参考": [
+        "source/armored-boar-up.png",
+        "../enemy-design-v2/parry-animation/frames/armored-boar/up/frame-12.png"
+      ],
+      "完整输入": "编辑参考1完整24格四列六行动作表。只修复第四行第一格和第二格：现在两格错误地朝下露出脸，必须改成朝上背向镜头的林豕强蹬冲锋两姿态。准确朝上身份以参考2为准；四足、叶尾在画面下方；冲角在画面顶部，脸和眼睛完全被头背部遮挡。第4行第1格后蹄撑蹬背部前伸，第2格前后腿交替快步冲锋，身体仍朝上。保留其他22格的现有姿态、尺寸、透明区域、树皮叶甲身份与二维俯视斜角，整表所有活体始终朝上。不能转成横版、旋转画片、复制同一帧，不能添加文字/轨迹/背景；每格独立完整留白，透明背景alpha0。"
+    },
+    {
+      "角色": "暮羽鸦妖",
+      "输出": "docs/enemy-combat-v1/source/dusk-raven-up-fix.png",
+      "原始生成工具输出": "Generated images are saved to /Users/archer/.codex/generated_images/01a0e248-dfc1-7b62-a9b2-21c5c443c8c8 as /Users/archer/.codex/generated_images/01a0e248-dfc1-7b62-a9b2-21c5c443c8c8/exec-ec6bda7f-7f8b-4b4c-9ab9-5649b62c2e8d.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "参考": [
+        "/Users/archer/Documents/ChatGPT/Game/farwind/docs/enemy-combat-v1/source/dusk-raven-up.png",
+        "/Users/archer/Documents/ChatGPT/Game/farwind/docs/enemy-design-v2/parry-animation/frames/dusk-raven/up/frame-12.png"
+      ],
+      "完整输入": "编辑参考1，保留四列六行24格完整姿态，修正第三行第四格以及第四行前三格错误朝下面向镜头的问题；第三第四行8攻击姿态全部始终朝上背向镜头。参考2为正确朝上身份：后脑羽冠、背翼羽面、背脊；脸、黄色眼睛、整根白喙不能出现在朝上攻击中。朝上身体正面对画面顶部、脚趾在底部。8攻击顺序为蹲低→翼臂向左右展开→头部向前即画面上端降低→收翼停顿锁向→蹬腿跃起翼向上顶端展开→双翼后收鸟身向画面上端伸出→爪落地低蹲→站稳收翼。只能从背部看这些动作，禁止为了表现啄击转成正面俯冲。保持二维俯视斜角、顶部可见羽面、深灰蓝橄榄羽翼身份一致，不变成横版飞鸟，不旋转或复制原图凑帧。其他16格保留原姿态。透明背景alpha0，四列六行均匀留白、完整角色，无文字标号、轨迹、底影、地面或背景。"
+    }
+  ]
+}

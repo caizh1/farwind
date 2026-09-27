@@ -53,14 +53,14 @@ describe("居民生活 M1 基础与事务", () => {
   it("版本5迁移不改变伤亡、背包、任务与库存；重复迁移稳定", () => {
     const { s } = setup();
     const old: any = structuredClone(s);
-    old.schema_version = 5;
+    old.schema_version = 5;old.skills={swordWind:false};
     delete old.life;
     Object.assign(old.defense.guards[0], { hp: 0, dead: true, mode: "dead" });
     old.defense.guards[1].hp = 73;
     old.coins = 17;
     old.bag[0] = { id: "wood", count: 4 };
     const next = validate(old);
-    expect(next.schema_version).toBe(6);
+    expect(next.schema_version).toBe(7);
     expect(next.defense.guards[0].dead).toBe(true);
     expect(next.defense.guards[1].hp).toBe(73);
     expect(next.coins).toBe(17);
@@ -887,7 +887,7 @@ describe("生活子版本2：私人取放与备用住宿", () => {
     Object.assign(old.defense.guards[0], { hp: 0, dead: true, mode: "dead" });
     old.life.stores.medicine = 1;
     const next = validate(old);
-    expect(next.life.version).toBe(3);
+    expect(next.life.version).toBe(4);
     expect(next.life.people[1].gear).toBe("carried");
     expect(next.life.stores.medicine).toBe(1);
     expect(next.defense.guards[0].dead).toBe(true);

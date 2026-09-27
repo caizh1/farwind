@@ -6,9 +6,9 @@
     },
     "schema_version": 6,
     "life": {
-      "version": 3,
-      "speechAt": 70506.98000000016,
-      "speechUrgentAt": 70506.98000000016,
+      "version": 4,
+      "speechAt": 71607.33666666693,
+      "speechUrgentAt": 71607.33666666693,
       "speechEventFloor": 2,
       "unavailable": {
         "homes": {},
@@ -19,15 +19,15 @@
           "id": "elder",
           "body": {
             "space": "village",
-            "x": 727.8215703529339,
-            "y": 774.7514637891184,
+            "x": 727.7819174579412,
+            "y": 774.627195120705,
             "hp": 100,
             "health": "healthy",
             "episode": 0,
             "recoverAt": 0
           },
           "action": {
-            "id": 22,
+            "id": 23,
             "kind": "talk",
             "target": {
               "space": "village",
@@ -38,28 +38,29 @@
             "facility": "plaza-seat",
             "task": null,
             "phase": "perform",
-            "progress": 711.6300000000192,
+            "progress": 2820.9866666675807,
             "duration": 3000,
-            "started": 112570,
+            "started": 115860,
             "failures": 0,
-            "label": "广场讲旧事"
+            "label": "广场讲旧事",
+            "social": null
           },
           "blockedTarget": null,
           "blockedUntil": 0,
-          "serial": 22,
-          "committed": 21,
+          "serial": 23,
+          "committed": 22,
           "needs": {
-            "hunger": 16.88797966665215,
-            "fatigue": 10.943989833326135
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.52304066668539,
+          "emotion": 22.35296711113236,
           "gear": "carried",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113470,
+          "nextDecision": 119460,
           "reason": "广场讲旧事（评分 90）",
           "pathFailures": 0,
           "alarm": 0,
@@ -82,23 +83,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -109,28 +110,33 @@
           "receiptFloor": 0,
           "known": {
             "player": {
-              "x": 762.0315376821296,
-              "y": 919.7700806290807,
+              "x": 756.6604021664754,
+              "y": 894.8176353307203,
               "hp": 80,
               "stamina": 100,
               "space": "village",
-              "time": 644.8809000006906
+              "time": 652.5641950007846
             },
             "north-patrol": {
               "space": "village",
-              "x": 860.0240242659738,
-              "y": 443.48243625148723,
-              "time": 613.7850000005199
+              "x": 860.0252617234452,
+              "y": 443.41438937214923,
+              "time": 651.9900000007802
             },
             "north-watch": {
               "space": "village",
-              "x": 830.4309000799639,
-              "y": 470.01163125189737,
-              "time": 552.2025000001911
+              "x": 834.0656788420274,
+              "y": 476.8450771872118,
+              "time": 552.2100000002005
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -142,15 +148,15 @@
           "id": "healer",
           "body": {
             "space": "healer-home",
-            "x": 575.6428234118127,
-            "y": 800.0851523565843,
+            "x": 575.9171124100413,
+            "y": 800.0837573302432,
             "hp": 100,
             "health": "healthy",
             "episode": 0,
             "recoverAt": 0
           },
           "action": {
-            "id": 13,
+            "id": 14,
             "kind": "rest",
             "target": {
               "space": "healer-home",
@@ -161,28 +167,29 @@
             "facility": "seat:healer-home",
             "task": null,
             "phase": "perform",
-            "progress": 1108.7800000005955,
+            "progress": 2215.9866666675807,
             "duration": 3000,
-            "started": 112175,
+            "started": 116465,
             "failures": 0,
-            "label": "窗口错过或设施忙，回家等待"
+            "label": "窗口错过或设施忙，回家等待",
+            "social": null
           },
           "blockedTarget": null,
           "blockedUntil": 0,
-          "serial": 13,
-          "committed": 12,
+          "serial": 14,
+          "committed": 13,
           "needs": {
-            "hunger": 16.88797966665215,
-            "fatigue": 0.01669816666667168
+            "hunger": 16.97793311109534,
+            "fatigue": 0.025924888888896384
           },
-          "emotion": 22.52304066668539,
+          "emotion": 22.35296711113236,
           "gear": "carried",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113975,
+          "nextDecision": 119165,
           "reason": "窗口错过或设施忙，回家等待（评分 20）",
           "pathFailures": 0,
           "alarm": 0,
@@ -205,23 +212,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -233,22 +240,21 @@
           "known": {
             "player": {
               "space": "healer-home",
-              "x": 702.8329563924482,
-              "y": 908.7892053209729,
-              "time": 571.0052250002901
-            },
-            "north-watch": {
-              "space": "village",
-              "x": 1370.8783225226941,
-              "y": 770.8783225226933,
-              "time": 539.8125000001263
+              "x": 697.7892885828128,
+              "y": 914.3028735056021,
+              "time": 573.0832750003156
             }
           },
           "lastSupplyDay": 1,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 2,
-            "nextAt": 101506.98000000016,
+            "nextAt": 102607.33666666693,
             "day": 0,
             "routines": [
               "work"
@@ -259,8 +265,8 @@
           "id": "carpenter",
           "body": {
             "space": "village",
-            "x": 407.9452941385438,
-            "y": 1005.6272779925473,
+            "x": 407.94529413854264,
+            "y": 1005.627277992546,
             "hp": 100,
             "health": "healthy",
             "episode": 0,
@@ -278,28 +284,29 @@
             "facility": "tools",
             "task": null,
             "phase": "perform",
-            "progress": 1273.7800000005955,
+            "progress": 6670.986666667581,
             "duration": 8000,
             "started": 112010,
             "failures": 0,
-            "label": "修工具、做木工"
+            "label": "修工具、做木工",
+            "social": null
           },
           "blockedTarget": null,
           "blockedUntil": 0,
           "serial": 12,
           "committed": 11,
           "needs": {
-            "hunger": 16.88797966665215,
-            "fatigue": 10.943989833326135
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.52304066668539,
+          "emotion": 22.35296711113236,
           "gear": "carried",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113810,
+          "nextDecision": 119210,
           "reason": "修工具、做木工（评分 88）",
           "pathFailures": 0,
           "alarm": 0,
@@ -316,23 +323,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -343,16 +350,21 @@
           "receiptFloor": 0,
           "known": {
             "player": {
-              "x": 762.0315376821296,
-              "y": 1069.01708062908,
+              "x": 756.6604021664754,
+              "y": 1089.5641353307224,
               "hp": 80,
               "stamina": 100,
               "space": "village",
-              "time": 646.3733700006986
+              "time": 654.5116600007963
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -369,17 +381,17 @@
           "serial": 3,
           "committed": 2,
           "needs": {
-            "hunger": 16.88797966665215,
-            "fatigue": 10.943989833326135
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.52304066668539,
+          "emotion": 22.35296711113236,
           "gear": "carried",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0.4,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -396,23 +408,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -425,32 +437,37 @@
             "south-watch": {
               "space": "village",
               "x": 1820,
-              "y": 979.3499999999983,
-              "time": 529.815000000075
+              "y": 975.9099999999986,
+              "time": 529.7775000000745
             },
             "north-watch": {
               "space": "village",
-              "x": 1704.5199999999982,
+              "x": 1709.679999999999,
               "y": 780,
-              "time": 533.8650000000961
+              "time": 533.8275000000972
             },
             "player": {
-              "x": 1704.2805756060313,
-              "y": 780.3149489633475,
+              "x": 1702.2442875390109,
+              "y": 779.3896466283289,
               "hp": 80,
               "stamina": 100,
               "space": "village",
-              "time": 630.7279650006114
+              "time": 638.1835450006944
             },
             "east-patrol": {
               "space": "village",
               "x": 2190,
               "y": 1100,
-              "time": 541.1625000001329
+              "time": 541.6050000001424
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -467,8 +484,8 @@
           "serial": 0,
           "committed": 0,
           "needs": {
-            "hunger": 16.88797966665215,
-            "fatigue": 10.943989833326135
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
           "emotion": 0,
           "gear": "locker",
@@ -477,7 +494,7 @@
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -500,12 +517,12 @@
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -516,27 +533,32 @@
           "known": {
             "south-watch": {
               "space": "village",
-              "x": 1592.369213485552,
-              "y": 1214.9736755412832,
-              "time": 535.800000000105
+              "x": 1593.4530244832333,
+              "y": 1214.2740658491682,
+              "time": 535.8000000001085
             },
             "player": {
-              "x": 1920.472573394632,
-              "y": 992.6003771008822,
+              "x": 1923.731256272419,
+              "y": 1015.499090487556,
               "hp": 80,
               "stamina": 100,
               "space": "village",
-              "time": 619.735920000552
+              "time": 625.588765000618
             },
             "east-watch": {
               "space": "village",
-              "x": 2008.5238296690372,
-              "y": 967.6094897660402,
-              "time": 541.2000000001332
+              "x": 2008.4536402131266,
+              "y": 967.4988659292027,
+              "time": 541.2000000001406
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -553,17 +575,17 @@
           "serial": 0,
           "committed": 0,
           "needs": {
-            "hunger": 16.88797966665215,
-            "fatigue": 10.943989833326135
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.52304066668539,
+          "emotion": 22.35296711113236,
           "gear": "locker",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -580,23 +602,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -608,6 +630,11 @@
           "known": {},
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -624,17 +651,17 @@
           "serial": 1,
           "committed": 0,
           "needs": {
-            "hunger": 16.88797966665215,
-            "fatigue": 10.943989833326135
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.52304066668539,
+          "emotion": 22.35296711113236,
           "gear": "carried",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -651,23 +678,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -679,43 +706,42 @@
           "known": {
             "north-patrol": {
               "space": "village",
-              "x": 867.0191829507315,
-              "y": 355.599240685797,
-              "time": 648.7575000007104
+              "x": 893.9248013201385,
+              "y": 305.5169619495267,
+              "time": 657.5025000008122
             },
             "south-watch": {
               "space": "village",
-              "x": 1816.3513290090784,
-              "y": 1023.6486709909227,
-              "time": 530.6250000000792
+              "x": 1817.2634967568088,
+              "y": 1022.736503243192,
+              "time": 530.6250000000795
             },
             "east-watch": {
               "space": "village",
-              "x": 2008.5238296690372,
-              "y": 967.6094897660402,
-              "time": 533.3250000000935
+              "x": 2008.4536402131266,
+              "y": 967.4988659292027,
+              "time": 533.3250000000944
             },
             "player": {
               "space": "village",
-              "x": 2059.3462760672637,
-              "y": 965.7153664355652,
-              "time": 533.0467650000919
-            },
-            "healer": {
-              "space": "village",
-              "x": 1071.4125820567203,
-              "y": 614.349671773124,
-              "time": 539.8125000001263
+              "x": 1985.0159904114525,
+              "y": 921.4313751883412,
+              "time": 532.1224000000882
             },
             "elder": {
               "space": "village",
-              "x": 727.8215703529339,
-              "y": 774.7514637891184,
-              "time": 551.9625000001898
+              "x": 727.7819174579412,
+              "y": 774.627195120705,
+              "time": 552.4050000002014
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -732,17 +758,17 @@
           "serial": 0,
           "committed": 0,
           "needs": {
-            "hunger": 16.88797966665215,
-            "fatigue": 10.943989833326135
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.52304066668539,
+          "emotion": 22.35296711113236,
           "gear": "locker",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -765,23 +791,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -793,31 +819,36 @@
           "known": {
             "north-watch": {
               "space": "village",
-              "x": 741.3637704522373,
-              "y": 302.56391166109114,
-              "time": 648.7575000007104
+              "x": 741.3130750571253,
+              "y": 302.46860345546304,
+              "time": 657.5025000008122
             },
             "elder": {
               "space": "village",
-              "x": 727.8215703529339,
-              "y": 774.7514637891184,
+              "x": 727.7819174579412,
+              "y": 774.627195120705,
               "hp": 100,
               "health": "healthy",
               "episode": 0,
               "recoverAt": 0,
-              "time": 639.3075000006586
+              "time": 652.1025000007808
             },
             "player": {
-              "x": 780.1634061001483,
-              "y": 700.4902320205947,
+              "x": 756.6604021664754,
+              "y": 771.3241353307191,
               "hp": 80,
               "stamina": 100,
               "space": "village",
-              "time": 642.3385050006772
+              "time": 651.3292600007777
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -834,17 +865,17 @@
           "serial": 0,
           "committed": 0,
           "needs": {
-            "hunger": 16.88797966665215,
-            "fatigue": 10.943989833326135
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.52304066668539,
+          "emotion": 22.35296711113236,
           "gear": "locker",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -861,23 +892,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -889,6 +920,11 @@
           "known": {},
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -905,17 +941,17 @@
           "serial": 1,
           "committed": 0,
           "needs": {
-            "hunger": 16.88797966665215,
-            "fatigue": 10.943989833326135
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.52304066668539,
+          "emotion": 22.35296711113236,
           "gear": "carried",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -932,23 +968,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -960,37 +996,42 @@
           "known": {
             "south-patrol": {
               "space": "village",
-              "x": 958.8908607862011,
-              "y": 1646.7523184236495,
-              "time": 648.7575000007104
+              "x": 965.403517614067,
+              "y": 1662.0813224032017,
+              "time": 657.5025000008122
             },
             "east-patrol": {
               "space": "village",
-              "x": 1952.130368282185,
-              "y": 1179.27369268713,
-              "time": 535.0125000001012
+              "x": 1952.4590146246294,
+              "y": 1180.3847128246068,
+              "time": 535.0125000001038
             },
             "east-watch": {
               "space": "village",
-              "x": 2008.5238296690372,
-              "y": 967.6094897660402,
-              "time": 529.6125000000739
+              "x": 2008.4536402131266,
+              "y": 967.4988659292027,
+              "time": 529.6125000000736
             },
             "north-watch": {
               "space": "village",
-              "x": 1938.4797204204494,
-              "y": 761.5202795795511,
-              "time": 529.6125000000739
+              "x": 1940,
+              "y": 759.3499999999982,
+              "time": 529.6125000000736
             },
             "player": {
               "space": "village",
-              "x": 2007.3220381524643,
-              "y": 921.0987274419351,
-              "time": 531.9317700000865
+              "x": 2005.7624904114532,
+              "y": 921.4313751883412,
+              "time": 532.3298650000895
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -1007,17 +1048,17 @@
           "serial": 0,
           "committed": 0,
           "needs": {
-            "hunger": 16.88797966665215,
-            "fatigue": 10.943989833326135
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.52304066668539,
+          "emotion": 22.35296711113236,
           "gear": "locker",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -1040,23 +1081,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -1068,19 +1109,24 @@
           "known": {
             "south-watch": {
               "space": "village",
-              "x": 812.4579793895273,
-              "y": 1718.4133523210123,
-              "time": 648.7575000007104
+              "x": 812.4579793895349,
+              "y": 1718.4133523210073,
+              "time": 657.5025000008122
             },
             "player": {
               "space": "village",
-              "x": 1188.1268491260153,
-              "y": 1359.470722579115,
-              "time": 590.8744800003974
+              "x": 1132.194288591627,
+              "y": 1328.7668471859035,
+              "time": 507.85085499997996
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -1097,17 +1143,17 @@
           "serial": 0,
           "committed": 0,
           "needs": {
-            "hunger": 16.88797966665215,
-            "fatigue": 10.943989833326135
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.52304066668539,
+          "emotion": 22.35296711113236,
           "gear": "locker",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -1124,23 +1170,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -1152,6 +1198,11 @@
           "known": {},
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -1160,13 +1211,13 @@
           }
         }
       ],
-      "elapsed": 113278.7800000006,
+      "elapsed": 118675.98666666758,
       "sequence": 2,
       "events": [
         {
           "id": "life:1",
           "sequence": 1,
-          "time": 538.4625000001191,
+          "time": 538.9050000001266,
           "kind": "alarm",
           "place": {
             "space": "village",
@@ -1181,7 +1232,7 @@
         {
           "id": "life:2",
           "sequence": 2,
-          "time": 559.6575000002299,
+          "time": 560.3025000002456,
           "kind": "clear",
           "place": {
             "space": "village",
@@ -1198,17 +1249,17 @@
         {
           "facility": "tools",
           "owner": "carpenter",
-          "expires": 125278.7800000006
-        },
-        {
-          "facility": "seat:healer-home",
-          "owner": "healer",
-          "expires": 125278.7800000006
+          "expires": 130675.98666666758
         },
         {
           "facility": "plaza-seat",
           "owner": "elder",
-          "expires": 125278.7800000006
+          "expires": 130675.98666666758
+        },
+        {
+          "facility": "seat:healer-home",
+          "owner": "healer",
+          "expires": 130675.98666666758
         }
       ],
       "tasks": [],
@@ -1227,53 +1278,53 @@
       },
       "playerSpace": "village",
       "outside": {
-        "x": 1110.364577354659,
-        "y": 461.97057084225645
+        "x": 1107.9168369845577,
+        "y": 458.68706239257915
       },
       "invitations": {},
       "observed": {
         "elder": {
-          "time": 644.8809000006906,
-          "label": "广场讲旧事",
+          "time": 652.5641950007846,
+          "label": "广场讲旧事（评分 90）",
           "space": "village"
         },
         "south-patrol": {
-          "time": 590.8744800003974,
+          "time": 507.85085499997996,
           "label": "值守或沿路返回岗位",
           "space": "village"
         },
         "healer": {
-          "time": 571.0052250002901,
-          "label": "配药与接待",
+          "time": 573.0832750003156,
+          "label": "配药与接待（评分 86）",
           "space": "healer-home"
         },
         "south-watch": {
-          "time": 531.9317700000865,
+          "time": 532.3298650000895,
           "label": "下岗后检查村门装备",
           "space": "village"
         },
         "east-watch": {
-          "time": 630.7279650006114,
+          "time": 638.1835450006944,
           "label": "值守或沿路返回岗位",
           "space": "village"
         },
         "north-watch": {
-          "time": 533.0467650000919,
+          "time": 532.1224000000882,
           "label": "下岗后检查村门装备",
           "space": "village"
         },
         "east-patrol": {
-          "time": 619.735920000552,
+          "time": 625.588765000618,
           "label": "值守或沿路返回岗位",
           "space": "village"
         },
         "north-patrol": {
-          "time": 642.3385050006772,
+          "time": 651.3292600007777,
           "label": "值守或沿路返回岗位",
           "space": "village"
         },
         "carpenter": {
-          "time": 646.3733700006986,
+          "time": 654.5116600007963,
           "label": "修工具、做木工",
           "space": "village"
         }
@@ -1290,8 +1341,8 @@
       "guards": [
         {
           "id": "east-watch",
-          "x": 2008.5238296690372,
-          "y": 967.6094897660402,
+          "x": 2008.4536402131266,
+          "y": 967.4988659292027,
           "hp": 180,
           "dead": false,
           "weaponId": "watch-blade",
@@ -1306,8 +1357,8 @@
         },
         {
           "id": "east-patrol",
-          "x": 1957.5970280399213,
-          "y": 1196.9421106460568,
+          "x": 1954.4377011692484,
+          "y": 1186.7897394517777,
           "hp": 180,
           "dead": false,
           "weaponId": "watch-blade",
@@ -1332,8 +1383,8 @@
         },
         {
           "id": "north-watch",
-          "x": 741.3637704522373,
-          "y": 302.56391166109114,
+          "x": 741.3130750571253,
+          "y": 302.46860345546304,
           "hp": 180,
           "dead": false,
           "weaponId": "watch-blade",
@@ -1348,8 +1399,8 @@
         },
         {
           "id": "north-patrol",
-          "x": 862.5633766826477,
-          "y": 390.1330669220126,
+          "x": 908.9368675651281,
+          "y": 302.3407254316686,
           "hp": 180,
           "dead": false,
           "weaponId": "watch-blade",
@@ -1374,8 +1425,8 @@
         },
         {
           "id": "south-watch",
-          "x": 812.4579793895273,
-          "y": 1718.4133523210123,
+          "x": 812.4579793895349,
+          "y": 1718.4133523210073,
           "hp": 180,
           "dead": false,
           "weaponId": "watch-blade",
@@ -1390,8 +1441,8 @@
         },
         {
           "id": "south-patrol",
-          "x": 972.502587355384,
-          "y": 1678.8016595060672,
+          "x": 971.4014206442478,
+          "y": 1676.204911557583,
           "hp": 180,
           "dead": false,
           "weaponId": "watch-blade",
@@ -1418,7 +1469,7 @@
       "sequence": 0,
       "completedSequence": 0,
       "raid": null,
-      "protectionMs": 186721.21999999933,
+      "protectionMs": 181324.01333333243,
       "cooldownMs": 481729,
       "retryMs": 0,
       "seed": 1729
@@ -1441,8 +1492,8 @@
     "economyRevision": 7,
     "map_version": 6,
     "player": {
-      "x": 929.8317266766238,
-      "y": 1222.2973406769515,
+      "x": 933.5664933229689,
+      "y": 1221.1511931721764,
       "hp": 80,
       "stamina": 100
     },
@@ -1491,10 +1542,10 @@
     "quest": 3,
     "side": 0,
     "collected": {
-      "wood-v1": 490.0234799999938,
-      "wood-yard-1": 492.1208849999923,
-      "berry-v1": 496.40071499998896,
-      "herb-v1": 516.2699249999998
+      "wood-v1": 489.99654999999353,
+      "wood-yard-1": 492.18393999999216,
+      "berry-v1": 496.4888199999893,
+      "herb-v1": 516.6129700000012
     },
     "chests": [],
     "killed": [],
@@ -1502,7 +1553,7 @@
     "dashCooldownRemaining": 0,
     "stones": [],
     "shortcut": false,
-    "time": 649.9181700007179,
+    "time": 658.0139800008168,
     "reward": false,
     "crafted": true
   },
@@ -1512,9 +1563,9 @@
     },
     "schema_version": 6,
     "life": {
-      "version": 3,
-      "speechAt": 70506.98000000016,
-      "speechUrgentAt": 70506.98000000016,
+      "version": 4,
+      "speechAt": 71607.33666666693,
+      "speechUrgentAt": 71607.33666666693,
       "speechEventFloor": 2,
       "unavailable": {
         "homes": {},
@@ -1525,15 +1576,15 @@
           "id": "elder",
           "body": {
             "space": "village",
-            "x": 727.8215703529339,
-            "y": 774.7514637891184,
+            "x": 727.7819174579412,
+            "y": 774.627195120705,
             "hp": 100,
             "health": "healthy",
             "episode": 0,
             "recoverAt": 0
           },
           "action": {
-            "id": 22,
+            "id": 23,
             "kind": "talk",
             "target": {
               "space": "village",
@@ -1544,28 +1595,29 @@
             "facility": "plaza-seat",
             "task": null,
             "phase": "perform",
-            "progress": 744.9366666666859,
+            "progress": 2820.9866666675807,
             "duration": 3000,
-            "started": 112570,
+            "started": 115860,
             "failures": 0,
-            "label": "广场讲旧事"
+            "label": "广场讲旧事",
+            "social": null
           },
           "blockedTarget": null,
           "blockedUntil": 0,
-          "serial": 22,
-          "committed": 21,
+          "serial": 23,
+          "committed": 22,
           "needs": {
-            "hunger": 16.888534777763255,
-            "fatigue": 10.944267388881688
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.521930444463177,
+          "emotion": 22.35296711113236,
           "gear": "carried",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113470,
+          "nextDecision": 119460,
           "reason": "广场讲旧事（评分 90）",
           "pathFailures": 0,
           "alarm": 0,
@@ -1588,23 +1640,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -1616,25 +1668,30 @@
           "known": {
             "player": {
               "space": "village",
-              "x": 762.0315376821296,
-              "y": 919.7700806290807,
-              "time": 644.8809000006906
+              "x": 756.6604021664754,
+              "y": 894.8176353307203,
+              "time": 652.5641950007846
             },
             "north-patrol": {
               "space": "village",
-              "x": 860.0240242659738,
-              "y": 443.48243625148723,
-              "time": 613.7850000005199
+              "x": 860.0252617234452,
+              "y": 443.41438937214923,
+              "time": 651.9900000007802
             },
             "north-watch": {
               "space": "village",
-              "x": 830.4309000799639,
-              "y": 470.01163125189737,
-              "time": 552.2025000001911
+              "x": 834.0656788420274,
+              "y": 476.8450771872118,
+              "time": 552.2100000002005
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -1646,15 +1703,15 @@
           "id": "healer",
           "body": {
             "space": "healer-home",
-            "x": 575.6428234118127,
-            "y": 800.0851523565843,
+            "x": 575.9171124100413,
+            "y": 800.0837573302432,
             "hp": 100,
             "health": "healthy",
             "episode": 0,
             "recoverAt": 0
           },
           "action": {
-            "id": 13,
+            "id": 14,
             "kind": "rest",
             "target": {
               "space": "healer-home",
@@ -1665,28 +1722,29 @@
             "facility": "seat:healer-home",
             "task": null,
             "phase": "perform",
-            "progress": 1142.0866666672623,
+            "progress": 2215.9866666675807,
             "duration": 3000,
-            "started": 112175,
+            "started": 116465,
             "failures": 0,
-            "label": "窗口错过或设施忙，回家等待"
+            "label": "窗口错过或设施忙，回家等待",
+            "social": null
           },
           "blockedTarget": null,
           "blockedUntil": 0,
-          "serial": 13,
-          "committed": 12,
+          "serial": 14,
+          "committed": 13,
           "needs": {
-            "hunger": 16.888534777763255,
-            "fatigue": 0.016975722222227232
+            "hunger": 16.97793311109534,
+            "fatigue": 0.025924888888896384
           },
-          "emotion": 22.521930444463177,
+          "emotion": 22.35296711113236,
           "gear": "carried",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113975,
+          "nextDecision": 119165,
           "reason": "窗口错过或设施忙，回家等待（评分 20）",
           "pathFailures": 0,
           "alarm": 0,
@@ -1709,23 +1767,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -1737,22 +1795,21 @@
           "known": {
             "player": {
               "space": "healer-home",
-              "x": 702.8329563924482,
-              "y": 908.7892053209729,
-              "time": 571.0052250002901
-            },
-            "north-watch": {
-              "space": "village",
-              "x": 1370.8783225226941,
-              "y": 770.8783225226933,
-              "time": 539.8125000001263
+              "x": 697.7892885828128,
+              "y": 914.3028735056021,
+              "time": 573.0832750003156
             }
           },
           "lastSupplyDay": 1,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 2,
-            "nextAt": 101506.98000000016,
+            "nextAt": 102607.33666666693,
             "day": 0,
             "routines": [
               "work"
@@ -1763,8 +1820,8 @@
           "id": "carpenter",
           "body": {
             "space": "village",
-            "x": 407.9452941385438,
-            "y": 1005.6272779925473,
+            "x": 407.94529413854264,
+            "y": 1005.627277992546,
             "hp": 100,
             "health": "healthy",
             "episode": 0,
@@ -1782,28 +1839,29 @@
             "facility": "tools",
             "task": null,
             "phase": "perform",
-            "progress": 1307.0866666672623,
+            "progress": 6670.986666667581,
             "duration": 8000,
             "started": 112010,
             "failures": 0,
-            "label": "修工具、做木工"
+            "label": "修工具、做木工",
+            "social": null
           },
           "blockedTarget": null,
           "blockedUntil": 0,
           "serial": 12,
           "committed": 11,
           "needs": {
-            "hunger": 16.888534777763255,
-            "fatigue": 10.944267388881688
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.521930444463177,
+          "emotion": 22.35296711113236,
           "gear": "carried",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113810,
+          "nextDecision": 119210,
           "reason": "修工具、做木工（评分 88）",
           "pathFailures": 0,
           "alarm": 0,
@@ -1820,23 +1878,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -1848,13 +1906,18 @@
           "known": {
             "player": {
               "space": "village",
-              "x": 762.0315376821296,
-              "y": 1069.01708062908,
-              "time": 646.3733700006986
+              "x": 756.6604021664754,
+              "y": 1089.5641353307224,
+              "time": 654.5116600007963
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -1871,17 +1934,17 @@
           "serial": 3,
           "committed": 2,
           "needs": {
-            "hunger": 16.888534777763255,
-            "fatigue": 10.944267388881688
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.521930444463177,
+          "emotion": 22.35296711113236,
           "gear": "carried",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0.4,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -1898,23 +1961,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -1927,30 +1990,35 @@
             "south-watch": {
               "space": "village",
               "x": 1820,
-              "y": 979.3499999999983,
-              "time": 529.815000000075
+              "y": 975.9099999999986,
+              "time": 529.7775000000745
             },
             "north-watch": {
               "space": "village",
-              "x": 1704.5199999999982,
+              "x": 1709.679999999999,
               "y": 780,
-              "time": 533.8650000000961
+              "time": 533.8275000000972
             },
             "player": {
               "space": "village",
-              "x": 1704.2805756060313,
-              "y": 780.3149489633475,
-              "time": 630.7279650006114
+              "x": 1702.2442875390109,
+              "y": 779.3896466283289,
+              "time": 638.1835450006944
             },
             "east-patrol": {
               "space": "village",
               "x": 2190,
               "y": 1100,
-              "time": 541.1625000001329
+              "time": 541.6050000001424
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -1967,8 +2035,8 @@
           "serial": 0,
           "committed": 0,
           "needs": {
-            "hunger": 16.888534777763255,
-            "fatigue": 10.944267388881688
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
           "emotion": 0,
           "gear": "locker",
@@ -1977,7 +2045,7 @@
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -2000,12 +2068,12 @@
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -2016,25 +2084,30 @@
           "known": {
             "south-watch": {
               "space": "village",
-              "x": 1592.369213485552,
-              "y": 1214.9736755412832,
-              "time": 535.800000000105
+              "x": 1593.4530244832333,
+              "y": 1214.2740658491682,
+              "time": 535.8000000001085
             },
             "player": {
               "space": "village",
-              "x": 1920.472573394632,
-              "y": 992.6003771008822,
-              "time": 619.735920000552
+              "x": 1923.731256272419,
+              "y": 1015.499090487556,
+              "time": 625.588765000618
             },
             "east-watch": {
               "space": "village",
-              "x": 2008.5238296690372,
-              "y": 967.6094897660402,
-              "time": 541.2000000001332
+              "x": 2008.4536402131266,
+              "y": 967.4988659292027,
+              "time": 541.2000000001406
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -2051,17 +2124,17 @@
           "serial": 0,
           "committed": 0,
           "needs": {
-            "hunger": 16.888534777763255,
-            "fatigue": 10.944267388881688
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.521930444463177,
+          "emotion": 22.35296711113236,
           "gear": "locker",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -2078,23 +2151,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -2106,6 +2179,11 @@
           "known": {},
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -2122,17 +2200,17 @@
           "serial": 1,
           "committed": 0,
           "needs": {
-            "hunger": 16.888534777763255,
-            "fatigue": 10.944267388881688
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.521930444463177,
+          "emotion": 22.35296711113236,
           "gear": "carried",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -2149,23 +2227,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -2177,43 +2255,42 @@
           "known": {
             "north-patrol": {
               "space": "village",
-              "x": 867.0191829507315,
-              "y": 355.599240685797,
-              "time": 648.7575000007104
+              "x": 893.9248013201385,
+              "y": 305.5169619495267,
+              "time": 657.5025000008122
             },
             "south-watch": {
               "space": "village",
-              "x": 1816.3513290090784,
-              "y": 1023.6486709909227,
-              "time": 530.6250000000792
+              "x": 1817.2634967568088,
+              "y": 1022.736503243192,
+              "time": 530.6250000000795
             },
             "east-watch": {
               "space": "village",
-              "x": 2008.5238296690372,
-              "y": 967.6094897660402,
-              "time": 533.3250000000935
+              "x": 2008.4536402131266,
+              "y": 967.4988659292027,
+              "time": 533.3250000000944
             },
             "player": {
               "space": "village",
-              "x": 2059.3462760672637,
-              "y": 965.7153664355652,
-              "time": 533.0467650000919
-            },
-            "healer": {
-              "space": "village",
-              "x": 1071.4125820567203,
-              "y": 614.349671773124,
-              "time": 539.8125000001263
+              "x": 1985.0159904114525,
+              "y": 921.4313751883412,
+              "time": 532.1224000000882
             },
             "elder": {
               "space": "village",
-              "x": 727.8215703529339,
-              "y": 774.7514637891184,
-              "time": 551.9625000001898
+              "x": 727.7819174579412,
+              "y": 774.627195120705,
+              "time": 552.4050000002014
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -2230,17 +2307,17 @@
           "serial": 0,
           "committed": 0,
           "needs": {
-            "hunger": 16.888534777763255,
-            "fatigue": 10.944267388881688
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.521930444463177,
+          "emotion": 22.35296711113236,
           "gear": "locker",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -2263,23 +2340,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -2291,25 +2368,30 @@
           "known": {
             "north-watch": {
               "space": "village",
-              "x": 741.3637704522373,
-              "y": 302.56391166109114,
-              "time": 648.7575000007104
+              "x": 741.3130750571253,
+              "y": 302.46860345546304,
+              "time": 657.5025000008122
             },
             "elder": {
               "space": "village",
-              "x": 727.8215703529339,
-              "y": 774.7514637891184,
-              "time": 639.3075000006586
+              "x": 727.7819174579412,
+              "y": 774.627195120705,
+              "time": 652.1025000007808
             },
             "player": {
               "space": "village",
-              "x": 780.1634061001483,
-              "y": 700.4902320205947,
-              "time": 642.3385050006772
+              "x": 756.6604021664754,
+              "y": 771.3241353307191,
+              "time": 651.3292600007777
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -2326,17 +2408,17 @@
           "serial": 0,
           "committed": 0,
           "needs": {
-            "hunger": 16.888534777763255,
-            "fatigue": 10.944267388881688
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.521930444463177,
+          "emotion": 22.35296711113236,
           "gear": "locker",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -2353,23 +2435,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -2381,6 +2463,11 @@
           "known": {},
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -2397,17 +2484,17 @@
           "serial": 1,
           "committed": 0,
           "needs": {
-            "hunger": 16.888534777763255,
-            "fatigue": 10.944267388881688
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.521930444463177,
+          "emotion": 22.35296711113236,
           "gear": "carried",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -2424,23 +2511,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -2452,37 +2539,42 @@
           "known": {
             "south-patrol": {
               "space": "village",
-              "x": 958.8908607862011,
-              "y": 1646.7523184236495,
-              "time": 648.7575000007104
+              "x": 965.403517614067,
+              "y": 1662.0813224032017,
+              "time": 657.5025000008122
             },
             "east-patrol": {
               "space": "village",
-              "x": 1952.130368282185,
-              "y": 1179.27369268713,
-              "time": 535.0125000001012
+              "x": 1952.4590146246294,
+              "y": 1180.3847128246068,
+              "time": 535.0125000001038
             },
             "east-watch": {
               "space": "village",
-              "x": 2008.5238296690372,
-              "y": 967.6094897660402,
-              "time": 529.6125000000739
+              "x": 2008.4536402131266,
+              "y": 967.4988659292027,
+              "time": 529.6125000000736
             },
             "north-watch": {
               "space": "village",
-              "x": 1938.4797204204494,
-              "y": 761.5202795795511,
-              "time": 529.6125000000739
+              "x": 1940,
+              "y": 759.3499999999982,
+              "time": 529.6125000000736
             },
             "player": {
               "space": "village",
-              "x": 2007.3220381524643,
-              "y": 921.0987274419351,
-              "time": 531.9317700000865
+              "x": 2005.7624904114532,
+              "y": 921.4313751883412,
+              "time": 532.3298650000895
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -2499,17 +2591,17 @@
           "serial": 0,
           "committed": 0,
           "needs": {
-            "hunger": 16.888534777763255,
-            "fatigue": 10.944267388881688
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.521930444463177,
+          "emotion": 22.35296711113236,
           "gear": "locker",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -2532,23 +2624,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -2560,19 +2652,24 @@
           "known": {
             "south-watch": {
               "space": "village",
-              "x": 812.4579793895273,
-              "y": 1718.4133523210123,
-              "time": 648.7575000007104
+              "x": 812.4579793895349,
+              "y": 1718.4133523210073,
+              "time": 657.5025000008122
             },
             "player": {
               "space": "village",
-              "x": 1188.1268491260153,
-              "y": 1359.470722579115,
-              "time": 590.8744800003974
+              "x": 1132.194288591627,
+              "y": 1328.7668471859035,
+              "time": 507.85085499997996
             }
           },
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -2589,17 +2686,17 @@
           "serial": 0,
           "committed": 0,
           "needs": {
-            "hunger": 16.888534777763255,
-            "fatigue": 10.944267388881688
+            "hunger": 16.97793311109534,
+            "fatigue": 10.9889665555476
           },
-          "emotion": 22.521930444463177,
+          "emotion": 22.35296711113236,
           "gear": "locker",
           "supplies": {
             "medicine": 0,
             "wood": 0
           },
           "project": 0,
-          "nextDecision": 113405,
+          "nextDecision": 119235,
           "reason": "值守或沿路返回岗位",
           "pathFailures": 0,
           "alarm": 0,
@@ -2616,23 +2713,23 @@
               "eventId": "life:1",
               "sequence": 1,
               "kind": "alarm",
-              "time": 538.4625000001191,
+              "time": 538.9050000001266,
               "subjects": [],
               "result": "村门袭扰，保持局部警戒",
               "source": "alarm",
               "importance": 40,
-              "expires": 4858.462500000119
+              "expires": 4858.905000000126
             },
             {
               "eventId": "life:2",
               "sequence": 2,
               "kind": "clear",
-              "time": 559.6575000002299,
+              "time": 560.3025000002456,
               "subjects": [],
               "result": "持续确认安全，先救护和检修再恢复日常",
               "source": "alarm",
               "importance": 40,
-              "expires": 4879.65750000023
+              "expires": 4880.302500000245
             }
           ],
           "receipt": 2,
@@ -2644,6 +2741,11 @@
           "known": {},
           "lastSupplyDay": 0,
           "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
           "speech": {
             "eventFloor": 0,
             "nextAt": 0,
@@ -2652,13 +2754,13 @@
           }
         }
       ],
-      "elapsed": 113312.08666666727,
+      "elapsed": 118675.98666666758,
       "sequence": 2,
       "events": [
         {
           "id": "life:1",
           "sequence": 1,
-          "time": 538.4625000001191,
+          "time": 538.9050000001266,
           "kind": "alarm",
           "place": {
             "space": "village",
@@ -2673,7 +2775,7 @@
         {
           "id": "life:2",
           "sequence": 2,
-          "time": 559.6575000002299,
+          "time": 560.3025000002456,
           "kind": "clear",
           "place": {
             "space": "village",
@@ -2690,17 +2792,17 @@
         {
           "facility": "tools",
           "owner": "carpenter",
-          "expires": 125312.08666666727
-        },
-        {
-          "facility": "seat:healer-home",
-          "owner": "healer",
-          "expires": 125312.08666666727
+          "expires": 130675.98666666758
         },
         {
           "facility": "plaza-seat",
           "owner": "elder",
-          "expires": 125312.08666666727
+          "expires": 130675.98666666758
+        },
+        {
+          "facility": "seat:healer-home",
+          "owner": "healer",
+          "expires": 130675.98666666758
         }
       ],
       "tasks": [],
@@ -2719,53 +2821,53 @@
       },
       "playerSpace": "village",
       "outside": {
-        "x": 1110.364577354659,
-        "y": 461.97057084225645
+        "x": 1107.9168369845577,
+        "y": 458.68706239257915
       },
       "invitations": {},
       "observed": {
         "elder": {
-          "time": 644.8809000006906,
-          "label": "广场讲旧事",
+          "time": 652.5641950007846,
+          "label": "广场讲旧事（评分 90）",
           "space": "village"
         },
         "south-patrol": {
-          "time": 590.8744800003974,
+          "time": 507.85085499997996,
           "label": "值守或沿路返回岗位",
           "space": "village"
         },
         "healer": {
-          "time": 571.0052250002901,
-          "label": "配药与接待",
+          "time": 573.0832750003156,
+          "label": "配药与接待（评分 86）",
           "space": "healer-home"
         },
         "south-watch": {
-          "time": 531.9317700000865,
+          "time": 532.3298650000895,
           "label": "下岗后检查村门装备",
           "space": "village"
         },
         "east-watch": {
-          "time": 630.7279650006114,
+          "time": 638.1835450006944,
           "label": "值守或沿路返回岗位",
           "space": "village"
         },
         "north-watch": {
-          "time": 533.0467650000919,
+          "time": 532.1224000000882,
           "label": "下岗后检查村门装备",
           "space": "village"
         },
         "east-patrol": {
-          "time": 619.735920000552,
+          "time": 625.588765000618,
           "label": "值守或沿路返回岗位",
           "space": "village"
         },
         "north-patrol": {
-          "time": 642.3385050006772,
+          "time": 651.3292600007777,
           "label": "值守或沿路返回岗位",
           "space": "village"
         },
         "carpenter": {
-          "time": 646.3733700006986,
+          "time": 654.5116600007963,
           "label": "修工具、做木工",
           "space": "village"
         }
@@ -2782,8 +2884,8 @@
       "guards": [
         {
           "id": "east-watch",
-          "x": 2008.5238296690372,
-          "y": 967.6094897660402,
+          "x": 2008.4536402131266,
+          "y": 967.4988659292027,
           "hp": 180,
           "dead": false,
           "weaponId": "watch-blade",
@@ -2798,8 +2900,8 @@
         },
         {
           "id": "east-patrol",
-          "x": 1957.5970280399213,
-          "y": 1195.4433106460574,
+          "x": 1954.4377011692484,
+          "y": 1186.7897394517777,
           "hp": 180,
           "dead": false,
           "weaponId": "watch-blade",
@@ -2824,8 +2926,8 @@
         },
         {
           "id": "north-watch",
-          "x": 741.3637704522373,
-          "y": 302.56391166109114,
+          "x": 741.3130750571253,
+          "y": 302.46860345546304,
           "hp": 180,
           "dead": false,
           "weaponId": "watch-blade",
@@ -2840,8 +2942,8 @@
         },
         {
           "id": "north-patrol",
-          "x": 862.5633766826477,
-          "y": 388.63426692201244,
+          "x": 908.9368675651281,
+          "y": 302.3407254316686,
           "hp": 180,
           "dead": false,
           "weaponId": "watch-blade",
@@ -2866,8 +2968,8 @@
         },
         {
           "id": "south-watch",
-          "x": 812.4579793895273,
-          "y": 1718.4133523210123,
+          "x": 812.4579793895349,
+          "y": 1718.4133523210073,
           "hp": 180,
           "dead": false,
           "weaponId": "watch-blade",
@@ -2882,8 +2984,8 @@
         },
         {
           "id": "south-patrol",
-          "x": 973.0884919272221,
-          "y": 1680.1811946715115,
+          "x": 971.4014206442478,
+          "y": 1676.204911557583,
           "hp": 180,
           "dead": false,
           "weaponId": "watch-blade",
@@ -2910,7 +3012,7 @@
       "sequence": 0,
       "completedSequence": 0,
       "raid": null,
-      "protectionMs": 186687.91333333266,
+      "protectionMs": 181324.01333333243,
       "cooldownMs": 481729,
       "retryMs": 0,
       "seed": 1729
@@ -2933,8 +3035,8 @@
     "economyRevision": 7,
     "map_version": 6,
     "player": {
-      "x": 929.8317266766238,
-      "y": 1222.2973406769515,
+      "x": 933.5664933229689,
+      "y": 1221.1511931721764,
       "hp": 80,
       "stamina": 100
     },
@@ -2983,10 +3085,10 @@
     "quest": 3,
     "side": 0,
     "collected": {
-      "wood-v1": 490.0234799999938,
-      "wood-yard-1": 492.1208849999923,
-      "berry-v1": 496.40071499998896,
-      "herb-v1": 516.2699249999998
+      "wood-v1": 489.99654999999353,
+      "wood-yard-1": 492.18393999999216,
+      "berry-v1": 496.4888199999893,
+      "herb-v1": 516.6129700000012
     },
     "chests": [],
     "killed": [],
@@ -2994,7 +3096,7 @@
     "dashCooldownRemaining": 0,
     "stones": [],
     "shortcut": false,
-    "time": 649.968130000718,
+    "time": 658.0139800008168,
     "reward": false,
     "crafted": true
   },

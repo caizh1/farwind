@@ -1,4 +1,5 @@
-// 当前只开放一个目标；升级上限不从存档读取。
+// 五阶段为永久本领；执行参数只从程序定义读取。
+export type SwordWindStage = 0 | 1 | 2 | 3 | 4 | 5;
 export const SWORD_WIND = {
   name: "剑风·一线斩",
   strike: {
@@ -42,9 +43,14 @@ export const SWORD_WIND = {
     ],
   },
 } as const;
-export type SwordWindConfig = typeof SWORD_WIND & { damage: number };
-export const resolveSwordWindConfig = (): SwordWindConfig => ({
-  ...structuredClone(SWORD_WIND),
-  damage: SWORD_WIND.strike.damage,
-  maxTargets: 1,
-});
+export type SwordWindConfig = Omit<typeof SWORD_WIND, 'name' | 'distance' | 'width' | 'lifetime'> & {
+  name:string; stage:Exclude<SwordWindStage,0>; distance:number; width:number; lifetime:number;
+  damage:number; angles:readonly number[]; trialLesson?:string;
+};
+export function resolveSwordWindConfig(stage:Exclude<SwordWindStage,0>=1):SwordWindConfig {
+  if(!Number.isInteger(stage)||stage<1||stage>5)throw Error('剑风阶段无效');
+  const distance=stage>=4?420:300;
+  return {...structuredClone(SWORD_WIND),stage,name:['一线斩','一线斩·双穿','一线斩·贯通','疾风斩','三向疾风斩'][stage-1],
+    distance,width:stage>=4?64:28,lifetime:Math.max(450,Math.ceil(distance/SWORD_WIND.speed*1000)+100),
+    damage:SWORD_WIND.strike.damage,maxTargets:stage===1?1:stage===2?2:'all',angles:stage===5?[-Math.PI/6,0,Math.PI/6]:[0]};
+}

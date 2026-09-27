@@ -1,0 +1,75 @@
+{
+  "说明": "当前工作区水景专项的真实执行记录；以下保留首因和中断，不将未执行项目写成通过。",
+  "源码分支": "codex/initial-game",
+  "源码提交": "70e11595e1d2cdf0472c3c40b80270cf73eaa7a5",
+  "单测": {
+    "命令": "npm run test",
+    "文件数": 27,
+    "测试数": 491,
+    "通过": 491,
+    "失败": 0,
+    "秒数": 61.27
+  },
+  "类型检查": {
+    "命令": "npm run typecheck",
+    "结果": "通过"
+  },
+  "构建": {
+    "命令": "npm run build",
+    "结果": "通过，既有大包体积警告"
+  },
+  "专项首轮": {
+    "通过": 3,
+    "失败": 1,
+    "首因": "桥PNG的透明板缝正确透出动态水纹，被全矩形静态像素检查误报。检查改为实际不透明桥板并核对桥对象变换，没有提高容忍阈值。",
+    "原始结果": "first-browser-results.json"
+  },
+  "标签隐藏调查": {
+    "结果": "未验证visibilitychange，已验证真实标签失焦的blur暂停分支",
+    "证据": "Playwright本地coreBundle.js默认Emulation.setFocusEmulationEnabled(true)。关闭模拟后，同一原生窗口两标签实际hasFocus不同，但均报告hidden=false；最小化仍false。未改写document.hidden。",
+    "原始结果": "visibility-first-browser-results.json",
+    "中断结果": "interrupted-browser-results.json",
+    "失焦通过结果": "tab-focus-browser-results.json"
+  },
+  "未执行": "本轮未重跑全部项目E2E、其他GPU设备和长期浸泡；未操作用户既有Chrome标签或其存档。",
+  "最终原生专项": {
+    "命令": "FARWIND_WATER_EVIDENCE_DIR=docs/water-effects/pond-redesign/behavior npm run test:e2e -- --config tools/playwright-pond-redesign.config.ts",
+    "通过": 5,
+    "失败": 0,
+    "秒数": 67.43844,
+    "原始结果": "browser-results.json",
+    "覆盖": [
+      "固定相机局部变化及静态控制",
+      "暂停、标题、场景重启及GPU清理",
+      "真实切换标签失焦暂停及恢复",
+      "两桥、池岸、黑猫跟随、镜头移动及窗口缩放",
+      "真实命中停顿独立时钟与离屏更新"
+    ]
+  },
+  "录屏": {
+    "命令": "node tools/capture-pond-redesign.mjs",
+    "服务": "实际5173",
+    "视口": [
+      [
+        1280,
+        800,
+        1
+      ],
+      [
+        1365,
+        853,
+        1.5
+      ]
+    ],
+    "结果": "通过，正常HUD、默认缩放、4时刻水面与固定岸/桥板对比、真实按键过桥",
+    "原始结果": "after.json"
+  },
+  "软件渲染兼容": {
+    "命令": "FARWIND_WATER_SOFTWARE=1 FARWIND_WATER_EVIDENCE_DIR=docs/water-effects/pond-redesign/software npm run test:e2e -- --config tools/playwright-pond-redesign.config.ts --grep water-motion-local",
+    "通过": 1,
+    "失败": 0,
+    "秒数": 11.301635,
+    "原始结果": "software-browser-results.json",
+    "范围": "SwiftShader仅复核真实局部水面变化与静态控制，未将软件渲染当作目标机性能测试"
+  }
+}

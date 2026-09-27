@@ -2,7 +2,7 @@ import {createEnemyAttack,advanceEnemyAttack,sampleEnemyAttack,predictEnemyConta
 import {PARRY,type CombatController} from "./combat";
 import {defends,type ContactResult} from "./contact";
 import type {Point} from "./obstacles";
-export type PracticeMode="off"|"slow"|"slime"|"leaf"|"chain";
+export type PracticeMode="off"|"slow"|"slime"|"leaf"|"spore"|"boar"|"raven"|"chain";
 export const PRACTICE={slow:900,near:185,gap:1400} as const;
 export class ParryTraining {
  mode:PracticeMode="off";target:(Point&{id:string})|null=null;attack:EnemyAttack|null=null;
@@ -14,7 +14,7 @@ export class ParryTraining {
  select(mode:PracticeMode,target:Point&{id:string},now:number,p:Point=target){
   this.reset();this.mode=mode;this.target=target;this.next=mode==="chain"?now:now+500;this.previous=now;
   const d=Math.hypot(p.x-target.x,p.y-target.y)||1;
-  this.projection=mode==="off"?null:{id:`practice-${target.id}`,x:target.x+(p.x-target.x)/d*34,y:target.y+(p.y-target.y)/d*34,hp:1,kind:"trainingProjection",staggerUntil:0,type:mode==="leaf"?"leaf":"slime"};
+  this.projection=mode==="off"?null:{id:`practice-${target.id}`,x:target.x+(p.x-target.x)/d*34,y:target.y+(p.y-target.y)/d*34,hp:1,kind:"trainingProjection",staggerUntil:0,type:["leaf","spore","boar","raven"].includes(mode)?mode:"slime"};
   this.feedback=mode==="chain"?"先 J 轻击；收手 K，成功自动反斩；J 接二、三刀。":"投影与正式怪物共用出手动作；K 成功自动反斩，J 接连击。";
  }
  started(now:number){if(this.lastContact?.result==="hurt"&&now>this.lastContact.at&&now-this.lastContact.at<180)this.feedback=`按晚 · 接触后 ${Math.round(now-this.lastContact.at)} 毫秒架剑`;}

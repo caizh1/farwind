@@ -1024,3 +1024,9 @@ kbd {
 @media (max-width: 800px) { .resident-tools { bottom: 110px; flex-wrap: wrap; } .resident-debug { max-width: 340px; } }
 
 .resident-tools[hidden] { display: none; }
+
+/* 传承操作与手记使用正常文档流，窄屏允许按钮换行。 */
+.lesson-actions {display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;min-width:0;}
+.lesson-actions button {flex:1 1 145px;min-width:0;white-space:normal;}
+.skill-journal {border-top:1px solid #748673;margin-top:20px;padding-top:12px;}
+.skill-journal p,.skill-journal li {overflow-wrap:anywhere;}

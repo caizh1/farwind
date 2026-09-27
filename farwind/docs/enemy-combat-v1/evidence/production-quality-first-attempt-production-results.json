@@ -1,0 +1,206 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "-c",
+      "tools/playwright-enemy-production.config.ts"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/tools/playwright-enemy-production.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/production-results-1790518874738",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "enemy-production.spec.ts"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/enemy-combat-v1/evidence/production-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "cwd": "/Users/archer/Documents/ChatGPT/Game/farwind",
+      "command": "npx vite preview --host 127.0.0.1 --port 4175 --strictPort --outDir .enemy-local/production-final",
+      "url": "http://127.0.0.1:4175",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "enemy-production.spec.ts",
+      "file": "enemy-production.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "production-assets-save-and-diagnostics",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7062,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T14:21:15.397Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/production-results-1790518875381/enemy-production-production-assets-save-and-diagnostics/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b8719ca03899c25fbf47-65936c111b1bed8f2e5b",
+          "file": "enemy-production.spec.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "title": "production-real-input-new-enemy-parry",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 14770,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#parry-feedback')\nExpected substring: \u001b[32m\"普通成功\"\u001b[39m\nReceived string:    \u001b[31m\"未架剑 · 接触已经发生\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('#parry-feedback') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#parry-feedback')\u001b[22m\n\u001b[2m    3 × locator resolved to <span id=\"parry-feedback\">投影与正式怪物共用出手动作；K 成功自动反斩，J 接连击。</span>\u001b[22m\n\u001b[2m      - unexpected value \"投影与正式怪物共用出手动作；K 成功自动反斩，J 接连击。\"\u001b[22m\n\u001b[2m    7 × locator resolved to <span id=\"parry-feedback\">精准成功 · 提前 84 毫秒</span>\u001b[22m\n\u001b[2m      - unexpected value \"精准成功 · 提前 84 毫秒\"\u001b[22m\n\u001b[2m    4 × locator resolved to <span id=\"parry-feedback\">未架剑 · 接触已经发生</span>\u001b[22m\n\u001b[2m      - unexpected value \"未架剑 · 接触已经发生\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#parry-feedback')\nExpected substring: \u001b[32m\"普通成功\"\u001b[39m\nReceived string:    \u001b[31m\"未架剑 · 接触已经发生\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('#parry-feedback') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#parry-feedback')\u001b[22m\n\u001b[2m    3 × locator resolved to <span id=\"parry-feedback\">投影与正式怪物共用出手动作；K 成功自动反斩，J 接连击。</span>\u001b[22m\n\u001b[2m      - unexpected value \"投影与正式怪物共用出手动作；K 成功自动反斩，J 接连击。\"\u001b[22m\n\u001b[2m    7 × locator resolved to <span id=\"parry-feedback\">精准成功 · 提前 84 毫秒</span>\u001b[22m\n\u001b[2m      - unexpected value \"精准成功 · 提前 84 毫秒\"\u001b[22m\n\u001b[2m    4 × locator resolved to <span id=\"parry-feedback\">未架剑 · 接触已经发生</span>\u001b[22m\n\u001b[2m      - unexpected value \"未架剑 · 接触已经发生\"\u001b[22m\n\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-production.spec.ts:20:49",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-production.spec.ts",
+                      "column": 49,
+                      "line": 20
+                    },
+                    "snippet": "  18 |   // 软件渲染会限制每帧模拟预算；读取现有生产只读时钟，避免把墙钟等待当成战斗时间。\n  19 |   const at=(await read(page)).skillGrowth.sim;await page.waitForFunction(at=>(window as any).__farwind().skillGrowth.sim>=at+940,at,{polling:5});await page.keyboard.press('k');\n> 20 |   await expect(page.locator('#parry-feedback')).toContainText('普通成功');await expect(page.locator('#training-stats')).toContainText('24伤害');expect((await read(page)).state.player.hp).toBe(100);expect(errors).toEqual([]);await page.screenshot({path:`${dir}/production-boar-parry.png`});await writeFile(`${dir}/production-validation.json`,JSON.stringify({说明:'生产构建，通过新游戏、正常键盘行走及可见林豕练习按钮，真实K完成普通弹反与自动反斩；只读生产模拟时钟用于输入时序，不注入任何状态。此项是技术集成验证，玩家动作可读性仍待审阅。',状态:'技术通过，美术待审阅',错误:errors,训练:await page.locator('#training-stats').textContent(),世界:await read(page)},null,2));\n     |                                                 ^\n  21 | });\n  22 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-production.spec.ts",
+                        "column": 49,
+                        "line": 20
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#parry-feedback')\nExpected substring: \u001b[32m\"普通成功\"\u001b[39m\nReceived string:    \u001b[31m\"未架剑 · 接触已经发生\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('#parry-feedback') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#parry-feedback')\u001b[22m\n\u001b[2m    3 × locator resolved to <span id=\"parry-feedback\">投影与正式怪物共用出手动作；K 成功自动反斩，J 接连击。</span>\u001b[22m\n\u001b[2m      - unexpected value \"投影与正式怪物共用出手动作；K 成功自动反斩，J 接连击。\"\u001b[22m\n\u001b[2m    7 × locator resolved to <span id=\"parry-feedback\">精准成功 · 提前 84 毫秒</span>\u001b[22m\n\u001b[2m      - unexpected value \"精准成功 · 提前 84 毫秒\"\u001b[22m\n\u001b[2m    4 × locator resolved to <span id=\"parry-feedback\">未架剑 · 接触已经发生</span>\u001b[22m\n\u001b[2m      - unexpected value \"未架剑 · 接触已经发生\"\u001b[22m\n\n\n  18 |   // 软件渲染会限制每帧模拟预算；读取现有生产只读时钟，避免把墙钟等待当成战斗时间。\n  19 |   const at=(await read(page)).skillGrowth.sim;await page.waitForFunction(at=>(window as any).__farwind().skillGrowth.sim>=at+940,at,{polling:5});await page.keyboard.press('k');\n> 20 |   await expect(page.locator('#parry-feedback')).toContainText('普通成功');await expect(page.locator('#training-stats')).toContainText('24伤害');expect((await read(page)).state.player.hp).toBe(100);expect(errors).toEqual([]);await page.screenshot({path:`${dir}/production-boar-parry.png`});await writeFile(`${dir}/production-validation.json`,JSON.stringify({说明:'生产构建，通过新游戏、正常键盘行走及可见林豕练习按钮，真实K完成普通弹反与自动反斩；只读生产模拟时钟用于输入时序，不注入任何状态。此项是技术集成验证，玩家动作可读性仍待审阅。',状态:'技术通过，美术待审阅',错误:errors,训练:await page.locator('#training-stats').textContent(),世界:await read(page)},null,2));\n     |                                                 ^\n  21 | });\n  22 |\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-production.spec.ts:20:49"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T14:21:22.575Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/production-results-1790518875381/enemy-production-production-real-input-new-enemy-parry/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/production-results-1790518875381/enemy-production-production-real-input-new-enemy-parry/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/production-results-1790518875381/enemy-production-production-real-input-new-enemy-parry/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-production.spec.ts",
+                    "column": 49,
+                    "line": 20
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "b8719ca03899c25fbf47-8ed08f45044c4c542053",
+          "file": "enemy-production.spec.ts",
+          "line": 15,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-27T14:21:14.740Z",
+    "duration": 24429.889,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

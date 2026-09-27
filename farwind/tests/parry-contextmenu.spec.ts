@@ -6,6 +6,7 @@ test.use({headless:true,video:'off'});
 test('PARRY-03-contextmenu',async({page})=>{
  const state=initialState();state.player.x=1640;state.player.y=620;state.quest=3;
  page.on('dialog',d=>d.accept());await page.goto('/');const chooser=page.waitForEvent('filechooser');await page.getByRole('button',{name:'导入存档',exact:true}).click();await(await chooser).setFiles({name:'contextmenu-fixture.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(state))});
+ await page.waitForFunction(()=>(window as any).__farwind()?.mode==='');
  await page.evaluate(()=>{(window as any).__menus=[];document.addEventListener('contextmenu',e=>(window as any).__menus.push({画布:e.target instanceof HTMLCanvasElement,已阻止:e.defaultPrevented}));});
  await page.mouse.click(650,400,{button:'right'});await page.keyboard.press('Escape');await page.getByText('世界与时间已暂停。').click({button:'right'});
  const menus=await page.evaluate(()=>(window as any).__menus);expect(menus).toContainEqual({画布:true,已阻止:true});expect(menus).toContainEqual({画布:false,已阻止:false});

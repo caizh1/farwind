@@ -1,0 +1,64 @@
+{
+  "说明": "本轮开发、技术测试和对抗式审查已完成；美术自查不代表用户验收。",
+  "记录时间": "2026-09-27T14:44:36.257764+00:00",
+  "参考提交": "70e11595e1d2cdf0472c3c40b80270cf73eaa7a5",
+  "开发状态": "已完成",
+  "美术状态": "pending-review",
+  "独立角色帧": 588,
+  "角色数": 5,
+  "单元测试": {
+    "文件数": 33,
+    "通过": 568
+  },
+  "开发浏览器": {
+    "startTime": "2026-09-27T14:36:48.581Z",
+    "duration": 222663.922,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "生产浏览器": {
+    "startTime": "2026-09-27T14:38:18.564Z",
+    "duration": 23750.392,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "类型检查": "通过",
+  "生产构建": "通过",
+  "审查结论": "PASS",
+  "本轮代码及图集与浏览器快照差异": [],
+  "录屏": [
+    {
+      "验证项目": "training-five-enemy-parry-recovery",
+      "正式录屏": "docs/enemy-combat-v1/evidence/training-gameplay.webm",
+      "原始录屏": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/runs/1790519808973/enemy-combat-v1-training-five-enemy-parry-recovery/video.webm",
+      "文件摘要": "4dc365f78aa96e256a1a08cc7361465790bdb36c023a48e73464dab4226a8b8a"
+    },
+    {
+      "验证项目": "wild-new-enemies-real-movement",
+      "正式录屏": "docs/enemy-combat-v1/evidence/wild-gameplay.webm",
+      "原始录屏": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/runs/1790519808973/enemy-combat-v1-wild-new-enemies-real-movement/video.webm",
+      "文件摘要": "48885b020d91ab062b878b22cf1587c710596389a568ef54b58c8f7e696f8996"
+    },
+    {
+      "验证项目": "wild-boar-hurt-death-and-reload",
+      "正式录屏": "docs/enemy-combat-v1/evidence/death-gameplay.webm",
+      "原始录屏": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/runs/1790519808973/enemy-combat-v1-wild-boar-hurt-death-and-reload/video.webm",
+      "文件摘要": "fea8081ac7d98a75bcecb595f57f661f31e19b083b94fc548ba794d6447ecac8"
+    },
+    {
+      "验证项目": "production-real-input-new-enemy-parry",
+      "正式录屏": "docs/enemy-combat-v1/evidence/production-gameplay.webm",
+      "原始录屏": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/production-results-1790519899881/enemy-production-production-real-input-new-enemy-parry/video.webm",
+      "文件摘要": "2c39a112b72db31a1f067c2c092a82c7d9ce22810dccf8a68dab18c8bbc837ce"
+    }
+  ],
+  "边界": [
+    "保留已有与并行改动",
+    "原生设备性能与听感未专门验收",
+    "没有提交、推送或部署"
+  ]
+}

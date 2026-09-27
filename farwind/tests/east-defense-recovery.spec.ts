@@ -66,7 +66,7 @@ test("玩家真实攻击来袭怪并在村门内实际受击，不污染固定�
 test("保留新剑风与弹反入口，真实第四刀和K可命中动态来袭怪",async({page})=>{
  test.skip(!!process.env.FARWIND_PRODUCTION,"调试轨迹仅在冻结开发源码回归，生产版保持不暴露诊断。");
  await mkdir(root,{recursive:true});await page.goto('/');const s=initialState();s.player.x=2050;s.player.y=1080;
- s.skills.swordWind=true;s.killed=['slime-1','slime-2','leaf-1','leaf-2'];
+ s.skills.swordWindStage=1;s.skills.legacySwordWind=true;s.killed=['slime-1','slime-2','leaf-1','leaf-2'];
  s.defense=prepareEastRaid(s.defense,{x:930,y:1220});for(const g of s.defense.guards)Object.assign(g,{hp:0,dead:true,mode:'dead'});
  s.defense.raid!.members.forEach((m,i)=>Object.assign(m,i?{hp:0}:{x:2440,y:1080}));
  await fixture(page,s);await page.keyboard.down('d');
@@ -99,6 +99,6 @@ test("生产构建恢复活跃演练并自主结算，查询开关不暴露开�
  await expect.poll(async()=>{const r=await read(page);return !r.defense.critical&&!r.defenseCheckpointPending;}).toBe(true);
  await page.screenshot({path:`${root}/production-autonomous.png`});await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();
  const r=await read(page);expect(r.state.defense.completedSequence).toBe(1);expect(r.state.defense.guards.every((g:any)=>!g.dead)).toBe(true);
- expect([r.state.schema_version,r.state.map_version]).toEqual([6,6]);
+ expect([r.state.schema_version,r.state.map_version]).toEqual([7,6]);
  await writeFile(`${root}/production.json`,JSON.stringify({说明:'冻结生产构建从正式导入恢复演练，正常版不提供开发启动入口。',驻防:r.state.defense},null,2));
 });

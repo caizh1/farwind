@@ -1,0 +1,39 @@
+{
+  "name": "farwind",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run tests/logic.test.ts tests/motion.test.ts tests/combat.test.ts tests/training.test.ts tests/map-expansion.test.ts tests/obstacles.test.ts tests/level-rework.test.ts tests/village-defense.test.ts tests/parry.test.ts tests/parry-v2.test.ts tests/parry-feedback-v3.test.ts tests/dialogue-portraits.test.ts tests/economy.test.ts tests/sword-wind-assets.test.ts tests/sword-wind.test.ts tests/east-defense.test.ts tests/village-raids.test.ts tests/village-integration.test.ts tests/day-night.test.ts tests/npc-life.test.ts tests/npc-life-combat.test.ts tests/npc-life-facility.test.ts tests/npc-navigation.test.ts tests/npc-speech.test.ts tests/npc-social.test.ts tests/npc-art.test.ts tests/sword-wind-audio.test.ts tests/water-motion.test.ts tests/safety-defense.test.ts",
+    "test:e2e": "playwright test",
+    "assets:sword-wind": "node tools/pack-sword-wind.mjs",
+    "test:sword-wind": "playwright test tests/sword-wind.spec.ts tests/sword-wind-focus.spec.ts tests/sword-wind-rise.spec.ts --config tools/playwright-sword-wind.config.ts --grep 'WIND-0[1-6]|WIND-0[89]|WIND-1[012]'",
+    "test:sword-wind:off": "VITE_DEV_GRANT_SWORD_WIND=0 playwright test tests/sword-wind.spec.ts tests/sword-wind-focus.spec.ts --config tools/playwright-sword-wind.config.ts --grep 'WIND-02|WIND-07|WIND-08'",
+    "test:sword-wind:production": "npm run build -- --outDir .sword-wind-local/production && playwright test --config tools/playwright-sword-wind-production.config.ts",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test:village-integration": "vitest run tests/village-integration.test.ts && playwright test tests/village-integration.spec.ts tests/economy-production.spec.ts --config tools/playwright-village-integration.config.ts",
+    "test:village-soak": "vitest run tests/village-integration.test.ts && node tools/soak-village-defense.mjs",
+    "test:npc-life": "vitest run tests/npc-life.test.ts tests/npc-life-combat.test.ts tests/npc-life-facility.test.ts tests/npc-navigation.test.ts tests/npc-speech.test.ts tests/npc-social.test.ts tests/npc-art.test.ts && playwright test tests/npc-life.spec.ts tests/npc-life-social-art.spec.ts tests/npc-life-combat.spec.ts tests/npc-life-facility.spec.ts --config tools/playwright-npc-life.config.ts",
+    "test:npc-life:production": "npm run build -- --outDir .npc-life-local/production && playwright test --config tools/playwright-npc-life-production.config.ts",
+    "test:parry-feedback": "vitest run tests/parry-feedback-v3.test.ts && playwright test tests/parry-feedback-v3.spec.ts --config tools/playwright-parry-feedback-v3.config.ts",
+    "assets:parry-feedback": "node tools/pack-parry-feedback-v3.mjs && node tools/export-parry-feedback-audio.mjs",
+    "assets:sword-wind:audio": "node tools/export-sword-wind-audio.mjs",
+    "test:sword-wind:audio": "playwright test --config tools/playwright-sword-wind-audio.config.ts",
+    "test:defense-safety": "vitest run tests/safety-defense.test.ts && playwright test --config tools/playwright-safety.config.ts",
+    "assets:npc-life": "node tools/prepare-npc-life-art.mjs"
+  },
+  "dependencies": {
+    "phaser": "4.2.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "prettier": "3.9.9",
+    "sharp": "0.35.4",
+    "typescript": "7.0.2",
+    "vite": "8.3.1",
+    "vitest": "5.0.1"
+  }
+}

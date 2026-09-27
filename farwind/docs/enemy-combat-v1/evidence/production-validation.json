@@ -1,0 +1,3393 @@
+{
+  "说明": "生产构建，通过新游戏、正常键盘行走及可见林豕练习按钮，真实K完成普通弹反与自动反斩；只读生产模拟时钟用于输入时序，不注入任何状态。此项是技术集成验证，玩家动作可读性仍待审阅。",
+  "状态": "技术通过，美术待审阅",
+  "错误": [],
+  "训练": "第1段 · 24伤害；本组命中1/3；累计24",
+  "世界": {
+    "state": {
+      "skills": {
+        "swordWindStage": 0,
+        "completedLessons": [],
+        "discoveredLessons": [],
+        "legacySwordWind": false,
+        "devices": {
+          "serialValve": 0,
+          "leakClosed": false,
+          "splitLeft": 0,
+          "splitRight": 0
+        }
+      },
+      "schema_version": 7,
+      "life": {
+        "version": 4,
+        "speechAt": 0,
+        "speechUrgentAt": 0,
+        "speechEventFloor": 0,
+        "unavailable": {
+          "homes": {},
+          "facilities": []
+        },
+        "people": [
+          {
+            "id": "elder",
+            "body": {
+              "space": "elder-home",
+              "x": 635.1288514436142,
+              "y": 781.9648383755704,
+              "hp": 100,
+              "health": "healthy",
+              "episode": 0,
+              "recoverAt": 0
+            },
+            "blockedTarget": null,
+            "blockedUntil": 0,
+            "action": {
+              "id": 1,
+              "kind": "work",
+              "target": {
+                "space": "village",
+                "x": 670,
+                "y": 620
+              },
+              "pickup": {
+                "space": "elder-home",
+                "x": 510,
+                "y": 535
+              },
+              "facility": null,
+              "task": null,
+              "phase": "collect",
+              "progress": 0,
+              "duration": 8000,
+              "started": 5,
+              "failures": 0,
+              "label": "检查风铃、记录风向",
+              "social": null
+            },
+            "serial": 1,
+            "committed": 0,
+            "needs": {
+              "hunger": 15.05073283333301,
+              "fatigue": 10.02536641666649
+            },
+            "emotion": 0,
+            "gear": "locker",
+            "supplies": {
+              "medicine": 0,
+              "wood": 0
+            },
+            "project": 0,
+            "nextDecision": 3605,
+            "reason": "检查风铃、记录风向（评分 90）",
+            "pathFailures": 0,
+            "alarm": 0,
+            "relations": {
+              "healer": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              },
+              "carpenter": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              }
+            },
+            "memories": [],
+            "receipt": 0,
+            "receipts": [],
+            "receiptFloor": 0,
+            "known": {
+              "player": {
+                "x": 848.0726016970543,
+                "y": 713.342786261536,
+                "hp": 100,
+                "stamina": 100,
+                "space": "village",
+                "time": 482.04990999999825
+              }
+            },
+            "lastSupplyDay": 0,
+            "lastMealDay": -1,
+            "social": {
+              "cooldownUntil": 0,
+              "occasionFloor": 0,
+              "visited": {}
+            },
+            "speech": {
+              "eventFloor": 0,
+              "nextAt": 0,
+              "day": 0,
+              "routines": []
+            }
+          },
+          {
+            "id": "healer",
+            "body": {
+              "space": "healer-home",
+              "x": 631.5635301856437,
+              "y": 774.9280201032606,
+              "hp": 100,
+              "health": "healthy",
+              "episode": 0,
+              "recoverAt": 0
+            },
+            "blockedTarget": null,
+            "blockedUntil": 0,
+            "action": {
+              "id": 1,
+              "kind": "work",
+              "target": {
+                "space": "village",
+                "x": 1070,
+                "y": 620
+              },
+              "pickup": {
+                "space": "healer-home",
+                "x": 510,
+                "y": 535
+              },
+              "facility": null,
+              "task": null,
+              "phase": "collect",
+              "progress": 0,
+              "duration": 8000,
+              "started": 75,
+              "failures": 0,
+              "label": "照料药田",
+              "social": null
+            },
+            "serial": 1,
+            "committed": 0,
+            "needs": {
+              "hunger": 15.05073283333301,
+              "fatigue": 10.02536641666649
+            },
+            "emotion": 0,
+            "gear": "locker",
+            "supplies": {
+              "medicine": 0,
+              "wood": 0
+            },
+            "project": 0,
+            "nextDecision": 3675,
+            "reason": "照料药田（评分 85）",
+            "pathFailures": 0,
+            "alarm": 0,
+            "relations": {
+              "elder": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              }
+            },
+            "memories": [],
+            "receipt": 0,
+            "receipts": [],
+            "receiptFloor": 0,
+            "known": {},
+            "lastSupplyDay": 0,
+            "lastMealDay": -1,
+            "social": {
+              "cooldownUntil": 0,
+              "occasionFloor": 0,
+              "visited": {}
+            },
+            "speech": {
+              "eventFloor": 0,
+              "nextAt": 0,
+              "day": 0,
+              "routines": []
+            }
+          },
+          {
+            "id": "carpenter",
+            "body": {
+              "space": "carpenter-home",
+              "x": 635.5175411657565,
+              "y": 782.7319891429564,
+              "hp": 100,
+              "health": "healthy",
+              "episode": 0,
+              "recoverAt": 0
+            },
+            "blockedTarget": null,
+            "blockedUntil": 0,
+            "action": {
+              "id": 1,
+              "kind": "work",
+              "target": {
+                "space": "village",
+                "x": 412,
+                "y": 1010
+              },
+              "pickup": {
+                "space": "carpenter-home",
+                "x": 510,
+                "y": 535
+              },
+              "facility": "tools",
+              "task": null,
+              "phase": "collect",
+              "progress": 0,
+              "duration": 8000,
+              "started": 150,
+              "failures": 0,
+              "label": "修工具、做木工",
+              "social": null
+            },
+            "serial": 1,
+            "committed": 0,
+            "needs": {
+              "hunger": 15.05073283333301,
+              "fatigue": 10.02536641666649
+            },
+            "emotion": 0,
+            "gear": "locker",
+            "supplies": {
+              "medicine": 0,
+              "wood": 0
+            },
+            "project": 0,
+            "nextDecision": 3750,
+            "reason": "修工具、做木工（评分 87）",
+            "pathFailures": 0,
+            "alarm": 0,
+            "relations": {
+              "elder": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              }
+            },
+            "memories": [],
+            "receipt": 0,
+            "receipts": [],
+            "receiptFloor": 0,
+            "known": {},
+            "lastSupplyDay": 0,
+            "lastMealDay": -1,
+            "social": {
+              "cooldownUntil": 0,
+              "occasionFloor": 0,
+              "visited": {}
+            },
+            "speech": {
+              "eventFloor": 0,
+              "nextAt": 0,
+              "day": 0,
+              "routines": []
+            }
+          },
+          {
+            "id": "east-watch",
+            "body": null,
+            "blockedTarget": null,
+            "blockedUntil": 0,
+            "action": {
+              "id": 1,
+              "kind": "habit",
+              "target": {
+                "space": "village",
+                "x": 2010,
+                "y": 970
+              },
+              "pickup": {
+                "space": "barracks",
+                "x": 510,
+                "y": 535
+              },
+              "facility": null,
+              "task": null,
+              "phase": "collect",
+              "progress": 0,
+              "duration": 8000,
+              "started": 225,
+              "failures": 0,
+              "label": "下岗后检查村门装备",
+              "social": null
+            },
+            "serial": 1,
+            "committed": 0,
+            "needs": {
+              "hunger": 15.05073283333301,
+              "fatigue": 10.02536641666649
+            },
+            "emotion": 0,
+            "gear": "locker",
+            "supplies": {
+              "medicine": 0,
+              "wood": 0
+            },
+            "project": 0,
+            "nextDecision": 3825,
+            "reason": "下岗后检查村门装备（评分 110）",
+            "pathFailures": 0,
+            "alarm": 0,
+            "relations": {
+              "elder": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              }
+            },
+            "memories": [],
+            "receipt": 0,
+            "receipts": [],
+            "receiptFloor": 0,
+            "known": {},
+            "lastSupplyDay": 0,
+            "lastMealDay": -1,
+            "social": {
+              "cooldownUntil": 0,
+              "occasionFloor": 0,
+              "visited": {}
+            },
+            "speech": {
+              "eventFloor": 0,
+              "nextAt": 0,
+              "day": 0,
+              "routines": []
+            }
+          },
+          {
+            "id": "east-patrol",
+            "body": null,
+            "blockedTarget": null,
+            "blockedUntil": 0,
+            "action": null,
+            "serial": 0,
+            "committed": 0,
+            "needs": {
+              "hunger": 15.05073283333301,
+              "fatigue": 10.02536641666649
+            },
+            "emotion": 0,
+            "gear": "locker",
+            "supplies": {
+              "medicine": 0,
+              "wood": 0
+            },
+            "project": 0,
+            "nextDecision": 3900,
+            "reason": "值守或沿路返回岗位",
+            "pathFailures": 0,
+            "alarm": 0,
+            "relations": {
+              "healer": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              },
+              "elder": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              }
+            },
+            "memories": [],
+            "receipt": 0,
+            "receipts": [],
+            "receiptFloor": 0,
+            "known": {},
+            "lastSupplyDay": 0,
+            "lastMealDay": -1,
+            "social": {
+              "cooldownUntil": 0,
+              "occasionFloor": 0,
+              "visited": {}
+            },
+            "speech": {
+              "eventFloor": 0,
+              "nextAt": 0,
+              "day": 0,
+              "routines": []
+            }
+          },
+          {
+            "id": "east-archer",
+            "body": null,
+            "blockedTarget": null,
+            "blockedUntil": 0,
+            "action": null,
+            "serial": 0,
+            "committed": 0,
+            "needs": {
+              "hunger": 15.05073283333301,
+              "fatigue": 10.02536641666649
+            },
+            "emotion": 0,
+            "gear": "locker",
+            "supplies": {
+              "medicine": 0,
+              "wood": 0
+            },
+            "project": 0,
+            "nextDecision": 3075,
+            "reason": "值守或沿路返回岗位",
+            "pathFailures": 0,
+            "alarm": 0,
+            "relations": {
+              "elder": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              }
+            },
+            "memories": [],
+            "receipt": 0,
+            "receipts": [],
+            "receiptFloor": 0,
+            "known": {},
+            "lastSupplyDay": 0,
+            "lastMealDay": -1,
+            "social": {
+              "cooldownUntil": 0,
+              "occasionFloor": 0,
+              "visited": {}
+            },
+            "speech": {
+              "eventFloor": 0,
+              "nextAt": 0,
+              "day": 0,
+              "routines": []
+            }
+          },
+          {
+            "id": "north-watch",
+            "body": null,
+            "blockedTarget": null,
+            "blockedUntil": 0,
+            "action": {
+              "id": 1,
+              "kind": "habit",
+              "target": {
+                "space": "village",
+                "x": 740,
+                "y": 300
+              },
+              "pickup": {
+                "space": "barracks",
+                "x": 840,
+                "y": 535
+              },
+              "facility": null,
+              "task": null,
+              "phase": "collect",
+              "progress": 0,
+              "duration": 8000,
+              "started": 450,
+              "failures": 0,
+              "label": "下岗后检查村门装备",
+              "social": null
+            },
+            "serial": 1,
+            "committed": 0,
+            "needs": {
+              "hunger": 15.05073283333301,
+              "fatigue": 10.02536641666649
+            },
+            "emotion": 0,
+            "gear": "locker",
+            "supplies": {
+              "medicine": 0,
+              "wood": 0
+            },
+            "project": 0,
+            "nextDecision": 3150,
+            "reason": "下岗后检查村门装备（评分 110）",
+            "pathFailures": 0,
+            "alarm": 0,
+            "relations": {
+              "elder": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              }
+            },
+            "memories": [],
+            "receipt": 0,
+            "receipts": [],
+            "receiptFloor": 0,
+            "known": {
+              "north-patrol": {
+                "space": "village",
+                "x": 866.6683731771901,
+                "y": 358.200600614451,
+                "time": 483.3749999999971
+              }
+            },
+            "lastSupplyDay": 0,
+            "lastMealDay": -1,
+            "social": {
+              "cooldownUntil": 0,
+              "occasionFloor": 0,
+              "visited": {}
+            },
+            "speech": {
+              "eventFloor": 0,
+              "nextAt": 0,
+              "day": 0,
+              "routines": []
+            }
+          },
+          {
+            "id": "north-patrol",
+            "body": null,
+            "blockedTarget": null,
+            "blockedUntil": 0,
+            "action": null,
+            "serial": 0,
+            "committed": 0,
+            "needs": {
+              "hunger": 15.05073283333301,
+              "fatigue": 10.02536641666649
+            },
+            "emotion": 0,
+            "gear": "locker",
+            "supplies": {
+              "medicine": 0,
+              "wood": 0
+            },
+            "project": 0,
+            "nextDecision": 3225,
+            "reason": "值守或沿路返回岗位",
+            "pathFailures": 0,
+            "alarm": 0,
+            "relations": {
+              "healer": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              },
+              "elder": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              }
+            },
+            "memories": [],
+            "receipt": 0,
+            "receipts": [],
+            "receiptFloor": 0,
+            "known": {
+              "north-watch": {
+                "space": "village",
+                "x": 841.5202795795511,
+                "y": 401.52027957955113,
+                "time": 483.487499999997
+              }
+            },
+            "lastSupplyDay": 0,
+            "lastMealDay": -1,
+            "social": {
+              "cooldownUntil": 0,
+              "occasionFloor": 0,
+              "visited": {}
+            },
+            "speech": {
+              "eventFloor": 0,
+              "nextAt": 0,
+              "day": 0,
+              "routines": []
+            }
+          },
+          {
+            "id": "north-archer",
+            "body": null,
+            "blockedTarget": null,
+            "blockedUntil": 0,
+            "action": null,
+            "serial": 0,
+            "committed": 0,
+            "needs": {
+              "hunger": 15.05073283333301,
+              "fatigue": 10.02536641666649
+            },
+            "emotion": 0,
+            "gear": "locker",
+            "supplies": {
+              "medicine": 0,
+              "wood": 0
+            },
+            "project": 0,
+            "nextDecision": 3300,
+            "reason": "值守或沿路返回岗位",
+            "pathFailures": 0,
+            "alarm": 0,
+            "relations": {
+              "elder": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              }
+            },
+            "memories": [],
+            "receipt": 0,
+            "receipts": [],
+            "receiptFloor": 0,
+            "known": {},
+            "lastSupplyDay": 0,
+            "lastMealDay": -1,
+            "social": {
+              "cooldownUntil": 0,
+              "occasionFloor": 0,
+              "visited": {}
+            },
+            "speech": {
+              "eventFloor": 0,
+              "nextAt": 0,
+              "day": 0,
+              "routines": []
+            }
+          },
+          {
+            "id": "south-watch",
+            "body": null,
+            "blockedTarget": null,
+            "blockedUntil": 0,
+            "action": {
+              "id": 1,
+              "kind": "habit",
+              "target": {
+                "space": "village",
+                "x": 810,
+                "y": 1720
+              },
+              "pickup": {
+                "space": "barracks",
+                "x": 620,
+                "y": 655
+              },
+              "facility": null,
+              "task": null,
+              "phase": "collect",
+              "progress": 0,
+              "duration": 8000,
+              "started": 675,
+              "failures": 0,
+              "label": "下岗后检查村门装备",
+              "social": null
+            },
+            "serial": 1,
+            "committed": 0,
+            "needs": {
+              "hunger": 15.05073283333301,
+              "fatigue": 10.02536641666649
+            },
+            "emotion": 0,
+            "gear": "locker",
+            "supplies": {
+              "medicine": 0,
+              "wood": 0
+            },
+            "project": 0,
+            "nextDecision": 3375,
+            "reason": "下岗后检查村门装备（评分 110）",
+            "pathFailures": 0,
+            "alarm": 0,
+            "relations": {
+              "elder": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              }
+            },
+            "memories": [],
+            "receipt": 0,
+            "receipts": [],
+            "receiptFloor": 0,
+            "known": {
+              "south-patrol": {
+                "space": "village",
+                "x": 986.8270658698191,
+                "y": 1654.359436796004,
+                "time": 483.71249999999685
+              }
+            },
+            "lastSupplyDay": 0,
+            "lastMealDay": -1,
+            "social": {
+              "cooldownUntil": 0,
+              "occasionFloor": 0,
+              "visited": {}
+            },
+            "speech": {
+              "eventFloor": 0,
+              "nextAt": 0,
+              "day": 0,
+              "routines": []
+            }
+          },
+          {
+            "id": "south-patrol",
+            "body": null,
+            "blockedTarget": null,
+            "blockedUntil": 0,
+            "action": null,
+            "serial": 0,
+            "committed": 0,
+            "needs": {
+              "hunger": 15.05073283333301,
+              "fatigue": 10.02536641666649
+            },
+            "emotion": 0,
+            "gear": "locker",
+            "supplies": {
+              "medicine": 0,
+              "wood": 0
+            },
+            "project": 0,
+            "nextDecision": 3450,
+            "reason": "值守或沿路返回岗位",
+            "pathFailures": 0,
+            "alarm": 0,
+            "relations": {
+              "healer": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              },
+              "elder": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              }
+            },
+            "memories": [],
+            "receipt": 0,
+            "receipts": [],
+            "receiptFloor": 0,
+            "known": {
+              "south-watch": {
+                "space": "village",
+                "x": 915.8109076273312,
+                "y": 1624.1890923726692,
+                "time": 483.82499999999675
+              }
+            },
+            "lastSupplyDay": 0,
+            "lastMealDay": -1,
+            "social": {
+              "cooldownUntil": 0,
+              "occasionFloor": 0,
+              "visited": {}
+            },
+            "speech": {
+              "eventFloor": 0,
+              "nextAt": 0,
+              "day": 0,
+              "routines": []
+            }
+          },
+          {
+            "id": "south-archer",
+            "body": null,
+            "blockedTarget": null,
+            "blockedUntil": 0,
+            "action": null,
+            "serial": 0,
+            "committed": 0,
+            "needs": {
+              "hunger": 15.05073283333301,
+              "fatigue": 10.02536641666649
+            },
+            "emotion": 0,
+            "gear": "locker",
+            "supplies": {
+              "medicine": 0,
+              "wood": 0
+            },
+            "project": 0,
+            "nextDecision": 3525,
+            "reason": "值守或沿路返回岗位",
+            "pathFailures": 0,
+            "alarm": 0,
+            "relations": {
+              "elder": {
+                "familiar": 35,
+                "trust": 35,
+                "wariness": 0,
+                "lastPositive": -1440
+              }
+            },
+            "memories": [],
+            "receipt": 0,
+            "receipts": [],
+            "receiptFloor": 0,
+            "known": {},
+            "lastSupplyDay": 0,
+            "lastMealDay": -1,
+            "social": {
+              "cooldownUntil": 0,
+              "occasionFloor": 0,
+              "visited": {}
+            },
+            "speech": {
+              "eventFloor": 0,
+              "nextAt": 0,
+              "day": 0,
+              "routines": []
+            }
+          }
+        ],
+        "elapsed": 3043.9700000000007,
+        "sequence": 0,
+        "events": [],
+        "reservations": [
+          {
+            "facility": "tools",
+            "owner": "carpenter",
+            "expires": 15043.970000000001
+          }
+        ],
+        "tasks": [],
+        "alarm": 0,
+        "clearSince": null,
+        "stores": {
+          "medicine": 4,
+          "herbs": 8,
+          "wood": 6,
+          "food": 18,
+          "day": 0
+        },
+        "facilities": {
+          "wind-bell": 100,
+          "workbench": 100
+        },
+        "playerSpace": "village",
+        "outside": {
+          "x": 670,
+          "y": 720
+        },
+        "invitations": {},
+        "observed": {
+          "elder": {
+            "time": 482.04990999999825,
+            "label": "检查风铃、记录风向",
+            "space": "village"
+          }
+        },
+        "lastDefenseSequence": 0,
+        "defenseReceipts": []
+      },
+      "night": {
+        "takeoverNight": 1,
+        "plan": null,
+        "discovered": false
+      },
+      "defense": {
+        "guards": [
+          {
+            "id": "east-watch",
+            "x": 1978.319072811262,
+            "y": 777.647106118913,
+            "hp": 180,
+            "dead": false,
+            "weaponId": "watch-blade",
+            "armorId": "watch-mail",
+            "postId": "east-north-post",
+            "mode": "life",
+            "peaceMs": 3043.9700000000007,
+            "cooldownMs": 0,
+            "offDuty": true,
+            "towerTransitMs": 0,
+            "space": "village"
+          },
+          {
+            "id": "east-patrol",
+            "x": 1945.6455146114072,
+            "y": 1158.3098727505467,
+            "hp": 180,
+            "dead": false,
+            "weaponId": "watch-blade",
+            "armorId": "watch-mail",
+            "postId": "east-south-post",
+            "mode": "patrol",
+            "peaceMs": 3043.9700000000007,
+            "cooldownMs": 0
+          },
+          {
+            "id": "east-archer",
+            "x": 2030,
+            "y": 900,
+            "hp": 100,
+            "dead": false,
+            "weaponId": "watch-bow",
+            "armorId": "watch-leather",
+            "postId": "east-gate-tower",
+            "mode": "post",
+            "peaceMs": 3043.9700000000007,
+            "cooldownMs": 0
+          },
+          {
+            "id": "north-watch",
+            "x": 860,
+            "y": 455.3914200000003,
+            "hp": 180,
+            "dead": false,
+            "weaponId": "watch-blade",
+            "armorId": "watch-mail",
+            "postId": "north-west-post",
+            "mode": "life",
+            "peaceMs": 3043.9700000000007,
+            "cooldownMs": 0,
+            "offDuty": true,
+            "towerTransitMs": 0,
+            "space": "village"
+          },
+          {
+            "id": "north-patrol",
+            "x": 862.1065065788636,
+            "y": 393.6368222522261,
+            "hp": 180,
+            "dead": false,
+            "weaponId": "watch-blade",
+            "armorId": "watch-mail",
+            "postId": "north-east-post",
+            "mode": "patrol",
+            "peaceMs": 3043.9700000000007,
+            "cooldownMs": 0
+          },
+          {
+            "id": "north-archer",
+            "x": 680,
+            "y": 350,
+            "hp": 100,
+            "dead": false,
+            "weaponId": "watch-bow",
+            "armorId": "watch-leather",
+            "postId": "north-gate-tower",
+            "mode": "post",
+            "peaceMs": 3043.9700000000007,
+            "cooldownMs": 0
+          },
+          {
+            "id": "south-watch",
+            "x": 945.7144268836169,
+            "y": 1594.285573116384,
+            "hp": 180,
+            "dead": false,
+            "weaponId": "watch-blade",
+            "armorId": "watch-mail",
+            "postId": "south-west-post",
+            "mode": "life",
+            "peaceMs": 3043.9700000000007,
+            "cooldownMs": 0,
+            "offDuty": true,
+            "towerTransitMs": 0,
+            "space": "village"
+          },
+          {
+            "id": "south-patrol",
+            "x": 965.4723116115193,
+            "y": 1640.2342336509018,
+            "hp": 180,
+            "dead": false,
+            "weaponId": "watch-blade",
+            "armorId": "watch-mail",
+            "postId": "south-east-post",
+            "mode": "patrol",
+            "peaceMs": 3043.9700000000007,
+            "cooldownMs": 0
+          },
+          {
+            "id": "south-archer",
+            "x": 1140,
+            "y": 1750,
+            "hp": 100,
+            "dead": false,
+            "weaponId": "watch-bow",
+            "armorId": "watch-leather",
+            "postId": "south-gate-tower",
+            "mode": "post",
+            "peaceMs": 3043.9700000000007,
+            "cooldownMs": 0
+          }
+        ],
+        "sequence": 0,
+        "completedSequence": 0,
+        "raid": null,
+        "protectionMs": 296956.03,
+        "cooldownMs": 481729,
+        "retryMs": 0,
+        "seed": 1729
+      },
+      "coins": 120,
+      "equipment": {
+        "weapon": null,
+        "armor": null
+      },
+      "shopStock": {
+        "general:wood": 20,
+        "general:stone": 20,
+        "general:herb": 20,
+        "general:berry": 24,
+        "general:potion": 8,
+        "healer:potion": 16,
+        "smith:ironSword": 8,
+        "smith:leatherCoat": 8
+      },
+      "economyRevision": 0,
+      "map_version": 6,
+      "player": {
+        "x": 848.0726016970543,
+        "y": 695.3427862615366,
+        "hp": 100,
+        "stamina": 100
+      },
+      "bag": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "hotbar": [
+        "potion",
+        "berry",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "quest": 0,
+      "side": 0,
+      "collected": {},
+      "chests": [],
+      "killed": [],
+      "pendingDrops": [],
+      "dashCooldownRemaining": 0,
+      "stones": [],
+      "shortcut": false,
+      "time": 484.5659549999966,
+      "reward": false,
+      "crafted": false
+    },
+    "defense": {
+      "guards": [
+        {
+          "id": "east-watch",
+          "x": 1978.319072811262,
+          "y": 777.647106118913,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-north-post",
+          "mode": "life",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0,
+          "offDuty": true,
+          "towerTransitMs": 0,
+          "space": "village"
+        },
+        {
+          "id": "east-patrol",
+          "x": 1945.6455146114072,
+          "y": 1158.3098727505467,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-south-post",
+          "mode": "patrol",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0
+        },
+        {
+          "id": "east-archer",
+          "x": 2030,
+          "y": 900,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "east-gate-tower",
+          "mode": "post",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0
+        },
+        {
+          "id": "north-watch",
+          "x": 860,
+          "y": 455.3914200000003,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-west-post",
+          "mode": "life",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0,
+          "offDuty": true,
+          "towerTransitMs": 0,
+          "space": "village"
+        },
+        {
+          "id": "north-patrol",
+          "x": 862.1065065788636,
+          "y": 393.6368222522261,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-east-post",
+          "mode": "patrol",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0
+        },
+        {
+          "id": "north-archer",
+          "x": 680,
+          "y": 350,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "north-gate-tower",
+          "mode": "post",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0
+        },
+        {
+          "id": "south-watch",
+          "x": 945.7144268836169,
+          "y": 1594.285573116384,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-west-post",
+          "mode": "life",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0,
+          "offDuty": true,
+          "towerTransitMs": 0,
+          "space": "village"
+        },
+        {
+          "id": "south-patrol",
+          "x": 965.4723116115193,
+          "y": 1640.2342336509018,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-east-post",
+          "mode": "patrol",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0
+        },
+        {
+          "id": "south-archer",
+          "x": 1140,
+          "y": 1750,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "south-gate-tower",
+          "mode": "post",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0
+        }
+      ],
+      "sequence": 0,
+      "completedSequence": 0,
+      "raid": null,
+      "protectionMs": 296956.03,
+      "cooldownMs": 481729,
+      "retryMs": 0,
+      "seed": 1729,
+      "arrows": [],
+      "threats": [
+        {
+          "id": "slime-1",
+          "gateId": "east-gate",
+          "reason": "observe",
+          "lastSeen": 3005,
+          "progress": 350.9649594494154,
+          "approachMs": 0,
+          "lastProgress": 5,
+          "assigned": []
+        }
+      ],
+      "managedIds": [],
+      "units": [
+        {
+          "id": "east-watch",
+          "x": 1978.319072811262,
+          "y": 777.647106118913,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-north-post",
+          "mode": "life",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0,
+          "offDuty": true,
+          "towerTransitMs": 0,
+          "space": "village",
+          "nav": {
+            "path": [],
+            "next": 0,
+            "failed": false,
+            "returning": false,
+            "queries": 0,
+            "visited": 0
+          },
+          "attack": null,
+          "serial": 0,
+          "patrol": 63,
+          "facing": 1,
+          "moved": 0.34142000000009803,
+          "distance": 241.55209811865825,
+          "flashUntil": 0,
+          "targetId": null,
+          "chaseMs": 0,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "stuckMs": 0,
+          "definition": {
+            "id": "east-watch",
+            "name": "岑风",
+            "role": "melee",
+            "maxHP": 180,
+            "weaponId": "watch-blade",
+            "armorId": "watch-mail",
+            "postId": "east-north-post",
+            "post": {
+              "x": 2010,
+              "y": 970
+            },
+            "cover": {
+              "x": 1920,
+              "y": 1060
+            },
+            "patrol": [
+              {
+                "x": 2010,
+                "y": 970
+              }
+            ],
+            "leash": 300
+          }
+        },
+        {
+          "id": "east-patrol",
+          "x": 1945.6455146114072,
+          "y": 1158.3098727505467,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-south-post",
+          "mode": "patrol",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0,
+          "nav": {
+            "path": [],
+            "next": 610,
+            "failed": false,
+            "returning": false,
+            "queries": 1,
+            "visited": 20,
+            "target": {
+              "x": 1960,
+              "y": 1210
+            }
+          },
+          "attack": null,
+          "serial": 0,
+          "patrol": 2,
+          "facing": 1,
+          "moved": 0.17865000000003853,
+          "distance": 136.52594999999565,
+          "flashUntil": 0,
+          "targetId": null,
+          "chaseMs": 0,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "stuckMs": 0,
+          "definition": {
+            "id": "east-patrol",
+            "name": "青禾",
+            "role": "melee",
+            "maxHP": 180,
+            "weaponId": "watch-blade",
+            "armorId": "watch-mail",
+            "postId": "east-south-post",
+            "post": {
+              "x": 2010,
+              "y": 1160
+            },
+            "cover": {
+              "x": 1910,
+              "y": 1190
+            },
+            "patrol": [
+              {
+                "x": 2010,
+                "y": 1160
+              },
+              {
+                "x": 1960,
+                "y": 1210
+              },
+              {
+                "x": 1940,
+                "y": 1140
+              }
+            ],
+            "leash": 300
+          }
+        },
+        {
+          "id": "east-archer",
+          "x": 2030,
+          "y": 900,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "east-gate-tower",
+          "mode": "post",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0,
+          "nav": {
+            "path": [],
+            "next": 0,
+            "failed": false,
+            "returning": false,
+            "queries": 0,
+            "visited": 0
+          },
+          "attack": null,
+          "serial": 0,
+          "patrol": 756,
+          "facing": 3,
+          "moved": 0,
+          "distance": 0,
+          "flashUntil": 0,
+          "targetId": null,
+          "chaseMs": 0,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "stuckMs": 0,
+          "definition": {
+            "id": "east-archer",
+            "name": "弦雨",
+            "role": "archer",
+            "maxHP": 100,
+            "weaponId": "watch-bow",
+            "armorId": "watch-leather",
+            "postId": "east-gate-tower",
+            "post": {
+              "x": 2030,
+              "y": 900
+            },
+            "cover": {
+              "x": 2030,
+              "y": 900
+            },
+            "patrol": [
+              {
+                "x": 2030,
+                "y": 900
+              }
+            ],
+            "leash": 0
+          }
+        },
+        {
+          "id": "north-watch",
+          "x": 860,
+          "y": 455.3914200000003,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-west-post",
+          "mode": "life",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0,
+          "offDuty": true,
+          "towerTransitMs": 0,
+          "space": "village",
+          "nav": {
+            "path": [],
+            "next": 0,
+            "failed": false,
+            "returning": false,
+            "queries": 0,
+            "visited": 0
+          },
+          "attack": null,
+          "serial": 0,
+          "patrol": 122,
+          "facing": 0,
+          "moved": 0.34142000000008466,
+          "distance": 205.09704748477165,
+          "flashUntil": 0,
+          "targetId": null,
+          "chaseMs": 0,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "stuckMs": 0,
+          "definition": {
+            "id": "north-watch",
+            "name": "松岚",
+            "role": "melee",
+            "maxHP": 180,
+            "weaponId": "watch-blade",
+            "armorId": "watch-mail",
+            "postId": "north-west-post",
+            "post": {
+              "x": 740,
+              "y": 300
+            },
+            "cover": {
+              "x": 760,
+              "y": 486
+            },
+            "patrol": [
+              {
+                "x": 740,
+                "y": 300
+              }
+            ],
+            "leash": 300
+          }
+        },
+        {
+          "id": "north-patrol",
+          "x": 862.1065065788636,
+          "y": 393.6368222522261,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-east-post",
+          "mode": "patrol",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0,
+          "nav": {
+            "path": [],
+            "next": 610,
+            "failed": false,
+            "returning": false,
+            "queries": 1,
+            "visited": 31,
+            "target": {
+              "x": 860,
+              "y": 410
+            }
+          },
+          "attack": null,
+          "serial": 0,
+          "patrol": 1,
+          "facing": 0,
+          "moved": 0.1786500000000344,
+          "distance": 136.7509500000031,
+          "flashUntil": 0,
+          "targetId": null,
+          "chaseMs": 0,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "stuckMs": 0,
+          "definition": {
+            "id": "north-patrol",
+            "name": "石泉",
+            "role": "melee",
+            "maxHP": 180,
+            "weaponId": "watch-blade",
+            "armorId": "watch-mail",
+            "postId": "north-east-post",
+            "post": {
+              "x": 920,
+              "y": 300
+            },
+            "cover": {
+              "x": 860,
+              "y": 450
+            },
+            "patrol": [
+              {
+                "x": 920,
+                "y": 300
+              },
+              {
+                "x": 860,
+                "y": 410
+              },
+              {
+                "x": 860,
+                "y": 450
+              }
+            ],
+            "leash": 300
+          }
+        },
+        {
+          "id": "north-archer",
+          "x": 680,
+          "y": 350,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "north-gate-tower",
+          "mode": "post",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0,
+          "nav": {
+            "path": [],
+            "next": 0,
+            "failed": false,
+            "returning": false,
+            "queries": 0,
+            "visited": 0
+          },
+          "attack": null,
+          "serial": 0,
+          "patrol": 756,
+          "facing": 3,
+          "moved": 0,
+          "distance": 0,
+          "flashUntil": 0,
+          "targetId": null,
+          "chaseMs": 0,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "stuckMs": 0,
+          "definition": {
+            "id": "north-archer",
+            "name": "林弦",
+            "role": "archer",
+            "maxHP": 100,
+            "weaponId": "watch-bow",
+            "armorId": "watch-leather",
+            "postId": "north-gate-tower",
+            "post": {
+              "x": 680,
+              "y": 350
+            },
+            "cover": {
+              "x": 680,
+              "y": 350
+            },
+            "patrol": [
+              {
+                "x": 680,
+                "y": 350
+              }
+            ],
+            "leash": 0
+          }
+        },
+        {
+          "id": "south-watch",
+          "x": 945.7144268836169,
+          "y": 1594.285573116384,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-west-post",
+          "mode": "life",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0,
+          "offDuty": true,
+          "towerTransitMs": 0,
+          "space": "village",
+          "nav": {
+            "path": [],
+            "next": 0,
+            "failed": false,
+            "returning": false,
+            "queries": 0,
+            "visited": 0
+          },
+          "attack": null,
+          "serial": 0,
+          "patrol": 180,
+          "facing": 1,
+          "moved": 0.3414200000001072,
+          "distance": 187.7870474847703,
+          "flashUntil": 0,
+          "targetId": null,
+          "chaseMs": 0,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "stuckMs": 0,
+          "definition": {
+            "id": "south-watch",
+            "name": "麦川",
+            "role": "melee",
+            "maxHP": 180,
+            "weaponId": "watch-blade",
+            "armorId": "watch-mail",
+            "postId": "south-west-post",
+            "post": {
+              "x": 810,
+              "y": 1720
+            },
+            "cover": {
+              "x": 790,
+              "y": 1592
+            },
+            "patrol": [
+              {
+                "x": 810,
+                "y": 1720
+              }
+            ],
+            "leash": 300
+          }
+        },
+        {
+          "id": "south-patrol",
+          "x": 965.4723116115193,
+          "y": 1640.2342336509018,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-east-post",
+          "mode": "patrol",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0,
+          "nav": {
+            "path": [],
+            "next": 620,
+            "failed": false,
+            "returning": false,
+            "queries": 1,
+            "visited": 13,
+            "target": {
+              "x": 1030,
+              "y": 1680
+            }
+          },
+          "attack": null,
+          "serial": 0,
+          "patrol": 2,
+          "facing": 2,
+          "moved": 0.17864999999993167,
+          "distance": 136.00125000001086,
+          "flashUntil": 0,
+          "targetId": null,
+          "chaseMs": 0,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "stuckMs": 0,
+          "definition": {
+            "id": "south-patrol",
+            "name": "望禾",
+            "role": "melee",
+            "maxHP": 180,
+            "weaponId": "watch-blade",
+            "armorId": "watch-mail",
+            "postId": "south-east-post",
+            "post": {
+              "x": 990,
+              "y": 1720
+            },
+            "cover": {
+              "x": 1020,
+              "y": 1590
+            },
+            "patrol": [
+              {
+                "x": 990,
+                "y": 1720
+              },
+              {
+                "x": 1030,
+                "y": 1680
+              },
+              {
+                "x": 950,
+                "y": 1630
+              }
+            ],
+            "leash": 300
+          }
+        },
+        {
+          "id": "south-archer",
+          "x": 1140,
+          "y": 1750,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "south-gate-tower",
+          "mode": "post",
+          "peaceMs": 3043.9700000000007,
+          "cooldownMs": 0,
+          "nav": {
+            "path": [],
+            "next": 0,
+            "failed": false,
+            "returning": false,
+            "queries": 0,
+            "visited": 0
+          },
+          "attack": null,
+          "serial": 0,
+          "patrol": 756,
+          "facing": 3,
+          "moved": 0,
+          "distance": 0,
+          "flashUntil": 0,
+          "targetId": null,
+          "chaseMs": 0,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "stuckMs": 0,
+          "definition": {
+            "id": "south-archer",
+            "name": "晴羽",
+            "role": "archer",
+            "maxHP": 100,
+            "weaponId": "watch-bow",
+            "armorId": "watch-leather",
+            "postId": "south-gate-tower",
+            "post": {
+              "x": 1140,
+              "y": 1750
+            },
+            "cover": {
+              "x": 1140,
+              "y": 1750
+            },
+            "patrol": [
+              {
+                "x": 1140,
+                "y": 1750
+              }
+            ],
+            "leash": 0
+          }
+        }
+      ],
+      "enemies": [],
+      "history": [],
+      "critical": false,
+      "awaitingCheckpoint": false
+    },
+    "npcLife": {
+      "alarm": 0,
+      "space": "village",
+      "speech": null,
+      "metrics": {
+        "steps": 756,
+        "decisions": 41,
+        "queries": 3,
+        "ms": 693.7999998927116,
+        "maxMs": 14.199999988079071,
+        "pathBatches": 52,
+        "maxExpandedPerBatch": 64
+      },
+      "stores": {
+        "medicine": 4,
+        "herbs": 8,
+        "wood": 6,
+        "food": 18,
+        "day": 0
+      },
+      "reservations": [
+        {
+          "facility": "tools",
+          "owner": "carpenter",
+          "expires": 15043.970000000001
+        }
+      ],
+      "tasks": [],
+      "people": [
+        {
+          "id": "elder",
+          "body": {
+            "space": "elder-home",
+            "x": 635.1288514436142,
+            "y": 781.9648383755704,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "action": {
+            "id": 1,
+            "kind": "work",
+            "target": {
+              "space": "village",
+              "x": 670,
+              "y": 620
+            },
+            "pickup": {
+              "space": "elder-home",
+              "x": 510,
+              "y": 535
+            },
+            "facility": null,
+            "task": null,
+            "phase": "collect",
+            "progress": 0,
+            "duration": 8000,
+            "started": 5,
+            "failures": 0,
+            "label": "检查风铃、记录风向",
+            "social": null
+          },
+          "reason": "检查风铃、记录风向（评分 90）",
+          "needs": {
+            "hunger": 15.05073283333301,
+            "fatigue": 10.02536641666649
+          },
+          "alarm": 0,
+          "candidates": [
+            {
+              "kind": "work",
+              "target": {
+                "space": "village",
+                "x": 670,
+                "y": 620
+              },
+              "score": 78.58763565745771,
+              "label": "检查风铃、记录风向",
+              "facility": null,
+              "task": null
+            },
+            {
+              "kind": "rest",
+              "target": {
+                "space": "elder-home",
+                "x": 570,
+                "y": 800
+              },
+              "score": 18.579048863704998,
+              "label": "窗口错过或设施忙，回家等待",
+              "facility": "seat:elder-home",
+              "task": null
+            },
+            {
+              "kind": "rest",
+              "target": {
+                "space": "elder-home",
+                "x": 648.4986118161435,
+                "y": 808.3525233213486,
+                "hp": 100,
+                "health": "healthy",
+                "episode": 0,
+                "recoverAt": 0
+              },
+              "score": 10,
+              "label": "原地安全等候",
+              "facility": null,
+              "task": null
+            }
+          ],
+          "path": {
+            "nav": {
+              "path": [],
+              "next": 0,
+              "failed": false,
+              "returning": false,
+              "queries": 0,
+              "visited": 0
+            },
+            "stuck": 0,
+            "queries": 0,
+            "batches": 0,
+            "maxExpanded": 0,
+            "failure": "",
+            "goal": "elder-home:64:67",
+            "planning": false
+          },
+          "memories": []
+        },
+        {
+          "id": "healer",
+          "body": {
+            "space": "healer-home",
+            "x": 631.5635301856437,
+            "y": 774.9280201032606,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "action": {
+            "id": 1,
+            "kind": "work",
+            "target": {
+              "space": "village",
+              "x": 1070,
+              "y": 620
+            },
+            "pickup": {
+              "space": "healer-home",
+              "x": 510,
+              "y": 535
+            },
+            "facility": null,
+            "task": null,
+            "phase": "collect",
+            "progress": 0,
+            "duration": 8000,
+            "started": 75,
+            "failures": 0,
+            "label": "照料药田",
+            "social": null
+          },
+          "reason": "照料药田（评分 85）",
+          "needs": {
+            "hunger": 15.05073283333301,
+            "fatigue": 10.02536641666649
+          },
+          "alarm": 0,
+          "candidates": [
+            {
+              "kind": "work",
+              "target": {
+                "space": "village",
+                "x": 1070,
+                "y": 620
+              },
+              "score": 69.67397262576779,
+              "label": "照料药田",
+              "facility": null,
+              "task": null
+            },
+            {
+              "kind": "rest",
+              "target": {
+                "space": "healer-home",
+                "x": 570,
+                "y": 800
+              },
+              "score": 18.69812861267752,
+              "label": "窗口错过或设施忙，回家等待",
+              "facility": "seat:healer-home",
+              "task": null
+            },
+            {
+              "kind": "rest",
+              "target": {
+                "space": "healer-home",
+                "x": 642.2124625031768,
+                "y": 795.9456496773364,
+                "hp": 100,
+                "health": "healthy",
+                "episode": 0,
+                "recoverAt": 0
+              },
+              "score": 10,
+              "label": "原地安全等候",
+              "facility": null,
+              "task": null
+            }
+          ],
+          "path": {
+            "nav": {
+              "path": [],
+              "next": 0,
+              "failed": false,
+              "returning": false,
+              "queries": 0,
+              "visited": 0
+            },
+            "stuck": 0,
+            "queries": 0,
+            "batches": 0,
+            "maxExpanded": 0,
+            "failure": "",
+            "goal": "healer-home:64:67",
+            "planning": false
+          },
+          "memories": []
+        },
+        {
+          "id": "carpenter",
+          "body": {
+            "space": "carpenter-home",
+            "x": 635.5175411657565,
+            "y": 782.7319891429564,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "action": {
+            "id": 1,
+            "kind": "work",
+            "target": {
+              "space": "village",
+              "x": 412,
+              "y": 1010
+            },
+            "pickup": {
+              "space": "carpenter-home",
+              "x": 510,
+              "y": 535
+            },
+            "facility": "tools",
+            "task": null,
+            "phase": "collect",
+            "progress": 0,
+            "duration": 8000,
+            "started": 150,
+            "failures": 0,
+            "label": "修工具、做木工",
+            "social": null
+          },
+          "reason": "修工具、做木工（评分 87）",
+          "needs": {
+            "hunger": 15.05073283333301,
+            "fatigue": 10.02536641666649
+          },
+          "alarm": 0,
+          "candidates": [
+            {
+              "kind": "work",
+              "target": {
+                "space": "village",
+                "x": 412,
+                "y": 1010
+              },
+              "score": 74.35296464474112,
+              "label": "修工具、做木工",
+              "facility": "tools",
+              "task": null
+            },
+            {
+              "kind": "rest",
+              "target": {
+                "space": "carpenter-home",
+                "x": 570,
+                "y": 800
+              },
+              "score": 18.680983249504095,
+              "label": "窗口错过或设施忙，回家等待",
+              "facility": "seat:carpenter-home",
+              "task": null
+            },
+            {
+              "kind": "rest",
+              "target": {
+                "space": "carpenter-home",
+                "x": 643.2513005672222,
+                "y": 797.9959879616368,
+                "hp": 100,
+                "health": "healthy",
+                "episode": 0,
+                "recoverAt": 0
+              },
+              "score": 10,
+              "label": "原地安全等候",
+              "facility": null,
+              "task": null
+            }
+          ],
+          "path": {
+            "nav": {
+              "path": [],
+              "next": 0,
+              "failed": false,
+              "returning": false,
+              "queries": 0,
+              "visited": 0
+            },
+            "stuck": 0,
+            "queries": 0,
+            "batches": 0,
+            "maxExpanded": 0,
+            "failure": "",
+            "goal": "carpenter-home:64:67",
+            "planning": false
+          },
+          "memories": []
+        },
+        {
+          "id": "east-watch",
+          "body": {
+            "space": "village",
+            "x": 1978.319072811262,
+            "y": 777.647106118913
+          },
+          "action": {
+            "id": 1,
+            "kind": "habit",
+            "target": {
+              "space": "village",
+              "x": 2010,
+              "y": 970
+            },
+            "pickup": {
+              "space": "barracks",
+              "x": 510,
+              "y": 535
+            },
+            "facility": null,
+            "task": null,
+            "phase": "collect",
+            "progress": 0,
+            "duration": 8000,
+            "started": 225,
+            "failures": 0,
+            "label": "下岗后检查村门装备",
+            "social": null
+          },
+          "reason": "下岗后检查村门装备（评分 110）",
+          "needs": {
+            "hunger": 15.05073283333301,
+            "fatigue": 10.02536641666649
+          },
+          "alarm": 0,
+          "candidates": [],
+          "path": {
+            "nav": {
+              "path": [],
+              "next": 2030,
+              "failed": false,
+              "returning": false,
+              "queries": 0,
+              "visited": 0,
+              "target": {
+                "space": "village",
+                "x": 1995,
+                "y": 650
+              }
+            },
+            "stuck": 0,
+            "queries": 1,
+            "batches": 2,
+            "maxExpanded": 64,
+            "failure": "",
+            "goal": "village:249:81",
+            "planning": false
+          },
+          "memories": []
+        },
+        {
+          "id": "east-patrol",
+          "body": {
+            "space": "village",
+            "x": 1945.6455146114072,
+            "y": 1158.3098727505467
+          },
+          "action": null,
+          "reason": "值守或沿路返回岗位",
+          "needs": {
+            "hunger": 15.05073283333301,
+            "fatigue": 10.02536641666649
+          },
+          "alarm": 0,
+          "candidates": [],
+          "path": null,
+          "memories": []
+        },
+        {
+          "id": "east-archer",
+          "body": {
+            "space": "village",
+            "x": 2030,
+            "y": 900
+          },
+          "action": null,
+          "reason": "值守或沿路返回岗位",
+          "needs": {
+            "hunger": 15.05073283333301,
+            "fatigue": 10.02536641666649
+          },
+          "alarm": 0,
+          "candidates": [],
+          "path": null,
+          "memories": []
+        },
+        {
+          "id": "north-watch",
+          "body": {
+            "space": "village",
+            "x": 860,
+            "y": 455.3914200000003
+          },
+          "action": {
+            "id": 1,
+            "kind": "habit",
+            "target": {
+              "space": "village",
+              "x": 740,
+              "y": 300
+            },
+            "pickup": {
+              "space": "barracks",
+              "x": 840,
+              "y": 535
+            },
+            "facility": null,
+            "task": null,
+            "phase": "collect",
+            "progress": 0,
+            "duration": 8000,
+            "started": 450,
+            "failures": 0,
+            "label": "下岗后检查村门装备",
+            "social": null
+          },
+          "reason": "下岗后检查村门装备（评分 110）",
+          "needs": {
+            "hunger": 15.05073283333301,
+            "fatigue": 10.02536641666649
+          },
+          "alarm": 0,
+          "candidates": [],
+          "path": {
+            "nav": {
+              "path": [
+                {
+                  "x": 860,
+                  "y": 460
+                },
+                {
+                  "x": 860,
+                  "y": 480
+                },
+                {
+                  "x": 860,
+                  "y": 500
+                },
+                {
+                  "x": 860,
+                  "y": 520
+                },
+                {
+                  "x": 860,
+                  "y": 540
+                },
+                {
+                  "x": 880,
+                  "y": 560
+                },
+                {
+                  "x": 880,
+                  "y": 580
+                },
+                {
+                  "x": 900,
+                  "y": 600
+                },
+                {
+                  "x": 920,
+                  "y": 620
+                },
+                {
+                  "x": 940,
+                  "y": 620
+                },
+                {
+                  "x": 960,
+                  "y": 620
+                },
+                {
+                  "x": 980,
+                  "y": 640
+                },
+                {
+                  "x": 1000,
+                  "y": 660
+                },
+                {
+                  "x": 1020,
+                  "y": 660
+                },
+                {
+                  "x": 1040,
+                  "y": 660
+                },
+                {
+                  "x": 1060,
+                  "y": 660
+                },
+                {
+                  "x": 1080,
+                  "y": 660
+                },
+                {
+                  "x": 1100,
+                  "y": 660
+                },
+                {
+                  "x": 1120,
+                  "y": 660
+                },
+                {
+                  "x": 1140,
+                  "y": 660
+                },
+                {
+                  "x": 1160,
+                  "y": 660
+                },
+                {
+                  "x": 1180,
+                  "y": 660
+                },
+                {
+                  "x": 1200,
+                  "y": 660
+                },
+                {
+                  "x": 1220,
+                  "y": 660
+                },
+                {
+                  "x": 1240,
+                  "y": 660
+                },
+                {
+                  "x": 1260,
+                  "y": 660
+                },
+                {
+                  "x": 1280,
+                  "y": 680
+                },
+                {
+                  "x": 1300,
+                  "y": 700
+                },
+                {
+                  "x": 1320,
+                  "y": 720
+                },
+                {
+                  "x": 1340,
+                  "y": 740
+                },
+                {
+                  "x": 1360,
+                  "y": 760
+                },
+                {
+                  "x": 1380,
+                  "y": 780
+                },
+                {
+                  "x": 1400,
+                  "y": 780
+                },
+                {
+                  "x": 1420,
+                  "y": 780
+                },
+                {
+                  "x": 1440,
+                  "y": 780
+                },
+                {
+                  "x": 1460,
+                  "y": 780
+                },
+                {
+                  "x": 1480,
+                  "y": 780
+                },
+                {
+                  "x": 1500,
+                  "y": 780
+                },
+                {
+                  "x": 1520,
+                  "y": 780
+                },
+                {
+                  "x": 1540,
+                  "y": 780
+                },
+                {
+                  "x": 1560,
+                  "y": 780
+                },
+                {
+                  "x": 1580,
+                  "y": 780
+                },
+                {
+                  "x": 1600,
+                  "y": 780
+                },
+                {
+                  "x": 1620,
+                  "y": 780
+                },
+                {
+                  "x": 1640,
+                  "y": 780
+                },
+                {
+                  "x": 1660,
+                  "y": 780
+                },
+                {
+                  "x": 1680,
+                  "y": 780
+                },
+                {
+                  "x": 1700,
+                  "y": 780
+                },
+                {
+                  "x": 1720,
+                  "y": 780
+                },
+                {
+                  "x": 1740,
+                  "y": 780
+                },
+                {
+                  "x": 1760,
+                  "y": 780
+                },
+                {
+                  "x": 1780,
+                  "y": 780
+                },
+                {
+                  "x": 1800,
+                  "y": 780
+                },
+                {
+                  "x": 1820,
+                  "y": 780
+                },
+                {
+                  "x": 1840,
+                  "y": 780
+                },
+                {
+                  "x": 1860,
+                  "y": 780
+                },
+                {
+                  "x": 1880,
+                  "y": 780
+                },
+                {
+                  "x": 1900,
+                  "y": 780
+                },
+                {
+                  "x": 1920,
+                  "y": 780
+                },
+                {
+                  "x": 1940,
+                  "y": 760
+                },
+                {
+                  "x": 1960,
+                  "y": 740
+                },
+                {
+                  "x": 1960,
+                  "y": 720
+                },
+                {
+                  "x": 1960,
+                  "y": 700
+                },
+                {
+                  "x": 1980,
+                  "y": 680
+                },
+                {
+                  "x": 2000,
+                  "y": 660
+                },
+                {
+                  "space": "village",
+                  "x": 1995,
+                  "y": 650
+                }
+              ],
+              "next": 2450,
+              "failed": false,
+              "returning": false,
+              "queries": 0,
+              "visited": 0,
+              "target": {
+                "space": "village",
+                "x": 1995,
+                "y": 650
+              }
+            },
+            "stuck": 0,
+            "queries": 1,
+            "batches": 26,
+            "maxExpanded": 64,
+            "failure": "",
+            "goal": "village:249:81",
+            "planning": false
+          },
+          "memories": []
+        },
+        {
+          "id": "north-patrol",
+          "body": {
+            "space": "village",
+            "x": 862.1065065788636,
+            "y": 393.6368222522261
+          },
+          "action": null,
+          "reason": "值守或沿路返回岗位",
+          "needs": {
+            "hunger": 15.05073283333301,
+            "fatigue": 10.02536641666649
+          },
+          "alarm": 0,
+          "candidates": [],
+          "path": null,
+          "memories": []
+        },
+        {
+          "id": "north-archer",
+          "body": {
+            "space": "village",
+            "x": 680,
+            "y": 350
+          },
+          "action": null,
+          "reason": "值守或沿路返回岗位",
+          "needs": {
+            "hunger": 15.05073283333301,
+            "fatigue": 10.02536641666649
+          },
+          "alarm": 0,
+          "candidates": [],
+          "path": null,
+          "memories": []
+        },
+        {
+          "id": "south-watch",
+          "body": {
+            "space": "village",
+            "x": 945.7144268836169,
+            "y": 1594.285573116384
+          },
+          "action": {
+            "id": 1,
+            "kind": "habit",
+            "target": {
+              "space": "village",
+              "x": 810,
+              "y": 1720
+            },
+            "pickup": {
+              "space": "barracks",
+              "x": 620,
+              "y": 655
+            },
+            "facility": null,
+            "task": null,
+            "phase": "collect",
+            "progress": 0,
+            "duration": 8000,
+            "started": 675,
+            "failures": 0,
+            "label": "下岗后检查村门装备",
+            "social": null
+          },
+          "reason": "下岗后检查村门装备（评分 110）",
+          "needs": {
+            "hunger": 15.05073283333301,
+            "fatigue": 10.02536641666649
+          },
+          "alarm": 0,
+          "candidates": [],
+          "path": {
+            "nav": {
+              "path": [
+                {
+                  "x": 960,
+                  "y": 1580
+                },
+                {
+                  "x": 980,
+                  "y": 1560
+                },
+                {
+                  "x": 1000,
+                  "y": 1560
+                },
+                {
+                  "x": 1020,
+                  "y": 1560
+                },
+                {
+                  "x": 1040,
+                  "y": 1540
+                },
+                {
+                  "x": 1060,
+                  "y": 1520
+                },
+                {
+                  "x": 1080,
+                  "y": 1500
+                },
+                {
+                  "x": 1100,
+                  "y": 1480
+                },
+                {
+                  "x": 1120,
+                  "y": 1460
+                },
+                {
+                  "x": 1140,
+                  "y": 1440
+                },
+                {
+                  "x": 1160,
+                  "y": 1420
+                },
+                {
+                  "x": 1180,
+                  "y": 1400
+                },
+                {
+                  "x": 1200,
+                  "y": 1380
+                },
+                {
+                  "x": 1220,
+                  "y": 1360
+                },
+                {
+                  "x": 1240,
+                  "y": 1360
+                },
+                {
+                  "x": 1260,
+                  "y": 1360
+                },
+                {
+                  "x": 1280,
+                  "y": 1360
+                },
+                {
+                  "x": 1300,
+                  "y": 1360
+                },
+                {
+                  "x": 1320,
+                  "y": 1360
+                },
+                {
+                  "x": 1340,
+                  "y": 1360
+                },
+                {
+                  "x": 1360,
+                  "y": 1360
+                },
+                {
+                  "x": 1380,
+                  "y": 1360
+                },
+                {
+                  "x": 1400,
+                  "y": 1340
+                },
+                {
+                  "x": 1420,
+                  "y": 1340
+                },
+                {
+                  "x": 1440,
+                  "y": 1320
+                },
+                {
+                  "x": 1460,
+                  "y": 1300
+                },
+                {
+                  "x": 1480,
+                  "y": 1300
+                },
+                {
+                  "x": 1500,
+                  "y": 1280
+                },
+                {
+                  "x": 1520,
+                  "y": 1260
+                },
+                {
+                  "x": 1540,
+                  "y": 1240
+                },
+                {
+                  "x": 1560,
+                  "y": 1220
+                },
+                {
+                  "x": 1580,
+                  "y": 1200
+                },
+                {
+                  "x": 1600,
+                  "y": 1180
+                },
+                {
+                  "x": 1620,
+                  "y": 1160
+                },
+                {
+                  "x": 1640,
+                  "y": 1140
+                },
+                {
+                  "x": 1660,
+                  "y": 1120
+                },
+                {
+                  "x": 1680,
+                  "y": 1100
+                },
+                {
+                  "x": 1700,
+                  "y": 1080
+                },
+                {
+                  "x": 1720,
+                  "y": 1060
+                },
+                {
+                  "x": 1740,
+                  "y": 1040
+                },
+                {
+                  "x": 1760,
+                  "y": 1020
+                },
+                {
+                  "x": 1780,
+                  "y": 1020
+                },
+                {
+                  "x": 1800,
+                  "y": 1020
+                },
+                {
+                  "x": 1820,
+                  "y": 1020
+                },
+                {
+                  "x": 1840,
+                  "y": 1000
+                },
+                {
+                  "x": 1840,
+                  "y": 980
+                },
+                {
+                  "x": 1860,
+                  "y": 960
+                },
+                {
+                  "x": 1860,
+                  "y": 940
+                },
+                {
+                  "x": 1880,
+                  "y": 920
+                },
+                {
+                  "x": 1880,
+                  "y": 900
+                },
+                {
+                  "x": 1900,
+                  "y": 880
+                },
+                {
+                  "x": 1900,
+                  "y": 860
+                },
+                {
+                  "x": 1900,
+                  "y": 840
+                },
+                {
+                  "x": 1920,
+                  "y": 820
+                },
+                {
+                  "x": 1920,
+                  "y": 800
+                },
+                {
+                  "x": 1940,
+                  "y": 780
+                },
+                {
+                  "x": 1940,
+                  "y": 760
+                },
+                {
+                  "x": 1960,
+                  "y": 740
+                },
+                {
+                  "x": 1960,
+                  "y": 720
+                },
+                {
+                  "x": 1960,
+                  "y": 700
+                },
+                {
+                  "x": 1980,
+                  "y": 680
+                },
+                {
+                  "x": 2000,
+                  "y": 660
+                },
+                {
+                  "space": "village",
+                  "x": 1995,
+                  "y": 650
+                }
+              ],
+              "next": 2650,
+              "failed": false,
+              "returning": false,
+              "queries": 0,
+              "visited": 0,
+              "target": {
+                "space": "village",
+                "x": 1995,
+                "y": 650
+              }
+            },
+            "stuck": 0,
+            "queries": 1,
+            "batches": 24,
+            "maxExpanded": 64,
+            "failure": "",
+            "goal": "village:249:81",
+            "planning": false
+          },
+          "memories": []
+        },
+        {
+          "id": "south-patrol",
+          "body": {
+            "space": "village",
+            "x": 965.4723116115193,
+            "y": 1640.2342336509018
+          },
+          "action": null,
+          "reason": "值守或沿路返回岗位",
+          "needs": {
+            "hunger": 15.05073283333301,
+            "fatigue": 10.02536641666649
+          },
+          "alarm": 0,
+          "candidates": [],
+          "path": null,
+          "memories": []
+        },
+        {
+          "id": "south-archer",
+          "body": {
+            "space": "village",
+            "x": 1140,
+            "y": 1750
+          },
+          "action": null,
+          "reason": "值守或沿路返回岗位",
+          "needs": {
+            "hunger": 15.05073283333301,
+            "fatigue": 10.02536641666649
+          },
+          "alarm": 0,
+          "candidates": [],
+          "path": null,
+          "memories": []
+        }
+      ],
+      "events": []
+    },
+    "npcLifeView": {
+      "residents": [
+        {
+          "id": "elder",
+          "texture": "elder",
+          "frame": 0,
+          "visible": false,
+          "depth": 781.9648383755704,
+          "cropped": false,
+          "x": 635.1288514436142,
+          "y": 781.9648383755704
+        },
+        {
+          "id": "healer",
+          "texture": "healer",
+          "frame": 0,
+          "visible": false,
+          "depth": 774.9280201032606,
+          "cropped": false,
+          "x": 631.5635301856437,
+          "y": 774.9280201032606
+        },
+        {
+          "id": "carpenter",
+          "texture": "carpenter",
+          "frame": 0,
+          "visible": false,
+          "depth": 782.7319891429564,
+          "cropped": false,
+          "x": 635.5175411657565,
+          "y": 782.7319891429564
+        }
+      ],
+      "furniture": []
+    },
+    "defenseSaving": false,
+    "defenseCheckpointPending": false,
+    "attackSerial": 1,
+    "skillGrowth": {
+      "trial": null,
+      "pending": null,
+      "saving": false,
+      "targets": [
+        {
+          "id": "lesson-water-bell",
+          "x": 1310,
+          "y": 1160,
+          "windSensitive": true,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-water-followup",
+          "x": 1430,
+          "y": 1240,
+          "windSensitive": true,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-serial-bell-0",
+          "x": 2570,
+          "y": 900,
+          "windSensitive": true,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-serial-bell-1",
+          "x": 2660,
+          "y": 900,
+          "windSensitive": true,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-double-0",
+          "x": 2570,
+          "y": 980,
+          "windSensitive": false,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-double-1",
+          "x": 2660,
+          "y": 980,
+          "windSensitive": false,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-through-0",
+          "x": 2970,
+          "y": 1180,
+          "windSensitive": false,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-through-1",
+          "x": 3050,
+          "y": 1180,
+          "windSensitive": false,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-through-2",
+          "x": 3130,
+          "y": 1180,
+          "windSensitive": false,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-through-3",
+          "x": 3260,
+          "y": 1180,
+          "windSensitive": false,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-wide-0",
+          "x": 3514,
+          "y": 730,
+          "windSensitive": true,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-wide-1",
+          "x": 3586,
+          "y": 730,
+          "windSensitive": true,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-three-left",
+          "x": 3780,
+          "y": 825,
+          "windSensitive": false,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-three-center",
+          "x": 3910,
+          "y": 790,
+          "windSensitive": false,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-three-right",
+          "x": 4000,
+          "y": 844,
+          "windSensitive": false,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-three-gap",
+          "x": 3830,
+          "y": 730,
+          "windSensitive": false,
+          "hits": 0,
+          "damage": 0
+        },
+        {
+          "id": "lesson-three-overlap",
+          "x": 3910,
+          "y": 975,
+          "windSensitive": false,
+          "hits": 0,
+          "damage": 0
+        }
+      ],
+      "enemies": [
+        {
+          "id": "slime-1",
+          "x": 2450,
+          "y": 1060,
+          "hp": 48,
+          "disabled": false
+        },
+        {
+          "id": "slime-2",
+          "x": 2670,
+          "y": 1230,
+          "hp": 48,
+          "disabled": false
+        },
+        {
+          "id": "leaf-1",
+          "x": 2920,
+          "y": 1070,
+          "hp": 72,
+          "disabled": false
+        },
+        {
+          "id": "leaf-2",
+          "x": 3170,
+          "y": 930,
+          "hp": 72,
+          "disabled": false
+        },
+        {
+          "id": "spore-1",
+          "x": 2730,
+          "y": 1840,
+          "hp": 60,
+          "disabled": false
+        },
+        {
+          "id": "boar-1",
+          "x": 3150,
+          "y": 340,
+          "hp": 90,
+          "disabled": false
+        },
+        {
+          "id": "raven-1",
+          "x": 3250,
+          "y": 1830,
+          "hp": 64,
+          "disabled": false
+        }
+      ],
+      "contacts": [],
+      "sim": 3043.9700000000007,
+      "combatStage": 0,
+      "ability": null,
+      "water": {
+        "active": 0,
+        "allocated": 0,
+        "capacity": 256,
+        "samples": [],
+        "disposed": false
+      },
+      "winds": [],
+      "objects": 510,
+      "textures": 191
+    },
+    "companion": {
+      "x": 776.8088918518789,
+      "y": 720.0026923660483,
+      "blocked": false
+    },
+    "mode": "",
+    "region": "风铃村",
+    "enemies": [
+      {
+        "id": "slime-1",
+        "x": 2450,
+        "y": 1060,
+        "hp": 48
+      },
+      {
+        "id": "slime-2",
+        "x": 2670,
+        "y": 1230,
+        "hp": 48
+      },
+      {
+        "id": "leaf-1",
+        "x": 2920,
+        "y": 1070,
+        "hp": 72
+      },
+      {
+        "id": "leaf-2",
+        "x": 3170,
+        "y": 930,
+        "hp": 72
+      },
+      {
+        "id": "spore-1",
+        "x": 2730,
+        "y": 1840,
+        "hp": 60
+      },
+      {
+        "id": "boar-1",
+        "x": 3150,
+        "y": 340,
+        "hp": 90
+      },
+      {
+        "id": "raven-1",
+        "x": 3250,
+        "y": 1830,
+        "hp": 64
+      }
+    ],
+    "fps": [
+      60.02400960384158,
+      60.02400960384158,
+      60.02400960384158,
+      60.02400960384158,
+      60.02400960384158,
+      60.02400960384158,
+      60.02400960384158,
+      60.02400960384158,
+      60.02400960384158,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      60.00000000000001,
+      50.00000000000001,
+      42.83878337855232,
+      37.5,
+      33.32222592469193,
+      29.999999999999993,
+      28.565987430965553,
+      26.082420448617654,
+      24.00192015361233,
+      21.428571428571427,
+      20.69108214359614,
+      20.68680182043858,
+      20.691082143596063,
+      20.68680182043858,
+      20.691082143596063,
+      20.68680182043858,
+      20,
+      20.004000800160046,
+      20,
+      20,
+      19.353590090961845,
+      19.357336430507146,
+      19.357336430507146,
+      19.357336430507146,
+      19.357336430507146,
+      19.357336430507146,
+      19.357336430507146,
+      19.353590090961845,
+      18.74765654293215,
+      19.353590090961916,
+      18.751171948246792,
+      19.353590090961916,
+      19.357336430507218,
+      19.357336430507218,
+      19.353590090961916,
+      18.751171948246792
+    ],
+    "renderer": 2
+  }
+}

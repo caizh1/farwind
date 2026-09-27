@@ -117,7 +117,7 @@ export function lifeTargets(world: World): Prop[] {
 }
 export function offerHelp(world: World, id: ResidentId) {
   if (
-    world.life.health(id) >= 85 ||
+    !world.life.needsTreatment(id) ||
     world.state.defense.guards.find((g) => g.id === id)?.dead
   )
     return;

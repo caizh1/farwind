@@ -1,0 +1,3 @@
+import {defineConfig} from '@playwright/test';
+import {resolve} from 'node:path';
+export default defineConfig({testDir:'../tests',testMatch:['enemy-combat-v1.spec.ts','parry-contextmenu.spec.ts'],workers:1,retries:0,timeout:180000,outputDir:resolve('.enemy-local/runs/'+String(Date.now())),reporter:[['list'],['json',{outputFile:resolve('docs/enemy-combat-v1/evidence/browser-results.json')}]],use:{baseURL:'http://127.0.0.1:5175',viewport:{width:1280,height:720},video:{mode:'on',size:{width:1280,height:720}},trace:'retain-on-failure',launchOptions:{args:['--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']}},webServer:{cwd:resolve('.'),command:'node tools/serve-enemy-review.mjs',url:'http://127.0.0.1:5175',reuseExistingServer:true}});

@@ -1,0 +1,165 @@
+{
+  "说明": "居民生活首版的真实收尾记录；所有命令为本机实际运行。保留共享修改，未提交、推送、部署或合并。固定旧档前提、自然运行和开发快进分别说明。",
+  "存档": {
+    "主版本": 6,
+    "生活子版本": 4,
+    "字符上限": 200000,
+    "旧主版本迁移": "一至五正式迁移到六，保留任务、钱物、技能、库存及守卫伤亡；不按现实离线时间补算。"
+  },
+  "验证": [
+    {
+      "命令": "npm test -- --maxWorkers=1",
+      "结果": "通过",
+      "文件": 29,
+      "项目": 507,
+      "秒": 108.92,
+      "跳过": 0,
+      "范围": "最后全量，含五日四万八千步。收尾共享池水渲染又作专项复验。"
+    },
+    {
+      "命令": "npx playwright test tests/npc-life.spec.ts tests/npc-life-social-art.spec.ts tests/npc-life-combat.spec.ts tests/npc-life-facility.spec.ts --config tools/playwright-npc-life.config.ts",
+      "结果": "通过",
+      "项目": 14,
+      "分钟约": 7.2
+    },
+    {
+      "命令": "npx playwright test tests/npc-life-combat.spec.ts tests/village-defense.spec.ts --config tools/playwright-npc-life.config.ts",
+      "结果": "通过",
+      "项目": 3,
+      "分钟约": 2.2,
+      "范围": "同一核心，配药危机加强一项、村门与旧档两项。"
+    },
+    {
+      "命令": "npx playwright test tests/economy.spec.ts tests/combat.spec.ts tests/adventure.spec.ts tests/session.spec.ts tests/safety-defense.spec.ts tests/village-defense.spec.ts tests/animation.spec.ts tests/training.spec.ts --config tools/playwright-npc-life.config.ts",
+      "结果": "首批十七通过、四失败；四项已补验通过",
+      "项目": 21,
+      "分钟约": 9.8,
+      "证据": "facility-regression-first-causes.json",
+      "失败原始目录": [
+        ".npc-life-local/facility-regression-first-results/",
+        ".npc-life-local/facility-regression-first-report/"
+      ]
+    },
+    {
+      "命令": "FARWIND_EVIDENCE_ROOT=docs/npc-life/evidence/safety-final FARWIND_URL=http://127.0.0.1:53084/ npx playwright test tests/safety-defense.spec.ts --config tools/playwright-safety.config.ts",
+      "结果": "通过",
+      "项目": 3,
+      "秒": 42,
+      "范围": "原专用配置，补验驻防三项；本次服务已关闭。"
+    },
+    {
+      "命令": "npm run test:npc-life:production",
+      "结果": "通过",
+      "项目": 5,
+      "分钟约": 2.8,
+      "构建": "index-Cj_IIXDu.js"
+    },
+    {
+      "命令": "npm run typecheck",
+      "结果": "通过",
+      "范围": "共享池水渲染接入后重新运行。"
+    },
+    {
+      "命令": "npm run build -- --outDir .npc-life-local/production",
+      "结果": "通过",
+      "模块": 77,
+      "提示": "保留原大于五百千字节提示。"
+    },
+    {
+      "命令": "npx playwright test --config tools/playwright-npc-life-production.config.ts",
+      "结果": "通过",
+      "项目": 5,
+      "分钟约": 1.9,
+      "构建": "index-sIuQyIO-.js",
+      "范围": "收尾正式包再次完整验收，没有调试伤情或时钟操作。"
+    },
+    {
+      "命令": "npx vitest run tests/water-motion.test.ts --maxWorkers=1",
+      "结果": "通过",
+      "项目": 6,
+      "秒": 0.62,
+      "范围": "共享池水渲染后相关规则补验。"
+    },
+    {
+      "命令": "npx playwright test tests/npc-life.spec.ts --config tools/playwright-npc-life.config.ts --grep '室内观察不会重置'",
+      "结果": "通过",
+      "项目": 1,
+      "秒": 25.3,
+      "范围": "共享池水渲染后空间与同场景性能补验。"
+    },
+    {
+      "命令": "git diff --check",
+      "结果": "通过"
+    }
+  ],
+  "可玩闭环": {
+    "医疗": "pharmacy-encounter-save.json 固定旧档中小满正配药三秒；真实警报中断且不扣药草、离屋后获知伤情、玩家键盘击退、真实到场消耗一份随身药。最后三小时恢复使用公开全世界开发快进；正式轻伤另一案例不用快进。",
+    "维修": "facility-encounter-save.json 固定旧北门死亡与突破样本；广场风铃挂架真实受击、室内阿禾未知、安全后按日程巡视、实际领料与到场维修、中途保存加载无重复提交。木工台仍为超出原纵深的明确标记演练。"
+  },
+  "性能": {
+    "证据": "facility-performance-comparison.json",
+    "说明": "基线和较慢样本均保留，软件图形及并行负载不能推导目标设备六十帧。",
+    "五日证据": "five-day-facility-final.json",
+    "五日存档字符": 18163,
+    "预约": 3,
+    "十二人路径失败": 0,
+    "最后短场景帧数": 247,
+    "中位毫秒": 54.17,
+    "九五分位毫秒": 60.01
+  },
+  "审查": {
+    "结论": "PASS",
+    "P0和P1阻塞": [],
+    "未验证": [
+      "极端拥挤与全部动态地图组合",
+      "最终美术和生成素材商业权利复核",
+      "目标设备长时图形性能",
+      "量化八成人工节省"
+    ],
+    "非阻塞": [
+      "荒野未接管敌人保留玩家目标",
+      "唯一药师失能需要玩家公共急救",
+      "无背负失能者穿过战场",
+      "木工台未扩展原来袭范围",
+      "姓名标注聚集可能重叠",
+      "完整多方向职业与救护动画待补",
+      "原驻防两文件仍有格式提示，未大面积重排无关代码",
+      "原构建大包提示"
+    ]
+  },
+  "记录时刻": "2026-09-27T21:26:26.309958+08:00",
+  "分支": "codex/initial-game",
+  "HEAD": "70e11595e1d2cdf0472c3c40b80270cf73eaa7a5",
+  "核心指纹": {
+    "src/data/npcLife.ts": "143fb28e8d8bfc723f9993c4771309333a1b6b9096a7e9f10253f70c33ba5e6b",
+    "src/game/systems/npcLife.ts": "9e66ed0e45c9c20dcaf0fd75f758ffbfef3ee18f6dd9110421feb15cdbecfc12",
+    "src/game/systems/npcSpeech.ts": "27f6adcb31fbf2f2de2987eb9661411fb9d2a5c08017433582e79906fbf51e86",
+    "src/game/systems/defense.ts": "a79ce9419fd05942972ab04c16893b65c1d1353729e1197d119a0ba8b32108ff",
+    "src/game/systems/defenseState.ts": "39bcee8a517e12445e0d9322e14ed55c284ff8c3a6da3f226eac93983130e3af",
+    "src/game/entities/npcLifeView.ts": "add4fa600565543c10156322b136a6f778fa5397369c97a31c6b853ddd28ad0d"
+  },
+  "共享集成指纹": {
+    "src/game/scenes/World.ts": "89a8b41bab980ebc9feabc4bbacf09e7bdac10a35d336b91f4c76f1eecc16e96",
+    "src/game/systems/waterEffects.ts": "7c1539167f5457d17a17b8e4c43f053b08a0a913ba54e9cabc937d588239f192",
+    "src/game/systems/waterMotion.ts": "362fb20405cb8acc92f5f8cf39746b54261d41221ecbe285bf35e29b47a66a52",
+    "src/game/systems/pondSurface.ts": "ccb4b7553de1f45490fda85b60bdeb111bf43c731ef907771e480face05bd336"
+  },
+  "正式包": "/assets/index-sIuQyIO-.js",
+  "本机预览": "http://127.0.0.1:5183/",
+  "预览校验": [
+    {
+      "路径": "/",
+      "状态": 200,
+      "字节": 660,
+      "SHA256": "48c75229f93af23602e204504e39dac93b8baf29ab65927cb9f7688c5afb97b2",
+      "与磁盘一致": true
+    },
+    {
+      "路径": "/assets/index-sIuQyIO-.js",
+      "状态": 200,
+      "字节": 1716355,
+      "SHA256": "017237f8dbfe981d42f3111001180295654c665a0f4b26a9e4e2023313df0fc5",
+      "与磁盘一致": true
+    }
+  ]
+}

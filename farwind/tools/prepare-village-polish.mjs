@@ -14,7 +14,7 @@ for (const [id, file, width, height, display, anchor, foot] of [
     null,
   ],
   ["fountain", "plaza-fountain", 390, 390, [130, 130], [0.5, 1], [100, 45]],
-  ["pond-water", "pond-water", 1040, 920, [520, 460], [0, 0], null],
+  ["pond-water", "pond-water", 1040, 920, [520, 460], [0.5, 0.5], null],
 ]) {
   const source = `${root}/${file}-source.png`;
   const meta = await sharp(source).metadata();
@@ -114,7 +114,8 @@ for (const [id, file, width, height, display, anchor, foot] of [
     显示尺寸: display,
     锚点: anchor,
     碰撞占地: foot,
-    动画: id === "fountain" ? "主体静态，池内两处轻微扩散涟漪" : null,
+    动画: id === "pond-water" ? "原图局部采样起伏，最大位移4.2×2.4世界像素；独立有效游玩时间；岸内固定带不变" : id === "fountain" ? "主体静态，池内两处轻微扩散涟漪" : null,
+    ...(id === "pond-water" ? {运行链路: "World.preload → pond-water → WaterEffects → pondSurface.ts原生Phaser 4 Shader与POND椭圆裁切 → 浅水/荷叶/桥/角色"} : {}),
     是否临时: false,
     透明处理:
       id === "pond-water"

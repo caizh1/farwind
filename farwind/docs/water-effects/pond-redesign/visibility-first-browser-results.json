@@ -1,0 +1,336 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "--config",
+      "tools/playwright-pond-redesign.config.ts"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/tools/playwright-pond-redesign.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "water-effects.spec.ts"
+        ],
+        "timeout": 240000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../docs/water-effects/pond-redesign/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "water-effects.spec.ts",
+      "file": "water-effects.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "water-motion-local",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7429,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T11:03:10.907Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-motion-local/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-68e9e06de44fde4efebc",
+          "file": "water-effects.spec.ts",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "title": "water-lifecycle",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8509,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T11:03:18.634Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-lifecycle/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-1645f9b13a73179ce238",
+          "file": "water-effects.spec.ts",
+          "line": 42,
+          "column": 1
+        },
+        {
+          "title": "water-page-visibility",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 15601,
+                  "error": {
+                    "message": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.",
+                    "stack": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts:77:14",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                      "column": 14,
+                      "line": 77
+                    },
+                    "snippet": "  75 |   const cdp=await context.newCDPSession(page);await cdp.send(\"Emulation.setFocusEmulationEnabled\",{enabled:false});\n  76 |   const tab=await context.newPage();await tab.goto(\"about:blank\");await tab.bringToFront();\n> 77 |   await page.waitForFunction(()=>document.hidden,undefined,{timeout:10000});\n     |              ^\n  78 |   const hidden=await readWater(page);await page.waitForTimeout(600);const later=await readWater(page);\n  79 |   expect(later.water.time).toBe(hidden.water.time);expect(later.water.surface.time).toBe(hidden.water.surface.time);\n  80 |   await tab.close();await page.bringToFront();await page.waitForFunction(()=>!document.hidden);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                        "column": 14,
+                        "line": 77
+                      },
+                      "message": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.\n\n  75 |   const cdp=await context.newCDPSession(page);await cdp.send(\"Emulation.setFocusEmulationEnabled\",{enabled:false});\n  76 |   const tab=await context.newPage();await tab.goto(\"about:blank\");await tab.bringToFront();\n> 77 |   await page.waitForFunction(()=>document.hidden,undefined,{timeout:10000});\n     |              ^\n  78 |   const hidden=await readWater(page);await page.waitForTimeout(600);const later=await readWater(page);\n  79 |   expect(later.water.time).toBe(hidden.water.time);expect(later.water.surface.time).toBe(hidden.water.surface.time);\n  80 |   await tab.close();await page.bringToFront();await page.waitForFunction(()=>!document.hidden);\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts:77:14"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T11:03:27.150Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-page-visibility/test-failed-2.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-page-visibility/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-page-visibility/video-1.webm"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-page-visibility/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-page-visibility/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-page-visibility/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                    "column": 14,
+                    "line": 77
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-ed2c806526c8829f2dc8",
+          "file": "water-effects.spec.ts",
+          "line": 72,
+          "column": 1
+        },
+        {
+          "title": "water-navigation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 41003,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T11:03:44.352Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-navigation/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-49134a7c3e0143dccac5",
+          "file": "water-effects.spec.ts",
+          "line": 88,
+          "column": 1
+        },
+        {
+          "title": "water-hitstop-culling",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5836,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T11:04:25.645Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/pond-redesign-results/water-effects-water-hitstop-culling/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-6ca2e5c5a6c6de8fdbc5",
+          "file": "water-effects.spec.ts",
+          "line": 102,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-27T11:03:10.596Z",
+    "duration": 81055.261,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

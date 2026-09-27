@@ -51,12 +51,12 @@ describe('三门常态防御',()=>{
   expect(s.raid).toBeNull();expect(s.completedSequence).toBe(1);expect(s.cooldownMs).toBe(0);expect(s.retryMs).toBe(RAID_TIMING.retry);expect(d.enemies).toEqual([]);
  });
  it('结构3迁移保留伤亡和东门活跃事件，结构4缺岗位拒绝',()=>{
-  const old:any=initialState();old.schema_version=3;old.map_version=5;
+  const old:any=initialState();old.schema_version=3;old.skills={swordWind:false};old.map_version=5;
   old.defense=prepareRaid(initialDefense(),player,'east-gate');old.defense.guards=old.defense.guards.slice(0,3);
   Object.assign(old.defense.guards[0],{hp:0,dead:true,mode:'dead'});old.defense.guards[1].hp=57;
   for(const k of ['protectionMs','cooldownMs','retryMs','seed'])delete old.defense[k];
   delete old.defense.raid.gateId;delete old.defense.raid.spawns;
-  const migrated=validate(old);expect(migrated.schema_version).toBe(6);expect(migrated.map_version).toBe(6);
+  const migrated=validate(old);expect(migrated.schema_version).toBe(7);expect(migrated.map_version).toBe(6);
   expect(migrated.defense.guards).toHaveLength(9);expect(migrated.defense.guards[0].dead).toBe(true);expect(migrated.defense.guards[1].hp).toBe(57);
   expect(migrated.defense.raid?.members).toEqual(old.defense.raid.members);expect(validate(migrated)).toEqual(migrated);
   migrated.defense.guards.pop();expect(()=>validate(migrated)).toThrow();

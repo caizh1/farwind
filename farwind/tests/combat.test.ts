@@ -272,7 +272,7 @@ describe("风步、碰撞和保护", () => {
   });
 });
 it("旧档迁移、满包待领取掉落往返和一次性领取", () => {
-  const old = { ...initialState(), schema_version: 1 };
+  const old = { ...initialState(), schema_version: 1,skills:{swordWind:false} };
   delete (old as Partial<typeof old>).pendingDrops;
   delete (old as Partial<typeof old>).dashCooldownRemaining;
   expect(parseSave(JSON.stringify(old)).pendingDrops).toEqual([]);

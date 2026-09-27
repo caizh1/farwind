@@ -1,3 +1,5 @@
+import {initialSkills,validateSkills,migrateLegacySkills} from './skills';
+import type {SkillState} from '../../data/windLessons';
 import {initialLife,validateLife,type LifeState} from './npcLifeState';
 import {
   STARTER_COINS,
@@ -14,8 +16,8 @@ import { initialDefense, migrateEastDefense, validateDefense, type DefenseState 
 import {initialNight,migratedNight,validateNight,type NightState} from "./nightDirector";
 export type Slot = { id: ItemId; count: number } | null;
 export type State = {
-  skills: {swordWind:boolean};
-  schema_version: 6;
+  skills: SkillState;
+  schema_version: 7;
   life: LifeState;
   night: NightState;
   defense: DefenseState;
@@ -41,8 +43,8 @@ export type State = {
   crafted: boolean;
 };
 export const initialState = (): State => ({
-  skills: {swordWind:false},
-  schema_version: 6,
+  skills: initialSkills(),
+  schema_version: 7,
   life: initialLife(),
   night: initialNight(),
   defense: initialDefense(),
@@ -130,10 +132,6 @@ export function reward(s: State) {
 }
 export function validate(raw: unknown): State {
   const s = structuredClone(raw) as State;
-  if(s && s.skills===undefined)s.skills={swordWind:false};
-  if(s && (!s.skills || typeof s.skills.swordWind!=="boolean"))throw Error("存档技能状态无效");
-  // 只持久化正式学习；高阶配置、临时授予与飞行实体均不进入存档。
-  if(s)s.skills={swordWind:s.skills.swordWind};
   const version = (s as { schema_version?: number })?.schema_version;
   if (s && version === 1) {
     s.pendingDrops ??= [];
@@ -150,7 +148,9 @@ export function validate(raw: unknown): State {
   }
   if (s && version === 3) { s.defense = migrateEastDefense(s.defense); (s as {schema_version:number}).schema_version = 4; }
   if(s&&(s as {schema_version:number}).schema_version===4){s.night=migratedNight(s.time);(s as {schema_version:number}).schema_version=5;}
-  if(s&&(s as {schema_version:number}).schema_version===5){s.life=initialLife(s.time);s.schema_version=6;}
+  if(s&&(s as {schema_version:number}).schema_version===5){s.life=initialLife(s.time);(s as {schema_version:number}).schema_version=6;}
+  if(s&&(s as {schema_version:number}).schema_version===6){s.skills=migrateLegacySkills(s.skills);s.schema_version=7;}
+  if(s&&s.schema_version===7)s.skills=validateSkills(s.skills);
   const num = (n: unknown, min: number, max: number) =>
     typeof n === "number" && Number.isFinite(n) && n >= min && n <= max;
   const strarr = (a: unknown) =>
@@ -159,7 +159,7 @@ export function validate(raw: unknown): State {
     a.every((x) => typeof x === "string" && x.length < 80);
   if (
     !s ||
-    s.schema_version !== 6 ||
+    s.schema_version !== 7 ||
     (s.map_version !== undefined &&
       s.map_version !== 2 &&
       s.map_version !== 3 &&

@@ -1,0 +1,129 @@
+{
+  "记录时间": "2026-09-27T11:06:18.325Z",
+  "说明": "本轮增量验收，保留历史失败批次；本机静态预览，没有提交、推送或发布。共享工作区其他任务修改仍保留。",
+  "工作区": "/Users/archer/Documents/ChatGPT/Game/farwind",
+  "分支": "codex/initial-game",
+  "已核验提交": "70e11595e1d2cdf0472c3c40b80270cf73eaa7a5",
+  "存档": {
+    "主版本": 6,
+    "生活子版本": 4,
+    "字符上限": 200000,
+    "旧档策略": "显式三到四迁移，保留资源、关系与伤亡；旧事件初始化探访水位，不重复刷关系。"
+  },
+  "命令": [
+    {
+      "命令": "npm test -- --maxWorkers=1",
+      "状态": "通过",
+      "文件": 27,
+      "测试": 491,
+      "秒": 95.94,
+      "跳过": 0
+    },
+    {
+      "命令": "npx playwright test tests/npc-life.spec.ts tests/npc-life-social-art.spec.ts --config tools/playwright-npc-life.config.ts",
+      "状态": "通过",
+      "场景": 12,
+      "约分钟": 5.1
+    },
+    {
+      "命令": "npx playwright test tests/economy.spec.ts tests/combat.spec.ts tests/adventure.spec.ts tests/session.spec.ts --config tools/playwright-npc-life.config.ts --workers=1",
+      "状态": "通过",
+      "场景": 12,
+      "约分钟": 6.3
+    },
+    {
+      "命令": "npx playwright test tests/npc-life-social-art.spec.ts --config tools/playwright-npc-life.config.ts --workers=1",
+      "状态": "通过",
+      "场景": 3,
+      "约分钟": 1.1,
+      "说明": "最后睡眠对齐与文字修正后补验"
+    },
+    {
+      "命令": "npx playwright test --config tools/playwright-npc-life-production.config.ts --workers=1",
+      "状态": "通过",
+      "场景": 3,
+      "秒": 19
+    },
+    {
+      "命令": "npm run assets:npc-life",
+      "状态": "通过",
+      "说明": "既有 Sharp 等比例处理，不在线生成运行依赖"
+    },
+    {
+      "命令": "npm run build -- --outDir .npc-life-local/production",
+      "状态": "通过",
+      "模块": 76,
+      "警告": "沿用主包超过五百千字节提示，未隐藏或更改阈值"
+    },
+    {
+      "命令": "git diff --check",
+      "状态": "通过"
+    }
+  ],
+  "构建": {
+    "页面摘要": "267d0e76f7d43cd5b7cbd90cb37e316c2853c4a9b671fd49d601142970547ce1",
+    "主脚本": "/assets/index-B0jR4hu9.js",
+    "主脚本字节": 1707349,
+    "主脚本摘要": "272eace8f9a91369c1256c557efbfcde598c22c91099a8f91b7ce42456d0eb1a"
+  },
+  "本机预览": {
+    "地址": "http://127.0.0.1:5183/",
+    "页面状态": 200,
+    "脚本状态": 200,
+    "指纹一致": true,
+    "说明": "不同来源的浏览器存档不自动迁移；旧旅途需通过正式导出导入。"
+  },
+  "运行素材": [
+    {
+      "文件": "public/assets/npc-life/bed.png",
+      "字节": 120917,
+      "摘要": "62dc48f4152af35866994d9272353c1925745f03b4b2e50e9a63aa3dadf5f026",
+      "状态": 200
+    },
+    {
+      "文件": "public/assets/npc-life/table.png",
+      "字节": 71812,
+      "摘要": "c32a692ea09adc625fc2294523e1f9845f8b6af53034b44308dc771d75f9c151",
+      "状态": 200
+    },
+    {
+      "文件": "public/assets/npc-life/elder-work.png",
+      "字节": 79625,
+      "摘要": "3f817947cb3b262a434ffda989ce0682b1e777e9f2300a7f38e7553f3fc03c73",
+      "状态": 200
+    },
+    {
+      "文件": "public/assets/npc-life/healer-work.png",
+      "字节": 59173,
+      "摘要": "bbe2c5b382dbb72a7816022ef8a0ab8d4eb9216e03a820a5ddd8c55cf525dfd5",
+      "状态": 200
+    },
+    {
+      "文件": "public/assets/npc-life/carpenter-work.png",
+      "字节": 61765,
+      "摘要": "624f2bc72f79098eb9c42c4629d93dae3612f42d53a5ea9c65eef1710f8a9af1",
+      "状态": 200
+    }
+  ],
+  "证据": [
+    "docs/npc-life/evidence/handdrawn-pharmacy.png",
+    "docs/npc-life/evidence/handdrawn-sleep.png",
+    "docs/npc-life/evidence/social-visit.png",
+    "docs/npc-life/evidence/five-day-social-art-final.json",
+    "docs/npc-life/evidence/browser-social-art.json"
+  ],
+  "审查": {
+    "结论": "PASS",
+    "阻塞": [],
+    "反证": "唯一卫兵权威、岗位许可、真实视线与到场、认知边界、睡眠与攻击约束、事务和关系幂等、取消与加载、白名单和上限、暂停与职业帧均沿实际链路核验。"
+  },
+  "未完成或未验证": [
+    "完整多方向职业与睡眠专用动画",
+    "全套手绘室内与最终美术验收",
+    "生成素材商业权利复核",
+    "自然平民和建筑攻击扩展",
+    "背负失能者穿过战场",
+    "目标设备长时图形性能",
+    "量化人工八成节省"
+  ]
+}

@@ -1,7 +1,8 @@
 import { test, expect, type Page } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import { move } from "./map-navigation";
-import { VILLAGE_PORTALS, portalAnchor } from "../src/data/village";
+import { VILLAGE_PORTALS, portalAnchor, regionAt } from "../src/data/village";
+import { inProtected } from "../src/data/defenseZones";
 import { props } from "../src/data/world";
 import { initialState } from "../src/game/systems/state";
 const directory = process.env.FARWIND_EVIDENCE_ROOT
@@ -55,6 +56,19 @@ test("真实输入通过三门，北南不触发森林任务，主角和黑猫�
         { timeout: 8000 },
       )
       .toBe(true);
+    if (gate.id === "east-gate") {
+      // 当前驻防版本将门外第一段设为近郊；继续走出保护带再验原森林主线。
+      const near = await read(page);
+      expect(regionAt(near.state.player).id).toBe("forest");
+      expect(inProtected(near.state.player)).toBe(true);
+      expect(near.region).toBe("巡逻近郊");
+      expect(near.state.quest).toBe(1);
+      await move(page, outside.x + 90, outside.y);
+      await expect
+        .poll(async () => regionAt((await read(page)).state.player).id)
+        .toBe("forest");
+      expect(inProtected((await read(page)).state.player)).toBe(false);
+    }
     const snapshot = await read(page);
     expect(snapshot.companion.blocked).toBe(false);
     expect(snapshot.region).toBe(

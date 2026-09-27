@@ -1,0 +1,361 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "-c",
+      "tools/playwright-enemy-review.config.ts"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/tools/playwright-enemy-review.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/runs/1790519417543",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "enemy-combat-v1.spec.ts",
+          "parry-contextmenu.spec.ts"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/enemy-combat-v1/evidence/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "cwd": "/Users/archer/Documents/ChatGPT/Game/farwind",
+      "command": "node tools/serve-enemy-review.mjs",
+      "url": "http://127.0.0.1:5175",
+      "reuseExistingServer": true
+    }
+  },
+  "suites": [
+    {
+      "title": "enemy-combat-v1.spec.ts",
+      "file": "enemy-combat-v1.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "fixed-all-directions-actions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6462,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T14:30:18.105Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/runs/1790519418079/enemy-combat-v1-fixed-all-directions-actions/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2cc2f0849e8074b7f98e-14b3da90e87c67de0faf",
+          "file": "enemy-combat-v1.spec.ts",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "title": "training-five-enemy-parry-recovery",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 62591,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T14:30:24.697Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/runs/1790519418079/enemy-combat-v1-training-five-enemy-parry-recovery/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2cc2f0849e8074b7f98e-237c2c9b4228d3908ec8",
+          "file": "enemy-combat-v1.spec.ts",
+          "line": 24,
+          "column": 1
+        },
+        {
+          "title": "wild-new-enemies-real-movement",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 188731,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts",
+                        "column": 133,
+                        "line": 5
+                      },
+                      "message": "Error: page.waitForFunction: Test timeout of 180000ms exceeded.\n\n  3 | import {move} from './map-navigation';\n  4 | const dir='docs/enemy-combat-v1/evidence',read=(p:Page)=>p.evaluate(()=>(window as any).__farwind());\n> 5 | async function start(page:Page){await page.goto('/');await page.getByRole('button',{name:'启程 · 新游戏',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().mode==='');}\n    |                                                                                                                                     ^\n  6 | async function sample(page:Page){await page.evaluate(()=>{const w=window as any;w.__enemyObservations=[];let last='';const frame=()=>{const s=w.__farwind?.();if(s?.animation){const data={at:s.session.sim,enemies:s.animation.enemies,practice:s.animation.practice,projectiles:s.animation.projectiles,contacts:s.contacts.slice(-1)},key=JSON.stringify([data.enemies.map((e:any)=>[e.id,e.art?.pose?.action,e.art?.pose?.frame]),data.practice?.pose?.action,data.practice?.pose?.frame,data.projectiles.map((s:any)=>s.state)]);if(key!==last){w.__enemyObservations.push(data);last=key;if(w.__enemyObservations.length>3000)w.__enemyObservations.shift();}}w.__enemyObserver=requestAnimationFrame(frame);};frame();});}\n  7 | async function exportSample(page:Page,name:string){const frames=await page.evaluate(()=>{const w=window as any;cancelAnimationFrame(w.__enemyObserver);return w.__enemyObservations;});await writeFile(`${dir}/${name}-validation.json`,JSON.stringify({说明:'正式游戏入口，新游戏正常键盘行走和可见按钮；诊断只读，不注入角色、生命、进度或计时器。弹反输入读取接触预测用于集成检查，不能替代玩家可读性验收。',状态:'技术验证，美术待审阅',帧:frames,最终世界:await read(page)},null,2));}\n  8 | async function parry(page:Page,prefix:string,lead:number){\n    at start (/Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts:5:133)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/enemy-combat-v1.spec.ts:41:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T14:31:27.294Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/runs/1790519418079/enemy-combat-v1-wild-new-enemies-real-movement/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/runs/1790519418079/enemy-combat-v1-wild-new-enemies-real-movement/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/runs/1790519418079/enemy-combat-v1-wild-new-enemies-real-movement/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2cc2f0849e8074b7f98e-d0231112d98429614653",
+          "file": "enemy-combat-v1.spec.ts",
+          "line": 34,
+          "column": 1
+        },
+        {
+          "title": "assets-legacy-save-and-normal-entry",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7050,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T14:34:41.629Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/runs/1790519681610/enemy-combat-v1-assets-legacy-save-and-normal-entry/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2cc2f0849e8074b7f98e-432a5b0f63e2c25d3324",
+          "file": "enemy-combat-v1.spec.ts",
+          "line": 46,
+          "column": 1
+        },
+        {
+          "title": "wild-boar-hurt-death-and-reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 39354,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T14:34:48.787Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/runs/1790519681610/enemy-combat-v1-wild-boar-hurt-death-and-reload/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2cc2f0849e8074b7f98e-331f583881ec8402cf07",
+          "file": "enemy-combat-v1.spec.ts",
+          "line": 51,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "parry-contextmenu.spec.ts",
+      "file": "parry-contextmenu.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "PARRY-03-contextmenu",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6193,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T14:35:28.508Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1b2be48c86fdb8b50c15-1882dd4c7359bae8836d",
+          "file": "parry-contextmenu.spec.ts",
+          "line": 6,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-27T14:30:17.547Z",
+    "duration": 317296.554,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

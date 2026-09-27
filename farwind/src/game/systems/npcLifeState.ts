@@ -33,6 +33,7 @@ export type LifeEvent = {
     | "help"
     | "visit"
     | "access"
+    | "company"
     | "report";
   place: Place;
   source: string;
@@ -52,6 +53,7 @@ export type Memory = {
   expires: number;
 };
 export type Action = {
+  social?: { partner: ResidentId; occasion: number } | null;
   id: number;
   kind: Activity;
   target: Place;
@@ -97,6 +99,11 @@ export type PersonState = {
   known: Record<string, Place & { time: number }>;
   lastSupplyDay: number;
   lastMealDay: number;
+  social: {
+    cooldownUntil: number;
+    occasionFloor: number;
+    visited: Partial<Record<ResidentId, number>>;
+  };
   speech: {
     eventFloor: number;
     nextAt: number;
@@ -120,7 +127,7 @@ export type LifeTask = {
   retryAt: number;
 };
 export type LifeState = {
-  version: 3;
+  version: 4;
   speechAt: number;
   speechUrgentAt: number;
   speechEventFloor: number;
@@ -154,7 +161,7 @@ export type LifeState = {
   defenseReceipts: string[];
 };
 export const initialLife = (time = 480): LifeState => ({
-  version: 3,
+  version: 4,
   speechAt: 0,
   speechUrgentAt: 0,
   speechEventFloor: 0,
@@ -203,6 +210,7 @@ export const initialLife = (time = 480): LifeState => ({
     known: {},
     lastSupplyDay: 0,
     lastMealDay: -1,
+    social: { cooldownUntil: 0, occasionFloor: 0, visited: {} },
     speech: {
       eventFloor: 0,
       nextAt: 0,
@@ -293,6 +301,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
         "help",
         "visit",
         "access",
+        "company",
         "report",
       ].includes(k as string);
   if (l) l.defenseReceipts ??= [];
@@ -327,7 +336,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
   }
   // 子版本2→3增加短句去重与有限随身资源；旧档的药品与木料仍留在原公共库存。
   if (l && (l as { version?: number }).version === 2) {
-    l.version = 3;
+    Object.assign(l, { version: 3 });
     l.speechAt = l.elapsed;
     l.speechUrgentAt = l.elapsed;
     l.speechEventFloor = l.sequence;
@@ -340,9 +349,21 @@ export function validateLife(raw: unknown, time: number): LifeState {
       };
     for (const n of l.people ?? []) n.supplies = { medicine: 0, wood: 0 };
   }
+  // 子版本3→4：不重演旧社交经历，不增关系、不修改资源或已有伤情。
+  if (l && (l as { version?: number }).version === 3) {
+    l.version = 4;
+    for (const n of l.people ?? []) {
+      n.social = {
+        cooldownUntil: l.elapsed,
+        occasionFloor: l.sequence,
+        visited: {},
+      };
+      if (n.action) n.action.social = null;
+    }
+  }
   if (
     !l ||
-    l.version !== 3 ||
+    l.version !== 4 ||
     !num(l.speechAt, l.elapsed + LIFE.speechPersonMs) ||
     !num(l.speechUrgentAt, l.elapsed + LIFE.speechPersonMs) ||
     !integer(l.speechEventFloor, l.sequence) ||
@@ -434,6 +455,19 @@ export function validateLife(raw: unknown, time: number): LifeState {
       n.speech.routines.length > 14 ||
       new Set(n.speech.routines).size !== n.speech.routines.length ||
       !n.speech.routines.every(activity) ||
+      !n.social ||
+      !num(n.social.cooldownUntil, l.elapsed + LIFE.socialCooldownMs) ||
+      !integer(n.social.occasionFloor, l.sequence) ||
+      !n.social.visited ||
+      typeof n.social.visited !== "object" ||
+      Array.isArray(n.social.visited) ||
+      Object.keys(n.social.visited).length > PEOPLE.length - 1 ||
+      !Object.entries(n.social.visited).every(
+        ([id, seq]) =>
+          id !== n.id &&
+          PEOPLE.some((p) => p.id === id) &&
+          integer(seq, l.sequence),
+      ) ||
       !n.needs ||
       !num(n.needs.hunger, 100) ||
       !num(n.needs.fatigue, 100) ||
@@ -481,6 +515,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
     )
       throw Error("人物状态或记忆无效。");
     const a = n.action;
+    if (a && a.social === undefined) a.social = null;
     if (a && a.pickup === undefined) a.pickup = null;
     if (
       a !== null &&
@@ -500,6 +535,21 @@ export function validateLife(raw: unknown, time: number): LifeState {
         !text(a.label))
     )
       throw Error("生活行动状态无效。");
+    if (
+      a?.social &&
+      (a.kind !== "talk" ||
+        a.facility !== null ||
+        a.task !== null ||
+        a.social.partner === n.id ||
+        !PEOPLE.some((p) => p.id === a.social!.partner) ||
+        !integer(a.social.occasion, l.sequence) ||
+        a.social.occasion <=
+          Math.max(
+            n.social.occasionFloor,
+            n.social.visited[a.social.partner] ?? 0,
+          ))
+    )
+      throw Error("同伴探访目标或事件凭据无效。");
     if (a?.phase === "stock") {
       const source = FACILITIES.find(
         (f) =>
@@ -652,6 +702,12 @@ export function validateLife(raw: unknown, time: number): LifeState {
           started: n.action.started,
           failures: n.action.failures,
           label: n.action.label,
+          social: n.action.social
+            ? {
+                partner: n.action.social.partner,
+                occasion: n.action.social.occasion,
+              }
+            : null,
         }
       : null,
     blockedTarget: n.blockedTarget ? place(n.blockedTarget) : null,
@@ -700,6 +756,11 @@ export function validateLife(raw: unknown, time: number): LifeState {
     ),
     lastSupplyDay: n.lastSupplyDay,
     lastMealDay: n.lastMealDay,
+    social: {
+      cooldownUntil: n.social.cooldownUntil,
+      occasionFloor: n.social.occasionFloor,
+      visited: { ...n.social.visited },
+    },
     speech: {
       eventFloor: n.speech.eventFloor,
       nextAt: n.speech.nextAt,
@@ -708,7 +769,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
     },
   }));
   return {
-    version: 3,
+    version: 4,
     speechAt: l.speechAt,
     speechUrgentAt: l.speechUrgentAt,
     speechEventFloor: l.speechEventFloor,

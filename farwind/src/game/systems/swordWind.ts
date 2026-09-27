@@ -6,7 +6,7 @@ import {
 import { SWORD_WIND_RELEASES } from "../../data/swordWindArt";
 import { firstSwordWindBlocker, sweptTargetContact } from "./swordWindGeometry";
 import type { Point } from "./obstacles";
-export type WindTarget = Target & { disabled?: boolean; radius?: number };
+export type WindTarget = Target & { disabled?: boolean; radius?: number; windSensitive?:boolean; lessonId?:string };
 export type WindMotion = {
   target: WindTarget;
   previous: Point;
@@ -15,6 +15,10 @@ export type WindMotion = {
 export type WindEnd = "target" | "obstacle" | "range" | "lifetime";
 export type SwordWind = {
   id: number;
+  releaseId:number;
+  direction:Point;
+  targetCount:number;
+  birthPosition:Point;
   attackId: number;
   comboId: number;
   source: string;
@@ -36,6 +40,9 @@ export type SwordWind = {
   initialChecked: boolean;
 };
 export type WindEvent = {
+  kind:"hit"|"end";
+  terminal?:boolean;
+  pathOrder?:number;
   wind: SwordWind;
   at: number;
   point: Point;
@@ -45,13 +52,13 @@ export type WindEvent = {
 // 纯呈现数据：只铺裁决完成的地面路径，不参与碰撞、伤害或存档。
 export function swordWindGroundSegments(w: SwordWind, now: number) {
   if (!w.initialChecked) return [];
-  const [dx, dy] = facingVector(w.facing),
+  const {x:dx,y:dy} = w.direction,
     m = w.config.art;
   const extent = Math.max(
     0,
     (w.position.x - w.origin.x) * dx + (w.position.y - w.origin.y) * dy,
   );
-  const birth = swordWindBirth(w.attack, w.origin, w.config).position;
+  const birth = w.birthPosition;
   const birthDistance =
     (birth.x - w.origin.x) * dx + (birth.y - w.origin.y) * dy;
   const segments = [];
@@ -121,165 +128,81 @@ export function swordWindBirth(
   };
 }
 export class SwordWindSystem {
-  serial = 0;
-  winds: SwordWind[] = [];
-  lastAttackId = 0;
-  events: WindEvent[] = [];
-  clear() {
-    this.winds = [];
-    this.lastAttackId = 0;
-    this.events = [];
+  serial=0;
+  winds:SwordWind[]=[];
+  lastAttackId=0;
+  events:WindEvent[]=[];
+  clear(){this.winds=[];this.lastAttackId=0;this.events=[];}
+  launch(attack:Attack,root:Point,at:number,damage:number) {
+    if(attack.stage!==4||attack.id<=this.lastAttackId)return null;
+    this.lastAttackId=attack.id;
+    const config={...structuredClone(attack.swordWind??resolveSwordWindConfig()),damage},birth=swordWindBirth(attack,root,config);
+    const hit=new Set<string>(),snapshot:Attack={...attack,hit:new Set(),config:{...attackConfig(attack)},swordWind:config};
+    const [dx,dy]=facingVector(attack.facing),baseForward=Math.hypot(birth.position.x-root.x,birth.position.y-root.y);
+    const created=config.angles.map(offset=>{
+      const direction={x:dx*Math.cos(offset)-dy*Math.sin(offset),y:dx*Math.sin(offset)+dy*Math.cos(offset)},position={x:root.x+direction.x*baseForward,y:root.y+direction.y*baseForward};
+      // 上身投影不旋转到地面；侧刃只旋转平面偏移，中央刃严格保留原锚点。
+      const plane={x:birth.visualOffset.x,y:birth.visualOffset.y+config.art.bodyHeight};
+      const w:SwordWind={id:++this.serial,releaseId:attack.id,attackId:attack.id,comboId:attack.comboId??attack.id,source:'hero',config,attack:{...snapshot,windDirection:direction},born:at,
+        previous:{...position},position,origin:{...root},birthPosition:{...position},direction,facing:attack.facing,distance:0,maxTargets:config.maxTargets,targetCount:0,hit,terminated:false,
+        visualOffset:{x:plane.x*Math.cos(offset)-plane.y*Math.sin(offset),y:plane.x*Math.sin(offset)+plane.y*Math.cos(offset)-config.art.bodyHeight},initialChecked:false};
+      this.winds.push(w);return w;
+    });
+    return created.find(w=>Math.abs(w.direction.x-dx)<1e-8&&Math.abs(w.direction.y-dy)<1e-8)!;
   }
-  launch(attack: Attack, root: Point, at: number, damage: number) {
-    if (attack.stage !== 4 || attack.id <= this.lastAttackId) return null;
-    this.lastAttackId = attack.id;
-    if (this.winds.some((w) => !w.terminated)) return null;
-    const base = attack.swordWind ?? resolveSwordWindConfig(),
-      config = {
-        ...structuredClone(base),
-        damage,
-        maxTargets: 1 as number | "all",
-      },
-      birth = swordWindBirth(attack, root, config);
-    const snapshot: Attack = {
-      ...attack,
-      hit: new Set(),
-      config: { ...attackConfig(attack) },
-      swordWind: config,
-    };
-    const wind: SwordWind = {
-      id: ++this.serial,
-      attackId: attack.id,
-      comboId: attack.comboId ?? attack.id,
-      source: "hero",
-      config,
-      attack: snapshot,
-      born: at,
-      previous: { ...birth.position },
-      position: { ...birth.position },
-      origin: { ...root },
-      facing: attack.facing,
-      distance: 0,
-      maxTargets: 1,
-      hit: new Set(),
-      terminated: false,
-      visualOffset: birth.visualOffset,
-      initialChecked: false,
-    };
-    this.winds.push(wind);
-    return wind;
-  }
-  advance(
-    prev: number,
-    now: number,
-    targets: WindMotion[],
-    blocker = firstSwordWindBlocker,
-  ) {
-    const result: WindEvent[] = [];
-    for (const w of this.winds) {
-      if (w.terminated || now < w.born) continue;
-      const from = Math.max(prev, w.born),
-        until = Math.min(now, w.born + w.config.lifetime),
-        [vx, vy] = facingVector(w.facing);
-      const scan = (a: Point, b: Point, start: number, end: number) => {
-        const wall = blocker(a, b, w.config.width / 2),
-          contacts: { target: WindTarget; t: number; center: Point }[] = [];
-        for (const motion of targets) {
-          const target = motion.target;
-          if (target.hp <= 0 || target.disabled || w.hit.has(target.id))
-            continue;
-          const u = (at: number) =>
-              now > prev
-                ? Math.max(0, Math.min(1, (at - prev) / (now - prev)))
-                : 1,
-            old = mix(motion.previous, motion.current, u(start)),
-            current = mix(motion.previous, motion.current, u(end)),
-            t = sweptTargetContact(
-              a,
-              b,
-              old,
-              current,
-              w.config.width / 2 + (target.radius ?? 14),
-            );
-          if (t !== null)
-            contacts.push({ target, t, center: mix(old, current, t) });
+  advance(prev:number,now:number,targets:WindMotion[],blocker=firstSwordWindBlocker) {
+    const pending:WindEvent[]=[],result:WindEvent[]=[];
+    const plans=new Map<SwordWind,{end:Point;travel:number}>();
+    for(const w of this.winds){
+      if(w.terminated||now<w.born)continue;
+      const from=Math.max(prev,w.born),until=Math.min(now,w.born+w.config.lifetime),vx=w.direction.x,vy=w.direction.y;
+      const scan=(a:Point,b:Point,start:number,end:number)=>{
+        const wall=blocker(a,b,w.config.width/2);
+        if(wall)pending.push({wind:w,kind:'end',pathOrder:Math.hypot(a.x-w.origin.x,a.y-w.origin.y)+Math.hypot(b.x-a.x,b.y-a.y)*wall.t,at:start+(end-start)*wall.t,point:mix(a,b,wall.t),reason:'obstacle'});
+        for(const motion of targets){
+          const target=motion.target;
+          if(target.hp<=0||target.disabled||w.hit.has(target.id)||w.config.trialLesson&&target.lessonId!==w.config.trialLesson)continue;
+          const u=(at:number)=>now>prev?Math.max(0,Math.min(1,(at-prev)/(now-prev))):1;
+          const old=mix(motion.previous,motion.current,u(start)),current=mix(motion.previous,motion.current,u(end)),radius=w.config.width/2+(target.radius??14);
+          // 先筛选有限路径的包围区域，再做连续接触裁决。
+          if(Math.max(old.x,current.x)+radius<Math.min(a.x,b.x)||Math.min(old.x,current.x)-radius>Math.max(a.x,b.x)||
+            Math.max(old.y,current.y)+radius<Math.min(a.y,b.y)||Math.min(old.y,current.y)-radius>Math.max(a.y,b.y))continue;
+          const t=sweptTargetContact(a,b,old,current,radius);
+          if(t===null||wall&&t>=wall.t-1e-8)continue;
+          pending.push({wind:w,kind:'hit',pathOrder:Math.hypot(a.x-w.origin.x,a.y-w.origin.y)+Math.hypot(b.x-a.x,b.y-a.y)*t,at:start+(end-start)*t,point:mix(a,b,t),target,reason:'target'});
         }
-        contacts.sort(
-          (a, b) => a.t - b.t || a.target.id.localeCompare(b.target.id),
-        );
-        const target = contacts[0];
-        // 同刻实体障碍优先；无敌有效目标也消费剑风，伤害入口自行裁决。
-        const obstacle = !!wall && (!target || wall.t <= target.t + 1e-8),
-          t = obstacle ? wall!.t : target?.t;
-        if (t === undefined) return false;
-        const point = mix(a, b, t);
-        w.position = point;
-        w.terminated = true;
-        w.reason = obstacle ? "obstacle" : "target";
-        w.ended = start + (end - start) * t;
-        if (!obstacle) w.hit.add(target.target.id);
-        const dx = obstacle ? vx : target.center.x - point.x,
-          dy = obstacle ? vy : target.center.y - point.y,
-          len = Math.hypot(dx, dy) || 1;
-        w.contact = {
-          x: point.x + ((dx / len) * w.config.width) / 2,
-          y: point.y + ((dy / len) * w.config.width) / 2,
-        };
-        const event: WindEvent = {
-          wind: w,
-          at: w.ended,
-          point: { ...w.contact },
-          target: obstacle ? undefined : target.target,
-          reason: w.reason,
-        };
-        result.push(event);
-        return true;
       };
-      if (!w.initialChecked) {
-        w.initialChecked = true;
-        if (scan(w.origin, w.position, w.born, w.born)) continue;
+      if(!w.initialChecked){w.initialChecked=true;scan(w.origin,w.position,w.born,w.born);}
+      if(until<from)continue;
+      const travel=Math.max(0,Math.min(w.config.distance-w.distance,w.config.speed*(until-from)/1000));
+      const endAt=from+travel/w.config.speed*1000,a={...w.position},b={x:a.x+vx*travel,y:a.y+vy*travel};
+      w.previous=a;plans.set(w,{end:b,travel});scan(a,b,from,endAt);
+      if(w.distance+travel>=w.config.distance-1e-7||until>=w.born+w.config.lifetime)
+        pending.push({wind:w,kind:'end',at:endAt,point:b,reason:w.distance+travel>=w.config.distance-1e-7?'range':'lifetime'});
+    }
+    // 三道侧刃共同按真实接触时刻结算，避免弹体数组顺序决定重复目标的击退方向。
+    pending.sort((a,b)=>a.at-b.at||(a.pathOrder??Infinity)-(b.pathOrder??Infinity)||(a.reason==='obstacle'?-1:b.reason==='obstacle'?1:0)||a.wind.id-b.wind.id||(a.target?.id??'').localeCompare(b.target?.id??''));
+    for(const event of pending){
+      const w=event.wind;
+      if(w.terminated)continue;
+      if(event.kind==='hit'){
+        if(w.hit.has(event.target!.id))continue;
+        w.hit.add(event.target!.id);
+        if(!event.target!.windSensitive)w.targetCount++;
+        if(w.maxTargets==='all'||w.targetCount<w.maxTargets||event.target!.windSensitive){event.terminal=false;result.push(event);continue;}
       }
-      if (until < from) continue;
-      const travel = Math.min(
-          w.config.distance - w.distance,
-          (w.config.speed * (until - from)) / 1000,
-        ),
-        end = from + (travel / w.config.speed) * 1000,
-        a = { ...w.position },
-        b = { x: a.x + vx * travel, y: a.y + vy * travel };
-      w.previous = a;
-      if (scan(a, b, from, end)) {
-        w.distance += Math.hypot(w.position.x - a.x, w.position.y - a.y);
-        continue;
-      }
-      w.position = b;
-      w.distance += travel;
-      if (
-        w.distance >= w.config.distance - 1e-7 ||
-        until >= w.born + w.config.lifetime
-      ) {
-        w.terminated = true;
-        w.reason =
-          w.distance >= w.config.distance - 1e-7 ? "range" : "lifetime";
-        w.ended = end;
-        result.push({ wind: w, at: end, point: { ...b }, reason: w.reason });
-      }
+      event.terminal=true;w.position={...event.point};w.terminated=true;w.reason=event.reason;w.ended=event.at;
+      w.contact={x:event.point.x+w.direction.x*w.config.width/2,y:event.point.y+w.direction.y*w.config.width/2};
+      result.push(event);
+    }
+    for(const [w,plan] of plans){
+      if(!w.terminated){w.position=plan.end;w.distance+=plan.travel;}
+      else w.distance+=Math.max(0,(w.position.x-w.previous.x)*w.direction.x+(w.position.y-w.previous.y)*w.direction.y);
     }
     this.events.push(...result);
-    if (this.events.length > 80) this.events.splice(0, this.events.length - 80);
-    this.winds = this.winds.filter(
-      (w) =>
-        !w.terminated ||
-        now - w.ended! <
-          (w.reason === "target" ? w.config.art.hit : w.config.art.dissolve),
-    );
+    if(this.events.length>80)this.events.splice(0,this.events.length-80);
+    this.winds=this.winds.filter(w=>!w.terminated||now-w.ended!<(w.reason==='target'?w.config.art.hit:w.config.art.dissolve));
     return result;
   }
-  snapshot() {
-    return this.winds.map((w) => ({
-      ...w,
-      hit: [...w.hit],
-      attack: { ...w.attack, hit: [...w.attack.hit] },
-    }));
-  }
+  snapshot(){return this.winds.map(w=>({...w,hit:[...w.hit],attack:{...w.attack,hit:[...w.attack.hit]}}));}
 }

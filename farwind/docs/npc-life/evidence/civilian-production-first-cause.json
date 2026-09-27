@@ -1,0 +1,160 @@
+{
+  "说明": "正式轻伤首轮失败的真实追踪提取；首次命中后玩家较远，又发生第二次敌伤，不是治疗降低生命或友伤。最终断言保留九十生命，改为近处接应的一击固定起始样本。",
+  "路径": ".npc-life-local/civilian-production-first/npc-life-production-正式构建：真实轻伤高于旧阈值仍被小满到场救治，挥剑不伤友方/trace.zip",
+  "状态变化": [
+    {
+      "时间": 540.8241400000034,
+      "生命": 90,
+      "伤情": "hurt",
+      "事件": [
+        {
+          "id": "life:2",
+          "sequence": 2,
+          "time": 540.8175000000034,
+          "kind": "injury",
+          "place": {
+            "space": "village",
+            "x": 830.20800337513,
+            "y": 557.0113135905215,
+            "hp": 90,
+            "health": "hurt",
+            "episode": 1,
+            "recoverAt": 0
+          },
+          "source": "raid-1:1",
+          "subjects": null,
+          "result": "敌人实际命中，需要休养与救护",
+          "debug": false
+        }
+      ]
+    },
+    {
+      "时间": 543.522010000016,
+      "生命": 80,
+      "伤情": "hurt",
+      "事件": [
+        {
+          "id": "life:2",
+          "sequence": 2,
+          "time": 540.8175000000034,
+          "kind": "injury",
+          "place": {
+            "space": "village",
+            "x": 830.20800337513,
+            "y": 557.0113135905215,
+            "hp": 90,
+            "health": "hurt",
+            "episode": 1,
+            "recoverAt": 0
+          },
+          "source": "raid-1:1",
+          "subjects": null,
+          "result": "敌人实际命中，需要休养与救护",
+          "debug": false
+        },
+        {
+          "id": "life:3",
+          "sequence": 3,
+          "time": 543.1725000000145,
+          "kind": "injury",
+          "place": {
+            "space": "village",
+            "x": 830.1962931707207,
+            "y": 557.0508434530703,
+            "hp": 80,
+            "health": "hurt",
+            "episode": 2,
+            "recoverAt": 0
+          },
+          "source": "raid-1:1",
+          "subjects": null,
+          "result": "敌人实际命中，需要休养与救护",
+          "debug": false
+        }
+      ]
+    },
+    {
+      "时间": 555.9895300000748,
+      "生命": 85,
+      "伤情": "convalescent",
+      "事件": [
+        {
+          "id": "life:2",
+          "sequence": 2,
+          "time": 540.8175000000034,
+          "kind": "injury",
+          "place": {
+            "space": "village",
+            "x": 830.20800337513,
+            "y": 557.0113135905215,
+            "hp": 90,
+            "health": "hurt",
+            "episode": 1,
+            "recoverAt": 0
+          },
+          "source": "raid-1:1",
+          "subjects": null,
+          "result": "敌人实际命中，需要休养与救护",
+          "debug": false
+        },
+        {
+          "id": "life:3",
+          "sequence": 3,
+          "time": 543.1725000000145,
+          "kind": "injury",
+          "place": {
+            "space": "village",
+            "x": 830.1962931707207,
+            "y": 557.0508434530703,
+            "hp": 80,
+            "health": "hurt",
+            "episode": 2,
+            "recoverAt": 0
+          },
+          "source": "raid-1:1",
+          "subjects": null,
+          "result": "敌人实际命中，需要休养与救护",
+          "debug": false
+        },
+        {
+          "id": "life:4",
+          "sequence": 4,
+          "time": 549.4575000000431,
+          "kind": "injury",
+          "place": {
+            "space": "village",
+            "x": 774.594983121871,
+            "y": 697.4461709905379,
+            "hp": 80,
+            "health": "hurt",
+            "episode": 2,
+            "recoverAt": 0
+          },
+          "source": "carpenter",
+          "subjects": null,
+          "result": "近处目击仍需救护的伤员",
+          "debug": false
+        },
+        {
+          "id": "life:5",
+          "sequence": 5,
+          "time": 555.9895300000748,
+          "kind": "care",
+          "place": {
+            "space": "village",
+            "x": 775.8153016638012,
+            "y": 734.4060306041298,
+            "hp": 85,
+            "health": "convalescent",
+            "episode": 2,
+            "recoverAt": 735.9895300000748
+          },
+          "source": "healer",
+          "subjects": null,
+          "result": "到场治疗，消耗从药房装入药箱的一份药品",
+          "debug": false
+        }
+      ]
+    }
+  ]
+}

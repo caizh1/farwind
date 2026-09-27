@@ -1,0 +1,247 @@
+{
+  "说明": "低生命固定夹具，由林豕实际攻击触发正式死亡／村庄恢复路径，不直接赋零血或调用死亡函数。",
+  "死亡后": {
+    "x": 670,
+    "y": 720,
+    "hp": 100,
+    "stamina": 100
+  },
+  "正式本领": {
+    "swordWindStage": 3,
+    "legacySwordWind": false,
+    "completedLessons": [
+      "windLessonResolved",
+      "serialWindCircuitRestored",
+      "longWindRouteRestored"
+    ],
+    "discoveredLessons": [
+      "windLessonResolved",
+      "serialWindCircuitRestored",
+      "longWindRouteRestored",
+      "wideWindOutletRestored"
+    ],
+    "devices": {
+      "serialValve": 1,
+      "leakClosed": true,
+      "splitLeft": 0,
+      "splitRight": 0
+    }
+  },
+  "教学与弹体": {
+    "trial": null,
+    "pending": null,
+    "saving": false,
+    "targets": [
+      {
+        "id": "lesson-water-bell",
+        "x": 1310,
+        "y": 1160,
+        "windSensitive": true,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-water-followup",
+        "x": 1430,
+        "y": 1240,
+        "windSensitive": true,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-serial-bell-0",
+        "x": 2570,
+        "y": 900,
+        "windSensitive": true,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-serial-bell-1",
+        "x": 2660,
+        "y": 900,
+        "windSensitive": true,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-double-0",
+        "x": 2570,
+        "y": 980,
+        "windSensitive": false,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-double-1",
+        "x": 2660,
+        "y": 980,
+        "windSensitive": false,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-through-0",
+        "x": 2970,
+        "y": 1180,
+        "windSensitive": false,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-through-1",
+        "x": 3050,
+        "y": 1180,
+        "windSensitive": false,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-through-2",
+        "x": 3130,
+        "y": 1180,
+        "windSensitive": false,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-through-3",
+        "x": 3260,
+        "y": 1180,
+        "windSensitive": false,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-wide-0",
+        "x": 3574,
+        "y": 670,
+        "windSensitive": true,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-wide-1",
+        "x": 3646,
+        "y": 670,
+        "windSensitive": true,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-wide-channel-bell",
+        "x": 3700,
+        "y": 930,
+        "windSensitive": true,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-three-left",
+        "x": 3780,
+        "y": 825,
+        "windSensitive": false,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-three-center",
+        "x": 3910,
+        "y": 790,
+        "windSensitive": false,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-three-right",
+        "x": 4000,
+        "y": 844,
+        "windSensitive": false,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-three-gap",
+        "x": 3830,
+        "y": 730,
+        "windSensitive": false,
+        "hits": 0,
+        "damage": 0
+      },
+      {
+        "id": "lesson-three-overlap",
+        "x": 3910,
+        "y": 975,
+        "windSensitive": false,
+        "hits": 0,
+        "damage": 0
+      }
+    ],
+    "enemies": [
+      {
+        "id": "slime-1",
+        "x": 2450,
+        "y": 1060,
+        "hp": 48,
+        "disabled": false
+      },
+      {
+        "id": "slime-2",
+        "x": 2670,
+        "y": 1230,
+        "hp": 48,
+        "disabled": false
+      },
+      {
+        "id": "leaf-1",
+        "x": 2920,
+        "y": 1070,
+        "hp": 72,
+        "disabled": false
+      },
+      {
+        "id": "leaf-2",
+        "x": 3398.4747485380744,
+        "y": 1093.7268150520053,
+        "hp": 72,
+        "disabled": false
+      },
+      {
+        "id": "spore-1",
+        "x": 2730,
+        "y": 1840,
+        "hp": 60,
+        "disabled": false
+      },
+      {
+        "id": "boar-1",
+        "x": 3150,
+        "y": 340,
+        "hp": 90,
+        "disabled": false
+      },
+      {
+        "id": "raven-1",
+        "x": 3250,
+        "y": 1830,
+        "hp": 64,
+        "disabled": false
+      }
+    ],
+    "contacts": [],
+    "sim": 6547.636666666665,
+    "combatStage": 0,
+    "ability": "一线斩·贯通",
+    "water": {
+      "active": 0,
+      "allocated": 0,
+      "capacity": 256,
+      "samples": [],
+      "disposed": false
+    },
+    "winds": [],
+    "objects": 515,
+    "textures": 193
+  },
+  "页面异常": []
+}

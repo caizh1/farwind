@@ -1,5 +1,6 @@
 import { GUARD_DEFS, type GuardId } from "./defense";
 export type ResidentId = "elder" | "healer" | "carpenter" | GuardId;
+export const CIVILIAN_IDS = ["elder", "healer", "carpenter"] as const;
 export type SpaceId =
   | "village"
   | "elder-home"
@@ -46,6 +47,10 @@ export const LIFE = {
   gateAlertRadius: 320,
   villageAlertRadius: 450,
   observation: 360,
+  injuryCallRadius: 320,
+  injuryKnownMinutes: 120,
+  treatmentSearchMs: 45000,
+  convalescentMinutes: 180,
   memoryLimit: 24,
   eventLimit: 80,
   taskLimit: 16,
@@ -65,6 +70,23 @@ export const LIFE = {
   speechRadius: 260,
   carriedMedicine: 2,
   carriedWood: 2,
+  socialKnownMinutes: 120,
+  socialMemoryMinutes: 180,
+  socialTravelMs: 45000,
+  socialCooldownMs: 60000,
+  socialRetryMs: 20000,
+  socialRange: 75,
+  socialMinCompassion: 0.6,
+  socialMinFamiliar: 20,
+  socialMaxHunger: 65,
+  socialMaxFatigue: 80,
+  socialRecoveryMinutes: 60,
+  socialBaseScore: 105,
+  socialCompassionWeight: 10,
+  socialDistanceWeight: 0.018,
+  socialRelationMinutes: 120,
+  socialTrustGain: 2,
+  socialFamiliarGain: 3,
 } as const;
 // 楼梯落脚位逐项核验：北塔下方是旧风塔，南塔下方是工坊边缘，不能统一偏移。
 export const GUARD_LANDINGS: Partial<Record<GuardId, Place>> = {
@@ -216,7 +238,7 @@ export const FACILITIES = [
   },
 ] as const;
 export const MAINTENANCE = [
-  { id: "wind-bell", name: "广场警报风铃", place: outdoor(720, 650) },
+  { id: "wind-bell", name: "广场风铃挂架", place: outdoor(720, 650) },
   { id: "workbench", name: "木工台", place: outdoor(412, 1010) },
 ] as const;
 export type PersonDef = {
@@ -387,12 +409,13 @@ export const PEOPLE: PersonDef[] = [
       slot(6, 12, "work", outdoor(412, 1010), "修工具、做木工", "tools"),
       slot(
         12,
-        14,
+        13,
         "eat",
         indoor("carpenter-home", 570, 800),
         "午饭与休息",
         "seat:carpenter-home",
       ),
+      slot(13, 14, "work", outdoor(720, 650), "巡视广场风铃与挂架"),
       slot(14, 18, "work", outdoor(412, 1010), "木工与保养工具", "tools"),
       slot(18, 21, "habit", indoor("carpenter-home", 830, 800), "雕刻木鸟"),
       slot(

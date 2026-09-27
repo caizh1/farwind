@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { BRIDGES, POND } from "../../data/world";
 import { WATER, EnvironmentClock, fountainPoint, lilyAnchors, clearOfBridges, ripplePhase, fitWaterPatch } from "./waterMotion";
+import { createPondSurface } from "./pondSurface";
 
 type Patch = { image: Phaser.GameObjects.Image; x: number; y: number; phase: number; w: number; h: number };
 // 原生Phaser 4内部纹理Mask；没有DOM画布、全局Tween、战斗时钟或每帧纹理上传。
@@ -10,9 +11,9 @@ export class WaterEffects {
   private textureKeys = ["water-runtime-shore"];
   private bridgeFrame = "water-runtime-bridge";
   private pond: Phaser.GameObjects.Container;
+  private surface: Phaser.GameObjects.Shader;
   private basin: Phaser.GameObjects.Container;
   private flow: Phaser.GameObjects.TileSprite;
-  private waves: Patch[] = [];
   private glints: Patch[] = [];
   private pondRipples: Patch[] = [];
   private fountainRipples: Patch[] = [];
@@ -30,19 +31,20 @@ export class WaterEffects {
   }
 
   constructor(private scene: Phaser.Scene, private fountain: Phaser.GameObjects.Image) {
-    this.pond = this.keep(scene.add.container(POND.x - POND.rx, POND.y - POND.ry).setDepth(WATER.depth.pond));
-    for (let i = 0; i < WATER.pond.waves + WATER.pond.glints + WATER.pond.ripples; i++) {
+    this.surface = this.keep(createPondSurface(scene, () => this.clock.time));
+    this.pond = this.keep(scene.add.container(POND.x - POND.rx, POND.y - POND.ry).setDepth(WATER.depth.pond + 0.1));
+    for (let i = 0; i < WATER.pond.glints + WATER.pond.ripples; i++) {
       const a = i * 2.39996, radius = 0.25 + (i % 5) * 0.135;
       let x = POND.rx + Math.cos(a) * POND.rx * radius, y = POND.ry + Math.sin(a) * POND.ry * radius;
-      const wave = i < WATER.pond.waves, glint = i < WATER.pond.waves + WATER.pond.glints;
-      const w = wave ? 110 + i % 3 * 15 : glint ? 42 : 22, h = wave ? 62 : glint ? 18 : 10;
-      const maxScale = wave ? 1 : glint ? 1.3 : 1.5;
-      const fitted = fitWaterPatch(x + POND.x - POND.rx, y + POND.y - POND.ry, w * maxScale / 2 + WATER.pond.waveDrift, h * maxScale / 2 + 2);
+      const glint = i < WATER.pond.glints;
+      const [w,h] = glint ? WATER.pond.glintSize : WATER.pond.rippleSize;
+      const maxScale = glint ? 1.3 : 1.5;
+      const fitted = fitWaterPatch(x + POND.x - POND.rx, y + POND.y - POND.ry, w * maxScale / 2, h * maxScale / 2);
       x = fitted.x - POND.x + POND.rx; y = fitted.y - POND.y + POND.ry;
-      const image = scene.add.image(x, y, wave || glint ? "water-waves" : "water-ripple", wave || glint ? i % 3 : 0).setDisplaySize(w, h);
+      const image = scene.add.image(x, y, glint ? "water-waves" : "water-ripple", glint ? i % 3 : 0).setDisplaySize(w, h);
       this.pond.add(image);
       const patch = { image, x, y, phase: i * 0.381966, w, h };
-      (wave ? this.waves : glint ? this.glints : this.pondRipples).push(patch);
+      (glint ? this.glints : this.pondRipples).push(patch);
     }
     this.createShore();
     for (const anchor of lilyAnchors()) {
@@ -115,18 +117,13 @@ export class WaterEffects {
   private draw(time: number) {
     const view = this.scene.cameras.main.worldView;
     const pondVisible = Phaser.Geom.Intersects.RectangleToRectangle(view, new Phaser.Geom.Rectangle(POND.x - POND.rx - 20, POND.y - POND.ry - 20, POND.rx * 2 + 40, POND.ry * 2 + 40));
-    this.pond.setVisible(pondVisible);
+    this.pond.setVisible(pondVisible); this.surface.setVisible(pondVisible);
     for (const leaf of this.lilies) {
       leaf.image.setVisible(pondVisible && leaf.visible);
       if (pondVisible) leaf.image.y = leaf.y + Math.sin(time / WATER.pond.lilyPeriod * Math.PI * 2 + leaf.phase) * WATER.pond.lilyAmplitude;
     }
     if (pondVisible) {
       this.pondUpdates++;
-      for (const p of this.waves) {
-        const phase = time / WATER.pond.wavePeriod * Math.PI * 2 + p.phase * Math.PI * 2;
-        p.image.setPosition(p.x + Math.sin(phase) * WATER.pond.waveDrift, p.y + Math.cos(phase * WATER.pond.verticalPhase) * WATER.pond.verticalDrift);
-        p.image.setAlpha(WATER.pond.waveAlpha * (0.48 + 0.52 * Math.sin(phase) ** 2));
-      }
       for (const p of this.glints) {
         const r = ripplePhase(time, WATER.pond.glintPeriod, p.phase);
         p.image.setAlpha(WATER.pond.glintAlpha * r.alpha).setDisplaySize(p.w * (0.9 + r.progress * 0.4), p.h);
@@ -156,7 +153,8 @@ export class WaterEffects {
   snapshot() {
     return { time: this.clock.time, running: this.clock.running, destroyed: this.destroyed,
       pondVisible: this.pond.visible, fountainVisible: this.flow.visible, pondUpdates: this.pondUpdates, fountainUpdates: this.fountainUpdates,
-      counts: { waves: this.waves.length, glints: this.glints.length, pondRipples: this.pondRipples.length, fountainRipples: this.fountainRipples.length, drops: this.drops.length, lilies: this.lilies.length, bridges: BRIDGES.length },
+      counts: { surfaces: 1, waves: 0, glints: this.glints.length, pondRipples: this.pondRipples.length, fountainRipples: this.fountainRipples.length, drops: this.drops.length, lilies: this.lilies.length, bridges: BRIDGES.length },
+      surface: { x: this.surface.x, y: this.surface.y, width: this.surface.width, height: this.surface.height, time: this.clock.time/1000, amplitude: WATER.pond.surface.amplitude },
       lilies: this.lilies.map(l => ({ x: l.image.x, y: l.image.y, anchorX: l.x, anchorY: l.y, visible: l.image.visible })),
       depths: WATER.depth, flowOffset: this.flow.tilePositionY, ownedTextures: this.textureKeys.slice() };
   }

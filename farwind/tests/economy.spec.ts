@@ -397,7 +397,7 @@ test("真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复�
 }) => {
   await page.goto("/");
   const old: any = initialState();
-  old.schema_version = 1;
+  old.schema_version = 1;old.skills={swordWind:false};
   old.map_version = 3;
   for (const key of ["coins", "equipment", "shopStock", "economyRevision"])
     delete old[key];

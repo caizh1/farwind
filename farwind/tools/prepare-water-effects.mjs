@@ -55,7 +55,7 @@ for(const [left,top] of [[70,310],[370,330],[630,570]]) {
   patches.push(await sharp(data,{raw:{width:info.width,height:info.height,channels:4}}).png().toBuffer());
 }
 const atlas=await sharp({create:{width:768,height:160,channels:4,background:"#00000000"}}).composite(patches.map((input,i)=>({input,left:i*256,top:0}))).png().toBuffer();
-await save("water-waves",atlas,"三处不同原池水笔触提取的局部波纹及反光，非平铺，不移动整片底图",pond,{帧尺寸:[256,160],帧数:3,处理:"仅贴片边缘alpha渐变，未模糊整片水面或镜像拼贴"});
+await save("water-waves",atlas,"三处不同原池水笔触提取的局部反光，非平铺；池水主体使用原纹理局部采样起伏",pond,{帧尺寸:[256,160],帧数:3,处理:"仅贴片边缘alpha渐变，未模糊整片水面或镜像拼贴"});
 for(const [id,w,h] of [["water-lily",80,48],["water-flower",32,24]]) {
   const source=`${root}/${id}-source.png`;
   try{await access(source);}catch{continue;}
@@ -67,7 +67,7 @@ for(const [id,w,h] of [["water-lily",80,48],["water-flower",32,24]]) {
   await save(id,await sharp(source).extract(crop).resize(w,h,{fit:"contain",background:"#00000000"}).png().toBuffer(),id==="water-lily"?"围绕原18个固定锚点微浮动的手绘荷叶":"随所属荷叶同步运动的手绘小荷花",`water-effects/${id}-source.png`,{源尺寸:[info.width,info.height],源有效裁切:crop,显示尺寸:id==="water-lily"?[20,12]:[8,6]});
 }
 const path="public/assets/manifest.json",m=JSON.parse(await readFile(path,"utf8"));
-const display={"water-flow-mask":[130,130],"water-basin-mask":[130,130],"water-flow":[130,130],"water-ripple":"喷泉基础19.5×7.8、池塘22×10，再乘0.45至1.5的扩散比例","water-splash":[8.45,8.45],"water-drop":[1.82,2.73],"water-waves":"波纹110/125/140×62，反光42×18；不同相位与轻微局部漂移"};
+const display={"water-flow-mask":[130,130],"water-basin-mask":[130,130],"water-flow":[130,130],"water-ripple":"喷泉基础19.5×7.8、池塘64×26，再乘0.45至1.5的扩散比例","water-splash":[8.45,8.45],"water-drop":[1.82,2.73],"water-waves":"反光42×18，共4处，错相渐隐；原12张漂移水纹已移除"};
 for(const record of records)if(display[record.ID])record.显示尺寸=display[record.ID];
 for(const record of records){const previous=m.资源.find(r=>r.ID===record.ID);if(previous?.摘要===record.摘要){record.验证状态=previous.验证状态;}}
 m.资源=[...m.资源.filter(r=>!records.some(n=>n.ID===r.ID)),...records];await writeFile(path,JSON.stringify(m,null,2));

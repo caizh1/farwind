@@ -99,6 +99,7 @@ export type Target = { id: string; x: number; y: number; hp: number };
 export type Attack = {
   released?:boolean;
   swordWind?:SwordWindConfig;
+  windDirection?:{x:number;y:number};
   id: number;
   comboId?: number;
   stage: number;
@@ -172,6 +173,7 @@ export function enemyTint(now: number, flashUntil: number, windup: number) {
 }
 export class CombatController {
   swordWindEnabled=false;
+  swordWindConfig:SwordWindConfig|null=null;
   chainOwner:number|null=null;
   get maxStage(){return this.swordWindEnabled?4:3;}
   parry: ParryAction | null = null;
@@ -626,7 +628,7 @@ export class CombatController {
           hit: new Set(),
           counter,
           config: resolveStrike(stage, counter),
-          swordWind:stage===4?resolveSwordWindConfig():undefined,
+          swordWind:stage===4?structuredClone(this.swordWindConfig??resolveSwordWindConfig()):undefined,
         };
         if(auto&&this.pending){this.reservationOwner=this.attack.id;this.bufferUntil=consumeAt+this.total(1)-COMBAT.chainWindow+COMBAT.buffer;}
         this.autoCounter = null;

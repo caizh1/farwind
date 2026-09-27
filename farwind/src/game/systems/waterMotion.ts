@@ -12,11 +12,20 @@ export const WATER = {
     ripplePeriod: 2200, rippleAlpha: 0.75, dropsPerImpact: 3, dropPeriod: 850, dropHeight: 13,
     splashPeriod: 1070, splashAlpha: 0.52, splashVariation: 0.15, dropAlpha: 0.85, dropSpread: 3,
   },
-  pond: { waves: 12, glints: 7, ripples: 3, waveAlpha: 0.78, glintAlpha: 0.85,
-    wavePeriod: 7200, waveDrift: 8, glintPeriod: 6300, ripplePeriod: 8200,
-    verticalDrift: 1.5, verticalPhase: 0.71, rippleAlpha: 0.32,
+  pond: { glints: 4, ripples: 4, glintAlpha: 0.68,
+    glintPeriod: 6300, ripplePeriod: 6400, rippleAlpha: 0.58,
+    rippleSize: [64, 26], glintSize: [42, 18],
+    surface: { amplitude: [4.2, 2.4], rate: [1.25, 0.83], fixedInset: 10, fadeWidth: 28, lightAmplitude: 0.035 },
     lilyAmplitude: 1.25, lilyPeriod: 5800 },
 } as const;
+
+// 与水面着色器同用的边界参数。岸内10像素完全静止，向内28像素平滑过渡。
+export function pondSurfaceStrength(x: number, y: number) {
+  const radius = Math.hypot((x-POND.x)/POND.rx, (y-POND.y)/POND.ry);
+  const minRadius = Math.min(POND.rx, POND.ry), config = WATER.pond.surface;
+  const t = Math.max(0, Math.min(1, (radius-(1-(config.fixedInset+config.fadeWidth)/minRadius))/(config.fadeWidth/minRadius)));
+  return 1-t*t*(3-2*t);
+}
 
 export class EnvironmentClock {
   time = 0;

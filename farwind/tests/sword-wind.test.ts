@@ -9,7 +9,8 @@ import {
 import { initialState, validate } from "../src/game/systems/state";
 import {
   hasSwordWind,
-  learnSwordWind,
+  completeWindLesson,
+  initialSkills,
   swordWindSource,
 } from "../src/game/systems/skills";
 import { resolveSwordWindConfig, SWORD_WIND } from "../src/data/swordWind";
@@ -86,33 +87,33 @@ function shot() {
 describe("技能状态和存档边界", () => {
   it("正式默认未学，测试授予仅影响查询，关闭无需清档", () => {
     const s = initialState();
-    expect(s.skills.swordWind).toBe(false);
+    expect(s.skills.swordWindStage).toBe(0);
     expect(hasSwordWind(s, false)).toBe(false);
     expect(hasSwordWind(s, true)).toBe(true);
     expect(swordWindSource(s, true)).toBe("测试授予");
-    expect(validate(s).skills.swordWind).toBe(false);
+    expect(validate(s).skills.swordWindStage).toBe(0);
     expect(hasSwordWind(s, false)).toBe(false);
   });
-  it("旧档缺字段默认未学；正式条件授予可保存，未配置条件不能学习", () => {
+  it("旧版缺字段默认未学；唯一学习事件授予可保存", () => {
     const s = initialState(),
       old: any = structuredClone(s);
+    old.schema_version=6;old.skills={swordWind:false};
     delete old.skills;
-    expect(validate(old).skills.swordWind).toBe(false);
-    expect(learnSwordWind(s)).toBe(false);
-    expect(learnSwordWind(s, () => false)).toBe(false);
-    expect(learnSwordWind(s, () => true)).toBe(true);
-    expect(validate(JSON.parse(JSON.stringify(s))).skills.swordWind).toBe(true);
-    expect(swordWindSource(s, false)).toBe("正式学习");
+    expect(validate(old).skills.swordWindStage).toBe(0);
+    expect(validate(s).skills.swordWindStage).toBe(0);
+    const learned=completeWindLesson(s,'windLessonResolved');
+    expect(validate(JSON.parse(JSON.stringify(learned))).skills.swordWindStage).toBe(1);
+    expect(swordWindSource(learned, false)).toBe("正式学习");
   });
   it("坏技能字段拒绝，高阶字段和临时实体不进入正式状态", () => {
     const s: any = initialState();
     s.skills.maxTargets = "all";
     s.swordWind = [{ id: 1 }];
     s.attack = attack();
-    expect(validate(s).skills).toEqual({ swordWind: false });
+    expect(validate(s).skills).toEqual(initialSkills());
     expect(validate(s)).not.toHaveProperty("swordWind");
     expect(validate(s)).not.toHaveProperty("attack");
-    s.skills.swordWind = "true";
+    s.skills.swordWindStage = "true";
     expect(() => validate(s)).toThrow("技能");
     expect(resolveSwordWindConfig().maxTargets).toBe(1);
   });
@@ -502,18 +503,16 @@ describe("连续碰撞、首目标及阻挡顺序", () => {
     expect(firstSwordWindBlocker(a, b, 14, p.reverse())?.id).toBe("近");
     expect(firstSwordWindBlocker(a, b, 0, p)).toBeNull();
   });
-  it("水域阻挡，既有完整桥面通行；不继承越水豁免", () => {
+  it("剑风越水与桥面通行，人物阻挡仍由独立地形处理", () => {
     expect(
       firstSwordWindBlocker({ x: 1200, y: 1120 }, { x: 1500, y: 1120 }, 14, [])
-        ?.id,
-    ).toBe("pond");
+    ).toBeNull();
     expect(
       firstSwordWindBlocker({ x: 1090, y: 880 }, { x: 1090, y: 1450 }, 14, []),
     ).toBeNull();
     expect(
       firstSwordWindBlocker({ x: 2450, y: 1000 }, { x: 2800, y: 1000 }, 14, [])
-        ?.id,
-    ).toBe("stream");
+    ).toBeNull();
     expect(
       firstSwordWindBlocker({ x: 2450, y: 1100 }, { x: 2800, y: 1100 }, 14, []),
     ).toBeNull();

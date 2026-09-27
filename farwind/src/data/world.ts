@@ -1,3 +1,4 @@
+import {lessonProps} from './windLessons';
 import {inProtected} from "./defenseZones";
 import {
   serviceBuildings,
@@ -338,6 +339,7 @@ export const props: Prop[] = [
   },
 ];
 // 树冠与围栏沿道路边缘布置，入口保留至少 120 像素通路。
+props.push(...lessonProps);
 const trees = [
   [140, 530],
   [520, 460],
@@ -998,6 +1000,10 @@ export const enemyDefs = [
   { id: "slime-2", x: 2670, y: 1230, type: "slime" },
   { id: "leaf-1", x: 2920, y: 1070, type: "leaf" },
   { id: "leaf-2", x: 3170, y: 930, type: "leaf" },
+  // 新物种分散在独立林地，避免把主线入口变成多种长距离追击重叠的伏击区。
+  { id: "spore-1", x: 2730, y: 1840, type: "spore" },
+  { id: "boar-1", x: 3150, y: 340, type: "boar" },
+  { id: "raven-1", x: 3250, y: 1830, type: "raven" },
 ] as const;
 export function region(x: number, y: number) {
   const p={x,y},r=regionAt(p);return r.id!=="village"&&inProtected(p)?"巡逻近郊":r.name;

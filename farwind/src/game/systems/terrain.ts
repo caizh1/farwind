@@ -29,7 +29,6 @@ export function makeTerrain(this: World) {
       .get("packed-earth")
       .getSourceImage() as HTMLImageElement,
     herb = this.textures.get("herb").getSourceImage() as HTMLImageElement,
-    pond = this.textures.get("pond-water").getSourceImage() as HTMLImageElement,
     flowerBed = this.textures.get("orchard-flower-bed").getSourceImage() as HTMLImageElement;
   const groundKeys: string[] = [];
   this.events.once("shutdown", () => groundKeys.forEach(key => this.textures.remove(key)));
@@ -149,11 +148,8 @@ export function makeTerrain(this: World) {
       c.closePath();
       c.fillStyle = "#b2b57e";
       c.fill();
-      // 基础池水继续静态缓存，统一世界坐标采样；动态纹理、浅水、荷叶及桥面独立分层。
-      c.save(); c.beginPath();
-      c.ellipse(POND.x, POND.y, POND.rx, POND.ry, 0, 0, Math.PI * 2); c.clip();
-      c.drawImage(pond, POND.x - POND.rx, POND.y - POND.ry, POND.rx * 2, POND.ry * 2);
-      c.restore();
+      // 原手绘池水由独立Shader一次绘制，地面不再保留静态副本。
+      // 岸底继续缓存；水面、浅水、荷叶及桥面按原世界坐标独立分层。
       // 沿湖岸与主路之外点缀花簇，避免覆盖通行信息。
       for (const { x, y, pink } of shoreFlowers) {
         if (inReworkArea(x, y)) {

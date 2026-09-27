@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { EnvironmentClock, WATER, fountainPoint, ripplePhase, lilyAnchors, waterContains, clearOfBridges, fitWaterPatch } from "../src/game/systems/waterMotion";
+import { EnvironmentClock, WATER, fountainPoint, ripplePhase, lilyAnchors, waterContains, clearOfBridges, fitWaterPatch, pondSurfaceStrength } from "../src/game/systems/waterMotion";
 import { POND, BRIDGES, props } from "../src/data/world";
 
 describe("独立环境水效时钟", () => {
@@ -42,13 +42,28 @@ describe("水效几何与动画周期", () => {
     expect(waterContains(POND.x+POND.rx, POND.y)).toBe(false);
     expect(waterContains(POND.x, POND.y)).toBe(true);
   });
-  it("局部水纹完整运动包围矩形被同一POND边界包含，不必逐帧重画或整池滤镜", () => {
-    for (let i = 0; i < 22; i++) {
+  it("局部水纹完整运动包围矩形被同一POND边界包含", () => {
+    for (let i = 0; i < WATER.pond.glints+WATER.pond.ripples; i++) {
       const a = i * 2.39996, r = 0.25 + i % 5 * 0.135;
-      const w = i < 12 ? (110 + i % 3 * 15) / 2 + 5 : i < 19 ? 42 * 1.3 / 2 + 5 : 22 * 1.5 / 2 + 5;
-      const h = i < 12 ? 62 / 2 + 2 : i < 19 ? 18 * 1.3 / 2 + 2 : 10 * 1.5 / 2 + 2;
+      const glint = i < WATER.pond.glints, size = glint ? WATER.pond.glintSize : WATER.pond.rippleSize, scale = glint ? 1.3 : 1.5;
+      const w = size[0]*scale/2, h = size[1]*scale/2;
       const p = fitWaterPatch(POND.x + Math.cos(a)*POND.rx*r, POND.y + Math.sin(a)*POND.ry*r, w, h);
       for (const x of [-w,w]) for (const y of [-h,h]) expect(waterContains(p.x+x,p.y+y,10)).toBe(true);
+    }
+  });
+  it("岸内固定带的水面采样完全不动，内侧连续过渡，最大位移不会采出原图", () => {
+    expect(pondSurfaceStrength(POND.x,POND.y)).toBe(1);
+    for (let angle=0;angle<Math.PI*2;angle+=0.1) {
+      const edge = {x:POND.x+Math.cos(angle)*POND.rx,y:POND.y+Math.sin(angle)*POND.ry};
+      expect(pondSurfaceStrength(edge.x,edge.y)).toBe(0);
+      expect(pondSurfaceStrength(POND.x+(edge.x-POND.x)*0.96,POND.y+(edge.y-POND.y)*0.96)).toBe(0);
+    }
+    for(let x=POND.x-POND.rx;x<=POND.x+POND.rx;x+=2)for(let y=POND.y-POND.ry;y<=POND.y+POND.ry;y+=2) {
+      const strength=pondSurfaceStrength(x,y);expect(strength).toBeGreaterThanOrEqual(0);expect(strength).toBeLessThanOrEqual(1);
+      if(!waterContains(x,y))continue;
+      const dx=strength*WATER.pond.surface.amplitude[0],dy=strength*WATER.pond.surface.amplitude[1];
+      expect(x-dx).toBeGreaterThanOrEqual(POND.x-POND.rx);expect(x+dx).toBeLessThanOrEqual(POND.x+POND.rx);
+      expect(y-dy).toBeGreaterThanOrEqual(POND.y-POND.ry);expect(y+dy).toBeLessThanOrEqual(POND.y+POND.ry);
     }
   });
 });
