@@ -152,6 +152,42 @@ export function moveLife(
         cachedBlocked(body.space, x, y) || !safe({ space: body.space, x, y }),
       clear: (a: Point, b: Point) => cachedLine(body.space, a, b),
     };
+  // 共用房门的已有重叠先局部散开，不必等完整路线规划；每步仍遵守碰撞与安全。
+  if (peers.some((p) => p.space === body.space && distance(p, body) < 18)) {
+    const dx = goal.x - body.x,
+      dy = goal.y - body.y,
+      len = Math.hypot(dx, dy),
+      step = Math.min(len, (LIFE.speed * ms) / 1000),
+      free = [
+        [dx, dy],
+        [-dy, dx],
+        [dy, -dx],
+        [-dx, -dy],
+      ]
+        .map(([x, y]) => ({
+          space: body.space,
+          x: body.x + (x / len) * step,
+          y: body.y + (y / len) * step,
+        }))
+        .find(
+          (q) =>
+            !query.blocked(q.x, q.y) &&
+            query.clear(body, q) &&
+            peers.every(
+              (p) =>
+                p.space !== body.space ||
+                distance(p, q) > Math.min(18, distance(p, body)) + 1e-7,
+            ),
+        );
+    if (free) {
+      Object.assign(body, free);
+      runtime.nav = enemyNavigation();
+      runtime.search = null;
+      runtime.stuck = 0;
+      runtime.failure = "入口侧让，先分离已有重叠";
+      return false;
+    }
+  }
   let waypoint: Point | undefined;
   if (!query.blocked(goal.x, goal.y) && query.clear(body, goal) && safe(goal)) {
     waypoint = goal;

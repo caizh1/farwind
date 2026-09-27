@@ -1,0 +1,46 @@
+{
+  "说明": "5173复核；保留首轮结果。本轮直接使用5173当前源码和素材，独立测试浏览器上下文不修改用户Chrome存档。检查时间为2026-09-27下午。",
+  "首次水景专项": {
+    "命令": "FARWIND_WATER_EVIDENCE_DIR=docs/water-effects/instance-5173/behavior npx playwright test --config .water-local/instance-5173.config.ts",
+    "结果": "4项通过，1.1分钟；以下记录来自该次实际终端输出",
+    "用例": [
+      {
+        "名称": "water-motion-local",
+        "秒": 7.2
+      },
+      {
+        "名称": "water-lifecycle",
+        "秒": 8.5
+      },
+      {
+        "名称": "water-navigation",
+        "秒": 42.3
+      },
+      {
+        "名称": "water-hitstop-culling",
+        "秒": 6.2
+      }
+    ]
+  },
+  "强化门槛复核": {
+    "命令": "同一配置加-g water-motion-local",
+    "结果": "1项通过，8.3秒；原始JSON见browser-results.json；本次只增加了可见性强度断言，没有放宽原断言"
+  },
+  "默认视口录屏": {
+    "结果": "1280×800/DPR1、1920×1080/DPR1.5全部通过；正常HUD、默认缩放，6组原始截图采样通过强化门槛",
+    "证据": "default-view-results.json"
+  },
+  "类型检查": "npm run typecheck通过，另npm run build内部再次执行类型检查并通过",
+  "水效逻辑": "npx vitest run tests/water-motion.test.ts：5项通过",
+  "全量单测": {
+    "命令": "npm run test",
+    "结果": "本轮22个文件、442项：441通过、1失败；耗时166.41秒，已执行结束",
+    "失败文件": "tests/day-night.test.ts:64",
+    "失败用例": "营房共用出口重叠可逐步分离返岗，不进入新的同伴重叠",
+    "实际错误": "expect(Math.hypot(body.x-peer.x,body.y-peer.y)).toBeGreaterThan(0)，实际为0",
+    "说明": "居民路径用例；本次没有修改其实现或断言，不宣称全量通过"
+  },
+  "构建": "npm run build通过；保留原有大chunk提示",
+  "未验证": "未能读取用户既有Chrome标签页：系统原生窗口捕获报-3811；因此没有把该标签页未刷新或缓存旧代码认定为事实。直接5173新页面的运行、HTTP素材及动画已验证。本轮未重新执行145项全量浏览器回归或长期性能测试。",
+  "审查": "VERDICT: PASS，仅本次水效增强；P0/P1 BLOCKERS为空。"
+}

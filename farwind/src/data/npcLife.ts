@@ -59,6 +59,12 @@ export const LIFE = {
   pathRetryMs: 1800,
   transferMs: 1500,
   pathNodesPerBatch: 64,
+  speechMs: 4500,
+  speechAreaMs: 14000,
+  speechPersonMs: 45000,
+  speechRadius: 260,
+  carriedMedicine: 2,
+  carriedWood: 2,
 } as const;
 // 楼梯落脚位逐项核验：北塔下方是旧风塔，南塔下方是工坊边缘，不能统一偏移。
 export const GUARD_LANDINGS: Partial<Record<GuardId, Place>> = {

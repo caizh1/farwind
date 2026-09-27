@@ -54,7 +54,7 @@ test("玩家真实攻击来袭怪并在村门内实际受击，不污染固定�
  await expect.poll(async()=>(await read(page)).state.defense.raid.members[0].hp).toBe(30);
  await expect.poll(async()=>(await read(page)).state.player.hp,{timeout:15000}).toBe(90);
  const hurt=await read(page);expect(regionAt(hurt.state.player).id).toBe('village');
- expect(hurt.contacts.some((c:any)=>c.id.startsWith('east-raid-1:1:')&&c.result==='hurt')).toBe(true);
+ if(!process.env.FARWIND_PRODUCTION)expect(hurt.contacts.some((c:any)=>c.id.startsWith('east-raid-1:1:')&&c.result==='hurt')).toBe(true);
  expect([hurt.state.quest,hurt.state.killed,hurt.state.bag,hurt.state.coins]).toEqual([before.quest,before.killed,before.bag,before.coins]);
  await page.screenshot({path:`${root}/player-raid-contact.png`});
  await page.keyboard.press('Escape');await page.getByRole('button',{name:'保存旅途',exact:true}).click();
@@ -64,6 +64,7 @@ test("玩家真实攻击来袭怪并在村门内实际受击，不污染固定�
  await writeFile(`${root}/player-raid-contact.json`,JSON.stringify({说明:'正式J攻击与怪物接触造成伤害，门内没有按横坐标无敌；历史存档只建立前提。',受击:hurt.state,接触:hurt.contacts,重载:restored.state.defense},null,2));
 });
 test("保留新剑风与弹反入口，真实第四刀和K可命中动态来袭怪",async({page})=>{
+ test.skip(!!process.env.FARWIND_PRODUCTION,"调试轨迹仅在冻结开发源码回归，生产版保持不暴露诊断。");
  await mkdir(root,{recursive:true});await page.goto('/');const s=initialState();s.player.x=2050;s.player.y=1080;
  s.skills.swordWind=true;s.killed=['slime-1','slime-2','leaf-1','leaf-2'];
  s.defense=prepareEastRaid(s.defense,{x:930,y:1220});for(const g of s.defense.guards)Object.assign(g,{hp:0,dead:true,mode:'dead'});

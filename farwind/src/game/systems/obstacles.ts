@@ -165,14 +165,21 @@ export const clearMeleeLine = (a: Point, b: Point, targetId?: string) =>
 export type FiringPort = {origin: Point; lowCoverIds: readonly string[]; structureId?: string};
 // 高处射击独立于脚底／水域。仅登记的射击口可越过己方低墙，高墙不能豁免。
 export function shotLineBlocker(a:Point,b:Point,port?:FiringPort,objects:readonly Prop[]=props) {
-  if([a,b].some(p=>p.x<30||p.x>WORLD.width-30||p.y<80||p.y>WORLD.height-30))return "world-edge";
-  return objects.find(p=>{
-    if(!p.solid)return false;
+  return shotLineImpact(a,b,port,objects)?.id;
+}
+export function shotLineImpact(a:Point,b:Point,port?:FiringPort,objects:readonly Prop[]=props){
+  const inside=(p:Point)=>p.x>=30&&p.x<=WORLD.width-30&&p.y>=80&&p.y<=WORLD.height-30;
+  let first: {id:string;fraction:number}|undefined;
+  if(!inside(a))return {id:'world-edge',fraction:0};
+  if(!inside(b))first={id:'world-edge',fraction:rectInterval(a,b,{left:30,right:WORLD.width-30,top:80,bottom:WORLD.height-30})?.[1]??0};
+  for(const p of objects){
+    if(!p.solid)continue;
     const fromPort=port && Math.hypot(a.x-port.origin.x,a.y-port.origin.y)<=2;
     const permitted=fromPort && p.owner==="village" &&
       (p.cover==="low" && port.lowCoverIds.includes(p.id) || p.id===port.structureId);
     const high=p.cover==="high" || ["house","shop","tower","smith-building","inn-building"].includes(p.art);
     const bounds=high ? {left:p.x-p.w/2,right:p.x+p.w/2,top:p.y-p.h,bottom:p.y} : propBounds(p);
-    return !permitted && !!rectInterval(a,b,bounds);
-  })?.id;
+    const interval=!permitted&&rectInterval(a,b,bounds);
+    if(interval&&(!first||interval[0]<first.fraction))first={id:p.id,fraction:interval[0]};
+  }return first;
 }

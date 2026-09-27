@@ -1,0 +1,19 @@
+
+> farwind@0.1.0 build
+> tsc --noEmit && vite build --outDir .parry-local/safety/production-latest
+
+vite v8.3.1 building client environment for production...
+transforming...
+✓ 73 modules transformed.
+rendering chunks...
+computing gzip size...
+.parry-local/safety/production-latest/index.html                     0.66 kB │ gzip:   0.40 kB
+.parry-local/safety/production-latest/assets/index-XnLvvJ38.css     16.10 kB │ gzip:   4.46 kB
+.parry-local/safety/production-latest/assets/index-CmbEgioC.js   1,699.50 kB │ gzip: 472.25 kB
+
+✓ built in 505ms
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

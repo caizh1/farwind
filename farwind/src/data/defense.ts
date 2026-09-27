@@ -69,6 +69,12 @@ export type GuardId = typeof GUARD_DEFS[number]["id"];
 export const RAID_SPAWNS = [{ x: 2430, y: 1080 }, { x: 2390, y: 1140 }, { x: 2470, y: 1120 }] as const;
 export const DEFENSE = { regenWait: 8000, regenPerSecond: 0.0075, retreatHP: 0.35,
   resumeHP: 0.65, speed: 100, enemySpeed: 66, arrowSpeed: 430, arrowLife: 1800,
-  arrowLimit: 12, unitLimit: 4, eventLimit: 120000 } as const;
-export const RAID_TIMING = { protection: 300000, minInterval: 240000, maxInterval: 480000,
-  warning: 3000, retry: 10000, checkpoint: 20000 } as const;
+  arrowLimit: 12, unitLimit: 3, historyUnitLimit: 4, arrowRange: 774, eventLimit: 120000 } as const;
+export const RAID_TIMING = { protection: 300000, minInterval: 480000, maxInterval: 900000,
+  warning: 3000, retry: 20000, checkpoint: 20000 } as const;
+export const DEFENSE_RULES = { health: .8, scan: 150, approach: 400, lost: 1000,
+  pursuit: 8000, reacquire: 2000, stuck: 2000, observationRange: 450 } as const;
+export function nextDefenseRandom(seed: number) {
+  seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; return seed >>> 0;
+}
+export const raidInterval = (seed: number) => RAID_TIMING.minInterval + seed % (RAID_TIMING.maxInterval - RAID_TIMING.minInterval + 1);

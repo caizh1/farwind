@@ -1,7 +1,7 @@
 import {DAY_NIGHT as C} from "../../data/dayNight";
 import {RAID_GATES,DEFENSE,type GateId} from "../../data/defense";
 import {dayNumber,nightWindowEnd,crossedBoundaries,minuteOfDay} from "./worldClock";
-import {nextRandom,prepareRaid} from "./defense";
+import {nextRandom,prepareRaid,EastDefense} from "./defense";
 import type {State} from "./state";
 import type {Rect,Point} from "./obstacles";
 export type NightPlan={night:number;at:number;gate:GateId;count:number;outcome:"quiet"|"pending"|"started"|"cancelled"|"skipped";raidSequence:number|null};
@@ -13,7 +13,7 @@ export function validateNight(s:State){
   if(!n||!integer(n.takeoverNight)||n.takeoverNight<1||n.takeoverNight>dayNumber(s.time)+1||typeof n.discovered!=="boolean"||p===undefined)throw Error("昼夜存档字段无效。");
   if(p!==null&&(!p||!integer(p.night)||p.night<1||p.night<n.takeoverNight||p.night>dayNumber(s.time)||s.time<(p.night-1)*C.day+C.dusk||
     !Number.isFinite(p.at)||p.at<(p.night-1)*C.day+C.raidStart||p.at>=nightWindowEnd(p.night)||
-    !RAID_GATES.some(g=>g.id===p.gate)||!Number.isInteger(p.count)||p.count<2||p.count>4||
+    !RAID_GATES.some(g=>g.id===p.gate)||!Number.isInteger(p.count)||p.count<1||p.count>DEFENSE.historyUnitLimit||
     !["quiet","pending","started","cancelled","skipped"].includes(p.outcome)||
     (p.outcome==="started"? !integer(p.raidSequence!)||p.raidSequence!<1||p.raidSequence!>s.defense.sequence:p.raidSequence!==null)||
     (p.night===1&&p.outcome!=="quiet"&&p.outcome!=="skipped")||
@@ -27,7 +27,7 @@ export function validateNight(s:State){
 }
 export function makeNightPlan(s:State,night:number):NightPlan{
   const seed=nextRandom((s.defense.seed^Math.imul(night,2654435761))>>>0||1729),r=nextRandom(seed);
-  return {night,at:(night-1)*C.day+C.raidStart+r%210,gate:RAID_GATES[seed%3].id,count:2+r%Math.max(1,Math.min(4,DEFENSE.unitLimit)-1),
+  return {night,at:(night-1)*C.day+C.raidStart+r%210,gate:RAID_GATES[seed%3].id,count:1+r%DEFENSE.unitLimit,
     outcome:night===1||seed%4===0?"quiet":"pending",raidSequence:null};
 }
 // 只在常规推进的黄昏边界制定计划；加载不调用本函数，长跨度不回放历史。
@@ -44,11 +44,22 @@ export function mayStartNight(s:State){
   return !!p&&p.outcome==="pending"&&s.time>=p.at&&s.time<nightWindowEnd(p.night)&&minuteOfDay(s.time)>=C.raidStart&&
     !d.raid&&!d.protectionMs&&!d.cooldownMs&&!d.retryMs;
 }
-export function nightWarningSnapshot(s:State,view?:Rect,occupied:readonly Point[]=[]){
+export class RaidDeferredError extends Error {}
+export function nightWarningSnapshot(s:State,view?:Rect,occupied:readonly Point[]=[],defense?:EastDefense){
   if(!mayStartNight(s))throw Error("当前夜间计划尚不能启动。");
   const next=structuredClone(s),p=next.night.plan!;
-  if(occupied.length+next.defense.guards.length+p.count>24)throw Error("当前人口达到上限。");
-  next.defense=prepareRaid(next.defense,next.player,p.gate,p.count,true,view,occupied);
+  // 历史已出生四怪原样恢复；旧待定计划尚未出生，按新事件上限准备。
+  const count=Math.min(p.count,DEFENSE.unitLimit);
+  const admission=defense??new EastDefense(structuredClone(s.defense),0);
+  if(!defense)admission.rebind(s.defense);
+  const player=s.life.playerSpace==="village"?s.player:{x:-10000,y:-10000};
+  const visible=s.life.playerSpace==="village"?view:undefined;
+  const first=RAID_GATES.findIndex(g=>g.id===p.gate);
+  const gate=RAID_GATES.map((_,i)=>RAID_GATES[(first+i)%RAID_GATES.length]).find(g=>
+    admission.canScheduleAtGate(g.id,player,g.spawns.slice(0,count),visible,occupied));
+  if(!gate)throw new RaidDeferredError("三门防线健康、岗位或生成条件尚不满足，延后来袭。");
+  next.defense=prepareRaid(next.defense,player,gate.id,count,true,visible,occupied);
+  p.gate=gate.id;p.count=count;
   p.outcome="started";p.raidSequence=next.defense.sequence;
   return next;
 }

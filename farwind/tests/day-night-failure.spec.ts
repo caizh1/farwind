@@ -12,15 +12,16 @@ function planned(time:number,at:number){const s=initialState();s.time=2460;s.def
 async function failWarningWrite(p:Page){await p.addInitScript(()=>{const put=IDBObjectStore.prototype.put;IDBObjectStore.prototype.put=function(...a:Parameters<IDBObjectStore["put"]>){if((a[0]as any).night?.plan?.outcome==="started"){IDBObjectStore.prototype.put=put;(window as any).__testWarningFailed=true;throw Error("测试预警写入失败");}return put.apply(this,a);};});}
 async function pause(p:Page){await p.keyboard.press("Escape");await p.waitForFunction(()=> (window as any).__farwind().mode==="pause");}
 test("预警写失败不出生，同页继续按原计划重试",async({page})=>{
- const s=planned(2870,2870.1);await failWarningWrite(page);await fixture(page,s);await page.waitForFunction(()=> (window as any).__testWarningFailed,undefined,{timeout:15000});
+ const s=planned(2700,2700.1);await failWarningWrite(page);await fixture(page,s);await page.waitForFunction(()=> (window as any).__testWarningFailed,undefined,{timeout:15000});
  const failed=(await read(page)).state;expect(failed.night.plan).toEqual(s.night.plan);expect(failed.defense.sequence).toBe(0);expect(failed.defense.raid).toBeNull();await expect(page.locator("#toast")).toContainText("测试预警写入失败");
- await pause(page);await page.getByRole("button",{name:"保存并返回标题"}).click();await page.getByRole("button",{name:"继续旅途",exact:true}).click();
- await expect.poll(async()=>(await read(page)).state.night.plan.outcome,{timeout:20000}).toBe("started");const n=(await read(page)).state;
+ expect((await read(page)).mode).toBe("pause");await page.getByRole("button",{name:"保存并返回标题"}).click();await page.getByRole("button",{name:"继续旅途",exact:true}).click();
+ await expect.poll(async()=>(await read(page)).state.night.plan.outcome,{timeout:40000}).toBe("started");const n=(await read(page)).state;
  expect(n.defense.sequence).toBe(1);expect(n.night.plan.raidSequence).toBe(1);for(const k of ["night","at","gate","count"]as const)expect(n.night.plan[k]).toBe(s.night.plan![k]);expect(n.defense.seed).toBe(s.defense.seed);
 });
 test("窗口末端预警写失败，午夜取消且不补刷",async({page})=>{
- const s=planned(2878,2879.8);await failWarningWrite(page);await fixture(page,s);await page.waitForFunction(()=> (window as any).__testWarningFailed,undefined,{timeout:15000});
- await expect.poll(async()=>(await read(page)).state.night.plan.outcome).toBe("cancelled");await page.waitForTimeout(5500);const n=(await read(page)).state;
+ const s=planned(2870,2870.1);await failWarningWrite(page);await fixture(page,s);await page.waitForFunction(()=> (window as any).__testWarningFailed,undefined,{timeout:15000});
+ const frozen=await read(page);expect(frozen.mode).toBe("pause");await page.waitForTimeout(500);expect((await read(page)).state.time).toBe(frozen.state.time);await page.getByRole("button",{name:"继续旅途",exact:true}).click();
+ await expect.poll(async()=>(await read(page)).state.night.plan.outcome,{timeout:15000}).toBe("cancelled");await page.waitForTimeout(5500);const n=(await read(page)).state;
  expect(n.defense.sequence).toBe(0);expect(n.defense.raid).toBeNull();expect(n.night.plan.at).toBe(s.night.plan!.at);expect(n.time).toBeGreaterThan(2880);
 });
 test("满包夜风不吞奖励，真实整理后领取且重载不能复领",async({page})=>{

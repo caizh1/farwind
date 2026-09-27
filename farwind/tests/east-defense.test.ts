@@ -66,7 +66,7 @@ describe("东门真实模拟与数据边界",()=>{
   });
   it("已放出的箭具有飞行时间、单次命中与寿命，重载不补箭伤",()=>{
     const s=prepareEastRaid(initialDefense(),player),d=new EastDefense(s,0),e=d.enemies[0],g=s.guards[2];
-    d.fire(g,e,"arrow-test");expect(d.arrows).toHaveLength(1);expect(e.hp).toBe(48);
+    Object.assign(e,{x:2260,y:1090});d.sync();d.fire(g,e,"arrow-test");expect(d.arrows).toHaveLength(1);expect(e.hp).toBe(48);
     d.updateArrows(1);expect(e.hp).toBe(48);expect(d.arrows[0].travelled).toBeGreaterThan(0);
     const reload=new EastDefense(validateDefense(s),0);expect(reload.arrows).toEqual([]);expect(reload.enemies[0].hp).toBe(48);
     d.updateArrows(1500);expect(e.hp).toBe(26);expect(d.arrows).toEqual([]);

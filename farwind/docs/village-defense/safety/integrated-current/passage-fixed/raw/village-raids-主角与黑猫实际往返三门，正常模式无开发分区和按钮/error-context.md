@@ -1,0 +1,97 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: village-raids.spec.ts >> 主角与黑猫实际往返三门，正常模式无开发分区和按钮
+- Location: tests/village-raids.spec.ts:45:1
+
+# Error details
+
+```
+Error: expect(locator).toBeVisible() failed
+
+Locator: getByRole('heading', { name: '东门驻防', exact: true })
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" getByRole('heading', { name: '东门驻防', exact: true }) with timeout 5000ms
+  - waiting for getByRole('heading', { name: '东门驻防', exact: true })
+
+```
+
+```yaml
+- status: 抵达 · 风铃村
+- dialog "卫兵 · 青禾":
+  - banner:
+    - text: 风铃村 · 交谈
+    - heading "卫兵 · 青禾" [level=1]
+  - paragraph: 值守或沿路返回岗位。训练后与居民交谈。守住村门并平安下岗：刚开始。
+  - button "继续 · E": 继续
+```
+
+# Test source
+
+```ts
+  1  | import {test,expect,type Page} from '@playwright/test';
+  2  | import {mkdir,writeFile} from 'node:fs/promises';
+  3  | import {initialState,validate} from '../src/game/systems/state';
+  4  | import {nextRandom} from '../src/game/systems/defense';
+  5  | import {makeNightPlan} from '../src/game/systems/nightDirector';
+  6  | import {RAID_GATES} from '../src/data/defense';
+  7  | import {move} from './map-navigation';
+  8  | const root=process.env.FARWIND_EVIDENCE_ROOT??'docs/village-defense/m4/browser';
+  9  | const read=(p:Page)=>p.evaluate(()=>(window as any).__farwind());
+  10 | async function fixture(page:Page,s:any){validate(s);await page.waitForFunction(()=>typeof (window as any).__farwind==='function');page.once('dialog',d=>d.accept());const choose=page.waitForEvent('filechooser');await page.getByRole('button',{name:'导入存档',exact:true}).click();await(await choose).setFiles({name:'village-raid-fixture.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(s))});await page.waitForFunction(()=>(window as any).__farwind().mode==='',undefined,{timeout:8000});}
+  11 | const seedFor=(gate:number)=>{for(let seed=1;seed<1000;seed++)if(nextRandom(nextRandom(seed))%3===gate)return seed;throw Error('种子不存在');};
+  12 | test.afterEach(async({page},info)=>{if(info.status!==info.expectedStatus&&!page.isClosed()){await mkdir(root,{recursive:true});await writeFile(`${root}/failure-${info.title.includes('北门')?'north':info.title.includes('南门')?'south':'east'}.json`,JSON.stringify({说明:'失败时只读现场，首因保留。',状态:await page.evaluate(()=>(window as any).__farwind?.())},null,2));}});
+  13 | for(const [i,gate]of RAID_GATES.entries())test(`${gate.name}按有效时间自动预警、离屏自主击退和保存恢复`,async({page})=>{
+  14 |  await mkdir(root,{recursive:true});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');
+  15 |  const s=initialState();s.killed=['slime-1','slime-2','leaf-1','leaf-2'];s.quest=0;s.player.x=930;s.player.y=1220;
+  16 |  s.defense.protectionMs=0;s.defense.cooldownMs=800;s.defense.seed=seedFor(i);s.time=2700;s.night.plan={...makeNightPlan(s,2),at:2700.1,gate:gate.id,count:2,outcome:"pending"};await fixture(page,s);
+  17 |  await expect.poll(async()=>(await read(page)).state.defense.raid?.phase).toBe('warning');
+  18 |  await expect.poll(async()=>(await read(page)).defense.awaitingCheckpoint).toBe(false);
+  19 |  await page.keyboard.press('Escape');const paused=await read(page);expect(paused.state.defense.raid.gateId).toBe(gate.id);expect(paused.defense.enemies).toEqual([]);
+  20 |  await page.waitForTimeout(700);expect((await read(page)).state.defense).toEqual(paused.state.defense);
+  21 |  await page.getByRole('button',{name:'保存旅途',exact:true}).click();await expect(page.locator('#toast')).toContainText('已保存');
+  22 |  const stored=(await read(page)).state.defense;await page.reload();await page.waitForTimeout(700);await page.getByRole('button',{name:'继续旅途',exact:true}).click();
+  23 |  expect((await read(page)).state.defense.sequence).toBe(1);expect((await read(page)).defense.arrows).toEqual([]);
+  24 |  await page.waitForFunction(()=>(window as any).__farwind().defense.enemies.length>=2);
+  25 |  await expect.poll(async()=>(await read(page)).defense.history.some((h:any)=>h.kind==='shot')).toBe(true);
+  26 |  const active=await read(page);if(active.session)expect(active.session.combat.hitStopRemaining).toBe(0);
+  27 |  await page.screenshot({path:`${root}/${gate.id}-offscreen.png`});
+  28 |  await expect.poll(async()=>(await read(page)).state.defense.raid,{timeout:60000}).toBeNull();
+  29 |  await expect.poll(async()=>{const d=await read(page);return !d.defense.critical&&!d.defenseCheckpointPending;}).toBe(true);
+  30 |  const end=await read(page);expect(end.state.defense.guards.every((g:any)=>!g.dead)).toBe(true);expect(end.state.defense.cooldownMs).toBeGreaterThanOrEqual(479000);
+  31 |  expect([end.state.quest,end.state.killed,end.state.bag,end.state.coins]).toEqual([s.quest,s.killed,s.bag,s.coins]);
+  32 |  await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();const restored=await read(page);
+  33 |  expect(restored.state.defense.completedSequence).toBe(1);expect(restored.state.defense.raid).toBeNull();expect(restored.state.defense.guards.map((g:any)=>g.hp)).toEqual(end.state.defense.guards.map((g:any)=>g.hp));
+  34 |  await writeFile(`${root}/${gate.id}-runtime.json`,JSON.stringify({说明:'正式导入只建立时间边界和有效历史；未修改运行状态，自动调度、正式AI与箭矢完成防御。玩家离屏，无离线推进。',预警:stored,运行:active.defense,结束:end.state.defense,重载:restored.state.defense,页面错误:errors},null,2));expect(errors).toEqual([]);
+  35 | });
+  36 | test('自动预警保存事务中止时回滚，原计划重试后出生',async({page})=>{
+  37 |  await mkdir(root,{recursive:true});await page.addInitScript(()=>{const put=IDBObjectStore.prototype.put;IDBObjectStore.prototype.put=function(v,k){const r=put.call(this,v,k);if(v.night?.plan?.outcome==='started')r.addEventListener('success',()=>{if((window as any).__abortRaid)this.transaction.abort();},{once:true});return r;};});
+  38 |  await page.goto('/');const s=initialState();s.time=2700;s.defense.protectionMs=0;s.defense.cooldownMs=800;s.night.plan={...makeNightPlan(s,2),at:2700.1,gate:'east-gate',count:2,outcome:'pending'};await page.evaluate(()=>(window as any).__abortRaid=true);await fixture(page,s);
+  39 |  await expect(page.locator('#toast')).toContainText('预警尚未保存，已暂停');const fail=await read(page);expect(fail.defense.enemies).toEqual([]);expect(fail.state.defense.sequence).toBe(0);expect(fail.state.defense.raid).toBeNull();expect(fail.state.night.plan).toEqual(s.night.plan);
+  40 |  expect(fail.mode).toBe('pause');const paused=(await read(page)).state.defense;await page.waitForTimeout(3500);expect((await read(page)).defense.enemies).toEqual([]);expect((await read(page)).state.defense).toEqual(paused);
+  41 |  await page.evaluate(()=>(window as any).__abortRaid=false);await page.getByRole('button',{name:'保存旅途',exact:true}).click();await expect(page.locator('#toast')).toContainText('已保存');
+  42 |  await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().defense.enemies.length>=2,undefined,{timeout:40000});
+  43 |  const recovery=await read(page);expect(recovery.state.defense.sequence).toBe(1);expect(recovery.state.night.plan.raidSequence).toBe(1);expect(recovery.state.night.plan.at).toBe(s.night.plan.at);await writeFile(`${root}/warning-save-abort.json`,JSON.stringify({说明:'故障只注入IDB事务；预警副本未提交不发布，不出生。重载继续原计划，正式预警成功后沿用原驻防。',失败:fail.defense,恢复:recovery.defense},null,2));
+  44 | });
+  45 | test('主角与黑猫实际往返三门，正常模式无开发分区和按钮',async({page})=>{
+  46 |  await mkdir(root,{recursive:true});await page.goto('/');const s=initialState();s.player.x=820;s.player.y=450;await fixture(page,s);
+  47 |  const records:any[]=[];
+  48 |  for(const [name,x,y,ix,iy]of [['north',820,130,820,380],['south',900,1990,900,1720],['east',2260,1080,1990,1080]]as const){
+  49 |   await move(page,x,y);await page.waitForFunction(()=>{const d=(window as any).__farwind();const c=d.companion;return Math.hypot(c.x-d.state.player.x,c.y-d.state.player.y)<120;});
+  50 |   const a=await read(page);expect(Math.hypot(a.companion.x-x,a.companion.y-y)).toBeLessThan(125);expect(a.companion.blocked).toBe(false);records.push({出口:name,主角:a.state.player,黑猫:a.companion});await page.screenshot({path:`${root}/${name}-passage.png`});await move(page,ix,iy);
+  51 |  }
+  52 |  expect((await read(page)).state.player.hp).toBe(100);await writeFile(`${root}/three-gate-passage.json`,JSON.stringify({说明:'全部位置推进来自真实键盘，诊断只读。',记录:records},null,2));
+> 53 |  await move(page,1960,1230);await page.keyboard.press('e');await expect(page.getByRole('heading',{name:'东门驻防',exact:true})).toBeVisible();await expect(page.locator('#defense-drill')).toHaveCount(0);
+     |                                                                                                                             ^ Error: expect(locator).toBeVisible() failed
+  54 | });
+  55 | 
+```

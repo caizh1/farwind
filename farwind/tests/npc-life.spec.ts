@@ -1,6 +1,9 @@
 import { prepareRaid } from "../src/game/systems/defense";
 import { test, expect, type Page } from "@playwright/test";
 import { initialState } from "../src/game/systems/state";
+import { NpcLife } from "../src/game/systems/npcLife";
+import { EastDefense } from "../src/game/systems/defense";
+import { FACILITIES } from "../src/data/npcLife";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { move } from "./map-navigation";
 test.use({ headless: false });
@@ -40,6 +43,100 @@ async function roomMove(page: Page, x: number, y: number) {
     }
   }
 }
+test("补给演练：药房装药中保存、重载、真实领取和到场救护", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  const state = initialState();
+  state.time = 540;
+  state.life.playerSpace = "healer-home";
+  Object.assign(state.player, { x: 830, y: 845 });
+  const life = new NpcLife(state, new EastDefense(state.defense, 0)),
+    healer = state.life.people[1];
+  healer.gear = "carried";
+  Object.assign(
+    healer.body!,
+    FACILITIES.find((f) => f.id === "pharmacy")!.place,
+  );
+  life.begin(
+    healer,
+    life.candidates(healer).find((c) => c.facility === "pharmacy")!,
+  );
+  healer.action!.phase = "perform";
+  await page.goto("/?npcDebug=1");
+  page.once("dialog", (d) => d.accept());
+  const chooser = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "导入存档" }).click();
+  await (
+    await chooser
+  ).setFiles({
+    name: "medicine-work-save.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(state)),
+  });
+  await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
+  await page.getByRole("button", { name: "NPC 调试", exact: true }).click();
+  await page.getByLabel("观察居民").selectOption("elder");
+  await page.getByRole("button", { name: "调试伤情", exact: true }).click();
+  await page.getByRole("button", { name: "NPC 调试", exact: true }).click();
+  await page.waitForFunction(
+    () =>
+      (window as any).__farwind().state.life.people[1].action?.phase ===
+      "stock",
+  );
+  const mid = await read(page),
+    n = mid.state.life.people[1];
+  expect(n.body.space).toBe("healer-home");
+  expect(Math.hypot(n.body.x - 830, n.body.y - 800)).toBeLessThan(6);
+  expect(n.supplies.medicine).toBe(0);
+  expect(mid.state.life.stores.medicine).toBe(state.life.stores.medicine);
+  await page.screenshot({
+    path: "docs/npc-life/evidence/medicine-collection.png",
+  });
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "保存旅途", exact: true }).click();
+  await expect(page.locator("#toast")).toContainText("已保存");
+  await page.reload();
+  await page.getByRole("button", { name: "继续旅途" }).click();
+  await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
+  await page.waitForFunction(
+    () =>
+      (window as any).__farwind().state.life.people[1].supplies.medicine === 2,
+  );
+  const stocked = await read(page);
+  expect(stocked.state.life.stores.medicine).toBe(
+    mid.state.life.stores.medicine - 2,
+  );
+  expect(stocked.state.bag).toEqual(mid.state.bag);
+  await page.waitForFunction(
+    () =>
+      (window as any)
+        .__farwind()
+        .state.life.events.some((e: any) => e.kind === "care"),
+    null,
+    { timeout: 90000 },
+  );
+  const recovered = await read(page);
+  expect(recovered.state.life.people[1].supplies.medicine).toBe(1);
+  expect(
+    recovered.state.life.events.filter((e: any) => e.kind === "care"),
+  ).toHaveLength(1);
+  expect(
+    recovered.state.life.events.some(
+      (e: any) => e.kind === "injury" && e.debug,
+    ),
+  ).toBe(true);
+  const care = recovered.state.life.events.find((e: any) => e.kind === "care");
+  // 伤者可以先回家休养；救护必须与实际双方处于同一空间，不能假定只能室外救治。
+  expect(care.place.space).toBe(recovered.state.life.people[0].body.space);
+  expect(care.place.space).toBe(recovered.state.life.people[1].body.space);
+  expect(
+    Math.hypot(
+      recovered.state.life.people[1].body.x - care.place.x,
+      recovered.state.life.people[1].body.y - care.place.y,
+    ),
+  ).toBeLessThan(45);
+  expect(errors).toEqual([]);
+});
 test("居民真实日常、动态位置、药房室内与存档恢复", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
@@ -308,7 +405,8 @@ test("真实驻防命中形成伤情，小满携箱到场执行救治", async ({
   const state = initialState();
   state.time = 600;
   state.defense = prepareRaid(state.defense, state.player, "east-gate");
-  state.defense.guards[0].hp = 75;
+  // 与已验证的固定模拟一致：岑风保持正常健康，青禾保留旧伤，新的伤情仍由敌人命中。
+  state.defense.guards[0].hp = 180;
   state.defense.guards[1].hp = 75;
   await page.goto("/?npcDebug=1");
   page.once("dialog", (d) => d.accept());
@@ -332,18 +430,40 @@ test("真实驻防命中形成伤情，小满携箱到场执行救治", async ({
     null,
     { timeout: 60000 },
   );
-  await page.waitForFunction(
-    () => {
-      const n = (window as any).__farwind().state.life.people[1];
-      return (
-        n.action?.kind === "treat" &&
-        n.action.phase === "perform" &&
-        n.body.space === "village"
-      );
-    },
-    null,
-    { timeout: 90000 },
-  );
+  try {
+    await page.waitForFunction(
+      () => {
+        const n = (window as any).__farwind().state.life.people[1];
+        return (
+          n.action?.kind === "treat" &&
+          n.action.phase === "perform" &&
+          n.body.space === "village"
+        );
+      },
+      null,
+      { timeout: 90000 },
+    );
+  } catch (error) {
+    const snap = await read(page);
+    writeFileSync(
+      "docs/npc-life/evidence/natural-care-failure.json",
+      JSON.stringify(
+        {
+          说明: "保留真实驻防救护等待失败的首因状态，没有改生命、冻结角色或跳过断言。",
+          时间: snap.state.time,
+          药师: snap.state.life.people[1],
+          卫兵: snap.state.defense.guards,
+          库存: snap.state.life.stores,
+          任务: snap.state.life.tasks,
+          事件: snap.state.life.events,
+          诊断: snap.npcLife,
+        },
+        null,
+        2,
+      ),
+    );
+    throw error;
+  }
   await page.getByRole("button", { name: "NPC 调试", exact: true }).click();
   await page.getByLabel("观察居民").selectOption("healer");
   await page.getByRole("button", { name: "观察人物", exact: true }).click();
@@ -419,7 +539,7 @@ test("私人储物真实查看、物品随身、午饭前归还与读档", async
   await page.reload();
   await page.getByRole("button", { name: "继续旅途" }).click();
   await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
-  expect((await read(page)).state.life.version).toBe(2);
+  expect((await read(page)).state.life.version).toBe(3);
   expect((await read(page)).state.life.people[1].gear).toBe("locker");
 });
 

@@ -11,6 +11,8 @@ import {
   type SpaceId,
 } from "../../data/npcLife";
 import type { NpcLife } from "../systems/npcLife";
+import { TOWERS, GUARD_DEFS } from "../../data/defense";
+import { distance, spaceClear } from "../systems/npcNavigation";
 import { Actor } from "./actor";
 export class NpcLifeView {
   residents = new Map<
@@ -35,7 +37,21 @@ export class NpcLifeView {
     { mark: Phaser.GameObjects.Graphics; label: Phaser.GameObjects.Text }
   >();
   lastSpace = "";
+  speechText: Phaser.GameObjects.Text;
+  speechInk: Phaser.GameObjects.Graphics;
   constructor(private scene: Phaser.Scene) {
+    this.speechInk = scene.add.graphics().setDepth(9900).setVisible(false);
+    this.speechText = scene.add
+      .text(0, 0, "", {
+        fontSize: "13px",
+        color: "#493f31",
+        wordWrap: { width: 235 },
+        align: "center",
+        padding: { x: 9, y: 7 },
+      })
+      .setOrigin(0.5, 1)
+      .setDepth(9901)
+      .setVisible(false);
     for (const d of PEOPLE.slice(0, 3)) {
       const sprite = scene.add
           .sprite(0, 0, d.art, 0)
@@ -198,6 +214,28 @@ export class NpcLifeView {
       }
       g.fillStyle(0xf0e3bc).fillRect(814, 779, 50, 15);
       g.lineStyle(1, 0x587559).lineBetween(836, 780, 840, 792);
+      const n = life.data.people.find((n) => n.id === "healer")!,
+        a = n.action;
+      if (
+        a?.kind === "work" &&
+        a.facility === "pharmacy" &&
+        a.phase === "perform"
+      ) {
+        // 未完成的药草与研钵跟随真实进度；只有事务完成后公共药瓶数量才改变。
+        const stroke = Math.sin(a.progress / 180) * 5;
+        g.fillStyle(0x65885f)
+          .fillEllipse(803, 757, 17, 6)
+          .fillEllipse(801, 749, 12, 5);
+        g.fillStyle(0xb3a180).fillEllipse(850, 761, 23, 10);
+        g.lineStyle(4, 0x66513b).lineBetween(848, 757, 852 + stroke, 742);
+        g.fillStyle(0xe4d7ad).fillRect(873, 751, 19, 12);
+        g.lineStyle(2, 0x799367).lineBetween(
+          876,
+          756,
+          876 + (13 * a.progress) / a.duration,
+          756,
+        );
+      }
     }
     if (space === "elder-home") {
       g.lineStyle(2, 0x806b4b)
@@ -319,7 +357,7 @@ export class NpcLifeView {
         .setPosition(p.x, p.y + 6)
         .setDepth(depth + 1)
         .setText(
-          `${person(id)!.name} · ${p.health === "down" ? "需救护" : p.health === "convalescent" ? "休养" : n.action ? ACTION_LABELS[n.action.kind] : "等待"}`,
+          `${person(id)!.name} · ${p.health === "down" ? "需救护" : p.health === "convalescent" ? "休养" : n.action ? (n.action.phase === "stock" ? (id === "healer" ? "装药" : "取木料") : n.action.phase === "collect" ? "取物" : ACTION_LABELS[n.action.kind]) : "等待"}`,
         );
       v.tool
         .clear()
@@ -336,21 +374,103 @@ export class NpcLifeView {
           .lineStyle(2, 0x99644a)
           .lineBetween(p.x + 27, p.y - 35, p.x + 27, p.y - 27)
           .lineBetween(p.x + 23, p.y - 31, p.x + 31, p.y - 31);
+        for (let i = 0; i < n.supplies.medicine; i++)
+          v.tool
+            .fillStyle(0x7ca38c)
+            .fillRoundedRect(p.x + 18 + i * 8, p.y - 42, 6, 8, 2);
       }
-      if (life.carrying(n) && id === "carpenter")
+      if (life.carrying(n) && id === "carpenter" && !working)
         v.tool
           .lineStyle(3, 0x91663a)
           .lineBetween(p.x + 18, p.y - 27, p.x + 28, p.y - 45)
           .lineStyle(5, 0x7c8680)
           .lineBetween(p.x + 22, p.y - 43, p.x + 34, p.y - 40);
+      if (life.carrying(n) && id === "carpenter")
+        for (let i = 0; i < n.supplies.wood; i++)
+          v.tool
+            .lineStyle(5, 0xb48b53)
+            .lineBetween(
+              p.x - 25 - i * 6,
+              p.y - 31,
+              p.x - 20 - i * 6,
+              p.y - 48,
+            );
       if (life.carrying(n) && id === "elder")
         v.tool
           .fillStyle(0xe2d5af)
           .fillRoundedRect(p.x + 18, p.y - 33, 15, 20, 2)
           .lineStyle(1, 0x748875)
           .lineBetween(p.x + 21, p.y - 27, p.x + 30, p.y - 27);
-      if (working && id === "healer" && !life.carrying(n))
-        v.tool.fillStyle(0x7eaa85).fillEllipse(p.x + 24, p.y - 30, 10, 18);
+      if (working && n.action) {
+        const phase = Math.sin(n.action.progress / 160),
+          x = p.x + (v.facing === 2 ? -23 : 23);
+        if (id === "healer" && n.action.kind === "treat")
+          v.tool
+            .fillStyle(0xede1bc)
+            .fillRect(x - 7, p.y - 34 + phase * 2, 14, 9)
+            .lineStyle(1, 0x99694e)
+            .lineBetween(x, p.y - 33, x, p.y - 27);
+        if (id === "carpenter")
+          v.tool
+            .lineStyle(3, 0x95683e)
+            .lineBetween(x - 6, p.y - 29, x + 5, p.y - 43 + phase * 5)
+            .lineStyle(5, 0x828b82)
+            .lineBetween(
+              x + 1,
+              p.y - 42 + phase * 5,
+              x + 13,
+              p.y - 41 + phase * 5,
+            )
+            .fillStyle(0xb7925d)
+            .fillEllipse(x, p.y - 22, 22, 7);
+        if (id === "elder")
+          v.tool
+            .lineStyle(1.5, 0x69533c)
+            .lineBetween(x, p.y - 30, x + 8, p.y - 37 + phase * 2);
+      }
+    }
+    const speech = life.speech,
+      speaker = speech && life.body(speech.speaker),
+      n = speech && life.data.people.find((n) => n.id === speech.speaker),
+      showSpeech =
+        !!speech &&
+        !!speaker &&
+        !!n &&
+        speaker.space === space &&
+        life.live(speech.speaker) &&
+        speech.until > life.data.elapsed &&
+        (speech.urgent || n.action?.id === speech.actionId) &&
+        distance(speaker, life.state.player) < 280 &&
+        spaceClear(space, speaker, life.state.player);
+    this.speechInk.clear().setVisible(showSpeech);
+    this.speechText.setVisible(showSpeech);
+    if (showSpeech && speech && speaker) {
+      const guard = life.state.defense.guards.find(
+          (g) => g.id === speech.speaker,
+        ),
+        archer =
+          GUARD_DEFS.find((g) => g.id === speech.speaker)?.role === "archer",
+        anchor =
+          guard && archer && !guard.offDuty
+            ? TOWERS.find((t) => t.occupantGuardId === guard.id)!.perch
+            : speaker;
+      this.speechText
+        .setText(speech.text)
+        .setPosition(anchor.x, anchor.y - 107);
+      const bounds = this.speechText.getBounds();
+      this.speechInk
+        .fillStyle(speech.urgent ? 0xf6ddb5 : 0xeee5c9, 0.96)
+        .fillRoundedRect(bounds.x, bounds.y, bounds.width, bounds.height, 8)
+        .lineStyle(1.5, 0x71593f, 0.9)
+        .strokeRoundedRect(bounds.x, bounds.y, bounds.width, bounds.height, 8)
+        .fillTriangle(
+          anchor.x - 5,
+          bounds.bottom - 1,
+          anchor.x + 5,
+          bounds.bottom - 1,
+          anchor.x,
+          bounds.bottom + 6,
+        );
     }
     this.lastSpace = space;
   }

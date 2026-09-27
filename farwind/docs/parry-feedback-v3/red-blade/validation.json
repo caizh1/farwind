@@ -1,0 +1,156 @@
+{
+  "说明": "本轮实际工作区，首轮失败保留；修正测试调度及背向呈现后定向复核，没有放宽玩法或断言。原始报告的相对环境变量输出位于配置子目录，已按原内容复制索引，未重算结果。",
+  "逻辑": [
+    {
+      "阶段": "baseline",
+      "总数": 432,
+      "通过": 430,
+      "失败": 2,
+      "失败用例": [
+        "营房共用出口重叠可逐步分离返岗，不进入新的同伴重叠",
+        "生活子版本2：私人取放与备用住宿 子版本1迁移携带事实，重复加载不补充公共库存或复活卫兵"
+      ]
+    },
+    {
+      "阶段": "regression",
+      "总数": 442,
+      "通过": 441,
+      "失败": 1,
+      "失败用例": [
+        "营房共用出口重叠可逐步分离返岗，不进入新的同伴重叠"
+      ]
+    },
+    {
+      "阶段": "logic-final",
+      "总数": 93,
+      "通过": 93,
+      "失败": 0,
+      "失败用例": []
+    },
+    {
+      "阶段": "末轮全量（运行时实际测试枚举）",
+      "总数": 475,
+      "通过": 474,
+      "失败": 1,
+      "失败用例": [
+        {
+          "文件": "tests/village-raids.test.ts",
+          "名称": "三门常态防御 历史四怪事件原样恢复完成，不污染主线；新调度30场由安全规则集成测试覆盖",
+          "原因": "Error: Test timed out in 5000ms."
+        }
+      ]
+    },
+    {
+      "阶段": "防御超时模块单独复核（不改断言或超时门槛）",
+      "总数": 8,
+      "通过": 8,
+      "失败": 0,
+      "失败用例": [],
+      "历史事件用例毫秒": [
+        3987.798583
+      ]
+    }
+  ],
+  "浏览器": [
+    {
+      "阶段": "browser",
+      "通过": 11,
+      "失败": 1,
+      "耗时毫秒": 74760.41799999999,
+      "用例": [
+        {
+          "名称": "V3-AB-D-normal",
+          "结果": "passed"
+        },
+        {
+          "名称": "V3-VISUAL-perfect-hit-combo",
+          "结果": "passed"
+        },
+        {
+          "名称": "V3-VISUAL-cancel-no-false-hit",
+          "结果": "passed"
+        },
+        {
+          "名称": "V3-RED-four-directions-live-blade",
+          "结果": "passed"
+        },
+        {
+          "名称": "V3-INTEGRATION-wild-slime",
+          "结果": "passed"
+        },
+        {
+          "名称": "V3-INTEGRATION-two-enemies",
+          "结果": "passed"
+        },
+        {
+          "名称": "V3-INTEGRATION-leaf-projection",
+          "结果": "passed"
+        },
+        {
+          "名称": "V3-INTEGRATION-wild-leaf",
+          "结果": "failed"
+        },
+        {
+          "名称": "V3-INTEGRATION-death-newgame",
+          "结果": "passed"
+        },
+        {
+          "名称": "V3-INTEGRATION-defense",
+          "结果": "passed"
+        },
+        {
+          "名称": "V3-INTEGRATION-pause-reset",
+          "结果": "passed"
+        },
+        {
+          "名称": "V3-REGRESSION-unlocked-fourth",
+          "结果": "passed"
+        }
+      ]
+    },
+    {
+      "阶段": "leaf-browser",
+      "通过": 1,
+      "失败": 0,
+      "耗时毫秒": 4262.1849999999995,
+      "用例": [
+        {
+          "名称": "V3-INTEGRATION-wild-leaf",
+          "结果": "passed"
+        }
+      ]
+    },
+    {
+      "阶段": "visual-final",
+      "通过": 3,
+      "失败": 0,
+      "耗时毫秒": 27410.62,
+      "用例": [
+        {
+          "名称": "V3-AB-D-normal",
+          "结果": "passed"
+        },
+        {
+          "名称": "V3-VISUAL-perfect-hit-combo",
+          "结果": "passed"
+        },
+        {
+          "名称": "V3-RED-four-directions-live-blade",
+          "结果": "passed"
+        }
+      ]
+    },
+    {
+      "阶段": "production-browser",
+      "通过": 1,
+      "失败": 0,
+      "耗时毫秒": 5574.490000000001,
+      "用例": [
+        {
+          "名称": "V3-PRODUCTION-real-input",
+          "结果": "passed"
+        }
+      ]
+    }
+  ]
+}

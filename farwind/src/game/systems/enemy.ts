@@ -1,3 +1,4 @@
+import {inProtected} from "../../data/defenseZones";
 import { enemyDefs } from "../../data/world";
 import { createEnemyAttack, advanceEnemyAttack, ENEMY_ATTACK, delayEnemyAttack, sampleEnemyAttack, type EnemyAttack, type EnemyContact } from "./enemyAttack";
 import {
@@ -249,6 +250,8 @@ export function updateEnemy(
     e.ai = "硬直";
     return null;
   }
+  // 从局部驻防交还给野怪AI时，不把未释放的守卫攻击转嫁给玩家。
+  if(e.attack&&e.targetId&&e.targetId!=="player"){e.attack.cancelled=true;e.attack=null;e.cool=now+250;}
   if (e.attack) {
     const attack=e.attack;
     const contact=advanceEnemyAttack(attack,e,player,now,enemyAttackSpace(e));
@@ -259,6 +262,7 @@ export function updateEnemy(
     return contact;
   }
   if (d < 80 && now > e.cool && safe && clearMeleeLine(e, player)) {
+    e.targetId="player";
     e.attack=createEnemyAttack(e.id,e.attackSerial=(e.attackSerial??0)+1,e.type,now,e,player);
     e.cool=e.attack.contactAt+(e.type==="leaf"?ENEMY_ATTACK.leaf.cooldown:ENEMY_ATTACK.slime.cooldown);
     e.windup = e.attack.contactAt-now;
@@ -266,7 +270,9 @@ export function updateEnemy(
     e.nav.path = [];
     return null;
   }
-  const canChase = d < 380 && safe && distance(e, home) < 420;
+  // 近郊不主动吸引远处野怪；已在追击或被玩家挑衅的敌人继续受原家园边界约束。
+  const engaged=e.nav.mode==="chase"&&!e.nav.returning||(e.playerAggroUntil??0)>now;
+  const canChase = d < 380 && safe && distance(e, home) < 420 && (!inProtected(player)||engaged);
   if (!canChase && distance(e, home) > 8) e.nav.returning = true;
   if (e.nav.returning && distance(e, home) <= 8) e.nav.returning = false;
   const chase = canChase && !e.nav.returning;

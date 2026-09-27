@@ -1,0 +1,884 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "--config",
+      "tools/playwright-safety.config.ts",
+      "tests/safety-defense.spec.ts",
+      "tests/day-night-failure.spec.ts",
+      "tests/village-raids.spec.ts",
+      "tests/east-defense-recovery.spec.ts",
+      "tests/economy-production.spec.ts",
+      "tests/adventure.spec.ts",
+      "--workers=1"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/tools/playwright-safety.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "safety-performance.spec.ts",
+          "safety-defense.spec.ts",
+          "day-night-failure.spec.ts",
+          "village-raids.spec.ts",
+          "east-defense-recovery.spec.ts",
+          "economy-production.spec.ts",
+          "economy.spec.ts",
+          "adventure.spec.ts"
+        ],
+        "timeout": 300000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "adventure.spec.ts",
+      "file": "adventure.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "adventure-loop",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 78220,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:31:46.148Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/adventure-adventure-loop/video-1.webm"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/adventure-adventure-loop/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0e432c2735e1cb75ffbd-09fa87c054fbf0880b19",
+          "file": "adventure.spec.ts",
+          "line": 21,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "day-night-failure.spec.ts",
+      "file": "day-night-failure.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "预警写失败不出生，同页继续按原计划重试",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22667,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:33:05.164Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/day-night-failure-预警写失败不出生，同页继续按原计划重试/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e7990ee6f7fba562b52-5ad6276cafa03539a8ec",
+          "file": "day-night-failure.spec.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "title": "窗口末端预警写失败，午夜取消且不补刷",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15259,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:33:28.126Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/day-night-failure-窗口末端预警写失败，午夜取消且不补刷/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e7990ee6f7fba562b52-d771a2983722514d286d",
+          "file": "day-night-failure.spec.ts",
+          "line": 21,
+          "column": 1
+        },
+        {
+          "title": "满包夜风不吞奖励，真实整理后领取且重载不能复领",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5596,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:33:43.393Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/day-night-failure-满包夜风不吞奖励，真实整理后领取且重载不能复领/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6e7990ee6f7fba562b52-36d89b80f5142d0b8289",
+          "file": "day-night-failure.spec.ts",
+          "line": 27,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "east-defense-recovery.spec.ts",
+      "file": "east-defense-recovery.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "实际守卫死亡后IDB请求成功但事务中止，暂停反馈与手动重存可恢复",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4188,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:33:49.003Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/east-defense-recovery-实际守卫死亡后IDB请求成功但事务中止，暂停反馈与手动重存可恢复/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-4dadc449ad3c7a8dd94c",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "title": "玩家真实攻击来袭怪并在村门内实际受击，不污染固定主线结算",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5915,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:33:53.198Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/east-defense-recovery-玩家真实攻击来袭怪并在村门内实际受击，不污染固定主线结算/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-cb0b4aff485f20135c56",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 46,
+          "column": 1
+        },
+        {
+          "title": "保留新剑风与弹反入口，真实第四刀和K可命中动态来袭怪",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "调试轨迹仅在冻结开发源码回归，生产版保持不暴露诊断。",
+                  "location": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/east-defense-recovery.spec.ts",
+                    "line": 67,
+                    "column": 7
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 512,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:33:59.121Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "调试轨迹仅在冻结开发源码回归，生产版保持不暴露诊断。",
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/east-defense-recovery.spec.ts",
+                        "line": 67,
+                        "column": 7
+                      }
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/east-defense-recovery-保留新剑风与弹反入口，真实第四刀和K可命中动态来袭怪/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-20faea33154a53568f63",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 66,
+          "column": 1
+        },
+        {
+          "title": "生产构建恢复活跃演练并自主结算，查询开关不暴露开发按钮",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13374,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:33:59.641Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/east-defense-recovery-生产构建恢复活跃演练并自主结算，查询开关不暴露开发按钮/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-b0e545349b3b3ff4c96e",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 90,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "economy-production.spec.ts",
+      "file": "economy-production.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "生产构建的服务、暂停、实际成交和重载",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2678,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:34:13.026Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/economy-production-生产构建的服务、暂停、实际成交和重载/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a7c2d504b4e19f31485-f06d6cd6076f7f415804",
+          "file": "economy-production.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "safety-defense.spec.ts",
+      "file": "safety-defense.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "安全近郊实际漫步、远怪不追、主角与黑猫过门",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8748,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:34:15.723Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/safety-defense-安全近郊实际漫步、远怪不追、主角与黑猫过门/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ef109078ecafb50a4af-a7c3090f6eed2e00d9f8",
+          "file": "safety-defense.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "实机主动拦截、一人守门、塔箭命中、归岗与脱战回血",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23416,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:34:24.477Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/safety-defense-实机主动拦截、一人守门、塔箭命中、归岗与脱战回血/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ef109078ecafb50a4af-39862423cf2720878cd1",
+          "file": "safety-defense.spec.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "title": "低血三门正式调度延期，暂停双方冻结、保存重载不复活",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7261,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:34:47.899Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/safety-defense-低血三门正式调度延期，暂停双方冻结、保存重载不复活/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ef109078ecafb50a4af-836000d357e596248306",
+          "file": "safety-defense.spec.ts",
+          "line": 25,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "village-raids.spec.ts",
+      "file": "village-raids.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "东门按有效时间自动预警、离屏自主击退和保存恢复",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17769,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:34:55.180Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/village-raids-东门按有效时间自动预警、离屏自主击退和保存恢复/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ed411b8f4bd61e90f8c4-9375da10a0f0dbfbc79a",
+          "file": "village-raids.spec.ts",
+          "line": 13,
+          "column": 43
+        },
+        {
+          "title": "北门按有效时间自动预警、离屏自主击退和保存恢复",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14269,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:35:12.958Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/village-raids-北门按有效时间自动预警、离屏自主击退和保存恢复/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ed411b8f4bd61e90f8c4-d52d2f344b706e324b0f",
+          "file": "village-raids.spec.ts",
+          "line": 13,
+          "column": 43
+        },
+        {
+          "title": "南门按有效时间自动预警、离屏自主击退和保存恢复",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14931,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:35:27.236Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/village-raids-南门按有效时间自动预警、离屏自主击退和保存恢复/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ed411b8f4bd61e90f8c4-79f93fd4127c4d558043",
+          "file": "village-raids.spec.ts",
+          "line": 13,
+          "column": 43
+        },
+        {
+          "title": "自动预警保存事务中止时回滚，原计划重试后出生",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 31097,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:35:42.177Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/village-raids-自动预警保存事务中止时回滚，原计划重试后出生/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ed411b8f4bd61e90f8c4-d52be75b4b5394375de8",
+          "file": "village-raids.spec.ts",
+          "line": 36,
+          "column": 1
+        },
+        {
+          "title": "主角与黑猫实际往返三门，正常模式无开发分区和按钮",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7382,
+                  "error": {
+                    "message": "Error: page.waitForFunction: TypeError: Cannot read properties of undefined (reading 'cat')\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:3:29)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:311:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                    "stack": "Error: page.waitForFunction: TypeError: Cannot read properties of undefined (reading 'cat')\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:3:29)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:311:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:3:29)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:311:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/village-raids.spec.ts:49:35",
+                    "location": {
+                      "file": "eval at predicate (eval at evaluate (:311:30)), <anonymous>",
+                      "column": 29,
+                      "line": 3
+                    }
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "eval at predicate (eval at evaluate (:311:30)), <anonymous>",
+                        "column": 29,
+                        "line": 3
+                      },
+                      "message": "Error: page.waitForFunction: TypeError: Cannot read properties of undefined (reading 'cat')\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:3:29)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:311:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at predicate (eval at evaluate (:311:30)), <anonymous>:3:29)\n    at predicate (eval at evaluate (:311:30), <anonymous>:7:27)\n    at next (eval at evaluate (:311:30), <anonymous>:29:33)\n    at eval (eval at evaluate (:311:30), <anonymous>:42:13)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/village-raids.spec.ts:49:35"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:36:13.283Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/village-raids-主角与黑猫实际往返三门，正常模式无开发分区和按钮/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/village-raids-主角与黑猫实际往返三门，正常模式无开发分区和按钮/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/village-raids-主角与黑猫实际往返三门，正常模式无开发分区和按钮/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/final-browser/raw/village-raids-主角与黑猫实际往返三门，正常模式无开发分区和按钮/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "eval at predicate (eval at evaluate (:311:30)), <anonymous>",
+                    "column": 29,
+                    "line": 3
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ed411b8f4bd61e90f8c4-aade11b32d8aa8458392",
+          "file": "village-raids.spec.ts",
+          "line": 45,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-27T09:31:45.841Z",
+    "duration": 277640.195,
+    "expected": 15,
+    "skipped": 1,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

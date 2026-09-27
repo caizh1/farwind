@@ -32,6 +32,7 @@ import {
   type LifeNav,
 } from "./npcNavigation";
 import { resolveDamage } from "./damage";
+import { chooseSpeech, type LifeSpeech } from "./npcSpeech";
 export type Candidate = {
   kind: Activity;
   target: Place;
@@ -46,6 +47,7 @@ export class NpcLife {
   scores = new Map<string, Candidate[]>();
   metrics = { steps: 0, decisions: 0, queries: 0, ms: 0, maxMs: 0 };
   messages: string[] = [];
+  speech: LifeSpeech | null = null;
   constructor(
     public state: State,
     public defense: EastDefense,
@@ -58,6 +60,7 @@ export class NpcLife {
   rebind(state: State, defense = this.defense) {
     this.state = state;
     this.defense = defense;
+    this.speech = null;
   }
   body(id: string): Place | null {
     const n = this.data.people.find((n) => n.id === id);
@@ -96,6 +99,46 @@ export class NpcLife {
         : n.id === "elder"
           ? ["work", "habit"].includes(kind)
           : kind === "habit";
+  }
+  material(n: PersonState, kind: Activity) {
+    return n.id === "healer" && kind === "treat"
+      ? ("medicine" as const)
+      : n.id === "carpenter" && kind === "repair"
+        ? ("wood" as const)
+        : null;
+  }
+  materialSource(material: "medicine" | "wood") {
+    return FACILITIES.find(
+      (f) => f.id === (material === "medicine" ? "pharmacy" : "tools"),
+    )!.place;
+  }
+  materialReady(n: PersonState, kind: Activity) {
+    const material = this.material(n, kind);
+    if (!material) return true;
+    const needed = material === "medicine" ? 1 : 2;
+    return (
+      n.supplies[material] >= needed ||
+      (n.supplies[material] + this.data.stores[material] >= needed &&
+        this.available(this.materialSource(material)) &&
+        this.routeSafe(this.body(n.id)!, this.materialSource(material)))
+    );
+  }
+  travelPhase(n: PersonState, a: Action) {
+    const material = this.material(n, a.kind);
+    const needed = material === "medicine" ? 1 : 2;
+    a.phase = material && n.supplies[material] < needed ? "stock" : "travel";
+    a.pickup =
+      a.phase === "stock" ? { ...this.materialSource(material!) } : null;
+    if (a.phase === "stock")
+      a.facility = material === "medicine" ? "pharmacy" : "tools";
+    else if (material) {
+      this.data.reservations = this.data.reservations.filter(
+        (r) => r.owner !== n.id,
+      );
+      a.facility = null;
+    }
+    a.progress = 0;
+    this.navigation.delete(n.id);
   }
   available(place: Place) {
     return !this.data.unavailable.homes[place.space];
@@ -164,6 +207,18 @@ export class NpcLife {
         };
         n.action.phase = "collect";
         n.action.progress = 0;
+      }
+      if (
+        n.action &&
+        ["travel", "perform"].includes(n.action.phase) &&
+        this.carrying(n)
+      ) {
+        const material = this.material(n, n.action.kind);
+        if (
+          material &&
+          n.supplies[material] < (material === "medicine" ? 1 : 2)
+        )
+          this.travelPhase(n, n.action);
       }
       if (
         n.action?.task &&
@@ -474,6 +529,7 @@ export class NpcLife {
         );
     if (
       !this.available(c.target) ||
+      !this.materialReady(n, c.kind) ||
       (this.gearNeeded(n, c.kind) &&
         !this.carrying(n) &&
         !canCollect &&
@@ -529,6 +585,7 @@ export class NpcLife {
       failures: 0,
       label: c.label,
     };
+    if (!collect) this.travelPhase(n, n.action);
     n.reason = `${c.label}（评分 ${Math.round(c.score)}）`;
     return true;
   }
@@ -594,7 +651,7 @@ export class NpcLife {
           (t) => t.kind === "treat" && (!t.owner || t.owner === n.id),
         ))
           if (
-            l.stores.medicine > 0 &&
+            this.materialReady(n, "treat") &&
             n.memories.some((m) => m.subjects.includes(t.subject))
           )
             add(
@@ -622,7 +679,7 @@ export class NpcLife {
       if (
         t.kind === "treat" &&
         d.ability.medicine &&
-        l.stores.medicine > 0 &&
+        this.materialReady(n, "treat") &&
         n.memories.some((m) => m.subjects.includes(t.subject))
       )
         add(
@@ -636,7 +693,7 @@ export class NpcLife {
       if (
         t.kind === "repair" &&
         d.ability.repair &&
-        l.stores.wood >= 2 &&
+        this.materialReady(n, "repair") &&
         (n.memories.some((m) => m.subjects.includes(t.subject)) ||
           (p.space === t.place.space &&
             distance(p, t.place) < LIFE.observation &&
@@ -674,7 +731,10 @@ export class NpcLife {
       if (
         window.facility === "pharmacy" &&
         window.activity === "work" &&
-        (l.stores.herbs < 2 || l.stores.medicine >= LIFE.maxMedicine)
+        (l.stores.herbs < 2 ||
+          l.stores.medicine +
+            l.people.find((n) => n.id === "healer")!.supplies.medicine >=
+            LIFE.maxMedicine)
       )
         allowed = false;
       const recent = n.memories.some(
@@ -939,6 +999,8 @@ export class NpcLife {
       a.progress < a.duration ||
       this.body(n.id)?.space !== a.target.space ||
       distance(this.body(n.id)!, a.target) > (a.kind === "treat" ? 45 : 35) ||
+      (a.kind === "treat" &&
+        !spaceClear(a.target.space, this.body(n.id)!, a.target)) ||
       (this.gearNeeded(n, a.kind) && !this.carrying(n) && a.kind !== "shelter")
     )
       return;
@@ -957,7 +1019,9 @@ export class NpcLife {
       n.id === "healer" &&
       a.facility === "pharmacy" &&
       l.stores.herbs >= 2 &&
-      l.stores.medicine < LIFE.maxMedicine
+      l.stores.medicine +
+        l.people.find((n) => n.id === "healer")!.supplies.medicine <
+        LIFE.maxMedicine
     ) {
       l.stores.herbs -= 2;
       l.stores.medicine++;
@@ -995,14 +1059,15 @@ export class NpcLife {
       if (
         t &&
         target &&
-        l.stores.medicine > 0 &&
+        n.supplies.medicine > 0 &&
         target.space === this.body(n.id)!.space &&
         distance(target, this.body(n.id)!) < 45 &&
+        spaceClear(target.space, this.body(n.id)!, target) &&
         this.safe(target) &&
         (!guard || !guard.dead) &&
         this.health(t.subject) < 85
       ) {
-        l.stores.medicine--;
+        n.supplies.medicine--;
         if (patient?.body) {
           patient.body.hp = Math.min(85, patient.body.hp + 45);
           patient.body.health = "convalescent";
@@ -1013,7 +1078,7 @@ export class NpcLife {
           target,
           n.id,
           [t.subject],
-          "到场治疗，消耗公共药品",
+          "到场治疗，消耗从药房装入药箱的一份药品",
         );
         l.tasks = l.tasks.filter((task) => task.id !== t.id);
         if (patient?.body) {
@@ -1074,15 +1139,15 @@ export class NpcLife {
       this.safe(a.target)
     ) {
       const t = l.tasks.find((t) => t.id === a.task);
-      if (t && l.stores.wood >= 2 && l.facilities[t.subject] < 100) {
-        l.stores.wood -= 2;
+      if (t && n.supplies.wood >= 2 && l.facilities[t.subject] < 100) {
+        n.supplies.wood -= 2;
         l.facilities[t.subject] = Math.min(100, l.facilities[t.subject] + 50);
         this.emit(
           "repair",
           t.place,
           n.id,
           [t.subject],
-          "到场维修，消耗公共木料",
+          "到场维修，消耗从工坊带来的两份木料",
         );
         l.tasks = l.tasks.filter((x) => x.id !== t.id);
       }
@@ -1131,7 +1196,11 @@ export class NpcLife {
     if (day > l.stores.day) {
       l.stores.day = day;
       l.stores.food = Math.min(LIFE.maxFood, l.stores.food + 6);
-      l.stores.wood = Math.min(LIFE.maxWood, l.stores.wood + 2);
+      l.stores.wood = Math.min(
+        LIFE.maxWood -
+          l.people.find((n) => n.id === "carpenter")!.supplies.wood,
+        l.stores.wood + 2,
+      );
     }
     const raid = this.state.defense.raid,
       hostiles = this.threats(),
@@ -1318,7 +1387,7 @@ export class NpcLife {
         task.expires = l.elapsed + LIFE.taskLeaseMs;
         a.target = { ...task.place };
       }
-      if (a.phase === "collect" && a.pickup) {
+      if ((a.phase === "collect" || a.phase === "stock") && a.pickup) {
         if (
           !this.safe(p, 130) ||
           !this.safe(a.pickup, 70) ||
@@ -1343,9 +1412,7 @@ export class NpcLife {
             a.progress += ms;
             if (a.progress >= LIFE.transferMs) {
               if (a.kind !== "escort") n.gear = "carried";
-              a.phase = "travel";
-              a.progress = 0;
-              this.navigation.delete(n.id);
+              this.travelPhase(n, a);
             }
           } else if (this.nav(n.id).stuck > 8000) {
             this.cancel(n, "救援会合通路受阻，报告并返岗");
@@ -1373,10 +1440,22 @@ export class NpcLife {
           if (arrived) {
             a.progress = Math.min(a.duration, a.progress + ms);
             if (a.progress >= LIFE.transferMs) {
-              n.gear = "carried";
-              a.phase = "travel";
-              a.progress = 0;
-              this.navigation.delete(n.id);
+              if (a.phase === "stock") {
+                const material = this.material(n, a.kind)!;
+                const count = Math.min(
+                  (material === "medicine"
+                    ? LIFE.carriedMedicine
+                    : LIFE.carriedWood) - n.supplies[material],
+                  l.stores[material],
+                );
+                n.supplies[material] += count;
+                l.stores[material] -= count;
+                if (n.supplies[material] < (material === "medicine" ? 1 : 2)) {
+                  this.cancel(n, "补给点库存不足，保留已取得材料并等待补充");
+                  continue;
+                }
+              } else n.gear = "carried";
+              this.travelPhase(n, a);
             }
           } else if (this.nav(n.id).stuck > 8000) {
             a.failures++;
@@ -1394,7 +1473,8 @@ export class NpcLife {
       const g = this.state.defense.guards.find((g) => g.id === n.id);
       let reached =
         p.space === a.target.space &&
-        distance(p, a.target) < (a.kind === "treat" ? 35 : 6);
+        distance(p, a.target) < (a.kind === "treat" ? 35 : 6) &&
+        (a.kind !== "treat" || spaceClear(p.space, p, a.target));
       if (a.kind === "escort") {
         const patient = l.people.find((o) => o.id === a.label.split(" ")[1]);
         if (patient?.body && patient.body.health !== "down") {
@@ -1638,6 +1718,8 @@ export class NpcLife {
         n.known.player = { ...p, time: this.state.time };
       }
     }
+    const speech = chooseSpeech(this);
+    if (speech) this.speech = speech;
   }
   dialogue(id: ResidentId) {
     const n = this.data.people.find((n) => n.id === id)!,
@@ -1729,7 +1811,13 @@ export class NpcLife {
     const box = PRIVATE_STORAGE.find((b) => b.id === id);
     if (!box) return "储物记录不存在。";
     const n = this.data.people.find((n) => n.id === box.owner)!;
-    return `${box.item}：${this.carrying(n) ? "主人已取出携带" : "存放在箱中"}。\n这是${person(n.id)!.name}的私人物品，来访许可不包含取用权。公共药品和维修材料另有库存，取出工作物品不会消耗玩家背包。`;
+    const supplies =
+      n.id === "healer"
+        ? `药箱内余药 ${n.supplies.medicine}/${LIFE.carriedMedicine}。`
+        : n.id === "carpenter"
+          ? `工具包内木料 ${n.supplies.wood}/${LIFE.carriedWood}。`
+          : "";
+    return `${box.item}：${this.carrying(n) ? "主人已取出携带" : "存放在箱中"}。${supplies}\n这是${person(n.id)!.name}的私人物品，来访许可不包含取用权。药房与工坊的公共补给需要到场领取；不会消耗玩家背包。`;
   }
   debugAccess(id: ResidentId, bed = false) {
     const p = person(id)!,
@@ -1786,9 +1874,17 @@ export class NpcLife {
     return {
       alarm: this.data.alarm,
       space: this.data.playerSpace,
-      metrics: { ...this.metrics,
-        pathBatches: [...this.navigation.values()].reduce((sum, n) => sum + n.batches, 0),
-        maxExpandedPerBatch: Math.max(0, ...[...this.navigation.values()].map(n => n.maxExpanded)),
+      speech: this.speech,
+      metrics: {
+        ...this.metrics,
+        pathBatches: [...this.navigation.values()].reduce(
+          (sum, n) => sum + n.batches,
+          0,
+        ),
+        maxExpandedPerBatch: Math.max(
+          0,
+          ...[...this.navigation.values()].map((n) => n.maxExpanded),
+        ),
       },
       stores: this.data.stores,
       reservations: this.data.reservations,
@@ -1802,11 +1898,21 @@ export class NpcLife {
         alarm: n.alarm,
         candidates: this.scores.get(n.id) ?? [],
         // 调试快照也只含可复制数据，不能暴露暂停中的生成器。
-        path: (() => { const r = this.navigation.get(n.id); return r ? {
-          nav: r.nav, stuck: r.stuck, queries: r.queries, batches: r.batches,
-          maxExpanded: r.maxExpanded, failure: r.failure, goal: r.goal,
-          planning: !!r.search,
-        } : null; })(),
+        path: (() => {
+          const r = this.navigation.get(n.id);
+          return r
+            ? {
+                nav: r.nav,
+                stuck: r.stuck,
+                queries: r.queries,
+                batches: r.batches,
+                maxExpanded: r.maxExpanded,
+                failure: r.failure,
+                goal: r.goal,
+                planning: !!r.search,
+              }
+            : null;
+        })(),
         memories: n.memories.slice(-4),
       })),
       events: this.data.events.slice(-12),

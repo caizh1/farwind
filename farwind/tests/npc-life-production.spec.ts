@@ -1,5 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { initialState } from "../src/game/systems/state";
+import { NpcLife } from "../src/game/systems/npcLife";
+import { EastDefense } from "../src/game/systems/defense";
+import { FACILITIES } from "../src/data/npcLife";
 import { approachNpc } from "./npc-navigation";
 const read = (page: any) => page.evaluate(() => (window as any).__farwind());
 test("正式构建：旧档迁移、动态药房交谈、原服务与隐藏调试", async ({ page }) => {
@@ -50,6 +53,78 @@ test("正式构建：旧档迁移、动态药房交谈、原服务与隐藏调�
   expect(errors).toEqual([]);
 });
 
+test("正式构建：生活子版本2的配药旧档显示事实短句，存取后不重复闲聊", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  const old: any = initialState();
+  old.time = 540;
+  old.life.playerSpace = "healer-home";
+  Object.assign(old.player, { x: 830, y: 845 });
+  const life = new NpcLife(old, new EastDefense(old.defense, 0)),
+    healer = old.life.people[1];
+  Object.assign(
+    healer.body,
+    FACILITIES.find((f) => f.id === "pharmacy")!.place,
+  );
+  healer.gear = "carried";
+  life.begin(
+    healer,
+    life.candidates(healer).find((c) => c.facility === "pharmacy")!,
+  );
+  healer.action.phase = "perform";
+  old.life.version = 2;
+  delete old.life.speechAt;
+  delete old.life.speechUrgentAt;
+  delete old.life.speechEventFloor;
+  for (const n of old.life.people) {
+    delete n.speech;
+    delete n.supplies;
+  }
+  await page.goto("/?npcDebug=1");
+  page.once("dialog", (d) => d.accept());
+  const chooser = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "导入存档" }).click();
+  await (
+    await chooser
+  ).setFiles({
+    name: "npc-life-v2-work.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(old)),
+  });
+  await page.waitForFunction(() => {
+    const r = (window as any).__farwind?.();
+    return (
+      r?.mode === "" &&
+      r.npcLife.speech?.text.includes("药还在配") &&
+      r.npcLife.speech.until > r.state.life.elapsed
+    );
+  });
+  const before = await read(page);
+  expect(before.state.life.version).toBe(3);
+  expect(before.state.life.people[1].speech.routines).toContain("work");
+  expect(before.state.life.stores).toEqual(old.life.stores);
+  expect(before.state.bag).toEqual(old.bag);
+  expect(
+    await page.getByRole("button", { name: "NPC 调试", exact: true }).count(),
+  ).toBe(0);
+  await page.screenshot({
+    path: "docs/npc-life/evidence/production-work-speech.png",
+  });
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "保存旅途", exact: true }).click();
+  await expect(page.locator("#toast")).toContainText("已保存");
+  await page.reload();
+  await page.getByRole("button", { name: "继续旅途" }).click();
+  await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
+  expect((await read(page)).npcLife.speech).toBeNull();
+  expect((await read(page)).state.life.people[1].speech.routines).toContain(
+    "work",
+  );
+  expect(errors).toEqual([]);
+});
+
 test("正式构建：原旅馆补给与独立客房侧门分别可用", async ({ page }) => {
   const old: any = initialState();
   old.schema_version = 5;
@@ -96,7 +171,7 @@ test("正式构建：原旅馆补给与独立客房侧门分别可用", async ({
   await page.waitForFunction(
     () => (window as any).__farwind().state.life.playerSpace === "inn",
   );
-  expect((await read(page)).state.life.version).toBe(2);
+  expect((await read(page)).state.life.version).toBe(3);
   await page.screenshot({ path: "docs/npc-life/evidence/production-inn.png" });
   const sequence = (await read(page)).state.defense.sequence;
   await page.keyboard.press("e");

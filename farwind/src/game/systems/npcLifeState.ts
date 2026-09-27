@@ -58,7 +58,7 @@ export type Action = {
   facility: string | null;
   task: string | null;
   pickup: Place | null;
-  phase: "collect" | "travel" | "perform";
+  phase: "collect" | "stock" | "travel" | "perform";
   progress: number;
   duration: number;
   started: number;
@@ -81,6 +81,7 @@ export type PersonState = {
   needs: { hunger: number; fatigue: number };
   emotion: number;
   gear: "locker" | "carried";
+  supplies: { medicine: number; wood: number };
   blockedTarget: Place | null;
   blockedUntil: number;
   project: number;
@@ -96,6 +97,12 @@ export type PersonState = {
   known: Record<string, Place & { time: number }>;
   lastSupplyDay: number;
   lastMealDay: number;
+  speech: {
+    eventFloor: number;
+    nextAt: number;
+    day: number;
+    routines: Activity[];
+  };
 };
 export type Reservation = {
   facility: string;
@@ -113,7 +120,10 @@ export type LifeTask = {
   retryAt: number;
 };
 export type LifeState = {
-  version: 2;
+  version: 3;
+  speechAt: number;
+  speechUrgentAt: number;
+  speechEventFloor: number;
   unavailable: {
     homes: Partial<Record<SpaceId, boolean>>;
     facilities: string[];
@@ -144,7 +154,10 @@ export type LifeState = {
   defenseReceipts: string[];
 };
 export const initialLife = (time = 480): LifeState => ({
-  version: 2,
+  version: 3,
+  speechAt: 0,
+  speechUrgentAt: 0,
+  speechEventFloor: 0,
   unavailable: { homes: {}, facilities: [] },
   people: PEOPLE.map((p, i) => ({
     id: p.id,
@@ -171,6 +184,7 @@ export const initialLife = (time = 480): LifeState => ({
     needs: { hunger: 15, fatigue: 10 },
     emotion: 0,
     gear: "locker",
+    supplies: { medicine: 0, wood: 0 },
     project: 0,
     nextDecision: i * 75,
     reason: "开始新的一天",
@@ -189,6 +203,12 @@ export const initialLife = (time = 480): LifeState => ({
     known: {},
     lastSupplyDay: 0,
     lastMealDay: -1,
+    speech: {
+      eventFloor: 0,
+      nextAt: 0,
+      day: Math.floor(time / 1440),
+      routines: [],
+    },
   })),
   elapsed: 0,
   sequence: 0,
@@ -283,7 +303,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
     ((l as { version?: number }).version === undefined ||
       (l as { version?: number }).version === 1)
   ) {
-    l.version = 2;
+    Object.assign(l, { version: 2 });
     l.unavailable = { homes: {}, facilities: [] };
     for (const n of l.people ?? []) {
       const old = n as PersonState & { kit?: boolean; tools?: boolean };
@@ -305,9 +325,27 @@ export function validateLife(raw: unknown, time: number): LifeState {
       }
     }
   }
+  // 子版本2→3增加短句去重与有限随身资源；旧档的药品与木料仍留在原公共库存。
+  if (l && (l as { version?: number }).version === 2) {
+    l.version = 3;
+    l.speechAt = l.elapsed;
+    l.speechUrgentAt = l.elapsed;
+    l.speechEventFloor = l.sequence;
+    for (const n of l.people ?? [])
+      n.speech = {
+        eventFloor: n.receipt,
+        nextAt: l.elapsed,
+        day: Math.floor(time / 1440),
+        routines: [],
+      };
+    for (const n of l.people ?? []) n.supplies = { medicine: 0, wood: 0 };
+  }
   if (
     !l ||
-    l.version !== 2 ||
+    l.version !== 3 ||
+    !num(l.speechAt, l.elapsed + LIFE.speechPersonMs) ||
+    !num(l.speechUrgentAt, l.elapsed + LIFE.speechPersonMs) ||
+    !integer(l.speechEventFloor, l.sequence) ||
     !l.unavailable ||
     !l.unavailable.homes ||
     Object.keys(l.unavailable.homes).length > HOMES.length ||
@@ -382,6 +420,20 @@ export function validateLife(raw: unknown, time: number): LifeState {
       ![0, 1, 2].includes(n.alarm) ||
       !num(n.emotion, 100) ||
       !["locker", "carried"].includes(n.gear) ||
+      !n.supplies ||
+      !integer(
+        n.supplies.medicine,
+        n.id === "healer" ? LIFE.carriedMedicine : 0,
+      ) ||
+      !integer(n.supplies.wood, n.id === "carpenter" ? LIFE.carriedWood : 0) ||
+      !n.speech ||
+      !integer(n.speech.eventFloor, l.sequence) ||
+      !num(n.speech.nextAt, l.elapsed + LIFE.speechPersonMs) ||
+      !integer(n.speech.day, Math.floor(time / 1440)) ||
+      !Array.isArray(n.speech.routines) ||
+      n.speech.routines.length > 14 ||
+      new Set(n.speech.routines).size !== n.speech.routines.length ||
+      !n.speech.routines.every(activity) ||
       !n.needs ||
       !num(n.needs.hunger, 100) ||
       !num(n.needs.fatigue, 100) ||
@@ -440,7 +492,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
         !(a.facility === null || FACILITIES.some((f) => f.id === a.facility)) ||
         !(a.task === null || text(a.task)) ||
         !(a.pickup === null || validPlace(a.pickup)) ||
-        !["collect", "travel", "perform"].includes(a.phase) ||
+        !["collect", "stock", "travel", "perform"].includes(a.phase) ||
         !num(a.progress, a.duration) ||
         !num(a.duration, 120000) ||
         !num(a.started, l.elapsed) ||
@@ -448,6 +500,27 @@ export function validateLife(raw: unknown, time: number): LifeState {
         !text(a.label))
     )
       throw Error("生活行动状态无效。");
+    if (a?.phase === "stock") {
+      const source = FACILITIES.find(
+        (f) =>
+          f.id ===
+          (n.id === "healer" && a.kind === "treat"
+            ? "pharmacy"
+            : n.id === "carpenter" && a.kind === "repair"
+              ? "tools"
+              : ""),
+      );
+      if (
+        !source ||
+        a.facility !== source.id ||
+        n.gear !== "carried" ||
+        !a.pickup ||
+        a.pickup.space !== source.place.space ||
+        a.pickup.x !== source.place.x ||
+        a.pickup.y !== source.place.y
+      )
+        throw Error("补给动作来源无效。");
+    }
     if (a?.kind === "store") {
       const box = PRIVATE_STORAGE.find((b) => b.owner === n.id)!;
       if (
@@ -546,6 +619,14 @@ export function validateLife(raw: unknown, time: number): LifeState {
       t.expires = 0;
     }
   const place = (p: Place) => ({ space: p.space, x: p.x, y: p.y });
+  if (
+    l.stores.medicine +
+      l.people.find((n) => n.id === "healer")!.supplies.medicine >
+      LIFE.maxMedicine ||
+    l.stores.wood + l.people.find((n) => n.id === "carpenter")!.supplies.wood >
+      LIFE.maxWood
+  )
+    throw Error("公共与随身物资合计超过上限。");
   const people = l.people.map((n) => ({
     id: n.id,
     body: n.body
@@ -580,6 +661,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
     needs: { hunger: n.needs.hunger, fatigue: n.needs.fatigue },
     emotion: n.emotion,
     gear: n.gear,
+    supplies: { medicine: n.supplies.medicine, wood: n.supplies.wood },
     project: n.project,
     nextDecision: n.nextDecision,
     reason: n.reason,
@@ -618,9 +700,18 @@ export function validateLife(raw: unknown, time: number): LifeState {
     ),
     lastSupplyDay: n.lastSupplyDay,
     lastMealDay: n.lastMealDay,
+    speech: {
+      eventFloor: n.speech.eventFloor,
+      nextAt: n.speech.nextAt,
+      day: n.speech.day,
+      routines: [...n.speech.routines],
+    },
   }));
   return {
-    version: 2,
+    version: 3,
+    speechAt: l.speechAt,
+    speechUrgentAt: l.speechUrgentAt,
+    speechEventFloor: l.speechEventFloor,
     unavailable: {
       homes: { ...l.unavailable.homes },
       facilities: [...l.unavailable.facilities],

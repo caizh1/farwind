@@ -5,6 +5,8 @@ export type FeedbackKind='guard-start'|'enemy-charge'|'enemy-strike'|'parry-cont
 export type FeedbackMaterial='slime'|'leaf'|'straw';
 export type FeedbackEvent=Readonly<{id:string;kind:FeedbackKind;at:number;targetId:string;attackId:string;point:Readonly<Point>;incoming:Readonly<Point>;blade:Readonly<Point>;deflect:Readonly<Point>;quality:CounterKind;material:FeedbackMaterial;until?:number;alive?:boolean;depth?:number;legacyHit?:'hit'|'straw'}>;
 export const FEEDBACK={history:96,effects:32,reactions:24,contactLife:150,hitLife:115,afterguardLife:65,peak:60,recover:160,secondaryLife:95,release:20,counterMotion:20} as const;
+// 仅影响成功反馈；红刃在拨开后建立，沿正式反斩的收势衰减，不表示额外伤害。
+export const BLADE_GLOW={start:20,rise:40,fade:145,maxLife:450,width:6,edgeWidth:2.6} as const;
 export const feedbackVisual=(mode:FeedbackMode)=>mode==='C'||mode==='D';
 export const feedbackAudio=(mode:FeedbackMode)=>mode==='B'||mode==='D';
 // 来招已被截住：保留出手事实，声音提交时只移除同一攻击的冲撞；其他威胁仍完整发声。
@@ -27,6 +29,7 @@ export class CombatFeedback {
  history:FeedbackEvent[]=[];effects:FeedbackEvent[]=[];private queue:FeedbackEvent[]=[];
  private seen=new Set<string>();private release:FeedbackEvent[]=[];
  private swings:FeedbackEvent[]=[];
+ private glow:{event:FeedbackEvent;counterId?:string;until:number}|null=null;
  private reactions=new Map<string,{parry:FeedbackEvent;hit?:FeedbackEvent}>();
  emit(value:FeedbackEvent) {
   const id=`${this.generation}:${value.id}`;if(this.seen.has(id))return false;
@@ -36,14 +39,20 @@ export class CombatFeedback {
   if(this.history.length>FEEDBACK.history){const old=this.history.shift()!;this.seen.delete(old.id);}
   if(['parry-contact','parry-perfect-contact','counter-hit','afterguard'].includes(event.kind)) {this.effects.push(event);if(this.effects.length>FEEDBACK.effects)this.effects.shift();}
   if(event.kind==='parry-contact'||event.kind==='parry-perfect-contact') {
+   this.glow={event,until:event.at+BLADE_GLOW.maxLife};
    this.reactions.set(event.targetId,{parry:event});if(this.reactions.size>FEEDBACK.reactions)this.reactions.delete(this.reactions.keys().next().value!);
    this.release.push(event);if(this.release.length>FEEDBACK.effects)this.release.shift();
   }
   if(event.kind==='counter-hit') {const r=this.reactions.get(event.targetId);if(r&&event.alive!==false)r.hit=event;else if(event.alive===false)this.reactions.delete(event.targetId);}
-  if(event.kind==='counter-start'){this.swings.push(event);if(this.swings.length>FEEDBACK.effects)this.swings.shift();}
+  if(event.kind==='guard-start')this.glow=null;
+  if(event.kind==='counter-start'){
+   if(this.glow&&this.glow.event.targetId===event.targetId)this.glow={...this.glow,counterId:event.attackId,until:Math.min(this.glow.until,event.until??this.glow.until)};
+   this.swings.push(event);if(this.swings.length>FEEDBACK.effects)this.swings.shift();
+  }
   return true;
  }
- advance(now:number,activeCounterId?:string|null) {
+ advance(now:number,activeCounterId?:string|null,deflecting?:boolean) {
+  if(this.glow&&(now>=this.glow.until||(deflecting===false&&activeCounterId!==this.glow.counterId)))this.glow=null;
   // 正式攻击已经启动，且仍在执行，首个实际起势姿态到达时只消费一次破风事件。
   for(const event of this.swings)if(now>=event.at+FEEDBACK.counterMotion&&(activeCounterId===undefined||activeCounterId===event.attackId))this.emit({...event,id:`swing:${event.attackId}`,kind:'counter-swing',at:event.at+FEEDBACK.counterMotion});
   this.swings=this.swings.filter(e=>now<e.at+FEEDBACK.counterMotion&&(activeCounterId===undefined||activeCounterId===e.attackId));
@@ -53,7 +62,16 @@ export class CombatFeedback {
   for(const [id,r] of this.reactions)if(now>=(r.parry.until??r.parry.at)||r.parry.alive===false)this.reactions.delete(id);
  }
  drain(){const events=this.queue;this.queue=[];return events;}
- cancelRelease(){this.release=[];this.swings=[];}
+ cancelRelease(){this.release=[];this.swings=[];this.glow=null;}
+ bladeGlow(now:number,root:Point,weapon:{grip:Point;tip:Point}|null,facing:number) {
+  const g=this.glow;if(!g||!weapon||!feedbackVisual(this.mode)||now<g.event.at+BLADE_GLOW.start||now>=g.until)return null;
+  const rise=Math.min(1,(now-g.event.at-BLADE_GLOW.start)/BLADE_GLOW.rise),fade=g.counterId?Math.min(1,(g.until-now)/BLADE_GLOW.fade):1;
+  const alpha=rise*fade;if(alpha<=0)return null;
+  return {id:g.event.id,quality:g.event.quality,alpha,counterId:g.counterId,
+   // 剑柄不发光；每帧读取已提交姿态的实际剑尖，镜像由武器采样统一提供。
+   start:{x:root.x+weapon.grip.x+(weapon.tip.x-weapon.grip.x)*.22,y:root.y+weapon.grip.y+(weapon.tip.y-weapon.grip.y)*.22},
+   tip:{x:root.x+weapon.tip.x,y:root.y+weapon.tip.y},depth:root.y+(facing===1?-.05:.08),edgeDepth:root.y+.08};
+ }
  reaction(id:string,now:number,type:string,alive=true) {
   const r=this.reactions.get(id);if(!r||!alive||now>=(r.parry.until??r.parry.at))return null;
   const e=r.parry,age=Math.max(0,now-e.at),remaining=e.until!-now;
@@ -63,6 +81,6 @@ export class CombatFeedback {
   return {x:(-incoming.x*7+side.x*(leaf?9:6))*strength-incoming.x*secondary*3,y:(-incoming.y*4+side.y*3)*strength-incoming.y*secondary*2,rotation:(side.x<0?-1:1)*(leaf?.28:.18)*strength+Math.sin(age/38)*.025*strength,frame:remaining<FEEDBACK.recover/2?0:3,strength,secondary,phase:age<FEEDBACK.peak?'impact':remaining<FEEDBACK.recover?'recover':'unbalanced'};
  }
  attackAudible(startedAt:number,root:Point|undefined,player:Point){return startedAt>=this.resetAt&&(!root||Math.hypot(root.x-player.x,root.y-player.y)<600);}
- reset(now=0){this.generation++;this.resetAt=now;this.history=[];this.queue=[];this.effects=[];this.release=[];this.swings=[];this.seen.clear();this.reactions.clear();}
- snapshot(){return {mode:this.mode,generation:this.generation,events:this.history,effects:this.effects,pending:this.queue.length,delayed:this.release.length+this.swings.length,reactions:this.reactions.size};}
+ reset(now=0){this.generation++;this.resetAt=now;this.history=[];this.queue=[];this.effects=[];this.release=[];this.swings=[];this.glow=null;this.seen.clear();this.reactions.clear();}
+ snapshot(){return {mode:this.mode,generation:this.generation,events:this.history,effects:this.effects,pending:this.queue.length,delayed:this.release.length+this.swings.length,reactions:this.reactions.size,bladeGlow:this.glow};}
 }

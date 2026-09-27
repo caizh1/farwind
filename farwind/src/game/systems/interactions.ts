@@ -35,7 +35,7 @@ export function interact(this: World, p: Prop) {
   }
   if(p.id === "east-gate-sign") { this.openDefenseDrill(); return; }
   if (p.id === "north-gate-sign" || p.id === "south-gate-sign") {
-    this.ui.dialog(p.label!,p.id === "north-gate-sign" ? "松岚、石泉与林弦守望山路。门外有危险，卫队不会追进深林。" : "麦川、望禾与晴羽照看果园外通路。普通来袭由卫队拦截，门洞保持开放。");return;
+    this.ui.dialog(p.label!,p.id === "north-gate-sign" ? "松岚、石泉与林弦守望山路。门外道路属于巡逻近郊，远处才是荒野。卫队会拦截逼近者，威胁退出后归岗，不会追进深林。" : "麦川、望禾与晴羽照看门外巡逻近郊，远处才是荒野。夜间少量来袭由卫队拦截，虚弱或缺员时延期，门洞保持开放。");return;
   }
   if (p.kind === "npc") {
     const talk = (text: string) => {this.ui.dialog(p.label!, `${text}\n${this.life.dialogue(p.id as ResidentId)}`, p.id);offerHelp(this,p.id as ResidentId);};

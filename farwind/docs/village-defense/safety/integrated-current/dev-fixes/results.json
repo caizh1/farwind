@@ -1,0 +1,218 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "--config",
+      "tools/playwright-safety.config.ts",
+      "tests/economy.spec.ts",
+      "--grep",
+      "新游戏真实采集|满包不能购买",
+      "--workers=1"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/tools/playwright-safety.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-fixes/raw",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "safety-performance.spec.ts",
+          "safety-defense.spec.ts",
+          "day-night-failure.spec.ts",
+          "village-raids.spec.ts",
+          "east-defense-recovery.spec.ts",
+          "economy-production.spec.ts",
+          "training.spec.ts",
+          "economy.spec.ts",
+          "adventure.spec.ts"
+        ],
+        "timeout": 300000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-fixes/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "economy.spec.ts",
+      "file": "economy.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 117964,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:36:07.943Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-fixes/raw/economy-新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-355bb8774f27f76b1f3d",
+          "file": "economy.spec.ts",
+          "line": 58,
+          "column": 1
+        },
+        {
+          "title": "满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 19846,
+                  "error": {
+                    "message": "TimeoutError: page.waitForFunction: Timeout 6000ms exceeded.",
+                    "stack": "TimeoutError: page.waitForFunction: Timeout 6000ms exceeded.\n    at indoorMove (/Users/archer/Documents/ChatGPT/Game/farwind/tests/safety-npc-navigation.ts:17:18)\n    at approachNpc (/Users/archer/Documents/ChatGPT/Game/farwind/tests/safety-npc-navigation.ts:87:7)\n    at open (/Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts:24:24)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts:235:3",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/safety-npc-navigation.ts",
+                      "column": 18,
+                      "line": 17
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39msafety-npc-navigation.ts:17\n\n  15 |   const keys=[...(Math.abs(dx)>3?[dx>0?'d':'a']:[]),...(Math.abs(dy)>3?[dy>0?'s':'w']:[])];\n  16 |   for(const key of keys)await page.keyboard.down(key);\n> 17 |   try{await page.waitForFunction(p=>Math.hypot((window as any).__farwind().state.player.x-p.x,(window as any).__farwind().state.player.y-p.y)<8,point,{timeout:6000,polling:16});}\n     |                  ^\n  18 |   finally{for(const key of keys)await page.keyboard.up(key);}\n  19 |  }\n  20 | }"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/safety-npc-navigation.ts",
+                        "column": 18,
+                        "line": 17
+                      },
+                      "message": "TimeoutError: page.waitForFunction: Timeout 6000ms exceeded.\n\n   at safety-npc-navigation.ts:17\n\n  15 |   const keys=[...(Math.abs(dx)>3?[dx>0?'d':'a']:[]),...(Math.abs(dy)>3?[dy>0?'s':'w']:[])];\n  16 |   for(const key of keys)await page.keyboard.down(key);\n> 17 |   try{await page.waitForFunction(p=>Math.hypot((window as any).__farwind().state.player.x-p.x,(window as any).__farwind().state.player.y-p.y)<8,point,{timeout:6000,polling:16});}\n     |                  ^\n  18 |   finally{for(const key of keys)await page.keyboard.up(key);}\n  19 |  }\n  20 | }\n    at indoorMove (/Users/archer/Documents/ChatGPT/Game/farwind/tests/safety-npc-navigation.ts:17:18)\n    at approachNpc (/Users/archer/Documents/ChatGPT/Game/farwind/tests/safety-npc-navigation.ts:87:7)\n    at open (/Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts:24:24)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts:235:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:38:06.247Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-fixes/raw/economy-满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-fixes/raw/economy-满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-fixes/raw/economy-满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-fixes/raw/economy-满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/safety-npc-navigation.ts",
+                    "column": 18,
+                    "line": 17
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-68c098f29f896f6d0d48",
+          "file": "economy.spec.ts",
+          "line": 220,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-27T09:36:07.417Z",
+    "duration": 141897.54900000003,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

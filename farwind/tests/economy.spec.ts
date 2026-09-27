@@ -1,4 +1,4 @@
-import { approachNpc } from "./npc-navigation";
+import { approachNpc } from "./safety-npc-navigation";
 import { test, expect, type Page } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import { move } from "./map-navigation";
@@ -89,6 +89,9 @@ test("新游戏真实采集和四服务路线、确认换药、买卖装备、�
     await page.keyboard.press("e");
   }
   await move(page, 2170, 1080);
+  expect((await read(page)).state.quest).toBe(1);
+  await move(page, 2300, 1080);
+  if((await read(page)).mode==="dialog")await page.getByRole("button",{name:"继续 · E",exact:true}).click();
   expect((await read(page)).state.quest).toBe(2);
   await approachNpc(page, "healer");
   await page.keyboard.press("e");

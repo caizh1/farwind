@@ -222,7 +222,7 @@ export function attachLifeUi(world: World) {
       if (panel.hidden) return;
       const n = world.state.life.people.find((n) => n.id === select.value)!,
         p = world.life.body(n.id)!;
-      pre.textContent = `${person(n.id)!.name} · 空间 ${p.space}\n原因：${n.reason}\n行动：${n.action?.label ?? "无"} / ${n.action?.phase ?? "等待"} ${Math.round(n.action?.progress ?? 0)}毫秒\n需求：饥饿 ${Math.round(n.needs.hunger)} 疲劳 ${Math.round(n.needs.fatigue)}\n警报认知 ${n.alarm} · 寻路失败 ${n.pathFailures}\n私人物品：${PRIVATE_STORAGE.find((b) => b.owner === n.id)!.item} / ${n.gear === "carried" ? "随身携带" : "自己的储物箱"}\n预约：${
+      pre.textContent = `${person(n.id)!.name} · 空间 ${p.space}\n原因：${n.reason}\n行动：${n.action?.label ?? "无"} / ${n.action?.phase ?? "等待"} ${Math.round(n.action?.progress ?? 0)}毫秒\n需求：饥饿 ${Math.round(n.needs.hunger)} 疲劳 ${Math.round(n.needs.fatigue)}\n警报认知 ${n.alarm} · 寻路失败 ${n.pathFailures}\n私人物品：${PRIVATE_STORAGE.find((b) => b.owner === n.id)!.item} / ${n.gear === "carried" ? "随身携带" : "自己的储物箱"}\n包内药品 ${n.supplies.medicine} 木料 ${n.supplies.wood}\n寻路批次 ${world.life.navigation.get(n.id)?.batches ?? 0} / 每批最多 ${world.life.navigation.get(n.id)?.maxExpanded ?? 0} 节点\n预约：${
         world.state.life.reservations
           .filter((r) => r.owner === n.id)
           .map((r) => r.facility)

@@ -3,7 +3,7 @@ import sharp from "sharp";
 import { mkdir, writeFile } from "node:fs/promises";
 import { startWater, readWater } from "./water-navigation";
 import { move } from "./map-navigation";
-const directory="docs/water-effects/behavior";
+const directory=process.env.FARWIND_WATER_EVIDENCE_DIR ?? "docs/water-effects/behavior";
 test.beforeAll(async()=>{await mkdir(directory,{recursive:true});});
 
 async function difference(a: Buffer,b: Buffer,rect:{left:number;top:number;width:number;height:number}) {
@@ -25,6 +25,9 @@ test("water-motion-local",async({page})=>{
     前池沿:await difference(a,b,rect(638,860,85,18)),空桥面:await difference(a,b,rect(1045,920,75,130)),池外草地:await difference(a,b,rect(1475,940,35,25))};
   expect(results.喷泉流水.变化像素比例).toBeGreaterThan(0.005);
   expect(results.池塘中心.变化像素比例).toBeGreaterThan(0.008);
+  // 少量像素变化不足以证明默认视口可读；水面变化强度也必须达到最低门槛。
+  expect(results.喷泉流水.平均通道差).toBeGreaterThan(0.75);
+  expect(results.池塘中心.平均通道差).toBeGreaterThan(0.35);
   for(const r of [results.前池沿,results.空桥面,results.池外草地])expect(r.变化像素比例).toBeLessThan(0.003);
   expect((await readWater(page)).stone).toEqual(state.stone);
   expect(errors).toEqual([]); await writeFile(`${directory}/local-motion.json`,JSON.stringify({说明:"固定相机，临时隐藏HUD及既有昼夜覆盖；只比较指定水面与静态控制区域，未以全图差异代替动画检查。",结果:results},null,2));

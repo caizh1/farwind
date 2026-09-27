@@ -1,0 +1,733 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "--config",
+      "tools/playwright-safety.config.ts",
+      "tests/training.spec.ts",
+      "tests/east-defense-recovery.spec.ts",
+      "tests/economy.spec.ts",
+      "--workers=1"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/tools/playwright-safety.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "safety-performance.spec.ts",
+          "safety-defense.spec.ts",
+          "day-night-failure.spec.ts",
+          "village-raids.spec.ts",
+          "east-defense-recovery.spec.ts",
+          "economy-production.spec.ts",
+          "training.spec.ts",
+          "economy.spec.ts",
+          "adventure.spec.ts"
+        ],
+        "timeout": 300000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "east-defense-recovery.spec.ts",
+      "file": "east-defense-recovery.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "实际守卫死亡后IDB请求成功但事务中止，暂停反馈与手动重存可恢复",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6797,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:32:15.160Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/east-defense-recovery-实际守卫死亡后IDB请求成功但事务中止，暂停反馈与手动重存可恢复/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-4dadc449ad3c7a8dd94c",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "title": "玩家真实攻击来袭怪并在村门内实际受击，不污染固定主线结算",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7514,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:32:22.249Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/east-defense-recovery-玩家真实攻击来袭怪并在村门内实际受击，不污染固定主线结算/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-cb0b4aff485f20135c56",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 46,
+          "column": 1
+        },
+        {
+          "title": "保留新剑风与弹反入口，真实第四刀和K可命中动态来袭怪",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6156,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:32:29.771Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/east-defense-recovery-保留新剑风与弹反入口，真实第四刀和K可命中动态来袭怪/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-20faea33154a53568f63",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 66,
+          "column": 1
+        },
+        {
+          "title": "生产构建恢复活跃演练并自主结算，查询开关不暴露开发按钮",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "单独在冻结生产预览运行",
+                  "location": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/east-defense-recovery.spec.ts",
+                    "line": 91,
+                    "column": 7
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 349,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:32:35.935Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "单独在冻结生产预览运行",
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/east-defense-recovery.spec.ts",
+                        "line": 91,
+                        "column": 7
+                      }
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/east-defense-recovery-生产构建恢复活跃演练并自主结算，查询开关不暴露开发按钮/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-b0e545349b3b3ff4c96e",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 90,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "economy.spec.ts",
+      "file": "economy.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 60510,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m2\u001b[39m\nReceived: \u001b[31m1\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m2\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts:92:42",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts",
+                      "column": 42,
+                      "line": 92
+                    },
+                    "snippet": "  90 |   }\n  91 |   await move(page, 2170, 1080);\n> 92 |   expect((await read(page)).state.quest).toBe(2);\n     |                                          ^\n  93 |   await approachNpc(page, \"healer\");\n  94 |   await page.keyboard.press(\"e\");\n  95 |   const before = (await read(page)).state;"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts",
+                        "column": 42,
+                        "line": 92
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m2\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n\n  90 |   }\n  91 |   await move(page, 2170, 1080);\n> 92 |   expect((await read(page)).state.quest).toBe(2);\n     |                                          ^\n  93 |   await approachNpc(page, \"healer\");\n  94 |   await page.keyboard.press(\"e\");\n  95 |   const before = (await read(page)).state;\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts:92:42"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:32:36.306Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/economy-新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/economy-新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/economy-新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/economy-新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts",
+                    "column": 42,
+                    "line": 92
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-355bb8774f27f76b1f3d",
+          "file": "economy.spec.ts",
+          "line": 58,
+          "column": 1
+        },
+        {
+          "title": "商店实际负向检查、双击只成交一次以及窄屏可操作",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3777,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:33:50.806Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/economy-商店实际负向检查、双击只成交一次以及窄屏可操作/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-8c56afd759fdb79b832d",
+          "file": "economy.spec.ts",
+          "line": 178,
+          "column": 1
+        },
+        {
+          "title": "满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 26007,
+                  "error": {
+                    "message": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.",
+                    "stack": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.\n    at indoorMove (/Users/archer/Documents/ChatGPT/Game/farwind/tests/npc-navigation.ts:17:18)\n    at approachNpc (/Users/archer/Documents/ChatGPT/Game/farwind/tests/npc-navigation.ts:94:7)\n    at open (/Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts:24:24)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts:232:3",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/npc-navigation.ts",
+                      "column": 18,
+                      "line": 17
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mnpc-navigation.ts:17\n\n  15 |     await page.keyboard.down(key);\n  16 |     try {\n> 17 |       await page.waitForFunction(\n     |                  ^\n  18 |         ({ axis, target, sign }) =>\n  19 |           sign * ((window as any).__farwind().state.player[axis] - target) > -3,\n  20 |         { axis, target, sign },"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/npc-navigation.ts",
+                        "column": 18,
+                        "line": 17
+                      },
+                      "message": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.\n\n   at npc-navigation.ts:17\n\n  15 |     await page.keyboard.down(key);\n  16 |     try {\n> 17 |       await page.waitForFunction(\n     |                  ^\n  18 |         ({ axis, target, sign }) =>\n  19 |           sign * ((window as any).__farwind().state.player[axis] - target) > -3,\n  20 |         { axis, target, sign },\n    at indoorMove (/Users/archer/Documents/ChatGPT/Game/farwind/tests/npc-navigation.ts:17:18)\n    at approachNpc (/Users/archer/Documents/ChatGPT/Game/farwind/tests/npc-navigation.ts:94:7)\n    at open (/Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts:24:24)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts:232:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:33:54.852Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/economy-满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/economy-满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/economy-满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/economy-满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/npc-navigation.ts",
+                    "column": 18,
+                    "line": 17
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-68c098f29f896f6d0d48",
+          "file": "economy.spec.ts",
+          "line": 217,
+          "column": 1
+        },
+        {
+          "title": "IDB写请求成功后事务中止，钱物库存与上次有效档完全保留",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4628,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:34:24.616Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/economy-IDB写请求成功后事务中止，钱物库存与上次有效档完全保留/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-87114cfa589a5d0316c1",
+          "file": "economy.spec.ts",
+          "line": 255,
+          "column": 1
+        },
+        {
+          "title": "交易待保存时不能Esc关闭，世界和输入全部暂停",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3783,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:34:29.517Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/economy-交易待保存时不能Esc关闭，世界和输入全部暂停/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-912daf1358a217cd2f2e",
+          "file": "economy.spec.ts",
+          "line": 291,
+          "column": 1
+        },
+        {
+          "title": "正式森林战斗实际扣血及铁剑增伤，默认战斗数值保持",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5240,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:34:33.306Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/economy-正式森林战斗实际扣血及铁剑增伤，默认战斗数值保持/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-ae852512ccbee111e5eb",
+          "file": "economy.spec.ts",
+          "line": 341,
+          "column": 1
+        },
+        {
+          "title": "真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复迁移",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6424,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:34:38.556Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/economy-真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复迁移/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-e28817f61f58dbcabc54",
+          "file": "economy.spec.ts",
+          "line": 392,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "training.spec.ts",
+      "file": "training.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "新游戏四面训练、风步底座、暂停和同页继续：真实输入",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22684,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:34:45.545Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/training-新游戏四面训练、风步底座、暂停和同页继续：真实输入/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2410163d751908292b1d-73d06569bc94940db20c",
+          "file": "training.spec.ts",
+          "line": 57,
+          "column": 1
+        },
+        {
+          "title": "隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9051,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:35:08.509Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/dev-browser/raw/training-隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2410163d751908292b1d-6af5aa60b753508dc014",
+          "file": "training.spec.ts",
+          "line": 184,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-27T09:32:14.740Z",
+    "duration": 183051.464,
+    "expected": 10,
+    "skipped": 1,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

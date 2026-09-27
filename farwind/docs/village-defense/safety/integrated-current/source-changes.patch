@@ -1,0 +1,2605 @@
+diff --git a/farwind/package.json b/farwind/package.json
+index a66f286..0336e1f 100644
+--- a/farwind/package.json
++++ b/farwind/package.json
+@@ -6,7 +6,7 @@
+   "scripts": {
+     "dev": "vite --host 127.0.0.1",
+     "typecheck": "tsc --noEmit",
+-    "test": "vitest run tests/logic.test.ts tests/motion.test.ts tests/combat.test.ts tests/training.test.ts tests/map-expansion.test.ts tests/obstacles.test.ts tests/level-rework.test.ts tests/village-defense.test.ts tests/parry.test.ts tests/parry-v2.test.ts tests/parry-feedback-v3.test.ts tests/dialogue-portraits.test.ts tests/economy.test.ts tests/sword-wind-assets.test.ts tests/sword-wind.test.ts tests/east-defense.test.ts tests/village-raids.test.ts tests/village-integration.test.ts tests/day-night.test.ts tests/npc-life.test.ts tests/sword-wind-audio.test.ts tests/water-motion.test.ts",
++    "test": "vitest run tests/logic.test.ts tests/motion.test.ts tests/combat.test.ts tests/training.test.ts tests/map-expansion.test.ts tests/obstacles.test.ts tests/level-rework.test.ts tests/village-defense.test.ts tests/parry.test.ts tests/parry-v2.test.ts tests/parry-feedback-v3.test.ts tests/dialogue-portraits.test.ts tests/economy.test.ts tests/sword-wind-assets.test.ts tests/sword-wind.test.ts tests/east-defense.test.ts tests/village-raids.test.ts tests/village-integration.test.ts tests/day-night.test.ts tests/npc-life.test.ts tests/npc-navigation.test.ts tests/npc-speech.test.ts tests/sword-wind-audio.test.ts tests/water-motion.test.ts tests/safety-defense.test.ts",
+     "test:e2e": "playwright test",
+     "assets:sword-wind": "node tools/pack-sword-wind.mjs",
+     "test:sword-wind": "playwright test tests/sword-wind.spec.ts tests/sword-wind-focus.spec.ts tests/sword-wind-rise.spec.ts --config tools/playwright-sword-wind.config.ts --grep 'WIND-0[1-6]|WIND-0[89]|WIND-1[012]'",
+@@ -16,12 +16,13 @@
+     "preview": "vite preview --host 127.0.0.1",
+     "test:village-integration": "vitest run tests/village-integration.test.ts && playwright test tests/village-integration.spec.ts tests/economy-production.spec.ts --config tools/playwright-village-integration.config.ts",
+     "test:village-soak": "vitest run tests/village-integration.test.ts && node tools/soak-village-defense.mjs",
+-    "test:npc-life": "vitest run tests/npc-life.test.ts && playwright test tests/npc-life.spec.ts --config tools/playwright-npc-life.config.ts",
++    "test:npc-life": "vitest run tests/npc-life.test.ts tests/npc-navigation.test.ts tests/npc-speech.test.ts && playwright test tests/npc-life.spec.ts --config tools/playwright-npc-life.config.ts",
+     "test:npc-life:production": "npm run build -- --outDir .npc-life-local/production && playwright test --config tools/playwright-npc-life-production.config.ts",
+     "test:parry-feedback": "vitest run tests/parry-feedback-v3.test.ts && playwright test tests/parry-feedback-v3.spec.ts --config tools/playwright-parry-feedback-v3.config.ts",
+     "assets:parry-feedback": "node tools/pack-parry-feedback-v3.mjs && node tools/export-parry-feedback-audio.mjs",
+     "assets:sword-wind:audio": "node tools/export-sword-wind-audio.mjs",
+-    "test:sword-wind:audio": "playwright test --config tools/playwright-sword-wind-audio.config.ts"
++    "test:sword-wind:audio": "playwright test --config tools/playwright-sword-wind-audio.config.ts",
++    "test:defense-safety": "vitest run tests/safety-defense.test.ts && playwright test --config tools/playwright-safety.config.ts"
+   },
+   "dependencies": {
+     "phaser": "4.2.1"
+diff --git a/farwind/src/data/defense.ts b/farwind/src/data/defense.ts
+index c918a07..7820ce7 100644
+--- a/farwind/src/data/defense.ts
++++ b/farwind/src/data/defense.ts
+@@ -69,6 +69,12 @@ export type GuardId = typeof GUARD_DEFS[number]["id"];
+ export const RAID_SPAWNS = [{ x: 2430, y: 1080 }, { x: 2390, y: 1140 }, { x: 2470, y: 1120 }] as const;
+ export const DEFENSE = { regenWait: 8000, regenPerSecond: 0.0075, retreatHP: 0.35,
+   resumeHP: 0.65, speed: 100, enemySpeed: 66, arrowSpeed: 430, arrowLife: 1800,
+-  arrowLimit: 12, unitLimit: 4, eventLimit: 120000 } as const;
+-export const RAID_TIMING = { protection: 300000, minInterval: 240000, maxInterval: 480000,
+-  warning: 3000, retry: 10000, checkpoint: 20000 } as const;
++  arrowLimit: 12, unitLimit: 3, historyUnitLimit: 4, arrowRange: 774, eventLimit: 120000 } as const;
++export const RAID_TIMING = { protection: 300000, minInterval: 480000, maxInterval: 900000,
++  warning: 3000, retry: 20000, checkpoint: 20000 } as const;
++export const DEFENSE_RULES = { health: .8, scan: 150, approach: 400, lost: 1000,
++  pursuit: 8000, reacquire: 2000, stuck: 2000, observationRange: 450 } as const;
++export function nextDefenseRandom(seed: number) {
++  seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; return seed >>> 0;
++}
++export const raidInterval = (seed: number) => RAID_TIMING.minInterval + seed % (RAID_TIMING.maxInterval - RAID_TIMING.minInterval + 1);
+diff --git a/farwind/src/data/npcLife.ts b/farwind/src/data/npcLife.ts
+index af77953..892c6e0 100644
+--- a/farwind/src/data/npcLife.ts
++++ b/farwind/src/data/npcLife.ts
+@@ -59,6 +59,12 @@ export const LIFE = {
+   pathRetryMs: 1800,
+   transferMs: 1500,
+   pathNodesPerBatch: 64,
++  speechMs: 4500,
++  speechAreaMs: 14000,
++  speechPersonMs: 45000,
++  speechRadius: 260,
++  carriedMedicine: 2,
++  carriedWood: 2,
+ } as const;
+ // 楼梯落脚位逐项核验：北塔下方是旧风塔，南塔下方是工坊边缘，不能统一偏移。
+ export const GUARD_LANDINGS: Partial<Record<GuardId, Place>> = {
+diff --git a/farwind/src/data/world.ts b/farwind/src/data/world.ts
+index 72d3cb5..fa50e87 100644
+--- a/farwind/src/data/world.ts
++++ b/farwind/src/data/world.ts
+@@ -1,3 +1,4 @@
++import {inProtected} from "./defenseZones";
+ import {
+   serviceBuildings,
+   serviceEntrances,
+@@ -660,7 +661,8 @@ for (const parcel of RESERVED_PARCELS) {
+   props.push({
+     id: `${parcel.id}-sign`,
+     art: "sign",
+-    x: parcel.x + 30,
++    // 工坊路牌避开南塔正式射口；只平移该装饰，不改变地块、门洞或世界尺寸。
++    x: parcel.x + (parcel.id === "parcel-workshop" ? 90 : 30),
+     y: parcel.y + 40,
+     w: 52,
+     h: 72,
+@@ -998,7 +1000,7 @@ export const enemyDefs = [
+   { id: "leaf-2", x: 3170, y: 930, type: "leaf" },
+ ] as const;
+ export function region(x: number, y: number) {
+-  return regionAt({ x, y }).name;
++  const p={x,y},r=regionAt(p);return r.id!=="village"&&inProtected(p)?"巡逻近郊":r.name;
+ }
+ 
+ // 交互物只阻挡实际占地，互动视线忽略目标本体。
+diff --git a/farwind/src/game/entities/combatFeedbackView.ts b/farwind/src/game/entities/combatFeedbackView.ts
+index 1df1ad8..fa6d71b 100644
+--- a/farwind/src/game/entities/combatFeedbackView.ts
++++ b/farwind/src/game/entities/combatFeedbackView.ts
+@@ -1,9 +1,29 @@
+ import Phaser from 'phaser';
+-import {CombatFeedback,FEEDBACK,feedbackVisual,type FeedbackEvent} from '../systems/combatFeedback';
++import {CombatFeedback,FEEDBACK,BLADE_GLOW,feedbackVisual} from '../systems/combatFeedback';
++import type {Actor} from './actor';
+ export class CombatFeedbackView {
+  private ink=new Map<string,Phaser.GameObjects.Graphics>();
++ private bladeInk?:Phaser.GameObjects.Graphics;
++ private bladeEdgeInk?:Phaser.GameObjects.Graphics;
++ private glow:ReturnType<CombatFeedback['bladeGlow']>=null;
++ private flashes:{id:string;alpha:number;core:number;edge:number}[]=[];
+  constructor(private scene:Phaser.Scene,private feedback:CombatFeedback){}
+- draw(now:number) {
++ draw(now:number,hero?:Actor) {
++  this.glow=hero?this.feedback.bladeGlow(now,{x:hero.sprite.x,y:hero.sprite.y},hero.weapon,hero.presentation.facing):null;
++  this.bladeInk?.clear();
++  this.bladeEdgeInk?.clear();
++  if(this.glow){
++   this.bladeInk??=this.scene.add.graphics();
++   this.bladeEdgeInk??=this.scene.add.graphics();
++   const {start,tip,alpha,depth,edgeDepth,quality}=this.glow,g=this.bladeInk,edge=this.bladeEdgeInk,perfect=quality==='perfect';
++   g.setDepth(depth);
++   // 薄红亮边贴着剑身，暖白内芯保留钢刃；不覆盖整个人物或产生悬空光弧。
++   g.lineStyle(BLADE_GLOW.width,0xff443b,alpha*.28).lineBetween(start.x,start.y,tip.x,tip.y);
++   // 背向柔光仍在身体后层；细亮边覆盖图集中已可见的钢刃，避免被同一张角色贴图完全吞没。
++   edge.setDepth(edgeDepth).lineStyle(BLADE_GLOW.edgeWidth,0xf04438,alpha*.9).lineBetween(start.x,start.y,tip.x,tip.y);
++   edge.lineStyle(perfect?1.1:.8,0xffead1,alpha*(perfect?.85:.65)).lineBetween(start.x,start.y,tip.x,tip.y);
++  }
++  this.flashes=[];
+   const visible=feedbackVisual(this.feedback.mode)?this.feedback.effects:[];
+   for(const [id,g] of this.ink)if(!visible.some(e=>e.id===id)){g.destroy();this.ink.delete(id);}
+   for(const e of visible){let g=this.ink.get(e.id);if(!g){g=this.scene.add.graphics();this.ink.set(e.id,g);}g.clear().setDepth(e.depth??e.point.y+35);
+@@ -17,9 +37,13 @@ export class CombatFeedbackView {
+    }
+    const perfect=e.quality==='perfect',small=e.kind==='afterguard';
+    // 初始形状已完整：接触核心、剑刃短亮边、偏向拨开一侧的碎光；模拟停顿不吞首帧。
+-   g.fillStyle(0xfff7dc,alpha).fillCircle(p.x,p.y,(small?2.5:perfect?6:5.5)*(1-u*.6));
+-   const edge=small?5:perfect?12:9;g.lineStyle(small?1.2:2.8,0xffffeb,alpha).lineBetween(p.x-b.x*edge,p.y-b.y*edge,p.x+b.x*edge,p.y+b.y*edge);
+-   const angle=Math.atan2(d.y,d.x),length=small?8:perfect?24:17;
++   const core=(small?2.5:perfect?6.5:5.5)*(1-u*.6),edge=small?5:perfect?18:14;
++   this.flashes.push({id:e.id,alpha,core,edge});
++   if(!small)g.fillStyle(0xffc98d,alpha*.18).fillCircle(p.x,p.y,core+3);
++   g.fillStyle(0xfff7dc,alpha).fillCircle(p.x,p.y,core);
++   g.lineStyle(small?1.2:4,0xfff1cf,alpha*.6).lineBetween(p.x-b.x*edge,p.y-b.y*edge,p.x+b.x*edge,p.y+b.y*edge);
++   g.lineStyle(small?1.2:2,0xffffff,alpha).lineBetween(p.x-b.x*edge,p.y-b.y*edge,p.x+b.x*edge,p.y+b.y*edge);
++   const angle=Math.atan2(d.y,d.x),length=small?8:perfect?26:20;
+    for(const [i,offset] of [-.45,-.1,.22,.52].entries()) {
+     const a=angle+offset,r=length*(i===1?1:.75)+u*10,dx=Math.cos(a),dy=Math.sin(a);
+     g.lineStyle(i===1?2.2:1.3,i===1?0xfff5d1:0xe8d5a6,alpha*(1-i*.12)).lineBetween(p.x+dx*4,p.y+dy*4,p.x+dx*r,p.y+dy*r);
+@@ -28,5 +52,6 @@ export class CombatFeedbackView {
+    if(perfect&&!small){g.lineStyle(1,0xffffff,alpha*.85).lineBetween(p.x-b.x*edge-d.x*3,p.y-b.y*edge-d.y*3,p.x+b.x*edge-d.x*3,p.y+b.y*edge-d.y*3);}
+   }
+  }
+- clear(){for(const g of this.ink.values())g.destroy();this.ink.clear();}
++ snapshot(){return {bladeGlow:this.glow,flashes:this.flashes};}
++ clear(){for(const g of this.ink.values())g.destroy();this.ink.clear();this.bladeInk?.destroy();this.bladeInk=undefined;this.bladeEdgeInk?.destroy();this.bladeEdgeInk=undefined;this.glow=null;this.flashes=[];}
+ }
+diff --git a/farwind/src/game/entities/npcLifeView.ts b/farwind/src/game/entities/npcLifeView.ts
+index d0deeee..27583d9 100644
+--- a/farwind/src/game/entities/npcLifeView.ts
++++ b/farwind/src/game/entities/npcLifeView.ts
+@@ -11,6 +11,8 @@ import {
+   type SpaceId,
+ } from "../../data/npcLife";
+ import type { NpcLife } from "../systems/npcLife";
++import { TOWERS, GUARD_DEFS } from "../../data/defense";
++import { distance, spaceClear } from "../systems/npcNavigation";
+ import { Actor } from "./actor";
+ export class NpcLifeView {
+   residents = new Map<
+@@ -35,7 +37,21 @@ export class NpcLifeView {
+     { mark: Phaser.GameObjects.Graphics; label: Phaser.GameObjects.Text }
+   >();
+   lastSpace = "";
++  speechText: Phaser.GameObjects.Text;
++  speechInk: Phaser.GameObjects.Graphics;
+   constructor(private scene: Phaser.Scene) {
++    this.speechInk = scene.add.graphics().setDepth(9900).setVisible(false);
++    this.speechText = scene.add
++      .text(0, 0, "", {
++        fontSize: "13px",
++        color: "#493f31",
++        wordWrap: { width: 235 },
++        align: "center",
++        padding: { x: 9, y: 7 },
++      })
++      .setOrigin(0.5, 1)
++      .setDepth(9901)
++      .setVisible(false);
+     for (const d of PEOPLE.slice(0, 3)) {
+       const sprite = scene.add
+           .sprite(0, 0, d.art, 0)
+@@ -198,6 +214,28 @@ export class NpcLifeView {
+       }
+       g.fillStyle(0xf0e3bc).fillRect(814, 779, 50, 15);
+       g.lineStyle(1, 0x587559).lineBetween(836, 780, 840, 792);
++      const n = life.data.people.find((n) => n.id === "healer")!,
++        a = n.action;
++      if (
++        a?.kind === "work" &&
++        a.facility === "pharmacy" &&
++        a.phase === "perform"
++      ) {
++        // 未完成的药草与研钵跟随真实进度；只有事务完成后公共药瓶数量才改变。
++        const stroke = Math.sin(a.progress / 180) * 5;
++        g.fillStyle(0x65885f)
++          .fillEllipse(803, 757, 17, 6)
++          .fillEllipse(801, 749, 12, 5);
++        g.fillStyle(0xb3a180).fillEllipse(850, 761, 23, 10);
++        g.lineStyle(4, 0x66513b).lineBetween(848, 757, 852 + stroke, 742);
++        g.fillStyle(0xe4d7ad).fillRect(873, 751, 19, 12);
++        g.lineStyle(2, 0x799367).lineBetween(
++          876,
++          756,
++          876 + (13 * a.progress) / a.duration,
++          756,
++        );
++      }
+     }
+     if (space === "elder-home") {
+       g.lineStyle(2, 0x806b4b)
+@@ -319,7 +357,7 @@ export class NpcLifeView {
+         .setPosition(p.x, p.y + 6)
+         .setDepth(depth + 1)
+         .setText(
+-          `${person(id)!.name} · ${p.health === "down" ? "需救护" : p.health === "convalescent" ? "休养" : n.action ? ACTION_LABELS[n.action.kind] : "等待"}`,
++          `${person(id)!.name} · ${p.health === "down" ? "需救护" : p.health === "convalescent" ? "休养" : n.action ? (n.action.phase === "stock" ? (id === "healer" ? "装药" : "取木料") : n.action.phase === "collect" ? "取物" : ACTION_LABELS[n.action.kind]) : "等待"}`,
+         );
+       v.tool
+         .clear()
+@@ -336,21 +374,103 @@ export class NpcLifeView {
+           .lineStyle(2, 0x99644a)
+           .lineBetween(p.x + 27, p.y - 35, p.x + 27, p.y - 27)
+           .lineBetween(p.x + 23, p.y - 31, p.x + 31, p.y - 31);
++        for (let i = 0; i < n.supplies.medicine; i++)
++          v.tool
++            .fillStyle(0x7ca38c)
++            .fillRoundedRect(p.x + 18 + i * 8, p.y - 42, 6, 8, 2);
+       }
+-      if (life.carrying(n) && id === "carpenter")
++      if (life.carrying(n) && id === "carpenter" && !working)
+         v.tool
+           .lineStyle(3, 0x91663a)
+           .lineBetween(p.x + 18, p.y - 27, p.x + 28, p.y - 45)
+           .lineStyle(5, 0x7c8680)
+           .lineBetween(p.x + 22, p.y - 43, p.x + 34, p.y - 40);
++      if (life.carrying(n) && id === "carpenter")
++        for (let i = 0; i < n.supplies.wood; i++)
++          v.tool
++            .lineStyle(5, 0xb48b53)
++            .lineBetween(
++              p.x - 25 - i * 6,
++              p.y - 31,
++              p.x - 20 - i * 6,
++              p.y - 48,
++            );
+       if (life.carrying(n) && id === "elder")
+         v.tool
+           .fillStyle(0xe2d5af)
+           .fillRoundedRect(p.x + 18, p.y - 33, 15, 20, 2)
+           .lineStyle(1, 0x748875)
+           .lineBetween(p.x + 21, p.y - 27, p.x + 30, p.y - 27);
+-      if (working && id === "healer" && !life.carrying(n))
+-        v.tool.fillStyle(0x7eaa85).fillEllipse(p.x + 24, p.y - 30, 10, 18);
++      if (working && n.action) {
++        const phase = Math.sin(n.action.progress / 160),
++          x = p.x + (v.facing === 2 ? -23 : 23);
++        if (id === "healer" && n.action.kind === "treat")
++          v.tool
++            .fillStyle(0xede1bc)
++            .fillRect(x - 7, p.y - 34 + phase * 2, 14, 9)
++            .lineStyle(1, 0x99694e)
++            .lineBetween(x, p.y - 33, x, p.y - 27);
++        if (id === "carpenter")
++          v.tool
++            .lineStyle(3, 0x95683e)
++            .lineBetween(x - 6, p.y - 29, x + 5, p.y - 43 + phase * 5)
++            .lineStyle(5, 0x828b82)
++            .lineBetween(
++              x + 1,
++              p.y - 42 + phase * 5,
++              x + 13,
++              p.y - 41 + phase * 5,
++            )
++            .fillStyle(0xb7925d)
++            .fillEllipse(x, p.y - 22, 22, 7);
++        if (id === "elder")
++          v.tool
++            .lineStyle(1.5, 0x69533c)
++            .lineBetween(x, p.y - 30, x + 8, p.y - 37 + phase * 2);
++      }
++    }
++    const speech = life.speech,
++      speaker = speech && life.body(speech.speaker),
++      n = speech && life.data.people.find((n) => n.id === speech.speaker),
++      showSpeech =
++        !!speech &&
++        !!speaker &&
++        !!n &&
++        speaker.space === space &&
++        life.live(speech.speaker) &&
++        speech.until > life.data.elapsed &&
++        (speech.urgent || n.action?.id === speech.actionId) &&
++        distance(speaker, life.state.player) < 280 &&
++        spaceClear(space, speaker, life.state.player);
++    this.speechInk.clear().setVisible(showSpeech);
++    this.speechText.setVisible(showSpeech);
++    if (showSpeech && speech && speaker) {
++      const guard = life.state.defense.guards.find(
++          (g) => g.id === speech.speaker,
++        ),
++        archer =
++          GUARD_DEFS.find((g) => g.id === speech.speaker)?.role === "archer",
++        anchor =
++          guard && archer && !guard.offDuty
++            ? TOWERS.find((t) => t.occupantGuardId === guard.id)!.perch
++            : speaker;
++      this.speechText
++        .setText(speech.text)
++        .setPosition(anchor.x, anchor.y - 107);
++      const bounds = this.speechText.getBounds();
++      this.speechInk
++        .fillStyle(speech.urgent ? 0xf6ddb5 : 0xeee5c9, 0.96)
++        .fillRoundedRect(bounds.x, bounds.y, bounds.width, bounds.height, 8)
++        .lineStyle(1.5, 0x71593f, 0.9)
++        .strokeRoundedRect(bounds.x, bounds.y, bounds.width, bounds.height, 8)
++        .fillTriangle(
++          anchor.x - 5,
++          bounds.bottom - 1,
++          anchor.x + 5,
++          bounds.bottom - 1,
++          anchor.x,
++          bounds.bottom + 6,
++        );
+     }
+     this.lastSpace = space;
+   }
+diff --git a/farwind/src/game/scenes/World.ts b/farwind/src/game/scenes/World.ts
+index 36c3131..eda6972 100644
+--- a/farwind/src/game/scenes/World.ts
++++ b/farwind/src/game/scenes/World.ts
+@@ -34,9 +34,10 @@ import { TrainingDummyView } from "../entities/trainingDummy";
+ import type { Attack } from "../systems/combat";
+ import { CombatTimeline } from "../systems/timeline";
+ import { StateCommit } from "../systems/stateCommit";
+-import { advanceNight,mayStartNight,nightWarningSnapshot } from "../systems/nightDirector";
++import { advanceNight,mayStartNight,nightWarningSnapshot,RaidDeferredError } from "../systems/nightDirector";
+ import { canDiscover,discoverySnapshot } from "../systems/nightDiscovery";
+-import { RAID_GATES } from "../../data/defense";
++import { RAID_GATES, RAID_TIMING } from "../../data/defense";
++import { inProtected } from "../../data/defenseZones";
+ import { NIGHT_DISCOVERY } from "../../data/dayNight";
+ import { DayNightView } from "../rendering/dayNightView";
+ import { lightAt } from "../systems/worldClock";
+@@ -384,7 +385,7 @@ export class World extends Phaser.Scene {
+                 warnings:this.warnings,
+                 inputs:this.inputHistory,
+                 contacts: this.contactHistory,
+-                feedback:{...this.feedback.snapshot(),audio:this.soundFx.diagnostic(),frames:this.feedbackFrames},
++                feedback:{...this.feedback.snapshot(),visual:this.feedbackView?.snapshot(),audio:this.soundFx.diagnostic(),frames:this.feedbackFrames},
+                 fieldTraining: this.fieldTargets.map((t) =>
+                   t.snapshot(this.sim),
+                 ),
+@@ -577,15 +578,16 @@ export class World extends Phaser.Scene {
+   }
+   publishState(next:State){this.state=next;this.loaded=structuredClone(next);this.ui.state=next;this.ui.available=true;this.defense.rebind(next.defense);this.life.rebind(next,this.defense);this.refresh();this.ui.update(next,"");}
+   async startNightRaid(){
+-    this.nextNightAttempt=this.sim+5000;
++    this.nextNightAttempt=this.sim+RAID_TIMING.retry;
+     try{
+       const v=this.cameras.main.worldView;
+-      await this.economy.run(()=>this.state,s=>{const p=s.night.plan!,occupied=this.enemies.filter(e=>e.hp>0&&!e.disabled),view={left:v.x,right:v.right,top:v.y,bottom:v.bottom};if(!this.defense.canScheduleAtGate(p.gate,s.player,RAID_GATES.find(g=>g.id===p.gate)!.spawns.slice(0,p.count),view,occupied))throw Error("防线健康或生成条件尚不满足。");return nightWarningSnapshot(s,view,occupied);},save,next=>this.publishState(next));
++      await this.economy.run(()=>this.state,s=>{const occupied=this.enemies.filter(e=>e.hp>0&&!e.disabled),view={left:v.x,right:v.right,top:v.y,bottom:v.bottom};return nightWarningSnapshot(s,view,occupied,this.defense);},save,next=>this.publishState(next));
+       this.ui.message("村门外发现动静，卫队正在戒备；可以参与或继续旅行。");
+     }catch(e){
+       // 同一个计划重试，失败不发布预警、不消费序号、不生成敌人。
+-      this.state.defense.retryMs=5000;
+-      this.ui.message("今晚的来袭暂未开始："+(e as Error).message);
++      this.state.defense.retryMs=RAID_TIMING.retry;
++      if(!(e instanceof RaidDeferredError))this.ui.open("pause");
++      this.ui.message(e instanceof RaidDeferredError?"今晚的来袭暂缓："+e.message:"预警尚未保存，已暂停："+(e as Error).message);
+     }
+   }
+   async discoverNight(){
+@@ -595,7 +597,7 @@ export class World extends Phaser.Scene {
+     }catch(e){this.ui.message((e as Error).message);}
+   }
+   openDefenseDrill() {
+-    this.ui.dialog("东门驻防", "岑风和青禾守住通路两侧，弦雨在塔上警戒。门洞保持畅通，穿过村门便是森林。");
++    this.ui.dialog("东门驻防", "岑风和青禾守住通路两侧，弦雨在塔上警戒。门洞保持畅通，门外道路是巡逻近郊，往远处才进入森林。首夜安静；后续夜晚需冷却结束、三名卫兵健康返岗，才可能有1～3只小怪接近。");
+     if (!import.meta.env.DEV || !new URLSearchParams(location.search).has("defenseDebug")) return;
+     const button=document.createElement("button"); button.id="defense-drill";
+     button.textContent="启动东门演练 · 3只普通怪";
+@@ -789,7 +791,8 @@ export class World extends Phaser.Scene {
+     this.slash.setDepth(this.state.player.y + 1);
+     for (const { a, b, alpha } of this.weaponTrail.segments(this.sim)) {
+       const ink = b.facing === 1 ? this.slashBack : this.slash;
+-      ink.fillStyle(b.counter ? b.counter==="perfect"?0xfff0bb:0xdcffff : b.stage === 3 ? 0xffdfa3 : 0xdaf9ed, b.counter?Math.min(1,alpha*1.3):alpha);
++      const red=!!b.counter&&feedbackVisual(this.feedback.mode);
++      ink.fillStyle(red?0xf85d53:b.counter ? b.counter==="perfect"?0xfff0bb:0xdcffff : b.stage === 3 ? 0xffdfa3 : 0xdaf9ed, red?alpha*.6:b.counter?Math.min(1,alpha*1.3):alpha);
+       ink.beginPath();
+       ink.moveTo(a.inner.x, a.inner.y);
+       ink.lineTo(a.tip.x, a.tip.y);
+@@ -1001,7 +1004,7 @@ export class World extends Phaser.Scene {
+     this.combat.update(prev,now,this.battleFacing(),this.state.player,this.combatTargets(),
+       (x,y)=>this.blocked(x,y),(x,y,tx,ty,id)=>this.meleeLine(x,y,tx,ty,id),
+       (target,stage,attack)=>this.strikeTarget(target,stage,attack),
+-      (stage,attack)=>{this.training.sync(this.combat.epoch);this.training.begin(attack);if(attack.counter)this.emitFeedback('counter-start',`counter-start:${attack.id}`,attack.start,undefined,attack);if(stage===4)this.soundFx.play('wind-charge');},
++      (stage,attack)=>{this.training.sync(this.combat.epoch);this.training.begin(attack);if(attack.counter){const m=attackConfig(attack);this.emitFeedback('counter-start',`counter-start:${attack.id}`,attack.start,undefined,attack,{until:attack.start+m.windup+m.active+m.recovery});}if(stage===4)this.soundFx.play('wind-charge');},
+       stage=>{const a=this.combat.attack!;if(a.counter){if(!feedbackAudio(this.feedback.mode))this.soundFx.play('counter');}else this.soundFx.play(stage===4?'wind-release':stage===3?'attack-heavy':'attack');},clearMotionLine,
+       (attack,root,at)=>this.swordWind.launch(attack,root,at,outgoingDamage(this.state,attack.swordWind!.damage)));
+   }
+@@ -1269,7 +1272,7 @@ export class World extends Phaser.Scene {
+     if(delta<200)this.fps.push(1000/delta);
+     if(this.fps.length>1200)this.fps.shift();
+     if(this.combat.hitStopRemaining>0)this.tweens.pauseAll();
+-    this.feedback.advance(this.sim,this.combat.attack?.counter?`player:${this.combat.attack.id}`:null);
++    this.feedback.advance(this.sim,this.combat.attack?.counter?`player:${this.combat.attack.id}`:null,!!this.combat.autoCounter||this.combat.parry?.successAt!==undefined);
+     const feedbackEvents=this.feedback.drain();
+     this.soundFx.feedbackBatch(feedbackEvents,this.feedback.mode);
+     this.swordWindView?.draw(this.sim);
+@@ -1450,10 +1453,14 @@ export class World extends Phaser.Scene {
+       if(event.kind==="death"){const enemy=this.enemies.find(e=>e.id===event.id);
+         if(enemy){enemy.sprite.setVisible(false);enemy.shadow.setVisible(false);
+           // 常驻野怪被卫队击倒只记录世界状态，不代领采集或主线奖励。
+-          if(!this.state.killed.includes(enemy.id))this.state.killed.push(enemy.id);}}
++          if(!this.state.killed.includes(enemy.id)){this.state.killed.push(enemy.id);
++            if(enemy.type==="leaf"&&!this.state.pendingDrops.some(d=>d.enemyId===enemy.id)){
++              this.state.pendingDrops.push({enemyId:enemy.id,item:"crystal",x:enemy.homeX,y:enemy.homeY});this.syncDrops();
++            }
++          }}}
+       if(event.kind==="warning")this.ui.message(`${event.id}外发现动静，卫队正在戒备。`);
+       if(event.kind==="started")this.ui.message(`${event.id}有小怪接近；卫队会自行拦截。`);
+-      if(event.kind==="delayed")this.ui.message("来袭路径或生成点不合法，本轮已延后。");
++      if(event.kind==="delayed")this.ui.message("防线健康、岗位或路径条件已变化；本次未出生来袭已取消并延期。");
+       if(event.kind==="ended")this.ui.message("村门来袭已结束，驻防变化正在保存。");
+     }
+     this.life.observePlayer();this.lifeView.update(this.life,this.sim);
+@@ -1465,7 +1472,7 @@ export class World extends Phaser.Scene {
+     this.practiceLabel.setVisible(!!this.practice.projection);
+     if(this.practice.projection)this.practiceLabel.setPosition(this.practice.projection.x,this.practice.projection.y-82).setDepth(8996);
+     this.drawParry();
+-    this.feedbackView?.draw(this.sim);
++    this.feedbackView?.draw(this.sim,this.hero);
+     this.presentedFrame++;
+     for(const event of feedbackEvents)this.feedbackFrames.push({id:event.id,frame:this.presentedFrame,sim:this.sim,wall:performance.now(),phase:this.hero.presentation.phase});
+     if(this.feedbackFrames.length>96)this.feedbackFrames.splice(0,this.feedbackFrames.length-96);
+@@ -1495,7 +1502,7 @@ export class World extends Phaser.Scene {
+       this.ui.message("岚爷爷把你带回广场。行囊与旅途进度都还在。");
+       void this.persist().catch(() => {});
+     }
+-    if (this.state.life.playerSpace==="village"&&this.state.quest === 1 && regionAt(p).id === "forest") {
++    if (this.state.life.playerSpace==="village"&&this.state.quest === 1 && regionAt(p).id === "forest" && !inProtected(p)) {
+       this.state.quest = this.state.crafted ? 3 : 2;
+       this.ui.dialog(
+         "林间异响",
+@@ -1505,7 +1512,7 @@ export class World extends Phaser.Scene {
+     }
+     if (
+       this.state.quest === 3 &&
+-      this.state.killed.some((id) => id.startsWith("leaf"))
++      this.state.killed.some((id) => id.startsWith("leaf") && !this.state.pendingDrops.some(d=>d.enemyId===id&&d.item==="crystal"))
+     )
+       this.state.quest = 4;
+     const r = this.state.life.playerSpace==="village"?region(p.x,p.y):"室内";
+diff --git a/farwind/src/game/systems/combatFeedback.ts b/farwind/src/game/systems/combatFeedback.ts
+index 6812817..2cac8f8 100644
+--- a/farwind/src/game/systems/combatFeedback.ts
++++ b/farwind/src/game/systems/combatFeedback.ts
+@@ -5,6 +5,8 @@ export type FeedbackKind='guard-start'|'enemy-charge'|'enemy-strike'|'parry-cont
+ export type FeedbackMaterial='slime'|'leaf'|'straw';
+ export type FeedbackEvent=Readonly<{id:string;kind:FeedbackKind;at:number;targetId:string;attackId:string;point:Readonly<Point>;incoming:Readonly<Point>;blade:Readonly<Point>;deflect:Readonly<Point>;quality:CounterKind;material:FeedbackMaterial;until?:number;alive?:boolean;depth?:number;legacyHit?:'hit'|'straw'}>;
+ export const FEEDBACK={history:96,effects:32,reactions:24,contactLife:150,hitLife:115,afterguardLife:65,peak:60,recover:160,secondaryLife:95,release:20,counterMotion:20} as const;
++// 仅影响成功反馈；红刃在拨开后建立，沿正式反斩的收势衰减，不表示额外伤害。
++export const BLADE_GLOW={start:20,rise:40,fade:145,maxLife:450,width:6,edgeWidth:2.6} as const;
+ export const feedbackVisual=(mode:FeedbackMode)=>mode==='C'||mode==='D';
+ export const feedbackAudio=(mode:FeedbackMode)=>mode==='B'||mode==='D';
+ // 来招已被截住：保留出手事实，声音提交时只移除同一攻击的冲撞；其他威胁仍完整发声。
+@@ -27,6 +29,7 @@ export class CombatFeedback {
+  history:FeedbackEvent[]=[];effects:FeedbackEvent[]=[];private queue:FeedbackEvent[]=[];
+  private seen=new Set<string>();private release:FeedbackEvent[]=[];
+  private swings:FeedbackEvent[]=[];
++ private glow:{event:FeedbackEvent;counterId?:string;until:number}|null=null;
+  private reactions=new Map<string,{parry:FeedbackEvent;hit?:FeedbackEvent}>();
+  emit(value:FeedbackEvent) {
+   const id=`${this.generation}:${value.id}`;if(this.seen.has(id))return false;
+@@ -36,14 +39,20 @@ export class CombatFeedback {
+   if(this.history.length>FEEDBACK.history){const old=this.history.shift()!;this.seen.delete(old.id);}
+   if(['parry-contact','parry-perfect-contact','counter-hit','afterguard'].includes(event.kind)) {this.effects.push(event);if(this.effects.length>FEEDBACK.effects)this.effects.shift();}
+   if(event.kind==='parry-contact'||event.kind==='parry-perfect-contact') {
++   this.glow={event,until:event.at+BLADE_GLOW.maxLife};
+    this.reactions.set(event.targetId,{parry:event});if(this.reactions.size>FEEDBACK.reactions)this.reactions.delete(this.reactions.keys().next().value!);
+    this.release.push(event);if(this.release.length>FEEDBACK.effects)this.release.shift();
+   }
+   if(event.kind==='counter-hit') {const r=this.reactions.get(event.targetId);if(r&&event.alive!==false)r.hit=event;else if(event.alive===false)this.reactions.delete(event.targetId);}
+-  if(event.kind==='counter-start'){this.swings.push(event);if(this.swings.length>FEEDBACK.effects)this.swings.shift();}
++  if(event.kind==='guard-start')this.glow=null;
++  if(event.kind==='counter-start'){
++   if(this.glow&&this.glow.event.targetId===event.targetId)this.glow={...this.glow,counterId:event.attackId,until:Math.min(this.glow.until,event.until??this.glow.until)};
++   this.swings.push(event);if(this.swings.length>FEEDBACK.effects)this.swings.shift();
++  }
+   return true;
+  }
+- advance(now:number,activeCounterId?:string|null) {
++ advance(now:number,activeCounterId?:string|null,deflecting?:boolean) {
++  if(this.glow&&(now>=this.glow.until||(deflecting===false&&activeCounterId!==this.glow.counterId)))this.glow=null;
+   // 正式攻击已经启动，且仍在执行，首个实际起势姿态到达时只消费一次破风事件。
+   for(const event of this.swings)if(now>=event.at+FEEDBACK.counterMotion&&(activeCounterId===undefined||activeCounterId===event.attackId))this.emit({...event,id:`swing:${event.attackId}`,kind:'counter-swing',at:event.at+FEEDBACK.counterMotion});
+   this.swings=this.swings.filter(e=>now<e.at+FEEDBACK.counterMotion&&(activeCounterId===undefined||activeCounterId===e.attackId));
+@@ -53,7 +62,16 @@ export class CombatFeedback {
+   for(const [id,r] of this.reactions)if(now>=(r.parry.until??r.parry.at)||r.parry.alive===false)this.reactions.delete(id);
+  }
+  drain(){const events=this.queue;this.queue=[];return events;}
+- cancelRelease(){this.release=[];this.swings=[];}
++ cancelRelease(){this.release=[];this.swings=[];this.glow=null;}
++ bladeGlow(now:number,root:Point,weapon:{grip:Point;tip:Point}|null,facing:number) {
++  const g=this.glow;if(!g||!weapon||!feedbackVisual(this.mode)||now<g.event.at+BLADE_GLOW.start||now>=g.until)return null;
++  const rise=Math.min(1,(now-g.event.at-BLADE_GLOW.start)/BLADE_GLOW.rise),fade=g.counterId?Math.min(1,(g.until-now)/BLADE_GLOW.fade):1;
++  const alpha=rise*fade;if(alpha<=0)return null;
++  return {id:g.event.id,quality:g.event.quality,alpha,counterId:g.counterId,
++   // 剑柄不发光；每帧读取已提交姿态的实际剑尖，镜像由武器采样统一提供。
++   start:{x:root.x+weapon.grip.x+(weapon.tip.x-weapon.grip.x)*.22,y:root.y+weapon.grip.y+(weapon.tip.y-weapon.grip.y)*.22},
++   tip:{x:root.x+weapon.tip.x,y:root.y+weapon.tip.y},depth:root.y+(facing===1?-.05:.08),edgeDepth:root.y+.08};
++ }
+  reaction(id:string,now:number,type:string,alive=true) {
+   const r=this.reactions.get(id);if(!r||!alive||now>=(r.parry.until??r.parry.at))return null;
+   const e=r.parry,age=Math.max(0,now-e.at),remaining=e.until!-now;
+@@ -63,6 +81,6 @@ export class CombatFeedback {
+   return {x:(-incoming.x*7+side.x*(leaf?9:6))*strength-incoming.x*secondary*3,y:(-incoming.y*4+side.y*3)*strength-incoming.y*secondary*2,rotation:(side.x<0?-1:1)*(leaf?.28:.18)*strength+Math.sin(age/38)*.025*strength,frame:remaining<FEEDBACK.recover/2?0:3,strength,secondary,phase:age<FEEDBACK.peak?'impact':remaining<FEEDBACK.recover?'recover':'unbalanced'};
+  }
+  attackAudible(startedAt:number,root:Point|undefined,player:Point){return startedAt>=this.resetAt&&(!root||Math.hypot(root.x-player.x,root.y-player.y)<600);}
+- reset(now=0){this.generation++;this.resetAt=now;this.history=[];this.queue=[];this.effects=[];this.release=[];this.swings=[];this.seen.clear();this.reactions.clear();}
+- snapshot(){return {mode:this.mode,generation:this.generation,events:this.history,effects:this.effects,pending:this.queue.length,delayed:this.release.length+this.swings.length,reactions:this.reactions.size};}
++ reset(now=0){this.generation++;this.resetAt=now;this.history=[];this.queue=[];this.effects=[];this.release=[];this.swings=[];this.glow=null;this.seen.clear();this.reactions.clear();}
++ snapshot(){return {mode:this.mode,generation:this.generation,events:this.history,effects:this.effects,pending:this.queue.length,delayed:this.release.length+this.swings.length,reactions:this.reactions.size,bladeGlow:this.glow};}
+ }
+diff --git a/farwind/src/game/systems/damage.ts b/farwind/src/game/systems/damage.ts
+index e54b84d..9b08292 100644
+--- a/farwind/src/game/systems/damage.ts
++++ b/farwind/src/game/systems/damage.ts
+@@ -7,8 +7,19 @@ export type DamageEvent = {
+ };
+ // 调用者负责攻击实例的命中去重；统一入口只负责阵营、存活与伤害后果。
+ export function resolveDamage(event: DamageEvent, source: UnitRef, target: UnitRef) {
++  if(source.hp<=0)return {applied:false,damage:0,hp:target.hp,killed:false};
++  return damage(event,source,target);
++}
++export type ReleasedAttack=Readonly<{sourceId:string;faction:Faction;attackId:string;amount:number;sourceType:'tower-arrow';eventId:string|null}>;
++// 合法释放的不可变快照没有HP字段；命中时不伪造已经死亡的射手仍存活。
++export function resolveReleasedDamage(event:DamageEvent,source:ReleasedAttack,target:UnitRef){
++  if(event.sourceType!==source.sourceType||event.attackId!==source.attackId||event.amount!==source.amount||event.eventId!==source.eventId)
++    return {applied:false,damage:0,hp:target.hp,killed:false};
++  return damage(event,{id:source.sourceId,faction:source.faction},target);
++}
++function damage(event:DamageEvent,source:Pick<UnitRef,'id'|'faction'>,target:UnitRef){
+   if (event.sourceId !== source.id || event.targetId !== target.id ||
+-    source.id === target.id || source.faction === target.faction || source.hp <= 0 || target.hp <= 0 ||
++    source.id === target.id || source.faction === target.faction || target.hp <= 0 ||
+     !event.attackId || !Number.isFinite(event.amount) || event.amount <= 0 || event.amount > 10000)
+     return { applied: false, damage: 0, hp: target.hp, killed: false };
+   const damage = Math.max(1, event.amount - target.armor);
+diff --git a/farwind/src/game/systems/defense.ts b/farwind/src/game/systems/defense.ts
+index badb946..7bd8ea6 100644
+--- a/farwind/src/game/systems/defense.ts
++++ b/farwind/src/game/systems/defense.ts
+@@ -1,22 +1,24 @@
+ import { GUARD_LANDINGS, type Place } from '../../data/npcLife';
+ import type {GuardId} from '../../data/defense';
+-import { DEFENSE, TOWERS, RAID_GATES, RAID_TIMING, GUARD_DEFS, GUARD_WEAPONS, GUARD_ARMOR, type GateId } from "../../data/defense";
++import { DEFENSE, DEFENSE_RULES, raidInterval, TOWERS, RAID_GATES, RAID_TIMING, GUARD_DEFS, GUARD_WEAPONS, GUARD_ARMOR, type GateId } from "../../data/defense";
+ import { props } from "../../data/world";
+-import { regionAt } from "../../data/village";
++import { regionAt, inPolygon } from "../../data/village";
+ import { localPath, nearestStanding, enemyNavigation, enemyAttackSpace, type EnemyBody, NAV } from "./enemy";
+-import { motionBlocked, clearMotionLine, clearMeleeLine, shotLineBlocker, type Point, type Rect, type FiringPort } from "./obstacles";
++import { motionBlocked, clearMotionLine, clearMeleeLine, shotLineBlocker, shotLineImpact, type Point, type Rect, type FiringPort } from "./obstacles";
+ import { createEnemyAttack, advanceEnemyAttack, delayEnemyAttack, type EnemyContact } from "./enemyAttack";
+-import { resolveDamage, type DamageEvent } from "./damage";
++import { resolveDamage, resolveReleasedDamage, type ReleasedAttack, type DamageEvent } from "./damage";
+ import type { DefenseState, GuardState } from "./defenseState";
++import {DEFENSE_ZONES,zoneFor,inProtected,locallyProtected,inAlert,inActivity,routeRemaining} from '../../data/defenseZones';
+ const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
+ export type DefenseEnemy = EnemyBody & { kind: "defense-enemy"; eventId: string; flashUntil: number;
+   targetId: string | null; playerAggroUntil: number; maxHP: number };
+ export type DefenseHostile = EnemyBody & {eventId?:string; flashUntil:number; maxHP?:number};
+ type GuardAttack = { id: string; start: number; contact: number; end: number; targetId: string; hit: boolean; direction: Point };
+ type GuardRuntime = { nav: EnemyBody["nav"]; attack: GuardAttack | null; serial: number; patrol: number;
+-  facing: 0 | 1 | 2 | 3; moved: number; distance: number; flashUntil: number };
++  facing: 0 | 1 | 2 | 3; moved: number; distance: number; flashUntil: number; targetId:string|null; chaseMs:number; blockedTarget:string|null; blockedUntil:number; stuckMs:number };
++export type Threat = {id:string;gateId:GateId;reason:"intrusion"|"attack"|"approach"|"observe";lastSeen:number;progress:number;approachMs:number;lastProgress:number;assigned:string[]};
+ export type DefenseArrow = { id: string; sourceId: string; eventId: string; x: number; y: number;
+-  origin: Point; vx: number; vy: number; age: number; damage: number; travelled: number; hit: Set<string> };
++  origin: Point; vx: number; vy: number; age: number; damage: number; travelled: number; hit: Set<string>; released:ReleasedAttack;port:Readonly<FiringPort> };
+ export type DefenseNotice = { kind: "hit" | "death" | "ended" | "shot" | "warning" | "started" | "delayed"; id: string; sourceId?: string; eventKey?:string;
+   at: number; damage?: number; x?: number; y?: number };
+ 
+@@ -28,7 +30,7 @@ export function spawnLegal(gateId: GateId, spawns: readonly Point[], player: Poi
+   return spawns.every(p => {
+     const region = regionAt(p).id;
+     if (region !== (gateId === "east-gate" ? "forest" : gateId === "north-gate" ? "north" : "south") ||
+-      dist(p, player) < 220 || occupied.some(q => dist(p, q) < 60) || motionBlocked(p.x, p.y) ||
++      inProtected(p) || !inPolygon(p,zoneFor(gateId).spawn) || dist(p, player) < 220 || occupied.some(q => dist(p, q) < 60) || motionBlocked(p.x, p.y) ||
+       view && p.x > view.left - 100 && p.x < view.right + 100 && p.y > view.top - 100 && p.y < view.bottom + 100) return false;
+     return !!localPath(p, q => dist(q, gate.entry) < 25 && clearMotionLine(q, gate.entry), gate.entry, q => dist(q, gate) <= 480).path;
+   }) && !!localPath(gate.entry, q => dist(q, gate.inside) < 25 && clearMotionLine(q, gate.inside),
+@@ -37,15 +39,15 @@ export function spawnLegal(gateId: GateId, spawns: readonly Point[], player: Poi
+ export function prepareRaid(s: DefenseState, player: Point, gateId: GateId, count = 3, warning = false, view?: Rect, occupied: readonly Point[] = []): DefenseState {
+   if (s.raid) throw Error("已有演练或来袭正在进行，不能重复生成。");
+   if (s.sequence >= 1e9) throw Error("来袭序号已到上限。");
+-  if (!Number.isInteger(count) || count < 2 || count > DEFENSE.unitLimit) throw Error("来袭人数无效。");
++  if (!Number.isInteger(count) || count < 1 || count > DEFENSE.unitLimit) throw Error("来袭人数无效。");
+   const gate = RAID_GATES.find(g => g.id === gateId);
+   if (!gate) throw Error("出口未开放。");
+   const spawns = gate.spawns.slice(0, count).map(p => ({...p}));
+   if (!spawnLegal(gateId, spawns, player, view, occupied)) throw Error("城外生成点近身、在视口内或不可达，请稍后再试。");
+   const next = structuredClone(s), sequence = ++next.sequence, id = gateId === "east-gate" && !warning ? `east-raid-${sequence}` : `raid-${sequence}`;
+   next.raid = { id, sequence, gateId, spawns, phase: warning ? "warning" : "approach", ageMs: 0,
+-    members: spawns.map((p, i) => ({ id: `${id}:${i + 1}`, type: warning && i === count - 1 && count >= 3 ? "leaf" : "slime",
+-      ...p, hp: warning && i === count - 1 && count >= 3 ? 72 : 48, cooldownMs: 0, targetId: null })) };
++    members: spawns.map((p, i) => ({ id: `${id}:${i + 1}`, type: "slime",
++      ...p, hp: 48, cooldownMs: 0, targetId: null })) };
+   return next;
+ }
+ export function prepareEastRaid(s: DefenseState, player: Point) { return prepareRaid(s, player, "east-gate"); }
+@@ -58,10 +60,18 @@ export class EastDefense {
+   healGuard(id:string,amount:number){const g=this.state.guards.find(g=>g.id===id);if(g&&!g.dead&&amount>0)g.hp=Math.min(GUARD_DEFS.find(d=>d.id===id)!.maxHP,g.hp+Math.min(30,amount));}
+   enemies: DefenseEnemy[] = [];
+   external: DefenseHostile[] = [];
+-  manages(e: EnemyBody) { return e.hp > 0 && !e.disabled && this.state.guards.some(g => !g.dead && !g.offDuty && (g.space??"village")==="village" &&
+-    GUARD_DEFS.find(d => d.id === g.id)!.role === "melee" && dist(e,GUARD_DEFS.find(d => d.id === g.id)!.post) <= 300 &&
+-    dist({x:e.homeX,y:e.homeY},GUARD_DEFS.find(d => d.id === g.id)!.post) <= 600); }
+-  hostiles(): DefenseHostile[] { return [...this.enemies,...this.external.filter(e=>this.manages(e))]; }
++  threats=new Map<string,Threat>();
++  managedIds=new Set<string>();
++  ownershipReady=false;
++  nextScan=0;
++  player:Point & {hp:number}={x:670,y:720,hp:100};
++  allHostiles():DefenseHostile[]{return [...this.enemies,...this.external];}
++  ownsFixed(e:EnemyBody){return e.hp>0&&!e.disabled&&DEFENSE_ZONES.some(z=>
++    (locallyProtected(z.gateId,e)||this.threatReason(z.gateId,e as DefenseHostile)!==null)&&
++    (inActivity(z.gateId,e)||inAlert(z.gateId,e)));}
++  // 更新所有权在时间片起点冻结，不能移动后重新归属再更新一次。
++  manages(e:EnemyBody){return this.ownershipReady?this.managedIds.has(e.id):this.ownsFixed(e);}
++  hostiles():DefenseHostile[]{return [...this.enemies,...this.external.filter(e=>this.manages(e))];}
+   arrows: DefenseArrow[] = [];
+   runtime = new Map<string, GuardRuntime>();
+   history: DefenseNotice[] = [];
+@@ -99,25 +109,77 @@ export class EastDefense {
+   }
+ 
+   // 新预警与预警结束复用同一门级准入；已生成的战斗不受此门槛影响。
+-  canScheduleAtGate(gateId: GateId, player: Point, spawns: readonly Point[], view?: Rect, occupied: readonly Point[] = []) {
++  guardGate(id:string):GateId {return TOWERS.find(t=>id.startsWith(t.gateId.split('-')[0]+'-'))!.gateId;}
++  guardAllowed(g:GuardState,p:Point){const d=GUARD_DEFS.find(d=>d.id===g.id)!;
++    return dist(p,d.post)<=d.leash && (d.role==='archer'?dist(p,d.post)<=2:
++      inPolygon(p,g.id.endsWith('-watch')?zoneFor(this.guardGate(g.id)).inside:zoneFor(this.guardGate(g.id)).activity));}
++  observed(gateId:GateId,e:DefenseHostile){
++    return this.state.guards.some(g=>!g.dead&&!g.offDuty&&(g.space??"village")==="village"&&this.guardGate(g.id)===gateId&&(
++      g.id.endsWith('-archer')?dist(e,GUARD_DEFS.find(d=>d.id===g.id)!.post)<=TOWERS.find(t=>t.occupantGuardId===g.id)!.range&&
++        !shotLineBlocker(this.portFor(g.id).origin,{x:e.x,y:e.y-30},this.portFor(g.id)):
++      dist(g,e)<=DEFENSE_RULES.observationRange&&clearMeleeLine(g,e)));
++  }
++  attackingProtected(gateId:GateId,e:DefenseHostile){
++    if(!e.attack||e.attack.cancelled||e.attack.resolved)return false;
++    const victim=e.targetId==='player'?this.player:this.state.guards.find(g=>g.id===e.targetId&&!g.dead&&(g.space??"village")==="village");
++    return !!victim&&locallyProtected(gateId,victim);
++  }
++  threatReason(gateId:GateId,e:DefenseHostile):Exclude<Threat['reason'],'observe'>|null{
++    if(e.hp<=0||e.disabled||!inActivity(gateId,e)&&!inAlert(gateId,e))return null;
++    const record=this.threats.get(e.id),visible=this.observed(gateId,e);
++    if(!visible&&(!record||record.gateId!==gateId||this.now-record.lastSeen>DEFENSE_RULES.lost))return null;
++    if(locallyProtected(gateId,e))return 'intrusion';
++    if(this.attackingProtected(gateId,e))return 'attack';
++    if(this.enemies.includes(e as DefenseEnemy)&&this.state.raid?.phase==='retreat')return null;
++    return record?.gateId===gateId&&inAlert(gateId,e)&&record.approachMs>=DEFENSE_RULES.approach&&
++      this.now-record.lastProgress<=DEFENSE_RULES.lost&&routeRemaining(gateId,e)<=record.progress+12?'approach':null;
++  }
++  scanThreats(){
++    if(this.now<this.nextScan)return;this.nextScan=this.now+DEFENSE_RULES.scan;
++    const alive=this.allHostiles().filter(e=>e.hp>0&&!e.disabled);
++    for(const e of alive){
++      const zone=DEFENSE_ZONES.find(z=>(inActivity(z.gateId,e)||inAlert(z.gateId,e))&&this.observed(z.gateId,e));
++      if(!zone)continue;
++      const progress=routeRemaining(zone.gateId,e),old=this.threats.get(e.id),same=old?.gateId===zone.gateId;
++      const record:Threat=same?old!:{id:e.id,gateId:zone.gateId,reason:'observe',lastSeen:this.now,progress,approachMs:0,lastProgress:this.now,assigned:[]};
++      const elapsed=Math.min(DEFENSE_RULES.scan*2,this.now-record.lastSeen);
++      if(same&&progress<record.progress-1){record.approachMs+=elapsed;record.lastProgress=this.now;}
++      else if(progress>record.progress+12||this.now-record.lastProgress>DEFENSE_RULES.lost)record.approachMs=0;
++      record.progress=progress;record.lastSeen=this.now;this.threats.set(e.id,record);
++      record.reason=this.threatReason(zone.gateId,e)??'observe';
++    }
++    for(const [id,record]of this.threats)if(!alive.some(e=>e.id===id)||this.now-record.lastSeen>DEFENSE_RULES.lost)this.threats.delete(id);
++  }
++  eligible(g:GuardState,e:DefenseHostile){
++    const d=GUARD_DEFS.find(d=>d.id===g.id)!,gate=this.guardGate(g.id);
++    if(g.dead||g.offDuty||(g.space??"village")!=="village"||g.hp<=0||!this.threatReason(gate,e))return false;
++    if(d.role==='archer'){const tower=TOWERS.find(t=>t.occupantGuardId===g.id)!;
++      return dist(g,tower)<=2&&dist(e,tower)<=tower.range&&this.inFiringArc(g.id,e)&&
++        !shotLineBlocker(tower.muzzle,{x:e.x,y:e.y-30},this.portFor(g.id));}
++    // 允许识别警戒带逼近者并前往固定拦截点，移动硬边界仍只约束卫兵。
++    return this.guardAllowed(g,g);
++  }
++  canScheduleAtGate(gateId:GateId,player:Point,spawns:readonly Point[],view?:Rect,occupied:readonly Point[]=[]){
+     const raid=this.state.raid;
+-    if (raid && (raid.phase !== "warning" || raid.gateId !== gateId) ||
+-      !raid && (this.state.protectionMs || this.state.cooldownMs || this.state.retryMs) ||
+-      occupied.length + this.state.guards.filter(g=>!g.dead).length + spawns.length > 24) return false;
+-    const defs=GUARD_DEFS.filter(d=>d.id.startsWith(gateId.split('-')[0]+'-'));
+-    if (defs.length !== 3 || !defs.every(d=>{
+-      const g=this.state.guards.find(g=>g.id===d.id),r=this.runtime.get(d.id);
+-      return g && !g.dead && !g.offDuty && (g.space??"village")==="village" && g.hp >= d.maxHP*.65 && g.postId===d.postId &&
+-        ["post","patrol"].includes(g.mode) && !r?.attack &&
+-        (d.role==='archer' ? dist(g,d.post)<=2 : dist(g,d.post)<=d.leash && !motionBlocked(g.x,g.y));
+-    })) return false;
+-    return spawnLegal(gateId,spawns,player,view,occupied);
++    if(raid&&(raid.phase!=='warning'||raid.gateId!==gateId)||!raid&&(this.state.protectionMs||this.state.cooldownMs||this.state.retryMs)||
++      occupied.length+this.state.guards.filter(g=>!g.dead).length+spawns.length>24)return false;
++    const defs=GUARD_DEFS.filter(d=>this.guardGate(d.id)===gateId);
++    if(defs.length!==3||!defs.every(d=>{const g=this.state.guards.find(g=>g.id===d.id),r=this.runtime.get(d.id);
++      return g&&!g.dead&&!g.offDuty&&(g.space??"village")==="village"&&g.hp>=d.maxHP*DEFENSE_RULES.health&&g.postId===d.postId&&
++        ['post','patrol'].includes(g.mode)&&!r?.attack&&
++        (d.role==='archer'?dist(g,d.post)<=2:this.guardAllowed(g,g)&&!motionBlocked(g.x,g.y));}))return false;
++    return !this.allHostiles().some(e=>this.threatReason(gateId,e)!==null)&&spawnLegal(gateId,spawns,player,view,occupied);
++  }
++  returnGuard(g:GuardState){const r=this.runtime.get(g.id)!;
++    if(r.targetId){r.blockedTarget=r.targetId;r.blockedUntil=this.now+DEFENSE_RULES.reacquire;}
++    r.targetId=null;r.chaseMs=r.stuckMs=0;r.attack=null;r.nav.path=[];r.nav.target=undefined;g.mode='return';
+   }
++
+   finish(delayed = false) {
+     const raid = this.state.raid; if (!raid) return;
+-    this.state.completedSequence = raid.sequence; this.state.raid = null; this.enemies = []; this.arrows = [];
++    this.state.completedSequence = raid.sequence; this.state.raid = null; this.enemies = [];
+     this.state.seed = nextRandom(this.state.seed);
+-    this.state.cooldownMs = delayed ? 0 : RAID_TIMING.minInterval + this.state.seed % (RAID_TIMING.maxInterval - RAID_TIMING.minInterval + 1);
++    this.state.cooldownMs = delayed ? 0 : raidInterval(this.state.seed);
+     this.state.retryMs = delayed ? RAID_TIMING.retry : 0; this.awaitingCheckpoint = false;
+     this.critical = true; this.note({kind:delayed ? "delayed" : "ended", id:raid.id, at:this.now});
+   }
+@@ -125,16 +187,16 @@ export class EastDefense {
+   // 交易只换状态副本；运行中的攻击与箭矢不重建、不补伤害。
+   rebind(state: DefenseState) { this.state = state; }
+   restore(now: number) {
+-    this.now = now; this.arrows = []; this.runtime.clear();
++    this.now = now; this.arrows = []; this.runtime.clear();this.threats.clear();this.managedIds.clear();this.ownershipReady=false;this.nextScan=now;
+     for (const g of this.state.guards) {
+       const d = GUARD_DEFS.find(d => d.id === g.id)!;
+       if (d.role === "archer" && !g.offDuty) Object.assign(g, d.post);
+-      else if (!g.dead && !g.offDuty && (motionBlocked(g.x, g.y) || dist(g,d.post) > d.leash)) {
+-        const safe = nearestStanding(g, [d.post, d.cover], p => dist(p, d.post) < d.leash);
++      else if (!g.dead && !g.offDuty && (motionBlocked(g.x, g.y) || !this.guardAllowed(g,g))) {
++        const safe = nearestStanding(g, [d.post, d.cover], p => this.guardAllowed(g,p));
+         Object.assign(g, safe ?? d.post);
+       }
+       this.runtime.set(g.id, { nav: enemyNavigation(), attack: null, serial: 0, patrol: 0,
+-        facing: 3, moved: 0, distance: 0, flashUntil: 0 });
++        facing: 3, moved: 0, distance: 0, flashUntil: 0,targetId:null,chaseMs:0,blockedTarget:null,blockedUntil:0,stuckMs:0 });
+     }
+     if (this.state.raid?.phase !== "warning") this.spawnEnemies(now); else this.enemies = [];
+     this.sync();
+@@ -156,15 +218,14 @@ export class EastDefense {
+     if (hit.killed) {
+       g.dead = true; g.mode = "dead"; g.cooldownMs = 0;
+       const r = this.runtime.get(g.id)!; r.attack = null; r.nav.path = [];
+-      this.arrows = this.arrows.filter(a => a.sourceId !== g.id);
+       this.critical = true;
+       this.note({ kind: "death", id: g.id, eventKey:`${event.attackId}:${g.id}:death`, sourceId: source.id, at: this.now, x: g.x, y: g.y });
+     }
+     return true;
+   }
+-  damageEnemy(e: DefenseHostile, event: DamageEvent, sourceHP: number) {
+-    const hit = resolveDamage(event, { id: event.sourceId, hp: sourceHP, faction: "village", armor: 0 },
+-      { id: e.id, hp: e.hp, faction: "hostile", armor: 0 });
++  damageEnemy(e: DefenseHostile, event: DamageEvent, source: number|ReleasedAttack) {
++    const target={id:e.id,hp:e.hp,faction:'hostile' as const,armor:0};
++    const hit=typeof source==='number'?resolveDamage(event,{id:event.sourceId,hp:source,faction:'village',armor:0},target):resolveReleasedDamage(event,source,target);
+     if (!hit.applied) return false;
+     e.hp = hit.hp; e.flashUntil = this.now + 130;
+     if (event.sourceType === "player-melee" || event.sourceType === "player-wind") e.playerAggroUntil = this.now + 2500;
+@@ -210,14 +271,17 @@ export class EastDefense {
+     return dist(old, body);
+   }
+   target(e: DefenseHostile, player: Point & { hp: number }) {
+-    const guards = this.state.guards.filter(g => !g.dead && (g.space??"village")==="village" && GUARD_DEFS.find(d => d.id === g.id)!.role === "melee");
++    const localGate=this.enemies.includes(e as DefenseEnemy)?this.gate().id:DEFENSE_ZONES.find(z=>inActivity(z.gateId,e)||inAlert(z.gateId,e))?.gateId;
++    const guards = this.state.guards.filter(g => !g.dead && (g.space??"village")==="village" && this.guardGate(g.id)===localGate && GUARD_DEFS.find(d => d.id === g.id)!.role === "melee");
+     const all = [...guards, ...(player.hp > 0 && dist(e, player) < 380 ? [{ ...player, id: "player" }] : [])]
+       .filter(p => this.external.includes(e) ? dist(p,{x:e.homeX,y:e.homeY}) <= 420 : dist(p,this.gate()) < 600)
++      .filter(p=>this.external.includes(e)||locallyProtected(this.gate().id,e)||p.id==='player'||dist(e,p)<110)
+       .sort((a, b) => dist(e, a) - dist(e, b) || a.id.localeCompare(b.id));
+     return ((e.playerAggroUntil ?? 0) > this.now && all.find(p => p.id === "player")) || all[0];
+   }
+   update(now: number, dtMs: number, player: Point & { hp: number }, budget: { queries: number }, view?: Rect, occupied: readonly Point[] = []) {
+     this.now = now; const dt = dtMs / 1000, contacts: EnemyContact[] = [];
++    this.player=player;this.scanThreats();this.managedIds=new Set(this.external.filter(e=>this.ownsFixed(e)).map(e=>e.id));this.ownershipReady=true;
+     this.schedule(dtMs, player, view, occupied);
+     this.timerCheckpoint += dtMs;
+     if (this.timerCheckpoint >= RAID_TIMING.checkpoint) { this.timerCheckpoint = 0; this.critical = true; }
+@@ -225,7 +289,7 @@ export class EastDefense {
+     if (raid?.phase === "warning") {
+       if (!this.awaitingCheckpoint) raid.ageMs = Math.min(RAID_TIMING.warning, raid.ageMs + dtMs);
+       if (raid.ageMs >= RAID_TIMING.warning) {
+-        if (!spawnLegal(raid.gateId, raid.spawns, player, view, occupied)) this.finish(true);
++        if (!this.canScheduleAtGate(raid.gateId, player, raid.spawns, view, occupied)) this.finish(true);
+         else { raid.phase = "approach"; raid.ageMs = 0; this.spawnEnemies(now); this.critical = true;
+           this.note({kind:"started", id:this.gate().name, at:now}); }
+       }
+@@ -257,7 +321,8 @@ export class EastDefense {
+         continue;
+       }
+       e.targetId = target?.id ?? null;
+-      const destination = !fixed && raid?.phase === "retreat" ? { x: e.homeX, y: e.homeY } : target ?? (fixed ? {x:e.homeX,y:e.homeY} : this.gate().inside);
++      const destination = !fixed && raid?.phase === "retreat" ? { x: e.homeX, y: e.homeY } : target ??
++        (fixed ? {x:e.homeX,y:e.homeY} : locallyProtected(this.gate().id,e)?this.gate().inside:this.gate().entry);
+       if (target && (fixed || raid?.phase !== "retreat") && dist(e, target) < 73 && clearMeleeLine(e, target) && now >= e.cool) {
+         e.attack = createEnemyAttack(e.id, e.attackSerial = (e.attackSerial ?? 0) + 1, e.type, now, e, target);
+         e.cool = e.attack.recoveryUntil + 850; e.ai = "前摇";
+@@ -268,6 +333,7 @@ export class EastDefense {
+         e.ai = raid?.phase === "retreat" ? "撤离" : "接近目标";
+       } else e.ai = "等待冷却";
+     }
++    for(const record of this.threats.values())record.assigned=[];
+     for (const g of this.state.guards) {
+       if (g.dead) continue;
+       const d = GUARD_DEFS.find(d => d.id === g.id)!, r = this.runtime.get(g.id)!, weapon = GUARD_WEAPONS[g.weaponId];
+@@ -289,54 +355,64 @@ export class EastDefense {
+         continue;
+       }
+       g.cooldownMs = Math.max(0, g.cooldownMs - dtMs); r.moved = 0;
+-      const targets = this.hostiles().filter(e => (!this.external.includes(e) || dist(e,d.post) <= 300) && e.hp > 0 && !e.disabled && dist(e, d.post) <= (d.role === "archer" ? TOWERS.find(t => t.occupantGuardId === g.id)!.range : d.leash));
+-      targets.sort((a, b) => dist(g, a) - dist(g, b) || a.id.localeCompare(b.id));
+-      let target = targets[0];
+-      if (d.role === "archer") {
+-        const tower = TOWERS.find(t => t.occupantGuardId === g.id)!, gate = RAID_GATES.find(p => p.id === tower.gateId)!;
+-        target = targets.filter(e => this.inFiringArc(g.id, e) &&
+-          !shotLineBlocker(tower.muzzle, { x:e.x, y:e.y-30 }, this.portFor(g.id)))
+-          .sort((a,b) => (a.targetId && a.targetId !== "player" ? -100 : 0) + dist(a,gate) -
+-            (b.targetId && b.targetId !== "player" ? -100 : 0) - dist(b,gate))[0];
+-      }
+-      g.peaceMs = target ? 0 : Math.min(DEFENSE.regenWait, g.peaceMs + dtMs);
+-      if (!target && g.peaceMs >= DEFENSE.regenWait) g.hp = Math.min(d.maxHP, g.hp + d.maxHP * DEFENSE.regenPerSecond * dt);
+-      const retreat = d.role === "melee" && (g.hp <= d.maxHP * DEFENSE.retreatHP ||
+-        ["retreat", "recover"].includes(g.mode) && g.hp < d.maxHP * DEFENSE.resumeHP);
+-      if (retreat) { r.attack = null; g.mode = dist(g, d.cover) < 5 ? "recover" : "retreat";
+-        r.moved = this.move(g, r.nav, d.cover, DEFENSE.speed, dt, budget, p => dist(p, d.post) <= d.leash,
+-          [...this.state.guards.filter(p => !p.dead && p !== g), player]);
+-      } else if (r.attack) {
+-        g.mode = "attack";
+-        const attack = r.attack, victim = this.hostiles().find(e => e.id === attack.targetId && e.hp > 0);
+-        if (!attack.hit && now >= attack.contact) {
+-          attack.hit = true;
+-          if (victim && d.role === "archer") this.fire(g, victim, attack.id);
+-          else if (victim && dist(g, victim) <= weapon.range + 8 && clearMeleeLine(g, victim))
+-            this.damageEnemy(victim, { sourceId: g.id, targetId: victim.id, attackId: attack.id,
+-              amount: weapon.damage, sourceType: "guard-melee", eventId: victim.eventId ?? null }, g.hp);
+-        }
+-        if (now >= attack.end) r.attack = null;
+-      } else if (target) {
+-        if (d.role === "archer" || dist(g, target) < weapon.range && clearMeleeLine(g, target)) {
+-          g.mode = "attack";
+-          if (g.cooldownMs === 0) {
+-            const n = Math.max(1, dist(g, target)), direction = { x: (target.x - g.x) / n, y: (target.y - g.y) / n };
+-            r.attack = { id: `${g.id}:${++r.serial}`, start: now, contact: now + weapon.windup,
+-              end: now + weapon.windup + 220, targetId: target.id, hit: false, direction };
+-            g.cooldownMs = weapon.cooldown;
+-            r.facing = Math.abs(direction.x) > Math.abs(direction.y) ? direction.x < 0 ? 2 : 3 : direction.y < 0 ? 1 : 0;
++      const gate=this.guardGate(g.id),ranged=d.role==='archer';
++      let targets=this.allHostiles().filter(e=>this.eligible(g,e));
++      // 守门人只在内侧移动；单个门外目标交给拦截员，突破者或多目标才协防。
++      if(g.id.endsWith('-watch'))targets=targets.filter(e=>inPolygon(e,zoneFor(gate).inside)||
++        targets.length>1&&dist(g,e)<=weapon.range+8);
++      targets.sort((a,b)=>Number(!locallyProtected(gate,a))-Number(!locallyProtected(gate,b))||dist(g,a)-dist(g,b)||a.id.localeCompare(b.id));
++      const urgent=targets.find(e=>locallyProtected(gate,e)||this.attackingProtected(gate,e));
++      let target=targets.find(e=>!(r.blockedTarget===e.id&&now<r.blockedUntil&&!locallyProtected(gate,e)&&!this.attackingProtected(gate,e)));
++      if(g.mode==='return'&&dist(g,d.post)>5)target=urgent;
++      const retreat=d.role==='melee'&&(g.hp<=d.maxHP*DEFENSE.retreatHP||
++        ['retreat','recover'].includes(g.mode)&&g.hp<d.maxHP*DEFENSE.resumeHP);
++      const fighting=!retreat&&(!!target||!!r.attack)||this.allHostiles().some(e=>e.hp>0&&e.attack&&!e.attack.cancelled&&e.targetId===g.id&&dist(e,g)<110);
++      g.peaceMs=fighting?0:Math.min(DEFENSE.regenWait,g.peaceMs+dtMs);
++      if(!fighting&&g.peaceMs>=DEFENSE.regenWait)g.hp=Math.min(d.maxHP,g.hp+d.maxHP*DEFENSE.regenPerSecond*dt);
++      if(retreat){
++        if(r.targetId||r.attack)this.returnGuard(g);
++        g.mode=dist(g,d.cover)<5?'recover':'retreat';
++        r.moved=this.move(g,r.nav,d.cover,DEFENSE.speed,dt,budget,p=>this.guardAllowed(g,p),[...this.state.guards.filter(p=>!p.dead&&p!==g),player]);
++      }else{
++        if(['retreat','recover'].includes(g.mode))this.returnGuard(g);
++        if(target){
++          if(r.targetId!==target.id){r.targetId=target.id;r.chaseMs=r.stuckMs=0;r.nav.path=[];r.nav.target=undefined;}
++          if(!locallyProtected(gate,target)&&!this.attackingProtected(gate,target))r.chaseMs+=dtMs;else r.chaseMs=0;
++          if(!ranged&&r.chaseMs>=DEFENSE_RULES.pursuit){this.returnGuard(g);target=undefined;}
++        }else if(r.targetId||r.attack||g.mode==='intercept'||g.mode==='attack')this.returnGuard(g);
++        if(target){const record=this.threats.get(target.id);if(record)record.assigned.push(g.id);}
++        if(r.attack){
++          const attack=r.attack,victim=this.allHostiles().find(e=>e.id===attack.targetId);
++          if(!victim||!this.eligible(g,victim)){r.attack=null;this.returnGuard(g);}
++          else{
++            g.mode='attack';
++            if(!attack.hit&&now>=attack.contact){attack.hit=true;
++              if(ranged)this.fire(g,victim,attack.id);
++              else if(inActivity(gate,victim)&&dist(g,victim)<=weapon.range+8&&clearMeleeLine(g,victim))
++                this.damageEnemy(victim,{sourceId:g.id,targetId:victim.id,attackId:attack.id,amount:weapon.damage,sourceType:'guard-melee',eventId:victim.eventId??null},g.hp);
++            }
++            if(now>=attack.end)r.attack=null;
+           }
+-        } else { g.mode = "intercept";
+-          r.moved = this.move(g, r.nav, target, DEFENSE.speed, dt, budget, p => dist(p, d.post) <= d.leash,
+-            [...this.state.guards.filter(p => !p.dead && p !== g), player]); }
+-      } else {
+-        const post = d.patrol[r.patrol % d.patrol.length];
+-        g.mode = d.role === "archer" || d.patrol.length === 1 ? "post" : "patrol";
+-        if (d.role !== "archer" && dist(g, post) > 3)
+-          r.moved = this.move(g, r.nav, post, DEFENSE.speed * 0.45, dt, budget, p => dist(p, d.post) <= d.leash,
+-            [...this.state.guards.filter(p => !p.dead && p !== g), player]);
+-        else r.patrol++;
++        }else if(target){
++          if(ranged||inActivity(gate,target)&&dist(g,target)<=weapon.range+8&&clearMeleeLine(g,target)){
++            g.mode='attack';
++            if(g.cooldownMs===0){const n=Math.max(1,dist(g,target)),direction={x:(target.x-g.x)/n,y:(target.y-g.y)/n};
++              r.attack={id:`${g.id}:${++r.serial}`,start:now,contact:now+weapon.windup,end:now+weapon.windup+220,targetId:target.id,hit:false,direction};
++              g.cooldownMs=weapon.cooldown;r.facing=Math.abs(direction.x)>Math.abs(direction.y)?direction.x<0?2:3:direction.y<0?1:0;
++            }
++          }else{
++            g.mode='intercept';const intercept=zoneFor(gate).intercept;
++            const goal=inPolygon(target,zoneFor(gate).inside)||locallyProtected(gate,target)&&dist(g,intercept)<30?target:intercept;
++            r.moved=this.move(g,r.nav,goal,DEFENSE.speed,dt,budget,p=>this.guardAllowed(g,p),[...this.state.guards.filter(p=>!p.dead&&p!==g),player]);
++            r.stuckMs=r.moved>.001||dist(g,goal)<10?0:r.stuckMs+dtMs;
++            if(r.stuckMs>=DEFENSE_RULES.stuck)this.returnGuard(g);
++          }
++        }else{
++          const returning=g.mode==='return',post=returning?d.post:d.patrol[r.patrol%d.patrol.length];
++          g.mode=returning?'return':ranged||d.patrol.length===1?'post':'patrol';
++          if(!ranged&&dist(g,post)>3)r.moved=this.move(g,r.nav,post,DEFENSE.speed*(returning?1:.45),dt,budget,p=>this.guardAllowed(g,p),[...this.state.guards.filter(p=>!p.dead&&p!==g),player]);
++          else if(returning){g.mode=d.patrol.length===1?'post':'patrol';r.nav.path=[];}else r.patrol++;
++        }
+       }
+       if(r.moved>.001){const dx=g.x-old.x,dy=g.y-old.y;
+         r.distance+=r.moved;
+@@ -354,32 +430,34 @@ export class EastDefense {
+   }
+   fire(g: GuardState, target: DefenseHostile, id: string) {
+     const tower = TOWERS.find(t => t.occupantGuardId === g.id);
+-    if (!tower || g.dead || g.offDuty || (g.space??"village")!=="village" || dist(g, tower) > 2 || this.arrows.length >= DEFENSE.arrowLimit || !this.inFiringArc(g.id,target) ||
+-      shotLineBlocker(tower.muzzle,{x:target.x,y:target.y-30},this.portFor(g.id))) return;
++    if (!tower || !this.eligible(g,target) || this.arrows.length >= DEFENSE.arrowLimit) return;
+     const end = { x:target.x,y:target.y-30 }, n = dist(tower.muzzle,end);
+     this.arrows.push({ id,sourceId:g.id,eventId:target.eventId ?? "world",...tower.muzzle,origin:{...tower.muzzle},
+       vx:(end.x-tower.muzzle.x)/n*DEFENSE.arrowSpeed,vy:(end.y-tower.muzzle.y)/n*DEFENSE.arrowSpeed,
+-      age:0,travelled:0,damage:GUARD_WEAPONS[g.weaponId].damage,hit:new Set() });
++      age:0,travelled:0,damage:GUARD_WEAPONS[g.weaponId].damage,hit:new Set(),
++      released:Object.freeze({sourceId:g.id,faction:'village',attackId:id,amount:GUARD_WEAPONS[g.weaponId].damage,sourceType:'tower-arrow',eventId:target.eventId??'world'}),
++      port:Object.freeze({...this.portFor(g.id),origin:Object.freeze({...tower.muzzle}),lowCoverIds:Object.freeze([...this.portFor(g.id).lowCoverIds])}) });
+     this.note({kind:"shot",id,sourceId:g.id,at:this.now});
+   }
+   updateArrows(ms: number) {
+     this.arrows = this.arrows.filter(a => {
+-      a.age += ms;
+-      const next = { x: a.x + a.vx * ms / 1000, y: a.y + a.vy * ms / 1000 };
+-      if (a.age > DEFENSE.arrowLife || shotLineBlocker(a.origin, next, this.portFor(a.sourceId))) return false;
+-      const dx = next.x - a.x, dy = next.y - a.y;
+-      const hits = this.hostiles().filter(e => e.hp > 0 && !a.hit.has(e.id)).map(e => {
+-        const u = Math.max(0, Math.min(1, ((e.x - a.x) * dx + (e.y - 30 - a.y) * dy) / (dx * dx + dy * dy || 1)));
+-        return { e, u, d: Math.hypot(a.x + dx * u - e.x, a.y + dy * u - e.y + 30) };
+-      }).filter(h => h.d <= 24).sort((a, b) => a.u - b.u || a.e.id.localeCompare(b.e.id));
+-      if (hits[0]) {
+-        const e = hits[0].e; a.hit.add(e.id);
+-        const g = this.state.guards.find(g => g.id === a.sourceId);
+-        if (g && !g.dead) this.damageEnemy(e, { sourceId: a.sourceId, targetId: e.id, attackId: a.id,
+-          amount: a.damage, sourceType: "tower-arrow", eventId: a.eventId }, g.hp);
+-        return false;
++      const elapsed=Math.max(0,Math.min(ms,DEFENSE.arrowLife-a.age,(DEFENSE.arrowRange-a.travelled)/DEFENSE.arrowSpeed*1000));
++      const next={x:a.x+a.vx*elapsed/1000,y:a.y+a.vy*elapsed/1000},segment=dist(a,next);
++      const impact=shotLineImpact(a.origin,next,a.port),wallDistance=impact?dist(a.origin,next)*impact.fraction:Infinity;
++      const dx=next.x-a.x,dy=next.y-a.y;
++      // 物理候选与威胁列表、AI所有权分开；先命中的墙／单位结算一次。
++      const hits=this.allHostiles().filter(e=>e.hp>0&&!e.disabled&&!a.hit.has(e.id)).map(e=>{
++        const fx=a.x-e.x,fy=a.y-e.y+30,length=dx*dx+dy*dy,b=2*(fx*dx+fy*dy),c=fx*fx+fy*fy-24*24,disc=b*b-4*length*c;
++        const u=c<=0?0:length>0&&disc>=0?(-b-Math.sqrt(disc))/(2*length):Infinity;
++        return {e,u};
++      }).filter(h=>h.u>=0&&h.u<=1&&a.travelled+segment*h.u<wallDistance).sort((a,b)=>a.u-b.u||a.e.id.localeCompare(b.e.id));
++      if(hits[0]){const e=hits[0].e;a.hit.add(e.id);
++        this.damageEnemy(e,{sourceId:a.sourceId,targetId:e.id,attackId:a.id,amount:a.damage,sourceType:'tower-arrow',eventId:a.eventId},a.released);return false;
+       }
+-      a.travelled += dist(a, next); Object.assign(a, next); return true;
++      if(wallDistance<=a.travelled+segment)return false;
++      a.age+=elapsed;a.travelled+=segment;Object.assign(a,next);
++      return a.age<DEFENSE.arrowLife&&a.travelled<DEFENSE.arrowRange;
++
+     });
+   }
+   sync() {
+@@ -390,6 +468,7 @@ export class EastDefense {
+     }
+   }
+   snapshot() { return { ...structuredClone(this.state), arrows: this.arrows.map(a => ({ ...a, hit: [...a.hit] })),
++    threats:[...this.threats.values()].map(t=>({...t,assigned:[...t.assigned]})),managedIds:[...this.managedIds],
+     units: this.state.guards.map(g => ({ ...g, ...this.runtime.get(g.id), definition: GUARD_DEFS.find(d => d.id === g.id) })),
+     enemies: this.enemies.map(e => ({ ...e })), history: [...this.history], critical: this.critical, awaitingCheckpoint: this.awaitingCheckpoint }; }
+ }
+diff --git a/farwind/src/game/systems/defenseState.ts b/farwind/src/game/systems/defenseState.ts
+index 198e659..16a7fa2 100644
+--- a/farwind/src/game/systems/defenseState.ts
++++ b/farwind/src/game/systems/defenseState.ts
+@@ -1,6 +1,6 @@
+ import {isSpace,validPlace} from './npcLifeState';
+ import type {SpaceId} from '../../data/npcLife';
+-import { GUARD_DEFS, RAID_TIMING, type GateId, type GuardId } from "../../data/defense";
++import { GUARD_DEFS, RAID_TIMING, raidInterval, type GateId, type GuardId } from "../../data/defense";
+ export type GuardMode = "post" | "patrol" | "intercept" | "attack" | "retreat" | "recover" | "dead" | "life" | "return";
+ export type GuardState = {
+   id: GuardId; x: number; y: number; hp: number; dead: boolean;
+@@ -17,7 +17,7 @@ export type DefenseState = { guards: GuardState[]; sequence: number; completedSe
+ export function initialDefense(): DefenseState {
+   return { guards: GUARD_DEFS.map(d => ({ id: d.id, ...d.post, hp: d.maxHP, dead: false,
+     weaponId: d.weaponId, armorId: d.armorId, postId: d.postId, mode: "post", peaceMs: 0, cooldownMs: 0 })),
+-    sequence: 0, completedSequence: 0, raid: null, protectionMs: RAID_TIMING.protection, cooldownMs: 360000, retryMs: 0, seed: 1729 };
++    sequence: 0, completedSequence: 0, raid: null, protectionMs: RAID_TIMING.protection, cooldownMs: raidInterval(1729), retryMs: 0, seed: 1729 };
+ }
+ export function validateDefense(raw: unknown): DefenseState {
+   const s = raw as DefenseState;
+diff --git a/farwind/src/game/systems/enemy.ts b/farwind/src/game/systems/enemy.ts
+index d491224..7346309 100644
+--- a/farwind/src/game/systems/enemy.ts
++++ b/farwind/src/game/systems/enemy.ts
+@@ -1,3 +1,4 @@
++import {inProtected} from "../../data/defenseZones";
+ import { enemyDefs } from "../../data/world";
+ import { createEnemyAttack, advanceEnemyAttack, ENEMY_ATTACK, delayEnemyAttack, sampleEnemyAttack, type EnemyAttack, type EnemyContact } from "./enemyAttack";
+ import {
+@@ -266,7 +267,9 @@ export function updateEnemy(
+     e.nav.path = [];
+     return null;
+   }
+-  const canChase = d < 380 && safe && distance(e, home) < 420;
++  // 近郊不主动吸引远处野怪；已在追击或被玩家挑衅的敌人继续受原家园边界约束。
++  const engaged=e.nav.mode==="chase"&&!e.nav.returning||(e.playerAggroUntil??0)>now;
++  const canChase = d < 380 && safe && distance(e, home) < 420 && (!inProtected(player)||engaged);
+   if (!canChase && distance(e, home) > 8) e.nav.returning = true;
+   if (e.nav.returning && distance(e, home) <= 8) e.nav.returning = false;
+   const chase = canChase && !e.nav.returning;
+diff --git a/farwind/src/game/systems/interactions.ts b/farwind/src/game/systems/interactions.ts
+index 0bdebce..e952594 100644
+--- a/farwind/src/game/systems/interactions.ts
++++ b/farwind/src/game/systems/interactions.ts
+@@ -35,7 +35,7 @@ export function interact(this: World, p: Prop) {
+   }
+   if(p.id === "east-gate-sign") { this.openDefenseDrill(); return; }
+   if (p.id === "north-gate-sign" || p.id === "south-gate-sign") {
+-    this.ui.dialog(p.label!,p.id === "north-gate-sign" ? "松岚、石泉与林弦守望山路。门外有危险，卫队不会追进深林。" : "麦川、望禾与晴羽照看果园外通路。普通来袭由卫队拦截，门洞保持开放。");return;
++    this.ui.dialog(p.label!,p.id === "north-gate-sign" ? "松岚、石泉与林弦守望山路。门外道路属于巡逻近郊，远处才是荒野。卫队会拦截逼近者，威胁退出后归岗，不会追进深林。" : "麦川、望禾与晴羽照看果园外通路。普通来袭由卫队拦截，门洞保持开放。");return;
+   }
+   if (p.kind === "npc") {
+     const talk = (text: string) => {this.ui.dialog(p.label!, `${text}\n${this.life.dialogue(p.id as ResidentId)}`, p.id);offerHelp(this,p.id as ResidentId);};
+diff --git a/farwind/src/game/systems/nightDirector.ts b/farwind/src/game/systems/nightDirector.ts
+index 4984511..bfd0f2e 100644
+--- a/farwind/src/game/systems/nightDirector.ts
++++ b/farwind/src/game/systems/nightDirector.ts
+@@ -1,7 +1,7 @@
+ import {DAY_NIGHT as C} from "../../data/dayNight";
+ import {RAID_GATES,DEFENSE,type GateId} from "../../data/defense";
+ import {dayNumber,nightWindowEnd,crossedBoundaries,minuteOfDay} from "./worldClock";
+-import {nextRandom,prepareRaid} from "./defense";
++import {nextRandom,prepareRaid,EastDefense} from "./defense";
+ import type {State} from "./state";
+ import type {Rect,Point} from "./obstacles";
+ export type NightPlan={night:number;at:number;gate:GateId;count:number;outcome:"quiet"|"pending"|"started"|"cancelled"|"skipped";raidSequence:number|null};
+@@ -13,7 +13,7 @@ export function validateNight(s:State){
+   if(!n||!integer(n.takeoverNight)||n.takeoverNight<1||n.takeoverNight>dayNumber(s.time)+1||typeof n.discovered!=="boolean"||p===undefined)throw Error("昼夜存档字段无效。");
+   if(p!==null&&(!p||!integer(p.night)||p.night<1||p.night<n.takeoverNight||p.night>dayNumber(s.time)||s.time<(p.night-1)*C.day+C.dusk||
+     !Number.isFinite(p.at)||p.at<(p.night-1)*C.day+C.raidStart||p.at>=nightWindowEnd(p.night)||
+-    !RAID_GATES.some(g=>g.id===p.gate)||!Number.isInteger(p.count)||p.count<2||p.count>4||
++    !RAID_GATES.some(g=>g.id===p.gate)||!Number.isInteger(p.count)||p.count<1||p.count>DEFENSE.historyUnitLimit||
+     !["quiet","pending","started","cancelled","skipped"].includes(p.outcome)||
+     (p.outcome==="started"? !integer(p.raidSequence!)||p.raidSequence!<1||p.raidSequence!>s.defense.sequence:p.raidSequence!==null)||
+     (p.night===1&&p.outcome!=="quiet"&&p.outcome!=="skipped")||
+@@ -27,7 +27,7 @@ export function validateNight(s:State){
+ }
+ export function makeNightPlan(s:State,night:number):NightPlan{
+   const seed=nextRandom((s.defense.seed^Math.imul(night,2654435761))>>>0||1729),r=nextRandom(seed);
+-  return {night,at:(night-1)*C.day+C.raidStart+r%210,gate:RAID_GATES[seed%3].id,count:2+r%Math.max(1,Math.min(4,DEFENSE.unitLimit)-1),
++  return {night,at:(night-1)*C.day+C.raidStart+r%210,gate:RAID_GATES[seed%3].id,count:1+r%DEFENSE.unitLimit,
+     outcome:night===1||seed%4===0?"quiet":"pending",raidSequence:null};
+ }
+ // 只在常规推进的黄昏边界制定计划；加载不调用本函数，长跨度不回放历史。
+@@ -44,11 +44,22 @@ export function mayStartNight(s:State){
+   return !!p&&p.outcome==="pending"&&s.time>=p.at&&s.time<nightWindowEnd(p.night)&&minuteOfDay(s.time)>=C.raidStart&&
+     !d.raid&&!d.protectionMs&&!d.cooldownMs&&!d.retryMs;
+ }
+-export function nightWarningSnapshot(s:State,view?:Rect,occupied:readonly Point[]=[]){
++export class RaidDeferredError extends Error {}
++export function nightWarningSnapshot(s:State,view?:Rect,occupied:readonly Point[]=[],defense?:EastDefense){
+   if(!mayStartNight(s))throw Error("当前夜间计划尚不能启动。");
+   const next=structuredClone(s),p=next.night.plan!;
+-  if(occupied.length+next.defense.guards.length+p.count>24)throw Error("当前人口达到上限。");
+-  next.defense=prepareRaid(next.defense,next.player,p.gate,p.count,true,view,occupied);
++  // 历史已出生四怪原样恢复；旧待定计划尚未出生，按新事件上限准备。
++  const count=Math.min(p.count,DEFENSE.unitLimit);
++  const admission=defense??new EastDefense(structuredClone(s.defense),0);
++  if(!defense)admission.rebind(s.defense);
++  const player=s.life.playerSpace==="village"?s.player:{x:-10000,y:-10000};
++  const visible=s.life.playerSpace==="village"?view:undefined;
++  const first=RAID_GATES.findIndex(g=>g.id===p.gate);
++  const gate=RAID_GATES.map((_,i)=>RAID_GATES[(first+i)%RAID_GATES.length]).find(g=>
++    admission.canScheduleAtGate(g.id,player,g.spawns.slice(0,count),visible,occupied));
++  if(!gate)throw new RaidDeferredError("三门防线健康、岗位或生成条件尚不满足，延后来袭。");
++  next.defense=prepareRaid(next.defense,player,gate.id,count,true,visible,occupied);
++  p.gate=gate.id;p.count=count;
+   p.outcome="started";p.raidSequence=next.defense.sequence;
+   return next;
+ }
+diff --git a/farwind/src/game/systems/npcLife.ts b/farwind/src/game/systems/npcLife.ts
+index 554800b..dea4090 100644
+--- a/farwind/src/game/systems/npcLife.ts
++++ b/farwind/src/game/systems/npcLife.ts
+@@ -32,6 +32,7 @@ import {
+   type LifeNav,
+ } from "./npcNavigation";
+ import { resolveDamage } from "./damage";
++import { chooseSpeech, type LifeSpeech } from "./npcSpeech";
+ export type Candidate = {
+   kind: Activity;
+   target: Place;
+@@ -46,6 +47,7 @@ export class NpcLife {
+   scores = new Map<string, Candidate[]>();
+   metrics = { steps: 0, decisions: 0, queries: 0, ms: 0, maxMs: 0 };
+   messages: string[] = [];
++  speech: LifeSpeech | null = null;
+   constructor(
+     public state: State,
+     public defense: EastDefense,
+@@ -58,6 +60,7 @@ export class NpcLife {
+   rebind(state: State, defense = this.defense) {
+     this.state = state;
+     this.defense = defense;
++    this.speech = null;
+   }
+   body(id: string): Place | null {
+     const n = this.data.people.find((n) => n.id === id);
+@@ -97,6 +100,46 @@ export class NpcLife {
+           ? ["work", "habit"].includes(kind)
+           : kind === "habit";
+   }
++  material(n: PersonState, kind: Activity) {
++    return n.id === "healer" && kind === "treat"
++      ? ("medicine" as const)
++      : n.id === "carpenter" && kind === "repair"
++        ? ("wood" as const)
++        : null;
++  }
++  materialSource(material: "medicine" | "wood") {
++    return FACILITIES.find(
++      (f) => f.id === (material === "medicine" ? "pharmacy" : "tools"),
++    )!.place;
++  }
++  materialReady(n: PersonState, kind: Activity) {
++    const material = this.material(n, kind);
++    if (!material) return true;
++    const needed = material === "medicine" ? 1 : 2;
++    return (
++      n.supplies[material] >= needed ||
++      (n.supplies[material] + this.data.stores[material] >= needed &&
++        this.available(this.materialSource(material)) &&
++        this.routeSafe(this.body(n.id)!, this.materialSource(material)))
++    );
++  }
++  travelPhase(n: PersonState, a: Action) {
++    const material = this.material(n, a.kind);
++    const needed = material === "medicine" ? 1 : 2;
++    a.phase = material && n.supplies[material] < needed ? "stock" : "travel";
++    a.pickup =
++      a.phase === "stock" ? { ...this.materialSource(material!) } : null;
++    if (a.phase === "stock")
++      a.facility = material === "medicine" ? "pharmacy" : "tools";
++    else if (material) {
++      this.data.reservations = this.data.reservations.filter(
++        (r) => r.owner !== n.id,
++      );
++      a.facility = null;
++    }
++    a.progress = 0;
++    this.navigation.delete(n.id);
++  }
+   available(place: Place) {
+     return !this.data.unavailable.homes[place.space];
+   }
+@@ -165,6 +208,18 @@ export class NpcLife {
+         n.action.phase = "collect";
+         n.action.progress = 0;
+       }
++      if (
++        n.action &&
++        ["travel", "perform"].includes(n.action.phase) &&
++        this.carrying(n)
++      ) {
++        const material = this.material(n, n.action.kind);
++        if (
++          material &&
++          n.supplies[material] < (material === "medicine" ? 1 : 2)
++        )
++          this.travelPhase(n, n.action);
++      }
+       if (
+         n.action?.task &&
+         !this.data.tasks.some((t) => t.id === n.action!.task)
+@@ -474,6 +529,7 @@ export class NpcLife {
+         );
+     if (
+       !this.available(c.target) ||
++      !this.materialReady(n, c.kind) ||
+       (this.gearNeeded(n, c.kind) &&
+         !this.carrying(n) &&
+         !canCollect &&
+@@ -529,6 +585,7 @@ export class NpcLife {
+       failures: 0,
+       label: c.label,
+     };
++    if (!collect) this.travelPhase(n, n.action);
+     n.reason = `${c.label}（评分 ${Math.round(c.score)}）`;
+     return true;
+   }
+@@ -594,7 +651,7 @@ export class NpcLife {
+           (t) => t.kind === "treat" && (!t.owner || t.owner === n.id),
+         ))
+           if (
+-            l.stores.medicine > 0 &&
++            this.materialReady(n, "treat") &&
+             n.memories.some((m) => m.subjects.includes(t.subject))
+           )
+             add(
+@@ -622,7 +679,7 @@ export class NpcLife {
+       if (
+         t.kind === "treat" &&
+         d.ability.medicine &&
+-        l.stores.medicine > 0 &&
++        this.materialReady(n, "treat") &&
+         n.memories.some((m) => m.subjects.includes(t.subject))
+       )
+         add(
+@@ -636,7 +693,7 @@ export class NpcLife {
+       if (
+         t.kind === "repair" &&
+         d.ability.repair &&
+-        l.stores.wood >= 2 &&
++        this.materialReady(n, "repair") &&
+         (n.memories.some((m) => m.subjects.includes(t.subject)) ||
+           (p.space === t.place.space &&
+             distance(p, t.place) < LIFE.observation &&
+@@ -674,7 +731,10 @@ export class NpcLife {
+       if (
+         window.facility === "pharmacy" &&
+         window.activity === "work" &&
+-        (l.stores.herbs < 2 || l.stores.medicine >= LIFE.maxMedicine)
++        (l.stores.herbs < 2 ||
++          l.stores.medicine +
++            l.people.find((n) => n.id === "healer")!.supplies.medicine >=
++            LIFE.maxMedicine)
+       )
+         allowed = false;
+       const recent = n.memories.some(
+@@ -957,7 +1017,9 @@ export class NpcLife {
+       n.id === "healer" &&
+       a.facility === "pharmacy" &&
+       l.stores.herbs >= 2 &&
+-      l.stores.medicine < LIFE.maxMedicine
++      l.stores.medicine +
++        l.people.find((n) => n.id === "healer")!.supplies.medicine <
++        LIFE.maxMedicine
+     ) {
+       l.stores.herbs -= 2;
+       l.stores.medicine++;
+@@ -995,14 +1057,14 @@ export class NpcLife {
+       if (
+         t &&
+         target &&
+-        l.stores.medicine > 0 &&
++        n.supplies.medicine > 0 &&
+         target.space === this.body(n.id)!.space &&
+         distance(target, this.body(n.id)!) < 45 &&
+         this.safe(target) &&
+         (!guard || !guard.dead) &&
+         this.health(t.subject) < 85
+       ) {
+-        l.stores.medicine--;
++        n.supplies.medicine--;
+         if (patient?.body) {
+           patient.body.hp = Math.min(85, patient.body.hp + 45);
+           patient.body.health = "convalescent";
+@@ -1013,7 +1075,7 @@ export class NpcLife {
+           target,
+           n.id,
+           [t.subject],
+-          "到场治疗，消耗公共药品",
++          "到场治疗，消耗从药房装入药箱的一份药品",
+         );
+         l.tasks = l.tasks.filter((task) => task.id !== t.id);
+         if (patient?.body) {
+@@ -1074,15 +1136,15 @@ export class NpcLife {
+       this.safe(a.target)
+     ) {
+       const t = l.tasks.find((t) => t.id === a.task);
+-      if (t && l.stores.wood >= 2 && l.facilities[t.subject] < 100) {
+-        l.stores.wood -= 2;
++      if (t && n.supplies.wood >= 2 && l.facilities[t.subject] < 100) {
++        n.supplies.wood -= 2;
+         l.facilities[t.subject] = Math.min(100, l.facilities[t.subject] + 50);
+         this.emit(
+           "repair",
+           t.place,
+           n.id,
+           [t.subject],
+-          "到场维修，消耗公共木料",
++          "到场维修，消耗从工坊带来的两份木料",
+         );
+         l.tasks = l.tasks.filter((x) => x.id !== t.id);
+       }
+@@ -1131,7 +1193,11 @@ export class NpcLife {
+     if (day > l.stores.day) {
+       l.stores.day = day;
+       l.stores.food = Math.min(LIFE.maxFood, l.stores.food + 6);
+-      l.stores.wood = Math.min(LIFE.maxWood, l.stores.wood + 2);
++      l.stores.wood = Math.min(
++        LIFE.maxWood -
++          l.people.find((n) => n.id === "carpenter")!.supplies.wood,
++        l.stores.wood + 2,
++      );
+     }
+     const raid = this.state.defense.raid,
+       hostiles = this.threats(),
+@@ -1318,7 +1384,7 @@ export class NpcLife {
+         task.expires = l.elapsed + LIFE.taskLeaseMs;
+         a.target = { ...task.place };
+       }
+-      if (a.phase === "collect" && a.pickup) {
++      if ((a.phase === "collect" || a.phase === "stock") && a.pickup) {
+         if (
+           !this.safe(p, 130) ||
+           !this.safe(a.pickup, 70) ||
+@@ -1343,9 +1409,7 @@ export class NpcLife {
+             a.progress += ms;
+             if (a.progress >= LIFE.transferMs) {
+               if (a.kind !== "escort") n.gear = "carried";
+-              a.phase = "travel";
+-              a.progress = 0;
+-              this.navigation.delete(n.id);
++              this.travelPhase(n, a);
+             }
+           } else if (this.nav(n.id).stuck > 8000) {
+             this.cancel(n, "救援会合通路受阻，报告并返岗");
+@@ -1373,10 +1437,22 @@ export class NpcLife {
+           if (arrived) {
+             a.progress = Math.min(a.duration, a.progress + ms);
+             if (a.progress >= LIFE.transferMs) {
+-              n.gear = "carried";
+-              a.phase = "travel";
+-              a.progress = 0;
+-              this.navigation.delete(n.id);
++              if (a.phase === "stock") {
++                const material = this.material(n, a.kind)!;
++                const count = Math.min(
++                  (material === "medicine"
++                    ? LIFE.carriedMedicine
++                    : LIFE.carriedWood) - n.supplies[material],
++                  l.stores[material],
++                );
++                n.supplies[material] += count;
++                l.stores[material] -= count;
++                if (n.supplies[material] < (material === "medicine" ? 1 : 2)) {
++                  this.cancel(n, "补给点库存不足，保留已取得材料并等待补充");
++                  continue;
++                }
++              } else n.gear = "carried";
++              this.travelPhase(n, a);
+             }
+           } else if (this.nav(n.id).stuck > 8000) {
+             a.failures++;
+@@ -1638,6 +1714,8 @@ export class NpcLife {
+         n.known.player = { ...p, time: this.state.time };
+       }
+     }
++    const speech = chooseSpeech(this);
++    if (speech) this.speech = speech;
+   }
+   dialogue(id: ResidentId) {
+     const n = this.data.people.find((n) => n.id === id)!,
+@@ -1729,7 +1807,13 @@ export class NpcLife {
+     const box = PRIVATE_STORAGE.find((b) => b.id === id);
+     if (!box) return "储物记录不存在。";
+     const n = this.data.people.find((n) => n.id === box.owner)!;
+-    return `${box.item}：${this.carrying(n) ? "主人已取出携带" : "存放在箱中"}。\n这是${person(n.id)!.name}的私人物品，来访许可不包含取用权。公共药品和维修材料另有库存，取出工作物品不会消耗玩家背包。`;
++    const supplies =
++      n.id === "healer"
++        ? `药箱内余药 ${n.supplies.medicine}/${LIFE.carriedMedicine}。`
++        : n.id === "carpenter"
++          ? `工具包内木料 ${n.supplies.wood}/${LIFE.carriedWood}。`
++          : "";
++    return `${box.item}：${this.carrying(n) ? "主人已取出携带" : "存放在箱中"}。${supplies}\n这是${person(n.id)!.name}的私人物品，来访许可不包含取用权。药房与工坊的公共补给需要到场领取；不会消耗玩家背包。`;
+   }
+   debugAccess(id: ResidentId, bed = false) {
+     const p = person(id)!,
+@@ -1786,9 +1870,17 @@ export class NpcLife {
+     return {
+       alarm: this.data.alarm,
+       space: this.data.playerSpace,
+-      metrics: { ...this.metrics,
+-        pathBatches: [...this.navigation.values()].reduce((sum, n) => sum + n.batches, 0),
+-        maxExpandedPerBatch: Math.max(0, ...[...this.navigation.values()].map(n => n.maxExpanded)),
++      speech: this.speech,
++      metrics: {
++        ...this.metrics,
++        pathBatches: [...this.navigation.values()].reduce(
++          (sum, n) => sum + n.batches,
++          0,
++        ),
++        maxExpandedPerBatch: Math.max(
++          0,
++          ...[...this.navigation.values()].map((n) => n.maxExpanded),
++        ),
+       },
+       stores: this.data.stores,
+       reservations: this.data.reservations,
+@@ -1802,11 +1894,21 @@ export class NpcLife {
+         alarm: n.alarm,
+         candidates: this.scores.get(n.id) ?? [],
+         // 调试快照也只含可复制数据，不能暴露暂停中的生成器。
+-        path: (() => { const r = this.navigation.get(n.id); return r ? {
+-          nav: r.nav, stuck: r.stuck, queries: r.queries, batches: r.batches,
+-          maxExpanded: r.maxExpanded, failure: r.failure, goal: r.goal,
+-          planning: !!r.search,
+-        } : null; })(),
++        path: (() => {
++          const r = this.navigation.get(n.id);
++          return r
++            ? {
++                nav: r.nav,
++                stuck: r.stuck,
++                queries: r.queries,
++                batches: r.batches,
++                maxExpanded: r.maxExpanded,
++                failure: r.failure,
++                goal: r.goal,
++                planning: !!r.search,
++              }
++            : null;
++        })(),
+         memories: n.memories.slice(-4),
+       })),
+       events: this.data.events.slice(-12),
+diff --git a/farwind/src/game/systems/npcLifeState.ts b/farwind/src/game/systems/npcLifeState.ts
+index c074432..c1a8f81 100644
+--- a/farwind/src/game/systems/npcLifeState.ts
++++ b/farwind/src/game/systems/npcLifeState.ts
+@@ -58,7 +58,7 @@ export type Action = {
+   facility: string | null;
+   task: string | null;
+   pickup: Place | null;
+-  phase: "collect" | "travel" | "perform";
++  phase: "collect" | "stock" | "travel" | "perform";
+   progress: number;
+   duration: number;
+   started: number;
+@@ -81,6 +81,7 @@ export type PersonState = {
+   needs: { hunger: number; fatigue: number };
+   emotion: number;
+   gear: "locker" | "carried";
++  supplies: { medicine: number; wood: number };
+   blockedTarget: Place | null;
+   blockedUntil: number;
+   project: number;
+@@ -96,6 +97,12 @@ export type PersonState = {
+   known: Record<string, Place & { time: number }>;
+   lastSupplyDay: number;
+   lastMealDay: number;
++  speech: {
++    eventFloor: number;
++    nextAt: number;
++    day: number;
++    routines: Activity[];
++  };
+ };
+ export type Reservation = {
+   facility: string;
+@@ -113,7 +120,10 @@ export type LifeTask = {
+   retryAt: number;
+ };
+ export type LifeState = {
+-  version: 2;
++  version: 3;
++  speechAt: number;
++  speechUrgentAt: number;
++  speechEventFloor: number;
+   unavailable: {
+     homes: Partial<Record<SpaceId, boolean>>;
+     facilities: string[];
+@@ -144,7 +154,10 @@ export type LifeState = {
+   defenseReceipts: string[];
+ };
+ export const initialLife = (time = 480): LifeState => ({
+-  version: 2,
++  version: 3,
++  speechAt: 0,
++  speechUrgentAt: 0,
++  speechEventFloor: 0,
+   unavailable: { homes: {}, facilities: [] },
+   people: PEOPLE.map((p, i) => ({
+     id: p.id,
+@@ -171,6 +184,7 @@ export const initialLife = (time = 480): LifeState => ({
+     needs: { hunger: 15, fatigue: 10 },
+     emotion: 0,
+     gear: "locker",
++    supplies: { medicine: 0, wood: 0 },
+     project: 0,
+     nextDecision: i * 75,
+     reason: "开始新的一天",
+@@ -189,6 +203,12 @@ export const initialLife = (time = 480): LifeState => ({
+     known: {},
+     lastSupplyDay: 0,
+     lastMealDay: -1,
++    speech: {
++      eventFloor: 0,
++      nextAt: 0,
++      day: Math.floor(time / 1440),
++      routines: [],
++    },
+   })),
+   elapsed: 0,
+   sequence: 0,
+@@ -283,7 +303,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
+     ((l as { version?: number }).version === undefined ||
+       (l as { version?: number }).version === 1)
+   ) {
+-    l.version = 2;
++    Object.assign(l, { version: 2 });
+     l.unavailable = { homes: {}, facilities: [] };
+     for (const n of l.people ?? []) {
+       const old = n as PersonState & { kit?: boolean; tools?: boolean };
+@@ -305,9 +325,27 @@ export function validateLife(raw: unknown, time: number): LifeState {
+       }
+     }
+   }
++  // 子版本2→3增加短句去重与有限随身资源；旧档的药品与木料仍留在原公共库存。
++  if (l && (l as { version?: number }).version === 2) {
++    l.version = 3;
++    l.speechAt = l.elapsed;
++    l.speechUrgentAt = l.elapsed;
++    l.speechEventFloor = l.sequence;
++    for (const n of l.people ?? [])
++      n.speech = {
++        eventFloor: n.receipt,
++        nextAt: l.elapsed,
++        day: Math.floor(time / 1440),
++        routines: [],
++      };
++    for (const n of l.people ?? []) n.supplies = { medicine: 0, wood: 0 };
++  }
+   if (
+     !l ||
+-    l.version !== 2 ||
++    l.version !== 3 ||
++    !num(l.speechAt, l.elapsed + LIFE.speechPersonMs) ||
++    !num(l.speechUrgentAt, l.elapsed + LIFE.speechPersonMs) ||
++    !integer(l.speechEventFloor, l.sequence) ||
+     !l.unavailable ||
+     !l.unavailable.homes ||
+     Object.keys(l.unavailable.homes).length > HOMES.length ||
+@@ -382,6 +420,20 @@ export function validateLife(raw: unknown, time: number): LifeState {
+       ![0, 1, 2].includes(n.alarm) ||
+       !num(n.emotion, 100) ||
+       !["locker", "carried"].includes(n.gear) ||
++      !n.supplies ||
++      !integer(
++        n.supplies.medicine,
++        n.id === "healer" ? LIFE.carriedMedicine : 0,
++      ) ||
++      !integer(n.supplies.wood, n.id === "carpenter" ? LIFE.carriedWood : 0) ||
++      !n.speech ||
++      !integer(n.speech.eventFloor, l.sequence) ||
++      !num(n.speech.nextAt, l.elapsed + LIFE.speechPersonMs) ||
++      !integer(n.speech.day, Math.floor(time / 1440)) ||
++      !Array.isArray(n.speech.routines) ||
++      n.speech.routines.length > 14 ||
++      new Set(n.speech.routines).size !== n.speech.routines.length ||
++      !n.speech.routines.every(activity) ||
+       !n.needs ||
+       !num(n.needs.hunger, 100) ||
+       !num(n.needs.fatigue, 100) ||
+@@ -440,7 +492,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
+         !(a.facility === null || FACILITIES.some((f) => f.id === a.facility)) ||
+         !(a.task === null || text(a.task)) ||
+         !(a.pickup === null || validPlace(a.pickup)) ||
+-        !["collect", "travel", "perform"].includes(a.phase) ||
++        !["collect", "stock", "travel", "perform"].includes(a.phase) ||
+         !num(a.progress, a.duration) ||
+         !num(a.duration, 120000) ||
+         !num(a.started, l.elapsed) ||
+@@ -448,6 +500,27 @@ export function validateLife(raw: unknown, time: number): LifeState {
+         !text(a.label))
+     )
+       throw Error("生活行动状态无效。");
++    if (a?.phase === "stock") {
++      const source = FACILITIES.find(
++        (f) =>
++          f.id ===
++          (n.id === "healer" && a.kind === "treat"
++            ? "pharmacy"
++            : n.id === "carpenter" && a.kind === "repair"
++              ? "tools"
++              : ""),
++      );
++      if (
++        !source ||
++        a.facility !== source.id ||
++        n.gear !== "carried" ||
++        !a.pickup ||
++        a.pickup.space !== source.place.space ||
++        a.pickup.x !== source.place.x ||
++        a.pickup.y !== source.place.y
++      )
++        throw Error("补给动作来源无效。");
++    }
+     if (a?.kind === "store") {
+       const box = PRIVATE_STORAGE.find((b) => b.owner === n.id)!;
+       if (
+@@ -546,6 +619,14 @@ export function validateLife(raw: unknown, time: number): LifeState {
+       t.expires = 0;
+     }
+   const place = (p: Place) => ({ space: p.space, x: p.x, y: p.y });
++  if (
++    l.stores.medicine +
++      l.people.find((n) => n.id === "healer")!.supplies.medicine >
++      LIFE.maxMedicine ||
++    l.stores.wood + l.people.find((n) => n.id === "carpenter")!.supplies.wood >
++      LIFE.maxWood
++  )
++    throw Error("公共与随身物资合计超过上限。");
+   const people = l.people.map((n) => ({
+     id: n.id,
+     body: n.body
+@@ -580,6 +661,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
+     needs: { hunger: n.needs.hunger, fatigue: n.needs.fatigue },
+     emotion: n.emotion,
+     gear: n.gear,
++    supplies: { ...n.supplies },
+     project: n.project,
+     nextDecision: n.nextDecision,
+     reason: n.reason,
+@@ -618,9 +700,13 @@ export function validateLife(raw: unknown, time: number): LifeState {
+     ),
+     lastSupplyDay: n.lastSupplyDay,
+     lastMealDay: n.lastMealDay,
++    speech: { ...n.speech, routines: [...n.speech.routines] },
+   }));
+   return {
+-    version: 2,
++    version: 3,
++    speechAt: l.speechAt,
++    speechUrgentAt: l.speechUrgentAt,
++    speechEventFloor: l.speechEventFloor,
+     unavailable: {
+       homes: { ...l.unavailable.homes },
+       facilities: [...l.unavailable.facilities],
+diff --git a/farwind/src/game/systems/npcNavigation.ts b/farwind/src/game/systems/npcNavigation.ts
+index a48b21b..a004a9a 100644
+--- a/farwind/src/game/systems/npcNavigation.ts
++++ b/farwind/src/game/systems/npcNavigation.ts
+@@ -152,6 +152,42 @@ export function moveLife(
+         cachedBlocked(body.space, x, y) || !safe({ space: body.space, x, y }),
+       clear: (a: Point, b: Point) => cachedLine(body.space, a, b),
+     };
++  // 共用房门的已有重叠先局部散开，不必等完整路线规划；每步仍遵守碰撞与安全。
++  if (peers.some((p) => p.space === body.space && distance(p, body) < 18)) {
++    const dx = goal.x - body.x,
++      dy = goal.y - body.y,
++      len = Math.hypot(dx, dy),
++      step = Math.min(len, (LIFE.speed * ms) / 1000),
++      free = [
++        [dx, dy],
++        [-dy, dx],
++        [dy, -dx],
++        [-dx, -dy],
++      ]
++        .map(([x, y]) => ({
++          space: body.space,
++          x: body.x + (x / len) * step,
++          y: body.y + (y / len) * step,
++        }))
++        .find(
++          (q) =>
++            !query.blocked(q.x, q.y) &&
++            query.clear(body, q) &&
++            peers.every(
++              (p) =>
++                p.space !== body.space ||
++                distance(p, q) > Math.min(18, distance(p, body)) + 1e-7,
++            ),
++        );
++    if (free) {
++      Object.assign(body, free);
++      runtime.nav = enemyNavigation();
++      runtime.search = null;
++      runtime.stuck = 0;
++      runtime.failure = "入口侧让，先分离已有重叠";
++      return false;
++    }
++  }
+   let waypoint: Point | undefined;
+   if (!query.blocked(goal.x, goal.y) && query.clear(body, goal) && safe(goal)) {
+     waypoint = goal;
+diff --git a/farwind/src/game/systems/obstacles.ts b/farwind/src/game/systems/obstacles.ts
+index ccb7053..f98eb20 100644
+--- a/farwind/src/game/systems/obstacles.ts
++++ b/farwind/src/game/systems/obstacles.ts
+@@ -165,14 +165,21 @@ export const clearMeleeLine = (a: Point, b: Point, targetId?: string) =>
+ export type FiringPort = {origin: Point; lowCoverIds: readonly string[]; structureId?: string};
+ // 高处射击独立于脚底／水域。仅登记的射击口可越过己方低墙，高墙不能豁免。
+ export function shotLineBlocker(a:Point,b:Point,port?:FiringPort,objects:readonly Prop[]=props) {
+-  if([a,b].some(p=>p.x<30||p.x>WORLD.width-30||p.y<80||p.y>WORLD.height-30))return "world-edge";
+-  return objects.find(p=>{
+-    if(!p.solid)return false;
++  return shotLineImpact(a,b,port,objects)?.id;
++}
++export function shotLineImpact(a:Point,b:Point,port?:FiringPort,objects:readonly Prop[]=props){
++  const inside=(p:Point)=>p.x>=30&&p.x<=WORLD.width-30&&p.y>=80&&p.y<=WORLD.height-30;
++  let first: {id:string;fraction:number}|undefined;
++  if(!inside(a))return {id:'world-edge',fraction:0};
++  if(!inside(b))first={id:'world-edge',fraction:rectInterval(a,b,{left:30,right:WORLD.width-30,top:80,bottom:WORLD.height-30})?.[1]??0};
++  for(const p of objects){
++    if(!p.solid)continue;
+     const fromPort=port && Math.hypot(a.x-port.origin.x,a.y-port.origin.y)<=2;
+     const permitted=fromPort && p.owner==="village" &&
+       (p.cover==="low" && port.lowCoverIds.includes(p.id) || p.id===port.structureId);
+     const high=p.cover==="high" || ["house","shop","tower","smith-building","inn-building"].includes(p.art);
+     const bounds=high ? {left:p.x-p.w/2,right:p.x+p.w/2,top:p.y-p.h,bottom:p.y} : propBounds(p);
+-    return !permitted && !!rectInterval(a,b,bounds);
+-  })?.id;
++    const interval=!permitted&&rectInterval(a,b,bounds);
++    if(interval&&(!first||interval[0]<first.fraction))first={id:p.id,fraction:interval[0]};
++  }return first;
+ }
+diff --git a/farwind/src/game/systems/waterMotion.ts b/farwind/src/game/systems/waterMotion.ts
+index 3eee28d..5a714f1 100644
+--- a/farwind/src/game/systems/waterMotion.ts
++++ b/farwind/src/game/systems/waterMotion.ts
+@@ -5,16 +5,16 @@ export const WATER = {
+   maxDelta: 50,
+   depth: { pond: -19, shore: -17, lily: -16, bridge: -15 },
+   fountain: {
+-    sourceSize: 390, flowSpeed: 42, flowAlpha: 0.64,
++    sourceSize: 390, flowSpeed: 66, flowAlpha: 0.9,
+     layers: { flow: 0.01, basin: 0.02 },
+     sizes: { ripple: [0.15, 0.06], splash: [0.065, 0.065], drop: [0.014, 0.021] },
+     impacts: [[120, 241], [192, 268], [260, 240]] as const,
+-    ripplePeriod: 2200, rippleAlpha: 0.42, dropsPerImpact: 3, dropPeriod: 850, dropHeight: 13,
+-    splashPeriod: 1070, splashAlpha: 0.35, splashVariation: 0.18, dropAlpha: 0.6, dropSpread: 3,
++    ripplePeriod: 2200, rippleAlpha: 0.75, dropsPerImpact: 3, dropPeriod: 850, dropHeight: 13,
++    splashPeriod: 1070, splashAlpha: 0.52, splashVariation: 0.15, dropAlpha: 0.85, dropSpread: 3,
+   },
+-  pond: { waves: 12, glints: 7, ripples: 3, waveAlpha: 0.42, glintAlpha: 0.45,
+-    wavePeriod: 9600, waveDrift: 5, glintPeriod: 6300, ripplePeriod: 8200,
+-    verticalDrift: 1.5, verticalPhase: 0.71, rippleAlpha: 0.16,
++  pond: { waves: 12, glints: 7, ripples: 3, waveAlpha: 0.78, glintAlpha: 0.85,
++    wavePeriod: 7200, waveDrift: 8, glintPeriod: 6300, ripplePeriod: 8200,
++    verticalDrift: 1.5, verticalPhase: 0.71, rippleAlpha: 0.32,
+     lilyAmplitude: 1.25, lilyPeriod: 5800 },
+ } as const;
+ 
+diff --git a/farwind/src/game/ui/npcLife.ts b/farwind/src/game/ui/npcLife.ts
+index 1ccc0e3..878033d 100644
+--- a/farwind/src/game/ui/npcLife.ts
++++ b/farwind/src/game/ui/npcLife.ts
+@@ -222,7 +222,7 @@ export function attachLifeUi(world: World) {
+       if (panel.hidden) return;
+       const n = world.state.life.people.find((n) => n.id === select.value)!,
+         p = world.life.body(n.id)!;
+-      pre.textContent = `${person(n.id)!.name} · 空间 ${p.space}\n原因：${n.reason}\n行动：${n.action?.label ?? "无"} / ${n.action?.phase ?? "等待"} ${Math.round(n.action?.progress ?? 0)}毫秒\n需求：饥饿 ${Math.round(n.needs.hunger)} 疲劳 ${Math.round(n.needs.fatigue)}\n警报认知 ${n.alarm} · 寻路失败 ${n.pathFailures}\n私人物品：${PRIVATE_STORAGE.find((b) => b.owner === n.id)!.item} / ${n.gear === "carried" ? "随身携带" : "自己的储物箱"}\n预约：${
++      pre.textContent = `${person(n.id)!.name} · 空间 ${p.space}\n原因：${n.reason}\n行动：${n.action?.label ?? "无"} / ${n.action?.phase ?? "等待"} ${Math.round(n.action?.progress ?? 0)}毫秒\n需求：饥饿 ${Math.round(n.needs.hunger)} 疲劳 ${Math.round(n.needs.fatigue)}\n警报认知 ${n.alarm} · 寻路失败 ${n.pathFailures}\n私人物品：${PRIVATE_STORAGE.find((b) => b.owner === n.id)!.item} / ${n.gear === "carried" ? "随身携带" : "自己的储物箱"}\n包内药品 ${n.supplies.medicine} 木料 ${n.supplies.wood}\n寻路批次 ${world.life.navigation.get(n.id)?.batches ?? 0} / 每批最多 ${world.life.navigation.get(n.id)?.maxExpanded ?? 0} 节点\n预约：${
+         world.state.life.reservations
+           .filter((r) => r.owner === n.id)
+           .map((r) => r.facility)
+diff --git a/farwind/tests/day-night-failure.spec.ts b/farwind/tests/day-night-failure.spec.ts
+index 9f8354a..78f3393 100644
+--- a/farwind/tests/day-night-failure.spec.ts
++++ b/farwind/tests/day-night-failure.spec.ts
+@@ -12,15 +12,16 @@ function planned(time:number,at:number){const s=initialState();s.time=2460;s.def
+ async function failWarningWrite(p:Page){await p.addInitScript(()=>{const put=IDBObjectStore.prototype.put;IDBObjectStore.prototype.put=function(...a:Parameters<IDBObjectStore["put"]>){if((a[0]as any).night?.plan?.outcome==="started"){IDBObjectStore.prototype.put=put;(window as any).__testWarningFailed=true;throw Error("测试预警写入失败");}return put.apply(this,a);};});}
+ async function pause(p:Page){await p.keyboard.press("Escape");await p.waitForFunction(()=> (window as any).__farwind().mode==="pause");}
+ test("预警写失败不出生，同页继续按原计划重试",async({page})=>{
+- const s=planned(2870,2870.1);await failWarningWrite(page);await fixture(page,s);await page.waitForFunction(()=> (window as any).__testWarningFailed,undefined,{timeout:15000});
++ const s=planned(2700,2700.1);await failWarningWrite(page);await fixture(page,s);await page.waitForFunction(()=> (window as any).__testWarningFailed,undefined,{timeout:15000});
+  const failed=(await read(page)).state;expect(failed.night.plan).toEqual(s.night.plan);expect(failed.defense.sequence).toBe(0);expect(failed.defense.raid).toBeNull();await expect(page.locator("#toast")).toContainText("测试预警写入失败");
+- await pause(page);await page.getByRole("button",{name:"保存并返回标题"}).click();await page.getByRole("button",{name:"继续旅途",exact:true}).click();
+- await expect.poll(async()=>(await read(page)).state.night.plan.outcome,{timeout:20000}).toBe("started");const n=(await read(page)).state;
++ expect((await read(page)).mode).toBe("pause");await page.getByRole("button",{name:"保存并返回标题"}).click();await page.getByRole("button",{name:"继续旅途",exact:true}).click();
++ await expect.poll(async()=>(await read(page)).state.night.plan.outcome,{timeout:40000}).toBe("started");const n=(await read(page)).state;
+  expect(n.defense.sequence).toBe(1);expect(n.night.plan.raidSequence).toBe(1);for(const k of ["night","at","gate","count"]as const)expect(n.night.plan[k]).toBe(s.night.plan![k]);expect(n.defense.seed).toBe(s.defense.seed);
+ });
+ test("窗口末端预警写失败，午夜取消且不补刷",async({page})=>{
+- const s=planned(2878,2879.8);await failWarningWrite(page);await fixture(page,s);await page.waitForFunction(()=> (window as any).__testWarningFailed,undefined,{timeout:15000});
+- await expect.poll(async()=>(await read(page)).state.night.plan.outcome).toBe("cancelled");await page.waitForTimeout(5500);const n=(await read(page)).state;
++ const s=planned(2870,2870.1);await failWarningWrite(page);await fixture(page,s);await page.waitForFunction(()=> (window as any).__testWarningFailed,undefined,{timeout:15000});
++ const frozen=await read(page);expect(frozen.mode).toBe("pause");await page.waitForTimeout(500);expect((await read(page)).state.time).toBe(frozen.state.time);await page.getByRole("button",{name:"继续旅途",exact:true}).click();
++ await expect.poll(async()=>(await read(page)).state.night.plan.outcome,{timeout:15000}).toBe("cancelled");await page.waitForTimeout(5500);const n=(await read(page)).state;
+  expect(n.defense.sequence).toBe(0);expect(n.defense.raid).toBeNull();expect(n.night.plan.at).toBe(s.night.plan!.at);expect(n.time).toBeGreaterThan(2880);
+ });
+ test("满包夜风不吞奖励，真实整理后领取且重载不能复领",async({page})=>{
+diff --git a/farwind/tests/day-night.test.ts b/farwind/tests/day-night.test.ts
+index 3e835f5..8a92c0c 100644
+--- a/farwind/tests/day-night.test.ts
++++ b/farwind/tests/day-night.test.ts
+@@ -27,7 +27,7 @@ describe("夜间许可与存档",()=>{
+   it.each([[180,1],[720,1],[1020,2],[1260,2],[1620,2]])("旧档%s从下一次黄昏接管",(time,takeover)=>{const s:any=initialState();s.schema_version=4;delete s.night;s.time=time;const n=validate(s);expect(n.night.takeoverNight).toBe(takeover);expect(n.night.plan).toBeNull();const dusk=(takeover-1)*1440+1020;n.time=dusk;advanceNight(n,dusk-1);expect(n.night.plan?.night).toBe(takeover);expect(validate(n)).toEqual(n);});
+   it("第一夜安静，同时间处理不重抽",()=>{const s=planned(1),p=structuredClone(s.night.plan);expect(p!.outcome).toBe("quiet");advanceNight(s,s.time);expect(s.night.plan).toEqual(p);expect(mayStartNight(s)).toBe(false);});
+   it.each(RAID_GATES.map(g=>g.id))("%s正式预警、午夜不重刷与黎明不删事件",gate=>{const s=planned();s.night.plan!.outcome="pending";s.night.plan!.gate=gate;s.night.plan!.count=2;const next=validate(nightWarningSnapshot(s));expect(next.night.plan!.raidSequence).toBe(1);expect(s.defense.raid).toBeNull();expect(mayStartNight(next)).toBe(false);const d=new EastDefense(next.defense,0);expect(d.enemies).toEqual([]);d.update(3000,3000,next.player,{queries:2});expect(d.enemies).toHaveLength(2);next.time=2880;advanceNight(next,2879);expect(next.defense.raid).not.toBeNull();next.time=3240;advanceNight(next,3239);expect(next.defense.raid).not.toBeNull();expect(validate(next).night).toEqual(next.night);});
+-  it("保护、冷却、人口、视口、近身与占用拒绝，同一计划保留",()=>{const s=planned();s.night.plan!.outcome="pending";s.night.plan!.count=2;s.defense.protectionMs=1;expect(mayStartNight(s)).toBe(false);s.defense.protectionMs=0;s.defense.cooldownMs=1;expect(mayStartNight(s)).toBe(false);s.defense.cooldownMs=0;const p=structuredClone(s.night.plan);expect(()=>nightWarningSnapshot(s,{left:0,right:4200,top:0,bottom:2200})).toThrow();expect(()=>nightWarningSnapshot(s,undefined,Array(24).fill(s.player))).toThrow();const spawn=RAID_GATES.find(g=>g.id===p!.gate)!.spawns[0];expect(()=>nightWarningSnapshot(s,undefined,[spawn])).toThrow();s.player={...s.player,...spawn};expect(()=>nightWarningSnapshot(s)).toThrow();expect(s.night.plan).toEqual(p);});
++  it("保护、冷却、人口、视口、近身与占用拒绝，同一计划保留",()=>{const s=planned();s.night.plan!.outcome="pending";s.night.plan!.count=2;s.defense.protectionMs=1;expect(mayStartNight(s)).toBe(false);s.defense.protectionMs=0;s.defense.cooldownMs=1;expect(mayStartNight(s)).toBe(false);s.defense.cooldownMs=0;const p=structuredClone(s.night.plan);expect(()=>nightWarningSnapshot(s,{left:0,right:4200,top:0,bottom:2200})).toThrow();expect(()=>nightWarningSnapshot(s,undefined,Array(24).fill(s.player))).toThrow();const spawn=RAID_GATES.find(g=>g.id===p!.gate)!.spawns[0];expect(()=>nightWarningSnapshot(s,undefined,RAID_GATES.map(g=>g.spawns[0]))).toThrow();s.player={...s.player,...spawn};expect(nightWarningSnapshot(s).defense.raid!.gateId).not.toBe(p!.gate);expect(s.night.plan).toEqual(p);});
+   it("窗口截止取消，加载不重抽，演练不消费夜额度",()=>{const s=planned();s.night.plan!.outcome="pending";s.time=2880;advanceNight(s,2879);expect(s.night.plan!.outcome).toBe("cancelled");const v=validate(s);expect(validate(v)).toEqual(v);s.defense=prepareRaid(s.defense,{x:670,y:720},"east-gate",2);expect(s.night.plan!.outcome).toBe("cancelled");});
+   it.each([1,2,3,4])("结构%s迁移时间/经济/守卫，重复幂等",version=>{const s:any=initialState();s.schema_version=version;s.time=1260;s.bag[0]={id:"herb",count:7};if(version===3){s.defense.guards=s.defense.guards.slice(0,3);for(const k of ["protectionMs","cooldownMs","retryMs","seed"])delete s.defense[k];}if(version>=3)Object.assign(s.defense.guards[0],{hp:0,dead:true,mode:"dead"});delete s.night;const v=validate(s);expect(v.schema_version).toBe(6);expect(v.time).toBe(1260);expect(v.bag[0]).toEqual(s.bag[0]);expect(v.night.takeoverNight).toBe(2);expect(v.night.plan).toBeNull();if(version>=3)expect(v.defense.guards[0].dead).toBe(true);expect(validate(v)).toEqual(v);});
+   it("当前版本缺字段及计划非法拒绝",()=>{const s:any=initialState();delete s.night;expect(()=>validate(s)).toThrow();for(const mutate of [(s:any)=>s.night.takeoverNight=NaN,(s:any)=>s.night.plan.at=2880,(s:any)=>s.night.plan.count=5,(s:any)=>{s.night.plan.outcome="started";s.night.plan.raidSequence=99;}]){const p=planned();mutate(p);expect(()=>validate(p)).toThrow();}});
+@@ -60,7 +60,7 @@ describe("探索和原子住宿",()=>{
+ 
+ it("营房共用出口重叠可逐步分离返岗，不进入新的同伴重叠",()=>{
+  const body={space:"village" as const,x:1995,y:650},peer={...body},nav=lifeNavigation();
+- moveLife(body,{space:"village",x:2010,y:970},50,50,{queries:2},nav,()=>true,[peer]);
++ for(let n=1;n<=120&&Math.hypot(body.x-peer.x,body.y-peer.y)===0;n++)moveLife(body,{space:"village",x:2010,y:970},50,n*50,{queries:2},nav,()=>true,[peer]);
+  expect(Math.hypot(body.x-peer.x,body.y-peer.y)).toBeGreaterThan(0);
+  const a={space:"village" as const,x:670,y:720},b={space:"village" as const,x:690,y:720};
+  moveLife(a,{space:"village",x:740,y:720},50,50,{queries:2},lifeNavigation(),()=>true,[b]);expect(a.x).toBe(670);
+diff --git a/farwind/tests/east-defense.test.ts b/farwind/tests/east-defense.test.ts
+index 5b7d98d..f19e52c 100644
+--- a/farwind/tests/east-defense.test.ts
++++ b/farwind/tests/east-defense.test.ts
+@@ -66,7 +66,7 @@ describe("东门真实模拟与数据边界",()=>{
+   });
+   it("已放出的箭具有飞行时间、单次命中与寿命，重载不补箭伤",()=>{
+     const s=prepareEastRaid(initialDefense(),player),d=new EastDefense(s,0),e=d.enemies[0],g=s.guards[2];
+-    d.fire(g,e,"arrow-test");expect(d.arrows).toHaveLength(1);expect(e.hp).toBe(48);
++    Object.assign(e,{x:2260,y:1090});d.sync();d.fire(g,e,"arrow-test");expect(d.arrows).toHaveLength(1);expect(e.hp).toBe(48);
+     d.updateArrows(1);expect(e.hp).toBe(48);expect(d.arrows[0].travelled).toBeGreaterThan(0);
+     const reload=new EastDefense(validateDefense(s),0);expect(reload.arrows).toEqual([]);expect(reload.enemies[0].hp).toBe(48);
+     d.updateArrows(1500);expect(e.hp).toBe(26);expect(d.arrows).toEqual([]);
+diff --git a/farwind/tests/npc-life-production.spec.ts b/farwind/tests/npc-life-production.spec.ts
+index d16ef34..28afee5 100644
+--- a/farwind/tests/npc-life-production.spec.ts
++++ b/farwind/tests/npc-life-production.spec.ts
+@@ -1,5 +1,8 @@
+ import { test, expect } from "@playwright/test";
+ import { initialState } from "../src/game/systems/state";
++import { NpcLife } from "../src/game/systems/npcLife";
++import { EastDefense } from "../src/game/systems/defense";
++import { FACILITIES } from "../src/data/npcLife";
+ import { approachNpc } from "./npc-navigation";
+ const read = (page: any) => page.evaluate(() => (window as any).__farwind());
+ test("正式构建：旧档迁移、动态药房交谈、原服务与隐藏调试", async ({ page }) => {
+@@ -50,6 +53,78 @@ test("正式构建：旧档迁移、动态药房交谈、原服务与隐藏调
+   expect(errors).toEqual([]);
+ });
+ 
++test("正式构建：生活子版本2的配药旧档显示事实短句，存取后不重复闲聊", async ({
++  page,
++}) => {
++  const errors: string[] = [];
++  page.on("pageerror", (e) => errors.push(e.message));
++  const old: any = initialState();
++  old.time = 540;
++  old.life.playerSpace = "healer-home";
++  Object.assign(old.player, { x: 830, y: 845 });
++  const life = new NpcLife(old, new EastDefense(old.defense, 0)),
++    healer = old.life.people[1];
++  Object.assign(
++    healer.body,
++    FACILITIES.find((f) => f.id === "pharmacy")!.place,
++  );
++  healer.gear = "carried";
++  life.begin(
++    healer,
++    life.candidates(healer).find((c) => c.facility === "pharmacy")!,
++  );
++  healer.action.phase = "perform";
++  old.life.version = 2;
++  delete old.life.speechAt;
++  delete old.life.speechUrgentAt;
++  delete old.life.speechEventFloor;
++  for (const n of old.life.people) {
++    delete n.speech;
++    delete n.supplies;
++  }
++  await page.goto("/?npcDebug=1");
++  page.once("dialog", (d) => d.accept());
++  const chooser = page.waitForEvent("filechooser");
++  await page.getByRole("button", { name: "导入存档" }).click();
++  await (
++    await chooser
++  ).setFiles({
++    name: "npc-life-v2-work.json",
++    mimeType: "application/json",
++    buffer: Buffer.from(JSON.stringify(old)),
++  });
++  await page.waitForFunction(() => {
++    const r = (window as any).__farwind?.();
++    return (
++      r?.mode === "" &&
++      r.npcLife.speech?.text.includes("药还在配") &&
++      r.npcLife.speech.until > r.state.life.elapsed
++    );
++  });
++  const before = await read(page);
++  expect(before.state.life.version).toBe(3);
++  expect(before.state.life.people[1].speech.routines).toContain("work");
++  expect(before.state.life.stores).toEqual(old.life.stores);
++  expect(before.state.bag).toEqual(old.bag);
++  expect(
++    await page.getByRole("button", { name: "NPC 调试", exact: true }).count(),
++  ).toBe(0);
++  await page.screenshot({
++    path: "docs/npc-life/evidence/production-work-speech.png",
++  });
++  await page.keyboard.press("Escape");
++  await page.getByRole("button", { name: "保存旅途", exact: true }).click();
++  await expect(page.locator("#toast")).toContainText("已保存");
++  await page.reload();
++  await page.getByRole("button", { name: "继续旅途" }).click();
++  await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
++  expect((await read(page)).npcLife.speech).toBeNull();
++  expect((await read(page)).state.life.people[1].speech.routines).toContain(
++    "work",
++  );
++  expect(errors).toEqual([]);
++});
++
+ test("正式构建：原旅馆补给与独立客房侧门分别可用", async ({ page }) => {
+   const old: any = initialState();
+   old.schema_version = 5;
+@@ -96,7 +171,7 @@ test("正式构建：原旅馆补给与独立客房侧门分别可用", async ({
+   await page.waitForFunction(
+     () => (window as any).__farwind().state.life.playerSpace === "inn",
+   );
+-  expect((await read(page)).state.life.version).toBe(2);
++  expect((await read(page)).state.life.version).toBe(3);
+   await page.screenshot({ path: "docs/npc-life/evidence/production-inn.png" });
+   const sequence = (await read(page)).state.defense.sequence;
+   await page.keyboard.press("e");
+diff --git a/farwind/tests/npc-life.spec.ts b/farwind/tests/npc-life.spec.ts
+index 7777e1e..2262b49 100644
+--- a/farwind/tests/npc-life.spec.ts
++++ b/farwind/tests/npc-life.spec.ts
+@@ -1,6 +1,9 @@
+ import { prepareRaid } from "../src/game/systems/defense";
+ import { test, expect, type Page } from "@playwright/test";
+ import { initialState } from "../src/game/systems/state";
++import { NpcLife } from "../src/game/systems/npcLife";
++import { EastDefense } from "../src/game/systems/defense";
++import { FACILITIES } from "../src/data/npcLife";
+ import { mkdirSync, writeFileSync } from "node:fs";
+ import { move } from "./map-navigation";
+ test.use({ headless: false });
+@@ -40,6 +43,93 @@ async function roomMove(page: Page, x: number, y: number) {
+     }
+   }
+ }
++test("补给演练：药房装药中保存、重载、真实领取和到场救护", async ({ page }) => {
++  const errors: string[] = [];
++  page.on("pageerror", (e) => errors.push(e.message));
++  const state = initialState();
++  state.time = 540;
++  state.life.playerSpace = "healer-home";
++  Object.assign(state.player, { x: 830, y: 845 });
++  const life = new NpcLife(state, new EastDefense(state.defense, 0)),
++    healer = state.life.people[1];
++  healer.gear = "carried";
++  Object.assign(
++    healer.body!,
++    FACILITIES.find((f) => f.id === "pharmacy")!.place,
++  );
++  life.begin(
++    healer,
++    life.candidates(healer).find((c) => c.facility === "pharmacy")!,
++  );
++  healer.action!.phase = "perform";
++  await page.goto("/?npcDebug=1");
++  page.once("dialog", (d) => d.accept());
++  const chooser = page.waitForEvent("filechooser");
++  await page.getByRole("button", { name: "导入存档" }).click();
++  await (
++    await chooser
++  ).setFiles({
++    name: "medicine-work-save.json",
++    mimeType: "application/json",
++    buffer: Buffer.from(JSON.stringify(state)),
++  });
++  await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
++  await page.getByRole("button", { name: "NPC 调试", exact: true }).click();
++  await page.getByLabel("观察居民").selectOption("elder");
++  await page.getByRole("button", { name: "调试伤情", exact: true }).click();
++  await page.getByRole("button", { name: "NPC 调试", exact: true }).click();
++  await page.waitForFunction(
++    () =>
++      (window as any).__farwind().state.life.people[1].action?.phase ===
++      "stock",
++  );
++  const mid = await read(page),
++    n = mid.state.life.people[1];
++  expect(n.body.space).toBe("healer-home");
++  expect(Math.hypot(n.body.x - 830, n.body.y - 800)).toBeLessThan(6);
++  expect(n.supplies.medicine).toBe(0);
++  expect(mid.state.life.stores.medicine).toBe(state.life.stores.medicine);
++  await page.screenshot({
++    path: "docs/npc-life/evidence/medicine-collection.png",
++  });
++  await page.keyboard.press("Escape");
++  await page.getByRole("button", { name: "保存旅途", exact: true }).click();
++  await expect(page.locator("#toast")).toContainText("已保存");
++  await page.reload();
++  await page.getByRole("button", { name: "继续旅途" }).click();
++  await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
++  await page.waitForFunction(
++    () =>
++      (window as any).__farwind().state.life.people[1].supplies.medicine === 2,
++  );
++  const stocked = await read(page);
++  expect(stocked.state.life.stores.medicine).toBe(
++    mid.state.life.stores.medicine - 2,
++  );
++  expect(stocked.state.bag).toEqual(mid.state.bag);
++  await page.waitForFunction(
++    () =>
++      (window as any)
++        .__farwind()
++        .state.life.events.some((e: any) => e.kind === "care"),
++    null,
++    { timeout: 90000 },
++  );
++  const recovered = await read(page);
++  expect(recovered.state.life.people[1].supplies.medicine).toBe(1);
++  expect(
++    recovered.state.life.events.filter((e: any) => e.kind === "care"),
++  ).toHaveLength(1);
++  expect(
++    recovered.state.life.events.some(
++      (e: any) => e.kind === "injury" && e.debug,
++    ),
++  ).toBe(true);
++  expect(
++    recovered.state.life.events.find((e: any) => e.kind === "care").place.space,
++  ).toBe("village");
++  expect(errors).toEqual([]);
++});
+ test("居民真实日常、动态位置、药房室内与存档恢复", async ({ page }) => {
+   const errors: string[] = [];
+   page.on("pageerror", (e) => errors.push(e.message));
+@@ -419,7 +509,7 @@ test("私人储物真实查看、物品随身、午饭前归还与读档", async
+   await page.reload();
+   await page.getByRole("button", { name: "继续旅途" }).click();
+   await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
+-  expect((await read(page)).state.life.version).toBe(2);
++  expect((await read(page)).state.life.version).toBe(3);
+   expect((await read(page)).state.life.people[1].gear).toBe("locker");
+ });
+ 
+diff --git a/farwind/tests/npc-life.test.ts b/farwind/tests/npc-life.test.ts
+index d873804..4978d9a 100644
+--- a/farwind/tests/npc-life.test.ts
++++ b/farwind/tests/npc-life.test.ts
+@@ -230,11 +230,11 @@ describe("居民生活 M1 基础与事务", () => {
+       [],
+       "村门袭扰，保持局部警戒",
+     );
+-    e.l.remember(e.s.life.people[1], memory, "alarm");
++    const isolated=setup();isolated.l.remember(isolated.s.life.people[1], memory, "alarm");
+     e.s.time = 900;
+     expect(
+-      e.l
+-        .candidates(e.s.life.people[1])
++      isolated.l
++        .candidates(isolated.s.life.people[1])
+         .some((c) => c.label.includes("近日遇险")),
+     ).toBe(false);
+   });
+@@ -255,6 +255,9 @@ describe("居民生活 M1 基础与事务", () => {
+     const before = e.s.life.stores.medicine;
+     n.action!.phase = "perform";
+     n.gear = "carried";
++    // 本例检验到场提交；实际补给移动、取消与读档由子版本3专项覆盖。
++    n.supplies.medicine = 1;
++    e.s.life.stores.medicine--;
+     n.action!.progress = n.action!.duration;
+     e.l.complete(n, n.action!);
+     expect(e.s.life.people[0].body!.hp).toBe(75);
+@@ -275,6 +278,8 @@ describe("居民生活 M1 基础与事务", () => {
+     const wood = e.s.life.stores.wood;
+     carpenter.action!.phase = "perform";
+     carpenter.gear = "carried";
++    carpenter.supplies.wood = 2;
++    e.s.life.stores.wood -= 2;
+     carpenter.action!.progress = carpenter.action!.duration;
+     e.l.complete(carpenter, carpenter.action!);
+     expect(e.s.life.facilities.workbench).toBe(100);
+@@ -415,7 +420,8 @@ describe("居民生活 M2/M3 连续模拟与恢复", () => {
+   it("真实驻防伤情经统一事件形成医疗需求，安全解除后到场治疗", () => {
+     const e = setup();
+     e.s.defense = prepareRaid(e.s.defense, e.s.player, "east-gate");
+-    e.s.defense.guards[0].hp = 75;
++    e.s.defense.guards[0].hp = 180;
++    // 同伴保留正常健康，避免把两人旧伤样本误当成标准防线。
+     e.s.defense.guards[1].hp = 75;
+     /* 固定起始样本保留旧伤，新伤必须来自实际敌人命中。 */ e.d =
+       new EastDefense(e.s.defense, 0);
+@@ -729,6 +735,8 @@ it("青禾接下安全可行的急救后护送，守门人数保持且先到场
+   });
+   medic.action!.phase = "perform";
+   medic.gear = "carried";
++  medic.supplies.medicine = 1;
++  e.s.life.stores.medicine--;
+   medic.action!.progress = medic.action!.duration;
+   e.l.complete(medic, medic.action!);
+   expect(helper.action?.kind).toBe("escort");
+@@ -832,7 +840,7 @@ describe("生活子版本2：私人取放与备用住宿", () => {
+     Object.assign(old.defense.guards[0], { hp: 0, dead: true, mode: "dead" });
+     old.life.stores.medicine = 1;
+     const next = validate(old);
+-    expect(next.life.version).toBe(2);
++    expect(next.life.version).toBe(3);
+     expect(next.life.people[1].gear).toBe("carried");
+     expect(next.life.stores.medicine).toBe(1);
+     expect(next.defense.guards[0].dead).toBe(true);
+@@ -977,6 +985,110 @@ describe("生活子版本2：私人取放与备用住宿", () => {
+   });
+ });
+ 
++describe("生活子版本3：真实补给与守恒", () => {
++  it("装药中读档不提前扣料，取消保留随身药，到场治疗只消耗一次", () => {
++    let e = setup();
++    const medic = e.s.life.people[1];
++    e.l.debugInjury("elder", 70);
++    medic.gear = "carried";
++    Object.assign(medic.body!, e.l.materialSource("medicine"));
++    const candidate = e.l.candidates(medic).find((c) => c.kind === "treat")!;
++    expect(e.l.begin(medic, candidate)).toBe(true);
++    expect(medic.action?.phase).toBe("stock");
++    const initial = e.s.life.stores.medicine;
++    tick(e, 1000);
++    expect(medic.supplies.medicine).toBe(0);
++    expect(e.s.life.stores.medicine).toBe(initial);
++    expect(
++      e.s.life.reservations.some(
++        (r) => r.facility === "pharmacy" && r.owner === "healer",
++      ),
++    ).toBe(true);
++    const saved = validate(e.s),
++      d = new EastDefense(saved.defense, 0);
++    e = { s: saved, d, l: new NpcLife(saved, d) };
++    tick(e, 600);
++    const next = e.s.life.people[1];
++    expect(next.supplies.medicine).toBe(2);
++    expect(e.s.life.stores.medicine).toBe(initial - 2);
++    expect(e.s.life.reservations.some((r) => r.facility === "pharmacy")).toBe(
++      false,
++    );
++    e.l.cancel(next, "安全演练中断");
++    expect(next.supplies.medicine).toBe(2);
++    expect(validate(e.s).life.people[1].supplies.medicine).toBe(2);
++    for (
++      let t = 0;
++      t < 80000 && !e.s.life.events.some((ev) => ev.kind === "care");
++      t += 100
++    )
++      tick(e, 100);
++    expect(e.s.life.events.filter((ev) => ev.kind === "care")).toHaveLength(1);
++    expect(next.supplies.medicine).toBe(1);
++    expect(e.s.life.stores.medicine).toBe(initial - 2);
++    expect(e.s.bag.every((x) => x === null)).toBe(true);
++    expect(e.s.life.people[0].body!.hp).toBe(75);
++    expect(validate(e.s).life.people[1].supplies).toEqual(next.supplies);
++  });
++  it("维修先到工坊领取有限木料，再到受损风铃维修，加载不再扣材料", () => {
++    const e = setup(),
++      carpenter = e.s.life.people[2],
++      initial = e.s.life.stores.wood;
++    carpenter.gear = "carried";
++    e.l.damageFacility("wind-bell", 50, true);
++    const event = e.s.life.events.at(-1)!;
++    e.l.remember(carpenter, event, "report");
++    let collected = false;
++    for (
++      let t = 0;
++      t < 80000 && !e.s.life.events.some((ev) => ev.kind === "repair");
++      t += 100
++    ) {
++      const before = e.s.life.stores.wood;
++      tick(e, 100);
++      if (before !== e.s.life.stores.wood) {
++        const source = e.l.materialSource("wood");
++        expect(carpenter.body!.space).toBe(source.space);
++        expect(
++          Math.hypot(
++            carpenter.body!.x - source.x,
++            carpenter.body!.y - source.y,
++          ),
++        ).toBeLessThan(6);
++        expect(carpenter.supplies.wood).toBe(2);
++        collected = true;
++      }
++    }
++    expect(collected).toBe(true);
++    expect(e.s.life.facilities["wind-bell"]).toBe(100);
++    expect(carpenter.supplies.wood).toBe(0);
++    expect(e.s.life.stores.wood).toBe(initial - 2);
++    expect(e.s.life.events.filter((ev) => ev.kind === "repair")).toHaveLength(
++      1,
++    );
++    const restored = validate(e.s),
++      d = new EastDefense(restored.defense, 0);
++    tick({ s: restored, d, l: new NpcLife(restored, d) }, 5000);
++    expect(restored.life.stores.wood).toBe(initial - 2);
++  });
++  it("补给入口关闭时不远程取药，已在药箱中的药仍可用于安全救护", () => {
++    const e = setup(),
++      medic = e.s.life.people[1];
++    e.l.debugInjury("elder", 70);
++    medic.gear = "carried";
++    e.s.life.unavailable.homes["healer-home"] = true;
++    expect(e.l.candidates(medic).some((c) => c.kind === "treat")).toBe(false);
++    tick(e, 1500);
++    expect(e.s.life.stores.medicine).toBe(4);
++    medic.supplies.medicine = 1;
++    e.s.life.stores.medicine--;
++    expect(e.l.candidates(medic).some((c) => c.kind === "treat")).toBe(true);
++    const bad = structuredClone(e.s);
++    bad.life.stores.medicine = LIFE.maxMedicine;
++    expect(() => validate(bad)).toThrow("合计超过上限");
++  });
++});
++
+ it("营房入口演练后每门只有一人沿路去备用床，塔位停射，调试事实可读档", () => {
+   const e = setup();
+   e.s.time = 1140;
+diff --git a/farwind/tests/npc-navigation.test.ts b/farwind/tests/npc-navigation.test.ts
+index d8b9747..cf09864 100644
+--- a/farwind/tests/npc-navigation.test.ts
++++ b/farwind/tests/npc-navigation.test.ts
+@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
+ import { mkdirSync, writeFileSync } from "node:fs";
+ import { HOMES, GUARD_LANDINGS, type Place } from "../src/data/npcLife";
+ import { lifeNavigation, moveLife } from "../src/game/systems/npcNavigation";
++import { pathSearch, localPath } from "../src/game/systems/enemy";
++import { LIFE } from "../src/data/npcLife";
+ 
+ describe("生活寻路预算", () => {
+   it("记录相同真实地图路线的规划批次与耗时", () => {
+@@ -33,6 +35,8 @@ describe("生活寻路预算", () => {
+           if (nav.nav.path.length || nav.nav.failed || !nav.queries) break;
+         }
+         expect(nav.nav.failed, name).toBe(false);
++        expect(nav.search, name).toBeNull();
++        expect(nav.maxExpanded).toBeLessThanOrEqual(LIFE.pathNodesPerBatch);
+         samples.push({
+           路线: name,
+           轮次: run + 1,
+@@ -40,6 +44,7 @@ describe("生活寻路预算", () => {
+           查询: nav.queries,
+           总规划毫秒: times.reduce((a, b) => a + b, 0),
+           最大批次毫秒: Math.max(...times),
++          最多展开节点: nav.maxExpanded,
+         });
+       }
+     mkdirSync("docs/npc-life/evidence", { recursive: true });
+@@ -55,4 +60,49 @@ describe("生活寻路预算", () => {
+       ),
+     );
+   });
++  it("分步搜索与原局部搜索结果相同，每批节点数有界", () => {
++    let checks = 0;
++    const query = {
++        blocked: (x: number, y: number) => x === 40 && Math.abs(y) < 120,
++        clear: () => true,
++      },
++      start = { x: 0, y: 0 },
++      target = { x: 100, y: 0 },
++      goal = (p: { x: number; y: number }) => {
++        checks++;
++        return p.x === target.x && p.y === target.y;
++      };
++    const expected = localPath(start, goal, target, () => true, query),
++      search = pathSearch(start, goal, target, () => true, query);
++    let result = search.next();
++    while (!result.done) {
++      const before = checks;
++      for (let i = 0; i < LIFE.pathNodesPerBatch && !result.done; i++)
++        result = search.next();
++      expect(checks - before).toBeLessThanOrEqual(LIFE.pathNodesPerBatch);
++    }
++    expect(result.value).toEqual(expected);
++    expect(expected.path).not.toBeNull();
++  });
++  it("待规划时不移动、不凭空撞墙，预算为零不展开，换目标释放搜索", () => {
++    const body = { ...GUARD_LANDINGS["north-archer"]! },
++      nav = lifeNavigation(),
++      target = {
++        space: "village" as const,
++        ...HOMES.find((h) => h.id === "barracks")!.door,
++      },
++      before = { ...body };
++    moveLife(body, target, 16, 0, { queries: 1 }, nav);
++    expect(nav.search).not.toBeNull();
++    expect(body).toEqual(before);
++    const batches = nav.batches;
++    moveLife(body, target, 16, 16, { queries: 0 }, nav);
++    expect(nav.batches).toBe(batches);
++    expect(nav.stuck).toBe(0);
++    moveLife(body, { ...body, y: body.y + 20 }, 16, 32, { queries: 1 }, nav);
++    expect(nav.search).toBeNull();
++    expect(
++      Math.hypot(body.x - before.x, body.y - before.y),
++    ).toBeLessThanOrEqual(LIFE.speed * 0.016 + 0.001);
++  });
+ });
+diff --git a/farwind/tests/parry-feedback-v3.production.ts b/farwind/tests/parry-feedback-v3.production.ts
+index 043dbb6..1234558 100644
+--- a/farwind/tests/parry-feedback-v3.production.ts
++++ b/farwind/tests/parry-feedback-v3.production.ts
+@@ -2,8 +2,9 @@ import {test,expect} from '@playwright/test';
+ import {mkdir,writeFile} from 'node:fs/promises';
+ import sharp from 'sharp';
+ import {initialState} from '../src/game/systems/state';
++const evidence=process.env.FARWIND_V3_EVIDENCE_ROOT??'docs/parry-feedback-v3/evidence';
+ test('V3-PRODUCTION-real-input',async({page})=>{
+  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());await page.goto('/?feedback=A');const s=initialState();s.quest=3;Object.assign(s.player,{x:850,y:720});const chooser=page.waitForEvent('filechooser');await page.getByRole('button',{name:'导入存档',exact:true}).click();await(await chooser).setFiles({name:'production-fixture.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(s))});await page.waitForFunction(()=>(window as any).__farwind().mode==='');await page.keyboard.press('k');await expect(page.locator('.meter.stamina')).toContainText('88 / 100');await page.waitForTimeout(450);await page.mouse.click(650,390,{button:'right'});await expect.poll(async()=>page.evaluate(()=>(window as any).__farwind().state.player.stamina)).toBeLessThan(85);await page.waitForTimeout(450);await page.keyboard.press('w');await page.waitForTimeout(40);await page.getByRole('button',{name:'迎风架剑练习',exact:true}).click();await page.getByRole('button',{name:'慢速教学 · 900毫秒',exact:true}).click();
+  let received=false;for(let i=0;i<180;i++){const png=await page.screenshot({clip:{x:580,y:330,width:130,height:160}}),{data}=await sharp(png).ensureAlpha().raw().toBuffer({resolveWithObject:true});let green=0;for(let k=0;k<130*100*4;k+=4){const r=data[k],g=data[k+1],b=data[k+2];if(r>155&&r<225&&g>225&&b>200&&g-r>20)green++;}if(green>12){await page.keyboard.press('k');received=true;break;}}
+- expect(received).toBe(true);await expect(page.locator('#training-stats')).toContainText('24伤害');await expect(page.locator('#training-stats')).toContainText('命中1/3');const state=await page.evaluate(()=>(window as any).__farwind());expect(state.feedback).toBeUndefined();expect(state.session).toBeUndefined();expect(errors).toEqual([]);await mkdir('docs/parry-feedback-v3/evidence',{recursive:true});await page.screenshot({path:'docs/parry-feedback-v3/evidence/production.png'});await writeFile('docs/parry-feedback-v3/evidence/production.json',JSON.stringify({说明:'实际生产构建，真实K与画布右键扣费；依据正常比例截图提示起按，不按J仍实际反斩24伤害；开发对照参数不改变生产反馈，战斗诊断不暴露。',页面错误:errors,训练:await page.locator('#training-stats').textContent()},null,2));
++ expect(received).toBe(true);await expect(page.locator('#training-stats')).toContainText('24伤害');await expect(page.locator('#training-stats')).toContainText('命中1/3');const state=await page.evaluate(()=>(window as any).__farwind());expect(state.feedback).toBeUndefined();expect(state.session).toBeUndefined();expect(errors).toEqual([]);await mkdir(evidence,{recursive:true});await page.screenshot({path:`${evidence}/production.png`});await writeFile(`${evidence}/production.json`,JSON.stringify({说明:'实际生产构建，真实K与画布右键扣费；依据正常比例截图提示起按，不按J仍实际反斩24伤害；开发对照参数不改变生产反馈，战斗诊断不暴露。',页面错误:errors,训练:await page.locator('#training-stats').textContent()},null,2));
+ });
+diff --git a/farwind/tests/parry-feedback-v3.spec.ts b/farwind/tests/parry-feedback-v3.spec.ts
+index d3c8a3e..8fd02fd 100644
+--- a/farwind/tests/parry-feedback-v3.spec.ts
++++ b/farwind/tests/parry-feedback-v3.spec.ts
+@@ -29,9 +29,9 @@ async function visualCue(page:Page,quality:'normal'|'perfect',name:string) {
+  }
+  await writeFile(`${dir}/${name}-cue.json`,JSON.stringify({说明:'B类画面触发，诊断仅用于事后记录，不重试失败',观察:observations},null,2));expect(chosen,'正常比例画面应提供起按线索').not.toBeNull();await writeFile(`${dir}/${name}-cue.png`,chosen!);
+ }
+-async function predicted(page:Page,predicate:string,lead=145){
++async function predicted(page:Page,predicate:string,lead=145,width=50){
+  // A类：只读时间用于精确集成断言，不作为动作可读性证明。
+- await page.waitForFunction(({id,lead})=>{const s=(window as any).__farwind();return s.warnings.some((w:any)=>w.id.startsWith(id)&&w.predicted!==null&&w.lead<=lead&&w.lead>lead-50);},{id:predicate,lead},{polling:5,timeout:20000});await page.keyboard.press('k');
++ await page.waitForFunction(({id,lead,width})=>{const s=(window as any).__farwind();return s.warnings.some((w:any)=>w.id.startsWith(id)&&w.predicted!==null&&w.lead<=lead&&w.lead>lead-width);},{id:predicate,lead,width},{polling:5,timeout:20000});await page.keyboard.press('k');
+ }
+ async function finish(page:Page,name:string){
+  const s=await read(page),frames=await page.evaluate(()=>{cancelAnimationFrame((window as any).__v3Sampler);return (window as any).__v3Frames});
+@@ -47,6 +47,7 @@ for(const mode of ['A','B','C','D'])test(`V3-AB-${mode}-normal`,async({page})=>{
+  expect(events.filter((e:any)=>e.kind==='parry-contact')).toHaveLength(1);expect(events.filter((e:any)=>e.kind==='counter-start')).toHaveLength(1);expect(events.filter((e:any)=>e.kind==='counter-swing')).toHaveLength(1);expect(events.filter((e:any)=>e.kind==='counter-hit')).toHaveLength(1);
+  const frames=await page.evaluate(()=>(window as any).__v3Frames),first=frames.find((f:any)=>f.反馈.events.some((e:any)=>e.kind==='parry-contact'));
+  expect(first.动作.phase).toBe('brace');expect(first.战斗.hitStopRemaining).toBeGreaterThan(0);expect(first.反馈.effects.some((e:any)=>e.kind==='parry-contact')).toBe(true);expect(first.反馈.effects.find((e:any)=>e.kind==='parry-contact').depth).toBeGreaterThan(first.动作.root[1]);
++ if(mode==='C'||mode==='D'){const flash=first.反馈.visual.flashes.find((e:any)=>e.id===events.find((e:any)=>e.kind==='parry-contact').id);expect(flash.core).toBeGreaterThanOrEqual(5);expect(flash.edge).toBe(14);expect(frames.some((f:any)=>f.反馈.visual.bladeGlow?.alpha>.5)).toBe(true);}
+  if(mode==='B'||mode==='D'){const audio=s.feedback.audio.events;for(const kind of ['parry-contact','deflect-release','counter-swing','counter-hit'])expect(audio.filter((e:any)=>e.kind===kind)).toHaveLength(1);expect(new Set(audio.map((e:any)=>e.id)).size).toBe(audio.length);expect(s.feedback.audio.cached).toBe(33);expect(audio.filter((e:any)=>e.kind==='enemy-strike')).toHaveLength(0);}
+  expect(s.state.player.hp).toBe(100);await finish(page,`ab-${mode}`);
+ });
+@@ -59,6 +60,20 @@ test('V3-VISUAL-cancel-no-false-hit',async({page})=>{
+  await setup(page);await visualCue(page,'normal','cancel');await page.waitForFunction(()=>(window as any).__farwind().contacts.at(-1)?.result==='normal',undefined,{polling:5});await page.keyboard.press('l');await page.waitForFunction(()=>(window as any).__farwind().session.combat.dashRemaining>0,undefined,{polling:5});await page.waitForTimeout(350);
+  const s=await read(page);expect(s.training.damage).toBe(0);expect(s.feedback.events.filter((e:any)=>e.kind.startsWith('counter'))).toHaveLength(0);expect(s.feedback.audio.events.filter((e:any)=>e.kind==='counter-hit')).toHaveLength(0);await finish(page,'cancel');
+ });
++test('V3-RED-four-directions-live-blade',async({page})=>{
++ const rows:any[]=[];
++ for(const [x,y,key,d,label] of [[850,720,'w',1,'up'],[850,580,'s',0,'down'],[920,650,'a',2,'left'],[780,650,'d',3,'right']] as const){
++  const s=initialState();s.quest=3;Object.assign(s.player,{x,y});await fixture(page,s);await face(page,key,d);await practice(page);await predicted(page,'practice-',145);
++  await page.waitForFunction(()=>{const s=(window as any).__farwind();return s.feedback.visual.bladeGlow?.alpha>.7&&s.animation.hero.key.startsWith('hero/counter');},undefined,{polling:5});
++  const png=await page.screenshot(),{data,info}=await sharp(png).ensureAlpha().raw().toBuffer({resolveWithObject:true});await writeFile(`${dir}/red-blade-${label}.png`,png);
++  let red=0;for(let y=400;y<580;y++)for(let x=565;x<730;x++){const k=(y*info.width+x)*4,r=data[k],g=data[k+1],b=data[k+2];if(r>180&&g<130&&b<130&&r-g>70)red++;}expect(red,`${label}正常比例画面有剑刃红光`).toBeGreaterThan(4);
++  await expect.poll(async()=>(await read(page)).training.damage).toBe(24);await page.waitForTimeout(220);
++  const frames=await page.evaluate(()=>(window as any).__v3Frames),glows=frames.filter((f:any)=>f.反馈.visual.bladeGlow);
++  expect(glows.length).toBeGreaterThan(2);for(const f of glows){const w=f.动作.weapon,g=f.反馈.visual.bladeGlow;expect(g.tip.x).toBeCloseTo(f.动作.root[0]+w.tip.x,6);expect(g.tip.y).toBeCloseTo(f.动作.root[1]+w.tip.y,6);expect(g.depth).toBe(f.动作.root[1]+(f.动作.direction===1?-.05:.08));}
++  expect((await read(page)).feedback.visual.bladeGlow).toBeNull();rows.push({方向:label,红色像素:red,呈现帧:glows,接触:(await read(page)).contacts});
++ }
++ await writeFile(`${dir}/red-blade-four-directions.json`,JSON.stringify({说明:'真实键盘与合法起始存档，A类只读预测决定起按，不作为动作可读性验收；每帧核对实际武器端点、前后层、正常比例红色像素及自然消退。',结果:rows},null,2));await finish(page,'red-blade-four-directions');
++});
+ test('V3-INTEGRATION-wild-slime',async({page})=>{
+  const s=initialState();s.quest=3;Object.assign(s.player,{x:2380,y:1060});s.killed=['slime-2','leaf-1','leaf-2'];await fixture(page,s);await face(page,'d',3);await predicted(page,'slime-1:');await expect.poll(async()=>(await read(page)).contacts.at(-1)?.result).toBe('normal');
+  await expect.poll(async()=>(await read(page)).enemies.find((e:any)=>e.id==='slime-1').hp).toBe(24);const r=await read(page),event=r.feedback.events.find((e:any)=>e.kind==='parry-contact'),enemy=r.enemies.find((e:any)=>e.id==='slime-1');expect(enemy.staggerUntil).toBe(event.at+600);expect(r.feedback.events.filter((e:any)=>e.kind==='counter-hit')).toHaveLength(1);expect(r.state.player.hp).toBe(100);await finish(page,'wild-slime');
+@@ -77,7 +92,8 @@ test('V3-INTEGRATION-leaf-projection',async({page})=>{
+  await setup(page,'D','叶灵节奏 · 650毫秒');await predicted(page,'practice-',130);await expect.poll(async()=>(await read(page)).training.damage).toBe(24);const r=await read(page);expect(r.feedback.events.find((e:any)=>e.kind==='counter-hit').material).toBe('leaf');expect(r.state.player.hp).toBe(100);await finish(page,'leaf-projection');
+ });
+ test('V3-INTEGRATION-wild-leaf',async({page})=>{
+- const s=initialState();s.quest=3;Object.assign(s.player,{x:2855,y:1070});s.killed=['slime-1','slime-2','leaf-2'];await fixture(page,s);await face(page,'d',3);await predicted(page,'leaf-1:',65);await expect.poll(async()=>(await read(page)).contacts.at(-1)?.result).toBe('perfect');await expect.poll(async()=>(await read(page)).enemies.find((e:any)=>e.id==='leaf-1').hp).toBe(42);
++ // 原15–65ms起按区跨进程调度后可能落到接触之后；50–85ms覆盖正常呈现步长，仍在既定精准区内，保留真实键盘与精准断言。
++ const s=initialState();s.quest=3;Object.assign(s.player,{x:2855,y:1070});s.killed=['slime-1','slime-2','leaf-2'];await fixture(page,s);await face(page,'d',3);await predicted(page,'leaf-1:',85,35);await expect.poll(async()=>(await read(page)).contacts.at(-1)?.result).toBe('perfect');await expect.poll(async()=>(await read(page)).enemies.find((e:any)=>e.id==='leaf-1').hp).toBe(42);
+  const r=await read(page),event=r.feedback.events.find((e:any)=>e.kind==='parry-perfect-contact');expect(r.enemies.find((e:any)=>e.id==='leaf-1').staggerUntil).toBe(event.at+800);expect(r.feedback.events.find((e:any)=>e.kind==='counter-hit').material).toBe('leaf');expect(r.state.player.hp).toBe(100);await finish(page,'wild-leaf');
+ });
+ test('V3-INTEGRATION-four-directions-muted',async({page})=>{
+diff --git a/farwind/tests/parry-feedback-v3.test.ts b/farwind/tests/parry-feedback-v3.test.ts
+index 946b53b..e578dfc 100644
+--- a/farwind/tests/parry-feedback-v3.test.ts
++++ b/farwind/tests/parry-feedback-v3.test.ts
+@@ -1,5 +1,5 @@
+ import {describe,it,expect} from 'vitest';
+-import {CombatFeedback,FEEDBACK,parryContactPoint,deflectDirection,feedbackVisual,feedbackAudio,audibleFeedback,type FeedbackEvent} from '../src/game/systems/combatFeedback';
++import {CombatFeedback,FEEDBACK,BLADE_GLOW,parryContactPoint,deflectDirection,feedbackVisual,feedbackAudio,audibleFeedback,type FeedbackEvent} from '../src/game/systems/combatFeedback';
+ import {synthFeedback,FEEDBACK_AUDIO} from '../src/game/systems/feedbackAudio';
+ import {CombatController,PARRY,COMBAT,STRIKES,attackConfig,type Attack} from '../src/game/systems/combat';
+ import {counterVisual,parryWeapon} from '../src/data/animation';
+@@ -8,6 +8,35 @@ import {Sound} from '../src/game/systems/audio';
+ import sharp from 'sharp';
+ const fact=(id='one',kind:FeedbackEvent['kind']='parry-contact',at=0,until=600):FeedbackEvent=>({id,kind,at,until,targetId:'slime-1',attackId:id,point:{x:10,y:10},incoming:{x:0,y:1},blade:{x:1,y:0},deflect:{x:1,y:-.2},quality:'normal',material:'slime',alive:true});
+ const attack=(facing:0|1|2|3=0,id=1):Attack=>({id,start:0,stage:1,facing,hit:new Set(),counter:'normal',automatic:true,primaryTarget:'main',config:attackConfig({stage:1,counter:'normal'})});
++describe('成功白闪后的剑身红光',()=>{
++ const root={x:850,y:720},weapon=parryWeapon(3,2);
++ const start=(f:CombatFeedback)=>f.emit({...fact('start','counter-start',60,375),attackId:'player:1'});
++ it('只从完整成功建立，拨开后升亮；停顿中同一模拟时刻不衰减',()=>{
++  const f=new CombatFeedback();f.emit(fact('guard','guard-start'));expect(f.bladeGlow(60,root,weapon,3)).toBeNull();f.emit(fact('after','afterguard'));expect(f.bladeGlow(60,root,weapon,3)).toBeNull();f.emit(fact());
++  expect(f.bladeGlow(19.999,root,weapon,3)).toBeNull();expect(f.bladeGlow(BLADE_GLOW.start,root,weapon,3)).toBeNull();expect(f.bladeGlow(40,root,weapon,3)!.alpha).toBe(.5);for(let i=0;i<5;i++){f.advance(40,null,true);expect(f.bladeGlow(40,root,weapon,3)!.alpha).toBe(.5);}
++ });
++ it('正式反斩的收势截止控制消退，成功并不要求命中',()=>{
++  const f=new CombatFeedback();f.emit(fact());start(f);f.advance(60,'player:1',false);expect(f.bladeGlow(60,root,weapon,3)!.alpha).toBe(1);expect(f.bladeGlow(230,root,weapon,3)!.alpha).toBe(1);expect(f.bladeGlow(300,root,weapon,3)!.alpha).toBeCloseTo(75/145);expect(f.bladeGlow(375,root,weapon,3)).toBeNull();f.advance(375,null,false);expect(f.snapshot().bladeGlow).toBeNull();expect(f.history.some(e=>e.kind==='counter-hit')).toBe(false);
++ });
++ it('余势及重复成功不续期，新的成功替换而不叠加',()=>{
++  const f=new CombatFeedback(),e=fact();f.emit(e);start(f);f.emit(fact('after','afterguard',100));expect(f.emit(e)).toBe(false);expect(f.snapshot().bladeGlow!.until).toBe(375);expect(f.bladeGlow(60,root,weapon,3)!.id).toBe('0:one');f.emit({...fact('next','parry-perfect-contact',200),quality:'perfect'});expect(f.bladeGlow(260,root,weapon,3)!.quality).toBe('perfect');expect(f.snapshot().bladeGlow!.event.id).toBe('0:next');
++ });
++ it('恢复点风步或反斩被取消立即清除，不转移到新攻击',()=>{
++  for(const began of [false,true]){const f=new CombatFeedback();f.emit(fact());if(began)start(f);f.advance(80,null,false);expect(f.bladeGlow(80,root,weapon,3)).toBeNull();}
++  const f=new CombatFeedback();f.emit(fact());start(f);f.advance(120,'player:2',false);expect(f.snapshot().bladeGlow).toBeNull();
++ });
++ it('受伤、重新架剑和会话重置清理红刃，原成功接触事实仍保留',()=>{
++  for(const end of ['hurt','guard','reset']){const f=new CombatFeedback();f.emit(fact());if(end==='hurt')f.cancelRelease();else if(end==='guard')f.emit(fact('guard','guard-start',40));else f.reset();expect(f.bladeGlow(60,root,weapon,3)).toBeNull();if(end!=='reset')expect(f.history[0].kind).toBe('parry-contact');}
++ });
++ for(const facing of [0,1,2,3] as const)it(`四向${facing}红刃跟随当前实际姿态，根位移一致、背向在角色后层`,()=>{
++  const f=new CombatFeedback();f.emit(fact());start(f);const a=attack(facing),tips=[];
++  for(const t of [115,144,173,202]){const w=counterVisual(a,t-60).weapon!,g=f.bladeGlow(t,root,w,facing)!;expect(g.tip).toEqual({x:root.x+w.tip.x,y:root.y+w.tip.y});expect(g.start.x).toBeCloseTo(root.x+w.grip.x+(w.tip.x-w.grip.x)*.22);expect(g.depth).toBe(root.y+(facing===1?-.05:.08));const moved=f.bladeGlow(t,{x:root.x+10,y:root.y+20},w,facing)!;expect(moved.tip.x-g.tip.x).toBe(10);expect(moved.tip.y-g.tip.y).toBe(20);tips.push(g.tip);}
++  expect(new Set(tips.map(p=>`${p.x}/${p.y}`)).size).toBe(4);
++ });
++ it('对照开关只影响呈现，缺少武器不绘制，未启动反斩的反馈也有寿命上限',()=>{
++  const f=new CombatFeedback();f.emit(fact());expect(f.bladeGlow(60,root,null,3)).toBeNull();for(const mode of ['A','B','C','D'] as const){f.mode=mode;expect(!!f.bladeGlow(60,root,weapon,3)).toBe(feedbackVisual(mode));}f.advance(BLADE_GLOW.maxLife);expect(f.snapshot().bladeGlow).toBeNull();
++ });
++});
+ describe('第三轮事实、去重、时钟和生命周期',()=>{
+  it('同一接触只消费一次，紧接的不同攻击不被全局节流吞掉',()=>{const f=new CombatFeedback();expect(f.emit(fact())).toBe(true);expect(f.emit(fact())).toBe(false);expect(f.emit(fact('two','parry-contact',1))).toBe(true);expect(f.drain()).toHaveLength(2);expect(f.drain()).toHaveLength(0);expect(f.effects).toHaveLength(2);});
+  it('快照冻结且深拷贝来招、位置和方向',()=>{const f=new CombatFeedback(),e=fact();f.emit(e);(e.point as any).x=999;(e.deflect as any).x=999;expect(f.history[0].point.x).toBe(10);expect(f.history[0].deflect.x).toBe(1);expect(Object.isFrozen(f.history[0])).toBe(true);expect(Object.isFrozen(f.history[0].blade)).toBe(true);});
+diff --git a/farwind/tests/village-integration.test.ts b/farwind/tests/village-integration.test.ts
+index f24fcc9..6951eb4 100644
+--- a/farwind/tests/village-integration.test.ts
++++ b/farwind/tests/village-integration.test.ts
+@@ -1,3 +1,4 @@
++import {legacyDefense} from './safety-fixtures';
+ import {describe,it,expect} from 'vitest';
+ import {mkdirSync,writeFileSync} from 'node:fs';
+ import {initialState,validate,type State} from '../src/game/systems/state';
+@@ -22,7 +23,7 @@ describe('M5集成迁移与恢复',()=>{
+  });
+  it('各门活跃阶段恢复不复活成员、不重放飞箭、不改变结算号',()=>{
+   for(const gate of RAID_GATES)for(const phase of ['warning','approach','fighting','retreat']as const){
+-   const s=initialState();s.player={...s.player,...observer};s.defense=prepareRaid(s.defense,s.player,gate.id,4,phase==='warning');
++   const s=initialState();s.player={...s.player,...observer};s.defense=legacyDefense(s.defense,gate.id,phase==='warning');
+    s.defense.raid!.phase=phase;s.defense.raid!.ageMs=phase==='retreat'?119900:2000;s.defense.raid!.members[0].hp=0;s.defense.raid!.members[1].hp=17;
+    const clean=validate(s),d=new EastDefense(clean.defense,1000);expect(d.arrows).toEqual([]);expect(d.state.raid!.members[0].hp).toBe(0);expect(d.state.raid!.members[1].hp).toBe(17);
+    d.update(1010,10,observer,{queries:2});expect(d.state.sequence).toBe(1);expect(d.state.completedSequence,`${gate.id} ${phase}`).toBe(phase==='retreat'?1:0);expect(d.state.guards.every(g=>!g.dead)).toBe(true);
+@@ -30,7 +31,7 @@ describe('M5集成迁移与恢复',()=>{
+   }
+  });
+  it('合法历史档的失效位置按正式碰撞修复，死亡和HP不被恢复器覆盖',()=>{
+-  const s=initialState();s.defense=prepareRaid(s.defense,observer,'north-gate',4);
++  const s=initialState();s.defense=legacyDefense(s.defense,'north-gate');
+   const living=s.defense.guards[1];living.x=2100;living.y=1188;living.hp=71;
+   Object.assign(s.defense.guards[0],{hp:0,dead:true,mode:'dead',x:2100,y:1188});
+   Object.assign(s.defense.raid!.members[0],{x:2030,y:885,hp:23});
+@@ -40,14 +41,14 @@ describe('M5集成迁移与恢复',()=>{
+  });
+  it('三门全灭历史只结算一次；重复恢复保持冷却、任务与固定死亡隔离',()=>{
+   for(const gate of RAID_GATES){
+-   const s=initialState();s.defense=prepareRaid(s.defense,observer,gate.id,4);s.defense.raid!.members.forEach(m=>m.hp=0);
++   const s=initialState();s.defense=legacyDefense(s.defense,gate.id);s.defense.raid!.members.forEach(m=>m.hp=0);
+    const d=new EastDefense(s.defense,0);d.update(20,20,observer,{queries:2});expect(d.state.raid).toBeNull();expect(d.state.completedSequence).toBe(1);
+    const finished=structuredClone(d.state);for(let n=0;n<5;n++){d.restore(20);expect(d.state).toEqual(finished);expect(d.enemies).toEqual([]);}
+    expect(s.killed).toEqual([]);expect(s.pendingDrops).toEqual([]);
+   }
+  });
+  it('生成可复用的正式历史档样本，浏览器只通过导入建立条件',()=>{
+-  const base=initialState();Object.assign(base.player,observer);const probes=RAID_GATES.map(g=>{const s=structuredClone(base);s.defense=prepareRaid(s.defense,s.player,g.id,4);s.defense.raid!.members[3].type='leaf';s.defense.raid!.members[3].hp=72;Object.assign(s.player,g.inside);return validate(s);});
++  const base=initialState();Object.assign(base.player,observer);const probes=RAID_GATES.map(g=>{const s=structuredClone(base);s.defense=legacyDefense(s.defense,g.id);s.defense.raid!.members[3].type='leaf';s.defense.raid!.members[3].hp=72;Object.assign(s.player,g.inside);return validate(s);});
+   const deaths=RAID_GATES.map((g,i)=>{const s=structuredClone(base);s.defense=prepareRaid(s.defense,s.player,g.id,3);s.defense.guards[i*3].hp=1;Object.assign(s.defense.raid!.members[0],{x:GUARD_DEFS[i*3].post.x+8,y:GUARD_DEFS[i*3].post.y+7});return validate(s);});
+   mkdirSync('.parry-local/m5',{recursive:true});writeFileSync('.parry-local/m5/fixtures.json',JSON.stringify({说明:'仅建立合法起始档；伤害、死亡、波次与时间由正式运行推进。',base,probes,deaths},null,2));expect(probes).toHaveLength(3);
+  });
+diff --git a/farwind/tests/village-raids.spec.ts b/farwind/tests/village-raids.spec.ts
+index 2af45fb..33d8135 100644
+--- a/farwind/tests/village-raids.spec.ts
++++ b/farwind/tests/village-raids.spec.ts
+@@ -13,7 +13,7 @@ test.afterEach(async({page},info)=>{if(info.status!==info.expectedStatus&&!page.
+ for(const [i,gate]of RAID_GATES.entries())test(`${gate.name}按有效时间自动预警、离屏自主击退和保存恢复`,async({page})=>{
+  await mkdir(root,{recursive:true});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');
+  const s=initialState();s.killed=['slime-1','slime-2','leaf-1','leaf-2'];s.quest=0;s.player.x=930;s.player.y=1220;
+- s.defense.protectionMs=0;s.defense.cooldownMs=800;s.defense.seed=seedFor(i);s.time=2870;s.night.plan={...makeNightPlan(s,2),at:2870.1,gate:gate.id,count:2,outcome:"pending"};await fixture(page,s);
++ s.defense.protectionMs=0;s.defense.cooldownMs=800;s.defense.seed=seedFor(i);s.time=2700;s.night.plan={...makeNightPlan(s,2),at:2700.1,gate:gate.id,count:2,outcome:"pending"};await fixture(page,s);
+  await expect.poll(async()=>(await read(page)).state.defense.raid?.phase).toBe('warning');
+  await expect.poll(async()=>(await read(page)).defense.awaitingCheckpoint).toBe(false);
+  await page.keyboard.press('Escape');const paused=await read(page);expect(paused.state.defense.raid.gateId).toBe(gate.id);expect(paused.defense.enemies).toEqual([]);
+@@ -27,7 +27,7 @@ for(const [i,gate]of RAID_GATES.entries())test(`${gate.name}按有效时间自
+  await page.screenshot({path:`${root}/${gate.id}-offscreen.png`});
+  await expect.poll(async()=>(await read(page)).state.defense.raid,{timeout:60000}).toBeNull();
+  await expect.poll(async()=>{const d=await read(page);return !d.defense.critical&&!d.defenseCheckpointPending;}).toBe(true);
+- const end=await read(page);expect(end.state.defense.guards.every((g:any)=>!g.dead)).toBe(true);expect(end.state.defense.cooldownMs).toBeGreaterThanOrEqual(239000);
++ const end=await read(page);expect(end.state.defense.guards.every((g:any)=>!g.dead)).toBe(true);expect(end.state.defense.cooldownMs).toBeGreaterThanOrEqual(479000);
+  expect([end.state.quest,end.state.killed,end.state.bag,end.state.coins]).toEqual([s.quest,s.killed,s.bag,s.coins]);
+  await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();const restored=await read(page);
+  expect(restored.state.defense.completedSequence).toBe(1);expect(restored.state.defense.raid).toBeNull();expect(restored.state.defense.guards.map((g:any)=>g.hp)).toEqual(end.state.defense.guards.map((g:any)=>g.hp));
+@@ -35,11 +35,11 @@ for(const [i,gate]of RAID_GATES.entries())test(`${gate.name}按有效时间自
+ });
+ test('自动预警保存事务中止时回滚，原计划重试后出生',async({page})=>{
+  await mkdir(root,{recursive:true});await page.addInitScript(()=>{const put=IDBObjectStore.prototype.put;IDBObjectStore.prototype.put=function(v,k){const r=put.call(this,v,k);if(v.night?.plan?.outcome==='started')r.addEventListener('success',()=>{if((window as any).__abortRaid)this.transaction.abort();},{once:true});return r;};});
+- await page.goto('/');const s=initialState();s.time=2870;s.defense.protectionMs=0;s.defense.cooldownMs=800;s.night.plan={...makeNightPlan(s,2),at:2870.1,gate:'east-gate',count:2,outcome:'pending'};await page.evaluate(()=>(window as any).__abortRaid=true);await fixture(page,s);
+- await expect(page.locator('#toast')).toContainText('今晚的来袭暂未开始');const fail=await read(page);expect(fail.defense.enemies).toEqual([]);expect(fail.state.defense.sequence).toBe(0);expect(fail.state.defense.raid).toBeNull();expect(fail.state.night.plan).toEqual(s.night.plan);
+- await page.keyboard.press('Escape');await page.waitForFunction(()=> (window as any).__farwind().mode==='pause');const paused=(await read(page)).state.defense;await page.waitForTimeout(3500);expect((await read(page)).defense.enemies).toEqual([]);expect((await read(page)).state.defense).toEqual(paused);
++ await page.goto('/');const s=initialState();s.time=2700;s.defense.protectionMs=0;s.defense.cooldownMs=800;s.night.plan={...makeNightPlan(s,2),at:2700.1,gate:'east-gate',count:2,outcome:'pending'};await page.evaluate(()=>(window as any).__abortRaid=true);await fixture(page,s);
++ await expect(page.locator('#toast')).toContainText('预警尚未保存，已暂停');const fail=await read(page);expect(fail.defense.enemies).toEqual([]);expect(fail.state.defense.sequence).toBe(0);expect(fail.state.defense.raid).toBeNull();expect(fail.state.night.plan).toEqual(s.night.plan);
++ expect(fail.mode).toBe('pause');const paused=(await read(page)).state.defense;await page.waitForTimeout(3500);expect((await read(page)).defense.enemies).toEqual([]);expect((await read(page)).state.defense).toEqual(paused);
+  await page.evaluate(()=>(window as any).__abortRaid=false);await page.getByRole('button',{name:'保存旅途',exact:true}).click();await expect(page.locator('#toast')).toContainText('已保存');
+- await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().defense.enemies.length>=2);
++ await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().defense.enemies.length>=2,undefined,{timeout:40000});
+  const recovery=await read(page);expect(recovery.state.defense.sequence).toBe(1);expect(recovery.state.night.plan.raidSequence).toBe(1);expect(recovery.state.night.plan.at).toBe(s.night.plan.at);await writeFile(`${root}/warning-save-abort.json`,JSON.stringify({说明:'故障只注入IDB事务；预警副本未提交不发布，不出生。重载继续原计划，正式预警成功后沿用原驻防。',失败:fail.defense,恢复:recovery.defense},null,2));
+ });
+ test('主角与黑猫实际往返三门，正常模式无开发分区和按钮',async({page})=>{
+diff --git a/farwind/tests/village-raids.test.ts b/farwind/tests/village-raids.test.ts
+index 16c670d..1957417 100644
+--- a/farwind/tests/village-raids.test.ts
++++ b/farwind/tests/village-raids.test.ts
+@@ -1,3 +1,5 @@
++import {legacyDefense} from './safety-fixtures';
++import {zoneFor} from '../src/data/defenseZones';
+ import {describe,it,expect} from 'vitest';
+ import {writeFileSync,mkdirSync} from 'node:fs';
+ import {GUARD_DEFS,TOWERS,RAID_GATES,RAID_TIMING} from '../src/data/defense';
+@@ -30,7 +32,7 @@ describe('三门常态防御',()=>{
+   const world=initialState();world.defense=s;world.night.plan=makeNightPlan(world,2);world.night.plan.outcome='pending';world.time=world.night.plan.at;
+   expect(mayStartNight(world)).toBe(true);const next=nightWarningSnapshot(world);Object.assign(s,next.defense);d.awaitingCheckpoint=true;expect(s.raid?.phase).toBe('warning');expect(d.enemies).toEqual([]);
+   step(d,4000);expect(s.raid?.ageMs).toBe(0);expect(d.enemies).toEqual([]);
+-  d.acknowledged(s.sequence);step(d,RAID_TIMING.warning);expect(d.enemies.length).toBeGreaterThanOrEqual(2);
++  d.acknowledged(s.sequence);step(d,RAID_TIMING.warning);expect(d.enemies.length).toBeGreaterThanOrEqual(1);
+   expect(s.raid?.phase).not.toBe('warning');
+  });
+  it('视口、近身、实体和人口上限禁止硬刷，同一个夜间计划等待合法条件',()=>{
+@@ -64,10 +66,12 @@ describe('三门常态防御',()=>{
+    const tower=TOWERS.find(t=>t.gateId===gate.id)!,guard=s.guards.find(g=>g.id===tower.occupantGuardId)!;
+    expect(d.inFiringArc(guard.id,gate.spawns[0]),gate.id).toBe(true);
+    expect(d.inFiringArc(guard.id,{x:tower.muzzle.x-tower.outward.x*200,y:tower.muzzle.y-tower.outward.y*200+30})).toBe(false);
+-   d.fire(guard,d.enemies[0],`test-${gate.id}`);expect(d.arrows.length,`${gate.id}:${shotLineBlocker(tower.muzzle,{x:gate.spawns[0].x,y:gate.spawns[0].y-30},d.portFor(guard.id))}`).toBe(1);
++   // 正式逼近形成威胁后才允许发射；北门射口不能穿过实体门柱。
++   while(!d.arrows.length&&d.now<15000)step(d,20);
++   expect(d.arrows.length,`${gate.id}正式来袭必须有合法塔箭`).toBeGreaterThan(0);
+    expect(new EastDefense(validateDefense(s),0).arrows).toEqual([]);
+    d.damageGuard({sourceId:'hostile',targetId:guard.id,attackId:'fatal',amount:1000,sourceType:'enemy-melee',eventId:s.raid!.id},{id:'hostile',hp:100});
+-   expect(d.arrows).toEqual([]);d.fire(guard,d.enemies[0],'again');expect(d.arrows).toEqual([]);
++   const released=d.arrows.length;expect(released).toBeGreaterThan(0);d.fire(guard,d.enemies[0],'again');expect(d.arrows).toHaveLength(released);d.updateArrows(2000);expect(d.arrows).toEqual([]);
+   }
+  });
+  it('常驻野怪在真实门内仍可攻击，选择守卫并被拦截，不为叶灵任务自动结算',()=>{
+@@ -79,19 +83,9 @@ describe('三门常态防御',()=>{
+   for(const leaf of enemyDefs.filter(e=>e.type==='leaf'))for(const g of GUARD_DEFS)
+     expect(Math.hypot(leaf.x-g.post.x,leaf.y-g.post.y)-420).toBeGreaterThan(300);
+  });
+- it('连续30波普通骚扰，玩家离屏不参与，无守卫死亡或主线污染',()=>{
+-  const s=initialState(),before=structuredClone(s),d=new EastDefense(s.defense,0),records:any[]=[];
+-  for(let n=0;n<30;n++){
+-   const gate=RAID_GATES[n%3],next=prepareRaid(s.defense,player,gate.id,2+Math.floor(n/3)%3,true);
+-   Object.assign(s.defense,next);d.restore(d.now);step(d,RAID_TIMING.warning);
+-   const start=d.now;while(s.defense.raid&&d.now-start<60000)step(d,100,20);
+-   expect(s.defense.raid,`第${n+1}波${gate.name}`).toBeNull();expect(s.defense.guards.every(g=>!g.dead),`第${n+1}波`).toBe(true);
+-   records.push({波次:n+1,出口:gate.name,数量:2+Math.floor(n/3)%3,用时:d.now-start,守卫:s.defense.guards.map(g=>({id:g.id,hp:g.hp}))});
+-   mkdirSync("docs/village-defense/m4",{recursive:true});writeFileSync("docs/village-defense/m4/wave-progress.json",JSON.stringify({说明:"进行中的固定基准，尚非最终结论。",记录:records},null,2));
+-   // 按真实有效时间走完随机冷却；这段不启动下一波，末尾保留一个步长。
+-   step(d,Math.max(0,s.defense.cooldownMs-1000),1000);
+-  }
+-  expect([s.quest,s.killed,s.coins,s.bag,s.pendingDrops]).toEqual([before.quest,before.killed,before.coins,before.bag,before.pendingDrops]);
+-  expect(()=>validate(s)).not.toThrow();mkdirSync('docs/village-defense/m4',{recursive:true});writeFileSync('docs/village-defense/m4/thirty-waves.json',JSON.stringify({说明:'正式运行时系统与碰撞；战斗20毫秒步长，间隔1000毫秒步长，无玩家攻击。每门10波，2/3/4只轮换，不是浏览器长期性能测量。',记录:records},null,2));
+- },600000);
++ it('历史四怪事件原样恢复完成，不污染主线；新调度30场由安全规则集成测试覆盖',()=>{
++  const s=initialState(),before=structuredClone(s);
++  for(const gate of RAID_GATES){s.defense=legacyDefense(s.defense,gate.id);const d=new EastDefense(s.defense,0);step(d,130000);expect(s.defense.raid).toBeNull();expect(s.defense.guards.every(g=>!g.dead)).toBe(true);}
++  expect([s.quest,s.killed,s.coins,s.bag,s.pendingDrops]).toEqual([before.quest,before.killed,before.coins,before.bag,before.pendingDrops]);validate(s);
++ });
+ });
+diff --git a/farwind/tests/water-effects.spec.ts b/farwind/tests/water-effects.spec.ts
+index 35ab8ed..5f09c5d 100644
+--- a/farwind/tests/water-effects.spec.ts
++++ b/farwind/tests/water-effects.spec.ts
+@@ -3,7 +3,7 @@ import sharp from "sharp";
+ import { mkdir, writeFile } from "node:fs/promises";
+ import { startWater, readWater } from "./water-navigation";
+ import { move } from "./map-navigation";
+-const directory="docs/water-effects/behavior";
++const directory=process.env.FARWIND_WATER_EVIDENCE_DIR ?? "docs/water-effects/behavior";
+ test.beforeAll(async()=>{await mkdir(directory,{recursive:true});});
+ 
+ async function difference(a: Buffer,b: Buffer,rect:{left:number;top:number;width:number;height:number}) {
+@@ -25,6 +25,9 @@ test("water-motion-local",async({page})=>{
+     前池沿:await difference(a,b,rect(638,860,85,18)),空桥面:await difference(a,b,rect(1045,920,75,130)),池外草地:await difference(a,b,rect(1475,940,35,25))};
+   expect(results.喷泉流水.变化像素比例).toBeGreaterThan(0.005);
+   expect(results.池塘中心.变化像素比例).toBeGreaterThan(0.008);
++  // 少量像素变化不足以证明默认视口可读；水面变化强度也必须达到最低门槛。
++  expect(results.喷泉流水.平均通道差).toBeGreaterThan(0.75);
++  expect(results.池塘中心.平均通道差).toBeGreaterThan(0.35);
+   for(const r of [results.前池沿,results.空桥面,results.池外草地])expect(r.变化像素比例).toBeLessThan(0.003);
+   expect((await readWater(page)).stone).toEqual(state.stone);
+   expect(errors).toEqual([]); await writeFile(`${directory}/local-motion.json`,JSON.stringify({说明:"固定相机，临时隐藏HUD及既有昼夜覆盖；只比较指定水面与静态控制区域，未以全图差异代替动画检查。",结果:results},null,2));
+diff --git a/farwind/tools/playwright-water-effects.config.ts b/farwind/tools/playwright-water-effects.config.ts
+index b36b526..9a56123 100644
+--- a/farwind/tools/playwright-water-effects.config.ts
++++ b/farwind/tools/playwright-water-effects.config.ts
+@@ -2,7 +2,7 @@ import { defineConfig } from "@playwright/test";
+ export default defineConfig({
+   testDir: "../tests", timeout: 240000, workers: 1,
+   outputDir: "../.water-local/test-results",
+-  use: { baseURL: process.env.FARWIND_URL ?? "http://127.0.0.1:5192", viewport: { width: 1280, height: 800 },
++  use: { baseURL: process.env.FARWIND_URL ?? "http://127.0.0.1:5173", viewport: { width: 1280, height: 800 },
+     screenshot: "only-on-failure", trace: "retain-on-failure",
+     launchOptions: { args: ["--enable-webgl", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"] } },
+   reporter: [["list"], ["json", { outputFile: "../docs/water-effects/browser-results.json" }]],

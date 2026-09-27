@@ -34,9 +34,10 @@ import { TrainingDummyView } from "../entities/trainingDummy";
 import type { Attack } from "../systems/combat";
 import { CombatTimeline } from "../systems/timeline";
 import { StateCommit } from "../systems/stateCommit";
-import { advanceNight,mayStartNight,nightWarningSnapshot } from "../systems/nightDirector";
+import { advanceNight,mayStartNight,nightWarningSnapshot,RaidDeferredError } from "../systems/nightDirector";
 import { canDiscover,discoverySnapshot } from "../systems/nightDiscovery";
-import { RAID_GATES } from "../../data/defense";
+import { RAID_GATES, RAID_TIMING } from "../../data/defense";
+import { inProtected } from "../../data/defenseZones";
 import { NIGHT_DISCOVERY } from "../../data/dayNight";
 import { DayNightView } from "../rendering/dayNightView";
 import { lightAt } from "../systems/worldClock";
@@ -384,7 +385,7 @@ export class World extends Phaser.Scene {
                 warnings:this.warnings,
                 inputs:this.inputHistory,
                 contacts: this.contactHistory,
-                feedback:{...this.feedback.snapshot(),audio:this.soundFx.diagnostic(),frames:this.feedbackFrames},
+                feedback:{...this.feedback.snapshot(),visual:this.feedbackView?.snapshot(),audio:this.soundFx.diagnostic(),frames:this.feedbackFrames},
                 fieldTraining: this.fieldTargets.map((t) =>
                   t.snapshot(this.sim),
                 ),
@@ -577,15 +578,16 @@ export class World extends Phaser.Scene {
   }
   publishState(next:State){this.state=next;this.loaded=structuredClone(next);this.ui.state=next;this.ui.available=true;this.defense.rebind(next.defense);this.life.rebind(next,this.defense);this.refresh();this.ui.update(next,"");}
   async startNightRaid(){
-    this.nextNightAttempt=this.sim+5000;
+    this.nextNightAttempt=this.sim+RAID_TIMING.retry;
     try{
       const v=this.cameras.main.worldView;
-      await this.economy.run(()=>this.state,s=>{const p=s.night.plan!,occupied=this.enemies.filter(e=>e.hp>0&&!e.disabled),view={left:v.x,right:v.right,top:v.y,bottom:v.bottom};if(!this.defense.canScheduleAtGate(p.gate,s.player,RAID_GATES.find(g=>g.id===p.gate)!.spawns.slice(0,p.count),view,occupied))throw Error("防线健康或生成条件尚不满足。");return nightWarningSnapshot(s,view,occupied);},save,next=>this.publishState(next));
+      await this.economy.run(()=>this.state,s=>{const occupied=this.enemies.filter(e=>e.hp>0&&!e.disabled),view={left:v.x,right:v.right,top:v.y,bottom:v.bottom};return nightWarningSnapshot(s,view,occupied,this.defense);},save,next=>this.publishState(next));
       this.ui.message("村门外发现动静，卫队正在戒备；可以参与或继续旅行。");
     }catch(e){
       // 同一个计划重试，失败不发布预警、不消费序号、不生成敌人。
-      this.state.defense.retryMs=5000;
-      this.ui.message("今晚的来袭暂未开始："+(e as Error).message);
+      this.state.defense.retryMs=RAID_TIMING.retry;
+      if(!(e instanceof RaidDeferredError))this.ui.open("pause");
+      this.ui.message(e instanceof RaidDeferredError?"今晚的来袭暂缓："+e.message:"预警尚未保存，已暂停："+(e as Error).message);
     }
   }
   async discoverNight(){
@@ -595,7 +597,7 @@ export class World extends Phaser.Scene {
     }catch(e){this.ui.message((e as Error).message);}
   }
   openDefenseDrill() {
-    this.ui.dialog("东门驻防", "岑风和青禾守住通路两侧，弦雨在塔上警戒。门洞保持畅通，穿过村门便是森林。");
+    this.ui.dialog("东门驻防", "岑风和青禾守住通路两侧，弦雨在塔上警戒。门洞保持畅通，门外道路是巡逻近郊，往远处才进入森林。首夜安静；后续夜晚需冷却结束、三名卫兵健康返岗，才可能有1～3只小怪接近。");
     if (!import.meta.env.DEV || !new URLSearchParams(location.search).has("defenseDebug")) return;
     const button=document.createElement("button"); button.id="defense-drill";
     button.textContent="启动东门演练 · 3只普通怪";
@@ -789,7 +791,8 @@ export class World extends Phaser.Scene {
     this.slash.setDepth(this.state.player.y + 1);
     for (const { a, b, alpha } of this.weaponTrail.segments(this.sim)) {
       const ink = b.facing === 1 ? this.slashBack : this.slash;
-      ink.fillStyle(b.counter ? b.counter==="perfect"?0xfff0bb:0xdcffff : b.stage === 3 ? 0xffdfa3 : 0xdaf9ed, b.counter?Math.min(1,alpha*1.3):alpha);
+      const red=!!b.counter&&feedbackVisual(this.feedback.mode);
+      ink.fillStyle(red?0xf85d53:b.counter ? b.counter==="perfect"?0xfff0bb:0xdcffff : b.stage === 3 ? 0xffdfa3 : 0xdaf9ed, red?alpha*.6:b.counter?Math.min(1,alpha*1.3):alpha);
       ink.beginPath();
       ink.moveTo(a.inner.x, a.inner.y);
       ink.lineTo(a.tip.x, a.tip.y);
@@ -1001,7 +1004,7 @@ export class World extends Phaser.Scene {
     this.combat.update(prev,now,this.battleFacing(),this.state.player,this.combatTargets(),
       (x,y)=>this.blocked(x,y),(x,y,tx,ty,id)=>this.meleeLine(x,y,tx,ty,id),
       (target,stage,attack)=>this.strikeTarget(target,stage,attack),
-      (stage,attack)=>{this.training.sync(this.combat.epoch);this.training.begin(attack);if(attack.counter)this.emitFeedback('counter-start',`counter-start:${attack.id}`,attack.start,undefined,attack);if(stage===4)this.soundFx.play('wind-charge');},
+      (stage,attack)=>{this.training.sync(this.combat.epoch);this.training.begin(attack);if(attack.counter){const m=attackConfig(attack);this.emitFeedback('counter-start',`counter-start:${attack.id}`,attack.start,undefined,attack,{until:attack.start+m.windup+m.active+m.recovery});}if(stage===4)this.soundFx.play('wind-charge');},
       stage=>{const a=this.combat.attack!;if(a.counter){if(!feedbackAudio(this.feedback.mode))this.soundFx.play('counter');}else this.soundFx.play(stage===4?'wind-release':stage===3?'attack-heavy':'attack');},clearMotionLine,
       (attack,root,at)=>this.swordWind.launch(attack,root,at,outgoingDamage(this.state,attack.swordWind!.damage)));
   }
@@ -1269,7 +1272,7 @@ export class World extends Phaser.Scene {
     if(delta<200)this.fps.push(1000/delta);
     if(this.fps.length>1200)this.fps.shift();
     if(this.combat.hitStopRemaining>0)this.tweens.pauseAll();
-    this.feedback.advance(this.sim,this.combat.attack?.counter?`player:${this.combat.attack.id}`:null);
+    this.feedback.advance(this.sim,this.combat.attack?.counter?`player:${this.combat.attack.id}`:null,!!this.combat.autoCounter||this.combat.parry?.successAt!==undefined);
     const feedbackEvents=this.feedback.drain();
     this.soundFx.feedbackBatch(feedbackEvents,this.feedback.mode);
     this.swordWindView?.draw(this.sim);
@@ -1450,10 +1453,14 @@ export class World extends Phaser.Scene {
       if(event.kind==="death"){const enemy=this.enemies.find(e=>e.id===event.id);
         if(enemy){enemy.sprite.setVisible(false);enemy.shadow.setVisible(false);
           // 常驻野怪被卫队击倒只记录世界状态，不代领采集或主线奖励。
-          if(!this.state.killed.includes(enemy.id))this.state.killed.push(enemy.id);}}
+          if(!this.state.killed.includes(enemy.id)){this.state.killed.push(enemy.id);
+            if(enemy.type==="leaf"&&!this.state.pendingDrops.some(d=>d.enemyId===enemy.id)){
+              this.state.pendingDrops.push({enemyId:enemy.id,item:"crystal",x:enemy.homeX,y:enemy.homeY});this.syncDrops();
+            }
+          }}}
       if(event.kind==="warning")this.ui.message(`${event.id}外发现动静，卫队正在戒备。`);
       if(event.kind==="started")this.ui.message(`${event.id}有小怪接近；卫队会自行拦截。`);
-      if(event.kind==="delayed")this.ui.message("来袭路径或生成点不合法，本轮已延后。");
+      if(event.kind==="delayed")this.ui.message("防线健康、岗位或路径条件已变化；本次未出生来袭已取消并延期。");
       if(event.kind==="ended")this.ui.message("村门来袭已结束，驻防变化正在保存。");
     }
     this.life.observePlayer();this.lifeView.update(this.life,this.sim);
@@ -1465,7 +1472,7 @@ export class World extends Phaser.Scene {
     this.practiceLabel.setVisible(!!this.practice.projection);
     if(this.practice.projection)this.practiceLabel.setPosition(this.practice.projection.x,this.practice.projection.y-82).setDepth(8996);
     this.drawParry();
-    this.feedbackView?.draw(this.sim);
+    this.feedbackView?.draw(this.sim,this.hero);
     this.presentedFrame++;
     for(const event of feedbackEvents)this.feedbackFrames.push({id:event.id,frame:this.presentedFrame,sim:this.sim,wall:performance.now(),phase:this.hero.presentation.phase});
     if(this.feedbackFrames.length>96)this.feedbackFrames.splice(0,this.feedbackFrames.length-96);
@@ -1495,7 +1502,7 @@ export class World extends Phaser.Scene {
       this.ui.message("岚爷爷把你带回广场。行囊与旅途进度都还在。");
       void this.persist().catch(() => {});
     }
-    if (this.state.life.playerSpace==="village"&&this.state.quest === 1 && regionAt(p).id === "forest") {
+    if (this.state.life.playerSpace==="village"&&this.state.quest === 1 && regionAt(p).id === "forest" && !inProtected(p)) {
       this.state.quest = this.state.crafted ? 3 : 2;
       this.ui.dialog(
         "林间异响",
@@ -1505,7 +1512,7 @@ export class World extends Phaser.Scene {
     }
     if (
       this.state.quest === 3 &&
-      this.state.killed.some((id) => id.startsWith("leaf"))
+      this.state.killed.some((id) => id.startsWith("leaf") && !this.state.pendingDrops.some(d=>d.enemyId===id&&d.item==="crystal"))
     )
       this.state.quest = 4;
     const r = this.state.life.playerSpace==="village"?region(p.x,p.y):"室内";

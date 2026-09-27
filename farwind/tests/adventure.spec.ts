@@ -4,6 +4,7 @@ import { writeFile } from "node:fs/promises";
 import { captureGameAudio } from "../tools/capture-game-audio.mjs";
 import { test, expect, type Page } from "@playwright/test";
 test.use({ video: "on" });
+const evidence=process.env.FARWIND_EVIDENCE_ROOT??"docs/map-expansion/adventure";
 const snapshot = (p: Page) => p.evaluate(() => (window as any).__farwind());
 async function dismiss(p: Page) {
   const s = await snapshot(p);
@@ -37,13 +38,15 @@ test("adventure-loop", async ({ page, context }) => {
   await move(page, 1730, 1210);
   await interact(page, "stone-v1");
   await move(page, 2170, 1080);
+  expect((await snapshot(page)).state.quest).toBe(1); // 巡逻近郊不提前触发森林主线。
+  await move(page, 2300, 1080);
   await dismiss(page);
   await page.keyboard.press("Tab");
   await page.getByRole("button", { name: "制作恢复药剂", exact: true }).click();
-  await page.screenshot({ path: "docs/map-expansion/adventure/inventory.png" });
+  await page.screenshot({ path: `${evidence}/inventory.png` });
   await page.getByRole("button", { name: "收好行囊" }).click();
   await expect.poll(async () => (await snapshot(page)).state.quest).toBe(3);
-  await page.screenshot({ path: "docs/map-expansion/adventure/forest.png" });
+  await page.screenshot({ path: `${evidence}/forest.png` });
   await move(page, 2500, 1080);
   for (let round = 0; round < 70; round++) {
     await dismiss(page);
@@ -75,7 +78,7 @@ test("adventure-loop", async ({ page, context }) => {
   await interact(page, "wind-1");
   await move(page, 3950, 510);
   await interact(page, "wind-2");
-  await page.screenshot({ path: "docs/map-expansion/adventure/ruins.png" });
+  await page.screenshot({ path: `${evidence}/ruins.png` });
   await move(page, 3740, 730);
   await interact(page, "waymark");
   await dismiss(page);
@@ -89,7 +92,7 @@ test("adventure-loop", async ({ page, context }) => {
   await dismiss(page);
   await expect.poll(async () => (await snapshot(page)).state.quest).toBe(7);
   await page.keyboard.press("q");
-  await page.screenshot({ path: "docs/map-expansion/adventure/quest.png" });
+  await page.screenshot({ path: `${evidence}/quest.png` });
   await page.getByRole("button", { name: "合上手记" }).click();
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "保存旅途", exact: true }).click();
@@ -97,16 +100,16 @@ test("adventure-loop", async ({ page, context }) => {
   const before = (await snapshot(page)).state;
   const audio = await page.evaluate(() => (window as any).__finishAudio());
   await writeFile(
-    "docs/map-expansion/adventure/forest-audio.webm",
+    `${evidence}/forest-audio.webm`,
     Buffer.from(audio.base64, "base64"),
   );
   await writeFile(
-    "docs/map-expansion/adventure/forest-audio-offset.txt",
+    `${evidence}/forest-audio-offset.txt`,
     String(audio.offset),
   );
   const video = page.video();
   await page.close();
-  await video?.saveAs("docs/map-expansion/adventure/forest-journey.webm");
+  await video?.saveAs(`${evidence}/forest-journey.webm`);
   const reopened = await context.newPage();
   await reopened.goto("/");
   await reopened.getByRole("button", { name: "继续旅途", exact: true }).click();
@@ -118,6 +121,6 @@ test("adventure-loop", async ({ page, context }) => {
   expect(after.reward).toBe(true);
   expect(errors).toEqual([]);
   await reopened.screenshot({
-    path: "docs/map-expansion/adventure/continued.png",
+    path: `${evidence}/continued.png`,
   });
 });

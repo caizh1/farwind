@@ -29,9 +29,9 @@ async function visualCue(page:Page,quality:'normal'|'perfect',name:string) {
  }
  await writeFile(`${dir}/${name}-cue.json`,JSON.stringify({说明:'B类画面触发，诊断仅用于事后记录，不重试失败',观察:observations},null,2));expect(chosen,'正常比例画面应提供起按线索').not.toBeNull();await writeFile(`${dir}/${name}-cue.png`,chosen!);
 }
-async function predicted(page:Page,predicate:string,lead=145){
+async function predicted(page:Page,predicate:string,lead=145,width=50){
  // A类：只读时间用于精确集成断言，不作为动作可读性证明。
- await page.waitForFunction(({id,lead})=>{const s=(window as any).__farwind();return s.warnings.some((w:any)=>w.id.startsWith(id)&&w.predicted!==null&&w.lead<=lead&&w.lead>lead-50);},{id:predicate,lead},{polling:5,timeout:20000});await page.keyboard.press('k');
+ await page.waitForFunction(({id,lead,width})=>{const s=(window as any).__farwind();return s.warnings.some((w:any)=>w.id.startsWith(id)&&w.predicted!==null&&w.lead<=lead&&w.lead>lead-width);},{id:predicate,lead,width},{polling:5,timeout:20000});await page.keyboard.press('k');
 }
 async function finish(page:Page,name:string){
  const s=await read(page),frames=await page.evaluate(()=>{cancelAnimationFrame((window as any).__v3Sampler);return (window as any).__v3Frames});
@@ -47,6 +47,7 @@ for(const mode of ['A','B','C','D'])test(`V3-AB-${mode}-normal`,async({page})=>{
  expect(events.filter((e:any)=>e.kind==='parry-contact')).toHaveLength(1);expect(events.filter((e:any)=>e.kind==='counter-start')).toHaveLength(1);expect(events.filter((e:any)=>e.kind==='counter-swing')).toHaveLength(1);expect(events.filter((e:any)=>e.kind==='counter-hit')).toHaveLength(1);
  const frames=await page.evaluate(()=>(window as any).__v3Frames),first=frames.find((f:any)=>f.反馈.events.some((e:any)=>e.kind==='parry-contact'));
  expect(first.动作.phase).toBe('brace');expect(first.战斗.hitStopRemaining).toBeGreaterThan(0);expect(first.反馈.effects.some((e:any)=>e.kind==='parry-contact')).toBe(true);expect(first.反馈.effects.find((e:any)=>e.kind==='parry-contact').depth).toBeGreaterThan(first.动作.root[1]);
+ if(mode==='C'||mode==='D'){const flash=first.反馈.visual.flashes.find((e:any)=>e.id===events.find((e:any)=>e.kind==='parry-contact').id);expect(flash.core).toBeGreaterThanOrEqual(5);expect(flash.edge).toBe(14);expect(frames.some((f:any)=>f.反馈.visual.bladeGlow?.alpha>.5)).toBe(true);}
  if(mode==='B'||mode==='D'){const audio=s.feedback.audio.events;for(const kind of ['parry-contact','deflect-release','counter-swing','counter-hit'])expect(audio.filter((e:any)=>e.kind===kind)).toHaveLength(1);expect(new Set(audio.map((e:any)=>e.id)).size).toBe(audio.length);expect(s.feedback.audio.cached).toBe(33);expect(audio.filter((e:any)=>e.kind==='enemy-strike')).toHaveLength(0);}
  expect(s.state.player.hp).toBe(100);await finish(page,`ab-${mode}`);
 });
@@ -58,6 +59,20 @@ test('V3-VISUAL-perfect-hit-combo',async({page})=>{
 test('V3-VISUAL-cancel-no-false-hit',async({page})=>{
  await setup(page);await visualCue(page,'normal','cancel');await page.waitForFunction(()=>(window as any).__farwind().contacts.at(-1)?.result==='normal',undefined,{polling:5});await page.keyboard.press('l');await page.waitForFunction(()=>(window as any).__farwind().session.combat.dashRemaining>0,undefined,{polling:5});await page.waitForTimeout(350);
  const s=await read(page);expect(s.training.damage).toBe(0);expect(s.feedback.events.filter((e:any)=>e.kind.startsWith('counter'))).toHaveLength(0);expect(s.feedback.audio.events.filter((e:any)=>e.kind==='counter-hit')).toHaveLength(0);await finish(page,'cancel');
+});
+test('V3-RED-four-directions-live-blade',async({page})=>{
+ const rows:any[]=[];
+ for(const [x,y,key,d,label] of [[850,720,'w',1,'up'],[850,580,'s',0,'down'],[920,650,'a',2,'left'],[780,650,'d',3,'right']] as const){
+  const s=initialState();s.quest=3;Object.assign(s.player,{x,y});await fixture(page,s);await face(page,key,d);await practice(page);await predicted(page,'practice-',145);
+  await page.waitForFunction(()=>{const s=(window as any).__farwind();return s.feedback.visual.bladeGlow?.alpha>.7&&s.animation.hero.key.startsWith('hero/counter');},undefined,{polling:5});
+  const png=await page.screenshot(),{data,info}=await sharp(png).ensureAlpha().raw().toBuffer({resolveWithObject:true});await writeFile(`${dir}/red-blade-${label}.png`,png);
+  let red=0;for(let y=400;y<580;y++)for(let x=565;x<730;x++){const k=(y*info.width+x)*4,r=data[k],g=data[k+1],b=data[k+2];if(r>180&&g<130&&b<130&&r-g>70)red++;}expect(red,`${label}正常比例画面有剑刃红光`).toBeGreaterThan(4);
+  await expect.poll(async()=>(await read(page)).training.damage).toBe(24);await page.waitForTimeout(220);
+  const frames=await page.evaluate(()=>(window as any).__v3Frames),glows=frames.filter((f:any)=>f.反馈.visual.bladeGlow);
+  expect(glows.length).toBeGreaterThan(2);for(const f of glows){const w=f.动作.weapon,g=f.反馈.visual.bladeGlow;expect(g.tip.x).toBeCloseTo(f.动作.root[0]+w.tip.x,6);expect(g.tip.y).toBeCloseTo(f.动作.root[1]+w.tip.y,6);expect(g.depth).toBe(f.动作.root[1]+(f.动作.direction===1?-.05:.08));}
+  expect((await read(page)).feedback.visual.bladeGlow).toBeNull();rows.push({方向:label,红色像素:red,呈现帧:glows,接触:(await read(page)).contacts});
+ }
+ await writeFile(`${dir}/red-blade-four-directions.json`,JSON.stringify({说明:'真实键盘与合法起始存档，A类只读预测决定起按，不作为动作可读性验收；每帧核对实际武器端点、前后层、正常比例红色像素及自然消退。',结果:rows},null,2));await finish(page,'red-blade-four-directions');
 });
 test('V3-INTEGRATION-wild-slime',async({page})=>{
  const s=initialState();s.quest=3;Object.assign(s.player,{x:2380,y:1060});s.killed=['slime-2','leaf-1','leaf-2'];await fixture(page,s);await face(page,'d',3);await predicted(page,'slime-1:');await expect.poll(async()=>(await read(page)).contacts.at(-1)?.result).toBe('normal');
@@ -77,7 +92,8 @@ test('V3-INTEGRATION-leaf-projection',async({page})=>{
  await setup(page,'D','叶灵节奏 · 650毫秒');await predicted(page,'practice-',130);await expect.poll(async()=>(await read(page)).training.damage).toBe(24);const r=await read(page);expect(r.feedback.events.find((e:any)=>e.kind==='counter-hit').material).toBe('leaf');expect(r.state.player.hp).toBe(100);await finish(page,'leaf-projection');
 });
 test('V3-INTEGRATION-wild-leaf',async({page})=>{
- const s=initialState();s.quest=3;Object.assign(s.player,{x:2855,y:1070});s.killed=['slime-1','slime-2','leaf-2'];await fixture(page,s);await face(page,'d',3);await predicted(page,'leaf-1:',65);await expect.poll(async()=>(await read(page)).contacts.at(-1)?.result).toBe('perfect');await expect.poll(async()=>(await read(page)).enemies.find((e:any)=>e.id==='leaf-1').hp).toBe(42);
+ // 原15–65ms起按区跨进程调度后可能落到接触之后；50–85ms覆盖正常呈现步长，仍在既定精准区内，保留真实键盘与精准断言。
+ const s=initialState();s.quest=3;Object.assign(s.player,{x:2855,y:1070});s.killed=['slime-1','slime-2','leaf-2'];await fixture(page,s);await face(page,'d',3);await predicted(page,'leaf-1:',85,35);await expect.poll(async()=>(await read(page)).contacts.at(-1)?.result).toBe('perfect');await expect.poll(async()=>(await read(page)).enemies.find((e:any)=>e.id==='leaf-1').hp).toBe(42);
  const r=await read(page),event=r.feedback.events.find((e:any)=>e.kind==='parry-perfect-contact');expect(r.enemies.find((e:any)=>e.id==='leaf-1').staggerUntil).toBe(event.at+800);expect(r.feedback.events.find((e:any)=>e.kind==='counter-hit').material).toBe('leaf');expect(r.state.player.hp).toBe(100);await finish(page,'wild-leaf');
 });
 test('V3-INTEGRATION-four-directions-muted',async({page})=>{

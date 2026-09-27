@@ -1,6 +1,6 @@
 import {isSpace,validPlace} from './npcLifeState';
 import type {SpaceId} from '../../data/npcLife';
-import { GUARD_DEFS, RAID_TIMING, type GateId, type GuardId } from "../../data/defense";
+import { GUARD_DEFS, RAID_TIMING, raidInterval, type GateId, type GuardId } from "../../data/defense";
 export type GuardMode = "post" | "patrol" | "intercept" | "attack" | "retreat" | "recover" | "dead" | "life" | "return";
 export type GuardState = {
   id: GuardId; x: number; y: number; hp: number; dead: boolean;
@@ -17,7 +17,7 @@ export type DefenseState = { guards: GuardState[]; sequence: number; completedSe
 export function initialDefense(): DefenseState {
   return { guards: GUARD_DEFS.map(d => ({ id: d.id, ...d.post, hp: d.maxHP, dead: false,
     weaponId: d.weaponId, armorId: d.armorId, postId: d.postId, mode: "post", peaceMs: 0, cooldownMs: 0 })),
-    sequence: 0, completedSequence: 0, raid: null, protectionMs: RAID_TIMING.protection, cooldownMs: 360000, retryMs: 0, seed: 1729 };
+    sequence: 0, completedSequence: 0, raid: null, protectionMs: RAID_TIMING.protection, cooldownMs: raidInterval(1729), retryMs: 0, seed: 1729 };
 }
 export function validateDefense(raw: unknown): DefenseState {
   const s = raw as DefenseState;

@@ -1,0 +1,178 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "--config",
+      "tools/playwright-safety.config.ts",
+      "tests/economy.spec.ts",
+      "--grep",
+      "满包不能购买",
+      "--workers=1"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/tools/playwright-safety.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/indoor-fixed/raw",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "safety-performance.spec.ts",
+          "safety-defense.spec.ts",
+          "day-night-failure.spec.ts",
+          "village-raids.spec.ts",
+          "east-defense-recovery.spec.ts",
+          "economy-production.spec.ts",
+          "training.spec.ts",
+          "economy.spec.ts",
+          "adventure.spec.ts"
+        ],
+        "timeout": 300000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/indoor-fixed/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "economy.spec.ts",
+      "file": "economy.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 16003,
+                  "error": {
+                    "message": "Error: 室内实际家具间存在可通行路线\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mnull\u001b[39m",
+                    "stack": "Error: 室内实际家具间存在可通行路线\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mnull\u001b[39m\n    at indoorMove (/Users/archer/Documents/ChatGPT/Game/farwind/tests/safety-npc-navigation.ts:12:33)\n    at approachNpc (/Users/archer/Documents/ChatGPT/Game/farwind/tests/safety-npc-navigation.ts:91:7)\n    at open (/Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts:24:24)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts:235:3",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/safety-npc-navigation.ts",
+                      "column": 33,
+                      "line": 12
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39msafety-npc-navigation.ts:12\n\n  10 |  if(Math.hypot(start.x-x,start.y-y)<5)return;\n  11 |  const route=localPath(start,p=>Math.hypot(p.x-x,p.y-y)<8&&spaceClear(space,p,target),target,()=>true,{blocked:(x,y)=>spaceBlocked(space,x,y),clear:(a,b)=>spaceClear(space,a,b)},{radius:1200,nodes:8192}).path;\n> 12 |  expect(route,'室内实际家具间存在可通行路线').toBeTruthy();\n     |                                 ^\n  13 |  for(const point of [...route!,target]){\n  14 |   const current=(await read(page)).state.player,dx=point.x-current.x,dy=point.y-current.y,steps=Math.ceil(Math.max(Math.abs(dx),Math.abs(dy))/10);\n  15 |   // 平滑路径不保证45度；按短段分别释放轴向按键，避免同时按两轴越过目标撞家具。"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/safety-npc-navigation.ts",
+                        "column": 33,
+                        "line": 12
+                      },
+                      "message": "Error: 室内实际家具间存在可通行路线\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mnull\u001b[39m\n\n   at safety-npc-navigation.ts:12\n\n  10 |  if(Math.hypot(start.x-x,start.y-y)<5)return;\n  11 |  const route=localPath(start,p=>Math.hypot(p.x-x,p.y-y)<8&&spaceClear(space,p,target),target,()=>true,{blocked:(x,y)=>spaceBlocked(space,x,y),clear:(a,b)=>spaceClear(space,a,b)},{radius:1200,nodes:8192}).path;\n> 12 |  expect(route,'室内实际家具间存在可通行路线').toBeTruthy();\n     |                                 ^\n  13 |  for(const point of [...route!,target]){\n  14 |   const current=(await read(page)).state.player,dx=point.x-current.x,dy=point.y-current.y,steps=Math.ceil(Math.max(Math.abs(dx),Math.abs(dy))/10);\n  15 |   // 平滑路径不保证45度；按短段分别释放轴向按键，避免同时按两轴越过目标撞家具。\n    at indoorMove (/Users/archer/Documents/ChatGPT/Game/farwind/tests/safety-npc-navigation.ts:12:33)\n    at approachNpc (/Users/archer/Documents/ChatGPT/Game/farwind/tests/safety-npc-navigation.ts:91:7)\n    at open (/Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts:24:24)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/economy.spec.ts:235:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T09:42:45.984Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/indoor-fixed/raw/economy-满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/indoor-fixed/raw/economy-满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/indoor-fixed/raw/economy-满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/integrated-current/indoor-fixed/raw/economy-满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/safety-npc-navigation.ts",
+                    "column": 33,
+                    "line": 12
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-68c098f29f896f6d0d48",
+          "file": "economy.spec.ts",
+          "line": 220,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-27T09:42:45.650Z",
+    "duration": 21029.915,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

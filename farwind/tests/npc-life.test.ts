@@ -15,6 +15,7 @@ import {
 } from "../src/data/npcLife";
 import { advanceTime } from "../src/game/systems/worldClock";
 import { motionBlocked } from "../src/game/systems/obstacles";
+import { spaceBlocked, spaceClear } from "../src/game/systems/npcNavigation";
 import { createEnemyAttack } from "../src/game/systems/enemyAttack";
 import { serviceEntrances } from "../src/data/village-economy";
 const setup = () => {
@@ -230,11 +231,12 @@ describe("居民生活 M1 基础与事务", () => {
       [],
       "村门袭扰，保持局部警戒",
     );
-    e.l.remember(e.s.life.people[1], memory, "alarm");
+    const isolated = setup();
+    isolated.l.remember(isolated.s.life.people[1], memory, "alarm");
     e.s.time = 900;
     expect(
-      e.l
-        .candidates(e.s.life.people[1])
+      isolated.l
+        .candidates(isolated.s.life.people[1])
         .some((c) => c.label.includes("近日遇险")),
     ).toBe(false);
   });
@@ -255,6 +257,9 @@ describe("居民生活 M1 基础与事务", () => {
     const before = e.s.life.stores.medicine;
     n.action!.phase = "perform";
     n.gear = "carried";
+    // 本例检验到场提交；实际补给移动、取消与读档由子版本3专项覆盖。
+    n.supplies.medicine = 1;
+    e.s.life.stores.medicine--;
     n.action!.progress = n.action!.duration;
     e.l.complete(n, n.action!);
     expect(e.s.life.people[0].body!.hp).toBe(75);
@@ -275,6 +280,8 @@ describe("居民生活 M1 基础与事务", () => {
     const wood = e.s.life.stores.wood;
     carpenter.action!.phase = "perform";
     carpenter.gear = "carried";
+    carpenter.supplies.wood = 2;
+    e.s.life.stores.wood -= 2;
     carpenter.action!.progress = carpenter.action!.duration;
     e.l.complete(carpenter, carpenter.action!);
     expect(e.s.life.facilities.workbench).toBe(100);
@@ -415,7 +422,8 @@ describe("居民生活 M2/M3 连续模拟与恢复", () => {
   it("真实驻防伤情经统一事件形成医疗需求，安全解除后到场治疗", () => {
     const e = setup();
     e.s.defense = prepareRaid(e.s.defense, e.s.player, "east-gate");
-    e.s.defense.guards[0].hp = 75;
+    e.s.defense.guards[0].hp = 180;
+    // 同伴保留正常健康，避免把两人旧伤样本误当成标准防线。
     e.s.defense.guards[1].hp = 75;
     /* 固定起始样本保留旧伤，新伤必须来自实际敌人命中。 */ e.d =
       new EastDefense(e.s.defense, 0);
@@ -435,6 +443,43 @@ describe("居民生活 M2/M3 连续模拟与恢复", () => {
     );
     expect(e.s.defense.guards.every((g) => !g.dead)).toBe(true);
     expect(e.s.life.alarm).toBe(0);
+  }, 30000);
+  it("两名重伤守卫的失败防线不让药师闯敌或治疗已阵亡者", () => {
+    const e = setup();
+    e.s.time = 600;
+    e.s.defense = prepareRaid(e.s.defense, e.s.player, "east-gate");
+    e.s.defense.guards[0].hp = 75;
+    e.s.defense.guards[1].hp = 75;
+    e.d = new EastDefense(e.s.defense, 0);
+    e.l = new NpcLife(e.s, e.d);
+    let guarded = false;
+    for (let frame = 0; frame < 120000; frame += 50) {
+      const budget = { queries: 2 };
+      for (let step = 0; step < 50; step += 5) {
+        e.s.time = advanceTime(e.s.time, 5);
+        e.d.update(frame + step + 5, 5, e.s.player, budget);
+        e.l.step(5, budget);
+        e.l.consumeDefense(e.d.drainNotices());
+        const n = e.s.life.people[1];
+        if (n.action?.kind === "treat" && n.action.phase === "perform")
+          expect(e.l.safe(n.body!)).toBe(true);
+        if (e.s.life.alarm === 2 && !e.l.safe(e.l.body("east-watch")!)) {
+          guarded = true;
+          expect(n.action?.kind).not.toBe("treat");
+        }
+      }
+    }
+    expect(guarded).toBe(true);
+    const casualties = e.s.defense.guards.filter((g) => g.dead);
+    expect(casualties.length).toBeGreaterThan(0);
+    const restored = validate(e.s),
+      d = new EastDefense(restored.defense, 120000),
+      life = new NpcLife(restored, d);
+    for (const g of casualties) {
+      d.healGuard(g.id, 30);
+      expect(life.state.defense.guards.find((n) => n.id === g.id)!.hp).toBe(0);
+      expect(life.helpPlayer(g.id)).toBe(false);
+    }
   }, 30000);
   it("治疗、撤离、睡觉与移动中读档保留必要进度，无重复药品提交", () => {
     for (const kind of ["treat", "shelter", "sleep", "work"] as const) {
@@ -630,8 +675,16 @@ describe("生活边界、恢复与认知反证", () => {
     const e = setup();
     (e.s.life.people[0] as any).sprite = { texture: "不能保存" };
     (e.s.life.people[0].body as any).texture = "不能保存";
+    (e.s.life.people[0].supplies as any).sprite = { texture: "不能保存" };
+    (e.s.life.people[0].speech as any).callback = "不能保存";
     expect((validate(e.s).life.people[0] as any).sprite).toBeUndefined();
     expect((validate(e.s).life.people[0].body as any).texture).toBeUndefined();
+    expect(
+      (validate(e.s).life.people[0].supplies as any).sprite,
+    ).toBeUndefined();
+    expect(
+      (validate(e.s).life.people[0].speech as any).callback,
+    ).toBeUndefined();
   });
 });
 
@@ -729,6 +782,8 @@ it("青禾接下安全可行的急救后护送，守门人数保持且先到场�
   });
   medic.action!.phase = "perform";
   medic.gear = "carried";
+  medic.supplies.medicine = 1;
+  e.s.life.stores.medicine--;
   medic.action!.progress = medic.action!.duration;
   e.l.complete(medic, medic.action!);
   expect(helper.action?.kind).toBe("escort");
@@ -832,7 +887,7 @@ describe("生活子版本2：私人取放与备用住宿", () => {
     Object.assign(old.defense.guards[0], { hp: 0, dead: true, mode: "dead" });
     old.life.stores.medicine = 1;
     const next = validate(old);
-    expect(next.life.version).toBe(2);
+    expect(next.life.version).toBe(3);
     expect(next.life.people[1].gear).toBe("carried");
     expect(next.life.stores.medicine).toBe(1);
     expect(next.defense.guards[0].dead).toBe(true);
@@ -977,6 +1032,110 @@ describe("生活子版本2：私人取放与备用住宿", () => {
   });
 });
 
+describe("生活子版本3：真实补给与守恒", () => {
+  it("装药中读档不提前扣料，取消保留随身药，到场治疗只消耗一次", () => {
+    let e = setup();
+    const medic = e.s.life.people[1];
+    e.l.debugInjury("elder", 70);
+    medic.gear = "carried";
+    Object.assign(medic.body!, e.l.materialSource("medicine"));
+    const candidate = e.l.candidates(medic).find((c) => c.kind === "treat")!;
+    expect(e.l.begin(medic, candidate)).toBe(true);
+    expect(medic.action?.phase).toBe("stock");
+    const initial = e.s.life.stores.medicine;
+    tick(e, 1000);
+    expect(medic.supplies.medicine).toBe(0);
+    expect(e.s.life.stores.medicine).toBe(initial);
+    expect(
+      e.s.life.reservations.some(
+        (r) => r.facility === "pharmacy" && r.owner === "healer",
+      ),
+    ).toBe(true);
+    const saved = validate(e.s),
+      d = new EastDefense(saved.defense, 0);
+    e = { s: saved, d, l: new NpcLife(saved, d) };
+    tick(e, 600);
+    const next = e.s.life.people[1];
+    expect(next.supplies.medicine).toBe(2);
+    expect(e.s.life.stores.medicine).toBe(initial - 2);
+    expect(e.s.life.reservations.some((r) => r.facility === "pharmacy")).toBe(
+      false,
+    );
+    e.l.cancel(next, "安全演练中断");
+    expect(next.supplies.medicine).toBe(2);
+    expect(validate(e.s).life.people[1].supplies.medicine).toBe(2);
+    for (
+      let t = 0;
+      t < 80000 && !e.s.life.events.some((ev) => ev.kind === "care");
+      t += 100
+    )
+      tick(e, 100);
+    expect(e.s.life.events.filter((ev) => ev.kind === "care")).toHaveLength(1);
+    expect(next.supplies.medicine).toBe(1);
+    expect(e.s.life.stores.medicine).toBe(initial - 2);
+    expect(e.s.bag.every((x) => x === null)).toBe(true);
+    expect(e.s.life.people[0].body!.hp).toBe(75);
+    expect(validate(e.s).life.people[1].supplies).toEqual(next.supplies);
+  });
+  it("维修先到工坊领取有限木料，再到受损风铃维修，加载不再扣材料", () => {
+    const e = setup(),
+      carpenter = e.s.life.people[2],
+      initial = e.s.life.stores.wood;
+    carpenter.gear = "carried";
+    e.l.damageFacility("wind-bell", 50, true);
+    const event = e.s.life.events.at(-1)!;
+    e.l.remember(carpenter, event, "report");
+    let collected = false;
+    for (
+      let t = 0;
+      t < 80000 && !e.s.life.events.some((ev) => ev.kind === "repair");
+      t += 100
+    ) {
+      const before = e.s.life.stores.wood;
+      tick(e, 100);
+      if (before !== e.s.life.stores.wood) {
+        const source = e.l.materialSource("wood");
+        expect(carpenter.body!.space).toBe(source.space);
+        expect(
+          Math.hypot(
+            carpenter.body!.x - source.x,
+            carpenter.body!.y - source.y,
+          ),
+        ).toBeLessThan(6);
+        expect(carpenter.supplies.wood).toBe(2);
+        collected = true;
+      }
+    }
+    expect(collected).toBe(true);
+    expect(e.s.life.facilities["wind-bell"]).toBe(100);
+    expect(carpenter.supplies.wood).toBe(0);
+    expect(e.s.life.stores.wood).toBe(initial - 2);
+    expect(e.s.life.events.filter((ev) => ev.kind === "repair")).toHaveLength(
+      1,
+    );
+    const restored = validate(e.s),
+      d = new EastDefense(restored.defense, 0);
+    tick({ s: restored, d, l: new NpcLife(restored, d) }, 5000);
+    expect(restored.life.stores.wood).toBe(initial - 2);
+  });
+  it("补给入口关闭时不远程取药，已在药箱中的药仍可用于安全救护", () => {
+    const e = setup(),
+      medic = e.s.life.people[1];
+    e.l.debugInjury("elder", 70);
+    medic.gear = "carried";
+    e.s.life.unavailable.homes["healer-home"] = true;
+    expect(e.l.candidates(medic).some((c) => c.kind === "treat")).toBe(false);
+    tick(e, 1500);
+    expect(e.s.life.stores.medicine).toBe(4);
+    medic.supplies.medicine = 1;
+    e.s.life.stores.medicine--;
+    expect(e.l.candidates(medic).some((c) => c.kind === "treat")).toBe(true);
+    const bad = structuredClone(e.s);
+    bad.life.stores.medicine = LIFE.maxMedicine;
+    expect(() => validate(bad)).toThrow("合计超过上限");
+  });
+});
+
 it("营房入口演练后每门只有一人沿路去备用床，塔位停射，调试事实可读档", () => {
   const e = setup();
   e.s.time = 1140;
@@ -1036,4 +1195,52 @@ it("旅馆客房侧门留足行走误差，不能抢占原补给服务点", () =
         Math.hypot(x - home.door.x, y - home.door.y),
       );
     }
+});
+
+it("室内床角阻挡实际救治，只有绕到同侧才结算药品与伤情", () => {
+  const e = setup(),
+    patient = e.s.life.people[0],
+    medic = e.s.life.people[1];
+  Object.assign(patient.body!, { space: "elder-home", x: 432, y: 485 });
+  Object.assign(medic.body!, { space: "elder-home", x: 415, y: 505 });
+  expect(spaceBlocked("elder-home", patient.body!.x, patient.body!.y)).toBe(
+    false,
+  );
+  expect(spaceBlocked("elder-home", medic.body!.x, medic.body!.y)).toBe(false);
+  expect(spaceClear("elder-home", medic.body!, patient.body!)).toBe(false);
+  e.l.debugInjury("elder", 70);
+  medic.gear = "carried";
+  medic.supplies.medicine = 1;
+  e.s.life.stores.medicine--;
+  const task = e.s.life.tasks.find((t) => t.subject === "elder")!;
+  expect(
+    e.l.begin(medic, {
+      kind: "treat",
+      target: task.place,
+      score: 200,
+      label: "安全到场救护",
+      facility: null,
+      task: task.id,
+    }),
+  ).toBe(true);
+  const a = medic.action!,
+    stock = e.s.life.stores.medicine,
+    hp = patient.body!.hp,
+    receipt = medic.committed;
+  a.phase = "perform";
+  a.progress = a.duration;
+  e.l.complete(medic, a);
+  expect(patient.body!.hp).toBe(hp);
+  expect(medic.supplies.medicine).toBe(1);
+  expect(medic.committed).toBe(receipt);
+  expect(e.s.life.events.some((event) => event.kind === "care")).toBe(false);
+  Object.assign(medic.body!, { x: 432, y: 470 });
+  expect(spaceClear("elder-home", medic.body!, patient.body!)).toBe(true);
+  e.l.complete(medic, a);
+  expect(patient.body!.hp).toBe(hp + 45);
+  expect(medic.supplies.medicine).toBe(0);
+  expect(e.s.life.stores.medicine).toBe(stock);
+  expect(e.s.life.events.filter((event) => event.kind === "care")).toHaveLength(
+    1,
+  );
 });

@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {CombatFeedback,FEEDBACK,parryContactPoint,deflectDirection,feedbackVisual,feedbackAudio,audibleFeedback,type FeedbackEvent} from '../src/game/systems/combatFeedback';
+import {CombatFeedback,FEEDBACK,BLADE_GLOW,parryContactPoint,deflectDirection,feedbackVisual,feedbackAudio,audibleFeedback,type FeedbackEvent} from '../src/game/systems/combatFeedback';
 import {synthFeedback,FEEDBACK_AUDIO} from '../src/game/systems/feedbackAudio';
 import {CombatController,PARRY,COMBAT,STRIKES,attackConfig,type Attack} from '../src/game/systems/combat';
 import {counterVisual,parryWeapon} from '../src/data/animation';
@@ -8,6 +8,35 @@ import {Sound} from '../src/game/systems/audio';
 import sharp from 'sharp';
 const fact=(id='one',kind:FeedbackEvent['kind']='parry-contact',at=0,until=600):FeedbackEvent=>({id,kind,at,until,targetId:'slime-1',attackId:id,point:{x:10,y:10},incoming:{x:0,y:1},blade:{x:1,y:0},deflect:{x:1,y:-.2},quality:'normal',material:'slime',alive:true});
 const attack=(facing:0|1|2|3=0,id=1):Attack=>({id,start:0,stage:1,facing,hit:new Set(),counter:'normal',automatic:true,primaryTarget:'main',config:attackConfig({stage:1,counter:'normal'})});
+describe('成功白闪后的剑身红光',()=>{
+ const root={x:850,y:720},weapon=parryWeapon(3,2);
+ const start=(f:CombatFeedback)=>f.emit({...fact('start','counter-start',60,375),attackId:'player:1'});
+ it('只从完整成功建立，拨开后升亮；停顿中同一模拟时刻不衰减',()=>{
+  const f=new CombatFeedback();f.emit(fact('guard','guard-start'));expect(f.bladeGlow(60,root,weapon,3)).toBeNull();f.emit(fact('after','afterguard'));expect(f.bladeGlow(60,root,weapon,3)).toBeNull();f.emit(fact());
+  expect(f.bladeGlow(19.999,root,weapon,3)).toBeNull();expect(f.bladeGlow(BLADE_GLOW.start,root,weapon,3)).toBeNull();expect(f.bladeGlow(40,root,weapon,3)!.alpha).toBe(.5);for(let i=0;i<5;i++){f.advance(40,null,true);expect(f.bladeGlow(40,root,weapon,3)!.alpha).toBe(.5);}
+ });
+ it('正式反斩的收势截止控制消退，成功并不要求命中',()=>{
+  const f=new CombatFeedback();f.emit(fact());start(f);f.advance(60,'player:1',false);expect(f.bladeGlow(60,root,weapon,3)!.alpha).toBe(1);expect(f.bladeGlow(230,root,weapon,3)!.alpha).toBe(1);expect(f.bladeGlow(300,root,weapon,3)!.alpha).toBeCloseTo(75/145);expect(f.bladeGlow(375,root,weapon,3)).toBeNull();f.advance(375,null,false);expect(f.snapshot().bladeGlow).toBeNull();expect(f.history.some(e=>e.kind==='counter-hit')).toBe(false);
+ });
+ it('余势及重复成功不续期，新的成功替换而不叠加',()=>{
+  const f=new CombatFeedback(),e=fact();f.emit(e);start(f);f.emit(fact('after','afterguard',100));expect(f.emit(e)).toBe(false);expect(f.snapshot().bladeGlow!.until).toBe(375);expect(f.bladeGlow(60,root,weapon,3)!.id).toBe('0:one');f.emit({...fact('next','parry-perfect-contact',200),quality:'perfect'});expect(f.bladeGlow(260,root,weapon,3)!.quality).toBe('perfect');expect(f.snapshot().bladeGlow!.event.id).toBe('0:next');
+ });
+ it('恢复点风步或反斩被取消立即清除，不转移到新攻击',()=>{
+  for(const began of [false,true]){const f=new CombatFeedback();f.emit(fact());if(began)start(f);f.advance(80,null,false);expect(f.bladeGlow(80,root,weapon,3)).toBeNull();}
+  const f=new CombatFeedback();f.emit(fact());start(f);f.advance(120,'player:2',false);expect(f.snapshot().bladeGlow).toBeNull();
+ });
+ it('受伤、重新架剑和会话重置清理红刃，原成功接触事实仍保留',()=>{
+  for(const end of ['hurt','guard','reset']){const f=new CombatFeedback();f.emit(fact());if(end==='hurt')f.cancelRelease();else if(end==='guard')f.emit(fact('guard','guard-start',40));else f.reset();expect(f.bladeGlow(60,root,weapon,3)).toBeNull();if(end!=='reset')expect(f.history[0].kind).toBe('parry-contact');}
+ });
+ for(const facing of [0,1,2,3] as const)it(`四向${facing}红刃跟随当前实际姿态，根位移一致、背向在角色后层`,()=>{
+  const f=new CombatFeedback();f.emit(fact());start(f);const a=attack(facing),tips=[];
+  for(const t of [115,144,173,202]){const w=counterVisual(a,t-60).weapon!,g=f.bladeGlow(t,root,w,facing)!;expect(g.tip).toEqual({x:root.x+w.tip.x,y:root.y+w.tip.y});expect(g.start.x).toBeCloseTo(root.x+w.grip.x+(w.tip.x-w.grip.x)*.22);expect(g.depth).toBe(root.y+(facing===1?-.05:.08));const moved=f.bladeGlow(t,{x:root.x+10,y:root.y+20},w,facing)!;expect(moved.tip.x-g.tip.x).toBe(10);expect(moved.tip.y-g.tip.y).toBe(20);tips.push(g.tip);}
+  expect(new Set(tips.map(p=>`${p.x}/${p.y}`)).size).toBe(4);
+ });
+ it('对照开关只影响呈现，缺少武器不绘制，未启动反斩的反馈也有寿命上限',()=>{
+  const f=new CombatFeedback();f.emit(fact());expect(f.bladeGlow(60,root,null,3)).toBeNull();for(const mode of ['A','B','C','D'] as const){f.mode=mode;expect(!!f.bladeGlow(60,root,weapon,3)).toBe(feedbackVisual(mode));}f.advance(BLADE_GLOW.maxLife);expect(f.snapshot().bladeGlow).toBeNull();
+ });
+});
 describe('第三轮事实、去重、时钟和生命周期',()=>{
  it('同一接触只消费一次，紧接的不同攻击不被全局节流吞掉',()=>{const f=new CombatFeedback();expect(f.emit(fact())).toBe(true);expect(f.emit(fact())).toBe(false);expect(f.emit(fact('two','parry-contact',1))).toBe(true);expect(f.drain()).toHaveLength(2);expect(f.drain()).toHaveLength(0);expect(f.effects).toHaveLength(2);});
  it('快照冻结且深拷贝来招、位置和方向',()=>{const f=new CombatFeedback(),e=fact();f.emit(e);(e.point as any).x=999;(e.deflect as any).x=999;expect(f.history[0].point.x).toBe(10);expect(f.history[0].deflect.x).toBe(1);expect(Object.isFrozen(f.history[0])).toBe(true);expect(Object.isFrozen(f.history[0].blade)).toBe(true);});

@@ -1,0 +1,79 @@
+{
+  "说明": "本任务真实执行结果；不合并重叠批次，不把演练事件当自然损失，不登记美术或目标设备性能通过。",
+  "记录时间": "2026-09-27T17:58:44.090209+08:00",
+  "工作区": "/Users/archer/Documents/ChatGPT/Game/farwind",
+  "分支": "codex/initial-game",
+  "存档": {
+    "主版本": 6,
+    "生活子版本": 3,
+    "字符上限": 200000,
+    "离线补算": false
+  },
+  "最后命令": [
+    {
+      "命令": "npm test -- --maxWorkers=1",
+      "通过": 479,
+      "文件": 25,
+      "跳过": 0,
+      "耗时秒": 100.48
+    },
+    {
+      "命令": "npx vitest run tests/npc-life.test.ts tests/npc-navigation.test.ts tests/npc-speech.test.ts --maxWorkers=1",
+      "通过": 55,
+      "跳过": 0,
+      "耗时秒": 27.56
+    },
+    {
+      "命令": "npx playwright test tests/npc-life.spec.ts --config tools/playwright-npc-life.config.ts --workers=1",
+      "通过": 9,
+      "跳过": 0,
+      "耗时约秒": 258
+    },
+    {
+      "命令": "npx playwright test --config tools/playwright-npc-life-production.config.ts --workers=1",
+      "通过": 3,
+      "跳过": 0,
+      "耗时秒": 17.3
+    }
+  ],
+  "经济战斗": "原九项批次七通过两失败；两项明确寻路首因修正后复测通过，不声称原批次通过。",
+  "构建": "类型检查与Vite构建通过，保留主包体积提示；本机5183页面及脚本返回200并与文件一致。",
+  "运行样本": {
+    "说明": "软件图形浏览器短样本，含室外来袭与室内观察，不能作为目标设备帧率承诺。",
+    "样本帧数": 261,
+    "中位帧毫秒": 48.33000000000011,
+    "九五分位毫秒": 54.99999999999999,
+    "生活指标": {
+      "steps": 2171,
+      "decisions": 1796,
+      "queries": 2,
+      "ms": 620.899998486042,
+      "maxMs": 9.099999964237213,
+      "pathBatches": 50,
+      "maxExpandedPerBatch": 64
+    },
+    "预约": 1,
+    "事件队列": 12
+  },
+  "未验证或未完成": [
+    "专用手绘室内",
+    "完整职业动画",
+    "自然平民和建筑攻击",
+    "目标设备长时帧率",
+    "八成人工节省"
+  ],
+  "文件指纹": {
+    "src/game/systems/npcSpeech.ts": "58e945eaad1a7e9e30ff607af2a0abb0db8fd9bf29c7049f740bc9ad08654932",
+    "src/game/systems/npcLife.ts": "de30e6376f578dfacd143f7c8c78e442812bec421007fd68cfa8aaa1b55a190c",
+    "src/game/systems/npcLifeState.ts": "06776a56b1970cde0ddaca7f966c00d492dde9179f23117a739440dbdced6bbc",
+    "src/game/systems/npcNavigation.ts": "f74892e7da1ffcf8e924954a5b04d941b4a6632b30727491f159c24c355a4733",
+    "src/game/entities/npcLifeView.ts": "47e654e484383b02a4f631925519189c494a709481975a01829c07384cc5a00d",
+    "src/data/npcLife.ts": "f32b36dbfb04bdff42f939848fe7ee58b8d858693aa8f4f0944b0a7900e4469d",
+    ".npc-life-local/production/index.html": "91bc99a3b75411695b77f1ae1d9620737f7a544269b4fcb6adc8e0528dc23bdf",
+    ".npc-life-local/production/assets/index-CmbEgioC.js": "f8eea5aa7e4cf9c754cc400414c587ea25a9766b08a1b758c1634740477e73de",
+    "docs/npc-life/evidence/production-work-speech.png": "3f24ff54d723fcdb65d1eeaf1001b4b8b215e3ad04906700f2d9fa90b7306726",
+    "docs/npc-life/evidence/medicine-collection.png": "591381d029f189268458d65a45c5d376e31571151b38a2c0d5fbd47beeae7504",
+    "docs/npc-life/evidence/natural-care.png": "99f4b22f34ad146ef9ed465fe3c018930c11b2be71ca5d0592d57b40ed478935",
+    "docs/npc-life/evidence/night-home.png": "824da49e8867617a4109c7ec776d790149e4c6ea7bb244b73d8b2afb661bc03e"
+  }
+}

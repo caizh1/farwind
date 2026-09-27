@@ -1,3 +1,4 @@
+import {legacyDefense} from './safety-fixtures';
 import {describe,it,expect} from 'vitest';
 import {mkdirSync,writeFileSync} from 'node:fs';
 import {initialState,validate,type State} from '../src/game/systems/state';
@@ -22,7 +23,7 @@ describe('M5集成迁移与恢复',()=>{
  });
  it('各门活跃阶段恢复不复活成员、不重放飞箭、不改变结算号',()=>{
   for(const gate of RAID_GATES)for(const phase of ['warning','approach','fighting','retreat']as const){
-   const s=initialState();s.player={...s.player,...observer};s.defense=prepareRaid(s.defense,s.player,gate.id,4,phase==='warning');
+   const s=initialState();s.player={...s.player,...observer};s.defense=legacyDefense(s.defense,gate.id,phase==='warning');
    s.defense.raid!.phase=phase;s.defense.raid!.ageMs=phase==='retreat'?119900:2000;s.defense.raid!.members[0].hp=0;s.defense.raid!.members[1].hp=17;
    const clean=validate(s),d=new EastDefense(clean.defense,1000);expect(d.arrows).toEqual([]);expect(d.state.raid!.members[0].hp).toBe(0);expect(d.state.raid!.members[1].hp).toBe(17);
    d.update(1010,10,observer,{queries:2});expect(d.state.sequence).toBe(1);expect(d.state.completedSequence,`${gate.id} ${phase}`).toBe(phase==='retreat'?1:0);expect(d.state.guards.every(g=>!g.dead)).toBe(true);
@@ -30,7 +31,7 @@ describe('M5集成迁移与恢复',()=>{
   }
  });
  it('合法历史档的失效位置按正式碰撞修复，死亡和HP不被恢复器覆盖',()=>{
-  const s=initialState();s.defense=prepareRaid(s.defense,observer,'north-gate',4);
+  const s=initialState();s.defense=legacyDefense(s.defense,'north-gate');
   const living=s.defense.guards[1];living.x=2100;living.y=1188;living.hp=71;
   Object.assign(s.defense.guards[0],{hp:0,dead:true,mode:'dead',x:2100,y:1188});
   Object.assign(s.defense.raid!.members[0],{x:2030,y:885,hp:23});
@@ -40,14 +41,14 @@ describe('M5集成迁移与恢复',()=>{
  });
  it('三门全灭历史只结算一次；重复恢复保持冷却、任务与固定死亡隔离',()=>{
   for(const gate of RAID_GATES){
-   const s=initialState();s.defense=prepareRaid(s.defense,observer,gate.id,4);s.defense.raid!.members.forEach(m=>m.hp=0);
+   const s=initialState();s.defense=legacyDefense(s.defense,gate.id);s.defense.raid!.members.forEach(m=>m.hp=0);
    const d=new EastDefense(s.defense,0);d.update(20,20,observer,{queries:2});expect(d.state.raid).toBeNull();expect(d.state.completedSequence).toBe(1);
    const finished=structuredClone(d.state);for(let n=0;n<5;n++){d.restore(20);expect(d.state).toEqual(finished);expect(d.enemies).toEqual([]);}
    expect(s.killed).toEqual([]);expect(s.pendingDrops).toEqual([]);
   }
  });
  it('生成可复用的正式历史档样本，浏览器只通过导入建立条件',()=>{
-  const base=initialState();Object.assign(base.player,observer);const probes=RAID_GATES.map(g=>{const s=structuredClone(base);s.defense=prepareRaid(s.defense,s.player,g.id,4);s.defense.raid!.members[3].type='leaf';s.defense.raid!.members[3].hp=72;Object.assign(s.player,g.inside);return validate(s);});
+  const base=initialState();Object.assign(base.player,observer);const probes=RAID_GATES.map(g=>{const s=structuredClone(base);s.defense=legacyDefense(s.defense,g.id);s.defense.raid!.members[3].type='leaf';s.defense.raid!.members[3].hp=72;Object.assign(s.player,g.inside);return validate(s);});
   const deaths=RAID_GATES.map((g,i)=>{const s=structuredClone(base);s.defense=prepareRaid(s.defense,s.player,g.id,3);s.defense.guards[i*3].hp=1;Object.assign(s.defense.raid!.members[0],{x:GUARD_DEFS[i*3].post.x+8,y:GUARD_DEFS[i*3].post.y+7});return validate(s);});
   mkdirSync('.parry-local/m5',{recursive:true});writeFileSync('.parry-local/m5/fixtures.json',JSON.stringify({说明:'仅建立合法起始档；伤害、死亡、波次与时间由正式运行推进。',base,probes,deaths},null,2));expect(probes).toHaveLength(3);
  });

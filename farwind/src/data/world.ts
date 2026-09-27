@@ -1,3 +1,4 @@
+import {inProtected} from "./defenseZones";
 import {
   serviceBuildings,
   serviceEntrances,
@@ -660,7 +661,8 @@ for (const parcel of RESERVED_PARCELS) {
   props.push({
     id: `${parcel.id}-sign`,
     art: "sign",
-    x: parcel.x + 30,
+    // 工坊路牌避开南塔正式射口；只平移该装饰，不改变地块、门洞或世界尺寸。
+    x: parcel.x + (parcel.id === "parcel-workshop" ? 90 : 30),
     y: parcel.y + 40,
     w: 52,
     h: 72,
@@ -998,7 +1000,7 @@ export const enemyDefs = [
   { id: "leaf-2", x: 3170, y: 930, type: "leaf" },
 ] as const;
 export function region(x: number, y: number) {
-  return regionAt({ x, y }).name;
+  const p={x,y},r=regionAt(p);return r.id!=="village"&&inProtected(p)?"巡逻近郊":r.name;
 }
 
 // 交互物只阻挡实际占地，互动视线忽略目标本体。

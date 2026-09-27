@@ -1,0 +1,2518 @@
+{
+  "说明": "保留真实驻防救护等待失败的首因状态，没有改生命、冻结角色或跳过断言。",
+  "时间": 716.3306300005993,
+  "药师": {
+    "id": "healer",
+    "body": {
+      "space": "village",
+      "x": 781.3892824396803,
+      "y": 738.5245066531103,
+      "hp": 100,
+      "health": "healthy",
+      "episode": 0,
+      "recoverAt": 0
+    },
+    "action": {
+      "id": 2,
+      "kind": "shelter",
+      "target": {
+        "space": "village",
+        "x": 776,
+        "y": 740
+      },
+      "pickup": null,
+      "facility": "assembly",
+      "task": null,
+      "phase": "perform",
+      "progress": 3000,
+      "duration": 3000,
+      "started": 11225,
+      "failures": 0,
+      "label": "带必需品前往安全集结处"
+    },
+    "blockedTarget": null,
+    "blockedUntil": 0,
+    "serial": 2,
+    "committed": 0,
+    "needs": {
+      "hunger": 16.29256255554347,
+      "fatigue": 10.646281277771715
+    },
+    "emotion": 69.82499999999419,
+    "gear": "carried",
+    "supplies": {
+      "medicine": 0,
+      "wood": 0
+    },
+    "project": 0,
+    "nextDecision": 77825,
+    "reason": "带必需品前往安全集结处（评分 198）",
+    "pathFailures": 0,
+    "alarm": 2,
+    "relations": {
+      "elder": {
+        "familiar": 35,
+        "trust": 35,
+        "wariness": 0,
+        "lastPositive": -1440
+      }
+    },
+    "memories": [
+      {
+        "eventId": "life:23",
+        "sequence": 23,
+        "kind": "injury",
+        "time": 649.2806300002537,
+        "subjects": [
+          "east-watch"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 4969.280630000254
+      },
+      {
+        "eventId": "life:24",
+        "sequence": 24,
+        "kind": "injury",
+        "time": 651.7556300002665,
+        "subjects": [
+          "east-watch"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 4971.755630000266
+      },
+      {
+        "eventId": "life:27",
+        "sequence": 27,
+        "kind": "injury",
+        "time": 656.3306300002901,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 4976.33063000029
+      },
+      {
+        "eventId": "life:28",
+        "sequence": 28,
+        "kind": "injury",
+        "time": 658.655630000302,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 4978.655630000302
+      },
+      {
+        "eventId": "life:29",
+        "sequence": 29,
+        "kind": "injury",
+        "time": 661.2056300003152,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 4981.205630000315
+      },
+      {
+        "eventId": "life:30",
+        "sequence": 30,
+        "kind": "injury",
+        "time": 663.6806300003279,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 4983.680630000328
+      },
+      {
+        "eventId": "life:31",
+        "sequence": 31,
+        "kind": "injury",
+        "time": 666.1556300003407,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 4986.15563000034
+      },
+      {
+        "eventId": "life:32",
+        "sequence": 32,
+        "kind": "injury",
+        "time": 668.6306300003534,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 4988.630630000353
+      },
+      {
+        "eventId": "life:33",
+        "sequence": 33,
+        "kind": "injury",
+        "time": 671.1056300003662,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 4991.105630000367
+      },
+      {
+        "eventId": "life:34",
+        "sequence": 34,
+        "kind": "injury",
+        "time": 673.6556300003793,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 4993.6556300003795
+      },
+      {
+        "eventId": "life:35",
+        "sequence": 35,
+        "kind": "injury",
+        "time": 676.1306300003921,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 4996.130630000393
+      },
+      {
+        "eventId": "life:36",
+        "sequence": 36,
+        "kind": "injury",
+        "time": 678.6056300004049,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 4998.605630000405
+      },
+      {
+        "eventId": "life:37",
+        "sequence": 37,
+        "kind": "injury",
+        "time": 681.0806300004176,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 5001.080630000418
+      },
+      {
+        "eventId": "life:38",
+        "sequence": 38,
+        "kind": "injury",
+        "time": 683.5556300004304,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 5003.55563000043
+      },
+      {
+        "eventId": "life:39",
+        "sequence": 39,
+        "kind": "injury",
+        "time": 686.1056300004435,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 5006.105630000444
+      },
+      {
+        "eventId": "life:40",
+        "sequence": 40,
+        "kind": "injury",
+        "time": 688.5806300004563,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 5008.580630000456
+      },
+      {
+        "eventId": "life:41",
+        "sequence": 41,
+        "kind": "injury",
+        "time": 691.055630000469,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 5011.055630000469
+      },
+      {
+        "eventId": "life:42",
+        "sequence": 42,
+        "kind": "injury",
+        "time": 693.5306300004818,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 5013.530630000481
+      },
+      {
+        "eventId": "life:43",
+        "sequence": 43,
+        "kind": "injury",
+        "time": 696.0056300004945,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 5016.005630000494
+      },
+      {
+        "eventId": "life:44",
+        "sequence": 44,
+        "kind": "injury",
+        "time": 698.5556300005077,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 5018.555630000507
+      },
+      {
+        "eventId": "life:45",
+        "sequence": 45,
+        "kind": "injury",
+        "time": 701.0306300005204,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 5021.03063000052
+      },
+      {
+        "eventId": "life:46",
+        "sequence": 46,
+        "kind": "injury",
+        "time": 703.5056300005332,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 5023.5056300005335
+      },
+      {
+        "eventId": "life:47",
+        "sequence": 47,
+        "kind": "injury",
+        "time": 705.980630000546,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 5025.980630000546
+      },
+      {
+        "eventId": "life:48",
+        "sequence": 48,
+        "kind": "injury",
+        "time": 708.4556300005587,
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "source": "report",
+        "importance": 40,
+        "expires": 5028.455630000559
+      }
+    ],
+    "receipt": 48,
+    "receipts": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "receiptFloor": 0,
+    "known": {
+      "east-patrol": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190,
+        "time": 708.4556300005587
+      },
+      "east-watch": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060,
+        "time": 651.7556300002665
+      },
+      "elder": {
+        "space": "village",
+        "x": 741.5271069006913,
+        "y": 745.3411526989257,
+        "hp": 100,
+        "health": "healthy",
+        "episode": 0,
+        "recoverAt": 0,
+        "time": 715.3875000005944
+      },
+      "player": {
+        "x": 670,
+        "y": 720,
+        "hp": 100,
+        "stamina": 100,
+        "space": "village",
+        "time": 716.3306300005993
+      },
+      "carpenter": {
+        "space": "village",
+        "x": 738.3942113279892,
+        "y": 771.6791532888511,
+        "hp": 100,
+        "health": "healthy",
+        "episode": 0,
+        "recoverAt": 0,
+        "time": 715.3875000005944
+      },
+      "north-patrol": {
+        "space": "village",
+        "x": 860.0241205471452,
+        "y": 396.3491045493927,
+        "time": 709.9875000005666
+      }
+    },
+    "lastSupplyDay": 0,
+    "lastMealDay": -1,
+    "speech": {
+      "eventFloor": 44,
+      "nextAt": 112253.75333333334,
+      "day": 0,
+      "routines": []
+    }
+  },
+  "卫兵": [
+    {
+      "id": "east-watch",
+      "x": 1920,
+      "y": 1060,
+      "hp": 0,
+      "dead": true,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "east-north-post",
+      "mode": "dead",
+      "peaceMs": 0,
+      "cooldownMs": 0
+    },
+    {
+      "id": "east-patrol",
+      "x": 1910,
+      "y": 1190,
+      "hp": 0,
+      "dead": true,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "east-south-post",
+      "mode": "dead",
+      "peaceMs": 0,
+      "cooldownMs": 0
+    },
+    {
+      "id": "east-archer",
+      "x": 2030,
+      "y": 900,
+      "hp": 100,
+      "dead": false,
+      "weaponId": "watch-bow",
+      "armorId": "watch-leather",
+      "postId": "east-gate-tower",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    },
+    {
+      "id": "north-watch",
+      "x": 740,
+      "y": 300,
+      "hp": 180,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "north-west-post",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    },
+    {
+      "id": "north-patrol",
+      "x": 873.2586269262902,
+      "y": 307.33694599557367,
+      "hp": 180,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "north-east-post",
+      "mode": "patrol",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    },
+    {
+      "id": "north-archer",
+      "x": 680,
+      "y": 350,
+      "hp": 100,
+      "dead": false,
+      "weaponId": "watch-bow",
+      "armorId": "watch-leather",
+      "postId": "north-gate-tower",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    },
+    {
+      "id": "south-watch",
+      "x": 810,
+      "y": 1720,
+      "hp": 180,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "south-west-post",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    },
+    {
+      "id": "south-patrol",
+      "x": 1026.0745618349113,
+      "y": 1680.3381471401867,
+      "hp": 180,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "south-east-post",
+      "mode": "patrol",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    },
+    {
+      "id": "south-archer",
+      "x": 1140,
+      "y": 1750,
+      "hp": 100,
+      "dead": false,
+      "weaponId": "watch-bow",
+      "armorId": "watch-leather",
+      "postId": "south-gate-tower",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    }
+  ],
+  "库存": {
+    "medicine": 4,
+    "herbs": 8,
+    "wood": 6,
+    "food": 18,
+    "day": 0
+  },
+  "任务": [],
+  "事件": [
+    {
+      "id": "life:1",
+      "sequence": 1,
+      "time": 600.0075,
+      "kind": "alarm",
+      "place": {
+        "space": "village",
+        "x": 720,
+        "y": 650
+      },
+      "source": "bell",
+      "subjects": [],
+      "result": "村门袭扰，保持局部警戒",
+      "debug": false
+    },
+    {
+      "id": "life:2",
+      "sequence": 2,
+      "time": 604.2806300000218,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 2149.454722195578,
+        "y": 1112.1620630834389
+      },
+      "source": "east-raid-1:1",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:3",
+      "sequence": 3,
+      "time": 604.7306300000241,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 2149.454722195578,
+        "y": 1112.1620630834389
+      },
+      "source": "east-raid-1:2",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:4",
+      "sequence": 4,
+      "time": 606.5306300000334,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 2149.454722195578,
+        "y": 1112.1620630834389
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:5",
+      "sequence": 5,
+      "time": 607.1306300000365,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 2149.454722195578,
+        "y": 1112.1620630834389
+      },
+      "source": "east-raid-1:2",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:6",
+      "sequence": 6,
+      "time": 612.0056300000616,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 2040.4049081309947,
+        "y": 1038.7082732017427
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:7",
+      "sequence": 7,
+      "time": 612.1556300000624,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 2040.4049081309947,
+        "y": 1038.7082732017427
+      },
+      "source": "east-raid-1:2",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:8",
+      "sequence": 8,
+      "time": 614.405630000074,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 2040.4049081309947,
+        "y": 1038.7082732017427
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:9",
+      "sequence": 9,
+      "time": 616.8375000000865,
+      "kind": "alarm",
+      "place": {
+        "space": "village",
+        "x": 720,
+        "y": 650
+      },
+      "source": "bell",
+      "subjects": [],
+      "result": "居民区威胁，集结与救护",
+      "debug": false
+    },
+    {
+      "id": "life:10",
+      "sequence": 10,
+      "time": 616.8806300000867,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 2040.4049081309947,
+        "y": 1038.7082732017427
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:11",
+      "sequence": 11,
+      "time": 619.5056300001003,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:12",
+      "sequence": 12,
+      "time": 621.8306300001123,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:13",
+      "sequence": 13,
+      "time": 624.3806300001254,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:14",
+      "sequence": 14,
+      "time": 626.8556300001381,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:15",
+      "sequence": 15,
+      "time": 629.3306300001509,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:16",
+      "sequence": 16,
+      "time": 631.8056300001637,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:17",
+      "sequence": 17,
+      "time": 634.2806300001764,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:18",
+      "sequence": 18,
+      "time": 636.8306300001896,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:19",
+      "sequence": 19,
+      "time": 639.3056300002023,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:20",
+      "sequence": 20,
+      "time": 641.7806300002151,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:21",
+      "sequence": 21,
+      "time": 644.2556300002278,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:22",
+      "sequence": 22,
+      "time": 646.7306300002406,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:23",
+      "sequence": 23,
+      "time": 649.2806300002537,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:24",
+      "sequence": 24,
+      "time": 651.7556300002665,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:25",
+      "sequence": 25,
+      "time": 654.2306300002792,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:26",
+      "sequence": 26,
+      "time": 654.2306300002792,
+      "kind": "death",
+      "place": {
+        "space": "village",
+        "x": 1920,
+        "y": 1060
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "守卫阵亡",
+      "debug": false
+    },
+    {
+      "id": "life:27",
+      "sequence": 27,
+      "time": 656.3306300002901,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:28",
+      "sequence": 28,
+      "time": 658.655630000302,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:29",
+      "sequence": 29,
+      "time": 661.2056300003152,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:30",
+      "sequence": 30,
+      "time": 663.6806300003279,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:31",
+      "sequence": 31,
+      "time": 666.1556300003407,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:32",
+      "sequence": 32,
+      "time": 668.6306300003534,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:33",
+      "sequence": 33,
+      "time": 671.1056300003662,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:34",
+      "sequence": 34,
+      "time": 673.6556300003793,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:35",
+      "sequence": 35,
+      "time": 676.1306300003921,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:36",
+      "sequence": 36,
+      "time": 678.6056300004049,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:37",
+      "sequence": 37,
+      "time": 681.0806300004176,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:38",
+      "sequence": 38,
+      "time": 683.5556300004304,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:39",
+      "sequence": 39,
+      "time": 686.1056300004435,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:40",
+      "sequence": 40,
+      "time": 688.5806300004563,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:41",
+      "sequence": 41,
+      "time": 691.055630000469,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:42",
+      "sequence": 42,
+      "time": 693.5306300004818,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:43",
+      "sequence": 43,
+      "time": 696.0056300004945,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:44",
+      "sequence": 44,
+      "time": 698.5556300005077,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:45",
+      "sequence": 45,
+      "time": 701.0306300005204,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:46",
+      "sequence": 46,
+      "time": 703.5056300005332,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:47",
+      "sequence": 47,
+      "time": 705.980630000546,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:48",
+      "sequence": 48,
+      "time": 708.4556300005587,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:49",
+      "sequence": 49,
+      "time": 711.0056300005718,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:50",
+      "sequence": 50,
+      "time": 711.0056300005718,
+      "kind": "death",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "守卫阵亡",
+      "debug": false
+    }
+  ],
+  "诊断": {
+    "alarm": 2,
+    "space": "village",
+    "speech": {
+      "speaker": "healer",
+      "text": "听同伴说，青禾需要救护，先确认安全路线。",
+      "until": 71753.75333333334,
+      "urgent": true,
+      "actionId": 2
+    },
+    "metrics": {
+      "steps": 17132,
+      "decisions": 25424,
+      "queries": 2,
+      "ms": 682.099996805191,
+      "maxMs": 10.399999976158142,
+      "pathBatches": 5,
+      "maxExpandedPerBatch": 64
+    },
+    "stores": {
+      "medicine": 4,
+      "herbs": 8,
+      "wood": 6,
+      "food": 18,
+      "day": 0
+    },
+    "reservations": [
+      {
+        "facility": "assembly",
+        "owner": "elder",
+        "expires": 89553.75333333334
+      },
+      {
+        "facility": "assembly",
+        "owner": "healer",
+        "expires": 89553.75333333334
+      },
+      {
+        "facility": "assembly",
+        "owner": "carpenter",
+        "expires": 89553.75333333334
+      }
+    ],
+    "tasks": [],
+    "people": [
+      {
+        "id": "elder",
+        "body": {
+          "space": "village",
+          "x": 741.5271069006913,
+          "y": 745.3411526989257,
+          "hp": 100,
+          "health": "healthy",
+          "episode": 0,
+          "recoverAt": 0
+        },
+        "action": {
+          "id": 4,
+          "kind": "count",
+          "target": {
+            "space": "village",
+            "x": 744,
+            "y": 740
+          },
+          "pickup": null,
+          "facility": "assembly",
+          "task": null,
+          "phase": "perform",
+          "progress": 3000,
+          "duration": 3000,
+          "started": 11225,
+          "failures": 0,
+          "label": "在集结处清点、报告失联者"
+        },
+        "reason": "集结处已确认 3 人，其余下落尚未确认",
+        "needs": {
+          "hunger": 16.29256255554347,
+          "fatigue": 10.646281277771715
+        },
+        "alarm": 2,
+        "candidates": [
+          {
+            "kind": "count",
+            "target": {
+              "space": "village",
+              "x": 760,
+              "y": 740
+            },
+            "score": 209.15386805394155,
+            "label": "在集结处清点、报告失联者",
+            "facility": "assembly",
+            "task": null
+          },
+          {
+            "kind": "count",
+            "target": {
+              "space": "village",
+              "x": 460,
+              "y": 720
+            },
+            "score": 179.41202415055312,
+            "label": "在集结处清点、报告失联者",
+            "facility": "west-refuge",
+            "task": null
+          },
+          {
+            "kind": "count",
+            "target": {
+              "space": "village",
+              "x": 1000,
+              "y": 1220
+            },
+            "score": 174.77151607271654,
+            "label": "在集结处清点、报告失联者",
+            "facility": "south-refuge",
+            "task": null
+          }
+        ],
+        "path": {
+          "nav": {
+            "path": [],
+            "next": 0,
+            "failed": false,
+            "returning": false,
+            "queries": 0,
+            "visited": 0
+          },
+          "stuck": 0,
+          "queries": 0,
+          "batches": 0,
+          "maxExpanded": 0,
+          "failure": "",
+          "goal": "village:93:93",
+          "planning": false
+        },
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "alarm",
+            "time": 600.0075,
+            "subjects": [],
+            "result": "村门袭扰，保持局部警戒",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4920.0075
+          },
+          {
+            "eventId": "life:9",
+            "sequence": 9,
+            "kind": "alarm",
+            "time": 616.8375000000865,
+            "subjects": [],
+            "result": "居民区威胁，集结与救护",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4936.837500000087
+          }
+        ]
+      },
+      {
+        "id": "healer",
+        "body": {
+          "space": "village",
+          "x": 781.3892824396803,
+          "y": 738.5245066531103,
+          "hp": 100,
+          "health": "healthy",
+          "episode": 0,
+          "recoverAt": 0
+        },
+        "action": {
+          "id": 2,
+          "kind": "shelter",
+          "target": {
+            "space": "village",
+            "x": 776,
+            "y": 740
+          },
+          "pickup": null,
+          "facility": "assembly",
+          "task": null,
+          "phase": "perform",
+          "progress": 3000,
+          "duration": 3000,
+          "started": 11225,
+          "failures": 0,
+          "label": "带必需品前往安全集结处"
+        },
+        "reason": "带必需品前往安全集结处（评分 198）",
+        "needs": {
+          "hunger": 16.29256255554347,
+          "fatigue": 10.646281277771715
+        },
+        "alarm": 2,
+        "candidates": [
+          {
+            "kind": "shelter",
+            "target": {
+              "space": "village",
+              "x": 760,
+              "y": 740
+            },
+            "score": 206.6140779498604,
+            "label": "带必需品前往安全集结处",
+            "facility": "assembly",
+            "task": null
+          },
+          {
+            "kind": "shelter",
+            "target": {
+              "space": "village",
+              "x": 460,
+              "y": 720
+            },
+            "score": 201.20539130386857,
+            "label": "带必需品前往安全集结处",
+            "facility": "west-refuge",
+            "task": null
+          },
+          {
+            "kind": "shelter",
+            "target": {
+              "space": "village",
+              "x": 1000,
+              "y": 1220
+            },
+            "score": 197.48194284139976,
+            "label": "带必需品前往安全集结处",
+            "facility": "south-refuge",
+            "task": null
+          }
+        ],
+        "path": {
+          "nav": {
+            "path": [],
+            "next": 14855,
+            "failed": false,
+            "returning": false,
+            "queries": 0,
+            "visited": 0,
+            "target": {
+              "space": "village",
+              "x": 776,
+              "y": 740
+            }
+          },
+          "stuck": 0,
+          "queries": 1,
+          "batches": 5,
+          "maxExpanded": 64,
+          "failure": "",
+          "goal": "village:97:93",
+          "planning": false
+        },
+        "memories": [
+          {
+            "eventId": "life:45",
+            "sequence": 45,
+            "kind": "injury",
+            "time": 701.0306300005204,
+            "subjects": [
+              "east-patrol"
+            ],
+            "result": "驻防战斗受伤",
+            "source": "report",
+            "importance": 40,
+            "expires": 5021.03063000052
+          },
+          {
+            "eventId": "life:46",
+            "sequence": 46,
+            "kind": "injury",
+            "time": 703.5056300005332,
+            "subjects": [
+              "east-patrol"
+            ],
+            "result": "驻防战斗受伤",
+            "source": "report",
+            "importance": 40,
+            "expires": 5023.5056300005335
+          },
+          {
+            "eventId": "life:47",
+            "sequence": 47,
+            "kind": "injury",
+            "time": 705.980630000546,
+            "subjects": [
+              "east-patrol"
+            ],
+            "result": "驻防战斗受伤",
+            "source": "report",
+            "importance": 40,
+            "expires": 5025.980630000546
+          },
+          {
+            "eventId": "life:48",
+            "sequence": 48,
+            "kind": "injury",
+            "time": 708.4556300005587,
+            "subjects": [
+              "east-patrol"
+            ],
+            "result": "驻防战斗受伤",
+            "source": "report",
+            "importance": 40,
+            "expires": 5028.455630000559
+          }
+        ]
+      },
+      {
+        "id": "carpenter",
+        "body": {
+          "space": "village",
+          "x": 738.3942113279892,
+          "y": 771.6791532888511,
+          "hp": 100,
+          "health": "healthy",
+          "episode": 0,
+          "recoverAt": 0
+        },
+        "action": {
+          "id": 2,
+          "kind": "shelter",
+          "target": {
+            "space": "village",
+            "x": 744,
+            "y": 770
+          },
+          "pickup": null,
+          "facility": "assembly",
+          "task": null,
+          "phase": "perform",
+          "progress": 3000,
+          "duration": 3000,
+          "started": 11225,
+          "failures": 0,
+          "label": "带必需品前往安全集结处"
+        },
+        "reason": "带必需品前往安全集结处（评分 183）",
+        "needs": {
+          "hunger": 16.29256255554347,
+          "fatigue": 10.646281277771715
+        },
+        "alarm": 2,
+        "candidates": [
+          {
+            "kind": "shelter",
+            "target": {
+              "space": "village",
+              "x": 760,
+              "y": 740
+            },
+            "score": 192.8097806509919,
+            "label": "带必需品前往安全集结处",
+            "facility": "assembly",
+            "task": null
+          },
+          {
+            "kind": "shelter",
+            "target": {
+              "space": "village",
+              "x": 460,
+              "y": 720
+            },
+            "score": 188.40329525491913,
+            "label": "带必需品前往安全集结处",
+            "facility": "west-refuge",
+            "task": null
+          },
+          {
+            "kind": "shelter",
+            "target": {
+              "space": "village",
+              "x": 1000,
+              "y": 1220
+            },
+            "score": 184.1568179315047,
+            "label": "带必需品前往安全集结处",
+            "facility": "south-refuge",
+            "task": null
+          }
+        ],
+        "path": {
+          "nav": {
+            "path": [],
+            "next": 0,
+            "failed": false,
+            "returning": false,
+            "queries": 0,
+            "visited": 0
+          },
+          "stuck": 0,
+          "queries": 0,
+          "batches": 0,
+          "maxExpanded": 0,
+          "failure": "",
+          "goal": "village:93:96",
+          "planning": false
+        },
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "alarm",
+            "time": 600.0075,
+            "subjects": [],
+            "result": "村门袭扰，保持局部警戒",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4920.0075
+          },
+          {
+            "eventId": "life:9",
+            "sequence": 9,
+            "kind": "alarm",
+            "time": 616.8375000000865,
+            "subjects": [],
+            "result": "居民区威胁，集结与救护",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4936.837500000087
+          }
+        ]
+      },
+      {
+        "id": "east-watch",
+        "body": {
+          "space": "village",
+          "x": 1920,
+          "y": 1060
+        },
+        "action": null,
+        "reason": "已阵亡",
+        "needs": {
+          "hunger": 16.29256255554347,
+          "fatigue": 10.646281277771715
+        },
+        "alarm": 2,
+        "candidates": [],
+        "path": null,
+        "memories": [
+          {
+            "eventId": "life:47",
+            "sequence": 47,
+            "kind": "injury",
+            "time": 705.980630000546,
+            "subjects": [
+              "east-patrol"
+            ],
+            "result": "驻防战斗受伤",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5025.980630000546
+          },
+          {
+            "eventId": "life:48",
+            "sequence": 48,
+            "kind": "injury",
+            "time": 708.4556300005587,
+            "subjects": [
+              "east-patrol"
+            ],
+            "result": "驻防战斗受伤",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5028.455630000559
+          },
+          {
+            "eventId": "life:49",
+            "sequence": 49,
+            "kind": "injury",
+            "time": 711.0056300005718,
+            "subjects": [
+              "east-patrol"
+            ],
+            "result": "驻防战斗受伤",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5031.005630000572
+          },
+          {
+            "eventId": "life:50",
+            "sequence": 50,
+            "kind": "death",
+            "time": 711.0056300005718,
+            "subjects": [
+              "east-patrol"
+            ],
+            "result": "守卫阵亡",
+            "source": "seen",
+            "importance": 80,
+            "expires": 15111.005630000573
+          }
+        ]
+      },
+      {
+        "id": "east-patrol",
+        "body": {
+          "space": "village",
+          "x": 1910,
+          "y": 1190
+        },
+        "action": null,
+        "reason": "已阵亡",
+        "needs": {
+          "hunger": 16.29256255554347,
+          "fatigue": 10.646281277771715
+        },
+        "alarm": 2,
+        "candidates": [],
+        "path": null,
+        "memories": [
+          {
+            "eventId": "life:47",
+            "sequence": 47,
+            "kind": "injury",
+            "time": 705.980630000546,
+            "subjects": [
+              "east-patrol"
+            ],
+            "result": "驻防战斗受伤",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5025.980630000546
+          },
+          {
+            "eventId": "life:48",
+            "sequence": 48,
+            "kind": "injury",
+            "time": 708.4556300005587,
+            "subjects": [
+              "east-patrol"
+            ],
+            "result": "驻防战斗受伤",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5028.455630000559
+          },
+          {
+            "eventId": "life:49",
+            "sequence": 49,
+            "kind": "injury",
+            "time": 711.0056300005718,
+            "subjects": [
+              "east-patrol"
+            ],
+            "result": "驻防战斗受伤",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5031.005630000572
+          },
+          {
+            "eventId": "life:50",
+            "sequence": 50,
+            "kind": "death",
+            "time": 711.0056300005718,
+            "subjects": [
+              "east-patrol"
+            ],
+            "result": "守卫阵亡",
+            "source": "seen",
+            "importance": 80,
+            "expires": 15111.005630000573
+          }
+        ]
+      },
+      {
+        "id": "east-archer",
+        "body": {
+          "space": "village",
+          "x": 2030,
+          "y": 900
+        },
+        "action": null,
+        "reason": "值守或沿路返回岗位",
+        "needs": {
+          "hunger": 16.29256255554347,
+          "fatigue": 10.646281277771715
+        },
+        "alarm": 2,
+        "candidates": [],
+        "path": null,
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "alarm",
+            "time": 600.0075,
+            "subjects": [],
+            "result": "村门袭扰，保持局部警戒",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4920.0075
+          },
+          {
+            "eventId": "life:9",
+            "sequence": 9,
+            "kind": "alarm",
+            "time": 616.8375000000865,
+            "subjects": [],
+            "result": "居民区威胁，集结与救护",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4936.837500000087
+          }
+        ]
+      },
+      {
+        "id": "north-watch",
+        "body": {
+          "space": "village",
+          "x": 740,
+          "y": 300
+        },
+        "action": null,
+        "reason": "值守或沿路返回岗位",
+        "needs": {
+          "hunger": 16.29256255554347,
+          "fatigue": 10.646281277771715
+        },
+        "alarm": 2,
+        "candidates": [],
+        "path": null,
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "alarm",
+            "time": 600.0075,
+            "subjects": [],
+            "result": "村门袭扰，保持局部警戒",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4920.0075
+          },
+          {
+            "eventId": "life:9",
+            "sequence": 9,
+            "kind": "alarm",
+            "time": 616.8375000000865,
+            "subjects": [],
+            "result": "居民区威胁，集结与救护",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4936.837500000087
+          }
+        ]
+      },
+      {
+        "id": "north-patrol",
+        "body": {
+          "space": "village",
+          "x": 873.2586269262902,
+          "y": 307.33694599557367
+        },
+        "action": null,
+        "reason": "值守或沿路返回岗位",
+        "needs": {
+          "hunger": 16.29256255554347,
+          "fatigue": 10.646281277771715
+        },
+        "alarm": 2,
+        "candidates": [],
+        "path": null,
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "alarm",
+            "time": 600.0075,
+            "subjects": [],
+            "result": "村门袭扰，保持局部警戒",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4920.0075
+          },
+          {
+            "eventId": "life:9",
+            "sequence": 9,
+            "kind": "alarm",
+            "time": 616.8375000000865,
+            "subjects": [],
+            "result": "居民区威胁，集结与救护",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4936.837500000087
+          }
+        ]
+      },
+      {
+        "id": "north-archer",
+        "body": {
+          "space": "village",
+          "x": 680,
+          "y": 350
+        },
+        "action": null,
+        "reason": "值守或沿路返回岗位",
+        "needs": {
+          "hunger": 16.29256255554347,
+          "fatigue": 10.646281277771715
+        },
+        "alarm": 2,
+        "candidates": [],
+        "path": null,
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "alarm",
+            "time": 600.0075,
+            "subjects": [],
+            "result": "村门袭扰，保持局部警戒",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4920.0075
+          },
+          {
+            "eventId": "life:9",
+            "sequence": 9,
+            "kind": "alarm",
+            "time": 616.8375000000865,
+            "subjects": [],
+            "result": "居民区威胁，集结与救护",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4936.837500000087
+          }
+        ]
+      },
+      {
+        "id": "south-watch",
+        "body": {
+          "space": "village",
+          "x": 810,
+          "y": 1720
+        },
+        "action": null,
+        "reason": "值守或沿路返回岗位",
+        "needs": {
+          "hunger": 16.29256255554347,
+          "fatigue": 10.646281277771715
+        },
+        "alarm": 2,
+        "candidates": [],
+        "path": null,
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "alarm",
+            "time": 600.0075,
+            "subjects": [],
+            "result": "村门袭扰，保持局部警戒",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4920.0075
+          },
+          {
+            "eventId": "life:9",
+            "sequence": 9,
+            "kind": "alarm",
+            "time": 616.8375000000865,
+            "subjects": [],
+            "result": "居民区威胁，集结与救护",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4936.837500000087
+          }
+        ]
+      },
+      {
+        "id": "south-patrol",
+        "body": {
+          "space": "village",
+          "x": 1026.0745618349113,
+          "y": 1680.3381471401867
+        },
+        "action": null,
+        "reason": "值守或沿路返回岗位",
+        "needs": {
+          "hunger": 16.29256255554347,
+          "fatigue": 10.646281277771715
+        },
+        "alarm": 2,
+        "candidates": [],
+        "path": null,
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "alarm",
+            "time": 600.0075,
+            "subjects": [],
+            "result": "村门袭扰，保持局部警戒",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4920.0075
+          },
+          {
+            "eventId": "life:9",
+            "sequence": 9,
+            "kind": "alarm",
+            "time": 616.8375000000865,
+            "subjects": [],
+            "result": "居民区威胁，集结与救护",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4936.837500000087
+          }
+        ]
+      },
+      {
+        "id": "south-archer",
+        "body": {
+          "space": "village",
+          "x": 1140,
+          "y": 1750
+        },
+        "action": null,
+        "reason": "值守或沿路返回岗位",
+        "needs": {
+          "hunger": 16.29256255554347,
+          "fatigue": 10.646281277771715
+        },
+        "alarm": 2,
+        "candidates": [],
+        "path": null,
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "alarm",
+            "time": 600.0075,
+            "subjects": [],
+            "result": "村门袭扰，保持局部警戒",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4920.0075
+          },
+          {
+            "eventId": "life:9",
+            "sequence": 9,
+            "kind": "alarm",
+            "time": 616.8375000000865,
+            "subjects": [],
+            "result": "居民区威胁，集结与救护",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 4936.837500000087
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "id": "life:39",
+        "sequence": 39,
+        "time": 686.1056300004435,
+        "kind": "injury",
+        "place": {
+          "space": "village",
+          "x": 1910,
+          "y": 1190
+        },
+        "source": "east-raid-1:3",
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "debug": false
+      },
+      {
+        "id": "life:40",
+        "sequence": 40,
+        "time": 688.5806300004563,
+        "kind": "injury",
+        "place": {
+          "space": "village",
+          "x": 1910,
+          "y": 1190
+        },
+        "source": "east-raid-1:3",
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "debug": false
+      },
+      {
+        "id": "life:41",
+        "sequence": 41,
+        "time": 691.055630000469,
+        "kind": "injury",
+        "place": {
+          "space": "village",
+          "x": 1910,
+          "y": 1190
+        },
+        "source": "east-raid-1:3",
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "debug": false
+      },
+      {
+        "id": "life:42",
+        "sequence": 42,
+        "time": 693.5306300004818,
+        "kind": "injury",
+        "place": {
+          "space": "village",
+          "x": 1910,
+          "y": 1190
+        },
+        "source": "east-raid-1:3",
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "debug": false
+      },
+      {
+        "id": "life:43",
+        "sequence": 43,
+        "time": 696.0056300004945,
+        "kind": "injury",
+        "place": {
+          "space": "village",
+          "x": 1910,
+          "y": 1190
+        },
+        "source": "east-raid-1:3",
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "debug": false
+      },
+      {
+        "id": "life:44",
+        "sequence": 44,
+        "time": 698.5556300005077,
+        "kind": "injury",
+        "place": {
+          "space": "village",
+          "x": 1910,
+          "y": 1190
+        },
+        "source": "east-raid-1:3",
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "debug": false
+      },
+      {
+        "id": "life:45",
+        "sequence": 45,
+        "time": 701.0306300005204,
+        "kind": "injury",
+        "place": {
+          "space": "village",
+          "x": 1910,
+          "y": 1190
+        },
+        "source": "east-raid-1:3",
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "debug": false
+      },
+      {
+        "id": "life:46",
+        "sequence": 46,
+        "time": 703.5056300005332,
+        "kind": "injury",
+        "place": {
+          "space": "village",
+          "x": 1910,
+          "y": 1190
+        },
+        "source": "east-raid-1:3",
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "debug": false
+      },
+      {
+        "id": "life:47",
+        "sequence": 47,
+        "time": 705.980630000546,
+        "kind": "injury",
+        "place": {
+          "space": "village",
+          "x": 1910,
+          "y": 1190
+        },
+        "source": "east-raid-1:3",
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "debug": false
+      },
+      {
+        "id": "life:48",
+        "sequence": 48,
+        "time": 708.4556300005587,
+        "kind": "injury",
+        "place": {
+          "space": "village",
+          "x": 1910,
+          "y": 1190
+        },
+        "source": "east-raid-1:3",
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "debug": false
+      },
+      {
+        "id": "life:49",
+        "sequence": 49,
+        "time": 711.0056300005718,
+        "kind": "injury",
+        "place": {
+          "space": "village",
+          "x": 1910,
+          "y": 1190
+        },
+        "source": "east-raid-1:3",
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "驻防战斗受伤",
+        "debug": false
+      },
+      {
+        "id": "life:50",
+        "sequence": 50,
+        "time": 711.0056300005718,
+        "kind": "death",
+        "place": {
+          "space": "village",
+          "x": 1910,
+          "y": 1190
+        },
+        "source": "east-raid-1:3",
+        "subjects": [
+          "east-patrol"
+        ],
+        "result": "守卫阵亡",
+        "debug": false
+      }
+    ]
+  }
+}
