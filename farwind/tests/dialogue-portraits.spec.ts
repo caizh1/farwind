@@ -111,7 +111,7 @@ test("dialogue-sign-and-inscription", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "启程 · 新游戏" }).click();
   await expect(page.locator("#modal")).toBeHidden();
-  for (const [id, x, y, name] of [["training-guide", 1700, 700, "练习场须知"], ["village-guide", 1960, 1210, "东村口路牌"], ["clue", 3370, 870, "被风磨亮的碑文"]] as const) {
+  for (const [id, x, y, name] of [["training-guide", 1700, 700, "练习场须知"], ["village-guide", 2040, 1210, "东村口路牌"], ["clue", 3370, 870, "被风磨亮的碑文"]] as const) {
     await move(page, x, y);
     await expect.poll(async () => (await read(page)).target).toBe(id);
     await page.keyboard.press("e");

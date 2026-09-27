@@ -9,22 +9,28 @@ import {
 } from "../../data/economy";
 import { items, type ItemId } from "../../data/content";
 import { add, remove, craft, validate, type State } from "./state";
+import {sleepSnapshot,type SleepSafety} from "./sleep";
 export type EconomyRequest = { sequence: number } & (
   | { kind: "buy" | "sell"; shop: ShopId; item: ItemId; quantity: number }
   | { kind: "exchange"; shop: ShopId; quantity: number }
   | { kind: "rest"; shop: ShopId; quantity: number }
+  | { kind: "sleep"; shop: ShopId; quantity: number }
   | { kind: "equip"; slot: EquipmentSlot; item: ItemId | null }
 );
 function fail(message: string): never {
   throw Error(message);
 }
-export function economySnapshot(state: State, request: EconomyRequest): State {
+export function economySnapshot(state: State, request: EconomyRequest, safety?:SleepSafety): State {
   if (
     !Number.isSafeInteger(request.sequence) ||
     request.sequence !== state.economyRevision + 1 ||
     request.sequence > 1e9
   )
     fail("交易已处理或已过期，请重新选择。");
+  if(request.kind==="sleep"){
+    if(request.shop!=="inn"||request.quantity!==1)fail("住宿服务无效。");
+    return sleepSnapshot(state,request.sequence,safety!);
+  }
   if (!["buy", "sell", "exchange", "rest", "equip"].includes(request.kind))
     fail("交易类型无效。");
   const next = validate(state);

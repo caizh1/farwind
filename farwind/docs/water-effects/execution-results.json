@@ -1,0 +1,61 @@
+{
+  "说明": "交付汇总；结果来自实际终端和浏览器执行。测试、视觉、生命周期与性能分别记录。",
+  "检查": [
+    {
+      "命令": "npm run typecheck",
+      "工作区": "farwind 当前工作区",
+      "退出码": 0,
+      "结果": "通过；最后内池遮罩修正后再次执行"
+    },
+    {
+      "命令": "npm run test -- --reporter=json --outputFile=.water-local/unit-final.json",
+      "工作区": "farwind 当前工作区",
+      "退出码": 0,
+      "结果": "22个文件、432项通过；新增5项逻辑测试已进入显式test命令",
+      "证据": "unit-results.json"
+    },
+    {
+      "命令": "FARWIND_URL=http://127.0.0.1:5221 npx playwright test tests/water-effects.spec.ts --config tools/playwright-water-effects.config.ts",
+      "工作区": "farwind 当前工作区；5221最终源码副本",
+      "退出码": 0,
+      "结果": "4项通过",
+      "证据": "browser-results.json、behavior/"
+    },
+    {
+      "命令": "npm run test:e2e -- --workers=1",
+      "工作区": ".water-local/after 冻结副本，服务5192；调整端口、证据输出与JSON记录，不改原断言",
+      "退出码": 1,
+      "结果": "145项：97通过、46失败、2跳过；较早水效实现，与最终专项区分",
+      "证据": "full-browser-results.json、full-run-summary.json"
+    },
+    {
+      "命令": "npm run build",
+      "工作区": "farwind 当前工作区",
+      "退出码": 0,
+      "结果": "通过；保留原有大chunk提示"
+    },
+    {
+      "对应脚本": "tools/verify-water-production.mjs",
+      "条件": "本地5223直接运行最终dist副本",
+      "退出码": 0,
+      "结果": "实际生产构建喷泉/池塘局部动画及静态控制检查通过，错误为空",
+      "证据": "production/result.json"
+    },
+    {
+      "对应脚本": "tools/measure-water-effects.mjs",
+      "条件": "最终5221与修改前5191；原生ANGLE Metal浏览器，两种视口/DPR、20秒阶段",
+      "退出码": 0,
+      "结果": "目标机没有明显帧率退化；短测与其他设备保证区分",
+      "证据": "performance-native-final.json"
+    },
+    {
+      "对应脚本": "tools/measure-water-cost.mjs",
+      "条件": "最终5221；SwiftShader同上下文显示/忽略/恢复各10秒",
+      "退出码": 0,
+      "结果": "软件渲染有明显额外开销，不标记性能完全通过",
+      "证据": "performance-software-final.json"
+    }
+  ],
+  "源图及截图": "素材源图与诊断图不冒充游戏截图；after、video、production为最终实际运行。",
+  "审查": "VERDICT: PASS，仅水效变更；P0/P1 BLOCKERS为空，不代表全量游戏回归通过。"
+}

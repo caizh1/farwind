@@ -5,7 +5,6 @@ import {
   roadWidth,
   WORLD,
   POND,
-  BRIDGES,
   villageAreas,
   canDecorate,
   shoreFlowers,
@@ -29,9 +28,7 @@ export function makeTerrain(this: World) {
     earth = this.textures
       .get("packed-earth")
       .getSourceImage() as HTMLImageElement,
-    bridge = this.textures.get("bridge").getSourceImage() as HTMLImageElement,
     herb = this.textures.get("herb").getSourceImage() as HTMLImageElement,
-    rock = this.textures.get("rock").getSourceImage() as HTMLImageElement,
     pond = this.textures.get("pond-water").getSourceImage() as HTMLImageElement,
     flowerBed = this.textures.get("orchard-flower-bed").getSourceImage() as HTMLImageElement;
   const groundKeys: string[] = [];
@@ -140,7 +137,7 @@ export function makeTerrain(this: World) {
         c.fillStyle = "#8b6541";
         c.fillRect(200 + i * 17, 1070, 12, 40);
       }
-      // 地面→岸底→整片池水→浅水过渡→荷叶→桥，角色仍按落地点独立排序。
+      // 地面缓存保留静态岸底；动态水面及上层装饰不重复烘焙。
       c.beginPath();
       for (let i = 0; i <= 96; i++) {
         const a = i / 96 * Math.PI * 2,
@@ -152,58 +149,11 @@ export function makeTerrain(this: World) {
       c.closePath();
       c.fillStyle = "#b2b57e";
       c.fill();
-      c.save();
-      c.beginPath();
-      c.ellipse(POND.x, POND.y, POND.rx, POND.ry, 0, 0, Math.PI * 2);
-      c.clip();
-      // 每个区块都从同一世界矩形采样，既不重复也不重新起算相位。
+      // 基础池水继续静态缓存，统一世界坐标采样；动态纹理、浅水、荷叶及桥面独立分层。
+      c.save(); c.beginPath();
+      c.ellipse(POND.x, POND.y, POND.rx, POND.ry, 0, 0, Math.PI * 2); c.clip();
       c.drawImage(pond, POND.x - POND.rx, POND.y - POND.ry, POND.rx * 2, POND.ry * 2);
-      for (const [inset, alpha] of [[2, 0.22], [5, 0.12], [8, 0.06]]) {
-        c.beginPath();
-        c.ellipse(POND.x, POND.y, POND.rx - inset, POND.ry - inset, 0, 0, Math.PI * 2);
-        c.strokeStyle = `rgba(176,204,163,${alpha})`;
-        c.lineWidth = 5;
-        c.stroke();
-      }
       c.restore();
-      // 少量沿岸旧素材打散机械椭圆；只改装饰，不改变池水和桥的逻辑边界。
-      for (const [i, a] of [0.1, 0.5, 0.9, 1.5, 2.1, 2.6, 3.6, 4.2, 4.65, 5.3, 5.85].entries()) {
-        const x = POND.x + Math.cos(a) * (POND.rx + 7),
-          y = POND.y + Math.sin(a) * (POND.ry + 7);
-        if (BRIDGES.some(b => x > b.x - 12 && x < b.x + b.w + 12 && y > b.y - 12 && y < b.y + b.h + 12)) continue;
-        c.drawImage(i % 2 ? herb : rock, x - 8, y - 10, 16, 15);
-      }
-      for (let i = 0; i < 18; i++) {
-        const a = i * 2.4,
-          x = POND.x + Math.cos(a) * (180 + (i % 4) * 9),
-          y = POND.y + Math.sin(a) * 155;
-        c.fillStyle = "#719c5a";
-        c.beginPath();
-        c.ellipse(x, y, 10, 5, 0, 0, 7);
-        c.fill();
-        if (i % 3 === 0) {
-          c.fillStyle = "#f2b6bc";
-          c.fillRect(x - 3, y - 5, 6, 5);
-        }
-      }
-      for (const b of BRIDGES) {
-        // 透明桥素材横向存放，裁掉画布留白后转为原来的南北桥轴线。
-        c.save();
-        c.translate(b.x + b.w / 2, b.y + b.h / 2);
-        c.rotate(Math.PI / 2);
-        c.drawImage(
-          bridge,
-          0,
-          92,
-          1983,
-          601,
-          -b.h / 2,
-          -(b.w + 8) / 2,
-          b.h,
-          b.w + 8,
-        );
-        c.restore();
-      }
       // 沿湖岸与主路之外点缀花簇，避免覆盖通行信息。
       for (const { x, y, pink } of shoreFlowers) {
         if (inReworkArea(x, y)) {

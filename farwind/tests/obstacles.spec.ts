@@ -78,7 +78,7 @@ test("隔离实机树边反例：正常出生、换侧、绕障与真实命中�
   await page.waitForFunction(() => {const s=(window as any).__farwind(),e=s.enemies[0],p=s.state.player;return Math.hypot(e.x-p.x,e.y-p.y)<85&&!e.meleeBlocker;});
   await page.keyboard.press("j");
   await expect.poll(async () => (await read(page)).enemies[0].hp).toBe(54);
-  await page.screenshot({ path: "docs/obstacle-fix/evidence/edge-hit.png" });
+  await page.screenshot({ path: `${process.env.FARWIND_EVIDENCE_ROOT??"docs"}/obstacle-fix/evidence/edge-hit.png` });
   await page.waitForTimeout(850);
   await walk(page, 3210, 1020);
   await walk(page, 3130, 1020);
@@ -110,7 +110,7 @@ test("隔离实机树边反例：正常出生、换侧、绕障与真实命中�
       expect(clearMeleeLine(e, trace[i].玩家)).toBe(true);
   }
   await writeFile(
-    "docs/obstacle-fix/evidence/isolated-runtime.json",
+    `${process.env.FARWIND_EVIDENCE_ROOT??"docs"}/obstacle-fix/evidence/isolated-runtime.json`,
     JSON.stringify(
       {
         说明: "隔离实机：仅导入玩家起点与其他敌人已死亡进度；叶灵使用正式出生点、AI、生命和碰撞，正常速度真实键盘。",
@@ -121,7 +121,7 @@ test("隔离实机树边反例：正常出生、换侧、绕障与真实命中�
     ),
   );
   await page.screenshot({
-    path: "docs/obstacle-fix/evidence/detour-runtime.png",
+    path: `${process.env.FARWIND_EVIDENCE_ROOT??"docs"}/obstacle-fix/evidence/detour-runtime.png`,
   });
   await page.keyboard.press("Escape");
   const paused = await read(page);

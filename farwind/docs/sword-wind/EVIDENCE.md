@@ -83,3 +83,16 @@
 | 本次验证与图集一致性 | [收尾验证](evidence/acceptance-verification.json)，六图集摘要不变、关键受测文件摘要一致；类型检查、十六文件二百九十一项逻辑测试、两项浏览器检查与生产构建通过 |
 
 复现本次浏览器检查：`FARWIND_WIND_RUN=acceptance npx playwright test tests/sword-wind-assets.spec.ts tests/sword-wind-rise.spec.ts --config tools/playwright-sword-wind.config.ts`。产物使用独立名称，不覆盖上一轮录像。原始轨道和逐帧诊断仍留在忽略目录。
+
+## 一线斩风呼啸更新
+
+| 内容 | 路径与验证边界 |
+| --- | --- |
+| 默认游戏音量试听 | [新风呼啸](assets/audio/wind-howl.wav)、[改动前释放声](assets/audio/wind-release-before.wav)；原创合成，新声音四百六十毫秒，主观音色待用户判断 |
+| 制作来源与复现 | [制作元数据](assets/audio/howl-metadata.json)、[声音验收](AUDIO_REVIEW.md)；`npm run assets:sword-wind:audio` |
+| 真实四连与实际游戏音轨 | [风呼啸实机演示](evidence/wind-howl-game.mp4)、[录像取帧](evidence/wind-howl-game.png)；实际本机五一七三实例，明确共线夹具，真实键盘，不运行敌人人工智能 |
+| 暂停与静音 | [实际菜单操作录像](evidence/wind-howl-pause-mute.mp4)；停止尾音、恢复不补播、静音不改变正式伤害 |
+| 只读诊断与释放次数 | [四连状态](evidence/wind-howl-game.json)、[声源启动](evidence/wind-howl-game-starts.json)、[暂停静音状态](evidence/wind-howl-pause-mute.json)；不强制发射或改运行中状态 |
+| 实际音轨与验证汇总 | [媒体检查](evidence/wind-howl-media-check.json)、[本轮验证](evidence/wind-howl-verification.json)；音视频墙钟对齐、正常比例及速度，没有后配试听声音 |
+
+复核：`npm run test:sword-wind:audio`。原始轨道、首次重载失败和测试追踪留在忽略目录，历史素材与弹反报告保留。隔离测试页面屏蔽并行源码编辑的热更新，实际网络和战斗逻辑未模拟；用户自然试玩保留热更新。

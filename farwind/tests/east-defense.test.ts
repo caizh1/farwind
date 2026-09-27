@@ -83,7 +83,7 @@ describe("东门真实模拟与数据边界",()=>{
   });
   it("旧结构2只补驻防，不重复发钱，新结构缺字段或复活矛盾拒绝",()=>{
     const old:any=initialState();old.schema_version=2;old.map_version=4;old.coins=17;old.equipment.weapon="ironSword";delete old.defense;
-    const next=validate(old);expect([next.schema_version,next.map_version,next.coins]).toEqual([4,6,17]);
+    const next=validate(old);expect([next.schema_version,next.map_version,next.coins]).toEqual([6,6,17]);
     expect(next.equipment.weapon).toBe("ironSword");expect(validate(next)).toEqual(next);
     const g=next.defense.guards[0];g.hp=0;g.dead=true;g.mode="dead";
     expect(validate(next).defense.guards[0].dead).toBe(true);

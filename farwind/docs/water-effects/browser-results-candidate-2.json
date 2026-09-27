@@ -1,0 +1,304 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "tests/water-effects.spec.ts",
+      "--config",
+      "tools/playwright-water-effects.config.ts"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/tools/playwright-water-effects.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 240000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../docs/water-effects/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "water-effects.spec.ts",
+      "file": "water-effects.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "固定机位局部水面随时间变化，石池沿与桥面保持稳定",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 19434,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0.008\u001b[39m\nReceived:   \u001b[31m0.00670995670995671\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0.008\u001b[39m\nReceived:   \u001b[31m0.00670995670995671\u001b[39m\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts:27:31",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                      "column": 31,
+                      "line": 27
+                    },
+                    "snippet": "  25 |     前池沿:await difference(a,b,rect(638,860,85,18)),空桥面:await difference(a,b,rect(1045,920,75,130)),池外草地:await difference(a,b,rect(1475,940,35,25))};\n  26 |   expect(results.喷泉流水.变化像素比例).toBeGreaterThan(0.005);\n> 27 |   expect(results.池塘中心.变化像素比例).toBeGreaterThan(0.008);\n     |                               ^\n  28 |   for(const r of [results.前池沿,results.空桥面,results.池外草地])expect(r.变化像素比例).toBeLessThan(0.003);\n  29 |   expect((await readWater(page)).stone).toEqual(state.stone);\n  30 |   expect(errors).toEqual([]); await writeFile(`${directory}/local-motion.json`,JSON.stringify({说明:\"固定相机，临时隐藏HUD及既有昼夜覆盖；只比较指定水面与静态控制区域，未以全图差异代替动画检查。\",结果:results},null,2));"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                        "column": 31,
+                        "line": 27
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0.008\u001b[39m\nReceived:   \u001b[31m0.00670995670995671\u001b[39m\n\n  25 |     前池沿:await difference(a,b,rect(638,860,85,18)),空桥面:await difference(a,b,rect(1045,920,75,130)),池外草地:await difference(a,b,rect(1475,940,35,25))};\n  26 |   expect(results.喷泉流水.变化像素比例).toBeGreaterThan(0.005);\n> 27 |   expect(results.池塘中心.变化像素比例).toBeGreaterThan(0.008);\n     |                               ^\n  28 |   for(const r of [results.前池沿,results.空桥面,results.池外草地])expect(r.变化像素比例).toBeLessThan(0.003);\n  29 |   expect((await readWater(page)).stone).toEqual(state.stone);\n  30 |   expect(errors).toEqual([]); await writeFile(`${directory}/local-motion.json`,JSON.stringify({说明:\"固定相机，临时隐藏HUD及既有昼夜覆盖；只比较指定水面与静态控制区域，未以全图差异代替动画检查。\",结果:results},null,2));\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts:27:31"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T02:05:19.704Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/test-results/water-effects-固定机位局部水面随时间变化，石池沿与桥面保持稳定/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/test-results/water-effects-固定机位局部水面随时间变化，石池沿与桥面保持稳定/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/test-results/water-effects-固定机位局部水面随时间变化，石池沿与桥面保持稳定/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                    "column": 31,
+                    "line": 27
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-3f51c815d8aa002c4dad",
+          "file": "water-effects.spec.ts",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "title": "暂停恢复及三次返回标题继续不补算、不重复对象，场景重启释放拥有资源",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 20022,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 12\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"游戏运行错误 TypeError: Cannot read properties of undefined (reading 'sys')\u001b[39m\n\u001b[31m+     at Sprite.setTexture (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:36402:31)\u001b[39m\n\u001b[31m+     at World.drawEnemyPose (http://127.0.0.1:5192/src/game/scenes/World.ts?t=1790474596649:1370:10)\u001b[39m\n\u001b[31m+     at World.update (http://127.0.0.1:5192/src/game/scenes/World.ts?t=1790474596649:1611:9)\u001b[39m\n\u001b[31m+     at Systems.step (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:155256:22)\u001b[39m\n\u001b[31m+     at SceneManager.update (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:153257:89)\u001b[39m\n\u001b[31m+     at Game.step (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:13125:16)\u001b[39m\n\u001b[31m+     at TimeStep.step (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:13885:10)\u001b[39m\n\u001b[31m+     at step (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:23971:12)\",\u001b[39m\n\u001b[31m+   \"Cannot read properties of undefined (reading 'sys')\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 12\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"游戏运行错误 TypeError: Cannot read properties of undefined (reading 'sys')\u001b[39m\n\u001b[31m+     at Sprite.setTexture (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:36402:31)\u001b[39m\n\u001b[31m+     at World.drawEnemyPose (http://127.0.0.1:5192/src/game/scenes/World.ts?t=1790474596649:1370:10)\u001b[39m\n\u001b[31m+     at World.update (http://127.0.0.1:5192/src/game/scenes/World.ts?t=1790474596649:1611:9)\u001b[39m\n\u001b[31m+     at Systems.step (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:155256:22)\u001b[39m\n\u001b[31m+     at SceneManager.update (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:153257:89)\u001b[39m\n\u001b[31m+     at Game.step (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:13125:16)\u001b[39m\n\u001b[31m+     at TimeStep.step (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:13885:10)\u001b[39m\n\u001b[31m+     at step (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:23971:12)\",\u001b[39m\n\u001b[31m+   \"Cannot read properties of undefined (reading 'sys')\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts:53:93",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                      "column": 93,
+                      "line": 53
+                    },
+                    "snippet": "  51 |   expect(lifecycle.destroyed).toBe(true);expect(lifecycle.owned).toEqual([false,false]);expect(lifecycle.shared).toBe(true);\n  52 |   await page.getByRole(\"button\",{name:\"继续旅途\"}).click();await page.waitForTimeout(600);\n> 53 |   expect((await readWater(page)).water.counts).toEqual(initial.water.counts);expect(errors).toEqual([]);\n     |                                                                                             ^\n  54 |   await writeFile(`${directory}/lifecycle.json`,JSON.stringify({说明:\"通过正式菜单返回与继续；另执行真实场景stop/start检查资源清理。\",暂停:paused.water,恢复:resumed.water,停止:lifecycle,重启:(await readWater(page)).water},null,2));\n  55 | });\n  56 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                        "column": 93,
+                        "line": 53
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 12\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"游戏运行错误 TypeError: Cannot read properties of undefined (reading 'sys')\u001b[39m\n\u001b[31m+     at Sprite.setTexture (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:36402:31)\u001b[39m\n\u001b[31m+     at World.drawEnemyPose (http://127.0.0.1:5192/src/game/scenes/World.ts?t=1790474596649:1370:10)\u001b[39m\n\u001b[31m+     at World.update (http://127.0.0.1:5192/src/game/scenes/World.ts?t=1790474596649:1611:9)\u001b[39m\n\u001b[31m+     at Systems.step (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:155256:22)\u001b[39m\n\u001b[31m+     at SceneManager.update (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:153257:89)\u001b[39m\n\u001b[31m+     at Game.step (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:13125:16)\u001b[39m\n\u001b[31m+     at TimeStep.step (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:13885:10)\u001b[39m\n\u001b[31m+     at step (http://127.0.0.1:5192/@fs/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after-vite-cache/deps/phaser.js?v=c01b1501:23971:12)\",\u001b[39m\n\u001b[31m+   \"Cannot read properties of undefined (reading 'sys')\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  51 |   expect(lifecycle.destroyed).toBe(true);expect(lifecycle.owned).toEqual([false,false]);expect(lifecycle.shared).toBe(true);\n  52 |   await page.getByRole(\"button\",{name:\"继续旅途\"}).click();await page.waitForTimeout(600);\n> 53 |   expect((await readWater(page)).water.counts).toEqual(initial.water.counts);expect(errors).toEqual([]);\n     |                                                                                             ^\n  54 |   await writeFile(`${directory}/lifecycle.json`,JSON.stringify({说明:\"通过正式菜单返回与继续；另执行真实场景stop/start检查资源清理。\",暂停:paused.water,恢复:resumed.water,停止:lifecycle,重启:(await readWater(page)).water},null,2));\n  55 | });\n  56 |\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts:53:93"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T02:05:41.839Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/test-results/water-effects-暂停恢复及三次返回标题继续不补算、不重复对象，场景重启释放拥有资源/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/test-results/water-effects-暂停恢复及三次返回标题继续不补算、不重复对象，场景重启释放拥有资源/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/test-results/water-effects-暂停恢复及三次返回标题继续不补算、不重复对象，场景重启释放拥有资源/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                    "column": 93,
+                    "line": 53
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-6234252fa66403613fe7",
+          "file": "water-effects.spec.ts",
+          "line": 33,
+          "column": 1
+        },
+        {
+          "title": "两座桥、池岸与喷泉前后行走，非整数缩放保持对齐",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 61491,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T02:06:03.532Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-d5c8279084ad375b1db7",
+          "file": "water-effects.spec.ts",
+          "line": 57,
+          "column": 1
+        },
+        {
+          "title": "真实训练命中停顿期间环境时钟仍推进，离开水景停止局部更新",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9299,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T02:07:05.142Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-5bbae19b7020b8efcbb8",
+          "file": "water-effects.spec.ts",
+          "line": 71,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-27T02:05:19.108Z",
+    "duration": 115454.795,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

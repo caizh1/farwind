@@ -1,0 +1,1531 @@
+{
+  "说明": "默认npm run test:e2e -- --workers=1；冻结5192副本保护现有证据。完整执行结束，退出码1。没有更改原断言。最终5221水效专项另4/4通过。",
+  "执行命令": "npm run test:e2e -- --workers=1",
+  "退出码": 1,
+  "汇总": {
+    "startTime": "2026-09-27T02:12:17.859Z",
+    "duration": 6344325.812,
+    "expected": 97,
+    "skipped": 2,
+    "unexpected": 46,
+    "flaky": 0
+  },
+  "状态计数": {
+    "expected": 97,
+    "unexpected": 46,
+    "skipped": 2
+  },
+  "运行错误": [],
+  "用例": [
+    {
+      "文件": "adventure.spec.ts",
+      "行": 20,
+      "用例": "adventure-loop",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "animation.spec.ts",
+      "行": 12,
+      "用例": "motion-directions-wall-stop-pause",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "animation.spec.ts",
+      "行": 85,
+      "用例": "companion-well-house-corners",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBeLessThan(expected)\n\nExpected: < 5\nReceived:   5.500702773732883\n\n  94 |     // 以实际位置决定松键，避免短于输入往返耗时的墙钟脉冲反复越过目标。\n  95 |     await move(page,x,y);\n> 96 |     for(const [axis,target]of [[\"x\",x],[\"y\",y]]as const)expect(Math.abs((await read(page)).state.player[axis]-target)).toBeLessThan(5);\n     |                                                                                                                        ^\n  97 |     expect((await read(page)).companion.blocked).toBe(false);\n  98 |   }\n  99 |   await go(850, 860);\n    at go (/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/animation.spec.ts:96:120)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/animation.spec.ts:106:3",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "chest.spec.ts",
+      "行": 11,
+      "用例": "village-chest",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "chest.spec.ts",
+      "行": 11,
+      "用例": "hidden-chest",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "combat-action.spec.ts",
+      "行": 5,
+      "用例": "四方向实机动作逐帧推进，三段收招与再次进攻",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 1\nReceived: 0\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  40 |         page.evaluate(() => (window as any).__farwind().session.combat.stage),\n  41 |       )\n> 42 |       .toBe(1);\n     |        ^\n  43 |     await page.waitForFunction(\n  44 |       () => (window as any).__farwind().animation.hero.phase === \"active\",\n  45 |       undefined,\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/combat-action.spec.ts:42:8",
+      "归属说明": "未接入水效的起点副本已复现同一阶段断言失败"
+    },
+    {
+      "文件": "combat-contact.spec.ts",
+      "行": 7,
+      "用例": "隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBeGreaterThan(expected)\n\nExpected: > 0\nReceived:   0\n\n  62 |       s.enemies.find((e: any) => e.id === \"leaf-1\").hp === 34,\n  63 |   );\n> 64 |   expect(hits.length).toBeGreaterThan(0);\n     |                       ^\n  65 |   expect(hits.every((s: any) => s.combat.facing === 3)).toBe(true);\n  66 |   expect(\n  67 |     hits.some((s: any) => {\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/combat-contact.spec.ts:64:23",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "combat-feel.spec.ts",
+      "行": 3,
+      "用例": "固定早按与乱按：单击不自动续刀，最多预约一刀，停手收剑，移动立即退出",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "combat-feel.spec.ts",
+      "行": 132,
+      "用例": "隔离河岸夹具：风步与普攻踏步不穿障碍，范围内隔岸敌人不受伤",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "combat-feel.spec.ts",
+      "行": 165,
+      "用例": "隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: true\nReceived: false\n\nCall Log:\n- Timeout 7000ms exceeded while waiting on the predicate\n\n  188 |       { timeout: 7000, intervals: [50] },\n  189 |     )\n> 190 |     .toBe(true);\n      |      ^\n  191 |   const before = await sample(page);\n  192 |   await page.keyboard.press(\"j\");\n  193 |   await expect\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/combat-feel.spec.ts:190:6",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "combat-followup.spec.ts",
+      "行": 4,
+      "用例": "最终显示：宽限内持剑，接招不插空手；缓退松键按有效面向风步",
+      "状态": "unexpected",
+      "结果": [
+        "timedOut"
+      ],
+      "首个错误": "Test timeout of 240000ms exceeded.",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "combat.spec.ts",
+      "行": 16,
+      "用例": "真实键鼠：三连、断连、风步、暂停和续玩",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "combat.spec.ts",
+      "行": 128,
+      "用例": "隔离森林战斗夹具：三连命中、风步拉开、再进攻",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "day-night-failure.spec.ts",
+      "行": 14,
+      "用例": "预警写失败不出生，同页继续按原计划重试",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "day-night-failure.spec.ts",
+      "行": 21,
+      "用例": "窗口末端预警写失败，午夜取消且不补刷",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "day-night-failure.spec.ts",
+      "行": 26,
+      "用例": "满包夜风不吞奖励，真实整理后领取且重载不能复领",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "day-night-journey.spec.ts",
+      "行": 9,
+      "用例": "同一新档完整昼夜旅程，保护期以正常游玩耗尽",
+      "状态": "unexpected",
+      "结果": [
+        "timedOut"
+      ],
+      "首个错误": "Test timeout of 1500000ms exceeded.",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "day-night-production.spec.ts",
+      "行": 7,
+      "用例": "正式构建住宿、继续、可见度和调试隔离",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBeUndefined()\n\nReceived: {\"draws\": 1, \"lights\": 10, \"loopGains\": [0, 0.040600843727588654], \"loops\": 2, \"objects\": 416, \"phase\": {\"color\": [22, 30, 55], \"lamps\": 1, \"shade\": 0.34}, \"textures\": 153}\n\n   7 | test(\"正式构建住宿、继续、可见度和调试隔离\",async({page})=>{\n   8 |  const errors:string[]=[];page.on(\"pageerror\",e=>errors.push(e.message));const s=initialState();s.time=1260;s.player.x=1685;s.player.y=1680;await fixture(page,s);\n>  9 |  expect((await read(page)).dayNight).toBeUndefined();await expect(page.locator(\"#day-night-debug\")).toHaveCount(0);await expect(page.getByRole(\"button\",{name:\"NPC 调试\",exact:true})).toHaveCount(0);await sleep(page);await expect(page.locator(\"#shop-feedback\")).toContainText(\"已完成\");const n=(await read(page)).state;expect([n.coins,n.time,n.night.plan.outcome]).toEqual([108,1800,\"skipped\"]);await page.locator(\"#close\").click();await expect(page.locator(\"#clock\")).toContainText(\"黎明\");await page.waitForTimeout(350);await page.screenshot({path:\"docs/day-night/evidence/m5-production-dawn.png\"});\n     |                                      ^\n  10 |  await page.keyboard.press(\"Escape\");await page.getByRole(\"button\",{name:\"设置\",exact:true}).click();await page.locator(\"#night-visibility\").press(\"Home\");await page.getByRole(\"button\",{name:\"返回\",exact:true}).click();await page.getByRole(\"button\",{name:\"保存并返回标题\"}).click();const saved=(await read(page)).state;await page.reload();await page.getByRole(\"button\",{name:\"继续旅途\",exact:true}).click();const restored=(await read(page)).state;expect([restored.coins,restored.night.plan.outcome]).toEqual([108,\"skipped\"]);expect(restored.defense.protectionMs+(restored.time-saved.time)/1.5*1000).toBeCloseTo(saved.defense.protectionMs,3);expect(restored.time).toBeGreaterThanOrEqual(1800);expect(errors).toEqual([]);\n  11 | });\n  12 | test(\"正式构建跨午夜与未结束来袭拒绝住宿\",async({page})=>{\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/day-night-production.spec.ts:9:38",
+      "归属说明": "生产专用断言实际指向开发服务"
+    },
+    {
+      "文件": "day-night-production.spec.ts",
+      "行": 12,
+      "用例": "正式构建跨午夜与未结束来袭拒绝住宿",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "day-night.spec.ts",
+      "行": 20,
+      "用例": "四阶段及夜间森林遗迹，HUD不被覆盖",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "day-night.spec.ts",
+      "行": 28,
+      "用例": "真实键鼠探索链：白天准备、第一夜发现、旅馆住宿、标题继续",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "day-night.spec.ts",
+      "行": 40,
+      "用例": "住宿保存失败、双击与重载的金币时间守恒",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "day-night.spec.ts",
+      "行": 46,
+      "用例": "住宿不足与06点关闭，失败仍可退出",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "day-night.spec.ts",
+      "行": 49,
+      "用例": "住宿保留有效风步冷却，保存中快捷药剂不能覆盖探索提交",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "day-night.spec.ts",
+      "行": 56,
+      "用例": "正式夜袭保存后才出生，午夜及加载不重复",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "day-night.spec.ts",
+      "行": 64,
+      "用例": "预警保存时松开方向不会续走",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "day-night.spec.ts",
+      "行": 69,
+      "用例": "适配1280×720 DPR1移动resize焦点",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "day-night.spec.ts",
+      "行": 69,
+      "用例": "适配1366×768 DPR1.5移动resize焦点",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "day-night.spec.ts",
+      "行": 69,
+      "用例": "适配1920×1080 DPR2移动resize焦点",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "day-night.spec.ts",
+      "行": 77,
+      "用例": "昼夜反复接管与标题继续，资源和环境音不增长",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "dialogue-portraits.spec.ts",
+      "行": 42,
+      "用例": "dialogue-residents",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"healer\"\nReceived: undefined\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  67 |   expect((await read(page)).animation.hero.action).toBe(\"idle\");\n  68 |   await move(page, 1130, 610);\n> 69 |   await expect.poll(async () => (await read(page)).target).toBe(\"healer\");\n     |                                                            ^\n  70 |   await page.keyboard.press(\"e\");\n  71 |   await expect(page.locator(\"#dialog-title\")).toHaveText(\"药师 · 小满\");\n  72 |   evidence.push({ 角色: \"小满\", ...await portrait(page, \"healer\") });\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/dialogue-portraits.spec.ts:69:60",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "dialogue-portraits.spec.ts",
+      "行": 110,
+      "用例": "dialogue-sign-and-inscription",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "dialogue-portraits.spec.ts",
+      "行": 127,
+      "用例": "dialogue-fallback-and-long-text",
+      "状态": "unexpected",
+      "结果": [
+        "timedOut"
+      ],
+      "首个错误": "Test timeout of 240000ms exceeded.",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "dialogue-portraits.spec.ts",
+      "行": 169,
+      "用例": "dialogue-late-image-failure",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(locator).toHaveText(expected) failed\n\nLocator: locator('#dialog-title')\nExpected: \"药师 · 小满\"\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toHaveText\" locator('#dialog-title') with timeout 5000ms\n  - waiting for locator('#dialog-title')\n\n\n  175 |   });\n  176 |   await page.goto(\"/docs/dialogue-portraits/preview.html\", { waitUntil: \"domcontentloaded\" });\n> 177 |   await expect(page.locator(\"#dialog-title\")).toHaveText(\"药师 · 小满\");\n      |                                               ^\n  178 |   await page.getByLabel(\"预览对象\").selectOption(\"elder\");\n  179 |   await portrait(page, \"elder\");\n  180 |   release();\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/dialogue-portraits.spec.ts:177:47",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "dialogue-portraits.spec.ts",
+      "行": 186,
+      "用例": "dialogue-missing-runtime",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(locator).toHaveText(expected) failed\n\nLocator: locator('#dialog-title')\nExpected: \"药师 · 小满\"\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toHaveText\" locator('#dialog-title') with timeout 5000ms\n  - waiting for locator('#dialog-title')\n\n\n  192 |   const before = await read(page);\n  193 |   await page.keyboard.press(\"e\");\n> 194 |   await expect(page.locator(\"#dialog-title\")).toHaveText(\"药师 · 小满\");\n      |                                               ^\n  195 |   await expect(page.locator(\".dialogue-portrait\")).toHaveCount(0);\n  196 |   await expect(page.locator(\"#dialog-text\")).toContainText(\"带来药草\");\n  197 |   await layout(page);\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/dialogue-portraits.spec.ts:194:47",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "drop.spec.ts",
+      "行": 4,
+      "用例": "隔离满包夹具：正常击杀、整理后领取、存档往返不重复",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "east-defense-recovery.spec.ts",
+      "行": 14,
+      "用例": "实际守卫死亡后IDB请求成功但事务中止，暂停反馈与手动重存可恢复",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "east-defense-recovery.spec.ts",
+      "行": 46,
+      "用例": "玩家真实攻击来袭怪并在村门内实际受击，不污染固定主线结算",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "east-defense-recovery.spec.ts",
+      "行": 66,
+      "用例": "保留新剑风与弹反入口，真实第四刀和K可命中动态来袭怪",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "east-defense-recovery.spec.ts",
+      "行": 89,
+      "用例": "生产构建恢复活跃演练并自主结算，查询开关不暴露开发按钮",
+      "状态": "skipped",
+      "结果": [
+        "skipped"
+      ],
+      "首个错误": null,
+      "说明": "原配置跳过，未验证"
+    },
+    {
+      "文件": "east-defense.spec.ts",
+      "行": 15,
+      "用例": "新游戏实走东门演练，真实放箭、自主击退和离屏持续按键不受停顿",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "east-defense.spec.ts",
+      "行": 43,
+      "用例": "受控低血守卫被实际怪物致死，关键保存与重载不复活",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "east-defense.spec.ts",
+      "行": 59,
+      "用例": "活跃波次保存重载、商店与失焦全体暂停，射手死亡塔停火",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "east-defense.spec.ts",
+      "行": 77,
+      "用例": "正常模式不显示开发演练，玩家攻击不会伤守卫，主角黑猫通过门口",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "economy-production.spec.ts",
+      "行": 5,
+      "用例": "生产构建的服务、暂停、实际成交和重载",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBeUndefined()\n\nReceived: 0\n\n  10 |   await page.waitForFunction(()=>(window as any).__farwind().target===\"service-general\");await page.keyboard.press(\"e\");\n  11 |   await page.getByLabel(\"物品\",{exact:true}).selectOption(\"potion\");await page.getByRole(\"button\",{name:\"核对交易\"}).click();await page.getByRole(\"button\",{name:\"确认购买\"}).click();await expect(page.locator(\"#shop-feedback\")).toContainText(\"交易已完成并保存\");\n> 12 |   const before=await page.evaluate(()=>(window as any).__farwind());expect(before.state.coins).toBe(102);expect(before.layoutLabels).toBeUndefined();\n     |                                                                                                                                      ^\n  13 |   await page.screenshot({path:`${root}/shop.png`});await page.keyboard.press(\"Escape\");await page.reload();await page.getByRole(\"button\",{name:\"继续旅途\",exact:true}).click();\n  14 |   const restored=await page.evaluate(()=>(window as any).__farwind().state);expect([restored.coins,restored.economyRevision,restored.map_version]).toEqual([102,1,6]);expect(restored.bag).toEqual(before.state.bag);expect(restored.shopStock).toEqual(before.state.shopStock);expect(errors).toEqual([]);\n  15 | });\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/economy-production.spec.ts:12:134",
+      "归属说明": "生产专用断言实际指向开发服务"
+    },
+    {
+      "文件": "economy.spec.ts",
+      "行": 58,
+      "用例": "新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"service-inn\"\nReceived: \"life-door:inn\"\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  38 |       })\n  39 |       .toBe(true);\n> 40 |   await expect.poll(async () => (await read(page)).target).toBe(id);\n     |                                                            ^\n  41 |   await page.keyboard.press(\"e\");\n  42 |   if (id === \"healer\")\n  43 |     await page.getByRole(\"button\", { name: \"查看药师服务\" }).click();\n    at open (/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/economy.spec.ts:40:60)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/economy.spec.ts:129:3",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "economy.spec.ts",
+      "行": 178,
+      "用例": "商店实际负向检查、双击只成交一次以及窄屏可操作",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "economy.spec.ts",
+      "行": 217,
+      "用例": "满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.\n\n   at npc-navigation.ts:17\n\n  15 |     await page.keyboard.down(key);\n  16 |     try {\n> 17 |       await page.waitForFunction(\n     |                  ^\n  18 |         ({ axis, target, sign }) =>\n  19 |           sign * ((window as any).__farwind().state.player[axis] - target) > -3,\n  20 |         { axis, target, sign },\n    at indoorMove (/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/npc-navigation.ts:17:18)\n    at approachNpc (/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/npc-navigation.ts:86:7)\n    at open (/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/economy.spec.ts:24:24)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/economy.spec.ts:232:3",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "economy.spec.ts",
+      "行": 255,
+      "用例": "IDB写请求成功后事务中止，钱物库存与上次有效档完全保留",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "economy.spec.ts",
+      "行": 291,
+      "用例": "交易待保存时不能Esc关闭，世界和输入全部暂停",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "economy.spec.ts",
+      "行": 341,
+      "用例": "正式森林战斗实际扣血及铁剑增伤，默认战斗数值保持",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "economy.spec.ts",
+      "行": 392,
+      "用例": "真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复迁移",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "hud.spec.ts",
+      "行": 29,
+      "用例": "hud-folds",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "hud.spec.ts",
+      "行": 88,
+      "用例": "hud-navigation",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(locator).toBeVisible() failed\n\nLocator: locator('.pause-panel')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" locator('.pause-panel') with timeout 5000ms\n  - waiting for locator('.pause-panel')\n\n\n  89 |   await start(page);\n  90 |   await page.keyboard.press(\"Escape\");\n> 91 |   await expect(page.locator(\".pause-panel\")).toBeVisible();\n     |                                              ^\n  92 |   const paused = await read(page);\n  93 |   await page.keyboard.press(\"Tab\");\n  94 |   await expect(page.locator(\"#pause-bag\")).toBeFocused();\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/hud.spec.ts:91:46",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "hud.spec.ts",
+      "行": 147,
+      "用例": "hud-hotbar",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "hud.spec.ts",
+      "行": 202,
+      "用例": "hud-pointer",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "hud.spec.ts",
+      "行": 239,
+      "用例": "hud-storage",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "hud.spec.ts",
+      "行": 265,
+      "用例": "hud-dialog-training",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "hud.spec.ts",
+      "行": 292,
+      "用例": "hud-responsive",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: ENOENT: no such file or directory, open 'docs/hud-redesign/after/layout-test.json'\n\n  355 |     await c.close();\n  356 |   }\n> 357 |   await writeFile(\n      |   ^\n  358 |     \"docs/hud-redesign/after/layout-test.json\",\n  359 |     JSON.stringify({ 结果: \"通过\", 测量: records }, null, 2),\n  360 |   );\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/hud.spec.ts:357:3",
+      "归属说明": "副本缺专用夹具或证据输出目录"
+    },
+    {
+      "文件": "hud.spec.ts",
+      "行": 363,
+      "用例": "hud-backup",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "level-rework.spec.ts",
+      "行": 9,
+      "用例": "局部入口真实步行、黑猫跟随、双门柱阻挡和存档重载",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"village-guide\"\nReceived: \"east-patrol\"\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  104 |   await expect\n  105 |     .poll(async () => (await read(page)).target)\n> 106 |     .toBe(\"village-guide\");\n      |      ^\n  107 |   await page.keyboard.press(\"e\");\n  108 |   await expect(page.locator(\"#modal\")).toContainText(\"东村口路牌\");\n  109 |   await page.getByRole(\"button\", { name: \"继续 · E\" }).click();\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/level-rework.spec.ts:106:6",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "level-rework.spec.ts",
+      "行": 160,
+      "用例": "普通画面和地图无工程标号，开发开关显式开启才出现",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "map-expansion.spec.ts",
+      "行": 26,
+      "用例": "map-expansion-player-journey",
+      "状态": "unexpected",
+      "结果": [
+        "timedOut"
+      ],
+      "首个错误": "Test timeout of 240000ms exceeded.",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "npc-life-production.spec.ts",
+      "行": 5,
+      "用例": "正式构建：旧档迁移、动态药房交谈、原服务与隐藏调试",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 0\nReceived: 1\n\n  29 |   expect(\n  30 |     await page.getByRole(\"button\", { name: \"NPC 调试\", exact: true }).count(),\n> 31 |   ).toBe(0);\n     |     ^\n  32 |   expect((await read(page)).state.schema_version).toBe(6);\n  33 |   expect((await read(page)).state.defense.guards[2].dead).toBe(true);\n  34 |   await page.waitForFunction(\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/npc-life-production.spec.ts:31:5",
+      "归属说明": "生产专用断言实际指向开发服务"
+    },
+    {
+      "文件": "npc-life.spec.ts",
+      "行": 43,
+      "用例": "居民真实日常、动态位置、药房室内与存档恢复",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "npc-life.spec.ts",
+      "行": 99,
+      "用例": "和平轮休真实进入营房，森林敌人不取消全村日常",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "npc-life.spec.ts",
+      "行": 144,
+      "用例": "开发演练：配药中断、集结、到场救护、维修与恢复",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "npc-life.spec.ts",
+      "行": 193,
+      "用例": "旧档真实导入、死亡保留、夜间床位、暂停与失焦冻结",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "npc-life.spec.ts",
+      "行": 261,
+      "用例": "室内观察不会重置室外来袭，居民笔记与性能采样",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "npc-life.spec.ts",
+      "行": 307,
+      "用例": "真实驻防命中形成伤情，小满携箱到场执行救治",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "npc-life.spec.ts",
+      "行": 386,
+      "用例": "私人储物真实查看、物品随身、午饭前归还与读档",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "npc-life.spec.ts",
+      "行": 426,
+      "用例": "床位演练：小满沿路入住旅馆备用床，室内存档保留而室外继续",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "obstacles.spec.ts",
+      "行": 33,
+      "用例": "隔离实机树边反例：正常出生、换侧、绕障与真实命中，不修改敌人",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "obstacles.spec.ts",
+      "行": 137,
+      "用例": "隔离异常掉落旧档：修复安全点、死亡ID不复活、正常领取关键材料与续玩",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "orchard-polish.spec.ts",
+      "行": 40,
+      "用例": "orchard-polish-movement",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBeCloseTo(expected, precision)\n\nExpected: 1493.9908440837025\nReceived: 1492.0192461176293\n\nExpected precision:    4\nExpected difference: < 0.00005\nReceived difference:   1.9715979660732046\n\n  71 |     });\n  72 |     expect(order.玩家).toBeCloseTo(snapshot.state.player.y, 4);\n> 73 |     expect(order.黑猫).toBeCloseTo(snapshot.companion.y, 4);\n     |                      ^\n  74 |     if (depth !== undefined) {\n  75 |       if (name.endsWith(\"behind\")) expect(order.玩家).toBeLessThan(depth);\n  76 |       else expect(order.玩家).toBeGreaterThan(depth);\n    at checkpoint (/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/orchard-polish.spec.ts:73:22)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/orchard-polish.spec.ts:92:3",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "orchard-polish.spec.ts",
+      "行": 161,
+      "用例": "orchard-polish-assets-lifecycle",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-contextmenu.spec.ts",
+      "行": 6,
+      "用例": "PARRY-03-contextmenu",
+      "状态": "unexpected",
+      "结果": [
+        "timedOut"
+      ],
+      "首个错误": "Test timeout of 240000ms exceeded.",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 43,
+      "用例": "V3-AB-A-normal",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 43,
+      "用例": "V3-AB-B-normal",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 43,
+      "用例": "V3-AB-C-normal",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 43,
+      "用例": "V3-AB-D-normal",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 53,
+      "用例": "V3-VISUAL-perfect-hit-combo",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: worker process exited unexpectedly (code=null, signal=SIGABRT)",
+      "归属说明": "测试进程内存耗尽并退出"
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 58,
+      "用例": "V3-VISUAL-cancel-no-false-hit",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 62,
+      "用例": "V3-INTEGRATION-wild-slime",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 66,
+      "用例": "V3-AUDIO-unparried-strike-still-audible",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 71,
+      "用例": "V3-INTEGRATION-two-enemies",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 76,
+      "用例": "V3-INTEGRATION-leaf-projection",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 79,
+      "用例": "V3-INTEGRATION-wild-leaf",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 83,
+      "用例": "V3-INTEGRATION-four-directions-muted",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 91,
+      "用例": "V3-INTEGRATION-death-newgame",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 95,
+      "用例": "V3-INTEGRATION-defense",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 99,
+      "用例": "V3-INTEGRATION-pause-reset",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 103,
+      "用例": "V3-AUDIO-real-context-cache-release-mute",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBeLessThan(expected)\n\nExpected: < 1\nReceived:   1\n\n  108 |   await new Promise(r=>setTimeout(r,15));const overlap=sound.diagnostic();await new Promise(r=>setTimeout(r,280));const released=sound.diagnostic();sound.volume=0;sound.feedback({...base,id:'静音',kind:'parry-contact'},'D');const muted=sound.diagnostic();sound.clearFeedback();const reset=sound.diagnostic();sound.destroy();return {overlap,released,muted,reset};\n  109 |  });\n> 110 |  expect(result.overlap.cached).toBe(33);expect(result.overlap.events).toHaveLength(5);expect(result.overlap.buses.threat).toBe(1);expect(result.overlap.buses.noncritical).toBeLessThan(1);expect(result.released.voices).toBe(0);expect(result.released.buses.noncritical).toBeCloseTo(1);expect(result.muted.events).toHaveLength(5);expect(result.reset.events).toHaveLength(0);await writeFile(`${dir}/audio-context.json`,JSON.stringify({说明:'独立真实AudioContext接口测试，不强制游戏成功；缓存、同帧事件、威胁声部、清理、静音',结果:result},null,2));\n      |                                                                                                                                                                            ^\n  111 | });\n  112 | test('V3-AUDIO-intercepted-strike-keeps-other-threats',async({page})=>{\n  113 |  await page.goto('/');await page.getByRole('button',{name:'启程 · 新游戏',exact:true}).click();\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/parry-feedback-v3.spec.ts:110:172",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 112,
+      "用例": "V3-AUDIO-intercepted-strike-keeps-other-threats",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-feedback-v3.spec.ts",
+      "行": 123,
+      "用例": "V3-REGRESSION-unlocked-fourth",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-focus.spec.ts",
+      "行": 40,
+      "用例": "PARRY-03",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-production.spec.ts",
+      "行": 5,
+      "用例": "V2-PRODUCTION-real-input-auto-counter",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4188/\nCall log:\n  - navigating to \"http://127.0.0.1:4188/\", waiting until \"load\"\n\n\n   6 |  const fixture=initialState();fixture.player.x=850;fixture.player.y=720;fixture.quest=3;\n   7 |  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());\n>  8 |  await page.goto(process.env.FARWIND_PARRY_PRODUCTION_URL??'http://127.0.0.1:4188/');const chooser=page.waitForEvent('filechooser');await page.getByRole('button',{name:'导入存档',exact:true}).click();await(await chooser).setFiles({name:'production-parry-fixture.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(fixture))});\n     |             ^\n   9 |  await expect(page.getByRole('button',{name:'迎风架剑练习',exact:true})).toBeVisible();\n  10 |  await page.keyboard.press('k');await expect(page.locator('.meter.stamina')).toContainText('88 / 100');\n  11 |  await page.waitForTimeout(450);await page.mouse.click(650,390,{button:'right'});await expect.poll(async()=>page.evaluate(()=>(window as any).__farwind().state.player.stamina)).toBeLessThan(85);\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/parry-production.spec.ts:8:13",
+      "归属说明": "专用生产端口未运行"
+    },
+    {
+      "文件": "parry-v2-visual.spec.ts",
+      "行": 37,
+      "用例": "V2-VISUAL-01-auto-only",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-v2-visual.spec.ts",
+      "行": 43,
+      "用例": "V2-VISUAL-02-perfect-combo",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(locator).toContainText(expected) failed\n\nLocator: locator('#parry-status')\nExpected substring: \"成功\"\nReceived string:    \"K 架剑就绪\"\nTimeout: 5000ms\n\nCall log:\n  - Expect \"toContainText\" locator('#parry-status') with timeout 5000ms\n  - waiting for locator('#parry-status')\n    - locator resolved to <span role=\"status\" id=\"parry-status\">K 架剑就绪</span>\n    - unexpected value \"K 架剑就绪\"\n    4 × locator resolved to <span role=\"status\" id=\"parry-status\">架剑已发动</span>\n      - unexpected value \"架剑已发动\"\n    9 × locator resolved to <span role=\"status\" id=\"parry-status\">K 架剑就绪</span>\n      - unexpected value \"K 架剑就绪\"\n\n\n  42 | });\n  43 | test('V2-VISUAL-02-perfect-combo',async({page})=>{\n> 44 |  await setup(page);await visualCue(page,'perfect','visual-perfect');await expect(page.locator('#parry-status')).toContainText('成功');await page.keyboard.press('j');\n     |                                                                                                                 ^\n  45 |  await expect.poll(async()=>(await read(page)).contacts.at(-1)?.result).toBe('perfect');await expect(page.locator('#parry-status')).toContainText('第3刀');await page.keyboard.press('j');await expect.poll(async()=>(await read(page)).training.damage).toBe(80);\n  46 |  const frames=await page.evaluate(()=>(window as any).__v2VisualFrames);expect(frames.some((f:any)=>f.战斗.buffered&&f.战斗.hitStopRemaining>0)).toBe(true);expect(frames.some((f:any)=>f.动作.phase==='active'&&f.动作.key.startsWith('hero/counter'))).toBe(true);await finish(page,'visual-perfect-combo');\n  47 | });\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/parry-v2-visual.spec.ts:44:113",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "parry-v2-visual.spec.ts",
+      "行": 48,
+      "用例": "V2-VISUAL-03-motion-muted",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry-v2-visual.spec.ts",
+      "行": 52,
+      "用例": "V2-VISUAL-04-dash-cancel",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry.spec.ts",
+      "行": 39,
+      "用例": "PARRY-01",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry.spec.ts",
+      "行": 59,
+      "用例": "PARRY-02",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry.spec.ts",
+      "行": 68,
+      "用例": "PARRY-04",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry.spec.ts",
+      "行": 75,
+      "用例": "PARRY-05",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "parry.spec.ts",
+      "行": 82,
+      "用例": "PARRY-06",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "session.spec.ts",
+      "行": 27,
+      "用例": "session-sprint-recovery",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBeGreaterThan(expected)\n\nExpected: > 200\nReceived:   33.319999999999894\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  30 |   await expect\n  31 |     .poll(async () => (await read(page)).session.sim)\n> 32 |     .toBeGreaterThan(200);\n     |      ^\n  33 |   await page.keyboard.press(\"Escape\");\n  34 |   await page.locator(\"#pause-help\").click();\n  35 |   await expect(page.locator(\".controls-guide\")).toContainText(\"按住空格并移动\");\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/session.spec.ts:32:6",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "session.spec.ts",
+      "行": 118,
+      "用例": "session-title-continue-new-refresh",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "stability.spec.ts",
+      "行": 3,
+      "用例": "pause-input-and-save-file-validation",
+      "状态": "unexpected",
+      "结果": [
+        "timedOut"
+      ],
+      "首个错误": "Test timeout of 240000ms exceeded.",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "sword-wind-assets.spec.ts",
+      "行": 2,
+      "用例": "独立素材固定预览：六图集加载、逐帧和正常速度播放",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(locator).toContainText(expected) failed\n\nLocator: locator('#status')\nExpected substring: \"已装载 6 个图集\"\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toContainText\" locator('#status') with timeout 5000ms\n  - waiting for locator('#status')\n\n\n  2 | test('独立素材固定预览：六图集加载、逐帧和正常速度播放',async({page})=>{\n  3 |  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));\n> 4 |  await page.goto('/docs/sword-wind/assets/preview.html');await expect(page.locator('#status')).toContainText('已装载 6 个图集');\n    |                                                                                                ^\n  5 |  await expect(page.locator('#approval')).toContainText('上撩动作与地面切痕已通过用户视觉验收');\n  6 |  await page.getByRole('button',{name:'暂停播放',exact:true}).click();\n  7 |  for(const at of [0,35,70,110,135,210,270,340,400,444,470,600]){await page.locator('#scrub').fill(String(at));await expect(page.locator('#status')).toContainText(`时间 ${at} 毫秒`);}\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind-assets.spec.ts:4:96",
+      "归属说明": "副本素材预览目录初次缺失，补齐并启用录屏后独立1项通过"
+    },
+    {
+      "文件": "sword-wind-audio.spec.ts",
+      "行": 30,
+      "用例": "WIND-AUDIO-01 真实第四击使用预生成呼啸，首靶结算及音轨采集",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "sword-wind-audio.spec.ts",
+      "行": 41,
+      "用例": "WIND-AUDIO-02 暂停停止呼啸，恢复不重播，静音不影响正式剑风裁决",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "sword-wind-focus.spec.ts",
+      "行": 8,
+      "用例": "WIND-08",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "sword-wind-rise.spec.ts",
+      "行": 11,
+      "用例": "WIND-12 上撩、逐段地面切痕、首目标停止、暂停与消隐",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: ENOENT: no such file or directory, open 'docs/sword-wind/evidence/rise-ground.json'\n\n   at sword-wind-fixtures.ts:106\n\n  104 |       return (window as any).__windFrames;\n  105 |     });\n> 106 |   await writeFile(\n      |   ^\n  107 |     `${dir}/${name}.json`,\n  108 |     JSON.stringify(\n  109 |       {\n    at finish (/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind-fixtures.ts:106:3)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind-rise.spec.ts:79:3",
+      "归属说明": "副本缺专用夹具或证据输出目录"
+    },
+    {
+      "文件": "sword-wind.spec.ts",
+      "行": 13,
+      "用例": "WIND-01",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 1\nReceived: 0\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  31 |         ).length,\n  32 |     )\n> 33 |     .toBe(1);\n     |      ^\n  34 |   const s = await read(page);\n  35 |   expect(s.swordWind.events[0].target).toBe(\"wind-arena-A\");\n  36 |   expect(s.enemies.find((e: any) => e.id === \"wind-arena-A\").hp).toBe(12);\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind.spec.ts:33:6",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "sword-wind.spec.ts",
+      "行": 48,
+      "用例": "WIND-02",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: ENOENT: no such file or directory, open 'docs/sword-wind/evidence/three-only.json'\n\n   at sword-wind-fixtures.ts:106\n\n  104 |       return (window as any).__windFrames;\n  105 |     });\n> 106 |   await writeFile(\n      |   ^\n  107 |     `${dir}/${name}.json`,\n  108 |     JSON.stringify(\n  109 |       {\n    at finish (/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind-fixtures.ts:106:3)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind.spec.ts:63:3",
+      "归属说明": "副本缺专用夹具或证据输出目录"
+    },
+    {
+      "文件": "sword-wind.spec.ts",
+      "行": 65,
+      "用例": "WIND-03",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "TypeError: Cannot read properties of null (reading 'saveAs')\n\n   at sword-wind-fixtures.ts:138\n\n  136 |   const video = page.video();\n  137 |   await page.close();\n> 138 |   await video!.saveAs(`${raw}/${name}-video.webm`);\n      |                ^\n  139 | }\n  140 | test.afterEach(async ({ page }, info) => {\n  141 |   if (info.status !== info.expectedStatus && !page.isClosed()) {\n    at finish (/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind-fixtures.ts:138:16)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind.spec.ts:112:3",
+      "归属说明": "默认配置未开启用例所需录屏"
+    },
+    {
+      "文件": "sword-wind.spec.ts",
+      "行": 114,
+      "用例": "WIND-04",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "TypeError: Cannot read properties of null (reading 'saveAs')\n\n   at sword-wind-fixtures.ts:138\n\n  136 |   const video = page.video();\n  137 |   await page.close();\n> 138 |   await video!.saveAs(`${raw}/${name}-video.webm`);\n      |                ^\n  139 | }\n  140 | test.afterEach(async ({ page }, info) => {\n  141 |   if (info.status !== info.expectedStatus && !page.isClosed()) {\n    at finish (/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind-fixtures.ts:138:16)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind.spec.ts:135:3",
+      "归属说明": "默认配置未开启用例所需录屏"
+    },
+    {
+      "文件": "sword-wind.spec.ts",
+      "行": 137,
+      "用例": "WIND-05",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "TypeError: Cannot read properties of null (reading 'saveAs')\n\n   at sword-wind-fixtures.ts:138\n\n  136 |   const video = page.video();\n  137 |   await page.close();\n> 138 |   await video!.saveAs(`${raw}/${name}-video.webm`);\n      |                ^\n  139 | }\n  140 | test.afterEach(async ({ page }, info) => {\n  141 |   if (info.status !== info.expectedStatus && !page.isClosed()) {\n    at finish (/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind-fixtures.ts:138:16)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind.spec.ts:165:3",
+      "归属说明": "默认配置未开启用例所需录屏"
+    },
+    {
+      "文件": "sword-wind.spec.ts",
+      "行": 167,
+      "用例": "WIND-06",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "TypeError: Cannot read properties of null (reading 'saveAs')\n\n   at sword-wind-fixtures.ts:138\n\n  136 |   const video = page.video();\n  137 |   await page.close();\n> 138 |   await video!.saveAs(`${raw}/${name}-video.webm`);\n      |                ^\n  139 | }\n  140 | test.afterEach(async ({ page }, info) => {\n  141 |   if (info.status !== info.expectedStatus && !page.isClosed()) {\n    at finish (/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind-fixtures.ts:138:16)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind.spec.ts:217:3",
+      "归属说明": "默认配置未开启用例所需录屏"
+    },
+    {
+      "文件": "sword-wind.spec.ts",
+      "行": 219,
+      "用例": "WIND-07",
+      "状态": "skipped",
+      "结果": [
+        "skipped"
+      ],
+      "首个错误": null,
+      "说明": "原配置跳过，未验证"
+    },
+    {
+      "文件": "sword-wind.spec.ts",
+      "行": 241,
+      "用例": "WIND-09",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "TypeError: Cannot read properties of null (reading 'saveAs')\n\n   at sword-wind-fixtures.ts:138\n\n  136 |   const video = page.video();\n  137 |   await page.close();\n> 138 |   await video!.saveAs(`${raw}/${name}-video.webm`);\n      |                ^\n  139 | }\n  140 | test.afterEach(async ({ page }, info) => {\n  141 |   if (info.status !== info.expectedStatus && !page.isClosed()) {\n    at finish (/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind-fixtures.ts:138:16)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind.spec.ts:266:3",
+      "归属说明": "默认配置未开启用例所需录屏"
+    },
+    {
+      "文件": "sword-wind.spec.ts",
+      "行": 268,
+      "用例": "WIND-10",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "TypeError: Cannot read properties of null (reading 'saveAs')\n\n   at sword-wind-fixtures.ts:138\n\n  136 |   const video = page.video();\n  137 |   await page.close();\n> 138 |   await video!.saveAs(`${raw}/${name}-video.webm`);\n      |                ^\n  139 | }\n  140 | test.afterEach(async ({ page }, info) => {\n  141 |   if (info.status !== info.expectedStatus && !page.isClosed()) {\n    at finish (/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind-fixtures.ts:138:16)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind.spec.ts:301:3",
+      "归属说明": "默认配置未开启用例所需录屏"
+    },
+    {
+      "文件": "sword-wind.spec.ts",
+      "行": 303,
+      "用例": "WIND-11",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "TypeError: Cannot read properties of null (reading 'saveAs')\n\n   at sword-wind-fixtures.ts:138\n\n  136 |   const video = page.video();\n  137 |   await page.close();\n> 138 |   await video!.saveAs(`${raw}/${name}-video.webm`);\n      |                ^\n  139 | }\n  140 | test.afterEach(async ({ page }, info) => {\n  141 |   if (info.status !== info.expectedStatus && !page.isClosed()) {\n    at finish (/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind-fixtures.ts:138:16)\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/sword-wind.spec.ts:328:3",
+      "归属说明": "默认配置未开启用例所需录屏"
+    },
+    {
+      "文件": "training.spec.ts",
+      "行": 57,
+      "用例": "新游戏四面训练、风步底座、暂停和同页继续：真实输入",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "training.spec.ts",
+      "行": 184,
+      "用例": "隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "village-boundary.spec.ts",
+      "行": 6,
+      "用例": "四个村墙角真实斜走与风步仍由连续碰撞阻挡",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "village-defense.spec.ts",
+      "行": 27,
+      "用例": "真实输入通过三门，北南不触发森林任务，主角和黑猫返回，西门与两柱实际阻挡",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "village-defense.spec.ts",
+      "行": 145,
+      "用例": "版本2被村墙占用的位置就近恢复，任务背包保持，正常模式无工程标签",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "village-integration.spec.ts",
+      "行": 10,
+      "用例": "east-watch真实致死后关闭浏览器，活跃事件恢复与多次结算幂等",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: ENOENT: no such file or directory, open '.parry-local/m5/fixtures.json'\n\n   9 | async function fixture(page:Page,s:unknown){validate(s);page.once('dialog',d=>d.accept());await page.waitForFunction(()=>typeof (window as any).__farwind==='function');const chooser=page.waitForEvent('filechooser');await page.getByRole('button',{name:'导入存档',exact:true}).click();await(await chooser).setFiles({name:'integration-fixture.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(s))});await page.waitForFunction(()=>(window as any).__farwind().mode==='');}\n  10 | for(const [i,id]of ['east-watch','north-watch','south-watch'].entries())test(`${id}真实致死后关闭浏览器，活跃事件恢复与多次结算幂等`,async()=>{\n> 11 |  const cases=JSON.parse(await readFile('.parry-local/m5/fixtures.json','utf8'));const profile=resolve(`.parry-local/m5/profiles/${id}-${Date.now()}`),errors:string[]=[];\n     |                         ^\n  12 |  const open=async()=>{const c=await chromium.launchPersistentContext(profile,{viewport:{width:1280,height:720},args:['--enable-gpu','--use-gl=angle','--use-angle=metal','--ignore-gpu-blocklist']});const p=c.pages()[0];p.on('pageerror',e=>errors.push(e.message));await p.goto(process.env.FARWIND_URL??'http://127.0.0.1:5204/');return{c,p};};\n  13 |  await mkdir(root,{recursive:true});let {c,p}=await open();\n  14 |  try{\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/village-integration.spec.ts:11:25",
+      "归属说明": "副本缺专用夹具或证据输出目录"
+    },
+    {
+      "文件": "village-integration.spec.ts",
+      "行": 10,
+      "用例": "north-watch真实致死后关闭浏览器，活跃事件恢复与多次结算幂等",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: ENOENT: no such file or directory, open '.parry-local/m5/fixtures.json'\n\n   9 | async function fixture(page:Page,s:unknown){validate(s);page.once('dialog',d=>d.accept());await page.waitForFunction(()=>typeof (window as any).__farwind==='function');const chooser=page.waitForEvent('filechooser');await page.getByRole('button',{name:'导入存档',exact:true}).click();await(await chooser).setFiles({name:'integration-fixture.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(s))});await page.waitForFunction(()=>(window as any).__farwind().mode==='');}\n  10 | for(const [i,id]of ['east-watch','north-watch','south-watch'].entries())test(`${id}真实致死后关闭浏览器，活跃事件恢复与多次结算幂等`,async()=>{\n> 11 |  const cases=JSON.parse(await readFile('.parry-local/m5/fixtures.json','utf8'));const profile=resolve(`.parry-local/m5/profiles/${id}-${Date.now()}`),errors:string[]=[];\n     |                         ^\n  12 |  const open=async()=>{const c=await chromium.launchPersistentContext(profile,{viewport:{width:1280,height:720},args:['--enable-gpu','--use-gl=angle','--use-angle=metal','--ignore-gpu-blocklist']});const p=c.pages()[0];p.on('pageerror',e=>errors.push(e.message));await p.goto(process.env.FARWIND_URL??'http://127.0.0.1:5204/');return{c,p};};\n  13 |  await mkdir(root,{recursive:true});let {c,p}=await open();\n  14 |  try{\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/village-integration.spec.ts:11:25",
+      "归属说明": "副本缺专用夹具或证据输出目录"
+    },
+    {
+      "文件": "village-integration.spec.ts",
+      "行": 10,
+      "用例": "south-watch真实致死后关闭浏览器，活跃事件恢复与多次结算幂等",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: ENOENT: no such file or directory, open '.parry-local/m5/fixtures.json'\n\n   9 | async function fixture(page:Page,s:unknown){validate(s);page.once('dialog',d=>d.accept());await page.waitForFunction(()=>typeof (window as any).__farwind==='function');const chooser=page.waitForEvent('filechooser');await page.getByRole('button',{name:'导入存档',exact:true}).click();await(await chooser).setFiles({name:'integration-fixture.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(s))});await page.waitForFunction(()=>(window as any).__farwind().mode==='');}\n  10 | for(const [i,id]of ['east-watch','north-watch','south-watch'].entries())test(`${id}真实致死后关闭浏览器，活跃事件恢复与多次结算幂等`,async()=>{\n> 11 |  const cases=JSON.parse(await readFile('.parry-local/m5/fixtures.json','utf8'));const profile=resolve(`.parry-local/m5/profiles/${id}-${Date.now()}`),errors:string[]=[];\n     |                         ^\n  12 |  const open=async()=>{const c=await chromium.launchPersistentContext(profile,{viewport:{width:1280,height:720},args:['--enable-gpu','--use-gl=angle','--use-angle=metal','--ignore-gpu-blocklist']});const p=c.pages()[0];p.on('pageerror',e=>errors.push(e.message));await p.goto(process.env.FARWIND_URL??'http://127.0.0.1:5204/');return{c,p};};\n  13 |  await mkdir(root,{recursive:true});let {c,p}=await open();\n  14 |  try{\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/village-integration.spec.ts:11:25",
+      "归属说明": "副本缺专用夹具或证据输出目录"
+    },
+    {
+      "文件": "village-integration.spec.ts",
+      "行": 28,
+      "用例": "结构1旧地图从正式导入迁移，保存及重开不重复坐标迁移",
+      "状态": "unexpected",
+      "结果": [
+        "timedOut"
+      ],
+      "首个错误": "Test timeout of 240000ms exceeded.",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "village-raids.spec.ts",
+      "行": 13,
+      "用例": "东门按有效时间自动预警、离屏自主击退和保存恢复",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"warning\"\nReceived: undefined\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  15 |  const s=initialState();s.killed=['slime-1','slime-2','leaf-1','leaf-2'];s.quest=0;s.player.x=930;s.player.y=1220;\n  16 |  s.defense.protectionMs=0;s.defense.cooldownMs=800;s.defense.seed=seedFor(i);s.time=2870;s.night.plan={...makeNightPlan(s,2),at:2870.1,gate:gate.id,count:2,outcome:\"pending\"};await fixture(page,s);\n> 17 |  await expect.poll(async()=>(await read(page)).state.defense.raid?.phase).toBe('warning');\n     |                                                                           ^\n  18 |  await expect.poll(async()=>(await read(page)).defense.awaitingCheckpoint).toBe(false);\n  19 |  await page.keyboard.press('Escape');const paused=await read(page);expect(paused.state.defense.raid.gateId).toBe(gate.id);expect(paused.defense.enemies).toEqual([]);\n  20 |  await page.waitForTimeout(700);expect((await read(page)).state.defense).toEqual(paused.state.defense);\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/village-raids.spec.ts:17:75",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "village-raids.spec.ts",
+      "行": 13,
+      "用例": "北门按有效时间自动预警、离屏自主击退和保存恢复",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"warning\"\nReceived: undefined\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  15 |  const s=initialState();s.killed=['slime-1','slime-2','leaf-1','leaf-2'];s.quest=0;s.player.x=930;s.player.y=1220;\n  16 |  s.defense.protectionMs=0;s.defense.cooldownMs=800;s.defense.seed=seedFor(i);s.time=2870;s.night.plan={...makeNightPlan(s,2),at:2870.1,gate:gate.id,count:2,outcome:\"pending\"};await fixture(page,s);\n> 17 |  await expect.poll(async()=>(await read(page)).state.defense.raid?.phase).toBe('warning');\n     |                                                                           ^\n  18 |  await expect.poll(async()=>(await read(page)).defense.awaitingCheckpoint).toBe(false);\n  19 |  await page.keyboard.press('Escape');const paused=await read(page);expect(paused.state.defense.raid.gateId).toBe(gate.id);expect(paused.defense.enemies).toEqual([]);\n  20 |  await page.waitForTimeout(700);expect((await read(page)).state.defense).toEqual(paused.state.defense);\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/village-raids.spec.ts:17:75",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "village-raids.spec.ts",
+      "行": 13,
+      "用例": "南门按有效时间自动预警、离屏自主击退和保存恢复",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"warning\"\nReceived: undefined\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  15 |  const s=initialState();s.killed=['slime-1','slime-2','leaf-1','leaf-2'];s.quest=0;s.player.x=930;s.player.y=1220;\n  16 |  s.defense.protectionMs=0;s.defense.cooldownMs=800;s.defense.seed=seedFor(i);s.time=2870;s.night.plan={...makeNightPlan(s,2),at:2870.1,gate:gate.id,count:2,outcome:\"pending\"};await fixture(page,s);\n> 17 |  await expect.poll(async()=>(await read(page)).state.defense.raid?.phase).toBe('warning');\n     |                                                                           ^\n  18 |  await expect.poll(async()=>(await read(page)).defense.awaitingCheckpoint).toBe(false);\n  19 |  await page.keyboard.press('Escape');const paused=await read(page);expect(paused.state.defense.raid.gateId).toBe(gate.id);expect(paused.defense.enemies).toEqual([]);\n  20 |  await page.waitForTimeout(700);expect((await read(page)).state.defense).toEqual(paused.state.defense);\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/village-raids.spec.ts:17:75",
+      "归属说明": "未完成根因归属，保留实际失败"
+    },
+    {
+      "文件": "village-raids.spec.ts",
+      "行": 36,
+      "用例": "自动预警保存事务中止时回滚，原计划重试后出生",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "village-raids.spec.ts",
+      "行": 45,
+      "用例": "主角与黑猫实际往返三门，正常模式无开发分区和按钮",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "visual-polish.spec.ts",
+      "行": 24,
+      "用例": "village-polish-movement",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "visual-polish.spec.ts",
+      "行": 217,
+      "用例": "village-polish-render-lifecycle",
+      "状态": "unexpected",
+      "结果": [
+        "failed"
+      ],
+      "首个错误": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 2\nReceived: 0\n\n  292 |   const before = await resources();\n  293 |   expect(before.地表).toBe(28);\n> 294 |   expect(before.涟漪).toBe(2);\n      |                     ^\n  295 |   await page.keyboard.press(\"Escape\");\n  296 |   await expect.poll(async () => (await read(page)).mode).toBe(\"pause\");\n  297 |   await page.waitForTimeout(100);\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.water-local/after/tests/visual-polish.spec.ts:294:21",
+      "归属说明": "旧喷泉Tween数量断言与本次明确替换冲突"
+    },
+    {
+      "文件": "visual.spec.ts",
+      "行": 2,
+      "用例": "village-visual",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "water-effects.spec.ts",
+      "行": 16,
+      "用例": "water-motion-local",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "water-effects.spec.ts",
+      "行": 33,
+      "用例": "water-lifecycle",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "water-effects.spec.ts",
+      "行": 58,
+      "用例": "water-navigation",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    },
+    {
+      "文件": "water-effects.spec.ts",
+      "行": 72,
+      "用例": "water-hitstop-culling",
+      "状态": "expected",
+      "结果": [
+        "passed"
+      ],
+      "首个错误": null
+    }
+  ],
+  "失败分类": {
+    "未完成根因归属，保留实际失败": 25,
+    "未接入水效的起点副本已复现同一阶段断言失败": 1,
+    "生产专用断言实际指向开发服务": 3,
+    "副本缺专用夹具或证据输出目录": 6,
+    "测试进程内存耗尽并退出": 1,
+    "专用生产端口未运行": 1,
+    "副本素材预览目录初次缺失，补齐并启用录屏后独立1项通过": 1,
+    "默认配置未开启用例所需录屏": 7,
+    "旧喷泉Tween数量断言与本次明确替换冲突": 1
+  },
+  "注意": "分类仅基于确定证据，不把剩余失败一概归因于既有改动或环境。全量副本早于最终透明遮罩、删除重复池沿层、参数集中与失焦入口修正。最终当前代码已独立执行水效专项及生产构建检查。"
+}

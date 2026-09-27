@@ -284,6 +284,8 @@ test("orchard-polish-assets-lifecycle", async ({ page }) => {
         缩放监听: scene.scale.listenerCount("resize"),
       };
     });
+  // 等首批文本纹理完成渲染，比较相同稳定阶段而非创建中间状态。
+  await page.waitForFunction(()=> (window as any).__farwind().session.sim>800);
   const before = await resources();
   expect(before.地表).toBe(28);
   expect(before.长椅).toBe(2);
@@ -291,7 +293,7 @@ test("orchard-polish-assets-lifecycle", async ({ page }) => {
     (window as any).__orchardGame.scene.getScene("World").scene.restart(),
   );
   await page.getByRole("button", { name: "继续旅途", exact: true }).click();
-  await page.waitForTimeout(500);
+  await page.waitForFunction(()=> (window as any).__farwind().session.sim>800);
   const after = await resources();
   expect(after).toEqual(before);
   await page.screenshot({ path: `${directory}/scene-restarted.png` });

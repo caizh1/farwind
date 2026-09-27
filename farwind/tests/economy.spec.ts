@@ -1,3 +1,4 @@
+import { approachNpc } from "./npc-navigation";
 import { test, expect, type Page } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import { move } from "./map-navigation";
@@ -20,19 +21,22 @@ async function fixture(page: Page, state = initialState()) {
   await page.waitForFunction(() => (window as any).__farwind().mode === "");
 }
 async function open(page: Page, id: string, x: number, y: number) {
-  await move(page, x, y);
-  await expect
-    .poll(async () => {
-      const s = await read(page);
-      return (
-        !s.companion.blocked &&
-        Math.hypot(
-          s.companion.x - s.state.player.x,
-          s.companion.y - s.state.player.y,
-        ) < 120
-      );
-    })
-    .toBe(true);
+  if (id === "healer") await approachNpc(page, id);
+  else await move(page, x, y);
+  // NPC会移动，黑猫不是交谈前置条件；采集链仍单独检查伙伴跟随。
+  if (id !== "healer")
+    await expect
+      .poll(async () => {
+        const s = await read(page);
+        return (
+          !s.companion.blocked &&
+          Math.hypot(
+            s.companion.x - s.state.player.x,
+            s.companion.y - s.state.player.y,
+          ) < 120
+        );
+      })
+      .toBe(true);
   await expect.poll(async () => (await read(page)).target).toBe(id);
   await page.keyboard.press("e");
   if (id === "healer")
@@ -86,7 +90,7 @@ test("新游戏真实采集和四服务路线、确认换药、买卖装备、�
   }
   await move(page, 2170, 1080);
   expect((await read(page)).state.quest).toBe(2);
-  await move(page, 1110, 600);
+  await approachNpc(page, "healer");
   await page.keyboard.press("e");
   const before = (await read(page)).state;
   expect(before.crafted).toBe(false);
@@ -125,7 +129,7 @@ test("新游戏真实采集和四服务路线、确认换药、买卖装备、�
   await open(page, "service-inn", 1630, 1650);
   await page.screenshot({ path: `${root}/inn-service.png` });
   await page.getByRole("button", { name: "离开商店" }).click();
-  await move(page, 2000, 700);
+  await move(page, 2030, 700);
   await expect
     .poll(async () => (await read(page)).target)
     .toBe("barracks-sign");
@@ -406,7 +410,7 @@ test("真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复�
     restored.map_version,
     restored.coins,
     restored.quest,
-  ]).toEqual([4, 6, 120, 3]);
+  ]).toEqual([6, 6, 120, 3]);
   expect(restored.bag).toEqual(old.bag);
   expect(
     Math.hypot(restored.player.x - 930, restored.player.y - 1100),
@@ -414,8 +418,13 @@ test("真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复�
   expect(restored.player.x).toBeLessThan(2100);
   // 恢复点贴近建筑边界；先真实向外走，避免测试寻路的额外6像素裕量误判起点。
   await page.keyboard.down("s");
-  try { await page.waitForFunction(()=>(window as any).__farwind().state.player.y > 1158); }
-  finally { await page.keyboard.up("s"); }
+  try {
+    await page.waitForFunction(
+      () => (window as any).__farwind().state.player.y > 1158,
+    );
+  } finally {
+    await page.keyboard.up("s");
+  }
   await open(page, "service-general", 930, 1220);
   await page.getByLabel("物品", { exact: true }).selectOption("wood");
   await confirm(page, "购买");

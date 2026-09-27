@@ -1,0 +1,304 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "tests/water-effects.spec.ts",
+      "--config",
+      "tools/playwright-water-effects.config.ts"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/tools/playwright-water-effects.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 240000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../docs/water-effects/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "water-effects.spec.ts",
+      "file": "water-effects.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "water-motion-local",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24888,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T02:09:28.271Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-68e9e06de44fde4efebc",
+          "file": "water-effects.spec.ts",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "title": "water-lifecycle",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 14296,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m216.61333333333354\u001b[39m\nReceived: \u001b[31m233.27333333333357\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m216.61333333333354\u001b[39m\nReceived: \u001b[31m233.27333333333357\u001b[39m\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts:36:46",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                      "column": 46,
+                      "line": 36
+                    },
+                    "snippet": "  34 |   const errors=await startWater(page); const initial=await readWater(page);\n  35 |   await page.keyboard.press(\"Escape\");const paused=await readWater(page);await page.waitForTimeout(700);\n> 36 |   expect((await readWater(page)).water.time).toBe(paused.water.time);\n     |                                              ^\n  37 |   await page.getByRole(\"button\",{name:\"继续旅途\"}).click();await page.waitForTimeout(180);\n  38 |   const resumed=await readWater(page); expect(resumed.water.time-paused.water.time).toBeLessThan(300);expect(resumed.water.time).toBeGreaterThan(paused.water.time);\n  39 |   for(let i=0;i<3;i++) {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                        "column": 46,
+                        "line": 36
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m216.61333333333354\u001b[39m\nReceived: \u001b[31m233.27333333333357\u001b[39m\n\n  34 |   const errors=await startWater(page); const initial=await readWater(page);\n  35 |   await page.keyboard.press(\"Escape\");const paused=await readWater(page);await page.waitForTimeout(700);\n> 36 |   expect((await readWater(page)).water.time).toBe(paused.water.time);\n     |                                              ^\n  37 |   await page.getByRole(\"button\",{name:\"继续旅途\"}).click();await page.waitForTimeout(180);\n  38 |   const resumed=await readWater(page); expect(resumed.water.time-paused.water.time).toBeLessThan(300);expect(resumed.water.time).toBeGreaterThan(paused.water.time);\n  39 |   for(let i=0;i<3;i++) {\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts:36:46"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T02:09:53.486Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/test-results/water-effects-water-lifecycle/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/test-results/water-effects-water-lifecycle/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/test-results/water-effects-water-lifecycle/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                    "column": 46,
+                    "line": 36
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-1645f9b13a73179ce238",
+          "file": "water-effects.spec.ts",
+          "line": 33,
+          "column": 1
+        },
+        {
+          "title": "water-navigation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 89077,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T02:10:11.189Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-49134a7c3e0143dccac5",
+          "file": "water-effects.spec.ts",
+          "line": 57,
+          "column": 1
+        },
+        {
+          "title": "water-hitstop-culling",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 15089,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts:77:74",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                      "column": 74,
+                      "line": 77
+                    },
+                    "snippet": "  75 |   await page.keyboard.press(\"w\");await page.keyboard.press(\"j\");await page.waitForTimeout(500);\n  76 |   const frames=await page.evaluate(()=>{const s=(window as any).__waterGame.scene.getScene(\"World\");s.events.off(\"postupdate\",(window as any).__waterSample);return (window as any).__waterHitFrames;});\n> 77 |   const frozen=frames.filter((f:any)=>f.hitstop>0);expect(frozen.length).toBeGreaterThan(0);\n     |                                                                          ^\n  78 |   expect(frozen.at(-1).time).toBeGreaterThan(frozen[0].time);\n  79 |   await page.evaluate(()=>{(window as any).__waterGame.scene.getScene(\"World\").cameras.main.centerOn(3100,600);});await page.waitForTimeout(180);\n  80 |   const off=await readWater(page);await page.waitForTimeout(500);const off2=await readWater(page);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                        "column": 74,
+                        "line": 77
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n\n  75 |   await page.keyboard.press(\"w\");await page.keyboard.press(\"j\");await page.waitForTimeout(500);\n  76 |   const frames=await page.evaluate(()=>{const s=(window as any).__waterGame.scene.getScene(\"World\");s.events.off(\"postupdate\",(window as any).__waterSample);return (window as any).__waterHitFrames;});\n> 77 |   const frozen=frames.filter((f:any)=>f.hitstop>0);expect(frozen.length).toBeGreaterThan(0);\n     |                                                                          ^\n  78 |   expect(frozen.at(-1).time).toBeGreaterThan(frozen[0].time);\n  79 |   await page.evaluate(()=>{(window as any).__waterGame.scene.getScene(\"World\").cameras.main.centerOn(3100,600);});await page.waitForTimeout(180);\n  80 |   const off=await readWater(page);await page.waitForTimeout(500);const off2=await readWater(page);\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts:77:74"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T02:11:40.499Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/test-results/water-effects-water-hitstop-culling/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/test-results/water-effects-water-hitstop-culling/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.water-local/test-results/water-effects-water-hitstop-culling/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/water-effects.spec.ts",
+                    "column": 74,
+                    "line": 77
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "bb67a89faca5e370e555-6ca2e5c5a6c6de8fdbc5",
+          "file": "water-effects.spec.ts",
+          "line": 71,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-27T02:09:26.388Z",
+    "duration": 152272.151,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

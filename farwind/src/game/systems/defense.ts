@@ -1,3 +1,5 @@
+import { GUARD_LANDINGS, type Place } from '../../data/npcLife';
+import type {GuardId} from '../../data/defense';
 import { DEFENSE, TOWERS, RAID_GATES, RAID_TIMING, GUARD_DEFS, GUARD_WEAPONS, GUARD_ARMOR, type GateId } from "../../data/defense";
 import { props } from "../../data/world";
 import { regionAt } from "../../data/village";
@@ -15,7 +17,7 @@ type GuardRuntime = { nav: EnemyBody["nav"]; attack: GuardAttack | null; serial:
   facing: 0 | 1 | 2 | 3; moved: number; distance: number; flashUntil: number };
 export type DefenseArrow = { id: string; sourceId: string; eventId: string; x: number; y: number;
   origin: Point; vx: number; vy: number; age: number; damage: number; travelled: number; hit: Set<string> };
-export type DefenseNotice = { kind: "hit" | "death" | "ended" | "shot" | "warning" | "started" | "delayed"; id: string; sourceId?: string;
+export type DefenseNotice = { kind: "hit" | "death" | "ended" | "shot" | "warning" | "started" | "delayed"; id: string; sourceId?: string; eventKey?:string;
   at: number; damage?: number; x?: number; y?: number };
 
 export function nextRandom(seed: number) {
@@ -48,9 +50,15 @@ export function prepareRaid(s: DefenseState, player: Point, gateId: GateId, coun
 }
 export function prepareEastRaid(s: DefenseState, player: Point) { return prepareRaid(s, player, "east-gate"); }
 export class EastDefense {
+  observerSpace="village";
+  peaceOrders=new Map<string,Place>();
+  lifeMove?: (guard:GuardState,target:Place,ms:number,budget:{queries:number})=>number;
+  leaveGuard(id:GuardId){const g=this.state.guards.find(g=>g.id===id)!;if(g.dead||g.offDuty)return;g.offDuty=true;g.mode="life";g.towerTransitMs=GUARD_DEFS.find(d=>d.id===id)!.role==="archer"?1800:0;this.runtime.get(id)!.attack=null;}
+  recallGuard(id:GuardId){const g=this.state.guards.find(g=>g.id===id)!;this.peaceOrders.delete(id);if(!g.dead&&g.offDuty)g.mode="return";}
+  healGuard(id:string,amount:number){const g=this.state.guards.find(g=>g.id===id);if(g&&!g.dead&&amount>0)g.hp=Math.min(GUARD_DEFS.find(d=>d.id===id)!.maxHP,g.hp+Math.min(30,amount));}
   enemies: DefenseEnemy[] = [];
   external: DefenseHostile[] = [];
-  manages(e: EnemyBody) { return e.hp > 0 && !e.disabled && this.state.guards.some(g => !g.dead &&
+  manages(e: EnemyBody) { return e.hp > 0 && !e.disabled && this.state.guards.some(g => !g.dead && !g.offDuty && (g.space??"village")==="village" &&
     GUARD_DEFS.find(d => d.id === g.id)!.role === "melee" && dist(e,GUARD_DEFS.find(d => d.id === g.id)!.post) <= 300 &&
     dist({x:e.homeX,y:e.homeY},GUARD_DEFS.find(d => d.id === g.id)!.post) <= 600); }
   hostiles(): DefenseHostile[] { return [...this.enemies,...this.external.filter(e=>this.manages(e))]; }
@@ -87,17 +95,23 @@ export class EastDefense {
     this.state.cooldownMs = Math.max(0, this.state.cooldownMs - (dtMs - protectedMs));
     this.state.retryMs = Math.max(0, this.state.retryMs - dtMs);
     if (this.state.protectionMs || this.state.cooldownMs || this.state.retryMs || this.awaitingCheckpoint || occupied.length + this.state.guards.length + DEFENSE.unitLimit > 24) return;
-    const seed = nextRandom(this.state.seed), count = 2 + seed % 3, first = nextRandom(seed) % RAID_GATES.length;
-    for (let i = 0; i < RAID_GATES.length; i++) {
-      const gate = RAID_GATES[(first + i) % RAID_GATES.length];
-      try {
-        const proposal = prepareRaid(this.state, player, gate.id, count, true, view, occupied);
-        proposal.seed = nextRandom(seed); Object.assign(this.state, proposal);
-        this.awaitingCheckpoint = true; this.critical = true;
-        this.note({kind:"warning", id:gate.name, at:this.now}); return;
-      } catch (error) { if (!(error instanceof Error)) throw error; }
-    }
-    this.state.retryMs = RAID_TIMING.retry;
+    // 夜间导演负责正式许可；这里仅推进有效游玩保护与冷却。
+  }
+
+  // 新预警与预警结束复用同一门级准入；已生成的战斗不受此门槛影响。
+  canScheduleAtGate(gateId: GateId, player: Point, spawns: readonly Point[], view?: Rect, occupied: readonly Point[] = []) {
+    const raid=this.state.raid;
+    if (raid && (raid.phase !== "warning" || raid.gateId !== gateId) ||
+      !raid && (this.state.protectionMs || this.state.cooldownMs || this.state.retryMs) ||
+      occupied.length + this.state.guards.filter(g=>!g.dead).length + spawns.length > 24) return false;
+    const defs=GUARD_DEFS.filter(d=>d.id.startsWith(gateId.split('-')[0]+'-'));
+    if (defs.length !== 3 || !defs.every(d=>{
+      const g=this.state.guards.find(g=>g.id===d.id),r=this.runtime.get(d.id);
+      return g && !g.dead && !g.offDuty && (g.space??"village")==="village" && g.hp >= d.maxHP*.65 && g.postId===d.postId &&
+        ["post","patrol"].includes(g.mode) && !r?.attack &&
+        (d.role==='archer' ? dist(g,d.post)<=2 : dist(g,d.post)<=d.leash && !motionBlocked(g.x,g.y));
+    })) return false;
+    return spawnLegal(gateId,spawns,player,view,occupied);
   }
   finish(delayed = false) {
     const raid = this.state.raid; if (!raid) return;
@@ -114,8 +128,8 @@ export class EastDefense {
     this.now = now; this.arrows = []; this.runtime.clear();
     for (const g of this.state.guards) {
       const d = GUARD_DEFS.find(d => d.id === g.id)!;
-      if (d.role === "archer") Object.assign(g, d.post);
-      else if (!g.dead && (motionBlocked(g.x, g.y) || dist(g,d.post) > d.leash)) {
+      if (d.role === "archer" && !g.offDuty) Object.assign(g, d.post);
+      else if (!g.dead && !g.offDuty && (motionBlocked(g.x, g.y) || dist(g,d.post) > d.leash)) {
         const safe = nearestStanding(g, [d.post, d.cover], p => dist(p, d.post) < d.leash);
         Object.assign(g, safe ?? d.post);
       }
@@ -125,6 +139,7 @@ export class EastDefense {
     if (this.state.raid?.phase !== "warning") this.spawnEnemies(now); else this.enemies = [];
     this.sync();
   }
+  drainNotices(){const batch=this.notices;this.notices=[];return batch;}
   note(event: DefenseNotice) {
     this.notices.push(event); this.history.push(event);
     if (this.history.length > 80) this.history.shift();
@@ -137,13 +152,13 @@ export class EastDefense {
     if (!hit.applied) return false;
     g.hp = hit.hp; g.peaceMs = 0;
     this.runtime.get(g.id)!.flashUntil = this.now + 130;
-    this.note({ kind: "hit", id: g.id, sourceId: source.id, at: this.now, damage: hit.damage, x: g.x, y: g.y });
+    this.note({ kind: "hit", id: g.id, eventKey:`${event.attackId}:${g.id}:hit`, sourceId: source.id, at: this.now, damage: hit.damage, x: g.x, y: g.y });
     if (hit.killed) {
       g.dead = true; g.mode = "dead"; g.cooldownMs = 0;
       const r = this.runtime.get(g.id)!; r.attack = null; r.nav.path = [];
       this.arrows = this.arrows.filter(a => a.sourceId !== g.id);
       this.critical = true;
-      this.note({ kind: "death", id: g.id, sourceId: source.id, at: this.now, x: g.x, y: g.y });
+      this.note({ kind: "death", id: g.id, eventKey:`${event.attackId}:${g.id}:death`, sourceId: source.id, at: this.now, x: g.x, y: g.y });
     }
     return true;
   }
@@ -195,7 +210,7 @@ export class EastDefense {
     return dist(old, body);
   }
   target(e: DefenseHostile, player: Point & { hp: number }) {
-    const guards = this.state.guards.filter(g => !g.dead && GUARD_DEFS.find(d => d.id === g.id)!.role === "melee");
+    const guards = this.state.guards.filter(g => !g.dead && (g.space??"village")==="village" && GUARD_DEFS.find(d => d.id === g.id)!.role === "melee");
     const all = [...guards, ...(player.hp > 0 && dist(e, player) < 380 ? [{ ...player, id: "player" }] : [])]
       .filter(p => this.external.includes(e) ? dist(p,{x:e.homeX,y:e.homeY}) <= 420 : dist(p,this.gate()) < 600)
       .sort((a, b) => dist(e, a) - dist(e, b) || a.id.localeCompare(b.id));
@@ -225,7 +240,7 @@ export class EastDefense {
       }
       const selected = this.target(e, player);
       const held = e.targetId === "player" ? (player.hp > 0 ? { ...player, id: "player" } : undefined)
-        : this.state.guards.find(g => g.id === e.targetId && !g.dead);
+        : this.state.guards.find(g => g.id === e.targetId && !g.dead && (g.space??"village")==="village");
       const target = e.attack ? held : selected;
       if (e.attack && (!target || dist(e, target) > 450 || !fixed && raid?.phase === "retreat")) {
         e.attack.cancelled = true; e.attack = null; e.cool = now + 250;
@@ -257,6 +272,22 @@ export class EastDefense {
       if (g.dead) continue;
       const d = GUARD_DEFS.find(d => d.id === g.id)!, r = this.runtime.get(g.id)!, weapon = GUARD_WEAPONS[g.weaponId];
       const old={x:g.x,y:g.y};
+      // 返回通道遭遇真实敌人时，近战守卫在岗位约束内立即交还战斗控制权。
+      if(g.offDuty&&g.mode==='return'&&d.role==='melee'&&(g.space??'village')==='village'&&dist(g,d.post)<=d.leash&&this.hostiles().some(e=>e.hp>0&&!e.disabled&&dist(e,d.post)<=d.leash&&dist(e,g)<100&&clearMeleeLine(g,e))){g.offDuty=false;g.mode='post';this.peaceOrders.delete(g.id);}
+      if(g.offDuty&&this.lifeMove){
+        r.attack=null;r.moved=0;
+        const apron=GUARD_LANDINGS[g.id]??{space:"village" as const,x:d.post.x,y:d.post.y+40};
+        if((g.towerTransitMs??0)>0){g.towerTransitMs=Math.max(0,g.towerTransitMs!-dtMs);
+          if(!g.towerTransitMs){if(g.mode==="return"){Object.assign(g,d.post);g.offDuty=false;g.mode="post";}else Object.assign(g,apron);}
+          continue;}
+        const order=this.peaceOrders.get(g.id),destination=order??(d.role==="archer"?apron:{space:"village" as const,...d.post});
+        const close=(g.space??"village")===destination.space&&dist(g,destination)<6;
+        if(!close)r.moved=this.lifeMove(g,destination,dtMs,budget);
+        else if(!order){if(d.role==="archer"){g.mode="return";g.towerTransitMs=1800;}else{g.offDuty=false;g.mode="post";}}
+        if(r.moved>.001){const dx=g.x-old.x,dy=g.y-old.y;r.distance+=r.moved;r.facing=Math.abs(dx)>Math.abs(dy)?dx<0?2:3:dy<0?1:0;}
+        g.peaceMs=Math.min(8000,g.peaceMs+dtMs);if(g.peaceMs>=8000)g.hp=Math.min(d.maxHP,g.hp+d.maxHP*DEFENSE.regenPerSecond*dt);
+        continue;
+      }
       g.cooldownMs = Math.max(0, g.cooldownMs - dtMs); r.moved = 0;
       const targets = this.hostiles().filter(e => (!this.external.includes(e) || dist(e,d.post) <= 300) && e.hp > 0 && !e.disabled && dist(e, d.post) <= (d.role === "archer" ? TOWERS.find(t => t.occupantGuardId === g.id)!.range : d.leash));
       targets.sort((a, b) => dist(g, a) - dist(g, b) || a.id.localeCompare(b.id));
@@ -323,7 +354,7 @@ export class EastDefense {
   }
   fire(g: GuardState, target: DefenseHostile, id: string) {
     const tower = TOWERS.find(t => t.occupantGuardId === g.id);
-    if (!tower || g.dead || dist(g, tower) > 2 || this.arrows.length >= DEFENSE.arrowLimit || !this.inFiringArc(g.id,target) ||
+    if (!tower || g.dead || g.offDuty || (g.space??"village")!=="village" || dist(g, tower) > 2 || this.arrows.length >= DEFENSE.arrowLimit || !this.inFiringArc(g.id,target) ||
       shotLineBlocker(tower.muzzle,{x:target.x,y:target.y-30},this.portFor(g.id))) return;
     const end = { x:target.x,y:target.y-30 }, n = dist(tower.muzzle,end);
     this.arrows.push({ id,sourceId:g.id,eventId:target.eventId ?? "world",...tower.muzzle,origin:{...tower.muzzle},

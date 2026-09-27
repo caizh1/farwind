@@ -27,7 +27,7 @@ export const shops = {
   },
   inn: {
     name: "归风旅馆",
-    greeting: "12枚铜币，恢复生命与体力。不推进昼夜时间。",
+    greeting: "休息补给不推进时间；夜间可另购住宿，睡到清晨06:00。",
     goods: {},
   },
 } as const;

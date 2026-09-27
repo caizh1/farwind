@@ -1,0 +1,26 @@
+{
+  "说明": "共享防御调度被同时改为夜间导演，已请求用户决定规则；独立副本以当前HEAD防御业务及初始World/UI形成可运行增量，不写回其他任务源码。",
+  "副本": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime",
+  "冲突文件": [
+    "src/game/systems/defense.ts",
+    "src/game/systems/state.ts",
+    "src/game/scenes/World.ts",
+    "package.json"
+  ],
+  "待决定": "有效时间自动调度／叠加夜间许可",
+  "最终候选": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime-v3",
+  "共享HEAD": "eac16f44dcc6c9b745dc5d6d24065ca841ba346c",
+  "共享文件SHA256": {
+    "src/game/systems/defense.ts": "8559e27b3a41f477dc2ba83f4648e90345dc9b2642b5cdd077979c5e0cdf2fb0",
+    "src/game/systems/state.ts": "49f0f278f1930e95cb49ab6241717adeed4febfb6782179cf521d65fb96ef40b",
+    "src/game/systems/nightDirector.ts": "7f4abbf0f29be2b7cd0068549cb68b04da965037404d9bb2658737e3d05bb465",
+    "src/game/scenes/World.ts": "1b3beacc6239abb6e01adba019a33e4a3f8a124ca89d0ca36ee803a67df89edc",
+    "package.json": "2dbb7b3062bccf14cf294be42b4d7b8fee8995f497029d20b5492c5a86373db3"
+  },
+  "当前共享观察": {
+    "结构版本": "6",
+    "夜间导演接管自动安排": true,
+    "已经新增门级准入": true,
+    "健康检查表达式": "g.hp >= d.maxHP*.65 "
+  }
+}

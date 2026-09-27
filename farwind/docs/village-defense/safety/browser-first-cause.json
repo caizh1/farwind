@@ -1,0 +1,10 @@
+{
+  "说明": "首轮实机环境口径错误：开发诊断断言在生产包执行。已取证暂停本轮，未改变产品诊断开关；正式包继续验用户结果，训练／剑风详细诊断在同源码冻结开发服务执行。",
+  "原始追踪": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/browser-first",
+  "实际已通过": [
+    "守卫真实死亡后的事务中止与恢复",
+    "生产商店成交与重载"
+  ],
+  "失败首因": "production中不暴露contacts、swordWind、animation、session，旧开发断言读取undefined；新黑猫检查改用生产公开companion坐标。",
+  "运行状态": "主动停止，不计全部矩阵通过"
+}

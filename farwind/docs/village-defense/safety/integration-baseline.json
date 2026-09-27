@@ -1,0 +1,27 @@
+{
+  "说明": "相关对话收尾后的共享源码核验，业务尚未整合。",
+  "时间": "2026-09-27T04:18:33.035278+00:00",
+  "分支": "codex/initial-game",
+  "HEAD": "eac16f44dcc6c9b745dc5d6d24065ca841ba346c",
+  "文件摘要": {
+    "AGENTS.md": "081b19d3829ae8ee30d50f670efc7460aaa7bc45551072faaae3b6cf2598d083",
+    "package.json": "c3644f5d0ecd3007795781269c2ed208826e68bdfba19e0ae20b5752ab912b7e",
+    "src/data/defense.ts": "7d1a1e452e5f9e54090dafd1b76f34781eb228271f99c511f1e6ccbfa042b0e2",
+    "src/data/dayNight.ts": "90aa1f2d4b1a5d438c3c11b2d57e5004631491f94747e26c014a06ce18632ea4",
+    "src/data/village.ts": "66f73c7ccb480850beb4a407a6ffcce75bfb01a8a44d730828606b3fd4f57262",
+    "src/data/npcLife.ts": "4542505f97b8e3d057dd7dadf730b5324bb4e5a474b46d18116c9d1125b29fba",
+    "src/game/systems/defense.ts": "5f3c6bbdf24313daa8b9ed99ad7ab4660710ff2a6eeb080f79270a305fa4acdb",
+    "src/game/systems/defenseState.ts": "ee1fff3d67f69e28b7da770fc5280dab56da932e874b27434d9c76def99c4701",
+    "src/game/systems/nightDirector.ts": "34d52fa531efa076de6df8181eac093bba2af29a882f3d1ab01cb064b82f9002",
+    "src/game/systems/npcLife.ts": "fa18e320d356b4e6ce48b5800916e3250e361239c8fdb6b19b6a402aea6d29de",
+    "src/game/systems/state.ts": "49f0f278f1930e95cb49ab6241717adeed4febfb6782179cf521d65fb96ef40b",
+    "src/game/systems/save.ts": "3bca98408349b3bb508cd011bf18ff026ae7d5153bc1228c910d4952ae9c9196",
+    "src/game/scenes/World.ts": "829959f2e154ecb0d8b6fd7248b1535e41592f9126c442eab0743d6fa982a163"
+  },
+  "验证": {
+    "类型检查": "通过",
+    "原昼夜与驻防测试": "五十五项通过，无跳过",
+    "本轮新要求反例": "八项中三通过、五失败；失败是尚未整合的需求差异，不是本轮新增业务改动引起"
+  },
+  "边界": "未重跑全量逻辑、生产构建、浏览器、三十场事件和性能；候选旧验收不能继承。"
+}

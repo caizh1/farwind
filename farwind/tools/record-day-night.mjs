@@ -1,0 +1,9 @@
+// 录制实际程序的正常速度过渡；只从正式导入准备起点，不绘制替代场景。
+import {chromium} from '@playwright/test';
+import {writeFile,copyFile} from 'node:fs/promises';
+import {captureGameAudio} from './capture-game-audio.mjs';
+const browser=await chromium.launch({headless:false,args:['--use-angle=metal','--ignore-gpu-blocklist']}),context=await browser.newContext({viewport:{width:1280,height:720},recordVideo:{dir:'.parry-local/day-night/transition',size:{width:1280,height:720}}}),page=await context.newPage();
+await page.addInitScript(captureGameAudio);await page.goto(process.env.FARWIND_RECORD_URL??'http://127.0.0.1:5173');await page.getByRole('button',{name:'启程 · 新游戏'}).click();
+const s=await page.evaluate(()=>window.__farwind().state);s.time=1109;s.player.x=670;s.player.y=720;await page.keyboard.press('Escape');page.once('dialog',d=>d.accept());const file=page.waitForEvent('filechooser');await page.getByRole('button',{name:'导入存档',exact:true}).click();await(await file).setFiles({name:'transition-fixture.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(s))});await page.waitForFunction(()=>window.__farwind().mode==='');
+const frames=[];for(let i=0;i<4;i++){if(i)await page.waitForTimeout(10000);await page.screenshot({path:`docs/day-night/evidence/m5-transition-${i}.png`});const d=await page.evaluate(()=>window.__farwind());frames.push({秒:i*10,世界分钟:d.state.time,灯光:d.dayNight.phase,光源数:d.dayNight.lights});}
+await page.waitForTimeout(5000);const sound=await page.evaluate(()=>window.__finishAudio()),video=page.video();await writeFile('docs/day-night/evidence/m5-ambience.webm',Buffer.from(sound.base64,'base64'));await context.close();await copyFile(await video.path(),'docs/day-night/evidence/m5-transition.webm');await browser.close();await writeFile('docs/day-night/evidence/transition.json',JSON.stringify({说明:'1280×720、DPR1；18:29附近导入隔离起点，随后正常模拟35秒，跨19:00阶段；音频来自实际AudioContext旁路采集，文件存在与幅值检验不等于听感确认。',时间:new Date().toISOString(),记录:frames},null,2));

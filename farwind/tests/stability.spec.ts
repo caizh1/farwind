@@ -6,8 +6,15 @@ test("pause-input-and-save-file-validation", async ({ page }) => {
     page.getByRole("button", { name: "继续旅途", exact: true }),
   ).toBeDisabled();
   await page.getByRole("button", { name: "启程 · 新游戏" }).click();
-  await page.getByRole("button", { name: /^1 恢复药剂/ }).click({ delay: 250 });
+  // 新游戏空行囊；用合法隔离导入建立药剂前置条件，保留满血不消耗断言。
+  const prepared=(await state(page)).state;prepared.bag[0]={id:"potion",count:1};
+  await page.keyboard.press("Escape");page.once("dialog",d=>d.accept());
+  const prepareFile=page.waitForEvent("filechooser");await page.getByRole("button",{name:"导入存档",exact:true}).click();
+  await(await prepareFile).setFiles({name:"pause-potion-fixture.json",mimeType:"application/json",buffer:Buffer.from(JSON.stringify(prepared))});
+  await page.waitForFunction(()=> (window as any).__farwind().mode==="");
+  await page.getByRole("button", { name: /恢复药剂 · 快捷键 1/ }).click({ delay: 250 });
   await expect(page.locator("#toast")).toContainText("生命充足");
+  expect((await state(page)).state.bag[0]).toEqual({id:"potion",count:1});
   const attacks = (await state(page)).attackSerial;
   await page.locator(".vitals").click();
   expect((await state(page)).attackSerial).toBe(attacks);
@@ -18,10 +25,10 @@ test("pause-input-and-save-file-validation", async ({ page }) => {
   await page.keyboard.press("Escape");
   await expect(page.getByText("世界与时间已暂停。")).toBeVisible();
   await page.getByRole("button", { name: "设置", exact: true }).click();
-  await page.getByRole("slider").press("End");
+  await page.locator("#volume").press("End");
   await page.getByRole("button", { name: "返回", exact: true }).click();
   await page.getByRole("button", { name: "设置", exact: true }).click();
-  await expect(page.getByRole("slider")).toHaveValue("100");
+  await expect(page.locator("#volume")).toHaveValue("100");
   await page.getByRole("button", { name: "返回", exact: true }).click();
   const before = (await state(page)).state;
   await page.keyboard.down("d");
@@ -42,12 +49,16 @@ test("pause-input-and-save-file-validation", async ({ page }) => {
   await page.getByRole("button", { name: "继续旅途", exact: true }).click();
   await page.keyboard.press("Tab");
   await expect(page.getByRole("heading", { name: "旅人的行囊" })).toBeVisible();
+  const focused=await page.evaluate(()=>document.activeElement?.outerHTML);
   await page.keyboard.press("Tab");
+  await expect(page.locator("#modal")).toBeVisible();
+  expect(await page.evaluate(()=>document.activeElement?.outerHTML)).not.toBe(focused);
+  await page.keyboard.press("Escape");
   await expect(page.locator("#modal")).toBeHidden();
   await page.keyboard.press("Escape");
   const downloading = page.waitForEvent("download");
   await page.getByRole("button", { name: "导出备份" }).click();
   const download = await downloading;
   expect(download.suggestedFilename()).toBe("farwind-save.json");
-  await download.saveAs("docs/combat/regression/exported-save.json");
+  await download.saveAs(`${process.env.FARWIND_EVIDENCE_ROOT??"docs"}/combat/regression/exported-save.json`);
 });

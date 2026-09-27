@@ -4,6 +4,40 @@ import { clearMotionLine } from "../src/game/systems/obstacles";
 const read = (p: Page) => p.evaluate(() => (window as any).__farwind());
 // 只读取诊断状态，所有推进通过真实键盘输入；寻路使用正式地图碰撞。
 export async function move(page: Page, tx: number, ty: number) {
+  // 开发快进也使用正式异步保存锁；等待保存结束再开始键盘行程，避免输入在提交边界被清空。
+  await page.waitForFunction(() => !(window as any).__farwind().defenseSaving);
+  await page.bringToFront();
+  if (
+    (await read(page)).state.life?.playerSpace !== undefined &&
+    (await read(page)).state.life.playerSpace !== "village"
+  ) {
+    for (const [axis, target] of [
+      ["y", 910],
+      ["x", 700],
+    ] as const) {
+      const delta = target - (await read(page)).state.player[axis],
+        sign = Math.sign(delta);
+      if (Math.abs(delta) < 4) continue;
+      const button =
+        axis === "x" ? (sign > 0 ? "d" : "a") : sign > 0 ? "s" : "w";
+      await page.keyboard.down(button);
+      try {
+        await page.waitForFunction(
+          ({ axis, target, sign }) =>
+            sign * ((window as any).__farwind().state.player[axis] - target) >
+            -3,
+          { axis, target, sign },
+          { timeout: 10000 },
+        );
+      } finally {
+        await page.keyboard.up(button);
+      }
+    }
+    await page.keyboard.press("e");
+    await page.waitForFunction(
+      () => (window as any).__farwind().state.life.playerSpace === "village",
+    );
+  }
   const start = (await read(page)).state.player,
     step = 10,
     cols = WORLD.width / step;

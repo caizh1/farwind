@@ -3,7 +3,7 @@ import sharp from 'sharp';
 import {mkdir,writeFile} from 'node:fs/promises';
 import {initialState} from '../src/game/systems/state';
 import {captureGameAudio} from '../tools/capture-game-audio.mjs';
-const dir='docs/parry-v2/evidence',raw='.parry-local/v2/recording';
+const dir=process.env.FARWIND_PARRY_EVIDENCE_ROOT??'docs/parry-v2/evidence',raw=process.env.FARWIND_PARRY_RAW_ROOT??'.parry-local/v2/recording';
 test.use({video:{mode:'on',size:{width:1280,height:720}}});
 const read=(p:Page)=>p.evaluate(()=>(window as any).__farwind());
 async function setup(page:Page,indicators=true,mode='慢速教学 · 900毫秒'){

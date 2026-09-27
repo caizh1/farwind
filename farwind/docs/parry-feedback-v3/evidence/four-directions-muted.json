@@ -1,0 +1,1305 @@
+{
+  "说明": "A类正式键盘四方向，菜单静音，未改运行中状态；静音不改变伤害",
+  "结果": [
+    {
+      "方向": "up",
+      "接触": [
+        {
+          "at": 1566.4866666666667,
+          "id": "practice-training-dummy:1",
+          "result": "normal",
+          "parryAge": 121.68556863912318,
+          "stamina": 100,
+          "hp": 100,
+          "inputAt": 1444.8010980275435,
+          "startAt": 1444.8010980275435,
+          "phase": "active",
+          "predicted": 1566.4866666666667,
+          "direction": {
+            "attack": {
+              "x": 0,
+              "y": 1
+            },
+            "guard": 1
+          },
+          "rejection": ""
+        }
+      ],
+      "反馈": {
+        "mode": "D",
+        "generation": 2,
+        "events": [
+          {
+            "id": "2:charge:practice-training-dummy:1",
+            "kind": "enemy-charge",
+            "at": 666.4866666666667,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 868.2826086956521,
+              "y": 646.391039473102
+            },
+            "incoming": {
+              "x": 0,
+              "y": 1
+            },
+            "blade": {
+              "x": 0.5355420253583323,
+              "y": -0.8445085784496775
+            },
+            "deflect": {
+              "x": -0.4306675953007633,
+              "y": 0.9025106217424025
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 715.3736481687541
+          },
+          {
+            "id": "2:guard:1",
+            "kind": "guard-start",
+            "at": 1444.8010980275435,
+            "targetId": "",
+            "attackId": "guard:1",
+            "point": {
+              "x": 868.2826086956521,
+              "y": 646.391039473102
+            },
+            "incoming": {
+              "x": 0,
+              "y": -1
+            },
+            "blade": {
+              "x": 0.5355420253583323,
+              "y": -0.8445085784496775
+            },
+            "deflect": {
+              "x": -0.4306675953007633,
+              "y": 0.9025106217424025
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 715.3736481687541
+          },
+          {
+            "id": "2:strike:practice-training-dummy:1",
+            "kind": "enemy-strike",
+            "at": 1566.4866666666667,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 868.2826086956521,
+              "y": 646.391039473102
+            },
+            "incoming": {
+              "x": 0,
+              "y": 1
+            },
+            "blade": {
+              "x": 0.5355420253583323,
+              "y": -0.8445085784496775
+            },
+            "deflect": {
+              "x": -0.4306675953007633,
+              "y": 0.9025106217424025
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 715.3736481687541
+          },
+          {
+            "id": "2:parry:practice-training-dummy:1",
+            "kind": "parry-contact",
+            "at": 1566.4866666666667,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 855.9891304347826,
+              "y": 665.7769090383193
+            },
+            "incoming": {
+              "x": 0,
+              "y": 1
+            },
+            "blade": {
+              "x": 0.5355420253583323,
+              "y": -0.8445085784496775
+            },
+            "deflect": {
+              "x": 0.4306675953007633,
+              "y": -0.9025106217424025
+            },
+            "quality": "normal",
+            "material": "slime",
+            "alive": true,
+            "depth": 715.5736481687541,
+            "until": 2166.4866666666667
+          },
+          {
+            "id": "2:release:practice-training-dummy:1",
+            "kind": "deflect-release",
+            "at": 1586.4866666666667,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 855.9891304347826,
+              "y": 665.7769090383193
+            },
+            "incoming": {
+              "x": 0,
+              "y": 1
+            },
+            "blade": {
+              "x": 0.5355420253583323,
+              "y": -0.8445085784496775
+            },
+            "deflect": {
+              "x": 0.4306675953007633,
+              "y": -0.9025106217424025
+            },
+            "quality": "normal",
+            "material": "slime",
+            "alive": true,
+            "depth": 715.5736481687541,
+            "until": 2166.4866666666667
+          },
+          {
+            "id": "2:counter-start:1",
+            "kind": "counter-start",
+            "at": 1626.4866666666667,
+            "targetId": "practice-training-dummy",
+            "attackId": "player:1",
+            "point": {
+              "x": 870.4891304347826,
+              "y": 625.586691647015
+            },
+            "incoming": {
+              "x": 0,
+              "y": -1
+            },
+            "blade": {
+              "x": 0.42677549808006415,
+              "y": -0.9043576030744217
+            },
+            "deflect": {
+              "x": -0.3395693430511537,
+              "y": 0.9405810232296885
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 715.3736481687541
+          },
+          {
+            "id": "2:swing:player:1",
+            "kind": "counter-swing",
+            "at": 1646.4866666666667,
+            "targetId": "practice-training-dummy",
+            "attackId": "player:1",
+            "point": {
+              "x": 870.4891304347826,
+              "y": 625.586691647015
+            },
+            "incoming": {
+              "x": 0,
+              "y": -1
+            },
+            "blade": {
+              "x": 0.42677549808006415,
+              "y": -0.9043576030744217
+            },
+            "deflect": {
+              "x": -0.3395693430511537,
+              "y": 0.9405810232296885
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 715.3736481687541
+          },
+          {
+            "id": "2:counter-hit:1:practice-training-dummy",
+            "kind": "counter-hit",
+            "at": 1681.4866666666667,
+            "targetId": "practice-training-dummy",
+            "attackId": "player:1",
+            "point": {
+              "x": 837.5489130434783,
+              "y": 652.8529959948411
+            },
+            "incoming": {
+              "x": 0,
+              "y": -1
+            },
+            "blade": {
+              "x": -0.3022438607339301,
+              "y": -0.953230637699318
+            },
+            "deflect": {
+              "x": -0.40844215575805964,
+              "y": -0.9127842052751072
+            },
+            "quality": "normal",
+            "material": "slime",
+            "alive": true,
+            "depth": 715.5736481687541,
+            "legacyHit": "straw"
+          }
+        ],
+        "effects": [],
+        "pending": 0,
+        "delayed": 0,
+        "reactions": 1,
+        "audio": {
+          "voices": 0,
+          "cached": 33,
+          "events": [],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        },
+        "frames": [
+          {
+            "id": "2:charge:practice-training-dummy:1",
+            "frame": 41,
+            "sim": 682.2933333333327,
+            "wall": 2877.699999988079,
+            "phase": "idle"
+          },
+          {
+            "id": "2:guard:1",
+            "frame": 87,
+            "sim": 1447.9333333333295,
+            "wall": 3644.600000023842,
+            "phase": "guard"
+          },
+          {
+            "id": "2:strike:practice-training-dummy:1",
+            "frame": 95,
+            "sim": 1566.4866666666667,
+            "wall": 3776.699999988079,
+            "phase": "brace"
+          },
+          {
+            "id": "2:parry:practice-training-dummy:1",
+            "frame": 95,
+            "sim": 1566.4866666666667,
+            "wall": 3776.699999988079,
+            "phase": "brace"
+          },
+          {
+            "id": "2:release:practice-training-dummy:1",
+            "frame": 99,
+            "sim": 1592.8366666666636,
+            "wall": 3842.100000023842,
+            "phase": "deflect"
+          },
+          {
+            "id": "2:counter-start:1",
+            "frame": 102,
+            "sim": 1642.8366666666639,
+            "wall": 3894.100000023842,
+            "phase": "windup"
+          },
+          {
+            "id": "2:swing:player:1",
+            "frame": 103,
+            "sim": 1659.506666666664,
+            "wall": 3909.100000023842,
+            "phase": "windup"
+          },
+          {
+            "id": "2:counter-hit:1:practice-training-dummy",
+            "frame": 105,
+            "sim": 1681.4866666666667,
+            "wall": 3945.600000023842,
+            "phase": "active"
+          }
+        ]
+      }
+    },
+    {
+      "方向": "down",
+      "接触": [
+        {
+          "at": 1533.1466666666665,
+          "id": "practice-training-dummy:1",
+          "result": "normal",
+          "parryAge": 129.59292620605538,
+          "stamina": 100,
+          "hp": 100,
+          "inputAt": 1403.5537404606112,
+          "startAt": 1403.5537404606112,
+          "phase": "active",
+          "predicted": 1533.1466666666665,
+          "direction": {
+            "attack": {
+              "x": 0,
+              "y": -1
+            },
+            "guard": 0
+          },
+          "rejection": ""
+        }
+      ],
+      "反馈": {
+        "mode": "D",
+        "generation": 2,
+        "events": [
+          {
+            "id": "2:charge:practice-training-dummy:1",
+            "kind": "enemy-charge",
+            "at": 633.1466666666665,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 825.4130434782609,
+              "y": 508.356668737944
+            },
+            "incoming": {
+              "x": 0,
+              "y": -1
+            },
+            "blade": {
+              "x": -0.7566578029472294,
+              "y": -0.6538111112844992
+            },
+            "deflect": {
+              "x": 0.8955112803311179,
+              "y": 0.4450388149360925
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 586.0088426509875
+          },
+          {
+            "id": "2:guard:1",
+            "kind": "guard-start",
+            "at": 1403.5537404606112,
+            "targetId": "",
+            "attackId": "guard:1",
+            "point": {
+              "x": 825.4130434782609,
+              "y": 508.356668737944
+            },
+            "incoming": {
+              "x": 0,
+              "y": 1
+            },
+            "blade": {
+              "x": -0.7566578029472294,
+              "y": -0.6538111112844992
+            },
+            "deflect": {
+              "x": 0.8955112803311179,
+              "y": 0.4450388149360925
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 586.0088426509875
+          },
+          {
+            "id": "2:strike:practice-training-dummy:1",
+            "kind": "enemy-strike",
+            "at": 1533.1466666666665,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 825.4130434782609,
+              "y": 508.356668737944
+            },
+            "incoming": {
+              "x": 0,
+              "y": -1
+            },
+            "blade": {
+              "x": -0.7566578029472294,
+              "y": -0.6538111112844992
+            },
+            "deflect": {
+              "x": 0.8955112803311179,
+              "y": 0.4450388149360925
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 586.0088426509875
+          },
+          {
+            "id": "2:parry:practice-training-dummy:1",
+            "kind": "parry-contact",
+            "at": 1533.1466666666665,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 849.7635869565217,
+              "y": 529.3974296075093
+            },
+            "incoming": {
+              "x": 0,
+              "y": -1
+            },
+            "blade": {
+              "x": -0.7566578029472294,
+              "y": -0.6538111112844992
+            },
+            "deflect": {
+              "x": -0.8955112803311179,
+              "y": -0.4450388149360925
+            },
+            "quality": "normal",
+            "material": "slime",
+            "alive": true,
+            "depth": 622.15,
+            "until": 2133.1466666666665
+          },
+          {
+            "id": "2:release:practice-training-dummy:1",
+            "kind": "deflect-release",
+            "at": 1553.1466666666665,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 849.7635869565217,
+              "y": 529.3974296075093
+            },
+            "incoming": {
+              "x": 0,
+              "y": -1
+            },
+            "blade": {
+              "x": -0.7566578029472294,
+              "y": -0.6538111112844992
+            },
+            "deflect": {
+              "x": -0.8955112803311179,
+              "y": -0.4450388149360925
+            },
+            "quality": "normal",
+            "material": "slime",
+            "alive": true,
+            "depth": 622.15,
+            "until": 2133.1466666666665
+          },
+          {
+            "id": "2:counter-start:1",
+            "kind": "counter-start",
+            "at": 1593.1466666666665,
+            "targetId": "practice-training-dummy",
+            "attackId": "player:1",
+            "point": {
+              "x": 810.2826086956521,
+              "y": 495.7479730857701
+            },
+            "incoming": {
+              "x": 0,
+              "y": 1
+            },
+            "blade": {
+              "x": -0.6667948594698258,
+              "y": -0.7452413135250991
+            },
+            "deflect": {
+              "x": 0.8188237586968865,
+              "y": 0.5740449914366496
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 586.0088426509875
+          },
+          {
+            "id": "2:swing:player:1",
+            "kind": "counter-swing",
+            "at": 1613.1466666666665,
+            "targetId": "practice-training-dummy",
+            "attackId": "player:1",
+            "point": {
+              "x": 810.2826086956521,
+              "y": 495.7479730857701
+            },
+            "incoming": {
+              "x": 0,
+              "y": 1
+            },
+            "blade": {
+              "x": -0.6667948594698258,
+              "y": -0.7452413135250991
+            },
+            "deflect": {
+              "x": 0.8188237586968865,
+              "y": 0.5740449914366496
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 586.0088426509875
+          },
+          {
+            "id": "2:counter-hit:1:practice-training-dummy",
+            "kind": "counter-hit",
+            "at": 1648.1466666666665,
+            "targetId": "practice-training-dummy",
+            "attackId": "player:1",
+            "point": {
+              "x": 864.9593004781316,
+              "y": 581.5339162682237
+            },
+            "incoming": {
+              "x": 0,
+              "y": 1
+            },
+            "blade": {
+              "x": 0.6401843996644798,
+              "y": 0.7682212795973757
+            },
+            "deflect": {
+              "x": 0.793824572679787,
+              "y": 0.6081468143546863
+            },
+            "quality": "normal",
+            "material": "slime",
+            "alive": true,
+            "depth": 622.15,
+            "legacyHit": "straw"
+          }
+        ],
+        "effects": [],
+        "pending": 0,
+        "delayed": 0,
+        "reactions": 1,
+        "audio": {
+          "voices": 0,
+          "cached": 33,
+          "events": [],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        },
+        "frames": [
+          {
+            "id": "2:charge:practice-training-dummy:1",
+            "frame": 39,
+            "sim": 649.0199999999993,
+            "wall": 3114.099999964237,
+            "phase": "idle"
+          },
+          {
+            "id": "2:guard:1",
+            "frame": 85,
+            "sim": 1414.4733333333293,
+            "wall": 3888.899999976158,
+            "phase": "guard"
+          },
+          {
+            "id": "2:strike:practice-training-dummy:1",
+            "frame": 93,
+            "sim": 1533.1466666666665,
+            "wall": 4011.899999976158,
+            "phase": "brace"
+          },
+          {
+            "id": "2:parry:practice-training-dummy:1",
+            "frame": 93,
+            "sim": 1533.1466666666665,
+            "wall": 4011.899999976158,
+            "phase": "brace"
+          },
+          {
+            "id": "2:release:practice-training-dummy:1",
+            "frame": 97,
+            "sim": 1559.169999999995,
+            "wall": 4078.399999976158,
+            "phase": "deflect"
+          },
+          {
+            "id": "2:counter-start:1",
+            "frame": 100,
+            "sim": 1609.156666666662,
+            "wall": 4129,
+            "phase": "windup"
+          },
+          {
+            "id": "2:swing:player:1",
+            "frame": 101,
+            "sim": 1625.816666666662,
+            "wall": 4144.899999976158,
+            "phase": "windup"
+          },
+          {
+            "id": "2:counter-hit:1:practice-training-dummy",
+            "frame": 103,
+            "sim": 1648.1466666666665,
+            "wall": 4179.299999952316,
+            "phase": "active"
+          }
+        ]
+      }
+    },
+    {
+      "方向": "left",
+      "接触": [
+        {
+          "at": 1499.813333333333,
+          "id": "practice-training-dummy:1",
+          "result": "normal",
+          "parryAge": 129.52130721286994,
+          "stamina": 100,
+          "hp": 100,
+          "inputAt": 1370.292026120463,
+          "startAt": 1370.292026120463,
+          "phase": "active",
+          "predicted": 1499.813333333333,
+          "direction": {
+            "attack": {
+              "x": 1,
+              "y": 0
+            },
+            "guard": 2
+          },
+          "rejection": ""
+        }
+      ],
+      "反馈": {
+        "mode": "D",
+        "generation": 2,
+        "events": [
+          {
+            "id": "2:charge:practice-training-dummy:1",
+            "kind": "enemy-charge",
+            "at": 599.813333333333,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 891.6080748721228,
+              "y": 573.0869565217391
+            },
+            "incoming": {
+              "x": 1,
+              "y": 0
+            },
+            "blade": {
+              "x": -0.5181194370983268,
+              "y": -0.8553082771146981
+            },
+            "deflect": {
+              "x": 0.6812239739087698,
+              "y": 0.7320750626622543
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 652
+          },
+          {
+            "id": "2:guard:1",
+            "kind": "guard-start",
+            "at": 1370.292026120463,
+            "targetId": "",
+            "attackId": "guard:1",
+            "point": {
+              "x": 891.6080748721228,
+              "y": 573.0869565217391
+            },
+            "incoming": {
+              "x": -1,
+              "y": 0
+            },
+            "blade": {
+              "x": -0.5181194370983268,
+              "y": -0.8553082771146981
+            },
+            "deflect": {
+              "x": 0.6812239739087698,
+              "y": 0.7320750626622543
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 652
+          },
+          {
+            "id": "2:strike:practice-training-dummy:1",
+            "kind": "enemy-strike",
+            "at": 1499.813333333333,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 891.6080748721228,
+              "y": 573.0869565217391
+            },
+            "incoming": {
+              "x": 1,
+              "y": 0
+            },
+            "blade": {
+              "x": -0.5181194370983268,
+              "y": -0.8553082771146981
+            },
+            "deflect": {
+              "x": 0.6812239739087698,
+              "y": 0.7320750626622543
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 652
+          },
+          {
+            "id": "2:parry:practice-training-dummy:1",
+            "kind": "parry-contact",
+            "at": 1499.813333333333,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 906.5020966112533,
+              "y": 597.6739130434783
+            },
+            "incoming": {
+              "x": 1,
+              "y": 0
+            },
+            "blade": {
+              "x": -0.5181194370983268,
+              "y": -0.8553082771146981
+            },
+            "deflect": {
+              "x": -0.6812239739087698,
+              "y": -0.7320750626622543
+            },
+            "quality": "normal",
+            "material": "slime",
+            "alive": true,
+            "depth": 650.15,
+            "until": 2099.813333333333
+          },
+          {
+            "id": "2:release:practice-training-dummy:1",
+            "kind": "deflect-release",
+            "at": 1519.813333333333,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 906.5020966112533,
+              "y": 597.6739130434783
+            },
+            "incoming": {
+              "x": 1,
+              "y": 0
+            },
+            "blade": {
+              "x": -0.5181194370983268,
+              "y": -0.8553082771146981
+            },
+            "deflect": {
+              "x": -0.6812239739087698,
+              "y": -0.7320750626622543
+            },
+            "quality": "normal",
+            "material": "slime",
+            "alive": true,
+            "depth": 650.15,
+            "until": 2099.813333333333
+          },
+          {
+            "id": "2:counter-start:1",
+            "kind": "counter-start",
+            "at": 1559.813333333333,
+            "targetId": "practice-training-dummy",
+            "attackId": "player:1",
+            "point": {
+              "x": 950.5537270460359,
+              "y": 561.4239130434783
+            },
+            "incoming": {
+              "x": -1,
+              "y": 0
+            },
+            "blade": {
+              "x": 0.7699241892268376,
+              "y": -0.6381353640438655
+            },
+            "deflect": {
+              "x": -0.6107027519383603,
+              "y": 0.7918599300222947
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 652
+          },
+          {
+            "id": "2:swing:player:1",
+            "kind": "counter-swing",
+            "at": 1579.813333333333,
+            "targetId": "practice-training-dummy",
+            "attackId": "player:1",
+            "point": {
+              "x": 950.5537270460359,
+              "y": 561.4239130434783
+            },
+            "incoming": {
+              "x": -1,
+              "y": 0
+            },
+            "blade": {
+              "x": 0.7699241892268376,
+              "y": -0.6381353640438655
+            },
+            "deflect": {
+              "x": -0.6107027519383603,
+              "y": 0.7918599300222947
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 652
+          },
+          {
+            "id": "2:counter-hit:1:practice-training-dummy",
+            "kind": "counter-hit",
+            "at": 1614.813333333333,
+            "targetId": "practice-training-dummy",
+            "attackId": "player:1",
+            "point": {
+              "x": 887.4319974431563,
+              "y": 602.7168052273249
+            },
+            "incoming": {
+              "x": -1,
+              "y": 0
+            },
+            "blade": {
+              "x": -0.8982987278421081,
+              "y": -0.43938524731407447
+            },
+            "deflect": {
+              "x": 0.9367588373931265,
+              "y": 0.3499755428110341
+            },
+            "quality": "normal",
+            "material": "slime",
+            "alive": true,
+            "depth": 650.15,
+            "legacyHit": "straw"
+          }
+        ],
+        "effects": [],
+        "pending": 0,
+        "delayed": 0,
+        "reactions": 1,
+        "audio": {
+          "voices": 0,
+          "cached": 33,
+          "events": [],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        },
+        "frames": [
+          {
+            "id": "2:charge:practice-training-dummy:1",
+            "frame": 37,
+            "sim": 615.6199999999998,
+            "wall": 2576.800000011921,
+            "phase": "idle"
+          },
+          {
+            "id": "2:guard:1",
+            "frame": 83,
+            "sim": 1381.12,
+            "wall": 3351.900000035763,
+            "phase": "guard"
+          },
+          {
+            "id": "2:strike:practice-training-dummy:1",
+            "frame": 91,
+            "sim": 1499.813333333333,
+            "wall": 3475.2000000476837,
+            "phase": "brace"
+          },
+          {
+            "id": "2:parry:practice-training-dummy:1",
+            "frame": 91,
+            "sim": 1499.813333333333,
+            "wall": 3475.2000000476837,
+            "phase": "brace"
+          },
+          {
+            "id": "2:release:practice-training-dummy:1",
+            "frame": 95,
+            "sim": 1525.8266666666661,
+            "wall": 3542,
+            "phase": "deflect"
+          },
+          {
+            "id": "2:counter-start:1",
+            "frame": 98,
+            "sim": 1575.8099999999995,
+            "wall": 3591.300000011921,
+            "phase": "windup"
+          },
+          {
+            "id": "2:swing:player:1",
+            "frame": 99,
+            "sim": 1592.4699999999996,
+            "wall": 3608.5,
+            "phase": "windup"
+          },
+          {
+            "id": "2:counter-hit:1:practice-training-dummy",
+            "frame": 101,
+            "sim": 1614.813333333333,
+            "wall": 3642.7000000476837,
+            "phase": "active"
+          }
+        ]
+      }
+    },
+    {
+      "方向": "right",
+      "接触": [
+        {
+          "at": 1499.88,
+          "id": "practice-training-dummy:1",
+          "result": "normal",
+          "parryAge": 122.22315993300367,
+          "stamina": 100,
+          "hp": 100,
+          "inputAt": 1377.6568400669964,
+          "startAt": 1377.6568400669964,
+          "phase": "active",
+          "predicted": 1499.88,
+          "direction": {
+            "attack": {
+              "x": -1,
+              "y": 0
+            },
+            "guard": 3
+          },
+          "rejection": ""
+        }
+      ],
+      "反馈": {
+        "mode": "D",
+        "generation": 2,
+        "events": [
+          {
+            "id": "2:charge:practice-training-dummy:1",
+            "kind": "enemy-charge",
+            "at": 599.88,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 808.215286517835,
+              "y": 573.0869565217391
+            },
+            "incoming": {
+              "x": -1,
+              "y": 0
+            },
+            "blade": {
+              "x": 0.5181194370983268,
+              "y": -0.8553082771146981
+            },
+            "deflect": {
+              "x": 0.27052256862703633,
+              "y": -0.9627136333632292
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 652
+          },
+          {
+            "id": "2:guard:1",
+            "kind": "guard-start",
+            "at": 1377.6568400669964,
+            "targetId": "",
+            "attackId": "guard:1",
+            "point": {
+              "x": 808.215286517835,
+              "y": 573.0869565217391
+            },
+            "incoming": {
+              "x": 1,
+              "y": 0
+            },
+            "blade": {
+              "x": 0.5181194370983268,
+              "y": -0.8553082771146981
+            },
+            "deflect": {
+              "x": 0.27052256862703633,
+              "y": -0.9627136333632292
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 652
+          },
+          {
+            "id": "2:strike:practice-training-dummy:1",
+            "kind": "enemy-strike",
+            "at": 1499.88,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 808.215286517835,
+              "y": 573.0869565217391
+            },
+            "incoming": {
+              "x": -1,
+              "y": 0
+            },
+            "blade": {
+              "x": 0.5181194370983268,
+              "y": -0.8553082771146981
+            },
+            "deflect": {
+              "x": 0.27052256862703633,
+              "y": -0.9627136333632292
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 652
+          },
+          {
+            "id": "2:parry:practice-training-dummy:1",
+            "kind": "parry-contact",
+            "at": 1499.88,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 793.3212647787045,
+              "y": 597.6739130434783
+            },
+            "incoming": {
+              "x": -1,
+              "y": 0
+            },
+            "blade": {
+              "x": 0.5181194370983268,
+              "y": -0.8553082771146981
+            },
+            "deflect": {
+              "x": -0.27052256862703633,
+              "y": 0.9627136333632292
+            },
+            "quality": "normal",
+            "material": "slime",
+            "alive": true,
+            "depth": 650.15,
+            "until": 2099.88
+          },
+          {
+            "id": "2:release:practice-training-dummy:1",
+            "kind": "deflect-release",
+            "at": 1519.88,
+            "targetId": "practice-training-dummy",
+            "attackId": "practice-training-dummy:1",
+            "point": {
+              "x": 793.3212647787045,
+              "y": 597.6739130434783
+            },
+            "incoming": {
+              "x": -1,
+              "y": 0
+            },
+            "blade": {
+              "x": 0.5181194370983268,
+              "y": -0.8553082771146981
+            },
+            "deflect": {
+              "x": -0.27052256862703633,
+              "y": 0.9627136333632292
+            },
+            "quality": "normal",
+            "material": "slime",
+            "alive": true,
+            "depth": 650.15,
+            "until": 2099.88
+          },
+          {
+            "id": "2:counter-start:1",
+            "kind": "counter-start",
+            "at": 1559.88,
+            "targetId": "practice-training-dummy",
+            "attackId": "player:1",
+            "point": {
+              "x": 749.2696343439219,
+              "y": 561.4239130434783
+            },
+            "incoming": {
+              "x": 1,
+              "y": 0
+            },
+            "blade": {
+              "x": -0.7699241892268376,
+              "y": -0.6381353640438655
+            },
+            "deflect": {
+              "x": -0.8540523520368113,
+              "y": -0.520187062488477
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 652
+          },
+          {
+            "id": "2:swing:player:1",
+            "kind": "counter-swing",
+            "at": 1579.88,
+            "targetId": "practice-training-dummy",
+            "attackId": "player:1",
+            "point": {
+              "x": 749.2696343439219,
+              "y": 561.4239130434783
+            },
+            "incoming": {
+              "x": 1,
+              "y": 0
+            },
+            "blade": {
+              "x": -0.7699241892268376,
+              "y": -0.6381353640438655
+            },
+            "deflect": {
+              "x": -0.8540523520368113,
+              "y": -0.520187062488477
+            },
+            "quality": "normal",
+            "material": "straw",
+            "alive": true,
+            "depth": 652
+          },
+          {
+            "id": "2:counter-hit:1:practice-training-dummy",
+            "kind": "counter-hit",
+            "at": 1614.88,
+            "targetId": "practice-training-dummy",
+            "attackId": "player:1",
+            "point": {
+              "x": 812.5339008135569,
+              "y": 602.6470861077163
+            },
+            "incoming": {
+              "x": 1,
+              "y": 0
+            },
+            "blade": {
+              "x": 0.8982987278421081,
+              "y": -0.43938524731407447
+            },
+            "deflect": {
+              "x": 0.8161177878052952,
+              "y": -0.5778855911231836
+            },
+            "quality": "normal",
+            "material": "slime",
+            "alive": true,
+            "depth": 650.15,
+            "legacyHit": "straw"
+          }
+        ],
+        "effects": [],
+        "pending": 0,
+        "delayed": 0,
+        "reactions": 1,
+        "audio": {
+          "voices": 0,
+          "cached": 33,
+          "events": [],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        },
+        "frames": [
+          {
+            "id": "2:charge:practice-training-dummy:1",
+            "frame": 37,
+            "sim": 615.7400000000006,
+            "wall": 2586.600000023842,
+            "phase": "idle"
+          },
+          {
+            "id": "2:guard:1",
+            "frame": 83,
+            "sim": 1381.3133333333371,
+            "wall": 3354.100000023842,
+            "phase": "guard"
+          },
+          {
+            "id": "2:strike:practice-training-dummy:1",
+            "frame": 91,
+            "sim": 1499.88,
+            "wall": 3486,
+            "phase": "brace"
+          },
+          {
+            "id": "2:parry:practice-training-dummy:1",
+            "frame": 91,
+            "sim": 1499.88,
+            "wall": 3486,
+            "phase": "brace"
+          },
+          {
+            "id": "2:release:practice-training-dummy:1",
+            "frame": 95,
+            "sim": 1526.0766666666714,
+            "wall": 3553.2000000476837,
+            "phase": "deflect"
+          },
+          {
+            "id": "2:counter-start:1",
+            "frame": 98,
+            "sim": 1576.040000000005,
+            "wall": 3602.900000035763,
+            "phase": "windup"
+          },
+          {
+            "id": "2:swing:player:1",
+            "frame": 99,
+            "sim": 1592.7066666666717,
+            "wall": 3619.100000023842,
+            "phase": "windup"
+          },
+          {
+            "id": "2:counter-hit:1:practice-training-dummy",
+            "frame": 101,
+            "sim": 1614.88,
+            "wall": 3653.600000023842,
+            "phase": "active"
+          }
+        ]
+      }
+    }
+  ]
+}

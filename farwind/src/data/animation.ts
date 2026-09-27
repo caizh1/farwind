@@ -1,3 +1,5 @@
+import {COUNTER_WEAPONS} from "./counterArt";
+import {FEEDBACK} from '../game/systems/combatFeedback';
 import type { Facing, MotionAction } from "../game/systems/locomotion";
 import {SWORD_WIND_WEAPONS, SWORD_WIND_HERO_PROVISIONAL} from './swordWindArt';
 import { COMBAT, PARRY, resolveStrike, type StrikeConfig, type ParryAction } from "../game/systems/combat";
@@ -45,10 +47,16 @@ export function parryVisual(a:ParryAction,now:number,ready=false):CombatVisual {
  const pose=ready?5:success!==null?success<20?1:2:elapsed<PARRY.active?0:5;
  return defensivePose(a.facing,pose,pose===0?"guard":pose===1?"brace":pose===2?"deflect":"ready",success!==null?Math.min(1,success/PARRY.resume):Math.min(1,elapsed/PARRY.recovery));
 }
-export function counterVisual(a:import("../game/systems/combat").Attack,now:number):CombatVisual {
+export function counterVisual(a:import("../game/systems/combat").Attack,now:number,improved=true):CombatVisual {
  const m=a.config??resolveStrike(1,a.counter),elapsed=now-a.start,pose=elapsed<20?2:elapsed<m.windup?3:elapsed<m.windup+m.active?4:5;
  const phase=elapsed<m.windup?"windup":elapsed<m.windup+m.active?"active":"recovery";
  const start=phase==="windup"?0:phase==="active"?m.windup:m.windup+m.active,duration=phase==="windup"?m.windup:phase==="active"?m.active:m.recovery;
+ if(improved&&elapsed>=FEEDBACK.counterMotion) {
+  // 115ms内四个真实挥剑姿态；历史采样取同一帧的剑尖，避免画一条脱离手与剑的独立弧线。
+  const index=phase==='windup'?0:phase==='active'?1+Math.min(3,Math.floor((elapsed-m.windup)/m.active*4)):5;
+  const sample=COUNTER_WEAPONS[a.facing===0?0:a.facing===1?1:2][index],point=(p:{x:number;y:number})=>({x:p.x*(a.facing===2?-1:1),y:p.y});
+  return {texture:'hero-counter-v3',frame:(a.facing===0?0:a.facing===1?1:2)*6+index,clip:`hero/counter/${a.facing}`,frameIndex:index,facing:a.facing,phase,phaseProgress:Math.min(1,(elapsed-start)/duration),provisional:true,weapon:{grip:point(sample.grip),tip:point(sample.tip),visible:phase==='active',progress:Math.min(1,(elapsed-start)/duration),alpha:phase==='active'?.85:0,provisional:true}};
+ }
  const result=defensivePose(a.facing,pose,phase,Math.min(1,(elapsed-start)/duration));
  result.clip=`hero/counter/${a.facing}`;
  result.weapon={...parryWeapon(a.facing,pose),visible:phase==="active",progress:result.phaseProgress,alpha:phase==="active"?.85:0};

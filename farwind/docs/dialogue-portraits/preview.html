@@ -6,7 +6,7 @@
     <title>对话立绘 · 固定预览</title>
     <style>
       body.portrait-preview { background: #254c40 url("./evidence/preview-world.png") center / cover no-repeat; }
-      .preview-controls { position: relative; z-index: 2; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px; background: #173c32; color: #f7edcf; }
+      .preview-controls { position: relative; z-index: 3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px; background: #173c32; color: #f7edcf; }
       .preview-controls select, .preview-controls button { padding: 8px; }
       .preview-controls small { flex: 1 1 200px; }
     </style>
@@ -23,7 +23,7 @@
       import "/src/style.css";
       import { Interface } from "/src/game/ui/interface.ts";
       const ui = new Interface();
-      ui.actions = { pause() {} };
+      ui.actions = { pause() {}, canMutate: () => true };
       const samples = {
         healer: ["药师 · 小满", "带来药草 ×2 和浆果 ×1，我可以替你调制一瓶恢复药剂。药草就在小院，浆果去南侧果园采；也可按 Tab 自行制作。采集点三个游戏小时后再生，兑换前请留出行囊空间。"],
         elder: ["守风人 · 岚爷爷", "东边的森林昨夜传来奇怪的风声。替我去看看吧。先找些药草和浆果，路上记得照顾好自己。"],

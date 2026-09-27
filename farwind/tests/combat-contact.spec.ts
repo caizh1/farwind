@@ -1,21 +1,22 @@
 import { test, expect } from "@playwright/test";
 import { initialState } from "../src/game/systems/state";
-import { writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { captureGameAudio } from "../tools/capture-game-audio.mjs";
 test.use({ video: { mode: "on", size: { width: 1280, height: 720 } } });
-const dir = "docs/combat-contact/evidence";
+const dir = `${process.env.FARWIND_EVIDENCE_ROOT??"docs"}/combat-contact/evidence`;
 test("隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及停手", async ({
   page,
 }) => {
+  await mkdir(dir,{recursive:true});
   await page.addInitScript(captureGameAudio);
   page.on("dialog", (d) => d.accept());
   await page.goto("/");
   const fixture = initialState();
-  delete fixture.map_version;
-  fixture.player.x = 2230;
+  // 当前地图叶灵出生在2920；夹具只设置玩家合法起点，不移动或削弱敌人。
+  fixture.player.x = 2855;
   fixture.player.y = 1070;
   fixture.quest = 3;
-  fixture.killed = ["slime-1", "slime-2"];
+  fixture.killed = ["slime-1", "slime-2", "leaf-2"];
   const chooser = page.waitForEvent("filechooser");
   await page.getByRole("button", { name: "导入存档" }).click();
   await (
@@ -27,8 +28,8 @@ test("隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及�
   });
   await page.waitForFunction(
     () =>
-      (window as any).__farwind().state.player.x > 2200 &&
-      (window as any).__farwind?.().session.sim > 500,
+      (window as any).__farwind().state.player.x > 2800 &&
+      (window as any).__farwind?.().mode === '',
   );
   await page.keyboard.down("d");
   await page.waitForFunction(
@@ -79,7 +80,7 @@ test("隔离森林夹具：侧向第二刀经过正前叶灵；背向三连及�
   await page.screenshot({ path: `${dir}/side-contact-runtime.png` });
   // 通过游戏菜单开启独立村庄场景，背向空挥清楚标识，不冒充森林命中。
   await page.keyboard.press("Escape");
-  await page.getByRole("button", { name: "返回标题" }).click();
+  await page.getByRole("button", { name: "保存并返回标题" }).click();
   await page.getByRole("button", { name: "启程 · 新游戏" }).click();
   await page.getByRole("button", { name: "确认新游戏" }).click();
   await page.waitForFunction(

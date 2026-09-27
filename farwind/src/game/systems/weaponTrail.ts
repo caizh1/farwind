@@ -18,7 +18,7 @@ export class WeaponTrail {
   private root: Point = { x: 0, y: 0 };
   private id = -1;
   private sampledAt = -1;
-  update(now: number, attack: Attack | null, root: Point, epoch: number) {
+  update(now: number, attack: Attack | null, root: Point, epoch: number, improved=true) {
     if (
       epoch !== this.epoch ||
       now < this.previous ||
@@ -50,7 +50,7 @@ export class WeaponTrail {
           at <= to;
           at += 8
         ) {
-          const w = attack.counter ? counterVisual(attack,at).weapon! : weaponSample(
+          const w = attack.counter ? counterVisual(attack,at,improved).weapon! : weaponSample(
             attack.stage,
             attack.facing,
             at - attack.start,

@@ -1,3 +1,5 @@
+import {lifeInteract,offerHelp} from '../ui/npcLife';
+import type {ResidentId} from '../../data/npcLife';
 import type { ShopId } from "../../data/economy";
 import { type Prop } from "../../data/world";
 import { items } from "../../data/content";
@@ -5,6 +7,8 @@ import { add, remove, count, reward } from "./state";
 import type { World } from "../scenes/World";
 
 export function interact(this: World, p: Prop) {
+  if(p.id==="waterside-night"){void this.discoverNight();return;}
+  if(lifeInteract(this,p))return;
   const s = this.state;
   this.soundFx.play("talk");
   if (p.id === "healer" || p.id.startsWith("service-")) {
@@ -15,10 +19,10 @@ export function interact(this: World, p: Prop) {
     if (p.id === "healer") {
       this.ui.dialog(
         p.label!,
-        "带来药草×2和浆果×1，我可以替你调制恢复药剂。先查看药师服务，核对材料并确认后才调药；只是交谈不会消耗材料。",
+        `${this.life.dialogue("healer")}\n带来药草×2和浆果×1，我可以替你调制恢复药剂。先查看药师服务，核对材料并确认后才调药；只是交谈不会消耗材料。`,
         p.id,
       );
-      this.ui.offerShop("healer");
+      this.ui.offerShop("healer");offerHelp(this,"healer");
     } else this.ui.shop(p.id.slice(8) as ShopId);
     return;
   }
@@ -34,7 +38,7 @@ export function interact(this: World, p: Prop) {
     this.ui.dialog(p.label!,p.id === "north-gate-sign" ? "松岚、石泉与林弦守望山路。门外有危险，卫队不会追进深林。" : "麦川、望禾与晴羽照看果园外通路。普通来袭由卫队拦截，门洞保持开放。");return;
   }
   if (p.kind === "npc") {
-    const talk = (text: string) => this.ui.dialog(p.label!, text, p.id);
+    const talk = (text: string) => {this.ui.dialog(p.label!, `${text}\n${this.life.dialogue(p.id as ResidentId)}`, p.id);offerHelp(this,p.id as ResidentId);};
     if (p.id === "elder") {
       if (s.quest === 0) {
         s.quest = 1;

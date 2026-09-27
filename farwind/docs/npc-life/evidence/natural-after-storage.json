@@ -1,0 +1,1057 @@
+{
+  "alarm": 0,
+  "space": "village",
+  "metrics": {
+    "steps": 1093,
+    "decisions": 1549,
+    "queries": 11,
+    "ms": 239.60627800021757,
+    "maxMs": 42.271958000004815
+  },
+  "stores": {
+    "medicine": 6,
+    "herbs": 0,
+    "wood": 6,
+    "food": 18,
+    "day": 0
+  },
+  "reservations": [
+    {
+      "facility": "tools",
+      "owner": "carpenter",
+      "expires": 121300
+    },
+    {
+      "facility": "plaza-seat",
+      "owner": "elder",
+      "expires": 121300
+    },
+    {
+      "facility": "seat:healer-home",
+      "owner": "healer",
+      "expires": 121300
+    }
+  ],
+  "tasks": [],
+  "people": [
+    {
+      "id": "elder",
+      "body": {
+        "space": "village",
+        "x": 730,
+        "y": 780,
+        "hp": 100,
+        "health": "healthy",
+        "episode": 0,
+        "recoverAt": 0
+      },
+      "action": {
+        "id": 21,
+        "kind": "talk",
+        "target": {
+          "space": "village",
+          "x": 730,
+          "y": 780
+        },
+        "pickup": null,
+        "facility": "plaza-seat",
+        "task": null,
+        "phase": "perform",
+        "progress": 2000,
+        "duration": 3000,
+        "started": 107400,
+        "failures": 0,
+        "label": "广场讲旧事"
+      },
+      "reason": "广场讲旧事（评分 90）",
+      "needs": {
+        "hunger": 16.821666666666076,
+        "fatigue": 10.910833333332505
+      },
+      "alarm": 0,
+      "candidates": [
+        {
+          "kind": "talk",
+          "target": {
+            "space": "village",
+            "x": 730,
+            "y": 780
+          },
+          "score": 90,
+          "label": "广场讲旧事",
+          "facility": "plaza-seat",
+          "task": null
+        },
+        {
+          "kind": "rest",
+          "target": {
+            "space": "village",
+            "x": 730,
+            "y": 780,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "score": 10,
+          "label": "原地安全等候",
+          "facility": null,
+          "task": null
+        },
+        {
+          "kind": "rest",
+          "target": {
+            "space": "elder-home",
+            "x": 570,
+            "y": 800
+          },
+          "score": 9.097587210612524,
+          "label": "窗口错过或设施忙，回家等待",
+          "facility": "seat:elder-home",
+          "task": null
+        }
+      ],
+      "path": {
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "stuck": 0,
+        "last": {
+          "x": 727.0907742811926,
+          "y": 772.6710398616802
+        },
+        "queries": 0,
+        "failure": "",
+        "goal": "village:91:98"
+      },
+      "memories": [
+        {
+          "eventId": "life:1",
+          "sequence": 1,
+          "kind": "alarm",
+          "time": 480.15,
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4800.15
+        },
+        {
+          "eventId": "life:8",
+          "sequence": 8,
+          "kind": "clear",
+          "time": 509.0999999999956,
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4829.099999999996
+        }
+      ]
+    },
+    {
+      "id": "healer",
+      "body": {
+        "space": "healer-home",
+        "x": 571.9999999999993,
+        "y": 800,
+        "hp": 100,
+        "health": "healthy",
+        "episode": 0,
+        "recoverAt": 0
+      },
+      "action": {
+        "id": 10,
+        "kind": "rest",
+        "target": {
+          "space": "healer-home",
+          "x": 570,
+          "y": 800
+        },
+        "pickup": null,
+        "facility": "seat:healer-home",
+        "task": null,
+        "phase": "perform",
+        "progress": 700,
+        "duration": 3000,
+        "started": 108700,
+        "failures": 0,
+        "label": "窗口错过或设施忙，回家等待"
+      },
+      "reason": "窗口错过或设施忙，回家等待（评分 20）",
+      "needs": {
+        "hunger": 16.821666666666076,
+        "fatigue": 0.9108333333325503
+      },
+      "alarm": 0,
+      "candidates": [
+        {
+          "kind": "rest",
+          "target": {
+            "space": "healer-home",
+            "x": 570,
+            "y": 800
+          },
+          "score": 19.964000000000013,
+          "label": "窗口错过或设施忙，回家等待",
+          "facility": "seat:healer-home",
+          "task": null
+        },
+        {
+          "kind": "rest",
+          "target": {
+            "space": "healer-home",
+            "x": 571.9999999999993,
+            "y": 800,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "score": 10,
+          "label": "原地安全等候",
+          "facility": null,
+          "task": null
+        }
+      ],
+      "path": {
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "stuck": 0,
+        "last": {
+          "x": 580.5999999999993,
+          "y": 800
+        },
+        "queries": 3,
+        "failure": "",
+        "goal": "healer-home:71:100"
+      },
+      "memories": [
+        {
+          "eventId": "life:7",
+          "sequence": 7,
+          "kind": "injury",
+          "time": 493.9499999999979,
+          "subjects": [
+            "east-watch"
+          ],
+          "result": "驻防战斗受伤",
+          "source": "report",
+          "importance": 40,
+          "expires": 4813.949999999998
+        },
+        {
+          "eventId": "life:8",
+          "sequence": 8,
+          "kind": "clear",
+          "time": 509.0999999999956,
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4829.099999999996
+        },
+        {
+          "eventId": "life:9",
+          "sequence": 9,
+          "kind": "care",
+          "time": 530.8499999999923,
+          "subjects": [
+            "east-watch"
+          ],
+          "result": "到场治疗，消耗公共药品",
+          "source": "seen",
+          "importance": 80,
+          "expires": 4850.849999999992
+        },
+        {
+          "eventId": "life:10",
+          "sequence": 10,
+          "kind": "care",
+          "time": 544.9499999999902,
+          "subjects": [
+            "east-patrol"
+          ],
+          "result": "到场治疗，消耗公共药品",
+          "source": "seen",
+          "importance": 80,
+          "expires": 4864.94999999999
+        }
+      ]
+    },
+    {
+      "id": "carpenter",
+      "body": {
+        "space": "village",
+        "x": 409.4071642003114,
+        "y": 1007.2038045297476,
+        "hp": 100,
+        "health": "healthy",
+        "episode": 0,
+        "recoverAt": 0
+      },
+      "action": {
+        "id": 11,
+        "kind": "work",
+        "target": {
+          "space": "village",
+          "x": 412,
+          "y": 1010
+        },
+        "pickup": null,
+        "facility": "tools",
+        "task": null,
+        "phase": "perform",
+        "progress": 6800,
+        "duration": 8000,
+        "started": 102600,
+        "failures": 0,
+        "label": "修工具、做木工"
+      },
+      "reason": "修工具、做木工（评分 88）",
+      "needs": {
+        "hunger": 16.821666666666076,
+        "fatigue": 10.910833333332505
+      },
+      "alarm": 0,
+      "candidates": [
+        {
+          "kind": "work",
+          "target": {
+            "space": "village",
+            "x": 412,
+            "y": 1010
+          },
+          "score": 87.93136001066571,
+          "label": "修工具、做木工",
+          "facility": "tools",
+          "task": null
+        },
+        {
+          "kind": "rest",
+          "target": {
+            "space": "village",
+            "x": 409.4071642003114,
+            "y": 1007.2038045297476,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "score": 10,
+          "label": "原地安全等候",
+          "facility": null,
+          "task": null
+        },
+        {
+          "kind": "rest",
+          "target": {
+            "space": "carpenter-home",
+            "x": 570,
+            "y": 800
+          },
+          "score": 7.281270714582243,
+          "label": "窗口错过或设施忙，回家等待",
+          "facility": "seat:carpenter-home",
+          "task": null
+        }
+      ],
+      "path": {
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "stuck": 0,
+        "last": {
+          "x": 403.5596839532343,
+          "y": 1000.8976983809389
+        },
+        "queries": 0,
+        "failure": "",
+        "goal": "village:52:126"
+      },
+      "memories": [
+        {
+          "eventId": "life:1",
+          "sequence": 1,
+          "kind": "alarm",
+          "time": 480.15,
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4800.15
+        },
+        {
+          "eventId": "life:8",
+          "sequence": 8,
+          "kind": "clear",
+          "time": 509.0999999999956,
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4829.099999999996
+        }
+      ]
+    },
+    {
+      "id": "east-watch",
+      "body": {
+        "space": "village",
+        "x": 2011.824121088583,
+        "y": 971.2573861586286
+      },
+      "action": null,
+      "reason": "值守或沿路返回岗位",
+      "needs": {
+        "hunger": 16.821666666666076,
+        "fatigue": 10.910833333332505
+      },
+      "alarm": 0,
+      "candidates": [],
+      "memories": [
+        {
+          "eventId": "life:6",
+          "sequence": 6,
+          "kind": "injury",
+          "time": 491.54999999999825,
+          "subjects": [
+            "east-watch"
+          ],
+          "result": "驻防战斗受伤",
+          "source": "seen",
+          "importance": 40,
+          "expires": 4811.549999999998
+        },
+        {
+          "eventId": "life:7",
+          "sequence": 7,
+          "kind": "injury",
+          "time": 493.9499999999979,
+          "subjects": [
+            "east-watch"
+          ],
+          "result": "驻防战斗受伤",
+          "source": "seen",
+          "importance": 40,
+          "expires": 4813.949999999998
+        },
+        {
+          "eventId": "life:8",
+          "sequence": 8,
+          "kind": "clear",
+          "time": 509.0999999999956,
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4829.099999999996
+        },
+        {
+          "eventId": "life:9",
+          "sequence": 9,
+          "kind": "care",
+          "time": 530.8499999999923,
+          "subjects": [
+            "east-watch"
+          ],
+          "result": "到场治疗，消耗公共药品",
+          "source": "seen",
+          "importance": 80,
+          "expires": 4850.849999999992
+        }
+      ]
+    },
+    {
+      "id": "east-patrol",
+      "body": {
+        "space": "village",
+        "x": 1971.2297242301393,
+        "y": 1159.7799212086113
+      },
+      "action": null,
+      "reason": "值守或沿路返回岗位",
+      "needs": {
+        "hunger": 16.821666666666076,
+        "fatigue": 10.910833333332505
+      },
+      "alarm": 0,
+      "candidates": [],
+      "memories": [
+        {
+          "eventId": "life:6",
+          "sequence": 6,
+          "kind": "injury",
+          "time": 491.54999999999825,
+          "subjects": [
+            "east-watch"
+          ],
+          "result": "驻防战斗受伤",
+          "source": "seen",
+          "importance": 40,
+          "expires": 4811.549999999998
+        },
+        {
+          "eventId": "life:7",
+          "sequence": 7,
+          "kind": "injury",
+          "time": 493.9499999999979,
+          "subjects": [
+            "east-watch"
+          ],
+          "result": "驻防战斗受伤",
+          "source": "seen",
+          "importance": 40,
+          "expires": 4813.949999999998
+        },
+        {
+          "eventId": "life:8",
+          "sequence": 8,
+          "kind": "clear",
+          "time": 509.0999999999956,
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4829.099999999996
+        },
+        {
+          "eventId": "life:10",
+          "sequence": 10,
+          "kind": "care",
+          "time": 544.9499999999902,
+          "subjects": [
+            "east-patrol"
+          ],
+          "result": "到场治疗，消耗公共药品",
+          "source": "seen",
+          "importance": 80,
+          "expires": 4864.94999999999
+        }
+      ]
+    },
+    {
+      "id": "east-archer",
+      "body": {
+        "space": "village",
+        "x": 2030,
+        "y": 900
+      },
+      "action": null,
+      "reason": "值守或沿路返回岗位",
+      "needs": {
+        "hunger": 16.821666666666076,
+        "fatigue": 10.910833333332505
+      },
+      "alarm": 0,
+      "candidates": [],
+      "memories": [
+        {
+          "eventId": "life:1",
+          "sequence": 1,
+          "kind": "alarm",
+          "time": 480.15,
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4800.15
+        },
+        {
+          "eventId": "life:8",
+          "sequence": 8,
+          "kind": "clear",
+          "time": 509.0999999999956,
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4829.099999999996
+        }
+      ]
+    },
+    {
+      "id": "north-watch",
+      "body": {
+        "space": "village",
+        "x": 740.2236322406201,
+        "y": 300.4270414217727
+      },
+      "action": null,
+      "reason": "值守或沿路返回岗位",
+      "needs": {
+        "hunger": 16.821666666666076,
+        "fatigue": 10.910833333332505
+      },
+      "alarm": 0,
+      "candidates": [],
+      "path": {
+        "nav": {
+          "path": [],
+          "next": 41900,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0,
+          "target": {
+            "space": "village",
+            "x": 740,
+            "y": 300
+          }
+        },
+        "stuck": 0,
+        "last": {
+          "x": 746.3009270419465,
+          "y": 312.0320613656492
+        },
+        "queries": 1,
+        "failure": "",
+        "goal": "village:93:38"
+      },
+      "memories": [
+        {
+          "eventId": "life:1",
+          "sequence": 1,
+          "kind": "alarm",
+          "time": 480.15,
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4800.15
+        },
+        {
+          "eventId": "life:8",
+          "sequence": 8,
+          "kind": "clear",
+          "time": 509.0999999999956,
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4829.099999999996
+        }
+      ]
+    },
+    {
+      "id": "north-patrol",
+      "body": {
+        "space": "village",
+        "x": 860,
+        "y": 401
+      },
+      "action": null,
+      "reason": "值守或沿路返回岗位",
+      "needs": {
+        "hunger": 16.821666666666076,
+        "fatigue": 10.910833333332505
+      },
+      "alarm": 0,
+      "candidates": [],
+      "memories": [
+        {
+          "eventId": "life:1",
+          "sequence": 1,
+          "kind": "alarm",
+          "time": 480.15,
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4800.15
+        },
+        {
+          "eventId": "life:8",
+          "sequence": 8,
+          "kind": "clear",
+          "time": 509.0999999999956,
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4829.099999999996
+        }
+      ]
+    },
+    {
+      "id": "north-archer",
+      "body": {
+        "space": "village",
+        "x": 680,
+        "y": 350
+      },
+      "action": null,
+      "reason": "值守或沿路返回岗位",
+      "needs": {
+        "hunger": 16.821666666666076,
+        "fatigue": 10.910833333332505
+      },
+      "alarm": 0,
+      "candidates": [],
+      "memories": [
+        {
+          "eventId": "life:1",
+          "sequence": 1,
+          "kind": "alarm",
+          "time": 480.15,
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4800.15
+        },
+        {
+          "eventId": "life:8",
+          "sequence": 8,
+          "kind": "clear",
+          "time": 509.0999999999956,
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4829.099999999996
+        }
+      ]
+    },
+    {
+      "id": "south-watch",
+      "body": {
+        "space": "village",
+        "x": 810.4856169074603,
+        "y": 1719.6870703237391
+      },
+      "action": null,
+      "reason": "值守或沿路返回岗位",
+      "needs": {
+        "hunger": 16.821666666666076,
+        "fatigue": 10.910833333332505
+      },
+      "alarm": 0,
+      "candidates": [],
+      "path": {
+        "nav": {
+          "path": [],
+          "next": 41900,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0,
+          "target": {
+            "space": "village",
+            "x": 810,
+            "y": 1720
+          }
+        },
+        "stuck": 0,
+        "last": {
+          "x": 821.4973395013889,
+          "y": 1712.5911584362955
+        },
+        "queries": 1,
+        "failure": "",
+        "goal": "village:101:215"
+      },
+      "memories": [
+        {
+          "eventId": "life:1",
+          "sequence": 1,
+          "kind": "alarm",
+          "time": 480.15,
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4800.15
+        },
+        {
+          "eventId": "life:8",
+          "sequence": 8,
+          "kind": "clear",
+          "time": 509.0999999999956,
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4829.099999999996
+        },
+        {
+          "eventId": "life:10",
+          "sequence": 10,
+          "kind": "care",
+          "time": 544.9499999999902,
+          "subjects": [
+            "east-patrol"
+          ],
+          "result": "到场治疗，消耗公共药品",
+          "source": "seen",
+          "importance": 80,
+          "expires": 4864.94999999999
+        }
+      ]
+    },
+    {
+      "id": "south-patrol",
+      "body": {
+        "space": "village",
+        "x": 973.7591002641261,
+        "y": 1683.4579755942839
+      },
+      "action": null,
+      "reason": "值守或沿路返回岗位",
+      "needs": {
+        "hunger": 16.821666666666076,
+        "fatigue": 10.910833333332505
+      },
+      "alarm": 0,
+      "candidates": [],
+      "memories": [
+        {
+          "eventId": "life:1",
+          "sequence": 1,
+          "kind": "alarm",
+          "time": 480.15,
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4800.15
+        },
+        {
+          "eventId": "life:8",
+          "sequence": 8,
+          "kind": "clear",
+          "time": 509.0999999999956,
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4829.099999999996
+        }
+      ]
+    },
+    {
+      "id": "south-archer",
+      "body": {
+        "space": "village",
+        "x": 1140,
+        "y": 1750
+      },
+      "action": null,
+      "reason": "值守或沿路返回岗位",
+      "needs": {
+        "hunger": 16.821666666666076,
+        "fatigue": 10.910833333332505
+      },
+      "alarm": 0,
+      "candidates": [],
+      "memories": [
+        {
+          "eventId": "life:1",
+          "sequence": 1,
+          "kind": "alarm",
+          "time": 480.15,
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4800.15
+        },
+        {
+          "eventId": "life:8",
+          "sequence": 8,
+          "kind": "clear",
+          "time": 509.0999999999956,
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "source": "alarm",
+          "importance": 40,
+          "expires": 4829.099999999996
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "life:1",
+      "sequence": 1,
+      "time": 480.15,
+      "kind": "alarm",
+      "place": {
+        "space": "village",
+        "x": 720,
+        "y": 650
+      },
+      "source": "bell",
+      "subjects": [],
+      "result": "村门袭扰，保持局部警戒",
+      "debug": false
+    },
+    {
+      "id": "life:2",
+      "sequence": 2,
+      "time": 485.0999999999992,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 2128.0443858207104,
+        "y": 1124.657736038588
+      },
+      "source": "east-raid-1:1",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:3",
+      "sequence": 3,
+      "time": 485.3999999999992,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 2128.0443858207104,
+        "y": 1124.657736038588
+      },
+      "source": "east-raid-1:2",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:4",
+      "sequence": 4,
+      "time": 487.1999999999989,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 2128.0443858207104,
+        "y": 1124.657736038588
+      },
+      "source": "east-raid-1:3",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:5",
+      "sequence": 5,
+      "time": 487.7999999999988,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 2128.0443858207104,
+        "y": 1124.657736038588
+      },
+      "source": "east-raid-1:2",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:6",
+      "sequence": 6,
+      "time": 491.54999999999825,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 2134.810038288664,
+        "y": 1083.6742519421518
+      },
+      "source": "east-raid-1:2",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:7",
+      "sequence": 7,
+      "time": 493.9499999999979,
+      "kind": "injury",
+      "place": {
+        "space": "village",
+        "x": 2134.810038288664,
+        "y": 1083.6742519421518
+      },
+      "source": "east-raid-1:2",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "驻防战斗受伤",
+      "debug": false
+    },
+    {
+      "id": "life:8",
+      "sequence": 8,
+      "time": 509.0999999999956,
+      "kind": "clear",
+      "place": {
+        "space": "village",
+        "x": 720,
+        "y": 650
+      },
+      "source": "bell",
+      "subjects": [],
+      "result": "持续确认安全，先救护和检修再恢复日常",
+      "debug": false
+    },
+    {
+      "id": "life:9",
+      "sequence": 9,
+      "time": 530.8499999999923,
+      "kind": "care",
+      "place": {
+        "space": "village",
+        "x": 2011.824121088583,
+        "y": 971.2573861586286
+      },
+      "source": "healer",
+      "subjects": [
+        "east-watch"
+      ],
+      "result": "到场治疗，消耗公共药品",
+      "debug": false
+    },
+    {
+      "id": "life:10",
+      "sequence": 10,
+      "time": 544.9499999999902,
+      "kind": "care",
+      "place": {
+        "space": "village",
+        "x": 1910,
+        "y": 1190
+      },
+      "source": "healer",
+      "subjects": [
+        "east-patrol"
+      ],
+      "result": "到场治疗，消耗公共药品",
+      "debug": false
+    }
+  ]
+}

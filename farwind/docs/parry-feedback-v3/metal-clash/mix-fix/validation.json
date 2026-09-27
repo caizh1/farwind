@@ -1,0 +1,42 @@
+{
+  "说明": "直接对当前5173服务验证，未重用5226或历史结果；主体音色不改，修复同一次来招遮蔽。浏览器JSON原先相对配置目录输出，已保留原件并复制到约定报告位置；不重跑或改写结果",
+  "目标地址": "http://127.0.0.1:5173/",
+  "浏览器": {
+    "通过": 7,
+    "失败": 0,
+    "耗时秒": 45.001559
+  },
+  "相关逻辑": {
+    "通过": 85,
+    "失败": 0
+  },
+  "类型检查": "通过",
+  "生产构建": "通过，原大分包提示保留",
+  "设备听感": "未验收",
+  "源码": [
+    {
+      "路径": "src/game/systems/audio.ts",
+      "摘要": "3c56be7deae7b98c222c0fb743e18d766907aab47dff75cc19d03179606426a4"
+    },
+    {
+      "路径": "src/game/systems/combatFeedback.ts",
+      "摘要": "8d52c55fcbfaa762465956940fb3cf2897a6603fd1ae9255dcbdcaa788447788"
+    },
+    {
+      "路径": "src/game/systems/feedbackAudio.ts",
+      "摘要": "cf53cb32a28055d83dcfc3e444a65f027dc7ef7be7c849c84fd706b84ddaf312"
+    },
+    {
+      "路径": "src/game/scenes/World.ts",
+      "摘要": "881b74f0690d8e35a5df7e0f5a53a1375ad3fbb3dc2f8486e6313399b794af2e"
+    },
+    {
+      "路径": "tests/parry-feedback-v3.test.ts",
+      "摘要": "b9f95d9167aa0614e094681bf613fbc34d201e29cad137501787a8865d7355da"
+    },
+    {
+      "路径": "tests/parry-feedback-v3.spec.ts",
+      "摘要": "f525e12e5143b43b3d83721b1a322beda0d3fe7059613043ad624b75807665e8"
+    }
+  ]
+}

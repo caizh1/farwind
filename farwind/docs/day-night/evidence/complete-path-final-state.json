@@ -1,0 +1,3239 @@
+{
+  "说明": "真实UI路线结束后的实际快照，未改写奖励、序号或主线字段；用于可复核恢复。",
+  "state": {
+    "skills": {
+      "swordWind": false
+    },
+    "schema_version": 6,
+    "life": {
+      "version": 2,
+      "unavailable": {
+        "homes": {},
+        "facilities": []
+      },
+      "people": [
+        {
+          "id": "elder",
+          "body": {
+            "space": "elder-home",
+            "x": 465.42279081888887,
+            "y": 557.9781431117623,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "action": {
+            "id": 77,
+            "kind": "sleep",
+            "target": {
+              "space": "elder-home",
+              "x": 460,
+              "y": 560
+            },
+            "pickup": null,
+            "facility": "bed:elder",
+            "task": null,
+            "phase": "perform",
+            "progress": 3000,
+            "duration": 3000,
+            "started": 911256.5999998066,
+            "failures": 0,
+            "label": "在家睡觉"
+          },
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 77,
+          "committed": 76,
+          "needs": {
+            "hunger": 33.95639738880196,
+            "fatigue": 0
+          },
+          "emotion": 24.450670666668593,
+          "gear": "locker",
+          "project": 2.1999999999999997,
+          "nextDecision": 1137954.5733331381,
+          "reason": "在家睡觉（评分 89）",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "healer": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "carpenter": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "player": {
+              "familiar": 0,
+              "trust": 0,
+              "wariness": 6,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 7046.019989997678,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11366.019989997678
+            },
+            {
+              "eventId": "life:8",
+              "sequence": 8,
+              "kind": "clear",
+              "time": 7077.445294996816,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11397.445294996816
+            },
+            {
+              "eventId": "life:9",
+              "sequence": 9,
+              "kind": "alarm",
+              "time": 7108.463974995982,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11428.463974995982
+            },
+            {
+              "eventId": "life:10",
+              "sequence": 10,
+              "kind": "clear",
+              "time": 7126.336474995508,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11446.336474995507
+            },
+            {
+              "eventId": "life:11",
+              "sequence": 11,
+              "kind": "alarm",
+              "time": 7188.646474993826,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11508.646474993826
+            },
+            {
+              "eventId": "life:12",
+              "sequence": 12,
+              "kind": "clear",
+              "time": 7208.168974993308,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11528.168974993308
+            },
+            {
+              "eventId": "life:13",
+              "sequence": 13,
+              "kind": "visit",
+              "time": 7214.189449993151,
+              "subjects": [
+                "elder"
+              ],
+              "result": "未预约敲门；获准短时拜访",
+              "source": "seen",
+              "importance": 40,
+              "expires": 11534.189449993151
+            },
+            {
+              "eventId": "life:14",
+              "sequence": 14,
+              "kind": "alarm",
+              "time": 7245.411949992648,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11565.41194999265
+            },
+            {
+              "eventId": "life:15",
+              "sequence": 15,
+              "kind": "clear",
+              "time": 7263.276949992359,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11583.27694999236
+            },
+            {
+              "eventId": "life:16",
+              "sequence": 16,
+              "kind": "visit",
+              "time": 7300.901689991822,
+              "subjects": [
+                "elder"
+              ],
+              "result": "未预约敲门；获准短时拜访",
+              "source": "seen",
+              "importance": 40,
+              "expires": 11620.901689991822
+            },
+            {
+              "eventId": "life:17",
+              "sequence": 17,
+              "kind": "alarm",
+              "time": 7346.339449991141,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11666.339449991141
+            },
+            {
+              "eventId": "life:18",
+              "sequence": 18,
+              "kind": "clear",
+              "time": 7363.81444999087,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11683.81444999087
+            }
+          ],
+          "receipt": 18,
+          "receipts": [
+            1,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "player": {
+              "space": "elder-home",
+              "x": 546.5573596118033,
+              "y": 908.4297791712619,
+              "time": 7311.563689991675
+            },
+            "north-patrol": {
+              "space": "village",
+              "x": 860.190317121663,
+              "y": 428.23855158458707,
+              "time": 2161.439530000202
+            },
+            "north-watch": {
+              "space": "village",
+              "x": 905.4730064863838,
+              "y": 605.4730064863838,
+              "time": 1811.4520299999292
+            },
+            "carpenter": {
+              "space": "village",
+              "x": 343.6241809168137,
+              "y": 936.2613715769552,
+              "time": 2162.789530000222
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1
+        },
+        {
+          "id": "healer",
+          "body": {
+            "space": "healer-home",
+            "x": 465.562859623964,
+            "y": 557.9145636186254,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "action": {
+            "id": 81,
+            "kind": "sleep",
+            "target": {
+              "space": "healer-home",
+              "x": 460,
+              "y": 560
+            },
+            "pickup": null,
+            "facility": "bed:healer",
+            "task": null,
+            "phase": "perform",
+            "progress": 3000,
+            "duration": 3000,
+            "started": 956345.9233331403,
+            "failures": 0,
+            "label": "在家睡觉"
+          },
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 81,
+          "committed": 80,
+          "needs": {
+            "hunger": 33.95639738880196,
+            "fatigue": 0
+          },
+          "emotion": 24.450670666668593,
+          "gear": "locker",
+          "project": 11.5,
+          "nextDecision": 1137954.5733331381,
+          "reason": "在家睡觉（评分 89）",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 7046.019989997678,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11366.019989997678
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "injury",
+              "time": 7054.149844997458,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "report",
+              "importance": 40,
+              "expires": 11374.149844997457
+            },
+            {
+              "eventId": "life:3",
+              "sequence": 3,
+              "kind": "injury",
+              "time": 7055.949739997398,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "report",
+              "importance": 40,
+              "expires": 11375.949739997399
+            },
+            {
+              "eventId": "life:4",
+              "sequence": 4,
+              "kind": "injury",
+              "time": 7056.424744997382,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "report",
+              "importance": 40,
+              "expires": 11376.424744997381
+            },
+            {
+              "eventId": "life:5",
+              "sequence": 5,
+              "kind": "injury",
+              "time": 7058.84460499732,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "report",
+              "importance": 40,
+              "expires": 11378.84460499732
+            },
+            {
+              "eventId": "life:6",
+              "sequence": 6,
+              "kind": "injury",
+              "time": 7058.924614997317,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "report",
+              "importance": 40,
+              "expires": 11378.924614997317
+            },
+            {
+              "eventId": "life:7",
+              "sequence": 7,
+              "kind": "injury",
+              "time": 7061.749474997233,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "report",
+              "importance": 40,
+              "expires": 11381.749474997232
+            },
+            {
+              "eventId": "life:8",
+              "sequence": 8,
+              "kind": "clear",
+              "time": 7077.445294996816,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11397.445294996816
+            },
+            {
+              "eventId": "life:9",
+              "sequence": 9,
+              "kind": "alarm",
+              "time": 7108.463974995982,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11428.463974995982
+            },
+            {
+              "eventId": "life:10",
+              "sequence": 10,
+              "kind": "clear",
+              "time": 7126.336474995508,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11446.336474995507
+            },
+            {
+              "eventId": "life:11",
+              "sequence": 11,
+              "kind": "alarm",
+              "time": 7188.646474993826,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11508.646474993826
+            },
+            {
+              "eventId": "life:12",
+              "sequence": 12,
+              "kind": "clear",
+              "time": 7208.168974993308,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11528.168974993308
+            },
+            {
+              "eventId": "life:14",
+              "sequence": 14,
+              "kind": "alarm",
+              "time": 7245.411949992648,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11565.41194999265
+            },
+            {
+              "eventId": "life:15",
+              "sequence": 15,
+              "kind": "clear",
+              "time": 7263.276949992359,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11583.27694999236
+            },
+            {
+              "eventId": "life:17",
+              "sequence": 17,
+              "kind": "alarm",
+              "time": 7346.339449991141,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11666.339449991141
+            },
+            {
+              "eventId": "life:18",
+              "sequence": 18,
+              "kind": "clear",
+              "time": 7363.81444999087,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11683.81444999087
+            }
+          ],
+          "receipt": 18,
+          "receipts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            14,
+            15,
+            17,
+            18
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "player": {
+              "space": "village",
+              "x": 1067.9383248234517,
+              "y": 667.6866229083801,
+              "time": 493.94640499999116
+            },
+            "north-watch": {
+              "space": "village",
+              "x": 755.7506920738657,
+              "y": 231.8467769408267,
+              "time": 7061.749474997233
+            }
+          },
+          "lastSupplyDay": 2,
+          "lastMealDay": -1
+        },
+        {
+          "id": "carpenter",
+          "body": {
+            "space": "carpenter-home",
+            "x": 465.3271677071677,
+            "y": 558.013795648171,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "action": {
+            "id": 55,
+            "kind": "sleep",
+            "target": {
+              "space": "carpenter-home",
+              "x": 460,
+              "y": 560
+            },
+            "pickup": null,
+            "facility": "bed:carpenter",
+            "task": null,
+            "phase": "perform",
+            "progress": 3000,
+            "duration": 3000,
+            "started": 911086.5999998066,
+            "failures": 0,
+            "label": "在家睡觉"
+          },
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 55,
+          "committed": 54,
+          "needs": {
+            "hunger": 33.95639738880196,
+            "fatigue": 0
+          },
+          "emotion": 24.450670666668593,
+          "gear": "locker",
+          "project": 7.700000000000001,
+          "nextDecision": 1137954.5733331381,
+          "reason": "在家睡觉（评分 89）",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 7046.019989997678,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11366.019989997678
+            },
+            {
+              "eventId": "life:8",
+              "sequence": 8,
+              "kind": "clear",
+              "time": 7077.445294996816,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11397.445294996816
+            },
+            {
+              "eventId": "life:9",
+              "sequence": 9,
+              "kind": "alarm",
+              "time": 7108.463974995982,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11428.463974995982
+            },
+            {
+              "eventId": "life:10",
+              "sequence": 10,
+              "kind": "clear",
+              "time": 7126.336474995508,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11446.336474995507
+            },
+            {
+              "eventId": "life:11",
+              "sequence": 11,
+              "kind": "alarm",
+              "time": 7188.646474993826,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11508.646474993826
+            },
+            {
+              "eventId": "life:12",
+              "sequence": 12,
+              "kind": "clear",
+              "time": 7208.168974993308,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11528.168974993308
+            },
+            {
+              "eventId": "life:14",
+              "sequence": 14,
+              "kind": "alarm",
+              "time": 7245.411949992648,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11565.41194999265
+            },
+            {
+              "eventId": "life:15",
+              "sequence": 15,
+              "kind": "clear",
+              "time": 7263.276949992359,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11583.27694999236
+            },
+            {
+              "eventId": "life:17",
+              "sequence": 17,
+              "kind": "alarm",
+              "time": 7346.339449991141,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11666.339449991141
+            },
+            {
+              "eventId": "life:18",
+              "sequence": 18,
+              "kind": "clear",
+              "time": 7363.81444999087,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11683.81444999087
+            }
+          ],
+          "receipt": 18,
+          "receipts": [
+            1,
+            8,
+            9,
+            10,
+            11,
+            12,
+            14,
+            15,
+            17,
+            18
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "player": {
+              "space": "village",
+              "x": 671.4710918014412,
+              "y": 761.2824918653461,
+              "time": 1823.9240699998575
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1
+        },
+        {
+          "id": "east-watch",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 11,
+          "committed": 4,
+          "needs": {
+            "hunger": 33.95639738880196,
+            "fatigue": 8.242264249975864
+          },
+          "emotion": 24.450670666668593,
+          "gear": "locker",
+          "project": 0.8,
+          "nextDecision": 1137954.5733331381,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 7046.019989997678,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11366.019989997678
+            },
+            {
+              "eventId": "life:8",
+              "sequence": 8,
+              "kind": "clear",
+              "time": 7077.445294996816,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11397.445294996816
+            },
+            {
+              "eventId": "life:9",
+              "sequence": 9,
+              "kind": "alarm",
+              "time": 7108.463974995982,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11428.463974995982
+            },
+            {
+              "eventId": "life:10",
+              "sequence": 10,
+              "kind": "clear",
+              "time": 7126.336474995508,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11446.336474995507
+            },
+            {
+              "eventId": "life:11",
+              "sequence": 11,
+              "kind": "alarm",
+              "time": 7188.646474993826,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11508.646474993826
+            },
+            {
+              "eventId": "life:12",
+              "sequence": 12,
+              "kind": "clear",
+              "time": 7208.168974993308,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11528.168974993308
+            },
+            {
+              "eventId": "life:14",
+              "sequence": 14,
+              "kind": "alarm",
+              "time": 7245.411949992648,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11565.41194999265
+            },
+            {
+              "eventId": "life:15",
+              "sequence": 15,
+              "kind": "clear",
+              "time": 7263.276949992359,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11583.27694999236
+            },
+            {
+              "eventId": "life:17",
+              "sequence": 17,
+              "kind": "alarm",
+              "time": 7346.339449991141,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11666.339449991141
+            },
+            {
+              "eventId": "life:18",
+              "sequence": 18,
+              "kind": "clear",
+              "time": 7363.81444999087,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11683.81444999087
+            }
+          ],
+          "receipt": 18,
+          "receipts": [
+            1,
+            8,
+            9,
+            10,
+            11,
+            12,
+            14,
+            15,
+            17,
+            18
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "player": {
+              "space": "village",
+              "x": 2101.988637364373,
+              "y": 1009.9551494992994,
+              "time": 7344.788479991163
+            },
+            "east-archer": {
+              "space": "village",
+              "x": 2024.6559862071256,
+              "y": 941.7575585877197,
+              "time": 7093.651474996377
+            },
+            "north-watch": {
+              "space": "village",
+              "x": 1705.3799999999983,
+              "y": 780,
+              "time": 5774.515094992958
+            },
+            "south-watch": {
+              "space": "village",
+              "x": 1820,
+              "y": 931.1799999999992,
+              "time": 5774.515094992958
+            },
+            "south-archer": {
+              "space": "village",
+              "x": 1820,
+              "y": 942.1499999999997,
+              "time": 7035.392489997991
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1
+        },
+        {
+          "id": "east-patrol",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 33.95639738880196,
+            "fatigue": 19.478198694475363
+          },
+          "emotion": 24.450670666668593,
+          "gear": "locker",
+          "project": 0,
+          "nextDecision": 1137954.5733331381,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "healer": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 7046.019989997678,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11366.019989997678
+            },
+            {
+              "eventId": "life:8",
+              "sequence": 8,
+              "kind": "clear",
+              "time": 7077.445294996816,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11397.445294996816
+            },
+            {
+              "eventId": "life:9",
+              "sequence": 9,
+              "kind": "alarm",
+              "time": 7108.463974995982,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11428.463974995982
+            },
+            {
+              "eventId": "life:10",
+              "sequence": 10,
+              "kind": "clear",
+              "time": 7126.336474995508,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11446.336474995507
+            },
+            {
+              "eventId": "life:11",
+              "sequence": 11,
+              "kind": "alarm",
+              "time": 7188.646474993826,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11508.646474993826
+            },
+            {
+              "eventId": "life:12",
+              "sequence": 12,
+              "kind": "clear",
+              "time": 7208.168974993308,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11528.168974993308
+            },
+            {
+              "eventId": "life:14",
+              "sequence": 14,
+              "kind": "alarm",
+              "time": 7245.411949992648,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11565.41194999265
+            },
+            {
+              "eventId": "life:15",
+              "sequence": 15,
+              "kind": "clear",
+              "time": 7263.276949992359,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11583.27694999236
+            },
+            {
+              "eventId": "life:17",
+              "sequence": 17,
+              "kind": "alarm",
+              "time": 7346.339449991141,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11666.339449991141
+            },
+            {
+              "eventId": "life:18",
+              "sequence": 18,
+              "kind": "clear",
+              "time": 7363.81444999087,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11683.81444999087
+            }
+          ],
+          "receipt": 18,
+          "receipts": [
+            1,
+            8,
+            9,
+            10,
+            11,
+            12,
+            14,
+            15,
+            17,
+            18
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "player": {
+              "space": "village",
+              "x": 2318.222637364366,
+              "y": 1009.9551494992994,
+              "time": 7346.95081999113
+            },
+            "south-watch": {
+              "space": "village",
+              "x": 1644.7534117068835,
+              "y": 1181.1592070890056,
+              "time": 5780.260094992805
+            },
+            "south-archer": {
+              "space": "village",
+              "x": 1665.4816831400458,
+              "y": 1220.0395416754936,
+              "time": 7041.1374899978255
+            },
+            "east-archer": {
+              "space": "village",
+              "x": 1917.0271312909724,
+              "y": 1002.9728687090275,
+              "time": 7089.6014749964725
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1
+        },
+        {
+          "id": "east-archer",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 5,
+          "committed": 4,
+          "needs": {
+            "hunger": 33.95639738880196,
+            "fatigue": 1.9448039166675517
+          },
+          "emotion": 24.450670666668593,
+          "gear": "carried",
+          "project": 0.4,
+          "nextDecision": 1137954.5733331381,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 7046.019989997678,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11366.019989997678
+            },
+            {
+              "eventId": "life:8",
+              "sequence": 8,
+              "kind": "clear",
+              "time": 7077.445294996816,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11397.445294996816
+            },
+            {
+              "eventId": "life:9",
+              "sequence": 9,
+              "kind": "alarm",
+              "time": 7108.463974995982,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11428.463974995982
+            },
+            {
+              "eventId": "life:10",
+              "sequence": 10,
+              "kind": "clear",
+              "time": 7126.336474995508,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11446.336474995507
+            },
+            {
+              "eventId": "life:11",
+              "sequence": 11,
+              "kind": "alarm",
+              "time": 7188.646474993826,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11508.646474993826
+            },
+            {
+              "eventId": "life:12",
+              "sequence": 12,
+              "kind": "clear",
+              "time": 7208.168974993308,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11528.168974993308
+            },
+            {
+              "eventId": "life:14",
+              "sequence": 14,
+              "kind": "alarm",
+              "time": 7245.411949992648,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11565.41194999265
+            },
+            {
+              "eventId": "life:15",
+              "sequence": 15,
+              "kind": "clear",
+              "time": 7263.276949992359,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11583.27694999236
+            },
+            {
+              "eventId": "life:17",
+              "sequence": 17,
+              "kind": "alarm",
+              "time": 7346.339449991141,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11666.339449991141
+            },
+            {
+              "eventId": "life:18",
+              "sequence": 18,
+              "kind": "clear",
+              "time": 7363.81444999087,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11683.81444999087
+            }
+          ],
+          "receipt": 18,
+          "receipts": [
+            1,
+            8,
+            9,
+            10,
+            11,
+            12,
+            14,
+            15,
+            17,
+            18
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "east-watch": {
+              "space": "village",
+              "x": 2008.5295040981423,
+              "y": 967.6186789365331,
+              "time": 7093.651474996377
+            },
+            "south-archer": {
+              "space": "village",
+              "x": 1436.3513290090782,
+              "y": 1503.6486709909218,
+              "time": 7082.851474996659
+            },
+            "east-patrol": {
+              "space": "village",
+              "x": 1946.9033939159813,
+              "y": 1144.338623167196,
+              "time": 7089.6014749964725
+            },
+            "player": {
+              "space": "village",
+              "x": 1193.987687965637,
+              "y": 1469.8652518953988,
+              "time": 7058.399659997332
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1
+        },
+        {
+          "id": "north-watch",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 17,
+          "committed": 4,
+          "needs": {
+            "hunger": 33.95639738880196,
+            "fatigue": 19.478198694475363
+          },
+          "emotion": 24.450670666668593,
+          "gear": "locker",
+          "project": 0.8,
+          "nextDecision": 1137954.5733331381,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 7046.019989997678,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11366.019989997678
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "injury",
+              "time": 7054.149844997458,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "seen",
+              "importance": 40,
+              "expires": 11374.149844997457
+            },
+            {
+              "eventId": "life:3",
+              "sequence": 3,
+              "kind": "injury",
+              "time": 7055.949739997398,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "seen",
+              "importance": 40,
+              "expires": 11375.949739997399
+            },
+            {
+              "eventId": "life:4",
+              "sequence": 4,
+              "kind": "injury",
+              "time": 7056.424744997382,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "seen",
+              "importance": 40,
+              "expires": 11376.424744997381
+            },
+            {
+              "eventId": "life:5",
+              "sequence": 5,
+              "kind": "injury",
+              "time": 7058.84460499732,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "seen",
+              "importance": 40,
+              "expires": 11378.84460499732
+            },
+            {
+              "eventId": "life:6",
+              "sequence": 6,
+              "kind": "injury",
+              "time": 7058.924614997317,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "seen",
+              "importance": 40,
+              "expires": 11378.924614997317
+            },
+            {
+              "eventId": "life:7",
+              "sequence": 7,
+              "kind": "injury",
+              "time": 7061.749474997233,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "seen",
+              "importance": 40,
+              "expires": 11381.749474997232
+            },
+            {
+              "eventId": "life:8",
+              "sequence": 8,
+              "kind": "clear",
+              "time": 7077.445294996816,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11397.445294996816
+            },
+            {
+              "eventId": "life:9",
+              "sequence": 9,
+              "kind": "alarm",
+              "time": 7108.463974995982,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11428.463974995982
+            },
+            {
+              "eventId": "life:10",
+              "sequence": 10,
+              "kind": "clear",
+              "time": 7126.336474995508,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11446.336474995507
+            },
+            {
+              "eventId": "life:11",
+              "sequence": 11,
+              "kind": "alarm",
+              "time": 7188.646474993826,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11508.646474993826
+            },
+            {
+              "eventId": "life:12",
+              "sequence": 12,
+              "kind": "clear",
+              "time": 7208.168974993308,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11528.168974993308
+            },
+            {
+              "eventId": "life:14",
+              "sequence": 14,
+              "kind": "alarm",
+              "time": 7245.411949992648,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11565.41194999265
+            },
+            {
+              "eventId": "life:15",
+              "sequence": 15,
+              "kind": "clear",
+              "time": 7263.276949992359,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11583.27694999236
+            },
+            {
+              "eventId": "life:17",
+              "sequence": 17,
+              "kind": "alarm",
+              "time": 7346.339449991141,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11666.339449991141
+            },
+            {
+              "eventId": "life:18",
+              "sequence": 18,
+              "kind": "clear",
+              "time": 7363.81444999087,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11683.81444999087
+            }
+          ],
+          "receipt": 18,
+          "receipts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            14,
+            15,
+            17,
+            18
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "north-patrol": {
+              "space": "village",
+              "x": 860.0250768981604,
+              "y": 322.6266023101043,
+              "time": 7370.564449990766
+            },
+            "elder": {
+              "space": "village",
+              "x": 664.3021893671261,
+              "y": 621.424452658219,
+              "time": 1812.4270299999218
+            },
+            "healer": {
+              "space": "village",
+              "x": 1071.4125820567206,
+              "y": 614.3496717731227,
+              "time": 1815.1270299999076
+            },
+            "south-watch": {
+              "space": "village",
+              "x": 1820,
+              "y": 943.0099999999999,
+              "time": 5774.725094992951
+            },
+            "east-watch": {
+              "space": "village",
+              "x": 2000.2148892293822,
+              "y": 954.1539916180614,
+              "time": 5773.375094992988
+            },
+            "player": {
+              "space": "village",
+              "x": 886.4669267349235,
+              "y": 579.9328386542718,
+              "time": 7087.644574996523
+            },
+            "north-archer": {
+              "space": "village",
+              "x": 802.4047740489455,
+              "y": 395.2770955526416,
+              "time": 7096.351474996302
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1
+        },
+        {
+          "id": "north-patrol",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 33.95639738880196,
+            "fatigue": 19.478198694475363
+          },
+          "emotion": 24.450670666668593,
+          "gear": "locker",
+          "project": 0,
+          "nextDecision": 1137954.5733331381,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "healer": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 7046.019989997678,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11366.019989997678
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "injury",
+              "time": 7054.149844997458,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "seen",
+              "importance": 40,
+              "expires": 11374.149844997457
+            },
+            {
+              "eventId": "life:3",
+              "sequence": 3,
+              "kind": "injury",
+              "time": 7055.949739997398,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "seen",
+              "importance": 40,
+              "expires": 11375.949739997399
+            },
+            {
+              "eventId": "life:4",
+              "sequence": 4,
+              "kind": "injury",
+              "time": 7056.424744997382,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "seen",
+              "importance": 40,
+              "expires": 11376.424744997381
+            },
+            {
+              "eventId": "life:5",
+              "sequence": 5,
+              "kind": "injury",
+              "time": 7058.84460499732,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "seen",
+              "importance": 40,
+              "expires": 11378.84460499732
+            },
+            {
+              "eventId": "life:6",
+              "sequence": 6,
+              "kind": "injury",
+              "time": 7058.924614997317,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "seen",
+              "importance": 40,
+              "expires": 11378.924614997317
+            },
+            {
+              "eventId": "life:7",
+              "sequence": 7,
+              "kind": "injury",
+              "time": 7061.749474997233,
+              "subjects": [
+                "north-watch"
+              ],
+              "result": "驻防战斗受伤",
+              "source": "seen",
+              "importance": 40,
+              "expires": 11381.749474997232
+            },
+            {
+              "eventId": "life:8",
+              "sequence": 8,
+              "kind": "clear",
+              "time": 7077.445294996816,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11397.445294996816
+            },
+            {
+              "eventId": "life:9",
+              "sequence": 9,
+              "kind": "alarm",
+              "time": 7108.463974995982,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11428.463974995982
+            },
+            {
+              "eventId": "life:10",
+              "sequence": 10,
+              "kind": "clear",
+              "time": 7126.336474995508,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11446.336474995507
+            },
+            {
+              "eventId": "life:11",
+              "sequence": 11,
+              "kind": "alarm",
+              "time": 7188.646474993826,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11508.646474993826
+            },
+            {
+              "eventId": "life:12",
+              "sequence": 12,
+              "kind": "clear",
+              "time": 7208.168974993308,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11528.168974993308
+            },
+            {
+              "eventId": "life:14",
+              "sequence": 14,
+              "kind": "alarm",
+              "time": 7245.411949992648,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11565.41194999265
+            },
+            {
+              "eventId": "life:15",
+              "sequence": 15,
+              "kind": "clear",
+              "time": 7263.276949992359,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11583.27694999236
+            },
+            {
+              "eventId": "life:17",
+              "sequence": 17,
+              "kind": "alarm",
+              "time": 7346.339449991141,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11666.339449991141
+            },
+            {
+              "eventId": "life:18",
+              "sequence": 18,
+              "kind": "clear",
+              "time": 7363.81444999087,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11683.81444999087
+            }
+          ],
+          "receipt": 18,
+          "receipts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            14,
+            15,
+            17,
+            18
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "north-watch": {
+              "space": "village",
+              "x": 740.6529081047455,
+              "y": 297.17486752383974,
+              "time": 7370.564449990766
+            },
+            "player": {
+              "space": "village",
+              "x": 883.960049206248,
+              "y": 668.8003938921352,
+              "time": 7327.163194991436
+            },
+            "elder": {
+              "space": "village",
+              "x": 664.2646425622427,
+              "y": 730.1491298840133,
+              "time": 2161.439530000202
+            },
+            "north-archer": {
+              "space": "village",
+              "x": 802.4047740489455,
+              "y": 395.2770955526416,
+              "time": 7096.351474996302
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1
+        },
+        {
+          "id": "north-archer",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 2,
+          "committed": 0,
+          "needs": {
+            "hunger": 33.95639738880196,
+            "fatigue": 19.478198694475363
+          },
+          "emotion": 24.450670666668593,
+          "gear": "locker",
+          "project": 0,
+          "nextDecision": 1137954.5733331381,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 7046.019989997678,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11366.019989997678
+            },
+            {
+              "eventId": "life:8",
+              "sequence": 8,
+              "kind": "clear",
+              "time": 7077.445294996816,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11397.445294996816
+            },
+            {
+              "eventId": "life:9",
+              "sequence": 9,
+              "kind": "alarm",
+              "time": 7108.463974995982,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11428.463974995982
+            },
+            {
+              "eventId": "life:10",
+              "sequence": 10,
+              "kind": "clear",
+              "time": 7126.336474995508,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11446.336474995507
+            },
+            {
+              "eventId": "life:11",
+              "sequence": 11,
+              "kind": "alarm",
+              "time": 7188.646474993826,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11508.646474993826
+            },
+            {
+              "eventId": "life:12",
+              "sequence": 12,
+              "kind": "clear",
+              "time": 7208.168974993308,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11528.168974993308
+            },
+            {
+              "eventId": "life:14",
+              "sequence": 14,
+              "kind": "alarm",
+              "time": 7245.411949992648,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11565.41194999265
+            },
+            {
+              "eventId": "life:15",
+              "sequence": 15,
+              "kind": "clear",
+              "time": 7263.276949992359,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11583.27694999236
+            },
+            {
+              "eventId": "life:17",
+              "sequence": 17,
+              "kind": "alarm",
+              "time": 7346.339449991141,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11666.339449991141
+            },
+            {
+              "eventId": "life:18",
+              "sequence": 18,
+              "kind": "clear",
+              "time": 7363.81444999087,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11683.81444999087
+            }
+          ],
+          "receipt": 18,
+          "receipts": [
+            1,
+            8,
+            9,
+            10,
+            11,
+            12,
+            14,
+            15,
+            17,
+            18
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "north-watch": {
+              "space": "village",
+              "x": 740.6529081047455,
+              "y": 297.17486752383974,
+              "time": 7096.351474996302
+            },
+            "north-patrol": {
+              "space": "village",
+              "x": 868.9833141728631,
+              "y": 340.315428215124,
+              "time": 7096.351474996302
+            },
+            "player": {
+              "space": "village",
+              "x": 970.1511998063777,
+              "y": 620.2766307082134,
+              "time": 7089.894499996466
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1
+        },
+        {
+          "id": "south-watch",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 17,
+          "committed": 4,
+          "needs": {
+            "hunger": 33.95639738880196,
+            "fatigue": 19.478198694475363
+          },
+          "emotion": 24.450670666668593,
+          "gear": "locker",
+          "project": 0.8,
+          "nextDecision": 1137954.5733331381,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 7046.019989997678,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11366.019989997678
+            },
+            {
+              "eventId": "life:8",
+              "sequence": 8,
+              "kind": "clear",
+              "time": 7077.445294996816,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11397.445294996816
+            },
+            {
+              "eventId": "life:9",
+              "sequence": 9,
+              "kind": "alarm",
+              "time": 7108.463974995982,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11428.463974995982
+            },
+            {
+              "eventId": "life:10",
+              "sequence": 10,
+              "kind": "clear",
+              "time": 7126.336474995508,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11446.336474995507
+            },
+            {
+              "eventId": "life:11",
+              "sequence": 11,
+              "kind": "alarm",
+              "time": 7188.646474993826,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11508.646474993826
+            },
+            {
+              "eventId": "life:12",
+              "sequence": 12,
+              "kind": "clear",
+              "time": 7208.168974993308,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11528.168974993308
+            },
+            {
+              "eventId": "life:14",
+              "sequence": 14,
+              "kind": "alarm",
+              "time": 7245.411949992648,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11565.41194999265
+            },
+            {
+              "eventId": "life:15",
+              "sequence": 15,
+              "kind": "clear",
+              "time": 7263.276949992359,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11583.27694999236
+            },
+            {
+              "eventId": "life:17",
+              "sequence": 17,
+              "kind": "alarm",
+              "time": 7346.339449991141,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11666.339449991141
+            },
+            {
+              "eventId": "life:18",
+              "sequence": 18,
+              "kind": "clear",
+              "time": 7363.81444999087,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11683.81444999087
+            }
+          ],
+          "receipt": 18,
+          "receipts": [
+            1,
+            8,
+            9,
+            10,
+            11,
+            12,
+            14,
+            15,
+            17,
+            18
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "south-patrol": {
+              "space": "village",
+              "x": 1002.2175566420848,
+              "y": 1692.3269184409246,
+              "time": 7370.564449990766
+            },
+            "player": {
+              "space": "village",
+              "x": 779.7204139299429,
+              "y": 1468.6261172787254,
+              "time": 6969.620719999745
+            },
+            "east-patrol": {
+              "space": "village",
+              "x": 1947.1345548313632,
+              "y": 1163.1255300377786,
+              "time": 5780.125094992807
+            },
+            "north-watch": {
+              "space": "village",
+              "x": 1693.4442199999987,
+              "y": 780,
+              "time": 5774.725094992951
+            },
+            "east-watch": {
+              "space": "village",
+              "x": 2008.5295040981423,
+              "y": 967.6186789365331,
+              "time": 5774.725094992951
+            },
+            "south-archer": {
+              "space": "village",
+              "x": 1054.8924354388914,
+              "y": 1786.6715831847184,
+              "time": 7093.651474996377
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1
+        },
+        {
+          "id": "south-patrol",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 33.95639738880196,
+            "fatigue": 19.478198694475363
+          },
+          "emotion": 24.450670666668593,
+          "gear": "locker",
+          "project": 0,
+          "nextDecision": 1137954.5733331381,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "healer": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 7046.019989997678,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11366.019989997678
+            },
+            {
+              "eventId": "life:8",
+              "sequence": 8,
+              "kind": "clear",
+              "time": 7077.445294996816,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11397.445294996816
+            },
+            {
+              "eventId": "life:9",
+              "sequence": 9,
+              "kind": "alarm",
+              "time": 7108.463974995982,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11428.463974995982
+            },
+            {
+              "eventId": "life:10",
+              "sequence": 10,
+              "kind": "clear",
+              "time": 7126.336474995508,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11446.336474995507
+            },
+            {
+              "eventId": "life:11",
+              "sequence": 11,
+              "kind": "alarm",
+              "time": 7188.646474993826,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11508.646474993826
+            },
+            {
+              "eventId": "life:12",
+              "sequence": 12,
+              "kind": "clear",
+              "time": 7208.168974993308,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11528.168974993308
+            },
+            {
+              "eventId": "life:14",
+              "sequence": 14,
+              "kind": "alarm",
+              "time": 7245.411949992648,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11565.41194999265
+            },
+            {
+              "eventId": "life:15",
+              "sequence": 15,
+              "kind": "clear",
+              "time": 7263.276949992359,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11583.27694999236
+            },
+            {
+              "eventId": "life:17",
+              "sequence": 17,
+              "kind": "alarm",
+              "time": 7346.339449991141,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11666.339449991141
+            },
+            {
+              "eventId": "life:18",
+              "sequence": 18,
+              "kind": "clear",
+              "time": 7363.81444999087,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11683.81444999087
+            }
+          ],
+          "receipt": 18,
+          "receipts": [
+            1,
+            8,
+            9,
+            10,
+            11,
+            12,
+            14,
+            15,
+            17,
+            18
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "south-watch": {
+              "space": "village",
+              "x": 812.4579793895488,
+              "y": 1718.4133523209982,
+              "time": 7370.564449990766
+            },
+            "player": {
+              "space": "village",
+              "x": 1050.7659973564487,
+              "y": 1310.8099393992088,
+              "time": 7061.674474997236
+            },
+            "south-archer": {
+              "space": "village",
+              "x": 1054.8924354388914,
+              "y": 1786.6715831847184,
+              "time": 7092.301474996409
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1
+        },
+        {
+          "id": "south-archer",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 5,
+          "committed": 4,
+          "needs": {
+            "hunger": 33.95639738880196,
+            "fatigue": 1.9486436944453316
+          },
+          "emotion": 24.450670666668593,
+          "gear": "carried",
+          "project": 0.4,
+          "nextDecision": 1137954.5733331381,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 7046.019989997678,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11366.019989997678
+            },
+            {
+              "eventId": "life:8",
+              "sequence": 8,
+              "kind": "clear",
+              "time": 7077.445294996816,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11397.445294996816
+            },
+            {
+              "eventId": "life:9",
+              "sequence": 9,
+              "kind": "alarm",
+              "time": 7108.463974995982,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11428.463974995982
+            },
+            {
+              "eventId": "life:10",
+              "sequence": 10,
+              "kind": "clear",
+              "time": 7126.336474995508,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11446.336474995507
+            },
+            {
+              "eventId": "life:11",
+              "sequence": 11,
+              "kind": "alarm",
+              "time": 7188.646474993826,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11508.646474993826
+            },
+            {
+              "eventId": "life:12",
+              "sequence": 12,
+              "kind": "clear",
+              "time": 7208.168974993308,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11528.168974993308
+            },
+            {
+              "eventId": "life:14",
+              "sequence": 14,
+              "kind": "alarm",
+              "time": 7245.411949992648,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11565.41194999265
+            },
+            {
+              "eventId": "life:15",
+              "sequence": 15,
+              "kind": "clear",
+              "time": 7263.276949992359,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11583.27694999236
+            },
+            {
+              "eventId": "life:17",
+              "sequence": 17,
+              "kind": "alarm",
+              "time": 7346.339449991141,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11666.339449991141
+            },
+            {
+              "eventId": "life:18",
+              "sequence": 18,
+              "kind": "clear",
+              "time": 7363.81444999087,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 11683.81444999087
+            }
+          ],
+          "receipt": 18,
+          "receipts": [
+            1,
+            8,
+            9,
+            10,
+            11,
+            12,
+            14,
+            15,
+            17,
+            18
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "south-watch": {
+              "space": "village",
+              "x": 812.4579793895488,
+              "y": 1718.4133523209982,
+              "time": 7093.651474996377
+            },
+            "south-patrol": {
+              "space": "village",
+              "x": 995.8759770617728,
+              "y": 1695.1072313700024,
+              "time": 7092.301474996409
+            },
+            "player": {
+              "space": "village",
+              "x": 1173.4916879656348,
+              "y": 1469.8652518953988,
+              "time": 7058.604619997329
+            },
+            "east-patrol": {
+              "space": "village",
+              "x": 1955.2598024696179,
+              "y": 1146.350654212631,
+              "time": 7040.559989997839
+            },
+            "east-watch": {
+              "space": "village",
+              "x": 2008.5295040981423,
+              "y": 967.6186789365331,
+              "time": 7035.1599899979965
+            },
+            "east-archer": {
+              "space": "village",
+              "x": 1644.256782822742,
+              "y": 1275.743217177258,
+              "time": 7082.851474996659
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1
+        }
+      ],
+      "elapsed": 1137383.8433331384,
+      "sequence": 18,
+      "events": [
+        {
+          "id": "life:1",
+          "sequence": 1,
+          "time": 7046.019989997678,
+          "kind": "alarm",
+          "place": {
+            "space": "village",
+            "x": 720,
+            "y": 650
+          },
+          "source": "bell",
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "debug": false
+        },
+        {
+          "id": "life:2",
+          "sequence": 2,
+          "time": 7054.149844997458,
+          "kind": "injury",
+          "place": {
+            "space": "village",
+            "x": 755.7506920738657,
+            "y": 231.8467769408267
+          },
+          "source": "raid-1:2",
+          "subjects": [
+            "north-watch"
+          ],
+          "result": "驻防战斗受伤",
+          "debug": false
+        },
+        {
+          "id": "life:3",
+          "sequence": 3,
+          "time": 7055.949739997398,
+          "kind": "injury",
+          "place": {
+            "space": "village",
+            "x": 755.7506920738657,
+            "y": 231.8467769408267
+          },
+          "source": "raid-1:4",
+          "subjects": [
+            "north-watch"
+          ],
+          "result": "驻防战斗受伤",
+          "debug": false
+        },
+        {
+          "id": "life:4",
+          "sequence": 4,
+          "time": 7056.424744997382,
+          "kind": "injury",
+          "place": {
+            "space": "village",
+            "x": 755.7506920738657,
+            "y": 231.8467769408267
+          },
+          "source": "raid-1:1",
+          "subjects": [
+            "north-watch"
+          ],
+          "result": "驻防战斗受伤",
+          "debug": false
+        },
+        {
+          "id": "life:5",
+          "sequence": 5,
+          "time": 7058.84460499732,
+          "kind": "injury",
+          "place": {
+            "space": "village",
+            "x": 755.7506920738657,
+            "y": 231.8467769408267
+          },
+          "source": "raid-1:4",
+          "subjects": [
+            "north-watch"
+          ],
+          "result": "驻防战斗受伤",
+          "debug": false
+        },
+        {
+          "id": "life:6",
+          "sequence": 6,
+          "time": 7058.924614997317,
+          "kind": "injury",
+          "place": {
+            "space": "village",
+            "x": 755.7506920738657,
+            "y": 231.8467769408267
+          },
+          "source": "raid-1:1",
+          "subjects": [
+            "north-watch"
+          ],
+          "result": "驻防战斗受伤",
+          "debug": false
+        },
+        {
+          "id": "life:7",
+          "sequence": 7,
+          "time": 7061.749474997233,
+          "kind": "injury",
+          "place": {
+            "space": "village",
+            "x": 755.7506920738657,
+            "y": 231.8467769408267
+          },
+          "source": "raid-1:4",
+          "subjects": [
+            "north-watch"
+          ],
+          "result": "驻防战斗受伤",
+          "debug": false
+        },
+        {
+          "id": "life:8",
+          "sequence": 8,
+          "time": 7077.445294996816,
+          "kind": "clear",
+          "place": {
+            "space": "village",
+            "x": 720,
+            "y": 650
+          },
+          "source": "bell",
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "debug": false
+        },
+        {
+          "id": "life:9",
+          "sequence": 9,
+          "time": 7108.463974995982,
+          "kind": "alarm",
+          "place": {
+            "space": "village",
+            "x": 720,
+            "y": 650
+          },
+          "source": "bell",
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "debug": false
+        },
+        {
+          "id": "life:10",
+          "sequence": 10,
+          "time": 7126.336474995508,
+          "kind": "clear",
+          "place": {
+            "space": "village",
+            "x": 720,
+            "y": 650
+          },
+          "source": "bell",
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "debug": false
+        },
+        {
+          "id": "life:11",
+          "sequence": 11,
+          "time": 7188.646474993826,
+          "kind": "alarm",
+          "place": {
+            "space": "village",
+            "x": 720,
+            "y": 650
+          },
+          "source": "bell",
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "debug": false
+        },
+        {
+          "id": "life:12",
+          "sequence": 12,
+          "time": 7208.168974993308,
+          "kind": "clear",
+          "place": {
+            "space": "village",
+            "x": 720,
+            "y": 650
+          },
+          "source": "bell",
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "debug": false
+        },
+        {
+          "id": "life:13",
+          "sequence": 13,
+          "time": 7214.189449993151,
+          "kind": "visit",
+          "place": {
+            "space": "village",
+            "x": 550,
+            "y": 650
+          },
+          "source": "player",
+          "subjects": [
+            "elder"
+          ],
+          "result": "未预约敲门；获准短时拜访",
+          "debug": false
+        },
+        {
+          "id": "life:14",
+          "sequence": 14,
+          "time": 7245.411949992648,
+          "kind": "alarm",
+          "place": {
+            "space": "village",
+            "x": 720,
+            "y": 650
+          },
+          "source": "bell",
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "debug": false
+        },
+        {
+          "id": "life:15",
+          "sequence": 15,
+          "time": 7263.276949992359,
+          "kind": "clear",
+          "place": {
+            "space": "village",
+            "x": 720,
+            "y": 650
+          },
+          "source": "bell",
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "debug": false
+        },
+        {
+          "id": "life:16",
+          "sequence": 16,
+          "time": 7300.901689991822,
+          "kind": "visit",
+          "place": {
+            "space": "village",
+            "x": 550,
+            "y": 650
+          },
+          "source": "player",
+          "subjects": [
+            "elder"
+          ],
+          "result": "未预约敲门；获准短时拜访",
+          "debug": false
+        },
+        {
+          "id": "life:17",
+          "sequence": 17,
+          "time": 7346.339449991141,
+          "kind": "alarm",
+          "place": {
+            "space": "village",
+            "x": 720,
+            "y": 650
+          },
+          "source": "bell",
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "debug": false
+        },
+        {
+          "id": "life:18",
+          "sequence": 18,
+          "time": 7363.81444999087,
+          "kind": "clear",
+          "place": {
+            "space": "village",
+            "x": 720,
+            "y": 650
+          },
+          "source": "bell",
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "debug": false
+        }
+      ],
+      "reservations": [
+        {
+          "facility": "bed:carpenter",
+          "owner": "carpenter",
+          "expires": 1149383.8433331384
+        },
+        {
+          "facility": "bed:elder",
+          "owner": "elder",
+          "expires": 1149383.8433331384
+        },
+        {
+          "facility": "bed:healer",
+          "owner": "healer",
+          "expires": 1149383.8433331384
+        }
+      ],
+      "tasks": [],
+      "alarm": 0,
+      "clearSince": null,
+      "stores": {
+        "medicine": 12,
+        "herbs": 0,
+        "wood": 12,
+        "food": 24,
+        "day": 5
+      },
+      "facilities": {
+        "wind-bell": 100,
+        "workbench": 100
+      },
+      "playerSpace": "village",
+      "outside": {
+        "x": 551.7907628652599,
+        "y": 652.0015400494328
+      },
+      "invitations": {
+        "elder-home": 7330.901689991822
+      },
+      "observed": {
+        "elder": {
+          "time": 7311.563689991675,
+          "label": "在家睡觉",
+          "space": "elder-home"
+        },
+        "north-patrol": {
+          "time": 7327.163194991436,
+          "label": "值守或沿路返回岗位",
+          "space": "village"
+        },
+        "healer": {
+          "time": 493.94640499999116,
+          "label": "照料药田（评分 85）",
+          "space": "village"
+        },
+        "carpenter": {
+          "time": 1823.9240699998575,
+          "label": "修工具、做木工",
+          "space": "village"
+        },
+        "south-watch": {
+          "time": 6969.620719999745,
+          "label": "值守或沿路返回岗位",
+          "space": "village"
+        },
+        "south-patrol": {
+          "time": 7061.674474997236,
+          "label": "值守或沿路返回岗位",
+          "space": "village"
+        },
+        "east-patrol": {
+          "time": 7346.95081999113,
+          "label": "值守或沿路返回岗位",
+          "space": "village"
+        },
+        "east-watch": {
+          "time": 7344.788479991163,
+          "label": "值守或沿路返回岗位",
+          "space": "village"
+        },
+        "north-watch": {
+          "time": 7087.644574996523,
+          "label": "值守或沿路返回岗位",
+          "space": "village"
+        },
+        "south-archer": {
+          "time": 7058.604619997329,
+          "label": "临水休息",
+          "space": "village"
+        },
+        "east-archer": {
+          "time": 7058.399659997332,
+          "label": "临水休息",
+          "space": "village"
+        },
+        "north-archer": {
+          "time": 7089.894499996466,
+          "label": "沿原路返回岗位",
+          "space": "village"
+        }
+      },
+      "lastDefenseSequence": 0,
+      "defenseReceipts": [
+        "raid-1:2:1:north-watch:hit",
+        "raid-1:4:1:north-watch:hit",
+        "raid-1:1:2:north-watch:hit",
+        "raid-1:4:2:north-watch:hit",
+        "raid-1:1:3:north-watch:hit",
+        "raid-1:4:3:north-watch:hit"
+      ]
+    },
+    "night": {
+      "takeoverNight": 1,
+      "discovered": true,
+      "plan": {
+        "night": 5,
+        "at": 7046,
+        "gate": "north-gate",
+        "count": 4,
+        "outcome": "started",
+        "raidSequence": 1
+      }
+    },
+    "defense": {
+      "guards": [
+        {
+          "id": "east-watch",
+          "x": 2008.5295040981423,
+          "y": 967.6186789365331,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-north-post",
+          "mode": "post",
+          "peaceMs": 8000,
+          "cooldownMs": 0,
+          "offDuty": false,
+          "towerTransitMs": 0,
+          "space": "village"
+        },
+        {
+          "id": "east-patrol",
+          "x": 1977.7107569596087,
+          "y": 1165.679731245995,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-south-post",
+          "mode": "patrol",
+          "peaceMs": 8000,
+          "cooldownMs": 0
+        },
+        {
+          "id": "east-archer",
+          "x": 2030,
+          "y": 900,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "east-gate-tower",
+          "mode": "post",
+          "peaceMs": 8000,
+          "cooldownMs": 0,
+          "offDuty": false,
+          "towerTransitMs": 0,
+          "space": "village"
+        },
+        {
+          "id": "north-watch",
+          "x": 740.6529081047455,
+          "y": 297.17486752383974,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-west-post",
+          "mode": "post",
+          "peaceMs": 8000,
+          "cooldownMs": 0,
+          "offDuty": false,
+          "towerTransitMs": 0,
+          "space": "village"
+        },
+        {
+          "id": "north-patrol",
+          "x": 865.3773644380703,
+          "y": 311.6167649675352,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-east-post",
+          "mode": "patrol",
+          "peaceMs": 8000,
+          "cooldownMs": 0
+        },
+        {
+          "id": "north-archer",
+          "x": 680,
+          "y": 350,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "north-gate-tower",
+          "mode": "post",
+          "peaceMs": 8000,
+          "cooldownMs": 0,
+          "offDuty": false,
+          "towerTransitMs": 0,
+          "space": "village"
+        },
+        {
+          "id": "south-watch",
+          "x": 812.4579793895488,
+          "y": 1718.4133523209982,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-west-post",
+          "mode": "post",
+          "peaceMs": 8000,
+          "cooldownMs": 0,
+          "offDuty": false,
+          "towerTransitMs": 0,
+          "space": "village"
+        },
+        {
+          "id": "south-patrol",
+          "x": 1007.019959942263,
+          "y": 1693.7758722909903,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-east-post",
+          "mode": "patrol",
+          "peaceMs": 8000,
+          "cooldownMs": 0
+        },
+        {
+          "id": "south-archer",
+          "x": 1140,
+          "y": 1750,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "south-gate-tower",
+          "mode": "post",
+          "peaceMs": 8000,
+          "cooldownMs": 0,
+          "offDuty": false,
+          "towerTransitMs": 0,
+          "space": "village"
+        }
+      ],
+      "sequence": 1,
+      "completedSequence": 1,
+      "raid": null,
+      "protectionMs": 0,
+      "cooldownMs": 217283.75666666572,
+      "retryMs": 0,
+      "seed": 467464973
+    },
+    "coins": 90,
+    "equipment": {
+      "weapon": null,
+      "armor": null
+    },
+    "shopStock": {
+      "general:wood": 20,
+      "general:stone": 20,
+      "general:herb": 20,
+      "general:berry": 24,
+      "general:potion": 7,
+      "healer:potion": 16,
+      "smith:ironSword": 8,
+      "smith:leatherCoat": 8
+    },
+    "economyRevision": 2,
+    "map_version": 6,
+    "player": {
+      "x": 670,
+      "y": 720,
+      "hp": 100,
+      "stamina": 100
+    },
+    "bag": [
+      null,
+      {
+        "id": "berry",
+        "count": 1
+      },
+      {
+        "id": "potion",
+        "count": 5
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "hotbar": [
+      "potion",
+      "berry",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "quest": 7,
+    "side": 0,
+    "collected": {
+      "herb-v1": 488.92159999999393,
+      "berry-v1": 508.9458349999826,
+      "wood-f1": 7254.012409992508,
+      "stone-f1": 7258.000339992439
+    },
+    "chests": [],
+    "killed": [
+      "leaf-1"
+    ],
+    "pendingDrops": [],
+    "dashCooldownRemaining": 0,
+    "stones": [
+      0,
+      1,
+      2
+    ],
+    "shortcut": true,
+    "time": 7371.058354990753,
+    "reward": true,
+    "crafted": true
+  }
+}

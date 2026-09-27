@@ -79,7 +79,7 @@ test("正常模式不显示开发演练，玩家攻击不会伤守卫，主角�
   await move(page,2010,1060);const before=(await read(page)).state.defense.guards.map((g:any)=>g.hp);
   await page.keyboard.down('w');await page.waitForTimeout(30);await page.keyboard.up('w');await page.keyboard.press('j');await page.waitForTimeout(350);
   expect((await read(page)).state.defense.guards.map((g:any)=>g.hp)).toEqual(before);
-  await move(page,1960,1230);await page.keyboard.press('e');
+  await move(page,2000,1315);await expect.poll(async()=>(await read(page)).target).toBe('east-gate-sign');await page.keyboard.press('e');
   await expect(page.getByRole('heading',{name:'东门驻防',exact:true})).toBeVisible();
   await expect(page.locator('#defense-drill')).toHaveCount(0);await page.getByRole('button',{name:'继续 · E',exact:true}).click();
   await move(page,2200,1080);await move(page,1940,1080);const end=await read(page);

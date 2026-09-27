@@ -1,0 +1,1366 @@
+diff --git a/farwind/src/data/defense.ts b/farwind/src/data/defense.ts
+--- a/farwind/src/data/defense.ts
++++ b/farwind/src/data/defense.ts
+@@ -69,6 +69,12 @@
+ export const RAID_SPAWNS = [{ x: 2430, y: 1080 }, { x: 2390, y: 1140 }, { x: 2470, y: 1120 }] as const;
+ export const DEFENSE = { regenWait: 8000, regenPerSecond: 0.0075, retreatHP: 0.35,
+   resumeHP: 0.65, speed: 100, enemySpeed: 66, arrowSpeed: 430, arrowLife: 1800,
+-  arrowLimit: 12, unitLimit: 4, eventLimit: 120000 } as const;
+-export const RAID_TIMING = { protection: 300000, minInterval: 240000, maxInterval: 480000,
+-  warning: 3000, retry: 10000, checkpoint: 20000 } as const;
++  arrowLimit: 12, unitLimit: 3, historyUnitLimit: 4, arrowRange: 774, eventLimit: 120000 } as const;
++export const RAID_TIMING = { protection: 300000, minInterval: 480000, maxInterval: 900000,
++  warning: 3000, retry: 20000, checkpoint: 20000 } as const;
++export const DEFENSE_RULES = { health: .8, scan: 150, approach: 400, lost: 1000,
++  pursuit: 8000, reacquire: 2000, stuck: 2000, observationRange: 450 } as const;
++export function nextDefenseRandom(seed: number) {
++  seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; return seed >>> 0;
++}
++export const raidInterval = (seed: number) => RAID_TIMING.minInterval + seed % (RAID_TIMING.maxInterval - RAID_TIMING.minInterval + 1);
+diff --git a/farwind/src/data/defenseZones.ts b/farwind/src/data/defenseZones.ts
+new file mode 100644
+--- /dev/null
++++ b/farwind/src/data/defenseZones.ts
+@@ -0,0 +1,30 @@
++import {inPolygon,regionAt,type Point} from './village';
++import type {GateId} from './defense';
++const rect=(l:number,t:number,r:number,b:number):Point[]=>[{x:l,y:t},{x:r,y:t},{x:r,y:b},{x:l,y:b}];
++// 保护／警戒是独立覆盖层；保留所有地理区域ID、世界和碰撞几何。
++export const DEFENSE_ZONES = [
++ {gateId:'east-gate',near:rect(2100,990,2280,1200),alert:rect(2280,990,2510,1250),
++  activity:rect(1880,950,2300,1250),inside:rect(1880,950,2100,1250),intercept:{x:2190,y:1100},
++  route:[{x:2470,y:1140},{x:2370,y:1090},{x:2140,y:1080}],spawn:rect(2340,1030,2510,1250)},
++ // 北门纵深仅140像素，使用横向接入走廊，不机械复制东门的圆形半径。
++ {gateId:'north-gate',near:rect(740,135,900,220),alert:rect(580,85,900,190),
++  activity:rect(700,95,1000,520),inside:rect(700,220,1000,520),intercept:{x:850,y:155},
++  route:[{x:620,y:120},{x:800,y:130},{x:820,y:180}],spawn:rect(590,85,710,140)},
++ {gateId:'south-gate',near:rect(800,1820,1040,1960),alert:rect(800,1920,1290,2140),
++  activity:rect(760,1580,1130,2000),inside:rect(760,1580,1130,1820),intercept:{x:950,y:1900},
++  route:[{x:1240,y:2070},{x:1050,y:2000},{x:900,y:1860}],spawn:rect(1120,2020,1290,2140)},
++] satisfies {gateId:GateId;near:Point[];alert:Point[];activity:Point[];inside:Point[];intercept:Point;route:Point[];spawn:Point[]}[];
++export const zoneFor=(id:GateId)=>DEFENSE_ZONES.find(z=>z.gateId===id)!;
++export const inProtected=(p:Point)=>regionAt(p).id==='village'||DEFENSE_ZONES.some(z=>inPolygon(p,z.near));
++export const locallyProtected=(id:GateId,p:Point)=>inPolygon(p,zoneFor(id).near)||inPolygon(p,zoneFor(id).inside);
++export const inAlert=(id:GateId,p:Point)=>inPolygon(p,zoneFor(id).alert);
++export const inActivity=(id:GateId,p:Point)=>inPolygon(p,zoneFor(id).activity);
++export const safetyAt=(p:Point)=>regionAt(p).id==='village'?'村内保护区':inProtected(p)?'巡逻近郊':DEFENSE_ZONES.some(z=>inPolygon(p,z.alert))?'门外警戒带':'荒野';
++// 沿折线路线的剩余距离；横向绕树也保留进度，不用单帧朝向判定逼近。
++export function routeRemaining(id:GateId,p:Point){
++ const route=zoneFor(id).route;let remaining=0,best=Infinity,result=Infinity;
++ for(let i=route.length-2;i>=0;i--){const a=route[i],b=route[i+1],dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy),u=Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/(len*len)));
++  const distance=Math.hypot(p.x-a.x-dx*u,p.y-a.y-dy*u);
++  if(distance<best){best=distance;result=remaining+len*(1-u)+distance;}remaining+=len;
++ }return result;
++}
+diff --git a/farwind/src/data/world.ts b/farwind/src/data/world.ts
+--- a/farwind/src/data/world.ts
++++ b/farwind/src/data/world.ts
+@@ -1,3 +1,4 @@
++import {safetyAt} from './defenseZones';
+ import {
+   serviceBuildings,
+   serviceEntrances,
+@@ -660,7 +661,8 @@
+   props.push({
+     id: `${parcel.id}-sign`,
+     art: "sign",
+-    x: parcel.x + 30,
++    // 南门塔口前的路牌移至院内右侧，保持实体遮挡，不豁免射击。
++    x: parcel.x + (parcel.id === "parcel-workshop" ? 90 : 30),
+     y: parcel.y + 40,
+     w: 52,
+     h: 72,
+@@ -998,7 +1000,8 @@
+   { id: "leaf-2", x: 3170, y: 930, type: "leaf" },
+ ] as const;
+ export function region(x: number, y: number) {
+-  return regionAt({ x, y }).name;
++  const point={x,y},name=regionAt(point).name;
++  return safetyAt(point)==='巡逻近郊'?`${name} · 巡逻近郊`:name;
+ }
+ 
+ // 交互物只阻挡实际占地，互动视线忽略目标本体。
+diff --git a/farwind/src/game/scenes/World.ts b/farwind/src/game/scenes/World.ts
+--- a/farwind/src/game/scenes/World.ts
++++ b/farwind/src/game/scenes/World.ts
+@@ -1,3 +1,4 @@
++import {inProtected} from '../../data/defenseZones';
+ import { EconomyCommit, outgoingDamage, incomingDamage, type EconomyRequest } from "../systems/economy";
+ import { EastDefense, prepareEastRaid, type DefenseEnemy } from "../systems/defense";
+ import { resolveDamage } from "../systems/damage";
+@@ -530,7 +531,7 @@
+     }
+   }
+   openDefenseDrill() {
+-    this.ui.dialog("东门驻防", "岑风和青禾守住通路两侧，弦雨在塔上警戒。门洞保持畅通，穿过村门便是森林。");
++    this.ui.dialog("东门驻防", "岑风和青禾守住通路两侧，弦雨在塔上警戒。门洞保持畅通；门外巡逻近郊平时安全，更远才进入森林荒野。普通侵扰间隔8～15分钟，虚弱防线会延期。");
+     if (!import.meta.env.DEV || !new URLSearchParams(location.search).has("defenseDebug")) return;
+     const button=document.createElement("button"); button.id="defense-drill";
+     button.textContent="启动东门演练 · 3只普通怪";
+@@ -1340,10 +1341,14 @@
+       if(event.kind==="death"){const enemy=this.enemies.find(e=>e.id===event.id);
+         if(enemy){enemy.sprite.setVisible(false);enemy.shadow.setVisible(false);
+           // 常驻野怪被卫队击倒只记录世界状态，不代领采集或主线奖励。
+-          if(!this.state.killed.includes(enemy.id))this.state.killed.push(enemy.id);}}
++          if(!this.state.killed.includes(enemy.id))this.state.killed.push(enemy.id);
++          // 卫队击倒固定主线怪只留下待领取关键物，不自动发奖励或推进任务。
++          if(enemy.type==='leaf'&&!this.state.pendingDrops.some(p=>p.enemyId===enemy.id)){
++            this.state.pendingDrops.push({enemyId:enemy.id,item:'crystal',x:enemy.x,y:enemy.y});this.syncDrops();
++          }}}
+       if(event.kind==="warning")this.ui.message(`${event.id}外发现动静，卫队正在戒备。`);
+       if(event.kind==="started")this.ui.message(`${event.id}有小怪接近；卫队会自行拦截。`);
+-      if(event.kind==="delayed")this.ui.message("来袭路径或生成点不合法，本轮已延后。");
++      if(event.kind==="delayed")this.ui.message("驻防尚未恢复或来袭路径不合法，本轮已延后。");
+       if(event.kind==="ended")this.ui.message("村门来袭已结束，驻防变化正在保存。");
+     }
+     this.practiceSprite??=this.add.sprite(0,0,"slime",0).setOrigin(.5,1);
+@@ -1378,7 +1383,7 @@
+       this.ui.message("岚爷爷把你带回广场。行囊与旅途进度都还在。");
+       void this.persist().catch(() => {});
+     }
+-    if (this.state.quest === 1 && regionAt(p).id === "forest") {
++    if (this.state.quest === 1 && regionAt(p).id === "forest" && !inProtected(p)) {
+       this.state.quest = this.state.crafted ? 3 : 2;
+       this.ui.dialog(
+         "林间异响",
+@@ -1388,7 +1393,7 @@
+     }
+     if (
+       this.state.quest === 3 &&
+-      this.state.killed.some((id) => id.startsWith("leaf"))
++      this.state.killed.some((id) => id.startsWith("leaf") && !this.state.pendingDrops.some(p=>p.enemyId===id&&p.item==="crystal"))
+     )
+       this.state.quest = 4;
+     const r = region(p.x, p.y);
+diff --git a/farwind/src/game/systems/damage.ts b/farwind/src/game/systems/damage.ts
+--- a/farwind/src/game/systems/damage.ts
++++ b/farwind/src/game/systems/damage.ts
+@@ -7,8 +7,19 @@
+ };
+ // 调用者负责攻击实例的命中去重；统一入口只负责阵营、存活与伤害后果。
+ export function resolveDamage(event: DamageEvent, source: UnitRef, target: UnitRef) {
++  if(source.hp<=0)return {applied:false,damage:0,hp:target.hp,killed:false};
++  return damage(event,source,target);
++}
++export type ReleasedAttack=Readonly<{sourceId:string;faction:Faction;attackId:string;amount:number;sourceType:'tower-arrow';eventId:string|null}>;
++// 合法释放的不可变快照没有HP字段；命中时不伪造已经死亡的射手仍存活。
++export function resolveReleasedDamage(event:DamageEvent,source:ReleasedAttack,target:UnitRef){
++  if(event.sourceType!==source.sourceType||event.attackId!==source.attackId||event.amount!==source.amount||event.eventId!==source.eventId)
++    return {applied:false,damage:0,hp:target.hp,killed:false};
++  return damage(event,{id:source.sourceId,faction:source.faction},target);
++}
++function damage(event:DamageEvent,source:Pick<UnitRef,'id'|'faction'>,target:UnitRef){
+   if (event.sourceId !== source.id || event.targetId !== target.id ||
+-    source.id === target.id || source.faction === target.faction || source.hp <= 0 || target.hp <= 0 ||
++    source.id === target.id || source.faction === target.faction || target.hp <= 0 ||
+     !event.attackId || !Number.isFinite(event.amount) || event.amount <= 0 || event.amount > 10000)
+     return { applied: false, damage: 0, hp: target.hp, killed: false };
+   const damage = Math.max(1, event.amount - target.armor);
+diff --git a/farwind/src/game/systems/defense.ts b/farwind/src/game/systems/defense.ts
+--- a/farwind/src/game/systems/defense.ts
++++ b/farwind/src/game/systems/defense.ts
+@@ -1,20 +1,23 @@
+-import { DEFENSE, TOWERS, RAID_GATES, RAID_TIMING, GUARD_DEFS, GUARD_WEAPONS, GUARD_ARMOR, type GateId } from "../../data/defense";
++import { DEFENSE, DEFENSE_RULES, raidInterval, TOWERS, RAID_GATES, RAID_TIMING, GUARD_DEFS, GUARD_WEAPONS, GUARD_ARMOR, type GateId } from "../../data/defense";
+ import { props } from "../../data/world";
+-import { regionAt } from "../../data/village";
++import { regionAt, inPolygon } from "../../data/village";
+ import { localPath, nearestStanding, enemyNavigation, enemyAttackSpace, type EnemyBody, NAV } from "./enemy";
+-import { motionBlocked, clearMotionLine, clearMeleeLine, shotLineBlocker, type Point, type Rect, type FiringPort } from "./obstacles";
++import { motionBlocked, clearMotionLine, clearMeleeLine, shotLineBlocker, shotLineImpact, type Point, type Rect, type FiringPort } from "./obstacles";
+ import { createEnemyAttack, advanceEnemyAttack, delayEnemyAttack, type EnemyContact } from "./enemyAttack";
+-import { resolveDamage, type DamageEvent } from "./damage";
++import { resolveDamage, resolveReleasedDamage, type ReleasedAttack, type DamageEvent } from "./damage";
+ import type { DefenseState, GuardState } from "./defenseState";
++import {DEFENSE_ZONES,zoneFor,inProtected,locallyProtected,inAlert,inActivity,routeRemaining} from '../../data/defenseZones';
+ const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
+ export type DefenseEnemy = EnemyBody & { kind: "defense-enemy"; eventId: string; flashUntil: number;
+   targetId: string | null; playerAggroUntil: number; maxHP: number };
+ export type DefenseHostile = EnemyBody & {eventId?:string; flashUntil:number; maxHP?:number};
+ type GuardAttack = { id: string; start: number; contact: number; end: number; targetId: string; hit: boolean; direction: Point };
+ type GuardRuntime = { nav: EnemyBody["nav"]; attack: GuardAttack | null; serial: number; patrol: number;
+-  facing: 0 | 1 | 2 | 3; moved: number; distance: number; flashUntil: number };
++  facing: 0 | 1 | 2 | 3; moved: number; distance: number; flashUntil: number; targetId:string|null; chaseMs:number; blockedTarget:string|null; blockedUntil:number; stuckMs:number };
++export type Threat = {id:string;gateId:GateId;reason:"intrusion"|"attack"|"approach"|"observe";lastSeen:number;progress:number;approachMs:number;lastProgress:number;assigned:string[]};
+ export type DefenseArrow = { id: string; sourceId: string; eventId: string; x: number; y: number;
+-  origin: Point; vx: number; vy: number; age: number; damage: number; travelled: number; hit: Set<string> };
++  origin: Point; vx: number; vy: number; age: number; damage: number; travelled: number; hit: Set<string>;
++  released:ReleasedAttack;port:Readonly<FiringPort> };
+ export type DefenseNotice = { kind: "hit" | "death" | "ended" | "shot" | "warning" | "started" | "delayed"; id: string; sourceId?: string;
+   at: number; damage?: number; x?: number; y?: number };
+ 
+@@ -26,7 +29,7 @@
+   return spawns.every(p => {
+     const region = regionAt(p).id;
+     if (region !== (gateId === "east-gate" ? "forest" : gateId === "north-gate" ? "north" : "south") ||
+-      dist(p, player) < 220 || occupied.some(q => dist(p, q) < 60) || motionBlocked(p.x, p.y) ||
++      inProtected(p) || !inPolygon(p,zoneFor(gateId).spawn) || dist(p, player) < 220 || occupied.some(q => dist(p, q) < 60) || motionBlocked(p.x, p.y) ||
+       view && p.x > view.left - 100 && p.x < view.right + 100 && p.y > view.top - 100 && p.y < view.bottom + 100) return false;
+     return !!localPath(p, q => dist(q, gate.entry) < 25 && clearMotionLine(q, gate.entry), gate.entry, q => dist(q, gate) <= 480).path;
+   }) && !!localPath(gate.entry, q => dist(q, gate.inside) < 25 && clearMotionLine(q, gate.inside),
+@@ -35,25 +38,33 @@
+ export function prepareRaid(s: DefenseState, player: Point, gateId: GateId, count = 3, warning = false, view?: Rect, occupied: readonly Point[] = []): DefenseState {
+   if (s.raid) throw Error("已有演练或来袭正在进行，不能重复生成。");
+   if (s.sequence >= 1e9) throw Error("来袭序号已到上限。");
+-  if (!Number.isInteger(count) || count < 2 || count > DEFENSE.unitLimit) throw Error("来袭人数无效。");
++  if (!Number.isInteger(count) || count < 1 || count > DEFENSE.unitLimit) throw Error("来袭人数无效。");
+   const gate = RAID_GATES.find(g => g.id === gateId);
+   if (!gate) throw Error("出口未开放。");
+   const spawns = gate.spawns.slice(0, count).map(p => ({...p}));
+   if (!spawnLegal(gateId, spawns, player, view, occupied)) throw Error("城外生成点近身、在视口内或不可达，请稍后再试。");
+   const next = structuredClone(s), sequence = ++next.sequence, id = gateId === "east-gate" && !warning ? `east-raid-${sequence}` : `raid-${sequence}`;
+   next.raid = { id, sequence, gateId, spawns, phase: warning ? "warning" : "approach", ageMs: 0,
+-    members: spawns.map((p, i) => ({ id: `${id}:${i + 1}`, type: warning && i === count - 1 && count >= 3 ? "leaf" : "slime",
+-      ...p, hp: warning && i === count - 1 && count >= 3 ? 72 : 48, cooldownMs: 0, targetId: null })) };
++    members: spawns.map((p, i) => ({ id: `${id}:${i + 1}`, type: "slime",
++      ...p, hp: 48, cooldownMs: 0, targetId: null })) };
+   return next;
+ }
+ export function prepareEastRaid(s: DefenseState, player: Point) { return prepareRaid(s, player, "east-gate"); }
+ export class EastDefense {
+   enemies: DefenseEnemy[] = [];
+   external: DefenseHostile[] = [];
+-  manages(e: EnemyBody) { return e.hp > 0 && !e.disabled && this.state.guards.some(g => !g.dead &&
+-    GUARD_DEFS.find(d => d.id === g.id)!.role === "melee" && dist(e,GUARD_DEFS.find(d => d.id === g.id)!.post) <= 300 &&
+-    dist({x:e.homeX,y:e.homeY},GUARD_DEFS.find(d => d.id === g.id)!.post) <= 600); }
+-  hostiles(): DefenseHostile[] { return [...this.enemies,...this.external.filter(e=>this.manages(e))]; }
++  threats=new Map<string,Threat>();
++  managedIds=new Set<string>();
++  ownershipReady=false;
++  nextScan=0;
++  player:Point & {hp:number}={x:670,y:720,hp:100};
++  allHostiles():DefenseHostile[]{return [...this.enemies,...this.external];}
++  ownsFixed(e:EnemyBody){return e.hp>0&&!e.disabled&&DEFENSE_ZONES.some(z=>
++    (locallyProtected(z.gateId,e)||this.threatReason(z.gateId,e as DefenseHostile)!==null)&&
++    (inActivity(z.gateId,e)||inAlert(z.gateId,e)));}
++  // 更新所有权在时间片起点冻结，不能移动后重新归属再更新一次。
++  manages(e:EnemyBody){return this.ownershipReady?this.managedIds.has(e.id):this.ownsFixed(e);}
++  hostiles():DefenseHostile[]{return [...this.enemies,...this.external.filter(e=>this.manages(e))];}
+   arrows: DefenseArrow[] = [];
+   runtime = new Map<string, GuardRuntime>();
+   history: DefenseNotice[] = [];
+@@ -68,6 +79,71 @@
+       lowCoverIds: props.filter(p => p.owner === "village" && p.cover === "low").map(p => p.id) };
+   }
+   gate() { return RAID_GATES.find(g => g.id === this.state.raid?.gateId) ?? RAID_GATES[0]; }
++  guardGate(id:string):GateId {return TOWERS.find(t=>id.startsWith(t.gateId.split('-')[0]+'-'))!.gateId;}
++  guardAllowed(g:GuardState,p:Point){const d=GUARD_DEFS.find(d=>d.id===g.id)!;
++    return dist(p,d.post)<=d.leash && (d.role==='archer'?dist(p,d.post)<=2:
++      inPolygon(p,g.id.endsWith('-watch')?zoneFor(this.guardGate(g.id)).inside:zoneFor(this.guardGate(g.id)).activity));}
++  observed(gateId:GateId,e:DefenseHostile){
++    return this.state.guards.some(g=>!g.dead&&this.guardGate(g.id)===gateId&&(
++      g.id.endsWith('-archer')?dist(e,GUARD_DEFS.find(d=>d.id===g.id)!.post)<=TOWERS.find(t=>t.occupantGuardId===g.id)!.range&&
++        !shotLineBlocker(this.portFor(g.id).origin,{x:e.x,y:e.y-30},this.portFor(g.id)):
++      dist(g,e)<=DEFENSE_RULES.observationRange&&clearMeleeLine(g,e)));
++  }
++  attackingProtected(gateId:GateId,e:DefenseHostile){
++    if(!e.attack||e.attack.cancelled||e.attack.resolved)return false;
++    const victim=e.targetId==='player'?this.player:this.state.guards.find(g=>g.id===e.targetId&&!g.dead);
++    return !!victim&&locallyProtected(gateId,victim);
++  }
++  threatReason(gateId:GateId,e:DefenseHostile):Exclude<Threat['reason'],'observe'>|null{
++    if(e.hp<=0||e.disabled||!inActivity(gateId,e)&&!inAlert(gateId,e))return null;
++    const record=this.threats.get(e.id),visible=this.observed(gateId,e);
++    if(!visible&&(!record||record.gateId!==gateId||this.now-record.lastSeen>DEFENSE_RULES.lost))return null;
++    if(locallyProtected(gateId,e))return 'intrusion';
++    if(this.attackingProtected(gateId,e))return 'attack';
++    if(this.enemies.includes(e as DefenseEnemy)&&this.state.raid?.phase==='retreat')return null;
++    return record?.gateId===gateId&&inAlert(gateId,e)&&record.approachMs>=DEFENSE_RULES.approach&&
++      this.now-record.lastProgress<=DEFENSE_RULES.lost&&routeRemaining(gateId,e)<=record.progress+12?'approach':null;
++  }
++  scanThreats(){
++    if(this.now<this.nextScan)return;this.nextScan=this.now+DEFENSE_RULES.scan;
++    const alive=this.allHostiles().filter(e=>e.hp>0&&!e.disabled);
++    for(const e of alive){
++      const zone=DEFENSE_ZONES.find(z=>(inActivity(z.gateId,e)||inAlert(z.gateId,e))&&this.observed(z.gateId,e));
++      if(!zone)continue;
++      const progress=routeRemaining(zone.gateId,e),old=this.threats.get(e.id),same=old?.gateId===zone.gateId;
++      const record:Threat=same?old!:{id:e.id,gateId:zone.gateId,reason:'observe',lastSeen:this.now,progress,approachMs:0,lastProgress:this.now,assigned:[]};
++      const elapsed=Math.min(DEFENSE_RULES.scan*2,this.now-record.lastSeen);
++      if(same&&progress<record.progress-1){record.approachMs+=elapsed;record.lastProgress=this.now;}
++      else if(progress>record.progress+12||this.now-record.lastProgress>DEFENSE_RULES.lost)record.approachMs=0;
++      record.progress=progress;record.lastSeen=this.now;this.threats.set(e.id,record);
++      record.reason=this.threatReason(zone.gateId,e)??'observe';
++    }
++    for(const [id,record]of this.threats)if(!alive.some(e=>e.id===id)||this.now-record.lastSeen>DEFENSE_RULES.lost)this.threats.delete(id);
++  }
++  eligible(g:GuardState,e:DefenseHostile){
++    const d=GUARD_DEFS.find(d=>d.id===g.id)!,gate=this.guardGate(g.id);
++    if(g.dead||g.hp<=0||!this.threatReason(gate,e))return false;
++    if(d.role==='archer'){const tower=TOWERS.find(t=>t.occupantGuardId===g.id)!;
++      return dist(g,tower)<=2&&dist(e,tower)<=tower.range&&this.inFiringArc(g.id,e)&&
++        !shotLineBlocker(tower.muzzle,{x:e.x,y:e.y-30},this.portFor(g.id));}
++    // 允许识别警戒带逼近者并前往固定拦截点，移动硬边界仍只约束卫兵。
++    return this.guardAllowed(g,g);
++  }
++  canScheduleAtGate(gateId:GateId,player:Point,spawns:readonly Point[],view?:Rect,occupied:readonly Point[]=[]){
++    const raid=this.state.raid;
++    if(raid&&(raid.phase!=='warning'||raid.gateId!==gateId)||!raid&&(this.state.protectionMs||this.state.cooldownMs||this.state.retryMs)||
++      occupied.length+this.state.guards.filter(g=>!g.dead).length+spawns.length>24)return false;
++    const defs=GUARD_DEFS.filter(d=>this.guardGate(d.id)===gateId);
++    if(defs.length!==3||!defs.every(d=>{const g=this.state.guards.find(g=>g.id===d.id),r=this.runtime.get(d.id);
++      return g&&!g.dead&&g.hp>=d.maxHP*DEFENSE_RULES.health&&g.postId===d.postId&&
++        ['post','patrol'].includes(g.mode)&&!r?.attack&&
++        (d.role==='archer'?dist(g,d.post)<=2:this.guardAllowed(g,g)&&!motionBlocked(g.x,g.y));}))return false;
++    return !this.allHostiles().some(e=>this.threatReason(gateId,e)!==null)&&spawnLegal(gateId,spawns,player,view,occupied);
++  }
++  returnGuard(g:GuardState){const r=this.runtime.get(g.id)!;
++    if(r.targetId){r.blockedTarget=r.targetId;r.blockedUntil=this.now+DEFENSE_RULES.reacquire;}
++    r.targetId=null;r.chaseMs=r.stuckMs=0;r.attack=null;r.nav.path=[];r.nav.target=undefined;g.mode='return';
++  }
+   acknowledged(sequence: number) { if (sequence === this.state.sequence) this.awaitingCheckpoint = false; }
+   spawnEnemies(now: number) {
+     this.enemies = (this.state.raid?.members ?? []).map((m, i) => {
+@@ -87,9 +163,10 @@
+     this.state.cooldownMs = Math.max(0, this.state.cooldownMs - (dtMs - protectedMs));
+     this.state.retryMs = Math.max(0, this.state.retryMs - dtMs);
+     if (this.state.protectionMs || this.state.cooldownMs || this.state.retryMs || this.awaitingCheckpoint || occupied.length + this.state.guards.length + DEFENSE.unitLimit > 24) return;
+-    const seed = nextRandom(this.state.seed), count = 2 + seed % 3, first = nextRandom(seed) % RAID_GATES.length;
++    const seed = nextRandom(this.state.seed), count = 1 + seed % DEFENSE.unitLimit, first = nextRandom(seed) % RAID_GATES.length;
+     for (let i = 0; i < RAID_GATES.length; i++) {
+       const gate = RAID_GATES[(first + i) % RAID_GATES.length];
++      if (!this.canScheduleAtGate(gate.id,player,gate.spawns.slice(0,count),view,occupied)) continue;
+       try {
+         const proposal = prepareRaid(this.state, player, gate.id, count, true, view, occupied);
+         proposal.seed = nextRandom(seed); Object.assign(this.state, proposal);
+@@ -101,9 +178,9 @@
+   }
+   finish(delayed = false) {
+     const raid = this.state.raid; if (!raid) return;
+-    this.state.completedSequence = raid.sequence; this.state.raid = null; this.enemies = []; this.arrows = [];
++    this.state.completedSequence = raid.sequence; this.state.raid = null; this.enemies = [];
+     this.state.seed = nextRandom(this.state.seed);
+-    this.state.cooldownMs = delayed ? 0 : RAID_TIMING.minInterval + this.state.seed % (RAID_TIMING.maxInterval - RAID_TIMING.minInterval + 1);
++    this.state.cooldownMs = delayed ? 0 : raidInterval(this.state.seed);
+     this.state.retryMs = delayed ? RAID_TIMING.retry : 0; this.awaitingCheckpoint = false;
+     this.critical = true; this.note({kind:delayed ? "delayed" : "ended", id:raid.id, at:this.now});
+   }
+@@ -111,16 +188,16 @@
+   // 交易只换状态副本；运行中的攻击与箭矢不重建、不补伤害。
+   rebind(state: DefenseState) { this.state = state; }
+   restore(now: number) {
+-    this.now = now; this.arrows = []; this.runtime.clear();
++    this.now = now; this.arrows = []; this.runtime.clear();this.threats.clear();this.managedIds.clear();this.ownershipReady=false;this.nextScan=now;
+     for (const g of this.state.guards) {
+       const d = GUARD_DEFS.find(d => d.id === g.id)!;
+       if (d.role === "archer") Object.assign(g, d.post);
+-      else if (!g.dead && (motionBlocked(g.x, g.y) || dist(g,d.post) > d.leash)) {
+-        const safe = nearestStanding(g, [d.post, d.cover], p => dist(p, d.post) < d.leash);
++      else if (!g.dead && (motionBlocked(g.x, g.y) || !this.guardAllowed(g,g))) {
++        const safe = nearestStanding(g, [d.post, d.cover], p => this.guardAllowed(g,p));
+         Object.assign(g, safe ?? d.post);
+       }
+       this.runtime.set(g.id, { nav: enemyNavigation(), attack: null, serial: 0, patrol: 0,
+-        facing: 3, moved: 0, distance: 0, flashUntil: 0 });
++        facing: 3, moved: 0, distance: 0, flashUntil: 0,targetId:null,chaseMs:0,blockedTarget:null,blockedUntil:0,stuckMs:0 });
+     }
+     if (this.state.raid?.phase !== "warning") this.spawnEnemies(now); else this.enemies = [];
+     this.sync();
+@@ -141,15 +218,14 @@
+     if (hit.killed) {
+       g.dead = true; g.mode = "dead"; g.cooldownMs = 0;
+       const r = this.runtime.get(g.id)!; r.attack = null; r.nav.path = [];
+-      this.arrows = this.arrows.filter(a => a.sourceId !== g.id);
+       this.critical = true;
+       this.note({ kind: "death", id: g.id, sourceId: source.id, at: this.now, x: g.x, y: g.y });
+     }
+     return true;
+   }
+-  damageEnemy(e: DefenseHostile, event: DamageEvent, sourceHP: number) {
+-    const hit = resolveDamage(event, { id: event.sourceId, hp: sourceHP, faction: "village", armor: 0 },
+-      { id: e.id, hp: e.hp, faction: "hostile", armor: 0 });
++  damageEnemy(e: DefenseHostile, event: DamageEvent, source: number|ReleasedAttack) {
++    const target={id:e.id,hp:e.hp,faction:'hostile' as const,armor:0};
++    const hit = typeof source==='number'?resolveDamage(event,{id:event.sourceId,hp:source,faction:'village',armor:0},target):resolveReleasedDamage(event,source,target);
+     if (!hit.applied) return false;
+     e.hp = hit.hp; e.flashUntil = this.now + 130;
+     if (event.sourceType === "player-melee" || event.sourceType === "player-wind") e.playerAggroUntil = this.now + 2500;
+@@ -195,14 +271,17 @@
+     return dist(old, body);
+   }
+   target(e: DefenseHostile, player: Point & { hp: number }) {
+-    const guards = this.state.guards.filter(g => !g.dead && GUARD_DEFS.find(d => d.id === g.id)!.role === "melee");
++    const localGate=this.enemies.includes(e as DefenseEnemy)?this.gate().id:DEFENSE_ZONES.find(z=>inActivity(z.gateId,e)||inAlert(z.gateId,e))?.gateId;
++    const guards = this.state.guards.filter(g => !g.dead && this.guardGate(g.id)===localGate && GUARD_DEFS.find(d => d.id === g.id)!.role === "melee");
+     const all = [...guards, ...(player.hp > 0 && dist(e, player) < 380 ? [{ ...player, id: "player" }] : [])]
+       .filter(p => this.external.includes(e) ? dist(p,{x:e.homeX,y:e.homeY}) <= 420 : dist(p,this.gate()) < 600)
++      .filter(p=>this.external.includes(e)||locallyProtected(this.gate().id,e)||p.id==='player'||dist(e,p)<110)
+       .sort((a, b) => dist(e, a) - dist(e, b) || a.id.localeCompare(b.id));
+     return ((e.playerAggroUntil ?? 0) > this.now && all.find(p => p.id === "player")) || all[0];
+   }
+   update(now: number, dtMs: number, player: Point & { hp: number }, budget: { queries: number }, view?: Rect, occupied: readonly Point[] = []) {
+     this.now = now; const dt = dtMs / 1000, contacts: EnemyContact[] = [];
++    this.player=player;this.scanThreats();this.managedIds=new Set(this.external.filter(e=>this.ownsFixed(e)).map(e=>e.id));this.ownershipReady=true;
+     this.schedule(dtMs, player, view, occupied);
+     this.timerCheckpoint += dtMs;
+     if (this.timerCheckpoint >= RAID_TIMING.checkpoint) { this.timerCheckpoint = 0; this.critical = true; }
+@@ -210,7 +289,7 @@
+     if (raid?.phase === "warning") {
+       if (!this.awaitingCheckpoint) raid.ageMs = Math.min(RAID_TIMING.warning, raid.ageMs + dtMs);
+       if (raid.ageMs >= RAID_TIMING.warning) {
+-        if (!spawnLegal(raid.gateId, raid.spawns, player, view, occupied)) this.finish(true);
++        if (!this.canScheduleAtGate(raid.gateId, player, raid.spawns, view, occupied)) this.finish(true);
+         else { raid.phase = "approach"; raid.ageMs = 0; this.spawnEnemies(now); this.critical = true;
+           this.note({kind:"started", id:this.gate().name, at:now}); }
+       }
+@@ -242,7 +321,8 @@
+         continue;
+       }
+       e.targetId = target?.id ?? null;
+-      const destination = !fixed && raid?.phase === "retreat" ? { x: e.homeX, y: e.homeY } : target ?? (fixed ? {x:e.homeX,y:e.homeY} : this.gate().inside);
++      const destination = !fixed && raid?.phase === "retreat" ? { x: e.homeX, y: e.homeY } : target ??
++        (fixed ? {x:e.homeX,y:e.homeY} : locallyProtected(this.gate().id,e)?this.gate().inside:this.gate().entry);
+       if (target && (fixed || raid?.phase !== "retreat") && dist(e, target) < 73 && clearMeleeLine(e, target) && now >= e.cool) {
+         e.attack = createEnemyAttack(e.id, e.attackSerial = (e.attackSerial ?? 0) + 1, e.type, now, e, target);
+         e.cool = e.attack.recoveryUntil + 850; e.ai = "前摇";
+@@ -253,59 +333,70 @@
+         e.ai = raid?.phase === "retreat" ? "撤离" : "接近目标";
+       } else e.ai = "等待冷却";
+     }
++    for(const record of this.threats.values())record.assigned=[];
+     for (const g of this.state.guards) {
+       if (g.dead) continue;
+       const d = GUARD_DEFS.find(d => d.id === g.id)!, r = this.runtime.get(g.id)!, weapon = GUARD_WEAPONS[g.weaponId];
+       const old={x:g.x,y:g.y};
+       g.cooldownMs = Math.max(0, g.cooldownMs - dtMs); r.moved = 0;
+-      const targets = this.hostiles().filter(e => (!this.external.includes(e) || dist(e,d.post) <= 300) && e.hp > 0 && !e.disabled && dist(e, d.post) <= (d.role === "archer" ? TOWERS.find(t => t.occupantGuardId === g.id)!.range : d.leash));
+-      targets.sort((a, b) => dist(g, a) - dist(g, b) || a.id.localeCompare(b.id));
+-      let target = targets[0];
+-      if (d.role === "archer") {
+-        const tower = TOWERS.find(t => t.occupantGuardId === g.id)!, gate = RAID_GATES.find(p => p.id === tower.gateId)!;
+-        target = targets.filter(e => this.inFiringArc(g.id, e) &&
+-          !shotLineBlocker(tower.muzzle, { x:e.x, y:e.y-30 }, this.portFor(g.id)))
+-          .sort((a,b) => (a.targetId && a.targetId !== "player" ? -100 : 0) + dist(a,gate) -
+-            (b.targetId && b.targetId !== "player" ? -100 : 0) - dist(b,gate))[0];
+-      }
+-      g.peaceMs = target ? 0 : Math.min(DEFENSE.regenWait, g.peaceMs + dtMs);
+-      if (!target && g.peaceMs >= DEFENSE.regenWait) g.hp = Math.min(d.maxHP, g.hp + d.maxHP * DEFENSE.regenPerSecond * dt);
+-      const retreat = d.role === "melee" && (g.hp <= d.maxHP * DEFENSE.retreatHP ||
+-        ["retreat", "recover"].includes(g.mode) && g.hp < d.maxHP * DEFENSE.resumeHP);
+-      if (retreat) { r.attack = null; g.mode = dist(g, d.cover) < 5 ? "recover" : "retreat";
+-        r.moved = this.move(g, r.nav, d.cover, DEFENSE.speed, dt, budget, p => dist(p, d.post) <= d.leash,
+-          [...this.state.guards.filter(p => !p.dead && p !== g), player]);
+-      } else if (r.attack) {
+-        g.mode = "attack";
+-        const attack = r.attack, victim = this.hostiles().find(e => e.id === attack.targetId && e.hp > 0);
+-        if (!attack.hit && now >= attack.contact) {
+-          attack.hit = true;
+-          if (victim && d.role === "archer") this.fire(g, victim, attack.id);
+-          else if (victim && dist(g, victim) <= weapon.range + 8 && clearMeleeLine(g, victim))
+-            this.damageEnemy(victim, { sourceId: g.id, targetId: victim.id, attackId: attack.id,
+-              amount: weapon.damage, sourceType: "guard-melee", eventId: victim.eventId ?? null }, g.hp);
++      const gate=this.guardGate(g.id),ranged=d.role==='archer';
++      let targets=this.allHostiles().filter(e=>this.eligible(g,e));
++      // 守门人只在内侧移动；单个门外目标交给拦截员，突破者或多目标才协防。
++      if(g.id.endsWith('-watch'))targets=targets.filter(e=>inPolygon(e,zoneFor(gate).inside)||
++        targets.length>1&&dist(g,e)<=weapon.range+8);
++      targets.sort((a,b)=>Number(!locallyProtected(gate,a))-Number(!locallyProtected(gate,b))||dist(g,a)-dist(g,b)||a.id.localeCompare(b.id));
++      const urgent=targets.find(e=>locallyProtected(gate,e)||this.attackingProtected(gate,e));
++      let target=targets.find(e=>!(r.blockedTarget===e.id&&now<r.blockedUntil&&!locallyProtected(gate,e)&&!this.attackingProtected(gate,e)));
++      if(g.mode==='return'&&dist(g,d.post)>5)target=urgent;
++      const retreat=d.role==='melee'&&(g.hp<=d.maxHP*DEFENSE.retreatHP||
++        ['retreat','recover'].includes(g.mode)&&g.hp<d.maxHP*DEFENSE.resumeHP);
++      const fighting=!retreat&&(!!target||!!r.attack)||this.allHostiles().some(e=>e.hp>0&&e.attack&&!e.attack.cancelled&&e.targetId===g.id&&dist(e,g)<110);
++      g.peaceMs=fighting?0:Math.min(DEFENSE.regenWait,g.peaceMs+dtMs);
++      if(!fighting&&g.peaceMs>=DEFENSE.regenWait)g.hp=Math.min(d.maxHP,g.hp+d.maxHP*DEFENSE.regenPerSecond*dt);
++      if(retreat){
++        if(r.targetId||r.attack)this.returnGuard(g);
++        g.mode=dist(g,d.cover)<5?'recover':'retreat';
++        r.moved=this.move(g,r.nav,d.cover,DEFENSE.speed,dt,budget,p=>this.guardAllowed(g,p),[...this.state.guards.filter(p=>!p.dead&&p!==g),player]);
++      }else{
++        if(['retreat','recover'].includes(g.mode))this.returnGuard(g);
++        if(target){
++          if(r.targetId!==target.id){r.targetId=target.id;r.chaseMs=r.stuckMs=0;r.nav.path=[];r.nav.target=undefined;}
++          if(!locallyProtected(gate,target)&&!this.attackingProtected(gate,target))r.chaseMs+=dtMs;else r.chaseMs=0;
++          if(!ranged&&r.chaseMs>=DEFENSE_RULES.pursuit){this.returnGuard(g);target=undefined;}
++        }else if(r.targetId||r.attack||g.mode==='intercept'||g.mode==='attack')this.returnGuard(g);
++        if(target){const record=this.threats.get(target.id);if(record)record.assigned.push(g.id);}
++        if(r.attack){
++          const attack=r.attack,victim=this.allHostiles().find(e=>e.id===attack.targetId);
++          if(!victim||!this.eligible(g,victim)){r.attack=null;this.returnGuard(g);}
++          else{
++            g.mode='attack';
++            if(!attack.hit&&now>=attack.contact){attack.hit=true;
++              if(ranged)this.fire(g,victim,attack.id);
++              else if(inActivity(gate,victim)&&dist(g,victim)<=weapon.range+8&&clearMeleeLine(g,victim))
++                this.damageEnemy(victim,{sourceId:g.id,targetId:victim.id,attackId:attack.id,amount:weapon.damage,sourceType:'guard-melee',eventId:victim.eventId??null},g.hp);
++            }
++            if(now>=attack.end)r.attack=null;
++          }
++        }else if(target){
++          if(ranged||inActivity(gate,target)&&dist(g,target)<=weapon.range+8&&clearMeleeLine(g,target)){
++            g.mode='attack';
++            if(g.cooldownMs===0){const n=Math.max(1,dist(g,target)),direction={x:(target.x-g.x)/n,y:(target.y-g.y)/n};
++              r.attack={id:`${g.id}:${++r.serial}`,start:now,contact:now+weapon.windup,end:now+weapon.windup+220,targetId:target.id,hit:false,direction};
++              g.cooldownMs=weapon.cooldown;r.facing=Math.abs(direction.x)>Math.abs(direction.y)?direction.x<0?2:3:direction.y<0?1:0;
++            }
++          }else{
++            g.mode='intercept';const intercept=zoneFor(gate).intercept;
++            const goal=locallyProtected(gate,target)&&dist(g,intercept)<30?target:intercept;
++            r.moved=this.move(g,r.nav,goal,DEFENSE.speed,dt,budget,p=>this.guardAllowed(g,p),[...this.state.guards.filter(p=>!p.dead&&p!==g),player]);
++            r.stuckMs=r.moved>.001||dist(g,goal)<10?0:r.stuckMs+dtMs;
++            if(r.stuckMs>=DEFENSE_RULES.stuck)this.returnGuard(g);
++          }
++        }else{
++          const returning=g.mode==='return',post=returning?d.post:d.patrol[r.patrol%d.patrol.length];
++          g.mode=returning?'return':ranged||d.patrol.length===1?'post':'patrol';
++          if(!ranged&&dist(g,post)>3)r.moved=this.move(g,r.nav,post,DEFENSE.speed*(returning?1:.45),dt,budget,p=>this.guardAllowed(g,p),[...this.state.guards.filter(p=>!p.dead&&p!==g),player]);
++          else if(returning){g.mode=d.patrol.length===1?'post':'patrol';r.nav.path=[];}else r.patrol++;
+         }
+-        if (now >= attack.end) r.attack = null;
+-      } else if (target) {
+-        if (d.role === "archer" || dist(g, target) < weapon.range && clearMeleeLine(g, target)) {
+-          g.mode = "attack";
+-          if (g.cooldownMs === 0) {
+-            const n = Math.max(1, dist(g, target)), direction = { x: (target.x - g.x) / n, y: (target.y - g.y) / n };
+-            r.attack = { id: `${g.id}:${++r.serial}`, start: now, contact: now + weapon.windup,
+-              end: now + weapon.windup + 220, targetId: target.id, hit: false, direction };
+-            g.cooldownMs = weapon.cooldown;
+-            r.facing = Math.abs(direction.x) > Math.abs(direction.y) ? direction.x < 0 ? 2 : 3 : direction.y < 0 ? 1 : 0;
+-          }
+-        } else { g.mode = "intercept";
+-          r.moved = this.move(g, r.nav, target, DEFENSE.speed, dt, budget, p => dist(p, d.post) <= d.leash,
+-            [...this.state.guards.filter(p => !p.dead && p !== g), player]); }
+-      } else {
+-        const post = d.patrol[r.patrol % d.patrol.length];
+-        g.mode = d.role === "archer" || d.patrol.length === 1 ? "post" : "patrol";
+-        if (d.role !== "archer" && dist(g, post) > 3)
+-          r.moved = this.move(g, r.nav, post, DEFENSE.speed * 0.45, dt, budget, p => dist(p, d.post) <= d.leash,
+-            [...this.state.guards.filter(p => !p.dead && p !== g), player]);
+-        else r.patrol++;
+       }
+       if(r.moved>.001){const dx=g.x-old.x,dy=g.y-old.y;
+         r.distance+=r.moved;
+@@ -323,32 +414,34 @@
+   }
+   fire(g: GuardState, target: DefenseHostile, id: string) {
+     const tower = TOWERS.find(t => t.occupantGuardId === g.id);
+-    if (!tower || g.dead || dist(g, tower) > 2 || this.arrows.length >= DEFENSE.arrowLimit || !this.inFiringArc(g.id,target) ||
+-      shotLineBlocker(tower.muzzle,{x:target.x,y:target.y-30},this.portFor(g.id))) return;
++    if (!tower || !this.eligible(g,target) || this.arrows.length >= DEFENSE.arrowLimit) return;
+     const end = { x:target.x,y:target.y-30 }, n = dist(tower.muzzle,end);
+     this.arrows.push({ id,sourceId:g.id,eventId:target.eventId ?? "world",...tower.muzzle,origin:{...tower.muzzle},
+       vx:(end.x-tower.muzzle.x)/n*DEFENSE.arrowSpeed,vy:(end.y-tower.muzzle.y)/n*DEFENSE.arrowSpeed,
+-      age:0,travelled:0,damage:GUARD_WEAPONS[g.weaponId].damage,hit:new Set() });
++      age:0,travelled:0,damage:GUARD_WEAPONS[g.weaponId].damage,hit:new Set(),
++      released:Object.freeze({sourceId:g.id,faction:'village',attackId:id,amount:GUARD_WEAPONS[g.weaponId].damage,sourceType:'tower-arrow',eventId:target.eventId??'world'}),
++      port:Object.freeze({...this.portFor(g.id),origin:Object.freeze({...tower.muzzle}),lowCoverIds:Object.freeze([...this.portFor(g.id).lowCoverIds])}) });
+     this.note({kind:"shot",id,sourceId:g.id,at:this.now});
+   }
+   updateArrows(ms: number) {
+     this.arrows = this.arrows.filter(a => {
+-      a.age += ms;
+-      const next = { x: a.x + a.vx * ms / 1000, y: a.y + a.vy * ms / 1000 };
+-      if (a.age > DEFENSE.arrowLife || shotLineBlocker(a.origin, next, this.portFor(a.sourceId))) return false;
+-      const dx = next.x - a.x, dy = next.y - a.y;
+-      const hits = this.hostiles().filter(e => e.hp > 0 && !a.hit.has(e.id)).map(e => {
+-        const u = Math.max(0, Math.min(1, ((e.x - a.x) * dx + (e.y - 30 - a.y) * dy) / (dx * dx + dy * dy || 1)));
+-        return { e, u, d: Math.hypot(a.x + dx * u - e.x, a.y + dy * u - e.y + 30) };
+-      }).filter(h => h.d <= 24).sort((a, b) => a.u - b.u || a.e.id.localeCompare(b.e.id));
+-      if (hits[0]) {
+-        const e = hits[0].e; a.hit.add(e.id);
+-        const g = this.state.guards.find(g => g.id === a.sourceId);
+-        if (g && !g.dead) this.damageEnemy(e, { sourceId: a.sourceId, targetId: e.id, attackId: a.id,
+-          amount: a.damage, sourceType: "tower-arrow", eventId: a.eventId }, g.hp);
+-        return false;
+-      }
+-      a.travelled += dist(a, next); Object.assign(a, next); return true;
++      const elapsed=Math.max(0,Math.min(ms,DEFENSE.arrowLife-a.age,(DEFENSE.arrowRange-a.travelled)/DEFENSE.arrowSpeed*1000));
++      const next={x:a.x+a.vx*elapsed/1000,y:a.y+a.vy*elapsed/1000},segment=dist(a,next);
++      const impact=shotLineImpact(a.origin,next,a.port),wallDistance=impact?dist(a.origin,next)*impact.fraction:Infinity;
++      const dx=next.x-a.x,dy=next.y-a.y;
++      // 物理候选与威胁列表、AI所有权分开；先命中的墙／单位结算一次。
++      const hits=this.allHostiles().filter(e=>e.hp>0&&!e.disabled&&!a.hit.has(e.id)).map(e=>{
++        const fx=a.x-e.x,fy=a.y-e.y+30,length=dx*dx+dy*dy,b=2*(fx*dx+fy*dy),c=fx*fx+fy*fy-24*24,disc=b*b-4*length*c;
++        const u=c<=0?0:length>0&&disc>=0?(-b-Math.sqrt(disc))/(2*length):Infinity;
++        return {e,u};
++      }).filter(h=>h.u>=0&&h.u<=1&&a.travelled+segment*h.u<wallDistance).sort((a,b)=>a.u-b.u||a.e.id.localeCompare(b.e.id));
++      if(hits[0]){const e=hits[0].e;a.hit.add(e.id);
++        this.damageEnemy(e,{sourceId:a.sourceId,targetId:e.id,attackId:a.id,amount:a.damage,sourceType:'tower-arrow',eventId:a.eventId},a.released);return false;
++      }
++      if(wallDistance<=a.travelled+segment)return false;
++      a.age+=elapsed;a.travelled+=segment;Object.assign(a,next);
++      return a.age<DEFENSE.arrowLife&&a.travelled<DEFENSE.arrowRange;
++
+     });
+   }
+   sync() {
+@@ -359,6 +452,7 @@
+     }
+   }
+   snapshot() { return { ...structuredClone(this.state), arrows: this.arrows.map(a => ({ ...a, hit: [...a.hit] })),
++    threats:[...this.threats.values()].map(t=>({...t,assigned:[...t.assigned]})),managedIds:[...this.managedIds],
+     units: this.state.guards.map(g => ({ ...g, ...this.runtime.get(g.id), definition: GUARD_DEFS.find(d => d.id === g.id) })),
+     enemies: this.enemies.map(e => ({ ...e })), history: [...this.history], critical: this.critical, awaitingCheckpoint: this.awaitingCheckpoint }; }
+ }
+diff --git a/farwind/src/game/systems/defenseState.ts b/farwind/src/game/systems/defenseState.ts
+--- a/farwind/src/game/systems/defenseState.ts
++++ b/farwind/src/game/systems/defenseState.ts
+@@ -1,5 +1,5 @@
+-import { GUARD_DEFS, RAID_TIMING, type GateId, type GuardId } from "../../data/defense";
+-export type GuardMode = "post" | "patrol" | "intercept" | "attack" | "retreat" | "recover" | "dead";
++import { GUARD_DEFS, RAID_TIMING, DEFENSE, nextDefenseRandom, raidInterval, type GateId, type GuardId } from "../../data/defense";
++export type GuardMode = "post" | "patrol" | "intercept" | "attack" | "retreat" | "recover" | "return" | "dead";
+ export type GuardState = {
+   id: GuardId; x: number; y: number; hp: number; dead: boolean;
+   weaponId: "watch-blade" | "watch-bow"; armorId: "watch-mail" | "watch-leather";
+@@ -14,7 +14,7 @@
+ export function initialDefense(): DefenseState {
+   return { guards: GUARD_DEFS.map(d => ({ id: d.id, ...d.post, hp: d.maxHP, dead: false,
+     weaponId: d.weaponId, armorId: d.armorId, postId: d.postId, mode: "post", peaceMs: 0, cooldownMs: 0 })),
+-    sequence: 0, completedSequence: 0, raid: null, protectionMs: RAID_TIMING.protection, cooldownMs: 360000, retryMs: 0, seed: 1729 };
++    sequence: 0, completedSequence: 0, raid: null, protectionMs: RAID_TIMING.protection, cooldownMs: raidInterval(nextDefenseRandom(1729)), retryMs: 0, seed: 1729 };
+ }
+ export function validateDefense(raw: unknown): DefenseState {
+   const s = raw as DefenseState;
+@@ -29,14 +29,14 @@
+       const d = GUARD_DEFS.find(d => d.id === g?.id);
+       return !!d && point(g) && num(g.hp, d.maxHP) && typeof g.dead === "boolean" && g.dead === (g.hp === 0) &&
+         g.weaponId === d.weaponId && g.armorId === d.armorId && g.postId === d.postId &&
+-        ["post", "patrol", "intercept", "attack", "retreat", "recover", "dead"].includes(g.mode) &&
++        ["post", "patrol", "intercept", "attack", "retreat", "recover", "return", "dead"].includes(g.mode) &&
+         (g.dead ? g.mode === "dead" : g.mode !== "dead") && num(g.peaceMs, 8000) && num(g.cooldownMs, 5000);
+     })) throw Error("驻防存档损坏，请使用有效备份。");
+   const r = s.raid;
+   if (r !== null && (!r || r.sequence !== s.sequence || r.sequence <= s.completedSequence ||
+     (r.id !== `east-raid-${r.sequence}` && r.id !== `raid-${r.sequence}`) ||
+     !["east-gate", "north-gate", "south-gate"].includes(r.gateId) || !["warning", "approach", "fighting", "retreat"].includes(r.phase) ||
+-    !num(r.ageMs, 120000) || !Array.isArray(r.members) || r.members.length < 1 || r.members.length > 4 ||
++    !num(r.ageMs, 120000) || !Array.isArray(r.members) || r.members.length < 1 || r.members.length > DEFENSE.historyUnitLimit ||
+     !Array.isArray(r.spawns) || r.spawns.length !== r.members.length || !r.spawns.every(point) ||
+     new Set(r.members.map(m => m?.id)).size !== r.members.length || !r.members.every((m, i) =>
+       m && m.id === `${r.id}:${i + 1}` && ["slime", "leaf"].includes(m.type) && point(m) &&
+diff --git a/farwind/src/game/systems/enemy.ts b/farwind/src/game/systems/enemy.ts
+--- a/farwind/src/game/systems/enemy.ts
++++ b/farwind/src/game/systems/enemy.ts
+@@ -1,4 +1,5 @@
+ import { enemyDefs } from "../../data/world";
++import {inProtected} from '../../data/defenseZones';
+ import { createEnemyAttack, advanceEnemyAttack, ENEMY_ATTACK, delayEnemyAttack, sampleEnemyAttack, type EnemyAttack, type EnemyContact } from "./enemyAttack";
+ import {
+   clearMotionLine,
+@@ -257,7 +258,9 @@
+     e.nav.path = [];
+     return null;
+   }
+-  const canChase = d < 380 && safe && distance(e, home) < 420;
++  // 安全近郊漫步不会远程唤醒家园怪；真实入侵、既有追击或玩家挑衅仍处理。
++  const canChase = d < 380 && safe && distance(e, home) < 420 &&
++    (!inProtected(player)||inProtected(e)||e.nav.mode==='chase'||(e.playerAggroUntil??0)>now);
+   if (!canChase && distance(e, home) > 8) e.nav.returning = true;
+   if (e.nav.returning && distance(e, home) <= 8) e.nav.returning = false;
+   const chase = canChase && !e.nav.returning;
+diff --git a/farwind/src/game/systems/interactions.ts b/farwind/src/game/systems/interactions.ts
+--- a/farwind/src/game/systems/interactions.ts
++++ b/farwind/src/game/systems/interactions.ts
+@@ -31,7 +31,7 @@
+   }
+   if(p.id === "east-gate-sign") { this.openDefenseDrill(); return; }
+   if (p.id === "north-gate-sign" || p.id === "south-gate-sign") {
+-    this.ui.dialog(p.label!,p.id === "north-gate-sign" ? "松岚、石泉与林弦守望山路。门外有危险，卫队不会追进深林。" : "麦川、望禾与晴羽照看果园外通路。普通来袭由卫队拦截，门洞保持开放。");return;
++    this.ui.dialog(p.label!,p.id === "north-gate-sign" ? "松岚、石泉与林弦守望山路。门外巡逻道路平时安全，沿山路再往远处才是荒野；卫队只拦截本地威胁。" : "麦川、望禾与晴羽照看果园外通路。门外巡逻道路平时安全，偶尔1～3只弱怪逼近时由卫队拦截，门洞保持开放。");return;
+   }
+   if (p.kind === "npc") {
+     const talk = (text: string) => this.ui.dialog(p.label!, text, p.id);
+diff --git a/farwind/src/game/systems/obstacles.ts b/farwind/src/game/systems/obstacles.ts
+--- a/farwind/src/game/systems/obstacles.ts
++++ b/farwind/src/game/systems/obstacles.ts
+@@ -165,14 +165,21 @@
+ export type FiringPort = {origin: Point; lowCoverIds: readonly string[]; structureId?: string};
+ // 高处射击独立于脚底／水域。仅登记的射击口可越过己方低墙，高墙不能豁免。
+ export function shotLineBlocker(a:Point,b:Point,port?:FiringPort,objects:readonly Prop[]=props) {
+-  if([a,b].some(p=>p.x<30||p.x>WORLD.width-30||p.y<80||p.y>WORLD.height-30))return "world-edge";
+-  return objects.find(p=>{
+-    if(!p.solid)return false;
++  return shotLineImpact(a,b,port,objects)?.id;
++}
++export function shotLineImpact(a:Point,b:Point,port?:FiringPort,objects:readonly Prop[]=props){
++  const inside=(p:Point)=>p.x>=30&&p.x<=WORLD.width-30&&p.y>=80&&p.y<=WORLD.height-30;
++  let first: {id:string;fraction:number}|undefined;
++  if(!inside(a))return {id:'world-edge',fraction:0};
++  if(!inside(b))first={id:'world-edge',fraction:rectInterval(a,b,{left:30,right:WORLD.width-30,top:80,bottom:WORLD.height-30})?.[1]??0};
++  for(const p of objects){
++    if(!p.solid)continue;
+     const fromPort=port && Math.hypot(a.x-port.origin.x,a.y-port.origin.y)<=2;
+     const permitted=fromPort && p.owner==="village" &&
+       (p.cover==="low" && port.lowCoverIds.includes(p.id) || p.id===port.structureId);
+     const high=p.cover==="high" || ["house","shop","tower","smith-building","inn-building"].includes(p.art);
+     const bounds=high ? {left:p.x-p.w/2,right:p.x+p.w/2,top:p.y-p.h,bottom:p.y} : propBounds(p);
+-    return !permitted && !!rectInterval(a,b,bounds);
+-  })?.id;
++    const interval=!permitted&&rectInterval(a,b,bounds);
++    if(interval&&(!first||interval[0]<first.fraction))first={id:p.id,fraction:interval[0]};
++  }return first;
+ }
+diff --git a/farwind/src/game/ui/interface.ts b/farwind/src/game/ui/interface.ts
+--- a/farwind/src/game/ui/interface.ts
++++ b/farwind/src/game/ui/interface.ts
+@@ -478,7 +478,7 @@
+           )
+           .join(
+             "",
+-          )}</ol><h2>支线 · 木匠的托付</h2><p>${["与西南方的木匠阿禾交谈", "为阿禾收集 4 份木材", "已交付，收到浆果与谢意"][s.side]}</p><button id="close">合上手记</button>`,
++          )}</ol><p class="muted">村内和门外巡逻近郊平时安全；更远的山路、荒野和森林需谨慎。普通侵扰每轮1～3只弱怪，结束后间隔8～15分钟；驻防虚弱时延期。</p><h2>支线 · 木匠的托付</h2><p>${["与西南方的木匠阿禾交谈", "为阿禾收集 4 份木材", "已交付，收到浆果与谢意"][s.side]}</p><button id="close">合上手记</button>`,
+       );
+     if (mode === "map" && s) {
+       this.shell(
+diff --git a/farwind/tests/adventure.spec.ts b/farwind/tests/adventure.spec.ts
+--- a/farwind/tests/adventure.spec.ts
++++ b/farwind/tests/adventure.spec.ts
+@@ -1,8 +1,9 @@
+ import { move } from "./map-navigation";
+-import { writeFile } from "node:fs/promises";
++import { mkdir, writeFile } from "node:fs/promises";
+ import { captureGameAudio } from "../tools/capture-game-audio.mjs";
+ import { test, expect, type Page } from "@playwright/test";
+ test.use({ video: "on" });
++const root = `${process.env.FARWIND_EVIDENCE_ROOT ?? 'docs/village-defense/safety/development'}/adventure`;
+ const snapshot = (p: Page) => p.evaluate(() => (window as any).__farwind());
+ async function dismiss(p: Page) {
+   const s = await snapshot(p);
+@@ -18,6 +19,7 @@
+ }
+ test("adventure-loop", async ({ page, context }) => {
+   test.setTimeout(300000);
++  await mkdir(root, { recursive: true });
+   const errors: string[] = [];
+   page.on("pageerror", (e) => errors.push(e.message));
+   await page.addInitScript(captureGameAudio);
+@@ -35,14 +37,15 @@
+   await interact(page, "wood-v1");
+   await move(page, 1730, 1210);
+   await interact(page, "stone-v1");
+-  await move(page, 2170, 1080);
++  // 东门外近郊不提前触发森林主线。
++  await move(page, 2290, 1080);
+   await dismiss(page);
+   await page.keyboard.press("Tab");
+   await page.getByRole("button", { name: "制作恢复药剂", exact: true }).click();
+-  await page.screenshot({ path: "docs/map-expansion/adventure/inventory.png" });
++  await page.screenshot({ path: `${root}/inventory.png` });
+   await page.getByRole("button", { name: "收好行囊" }).click();
+   await expect.poll(async () => (await snapshot(page)).state.quest).toBe(3);
+-  await page.screenshot({ path: "docs/map-expansion/adventure/forest.png" });
++  await page.screenshot({ path: `${root}/forest.png` });
+   await move(page, 2500, 1080);
+   for (let round = 0; round < 70; round++) {
+     await dismiss(page);
+@@ -74,7 +77,7 @@
+   await interact(page, "wind-1");
+   await move(page, 3950, 510);
+   await interact(page, "wind-2");
+-  await page.screenshot({ path: "docs/map-expansion/adventure/ruins.png" });
++  await page.screenshot({ path: `${root}/ruins.png` });
+   await move(page, 3740, 730);
+   await interact(page, "waymark");
+   await dismiss(page);
+@@ -88,7 +91,7 @@
+   await dismiss(page);
+   await expect.poll(async () => (await snapshot(page)).state.quest).toBe(7);
+   await page.keyboard.press("q");
+-  await page.screenshot({ path: "docs/map-expansion/adventure/quest.png" });
++  await page.screenshot({ path: `${root}/quest.png` });
+   await page.getByRole("button", { name: "合上手记" }).click();
+   await page.keyboard.press("Escape");
+   await page.getByRole("button", { name: "保存旅途", exact: true }).click();
+@@ -96,16 +99,16 @@
+   const before = (await snapshot(page)).state;
+   const audio = await page.evaluate(() => (window as any).__finishAudio());
+   await writeFile(
+-    "docs/map-expansion/adventure/forest-audio.webm",
++    `${root}/forest-audio.webm`,
+     Buffer.from(audio.base64, "base64"),
+   );
+   await writeFile(
+-    "docs/map-expansion/adventure/forest-audio-offset.txt",
++    `${root}/forest-audio-offset.txt`,
+     String(audio.offset),
+   );
+   const video = page.video();
+   await page.close();
+-  await video?.saveAs("docs/map-expansion/adventure/forest-journey.webm");
++  await video?.saveAs(`${root}/forest-journey.webm`);
+   const reopened = await context.newPage();
+   await reopened.goto("/");
+   await reopened.getByRole("button", { name: "继续旅途", exact: true }).click();
+@@ -117,6 +120,6 @@
+   expect(after.reward).toBe(true);
+   expect(errors).toEqual([]);
+   await reopened.screenshot({
+-    path: "docs/map-expansion/adventure/continued.png",
++    path: `${root}/continued.png`,
+   });
+ });
+diff --git a/farwind/tests/east-defense.test.ts b/farwind/tests/east-defense.test.ts
+--- a/farwind/tests/east-defense.test.ts
++++ b/farwind/tests/east-defense.test.ts
+@@ -66,12 +66,12 @@
+   });
+   it("已放出的箭具有飞行时间、单次命中与寿命，重载不补箭伤",()=>{
+     const s=prepareEastRaid(initialDefense(),player),d=new EastDefense(s,0),e=d.enemies[0],g=s.guards[2];
+-    d.fire(g,e,"arrow-test");expect(d.arrows).toHaveLength(1);expect(e.hp).toBe(48);
++    Object.assign(e,{x:2260,y:1090});d.fire(g,e,"arrow-test");expect(d.arrows).toHaveLength(1);expect(e.hp).toBe(48);
+     d.updateArrows(1);expect(e.hp).toBe(48);expect(d.arrows[0].travelled).toBeGreaterThan(0);
+     const reload=new EastDefense(validateDefense(s),0);expect(reload.arrows).toEqual([]);expect(reload.enemies[0].hp).toBe(48);
+     d.updateArrows(1500);expect(e.hp).toBe(26);expect(d.arrows).toEqual([]);
+     d.updateArrows(1500);expect(e.hp).toBe(26);
+-    d.fire(g,d.enemies[1],"expired");d.updateArrows(DEFENSE.arrowLife+1);expect(d.arrows).toEqual([]);
++    Object.assign(d.enemies[1],{x:2260,y:1090});d.fire(g,d.enemies[1],"expired");d.updateArrows(DEFENSE.arrowLife+1);expect(d.arrows).toEqual([]);
+   });
+   it("发射口越过登记低挡，屋顶与高柱仍阻挡，不接受任意起点豁免",()=>{
+     const low={id:"low",art:"fence",x:2300,y:900,w:100,h:70,solid:[40,30] as [number,number],cover:"low" as const,owner:"village"};
+diff --git a/farwind/tests/economy.spec.ts b/farwind/tests/economy.spec.ts
+--- a/farwind/tests/economy.spec.ts
++++ b/farwind/tests/economy.spec.ts
+@@ -54,6 +54,8 @@
+ test("新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载", async ({
+   page,
+ }) => {
++  // 四店铺、采集、装备和重载的完整步行路线需要较长超时。
++  test.setTimeout(300000);
+   await mkdir(root, { recursive: true });
+   const errors: string[] = [];
+   page.on("pageerror", (e) => errors.push(e.message));
+@@ -84,7 +86,8 @@
+     await expect.poll(async () => (await read(page)).target).toBe(id);
+     await page.keyboard.press("e");
+   }
+-  await move(page, 2170, 1080);
++  // 近郊保护覆盖至2280；进入荒野后才触发森林主线。
++  await move(page, 2290, 1080);
+   expect((await read(page)).state.quest).toBe(2);
+   await move(page, 1110, 600);
+   await page.keyboard.press("e");
+diff --git a/farwind/tests/fixtures/legacy-defense.json b/farwind/tests/fixtures/legacy-defense.json
+new file mode 100644
+--- /dev/null
++++ b/farwind/tests/fixtures/legacy-defense.json
+@@ -0,0 +1,194 @@
++{
++  "说明": "此前M5保存的真实结构4／地图6四怪事件摘录，仅用于历史恢复，不调用新事件入口生成四怪。",
++  "事件": [
++    {
++      "id": "east-raid-1",
++      "sequence": 1,
++      "gateId": "east-gate",
++      "spawns": [
++        {
++          "x": 2370,
++          "y": 1090
++        },
++        {
++          "x": 2390,
++          "y": 1140
++        },
++        {
++          "x": 2470,
++          "y": 1140
++        },
++        {
++          "x": 2430,
++          "y": 1180
++        }
++      ],
++      "phase": "approach",
++      "ageMs": 0,
++      "members": [
++        {
++          "id": "east-raid-1:1",
++          "type": "slime",
++          "x": 2370,
++          "y": 1090,
++          "hp": 48,
++          "cooldownMs": 0,
++          "targetId": null
++        },
++        {
++          "id": "east-raid-1:2",
++          "type": "slime",
++          "x": 2390,
++          "y": 1140,
++          "hp": 48,
++          "cooldownMs": 0,
++          "targetId": null
++        },
++        {
++          "id": "east-raid-1:3",
++          "type": "slime",
++          "x": 2470,
++          "y": 1140,
++          "hp": 48,
++          "cooldownMs": 0,
++          "targetId": null
++        },
++        {
++          "id": "east-raid-1:4",
++          "type": "leaf",
++          "x": 2430,
++          "y": 1180,
++          "hp": 72,
++          "cooldownMs": 0,
++          "targetId": null
++        }
++      ]
++    },
++    {
++      "id": "raid-1",
++      "sequence": 1,
++      "gateId": "north-gate",
++      "spawns": [
++        {
++          "x": 620,
++          "y": 120
++        },
++        {
++          "x": 660,
++          "y": 110
++        },
++        {
++          "x": 680,
++          "y": 130
++        },
++        {
++          "x": 640,
++          "y": 90
++        }
++      ],
++      "phase": "approach",
++      "ageMs": 0,
++      "members": [
++        {
++          "id": "raid-1:1",
++          "type": "slime",
++          "x": 620,
++          "y": 120,
++          "hp": 48,
++          "cooldownMs": 0,
++          "targetId": null
++        },
++        {
++          "id": "raid-1:2",
++          "type": "slime",
++          "x": 660,
++          "y": 110,
++          "hp": 48,
++          "cooldownMs": 0,
++          "targetId": null
++        },
++        {
++          "id": "raid-1:3",
++          "type": "slime",
++          "x": 680,
++          "y": 130,
++          "hp": 48,
++          "cooldownMs": 0,
++          "targetId": null
++        },
++        {
++          "id": "raid-1:4",
++          "type": "leaf",
++          "x": 640,
++          "y": 90,
++          "hp": 72,
++          "cooldownMs": 0,
++          "targetId": null
++        }
++      ]
++    },
++    {
++      "id": "raid-1",
++      "sequence": 1,
++      "gateId": "south-gate",
++      "spawns": [
++        {
++          "x": 1140,
++          "y": 2060
++        },
++        {
++          "x": 1200,
++          "y": 2090
++        },
++        {
++          "x": 1160,
++          "y": 2110
++        },
++        {
++          "x": 1240,
++          "y": 2070
++        }
++      ],
++      "phase": "approach",
++      "ageMs": 0,
++      "members": [
++        {
++          "id": "raid-1:1",
++          "type": "slime",
++          "x": 1140,
++          "y": 2060,
++          "hp": 48,
++          "cooldownMs": 0,
++          "targetId": null
++        },
++        {
++          "id": "raid-1:2",
++          "type": "slime",
++          "x": 1200,
++          "y": 2090,
++          "hp": 48,
++          "cooldownMs": 0,
++          "targetId": null
++        },
++        {
++          "id": "raid-1:3",
++          "type": "slime",
++          "x": 1160,
++          "y": 2110,
++          "hp": 48,
++          "cooldownMs": 0,
++          "targetId": null
++        },
++        {
++          "id": "raid-1:4",
++          "type": "leaf",
++          "x": 1240,
++          "y": 2070,
++          "hp": 72,
++          "cooldownMs": 0,
++          "targetId": null
++        }
++      ]
++    }
++  ]
++}
+diff --git a/farwind/tests/safety-defense.spec.ts b/farwind/tests/safety-defense.spec.ts
+new file mode 100644
+--- /dev/null
++++ b/farwind/tests/safety-defense.spec.ts
+@@ -0,0 +1,27 @@
++import {test,expect,type Page} from '@playwright/test';
++import {mkdir,writeFile} from 'node:fs/promises';
++import {initialState,validate,type State} from '../src/game/systems/state';
++import {prepareRaid} from '../src/game/systems/defense';
++import {move} from './map-navigation';
++const root=process.env.FARWIND_EVIDENCE_ROOT!;
++const read=(p:Page)=>p.evaluate(()=>(window as any).__farwind());
++async function initial(p:Page,s:State){validate(s);p.once('dialog',d=>d.accept());const choose=p.waitForEvent('filechooser');await p.getByRole('button',{name:'导入存档',exact:true}).click();await(await choose).setFiles({name:'safety-initial-fixture.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(s))});await p.waitForFunction(()=>(window as any).__farwind().mode==='');}
++async function caption(p:Page,text:string){await p.evaluate(text=>{let n=document.getElementById('acceptance-caption');if(!n){n=document.createElement('p');n.id='acceptance-caption';n.style.cssText='position:fixed;bottom:4px;left:12px;margin:0;padding:6px 12px;background:#132b26dd;color:#fff;z-index:9999;font:14px sans-serif;max-width:1000px';document.body.append(n);}n.textContent='验收字幕（只读）：'+text;},text);}
++test.beforeEach(async({page})=>{await mkdir(root,{recursive:true});await page.goto('/');});
++test.afterEach(async({page},info)=>{if(!page.isClosed()){const name=info.title.includes('近郊')?'walk':info.title.includes('低血')?'weak':'battle';await writeFile(`${root}/${name}-${info.status}.json`,JSON.stringify({说明:'只读实际运行记录；初始条件只通过正式导入建立，未写运行生命或位置。',状态:await read(page)},null,2));const video=page.video();await page.close();await video?.saveAs(`${root}/${name}-footage.webm`);}});
++test('安全近郊实际漫步、远怪不追、主角与黑猫过门',async({page})=>{
++ const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));const s=initialState();Object.assign(s.player,{x:2010,y:1080});await initial(page,s);await caption(page,'初始夹具只定位东门内侧；真实键盘漫步，保留全部常驻野怪。');
++ await move(page,2250,1080);await page.waitForTimeout(3500);const end=await read(page);expect(end.state.player.hp).toBe(100);expect(end.region).not.toBe('危险');expect(end.defense.history.filter((h:any)=>h.kind==='shot')).toEqual([]);
++ expect(Math.hypot(end.companion.x-end.state.player.x,end.companion.y-end.state.player.y)).toBeLessThan(130);await page.screenshot({path:`${root}/safe-outskirts.png`});await move(page,1990,1080);expect(errors).toEqual([]);
++});
++test('实机主动拦截、一人守门、塔箭命中、归岗与脱战回血',async({page})=>{
++ const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));const s=initialState();s.defense=prepareRaid(s.defense,{x:670,y:720},'east-gate',3);Object.assign(s.player,{x:1940,y:1080});await initial(page,s);
++ await caption(page,'初始夹具：已经生成的三只弱怪事件；位置、伤害、箭矢和恢复全部由正式模拟推进。其他用例另验自然调度。');
++ let captured=false;const samples:any[]=[];for(let n=0;n<25;n++){await page.waitForTimeout(500);const d=await read(page);samples.push({time:d.state.time,guards:d.state.defense.guards,threats:d.defense.threats,arrows:d.defense.arrows,history:d.defense.history});if(!captured&&d.state.defense.guards.find((g:any)=>g.id==='east-patrol').x>2100){captured=true;await page.screenshot({path:`${root}/active-interception.png`});}if(!d.state.defense.raid)break;}
++ const fight=await read(page);expect(fight.defense.history.some((h:any)=>h.kind==='shot')).toBe(true);expect(fight.defense.history.some((h:any)=>h.kind==='hit'&&h.sourceId==='east-archer')).toBe(true);expect(samples.some(d=>d.guards.find((g:any)=>g.id==='east-patrol').x>2100)).toBe(true);expect(samples.every(d=>d.guards.find((g:any)=>g.id==='east-watch').x<=2100)).toBe(true);
++ await page.waitForFunction(()=>(window as any).__farwind().state.defense.raid===null,undefined,{timeout:40000});const ended=await read(page);await caption(page,'事件已结束：目标释放、回固定岗位；脱战8秒后按真实速度缓慢回血。');await page.waitForTimeout(12000);const healed=await read(page);expect(healed.state.defense.guards.every((g:any)=>!g.dead)).toBe(true);for(const g of healed.state.defense.guards){const old=ended.state.defense.guards.find((x:any)=>x.id===g.id);expect(g.hp).toBeGreaterThanOrEqual(old.hp);}expect(Math.hypot(healed.state.defense.guards[1].x-2010,healed.state.defense.guards[1].y-1160)).toBeLessThan(85);await page.screenshot({path:`${root}/return-and-recovery.png`});await writeFile(`${root}/interception-samples.json`,JSON.stringify({说明:'500毫秒只读采样；实际浏览器推进，无运行改值。',样本:samples,结束:ended.state.defense,恢复:healed.state.defense,页面错误:errors},null,2));expect(errors).toEqual([]);
++});
++test('低血三门正式调度延期，暂停双方冻结、保存重载不复活',async({page})=>{
++ const s=initialState();Object.assign(s.player,{x:1940,y:1080});s.defense.protectionMs=s.defense.cooldownMs=0;s.defense.guards.forEach(g=>g.hp=1);await initial(page,s);await caption(page,'初始夹具：三门全部1HP，保护／冷却已结束；正式调度只能延期，不能补血或创建预警。');await page.waitForTimeout(3000);const weak=await read(page);expect(weak.state.defense.raid).toBeNull();expect(weak.state.defense.sequence).toBe(0);expect(weak.state.defense.retryMs).toBeGreaterThan(0);await page.screenshot({path:`${root}/weak-gates-deferred.png`});
++ await page.keyboard.press('Escape');await page.waitForFunction(()=>(window as any).__farwind().mode==='pause');const paused=await read(page);await page.waitForTimeout(800);expect((await read(page)).state.defense).toEqual(paused.state.defense);await page.getByRole('button',{name:'保存旅途',exact:true}).click();await expect(page.locator('#toast')).toContainText('已保存');await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();const restored=await read(page);expect(restored.state.defense.sequence).toBe(0);expect(restored.state.defense.guards.every((g:any)=>g.hp<10)).toBe(true);expect(restored.defense.arrows).toEqual([]);
++});
+diff --git a/farwind/tests/safety-defense.test.ts b/farwind/tests/safety-defense.test.ts
+new file mode 100644
+--- /dev/null
++++ b/farwind/tests/safety-defense.test.ts
+@@ -0,0 +1,81 @@
++import {describe,it,expect} from 'vitest';
++import {initialDefense,validateDefense} from '../src/game/systems/defenseState';
++import {EastDefense,prepareRaid,nextRandom} from '../src/game/systems/defense';
++import {GUARD_DEFS,RAID_GATES,RAID_TIMING,DEFENSE_RULES} from '../src/data/defense';
++import {zoneFor,inProtected,inActivity,locallyProtected} from '../src/data/defenseZones';
++import {enemyNavigation,updateEnemy} from '../src/game/systems/enemy';
++import {initialState,validate} from '../src/game/systems/state';
++import {resolve} from 'node:path';
++import {mkdirSync,writeFileSync} from 'node:fs';
++import {props,type Prop} from '../src/data/world';
++import {shotLineBlocker} from '../src/game/systems/obstacles';
++import {createEnemyAttack} from '../src/game/systems/enemyAttack';
++const evidenceRoot=process.env.FARWIND_EVIDENCE_ROOT??resolve('docs/village-defense/safety/latest');
++mkdirSync(evidenceRoot,{recursive:true});
++const step=(d:EastDefense,ms:number,dt=20)=>{for(let n=0;n<ms;n+=dt){d.update(d.now+dt,dt,player,{queries:2});if(d.critical){validateDefense(d.state);d.acknowledged(d.state.sequence);d.critical=false;}}};
++const fixed=(x=2450,y=1060)=>({id:'slime-1',type:'slime',x,y,hp:48,homeX:2450,homeY:1060,cool:0,windup:0,staggerUntil:0,flashUntil:0,nav:enemyNavigation(),ai:'家园',disabled:false,recovered:false});
++const player={x:670,y:720,hp:100};
++const ready=()=>{const s=initialDefense();s.protectionMs=s.cooldownMs=0;return s;};
++describe('安全防御反例与正常对照',()=>{
++ it('健康正常的防线允许正式调度预警',()=>{const s=ready(),d=new EastDefense(s,0);d.update(5,5,player,{queries:2});expect(s.raid?.phase).toBe('warning');});
++ it('全员低血不会创建新预警',()=>{const s=ready();s.guards.forEach(g=>g.hp=1);const d=new EastDefense(s,0);d.update(5,5,player,{queries:2});expect(s.raid).toBeNull();expect(s.retryMs).toBeGreaterThan(0);});
++ it('永久全员死亡不会创建新预警或复活',()=>{const s=ready();s.guards.forEach(g=>Object.assign(g,{hp:0,dead:true,mode:'dead'}));const d=new EastDefense(s,0);d.update(5,5,player,{queries:2});expect(s.raid).toBeNull();expect(validateDefense(s).guards.every(g=>g.dead)).toBe(true);});
++ it('真正入侵且在射程内可放箭，移出射程不能新放箭',()=>{const d=new EastDefense(prepareRaid(initialDefense(),player,'east-gate'),0),g=d.state.guards[2],e=d.enemies[0];Object.assign(e,{x:2260,y:1090});d.update(5,5,player,{queries:2});d.fire(g,e,'正常箭');expect(d.arrows).toHaveLength(1);Object.assign(e,{x:2590,y:1090});d.fire(g,e,'越界箭');expect(d.arrows).toHaveLength(1);});
++ it('射手死亡取消新射击，已经射出的箭继续有限飞行',()=>{const d=new EastDefense(prepareRaid(initialDefense(),player,'east-gate'),0),g=d.state.guards[2],e=d.enemies[0];Object.assign(e,{x:2260,y:1090});d.update(5,5,player,{queries:2});d.fire(g,e,'在途箭');expect(d.arrows).toHaveLength(1);d.damageGuard({sourceId:'hostile',targetId:g.id,attackId:'致死',amount:1000,sourceType:'enemy-melee',eventId:null},{id:'hostile',hp:10});expect(d.arrows).toHaveLength(1);d.fire(g,e,'死后新箭');expect(d.arrows).toHaveLength(1);d.updateArrows(1000);expect(e.hp).toBe(26);expect(d.arrows).toEqual([]);});
++ it('正式新事件可以只有一只弱怪',()=>{const s=prepareRaid(initialDefense(),player,'north-gate',1,true);expect(s.raid?.members).toHaveLength(1);expect(s.raid?.members[0].type).toBe('slime');});
++ it('一门缺员可选其他门，三门缺员只延期且序号不变',()=>{const s=ready();Object.assign(s.guards[0],{hp:0,dead:true,mode:'dead'});const d=new EastDefense(s,0);step(d,20);expect(s.raid?.gateId).not.toBe('east-gate');expect(s.raid).not.toBeNull();const broken=ready();for(const g of broken.guards.filter(g=>g.id.endsWith('-watch')))Object.assign(g,{hp:0,dead:true,mode:'dead'});const x=new EastDefense(broken,0);step(x,20);expect(broken.raid).toBeNull();expect(broken.sequence).toBe(0);expect(broken.retryMs).toBe(RAID_TIMING.retry);});
++ it('预警期间真实受伤导致同编号取消；已生成敌人受伤后不被移除',()=>{const s=ready(),d=new EastDefense(s,0);step(d,20);const r=s.raid!,g=s.guards.find(g=>g.id.startsWith(r.gateId.split('-')[0]))!;d.damageGuard({sourceId:'hostile',targetId:g.id,attackId:'压低健康',amount:50,sourceType:'enemy-melee',eventId:null},{id:'hostile',hp:48});step(d,3000);expect(s.raid).toBeNull();expect(s.completedSequence).toBe(r.sequence);expect(s.retryMs).toBeGreaterThan(0);expect(d.enemies).toEqual([]);
++  const live=new EastDefense(prepareRaid(initialDefense(),player,'east-gate',1),0);live.damageGuard({sourceId:'hostile',targetId:live.state.guards[0].id,attackId:'战中伤害',amount:50,sourceType:'enemy-melee',eventId:null},{id:'hostile',hp:48});step(live,20);expect(live.enemies).toHaveLength(1);
++ });
++ it('普通家园怪不因近郊漫步被唤醒；静止入侵者由真实防御处理',()=>{const s=initialDefense(),d=new EastDefense(s,0),e=fixed();d.external=[e];const walk={x:2230,y:1080,hp:100};for(let n=20;n<=2000;n+=20){d.update(n,20,walk,{queries:2});if(!d.manages(e))updateEnemy(e,walk,n,20,{queries:2});}expect(e.x).toBe(2450);expect(d.history.filter(h=>h.kind==='shot')).toEqual([]);
++  Object.assign(e,{x:2210,y:1080});expect(d.ownsFixed(e)).toBe(true);step(d,12000);writeFileSync(`${evidenceRoot}/fixed-intruder-fixed.json`,JSON.stringify({说明:'失败首因只读现场',外部:e,运行:d.snapshot()},null,2));expect(e.hp).toBeLessThan(48);
++ });
++ it('外沿横向路过只观察，持续沿入口逼近才形成Threat',()=>{const d=new EastDefense(initialDefense(),0),e=fixed(2420,1110);d.external=[e];for(let n=150;n<=750;n+=150){e.y+=1;d.now=n;d.scanThreats();}expect(d.threats.get(e.id)?.reason).toBe('observe');expect(d.history.filter(h=>h.kind==='shot')).toEqual([]);
++  for(let n=900;n<=1500;n+=150){e.x-=8;d.now=n;d.scanThreats();}expect(d.threats.get(e.id)?.approachMs).toBeGreaterThanOrEqual(DEFENSE_RULES.approach);writeFileSync(`${evidenceRoot}/approach-fixed.json`,JSON.stringify({说明:'接近反例只读现场',外部:e,运行:d.snapshot()},null,2));expect(d.threatReason('east-gate',e)).toBe('approach');
++ });
++ it('单目标外侧拦截时守门人保持内侧；撤离后回岗并有重获滞回',()=>{const d=new EastDefense(prepareRaid(initialDefense(),player,'east-gate',1),0);step(d,2000);const watch=d.state.guards[0];expect(locallyProtected('east-gate',watch)).toBe(true);expect(watch.x).toBeLessThanOrEqual(2100);const patrol=d.state.guards[1];expect(patrol.x).toBeGreaterThan(2100);
++  const enemy=d.enemies[0];d.state.raid!.phase='retreat';enemy.x=2530;enemy.y=1150;step(d,1000);expect(d.runtime.get(patrol.id)!.attack).toBeNull();step(d,5000);writeFileSync(`${evidenceRoot}/return-fixed.json`,JSON.stringify({说明:'归岗反例只读现场',运行:d.snapshot()},null,2));expect(Math.hypot(patrol.x-GUARD_DEFS[1].post.x,patrol.y-GUARD_DEFS[1].post.y)).toBeLessThan(90);
++ });
++ it('未释放攻击在目标退出Threat、射界或射程时取消，不换靶补发',()=>{for(const point of [{x:2590,y:1090},{x:1960,y:1090},{x:2320,y:1260}]){const d=new EastDefense(prepareRaid(initialDefense(),player,'east-gate',1),0),e=d.enemies[0];Object.assign(e,{x:2260,y:1090});d.update(5,5,player,{queries:2});expect(d.runtime.get('east-archer')!.attack).not.toBeNull();Object.assign(e,point);d.update(505,500,player,{queries:2});expect(d.history.filter(h=>h.kind==='shot')).toEqual([]);}});
++ it('在途箭命中资格独立于Threat且重载不补箭',()=>{const d=new EastDefense(prepareRaid(initialDefense(),player,'east-gate',1),0),e=d.enemies[0],g=d.state.guards[2];Object.assign(e,{x:2280,y:1090});d.fire(g,e,'释放快照');Object.assign(e,{x:2290,y:1111});expect(d.threatReason('east-gate',e)).toBeNull();d.updateArrows(1000);expect(e.hp).toBe(26);d.updateArrows(1000);expect(e.hp).toBe(26);expect(new EastDefense(validateDefense(d.state),0).arrows).toEqual([]);});
++ it('生产初始参数和旧计时反复保存兼容，地图与结构不因规则调整升级',()=>{const s=initialState();expect(s.defense.protectionMs).toBe(300000);expect(s.defense.cooldownMs).toBeGreaterThanOrEqual(480000);expect(s.defense.cooldownMs).toBeLessThanOrEqual(900000);s.defense.protectionMs=17000;s.defense.cooldownMs=123456;s.defense.guards[0].hp=80;let next=s;for(let n=0;n<5;n++)next=validate(JSON.parse(JSON.stringify(next)));expect([next.schema_version,next.map_version,next.defense.protectionMs,next.defense.cooldownMs,next.defense.guards[0].hp]).toEqual([4,6,17000,123456,80]);for(const gate of RAID_GATES){expect(inProtected(gate.spawns[0])).toBe(false);expect(inActivity(gate.id,zoneFor(gate.id).intercept)).toBe(true);}});
++ it('每个岗位精确80%边界、恢复状态、失效位置和缺员都走共用准入',()=>{for(const gate of RAID_GATES){const s=ready(),d=new EastDefense(s,0),defs=GUARD_DEFS.filter(g=>g.id.startsWith(gate.id.split('-')[0]));expect(d.canScheduleAtGate(gate.id,player,gate.spawns.slice(0,1))).toBe(true);for(const def of defs){const g=s.guards.find(g=>g.id===def.id)!;g.hp=def.maxHP*.8;expect(d.canScheduleAtGate(gate.id,player,gate.spawns.slice(0,1))).toBe(true);g.hp-=.01;expect(d.canScheduleAtGate(gate.id,player,gate.spawns.slice(0,1))).toBe(false);g.hp=def.maxHP;g.mode='recover';expect(d.canScheduleAtGate(gate.id,player,gate.spawns.slice(0,1))).toBe(false);g.mode='post';const x=g.x;g.x=3500;expect(d.canScheduleAtGate(gate.id,player,gate.spawns.slice(0,1))).toBe(false);g.x=x;}}});
++ it('预警期间真实死亡保持死亡和结算号，序列化后不会补刷同一事件',()=>{const s=ready(),d=new EastDefense(s,0);step(d,20);const raid=s.raid!,g=s.guards.find(g=>g.id.startsWith(raid.gateId.split('-')[0]))!;d.damageGuard({sourceId:'hostile',targetId:g.id,attackId:'预警致死',amount:1000,sourceType:'enemy-melee',eventId:null},{id:'hostile',hp:48});step(d,3000);expect(s.raid).toBeNull();expect(s.completedSequence).toBe(raid.sequence);const restored=new EastDefense(validateDefense(JSON.parse(JSON.stringify(s))),0);step(restored,100);expect(restored.state.sequence).toBe(raid.sequence);expect(restored.state.guards.find(x=>x.id===g.id)?.dead).toBe(true);});
++ it('拉弓之后出现高墙，释放取消；已放箭墙和单位按实际顺序处理',()=>{const wall:Prop={id:'controlled-wall',art:'house',x:2200,y:910,w:20,h:30,solid:[20,30],cover:'high'};
++  const d=new EastDefense(prepareRaid(initialDefense(),player,'east-gate',1),0),e=d.enemies[0],g=d.state.guards[2];Object.assign(e,{x:2280,y:1090});d.update(5,5,player,{queries:2});expect(d.runtime.get(g.id)!.attack).not.toBeNull();props.push(wall);try{d.update(505,500,player,{queries:2});expect(d.history.filter(h=>h.kind==='shot')).toEqual([]);}finally{props.splice(props.indexOf(wall),1);}
++  for(const before of [true,false]){const x=new EastDefense(prepareRaid(initialDefense(),player,'east-gate',1),0),victim=x.enemies[0],archer=x.state.guards[2];Object.assign(victim,{x:2280,y:1090});x.fire(archer,victim,'墙序');const obstacle={...wall,x:before?2200:2310,y:before?910:1140};props.push(obstacle);try{x.updateArrows(1600);expect(victim.hp).toBe(before?48:26);expect(x.arrows).toEqual([]);}finally{props.splice(props.indexOf(obstacle),1);}}
++ });
++ it('同一外侧目标归岗滞回，重新侵入保护区立即解除抑制',()=>{const d=new EastDefense(prepareRaid(initialDefense(),player,'east-gate',1),0),e=d.enemies[0],g=d.state.guards[1],r=d.runtime.get(g.id)!;Object.assign(e,{x:2370,y:1090});d.threats.set(e.id,{id:e.id,gateId:'east-gate',reason:'approach',lastSeen:0,lastProgress:0,progress:300,approachMs:600,assigned:[]});r.targetId=e.id;d.returnGuard(g);d.update(20,20,player,{queries:2});expect(r.targetId).toBeNull();Object.assign(e,{x:2230,y:1080});d.update(40,20,player,{queries:2});expect(r.targetId).toBe(e.id);});
++ it('近战释放时目标已撤出交战区，取消未释放动作；远方玩家战斗不触发出击',()=>{const d=new EastDefense(initialDefense(),0),e=fixed(2200,1080);d.external=[e];const g=d.state.guards[1];Object.assign(g,{x:2190,y:1100});d.update(5,5,player,{queries:2});expect(d.runtime.get(g.id)!.attack).not.toBeNull();Object.assign(e,{x:2500,y:1350});d.update(505,500,player,{queries:2});expect(e.hp).toBe(48);
++  const remote=fixed(2600,1110);remote.attack=createEnemyAttack(remote.id,1,'slime',0,remote,{x:2650,y:1110});remote.targetId='player';const x=new EastDefense(initialDefense(),0);x.external=[remote];x.update(20,20,{x:2650,y:1110,hp:100},{queries:2});expect(x.manages(remote)).toBe(false);expect(x.state.guards.every(g=>['post','patrol'].includes(g.mode))).toBe(true);
++ });
++});
++it('正式健康准入和自然调度30场，三门各10场，1／2／3怪，无手工补血',()=>{
++ const s=initialState(),before=structuredClone(s),d=new EastDefense(s.defense,0),records:any[]=[];
++ const seedFor=(gate:number,count:number)=>{for(let seed=1;seed<100000;seed++){const r=nextRandom(seed);if(1+r%3===count&&nextRandom(r)%3===gate)return seed;}throw Error('找不到确定序列');};
++ const advance=(dt:number,min:Record<string,number>,distance:Record<string,number>)=>{
++  d.update(d.now+dt,dt,player,{queries:2});
++  for(const g of s.defense.guards){min[g.id]=Math.min(min[g.id]??g.hp,g.hp);const post=GUARD_DEFS.find(p=>p.id===g.id)!.post;distance[g.id]=Math.max(distance[g.id]??0,Math.hypot(g.x-post.x,g.y-post.y));}
++  if(d.critical){validateDefense(d.state);d.acknowledged(d.state.sequence);d.critical=false;}
++ };
++ for(let n=0;n<30;n++){
++  const gate=n%3,count=1+Math.floor(n/3)%3,seed=seedFor(gate,count);s.defense.seed=seed;
++  const min:Record<string,number>={},distance:Record<string,number>={},waitStart=d.now;
++  while(!s.defense.raid&&d.now-waitStart<1500000)advance(1000,min,distance);
++  expect(s.defense.raid,`第${n+1}场可达调度`).not.toBeNull();const event=s.defense.raid!,start=d.now;
++  expect(event.gateId).toBe(RAID_GATES[gate].id);expect(event.members).toHaveLength(count);expect(event.members.every(m=>m.type==='slime')).toBe(true);
++  const readyHP=s.defense.guards.map(g=>({id:g.id,hp:g.hp}));
++  while(s.defense.raid&&d.now-start<130000)advance(20,min,distance);
++  expect(s.defense.raid,`第${n+1}场有界结束`).toBeNull();expect(s.defense.guards.every(g=>!g.dead)).toBe(true);
++  for(const def of GUARD_DEFS){expect(distance[def.id]??0).toBeLessThanOrEqual(def.leash+.001);}
++  records.push({场次:n+1,门:RAID_GATES[gate].name,数量:count,种子:seed,等待毫秒:d.now-start===0?0:start-waitStart,预警与击退毫秒:d.now-start,准入生命:readyHP,最低生命:min,最大离岗距离:distance,结束生命:s.defense.guards.map(g=>({id:g.id,hp:g.hp,mode:g.mode})),后续冷却:s.defense.cooldownMs});
++  const root=evidenceRoot;mkdirSync(root,{recursive:true});writeFileSync(`${root}/thirty-progress.json`,JSON.stringify({说明:'进行中的正式调度样本；非最终结论。',记录:records},null,2));
++ }
++ expect([s.quest,s.killed,s.coins,s.bag,s.pendingDrops]).toEqual([before.quest,before.killed,before.coins,before.bag,before.pendingDrops]);validate(s);
++ const root=evidenceRoot;
++ writeFileSync(`${root}/thirty-events.json`,JSON.stringify({说明:'正式schedule及健康准入；只设置可复核的确定随机种子，未调用prepareRaid准备波次、未补血。等待步长1000毫秒，战斗步长20毫秒；关键状态校验后模拟提交确认。不是数小时实际等待或性能测量。',有效模拟总毫秒:d.now,门别分布:{东门:10,北门:10,南门:10},数量分布:{一只:12,两只:9,三只:9},记录:records},null,2));
++},600000);
++
++it('南门正式单怪调度只读遮挡诊断',()=>{const s=ready(),d=new EastDefense(s,0);for(let seed=1;seed<10000;seed++)if(nextRandom(nextRandom(seed))%3===2&&1+nextRandom(seed)%3===1){s.seed=seed;break;}const records:any[]=[];for(let n=0;n<10000;n+=20){step(d,20);if(d.state.raid?.phase!=='warning'&&d.enemies[0]&&n%100===0){const e=d.enemies[0],g=d.state.guards[8];records.push({时间:d.now,怪物:{x:e.x,y:e.y,hp:e.hp},威胁:d.threatReason('south-gate',e),记录:d.threats.get(e.id),观测:d.observed('south-gate',e),射界:d.inFiringArc(g.id,e),弓手资格:d.eligible(g,e),遮挡:shotLineBlocker(d.portFor(g.id).origin,{x:e.x,y:e.y-30},d.portFor(g.id)),历史:d.history.filter(h=>h.kind==='shot')});}}writeFileSync(`${evidenceRoot}/south-shot-diagnostic.json`,JSON.stringify({说明:'正式schedule推进；工坊路牌从1130、1680移至1190、1680，只读追踪，未修改在场生命、位置或放宽射界。',记录:records},null,2));expect(d.state.raid).toBeNull();expect(d.history.some(h=>h.kind==='shot'&&h.sourceId==='south-archer')).toBe(true);});
++
++it('三门低血按正式回血恢复后允许新事件，永久缺员不靠复活恢复调度',()=>{for(const missing of [false,true]){const s=ready();s.guards.forEach(g=>g.hp=1);if(missing)for(const g of s.guards.filter(g=>g.id.endsWith('-archer')))Object.assign(g,{hp:0,dead:true,mode:'dead'});const d=new EastDefense(s,0);let warningHP:any=null;for(let n=0;n<220000;n+=1000){step(d,1000,1000);if(s.raid){warningHP=s.guards.map(g=>({id:g.id,hp:g.hp}));break;}}if(missing){expect(s.raid).toBeNull();expect(s.guards.filter(g=>g.id.endsWith('-archer')).every(g=>g.dead&&g.hp===0)).toBe(true);}else{expect(s.raid?.phase).toBe('warning');const defs=GUARD_DEFS.filter(g=>g.id.startsWith(s.raid!.gateId.split('-')[0]));expect(defs.every(def=>warningHP.find((g:any)=>g.id===def.id).hp>=def.maxHP*.8)).toBe(true);expect(d.now).toBeGreaterThan(100000);}}});
+diff --git a/farwind/tests/safety-fixtures.ts b/farwind/tests/safety-fixtures.ts
+new file mode 100644
+--- /dev/null
++++ b/farwind/tests/safety-fixtures.ts
+@@ -0,0 +1,8 @@
++import archive from './fixtures/legacy-defense.json';
++import type {GateId} from '../src/data/defense';
++import {validateDefense,type DefenseState,type RaidState} from '../src/game/systems/defenseState';
++export function legacyDefense(s:DefenseState,gate:GateId,warning=false){
++ const next=structuredClone(s),raid=structuredClone(archive.事件.find(r=>r.gateId===gate)) as RaidState;
++ next.sequence=raid.sequence;next.completedSequence=raid.sequence-1;next.raid=raid;
++ raid.phase=warning?'warning':'approach';raid.ageMs=0;return validateDefense(next);
++}
+diff --git a/farwind/tests/training.spec.ts b/farwind/tests/training.spec.ts
+--- a/farwind/tests/training.spec.ts
++++ b/farwind/tests/training.spec.ts
+@@ -1,8 +1,9 @@
+ import { test, expect, type Page } from "@playwright/test";
+-import { writeFile } from "node:fs/promises";
++import { mkdir, writeFile } from "node:fs/promises";
+ import { captureGameAudio } from "../tools/capture-game-audio.mjs";
+ import { initialState } from "../src/game/systems/state";
+ test.use({ video: { mode: "on", size: { width: 1280, height: 720 } } });
++test.beforeAll(async()=>{await mkdir(`${process.env.FARWIND_EVIDENCE_ROOT ?? 'docs/village-defense/safety/development'}/training`,{recursive:true});});
+ const dir = process.env.FARWIND_EVIDENCE_ROOT
+     ? `${process.env.FARWIND_EVIDENCE_ROOT}/training`
+     : "docs/map-expansion/training",
+@@ -162,10 +163,13 @@
+       s.training.damage > 0 &&
+       (i === 0 || s.training.lastHit !== trace[i - 1].training.lastHit),
+   );
++  // 保留失败样本以区分活动阶段与真实命中，断言前先写出只读轨迹。
++  await writeFile(`${dir}/runtime-trace-before-assert.json`, JSON.stringify(trace,null,2));
+   expect(
+     hits.every(
+       (s: any) =>
+-        s.combat.phase === "active" &&
++        // 命中停顿会冻结诊断阶段；仅允许有真实hit stop的命中样本。
++        (s.combat.phase === "active" || s.combat.phase === "windup" && s.combat.hitStopRemaining > 0) &&
+         s.combat.hitTargets.includes("training-dummy"),
+     ),
+   ).toBe(true);
+diff --git a/farwind/tests/village-integration.test.ts b/farwind/tests/village-integration.test.ts
+--- a/farwind/tests/village-integration.test.ts
++++ b/farwind/tests/village-integration.test.ts
+@@ -1,6 +1,7 @@
+ import {describe,it,expect} from 'vitest';
+ import {mkdirSync,writeFileSync} from 'node:fs';
+ import {initialState,validate,type State} from '../src/game/systems/state';
++import {legacyDefense} from './safety-fixtures';
+ import {EastDefense,prepareRaid} from '../src/game/systems/defense';
+ import {GUARD_DEFS,RAID_GATES} from '../src/data/defense';
+ import {motionBlocked} from '../src/game/systems/obstacles';
+@@ -22,7 +23,7 @@
+  });
+  it('各门活跃阶段恢复不复活成员、不重放飞箭、不改变结算号',()=>{
+   for(const gate of RAID_GATES)for(const phase of ['warning','approach','fighting','retreat']as const){
+-   const s=initialState();s.player={...s.player,...observer};s.defense=prepareRaid(s.defense,s.player,gate.id,4,phase==='warning');
++   const s=initialState();s.player={...s.player,...observer};s.defense=legacyDefense(s.defense,gate.id,phase==='warning');
+    s.defense.raid!.phase=phase;s.defense.raid!.ageMs=phase==='retreat'?119900:2000;s.defense.raid!.members[0].hp=0;s.defense.raid!.members[1].hp=17;
+    const clean=validate(s),d=new EastDefense(clean.defense,1000);expect(d.arrows).toEqual([]);expect(d.state.raid!.members[0].hp).toBe(0);expect(d.state.raid!.members[1].hp).toBe(17);
+    d.update(1010,10,observer,{queries:2});expect(d.state.sequence).toBe(1);expect(d.state.completedSequence,`${gate.id} ${phase}`).toBe(phase==='retreat'?1:0);expect(d.state.guards.every(g=>!g.dead)).toBe(true);
+@@ -30,7 +31,7 @@
+   }
+  });
+  it('合法历史档的失效位置按正式碰撞修复，死亡和HP不被恢复器覆盖',()=>{
+-  const s=initialState();s.defense=prepareRaid(s.defense,observer,'north-gate',4);
++  const s=initialState();s.defense=legacyDefense(s.defense,'north-gate');
+   const living=s.defense.guards[1];living.x=2100;living.y=1188;living.hp=71;
+   Object.assign(s.defense.guards[0],{hp:0,dead:true,mode:'dead',x:2100,y:1188});
+   Object.assign(s.defense.raid!.members[0],{x:2030,y:885,hp:23});
+@@ -40,14 +41,14 @@
+  });
+  it('三门全灭历史只结算一次；重复恢复保持冷却、任务与固定死亡隔离',()=>{
+   for(const gate of RAID_GATES){
+-   const s=initialState();s.defense=prepareRaid(s.defense,observer,gate.id,4);s.defense.raid!.members.forEach(m=>m.hp=0);
++   const s=initialState();s.defense=legacyDefense(s.defense,gate.id);s.defense.raid!.members.forEach(m=>m.hp=0);
+    const d=new EastDefense(s.defense,0);d.update(20,20,observer,{queries:2});expect(d.state.raid).toBeNull();expect(d.state.completedSequence).toBe(1);
+    const finished=structuredClone(d.state);for(let n=0;n<5;n++){d.restore(20);expect(d.state).toEqual(finished);expect(d.enemies).toEqual([]);}
+    expect(s.killed).toEqual([]);expect(s.pendingDrops).toEqual([]);
+   }
+  });
+  it('生成可复用的正式历史档样本，浏览器只通过导入建立条件',()=>{
+-  const base=initialState();Object.assign(base.player,observer);const probes=RAID_GATES.map(g=>{const s=structuredClone(base);s.defense=prepareRaid(s.defense,s.player,g.id,4);s.defense.raid!.members[3].type='leaf';s.defense.raid!.members[3].hp=72;Object.assign(s.player,g.inside);return validate(s);});
++  const base=initialState();Object.assign(base.player,observer);const probes=RAID_GATES.map(g=>{const s=structuredClone(base);s.defense=legacyDefense(s.defense,g.id);s.defense.raid!.members[3].type='leaf';s.defense.raid!.members[3].hp=72;Object.assign(s.player,g.inside);return validate(s);});
+   const deaths=RAID_GATES.map((g,i)=>{const s=structuredClone(base);s.defense=prepareRaid(s.defense,s.player,g.id,3);s.defense.guards[i*3].hp=1;Object.assign(s.defense.raid!.members[0],{x:GUARD_DEFS[i*3].post.x+8,y:GUARD_DEFS[i*3].post.y+7});return validate(s);});
+   mkdirSync('.parry-local/m5',{recursive:true});writeFileSync('.parry-local/m5/fixtures.json',JSON.stringify({说明:'仅建立合法起始档；伤害、死亡、波次与时间由正式运行推进。',base,probes,deaths},null,2));expect(probes).toHaveLength(3);
+  });
+diff --git a/farwind/tests/village-raids.spec.ts b/farwind/tests/village-raids.spec.ts
+--- a/farwind/tests/village-raids.spec.ts
++++ b/farwind/tests/village-raids.spec.ts
+@@ -20,13 +20,13 @@
+  await page.getByRole('button',{name:'保存旅途',exact:true}).click();await expect(page.locator('#toast')).toContainText('已保存');
+  const stored=(await read(page)).state.defense;await page.reload();await page.waitForTimeout(700);await page.getByRole('button',{name:'继续旅途',exact:true}).click();
+  expect((await read(page)).state.defense.sequence).toBe(1);expect((await read(page)).defense.arrows).toEqual([]);
+- await page.waitForFunction(()=>(window as any).__farwind().defense.enemies.length>=2);
++ await page.waitForFunction(()=>(window as any).__farwind().defense.enemies.length>=1);
+  await expect.poll(async()=>(await read(page)).defense.history.some((h:any)=>h.kind==='shot')).toBe(true);
+  const active=await read(page);if(active.session)expect(active.session.combat.hitStopRemaining).toBe(0);
+  await page.screenshot({path:`${root}/${gate.id}-offscreen.png`});
+  await expect.poll(async()=>(await read(page)).state.defense.raid,{timeout:60000}).toBeNull();
+  await expect.poll(async()=>{const d=await read(page);return !d.defense.critical&&!d.defenseCheckpointPending;}).toBe(true);
+- const end=await read(page);expect(end.state.defense.guards.every((g:any)=>!g.dead)).toBe(true);expect(end.state.defense.cooldownMs).toBeGreaterThanOrEqual(239000);
++ const end=await read(page);expect(end.state.defense.guards.every((g:any)=>!g.dead)).toBe(true);expect(end.state.defense.cooldownMs).toBeGreaterThanOrEqual(479000);
+  expect([end.state.quest,end.state.killed,end.state.bag,end.state.coins]).toEqual([s.quest,s.killed,s.bag,s.coins]);
+  await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();const restored=await read(page);
+  expect(restored.state.defense.completedSequence).toBe(1);expect(restored.state.defense.raid).toBeNull();expect(restored.state.defense.guards.map((g:any)=>g.hp)).toEqual(end.state.defense.guards.map((g:any)=>g.hp));
+@@ -38,7 +38,7 @@
+  await expect(page.locator('#toast')).toContainText('驻防变化尚未保存');const fail=await read(page);expect(fail.mode).toBe('pause');expect(fail.defense.enemies).toEqual([]);expect(fail.defense.awaitingCheckpoint).toBe(true);
+  await page.waitForTimeout(3500);expect((await read(page)).defense.enemies).toEqual([]);expect((await read(page)).state.defense).toEqual(fail.state.defense);
+  await page.evaluate(()=>(window as any).__abortRaid=false);await page.getByRole('button',{name:'保存旅途',exact:true}).click();await expect(page.locator('#toast')).toContainText('已保存');
+- await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().defense.enemies.length>=2);
++ await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().defense.enemies.length>=1);
+  const recovery=await read(page);expect(recovery.state.defense.sequence).toBe(1);await writeFile(`${root}/warning-save-abort.json`,JSON.stringify({说明:'故障只注入IDB事务；预警保存未提交时正式运行不会出生小怪。',失败:fail.defense,恢复:recovery.defense},null,2));
+ });
+ test('主角与黑猫实际往返三门，正常模式无开发分区和按钮',async({page})=>{
+diff --git a/farwind/tests/village-raids.test.ts b/farwind/tests/village-raids.test.ts
+--- a/farwind/tests/village-raids.test.ts
++++ b/farwind/tests/village-raids.test.ts
+@@ -1,3 +1,4 @@
++import {routeRemaining} from '../src/data/defenseZones';
+ import {describe,it,expect} from 'vitest';
+ import {writeFileSync,mkdirSync} from 'node:fs';
+ import {GUARD_DEFS,TOWERS,RAID_GATES,RAID_TIMING} from '../src/data/defense';
+@@ -26,14 +27,14 @@
+   step(d,100);expect(s.protectionMs).toBe(0);expect(s.cooldownMs).toBe(100);expect(s.raid).toBeNull();
+   step(d,100);expect(s.raid?.phase).toBe('warning');expect(d.enemies).toEqual([]);
+   step(d,4000);expect(s.raid?.ageMs).toBe(0);expect(d.enemies).toEqual([]);
+-  d.acknowledged(s.sequence);step(d,RAID_TIMING.warning);expect(d.enemies.length).toBeGreaterThanOrEqual(2);
++  d.acknowledged(s.sequence);step(d,RAID_TIMING.warning);expect(d.enemies.length).toBeGreaterThanOrEqual(1);
+   expect(s.raid?.phase).not.toBe('warning');
+  });
+  it('视口、近身、实体和人口上限禁止硬刷，合法点延迟重选',()=>{
+   const s=initialDefense();s.protectionMs=s.cooldownMs=0;const d=new EastDefense(s,0);
+   const view={left:0,right:4200,top:0,bottom:2200};d.update(20,20,player,{queries:2},view);
+   expect(s.raid).toBeNull();expect(s.retryMs).toBe(RAID_TIMING.retry);
+-  s.retryMs=0;d.update(40,20,player,{queries:2},undefined,Array(12).fill(player));expect(s.raid).toBeNull();
++  s.retryMs=0;d.update(40,20,player,{queries:2},undefined,Array(13).fill(player));expect(s.raid).toBeNull();
+   expect(()=>prepareRaid(s,RAID_GATES[1].spawns[0],'north-gate')).toThrow();
+   s.retryMs=0;d.update(60,20,player,{queries:2});expect(s.raid?.phase).toBe('warning');
+  });
+@@ -58,10 +59,12 @@
+    const tower=TOWERS.find(t=>t.gateId===gate.id)!,guard=s.guards.find(g=>g.id===tower.occupantGuardId)!;
+    expect(d.inFiringArc(guard.id,gate.spawns[0]),gate.id).toBe(true);
+    expect(d.inFiringArc(guard.id,{x:tower.muzzle.x-tower.outward.x*200,y:tower.muzzle.y-tower.outward.y*200+30})).toBe(false);
++   // 本例只检查释放和射界，以纯数据夹具建立已确认逼近情报；完整识别由安全专项另测。
++   const e=d.enemies[0];d.threats.set(e.id,{id:e.id,gateId:gate.id,reason:'approach',lastSeen:0,progress:routeRemaining(gate.id,e),approachMs:450,lastProgress:0,assigned:[]});
+    d.fire(guard,d.enemies[0],`test-${gate.id}`);expect(d.arrows.length,`${gate.id}:${shotLineBlocker(tower.muzzle,{x:gate.spawns[0].x,y:gate.spawns[0].y-30},d.portFor(guard.id))}`).toBe(1);
+    expect(new EastDefense(validateDefense(s),0).arrows).toEqual([]);
+    d.damageGuard({sourceId:'hostile',targetId:guard.id,attackId:'fatal',amount:1000,sourceType:'enemy-melee',eventId:s.raid!.id},{id:'hostile',hp:100});
+-   expect(d.arrows).toEqual([]);d.fire(guard,d.enemies[0],'again');expect(d.arrows).toEqual([]);
++   expect(d.arrows).toHaveLength(1);d.fire(guard,d.enemies[0],'again');expect(d.arrows).toHaveLength(1);d.updateArrows(2000);expect(d.arrows).toEqual([]);
+   }
+  });
+  it('常驻野怪在真实门内仍可攻击，选择守卫并被拦截，不为叶灵任务自动结算',()=>{
+@@ -73,19 +76,4 @@
+   for(const leaf of enemyDefs.filter(e=>e.type==='leaf'))for(const g of GUARD_DEFS)
+     expect(Math.hypot(leaf.x-g.post.x,leaf.y-g.post.y)-420).toBeGreaterThan(300);
+  });
+- it('连续30波普通骚扰，玩家离屏不参与，无守卫死亡或主线污染',()=>{
+-  const s=initialState(),before=structuredClone(s),d=new EastDefense(s.defense,0),records:any[]=[];
+-  for(let n=0;n<30;n++){
+-   const gate=RAID_GATES[n%3],next=prepareRaid(s.defense,player,gate.id,2+Math.floor(n/3)%3,true);
+-   Object.assign(s.defense,next);d.restore(d.now);step(d,RAID_TIMING.warning);
+-   const start=d.now;while(s.defense.raid&&d.now-start<60000)step(d,100,20);
+-   expect(s.defense.raid,`第${n+1}波${gate.name}`).toBeNull();expect(s.defense.guards.every(g=>!g.dead),`第${n+1}波`).toBe(true);
+-   records.push({波次:n+1,出口:gate.name,数量:2+Math.floor(n/3)%3,用时:d.now-start,守卫:s.defense.guards.map(g=>({id:g.id,hp:g.hp}))});
+-   mkdirSync("docs/village-defense/m4",{recursive:true});writeFileSync("docs/village-defense/m4/wave-progress.json",JSON.stringify({说明:"进行中的固定基准，尚非最终结论。",记录:records},null,2));
+-   // 按真实有效时间走完随机冷却；这段不启动下一波，末尾保留一个步长。
+-   step(d,Math.max(0,s.defense.cooldownMs-1000),1000);
+-  }
+-  expect([s.quest,s.killed,s.coins,s.bag,s.pendingDrops]).toEqual([before.quest,before.killed,before.coins,before.bag,before.pendingDrops]);
+-  expect(()=>validate(s)).not.toThrow();mkdirSync('docs/village-defense/m4',{recursive:true});writeFileSync('docs/village-defense/m4/thirty-waves.json',JSON.stringify({说明:'正式运行时系统与碰撞；战斗20毫秒步长，间隔1000毫秒步长，无玩家攻击。每门10波，2/3/4只轮换，不是浏览器长期性能测量。',记录:records},null,2));
+- },600000);
+ });
+diff --git a/farwind/tools/playwright-safety.config.ts b/farwind/tools/playwright-safety.config.ts
+new file mode 100644
+--- /dev/null
++++ b/farwind/tools/playwright-safety.config.ts
+@@ -0,0 +1,7 @@
++import {defineConfig} from '@playwright/test';
++import {resolve} from 'node:path';
++const root=process.env.FARWIND_EVIDENCE_ROOT??resolve('docs/village-defense/safety/latest');
++process.env.FARWIND_EVIDENCE_ROOT=root;
++export default defineConfig({testDir:'../tests',testMatch:['safety-defense.spec.ts','village-raids.spec.ts','east-defense-recovery.spec.ts','economy-production.spec.ts','training.spec.ts','economy.spec.ts','adventure.spec.ts'],workers:1,timeout:120000,
++ outputDir:resolve(root,'raw'),reporter:[['list'],['json',{outputFile:resolve(root,'results.json')}]],
++ use:{baseURL:process.env.FARWIND_URL??'http://127.0.0.1:5253/',viewport:{width:1280,height:720},video:{mode:'on',size:{width:1280,height:720}},screenshot:'only-on-failure',trace:'retain-on-failure',launchOptions:{args:['--enable-gpu','--use-gl=angle','--use-angle=metal','--ignore-gpu-blocklist']}}});
+diff --git a/farwind/tools/vite-safety.config.ts b/farwind/tools/vite-safety.config.ts
+new file mode 100644
+--- /dev/null
++++ b/farwind/tools/vite-safety.config.ts
+@@ -0,0 +1,2 @@
++import {defineConfig} from 'vite';
++export default defineConfig({server:{host:'127.0.0.1',port:5211,strictPort:true,hmr:false}});
+diff --git a/farwind/package.json b/farwind/package.json
+--- a/farwind/package.json
++++ b/farwind/package.json
+@@ -6,7 +6,7 @@
+   "scripts": {
+     "dev": "vite --host 127.0.0.1",
+     "typecheck": "tsc --noEmit",
+-    "test": "vitest run tests/logic.test.ts tests/motion.test.ts tests/combat.test.ts tests/training.test.ts tests/map-expansion.test.ts tests/obstacles.test.ts tests/level-rework.test.ts tests/village-defense.test.ts tests/parry.test.ts tests/parry-v2.test.ts tests/dialogue-portraits.test.ts tests/economy.test.ts tests/sword-wind-assets.test.ts tests/sword-wind.test.ts tests/east-defense.test.ts tests/village-raids.test.ts tests/village-integration.test.ts",
++    "test": "vitest run tests/logic.test.ts tests/motion.test.ts tests/combat.test.ts tests/training.test.ts tests/map-expansion.test.ts tests/obstacles.test.ts tests/level-rework.test.ts tests/village-defense.test.ts tests/parry.test.ts tests/parry-v2.test.ts tests/dialogue-portraits.test.ts tests/economy.test.ts tests/sword-wind-assets.test.ts tests/sword-wind.test.ts tests/east-defense.test.ts tests/village-raids.test.ts tests/village-integration.test.ts tests/safety-defense.test.ts",
+     "test:e2e": "playwright test",
+     "assets:sword-wind": "node tools/pack-sword-wind.mjs",
+     "test:sword-wind": "playwright test tests/sword-wind.spec.ts tests/sword-wind-focus.spec.ts tests/sword-wind-rise.spec.ts --config tools/playwright-sword-wind.config.ts --grep 'WIND-0[1-6]|WIND-0[89]|WIND-1[012]'",
+@@ -15,7 +15,8 @@
+     "build": "tsc --noEmit && vite build",
+     "preview": "vite preview --host 127.0.0.1",
+     "test:village-integration": "vitest run tests/village-integration.test.ts && playwright test tests/village-integration.spec.ts tests/economy-production.spec.ts --config tools/playwright-village-integration.config.ts",
+-    "test:village-soak": "vitest run tests/village-integration.test.ts && node tools/soak-village-defense.mjs"
++    "test:village-soak": "vitest run tests/village-integration.test.ts && node tools/soak-village-defense.mjs",
++    "test:defense-safety": "vitest run tests/safety-defense.test.ts && playwright test tests/safety-defense.spec.ts --config tools/playwright-safety.config.ts"
+   },
+   "dependencies": {
+     "phaser": "4.2.1"

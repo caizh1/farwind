@@ -1,4 +1,5 @@
 import { move } from "./map-navigation";
+import { approachNpc } from "./npc-navigation";
 import { test, expect, type Page } from "@playwright/test";
 import { props } from "../src/data/world";
 const dir = process.env.FARWIND_EVIDENCE_ROOT
@@ -10,7 +11,8 @@ async function closeDialog(page: Page) {
 }
 async function interact(page: Page, id: string, x?: number, y?: number) {
   const p = props.find((p) => p.id === id)!;
-  await move(page, x ?? p.x, y ?? p.y + 45);
+  if(p.kind==="npc") await approachNpc(page,id);
+  else await move(page, x ?? p.x, y ?? p.y + 45);
   await expect.poll(async () => (await read(page)).target).toBe(id);
   const sim = (await read(page)).session.sim;
   await page.keyboard.press("e");

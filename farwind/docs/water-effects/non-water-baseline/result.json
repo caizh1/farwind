@@ -1,0 +1,9 @@
+{
+  "说明": "未接入本次水效的5191起点副本上，原四方向战斗用例同一断言已失败；仅证明这一症状在修改前存在，不推广归因到其他失败。测试断言未改。",
+  "用例": "tests/combat-action.spec.ts：四方向实机动作逐帧推进，三段收招与再次进攻",
+  "观察": "期待阶段1，实际阶段0，5秒轮询超时。",
+  "原始错误": "```\nError: expect(received).toBe(expected) // Object.is equality\n\nExpected: 1\nReceived: 0\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n```",
+  "运行图": "combat-action.png",
+  "起点源码记录": "../before-source.json",
+  "原始追踪保存于本机忽略目录": ".water-local/after/.water-local/baseline-combat-results/combat-action-四方向实机动作逐帧推进，三段收招与再次进攻/trace.zip"
+}

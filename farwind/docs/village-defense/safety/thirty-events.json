@@ -1,0 +1,3496 @@
+{
+  "说明": "正式schedule及健康准入；只设置可复核的确定随机种子，未调用prepareRaid准备波次、未补血。等待步长1000毫秒，战斗步长20毫秒；关键状态校验后模拟提交确认。不是数小时实际等待或性能测量。",
+  "有效模拟总毫秒": 20758960,
+  "门别分布": {
+    "东门": 10,
+    "北门": 10,
+    "南门": 10
+  },
+  "数量分布": {
+    "一只": 12,
+    "两只": 9,
+    "三只": 9
+  },
+  "记录": [
+    {
+      "场次": 1,
+      "门": "东门",
+      "数量": 1,
+      "种子": 2,
+      "等待毫秒": 784000,
+      "预警与击退毫秒": 7500,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 172,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 180,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 141.85217035533424,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 172,
+          "mode": "attack"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 741093
+    },
+    {
+      "场次": 2,
+      "门": "北门",
+      "数量": 1,
+      "种子": 1,
+      "等待毫秒": 742000,
+      "预警与击退毫秒": 6400,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 172,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 176,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 176,
+          "mode": "attack"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 649158
+    },
+    {
+      "场次": 3,
+      "门": "南门",
+      "数量": 1,
+      "种子": 3,
+      "等待毫秒": 650000,
+      "预警与击退毫秒": 6960,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 180,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 176,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 176,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 158.2373176866757,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 176,
+          "mode": "attack"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 645444
+    },
+    {
+      "场次": 4,
+      "门": "东门",
+      "数量": 2,
+      "种子": 55,
+      "等待毫秒": 646000,
+      "预警与击退毫秒": 10420,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 160,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 180,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 176,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 144.74264971098776,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 160,
+          "mode": "attack"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 755544
+    },
+    {
+      "场次": 5,
+      "门": "北门",
+      "数量": 2,
+      "种子": 49,
+      "等待毫秒": 756000,
+      "预警与击退毫秒": 7680,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 160,
+        "east-archer": 100,
+        "north-watch": 176,
+        "north-patrol": 176,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 176,
+          "mode": "attack"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 176,
+          "mode": "return"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 791829
+    },
+    {
+      "场次": 6,
+      "门": "南门",
+      "数量": 2,
+      "种子": 51,
+      "等待毫秒": 792000,
+      "预警与击退毫秒": 9120,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 180,
+        "east-archer": 100,
+        "north-watch": 176,
+        "north-patrol": 176,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 168,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 152.03667348173647,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 168,
+          "mode": "attack"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 597494
+    },
+    {
+      "场次": 7,
+      "门": "东门",
+      "数量": 3,
+      "种子": 60,
+      "等待毫秒": 598000,
+      "预警与击退毫秒": 12580,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 152,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 180,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 168,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 134.96962228102626,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 152,
+          "mode": "attack"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 826018
+    },
+    {
+      "场次": 8,
+      "门": "北门",
+      "数量": 3,
+      "种子": 50,
+      "等待毫秒": 827000,
+      "预警与击退毫秒": 9120,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 152,
+        "east-archer": 100,
+        "north-watch": 176,
+        "north-patrol": 168,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 176,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 168,
+          "mode": "attack"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 524014
+    },
+    {
+      "场次": 9,
+      "门": "南门",
+      "数量": 3,
+      "种子": 48,
+      "等待毫秒": 525000,
+      "预警与击退毫秒": 11880,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 180,
+        "east-archer": 100,
+        "north-watch": 176,
+        "north-patrol": 168,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 148,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 163.9083479973197,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 148,
+          "mode": "attack"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 568515
+    },
+    {
+      "场次": 10,
+      "门": "东门",
+      "数量": 1,
+      "种子": 2,
+      "等待毫秒": 569000,
+      "预警与击退毫秒": 7420,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 176,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 180,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 148,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 144.74264971098776,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 176,
+          "mode": "attack"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 741093
+    },
+    {
+      "场次": 11,
+      "门": "北门",
+      "数量": 1,
+      "种子": 1,
+      "等待毫秒": 742000,
+      "预警与击退毫秒": 6920,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 176,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 176,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 176,
+          "mode": "attack"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 649158
+    },
+    {
+      "场次": 12,
+      "门": "南门",
+      "数量": 1,
+      "种子": 3,
+      "等待毫秒": 650000,
+      "预警与击退毫秒": 6980,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 180,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 176,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 176,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 156.38651864753174,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 176,
+          "mode": "attack"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 645444
+    },
+    {
+      "场次": 13,
+      "门": "东门",
+      "数量": 2,
+      "种子": 55,
+      "等待毫秒": 646000,
+      "预警与击退毫秒": 10700,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 156,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 180,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 176,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 128.9970480099623,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 156,
+          "mode": "attack"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 755544
+    },
+    {
+      "场次": 14,
+      "门": "北门",
+      "数量": 2,
+      "种子": 49,
+      "等待毫秒": 756000,
+      "预警与击退毫秒": 7680,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 156,
+        "east-archer": 100,
+        "north-watch": 176,
+        "north-patrol": 176,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 176,
+          "mode": "attack"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 176,
+          "mode": "return"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 791829
+    },
+    {
+      "场次": 15,
+      "门": "南门",
+      "数量": 2,
+      "种子": 51,
+      "等待毫秒": 792000,
+      "预警与击退毫秒": 9120,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 180,
+        "east-archer": 100,
+        "north-watch": 176,
+        "north-patrol": 176,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 168,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 152.03667348173647,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 168,
+          "mode": "attack"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 597494
+    },
+    {
+      "场次": 16,
+      "门": "东门",
+      "数量": 3,
+      "种子": 60,
+      "等待毫秒": 598000,
+      "预警与击退毫秒": 12700,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 136,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 180,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 168,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 128.9970480099623,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 136,
+          "mode": "attack"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 826018
+    },
+    {
+      "场次": 17,
+      "门": "北门",
+      "数量": 3,
+      "种子": 50,
+      "等待毫秒": 827000,
+      "预警与击退毫秒": 9120,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 136,
+        "east-archer": 100,
+        "north-watch": 176,
+        "north-patrol": 168,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 176,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 168,
+          "mode": "attack"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 524014
+    },
+    {
+      "场次": 18,
+      "门": "南门",
+      "数量": 3,
+      "种子": 48,
+      "等待毫秒": 525000,
+      "预警与击退毫秒": 11880,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 180,
+        "east-archer": 100,
+        "north-watch": 176,
+        "north-patrol": 168,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 148,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 163.9083479973197,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 148,
+          "mode": "attack"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 568515
+    },
+    {
+      "场次": 19,
+      "门": "东门",
+      "数量": 1,
+      "种子": 2,
+      "等待毫秒": 569000,
+      "预警与击退毫秒": 7500,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 172,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 180,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 148,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 141.85217035533424,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 172,
+          "mode": "attack"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 741093
+    },
+    {
+      "场次": 20,
+      "门": "北门",
+      "数量": 1,
+      "种子": 1,
+      "等待毫秒": 742000,
+      "预警与击退毫秒": 6920,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 172,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 176,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 176,
+          "mode": "attack"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 649158
+    },
+    {
+      "场次": 21,
+      "门": "南门",
+      "数量": 1,
+      "种子": 3,
+      "等待毫秒": 650000,
+      "预警与击退毫秒": 6980,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 180,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 176,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 176,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 156.38651864753174,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 176,
+          "mode": "attack"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 645444
+    },
+    {
+      "场次": 22,
+      "门": "东门",
+      "数量": 2,
+      "种子": 55,
+      "等待毫秒": 646000,
+      "预警与击退毫秒": 10680,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 164,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 180,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 176,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 129.2061758607572,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 164,
+          "mode": "attack"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 755544
+    },
+    {
+      "场次": 23,
+      "门": "北门",
+      "数量": 2,
+      "种子": 49,
+      "等待毫秒": 756000,
+      "预警与击退毫秒": 7680,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 164,
+        "east-archer": 100,
+        "north-watch": 176,
+        "north-patrol": 176,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 176,
+          "mode": "attack"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 176,
+          "mode": "return"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 791829
+    },
+    {
+      "场次": 24,
+      "门": "南门",
+      "数量": 2,
+      "种子": 51,
+      "等待毫秒": 792000,
+      "预警与击退毫秒": 9120,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 180,
+        "east-archer": 100,
+        "north-watch": 176,
+        "north-patrol": 176,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 168,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 152.03667348173647,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 168,
+          "mode": "attack"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 597494
+    },
+    {
+      "场次": 25,
+      "门": "东门",
+      "数量": 3,
+      "种子": 60,
+      "等待毫秒": 598000,
+      "预警与击退毫秒": 12580,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 152,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 180,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 168,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 134.96962228102626,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 152,
+          "mode": "attack"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 826018
+    },
+    {
+      "场次": 26,
+      "门": "北门",
+      "数量": 3,
+      "种子": 50,
+      "等待毫秒": 827000,
+      "预警与击退毫秒": 9120,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 152,
+        "east-archer": 100,
+        "north-watch": 176,
+        "north-patrol": 168,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 176,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 168,
+          "mode": "attack"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 524014
+    },
+    {
+      "场次": 27,
+      "门": "南门",
+      "数量": 3,
+      "种子": 48,
+      "等待毫秒": 525000,
+      "预警与击退毫秒": 11880,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 180,
+        "east-archer": 100,
+        "north-watch": 176,
+        "north-patrol": 168,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 148,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 163.9083479973197,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 148,
+          "mode": "attack"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 568515
+    },
+    {
+      "场次": 28,
+      "门": "东门",
+      "数量": 1,
+      "种子": 2,
+      "等待毫秒": 569000,
+      "预警与击退毫秒": 7420,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 176,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 180,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 148,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 144.74264971098776,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 176,
+          "mode": "attack"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 741093
+    },
+    {
+      "场次": 29,
+      "门": "北门",
+      "数量": 1,
+      "种子": 1,
+      "等待毫秒": 742000,
+      "预警与击退毫秒": 6920,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 176,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 176,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 176,
+          "mode": "attack"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 649158
+    },
+    {
+      "场次": 30,
+      "门": "南门",
+      "数量": 1,
+      "种子": 3,
+      "等待毫秒": 650000,
+      "预警与击退毫秒": 6980,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180
+        },
+        {
+          "id": "east-archer",
+          "hp": 100
+        },
+        {
+          "id": "north-watch",
+          "hp": 180
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180
+        },
+        {
+          "id": "north-archer",
+          "hp": 100
+        },
+        {
+          "id": "south-watch",
+          "hp": 180
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180
+        },
+        {
+          "id": "south-archer",
+          "hp": 100
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 180,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 176,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 176,
+        "south-archer": 100
+      },
+      "最大离岗距离": {
+        "east-watch": 0,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 156.38651864753174,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "mode": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "mode": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "mode": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 176,
+          "mode": "attack"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "mode": "post"
+        }
+      ],
+      "后续冷却": 645444
+    }
+  ]
+}

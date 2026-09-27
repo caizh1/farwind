@@ -3,7 +3,7 @@ import {writeFile,mkdir} from 'node:fs/promises';
 import {initialState} from '../src/game/systems/state';
 import {captureGameAudio} from '../tools/capture-game-audio.mjs';
 test.use({headless:false,video:{mode:'on',size:{width:1280,height:720}}});
-const dir='docs/parry-v2/evidence',raw='.parry-local/v2/recording',read=(page:Page)=>page.evaluate(()=>(window as any).__farwind());
+const dir=process.env.FARWIND_PARRY_EVIDENCE_ROOT??'docs/parry-v2/evidence',raw=process.env.FARWIND_PARRY_RAW_ROOT??'.parry-local/v2/recording',read=(page:Page)=>page.evaluate(()=>(window as any).__farwind());
 async function loadFixture(page:Page,x=850,y=720,stamina=100,hp=100,killed:string[]=[]) {
  await mkdir(dir,{recursive:true});const state=initialState();Object.assign(state.player,{x,y,stamina,hp});state.quest=3;state.killed=killed;
  await mkdir(`${dir}/fixtures`,{recursive:true});await writeFile(`${dir}/fixtures/${x===850?'training':x===1640?'field':x===2380?'adventure':'two-enemies'}.json`,JSON.stringify(state,null,2));

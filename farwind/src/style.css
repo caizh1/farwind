@@ -23,6 +23,7 @@ canvas {
 }
 #ui {
   position: fixed;
+  z-index: 2;
   inset: 0;
   pointer-events: none;
 }
@@ -65,6 +66,7 @@ button:focus-visible {
   justify-content: space-between;
 }
 .vitals {
+  pointer-events: auto;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -1011,3 +1013,14 @@ kbd {
 /* 弹反状态与练习开关留在正常布局中，窄屏可换行。 */
 #parry-status { font-size: 12px; color: #ecedd4; padding: 3px 7px; background: #284437cc; border-radius: 5px; max-width: 100%; }
 .practice-toggle { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 8px 0 16px; }
+
+/* 居民入口与开发工具使用正常流中的按钮组，无绝对定位图标。 */
+.resident-tools { position: fixed; left: 18px; bottom: 98px; z-index: 5; display: flex; gap: 8px; align-items: flex-end; max-width: calc(100vw - 36px); }
+.resident-tools button, .resident-tools select { font: inherit; color: #f5edcf; background: #344b40; border: 1px solid #ab9767; border-radius: 7px; padding: 7px 12px; }
+.resident-debug { display: flex; flex-direction: column; gap: 8px; background: #20382ff2; padding: 12px; border: 1px solid #9e8c61; border-radius: 9px; max-width: 500px; max-height: 65vh; overflow: auto; }
+.resident-debug[hidden] { display: none; }
+.resident-debug-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.resident-debug pre { white-space: pre-wrap; max-width: 460px; color: #f0e9c9; margin: 0; font-size: 12px; }
+@media (max-width: 800px) { .resident-tools { bottom: 110px; flex-wrap: wrap; } .resident-debug { max-width: 340px; } }
+
+.resident-tools[hidden] { display: none; }

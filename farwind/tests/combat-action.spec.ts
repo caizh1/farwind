@@ -6,9 +6,10 @@ test("四方向实机动作逐帧推进，三段收招与再次进攻", async ({
   await page.goto("/?animationDebug=1");
   await page.getByRole("button", { name: "启程 · 新游戏" }).click();
   await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
+  await page.waitForFunction(() => (window as any).__farwind().session.sim > 500);
   await page.evaluate(() => {
     (window as any).__actionFrames = [];
-    (window as any).__actionTimer = setInterval(() => {
+    const sample = () => {
       const state = (window as any).__farwind?.();
       if (state?.session?.combat?.stage)
         (window as any).__actionFrames.push({
@@ -19,7 +20,9 @@ test("四方向实机动作逐帧推进，三段收招与再次进攻", async ({
           texture: state.animation.hero.texture,
           anchor: state.animation.hero.anchor,
         });
-    }, 8);
+      (window as any).__actionTimer=requestAnimationFrame(sample);
+    };
+    (window as any).__actionTimer=requestAnimationFrame(sample);
   });
   for (const [key, facing] of [
     ["s", 0],
@@ -43,7 +46,7 @@ test("四方向实机动作逐帧推进，三段收招与再次进攻", async ({
       { polling: 16 },
     );
     await page.screenshot({
-      path: `docs/combat-action/evidence/single-${key}.png`,
+      path: `${process.env.FARWIND_EVIDENCE_ROOT??'docs'}/combat-action/evidence/single-${key}.png`,
     });
     await expect
       .poll(async () =>
@@ -139,5 +142,5 @@ test("四方向实机动作逐帧推进，三段收招与再次进攻", async ({
   expect(
     await page.evaluate(() => (window as any).__farwind().session.combat.stage),
   ).toBe(0);
-  await page.evaluate(() => clearInterval((window as any).__actionTimer));
+  await page.evaluate(() => cancelAnimationFrame((window as any).__actionTimer));
 });

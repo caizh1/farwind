@@ -52,8 +52,15 @@ test("session-sprint-recovery", async ({ page }) => {
   expect(stationary.session.combat.dashCooldownRemaining).toBe(0);
   const sprintStart = (await read(page)).session.sim;
   const transitions: any[] = [];
-  let last = "run",
-    lastChange = 0;
+  // 逐实际渲染帧读取，避免50毫秒墙钟轮询漏掉切换边界而缩短实测周期。
+  await page.evaluate(()=>{
+    const trace:{sim:number;体力:number;动作:string}[]=[],observer={active:true};
+    (window as any).__sprintObservation={trace,observer};
+    let last:string|undefined;
+    const sample=()=>{if(!observer.active)return;const s=(window as any).__farwind(),action=s.session.exhausted?"walk":"run";
+      if(["walk","run"].includes(action)&&action!==last){trace.push({sim:s.session.sim,体力:s.state.player.stamina,动作:action});last=action;}
+      requestAnimationFrame(sample);};requestAnimationFrame(sample);
+  });
   await page.keyboard.down("Space");
   for (let n = 0; n < 32; n++) {
     const key = n % 2 ? "d" : "a";
@@ -79,16 +86,7 @@ test("session-sprint-recovery", async ({ page }) => {
       const s = await read(page),
         a = s.animation.hero.action;
       expect(["walk", "run"]).toContain(a);
-      if (a !== last) {
-        if (lastChange) expect(s.session.sim - lastChange).toBeGreaterThan(800);
-        transitions.push({
-          sim: s.session.sim,
-          体力: s.state.player.stamina,
-          动作: a,
-        });
-        lastChange = s.session.sim;
-        last = a;
-      }
+
       if (
         s.session.exhausted &&
         s.state.player.stamina > 3 &&
@@ -101,6 +99,10 @@ test("session-sprint-recovery", async ({ page }) => {
     }
     await page.keyboard.up(key);
   }
+  const sampled=await page.evaluate(()=>{const observation=(window as any).__sprintObservation;observation.observer.active=false;return observation.trace;});
+  // 转向松键可产生短时动画切换；耗尽周期读取生产锁存状态，保留800毫秒门槛。
+  transitions.push(...sampled);
+  for(let i=1;i<transitions.length;i++)expect(transitions[i].sim-transitions[i-1].sim).toBeGreaterThan(800);
   await page.keyboard.up("Space");
   expect(transitions.length).toBeGreaterThan(4);
   // 同机运行软件GPU时墙钟与模拟时长不同，以实际模拟时间约束切换数量。

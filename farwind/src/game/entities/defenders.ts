@@ -3,6 +3,7 @@ import {Actor} from "./actor";
 import art from "../../data/defense-art.json";
 import { GUARD_DEFS, TOWERS } from "../../data/defense";
 import type { EastDefense, DefenseEnemy } from "../systems/defense";
+import type { NpcLife } from "../systems/npcLife";
 type View = { sprite: Phaser.GameObjects.Sprite; shadow: Phaser.GameObjects.Ellipse; name?: Phaser.GameObjects.Text };
 export class DefendersView {
   guards = new Map<string, View>();
@@ -15,12 +16,14 @@ export class DefendersView {
     }
     this.arrows = scene.add.graphics().setDepth(8996);
   }
-  update(defense: EastDefense, now: number, drawEnemy: (e: DefenseEnemy, sprite: Phaser.GameObjects.Sprite) => void) {
+  update(defense: EastDefense, now: number, drawEnemy: (e: DefenseEnemy, sprite: Phaser.GameObjects.Sprite) => void, life?: NpcLife) {
     for (const g of defense.state.guards) {
       const d = GUARD_DEFS.find(d => d.id === g.id)!;
       const tower = TOWERS.find(t => t.occupantGuardId === g.id);
       const key = d.role === "melee" ? "guard" : tower!.gateId !== "east-gate" && !g.dead ? "vertical" : "archer";
       const r = defense.runtime.get(g.id)!;
+      const action=life?.data.people.find(n=>n.id===g.id)?.action,
+        sleeping=g.offDuty&&action?.kind==="sleep"&&action.phase==="perform";
       let view = this.guards.get(g.id);
       if (!view) {
         view = { sprite: this.scene.add.sprite(g.x, g.y, `defender-${key}`, 0),
@@ -38,16 +41,22 @@ export class DefendersView {
       const frame = key === "guard" ? row * 6 + pose : key === "vertical" ?
         (tower!.gateId === "south-gate" ? 4 : 0) + Math.min(pose,3) : pose;
       const data = art[key], f = data.frames[frame];
-      const point = d.role === "archer" ? tower!.perch : g;
+      const point = d.role === "archer" && !g.offDuty ? tower!.perch : g;
       Actor.mirror(view.sprite,key === "guard" && r.facing === 2);
       view.sprite.setTexture(`defender-${key}`,frame).setOrigin(f.footX/f.w,f.footY/f.h).setScale(87/(key === "vertical" ? data.frames[frame].bodyHeight : data.frames[0].bodyHeight))
-        .setPosition(point.x,point.y).setDepth(d.role === "archer" ? tower!.y+1 : g.y)
-        .setAlpha(g.dead ? .65 : 1).setRotation(g.dead && key === "guard" ? Math.PI/2 : 0);
+        .setPosition(point.x,point.y).setDepth(d.role === "archer" && !g.offDuty ? tower!.y+1 : g.y)
+        .setAlpha(g.dead ? .65 : 1).setRotation(g.dead && key === "guard" ? Math.PI/2 : sleeping ? .5 : 0);
       if (now < r.flashUntil) view.sprite.setTint(0xffaaaa); else view.sprite.clearTint();
-      view.shadow.setPosition(point.x,point.y-3).setDepth(d.role === "archer" ? tower!.y+.5 : g.y-.5).setVisible(!g.dead);
-      view.name!.setPosition(point.x,point.y+14).setDepth(d.role === "archer" ? tower!.y+2 : g.y+2)
-        .setText(`${d.name}${g.dead ? " · 已阵亡" : ""}`);
+      view.shadow.setPosition(point.x,point.y-3).setDepth(d.role === "archer" && !g.offDuty ? tower!.y+.5 : g.y-.5).setVisible(!g.dead);
+      view.name!.setPosition(point.x,point.y+14).setDepth(d.role === "archer" && !g.offDuty ? tower!.y+2 : g.y+2)
+        .setText(`${d.name}${g.dead ? " · 已阵亡" : sleeping ? " · 睡眠" : g.offDuty ? " · 轮休途中" : ""}`);
     }
+    const activeSpace=(defense as EastDefense & {observerSpace?:string}).observerSpace??"village";
+    for(const g of defense.state.guards){const v=this.guards.get(g.id)!,visible=(g.space??"village")===activeSpace,base=activeSpace==="village"?0:7500;
+      v.sprite.setVisible(visible);v.shadow.setVisible(visible&&!g.dead);v.name?.setVisible(visible);
+      if(base){v.sprite.setDepth(base+g.y);v.shadow.setDepth(base+g.y-.5);v.name?.setDepth(base+g.y+1);}
+    }
+    this.arrows.setVisible(activeSpace==="village");
     for (const [id, v] of this.enemies) if (!defense.enemies.some(e => e.id === id && e.hp > 0)) {
       v.sprite.destroy(); v.shadow.destroy(); this.enemies.delete(id);
     }
@@ -57,7 +66,7 @@ export class DefendersView {
         v = { sprite:this.scene.add.sprite(e.x,e.y,e.type,0).setOrigin(.5,1),
           shadow:this.scene.add.ellipse(e.x,e.y-3,40,12,0x173b30,.2) }; this.enemies.set(e.id,v);
       }
-      drawEnemy(e,v.sprite);
+      drawEnemy(e,v.sprite);v.sprite.setVisible(activeSpace==="village");v.shadow.setVisible(activeSpace==="village");
       v.shadow.setPosition(e.x,e.y-3).setDepth(e.y-.5);
       if (now < e.flashUntil) v.sprite.setTint(0xffaaaa); else v.sprite.clearTint();
     }

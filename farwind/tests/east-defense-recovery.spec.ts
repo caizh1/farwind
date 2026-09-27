@@ -98,6 +98,6 @@ test("生产构建恢复活跃演练并自主结算，查询开关不暴露开�
  await expect.poll(async()=>{const r=await read(page);return !r.defense.critical&&!r.defenseCheckpointPending;}).toBe(true);
  await page.screenshot({path:`${root}/production-autonomous.png`});await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();
  const r=await read(page);expect(r.state.defense.completedSequence).toBe(1);expect(r.state.defense.guards.every((g:any)=>!g.dead)).toBe(true);
- expect([r.state.schema_version,r.state.map_version]).toEqual([4,6]);
+ expect([r.state.schema_version,r.state.map_version]).toEqual([6,6]);
  await writeFile(`${root}/production.json`,JSON.stringify({说明:'冻结生产构建从正式导入恢复演练，正常版不提供开发启动入口。',驻防:r.state.defense},null,2));
 });

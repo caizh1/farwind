@@ -91,22 +91,9 @@ test("companion-well-house-corners", async ({ page }) => {
   );
   await page.waitForTimeout(300);
   async function go(x: number, y: number) {
-    for (const axis of ["x", "y"] as const) {
-      const target = axis === "x" ? x : y;
-      for (let attempt = 0; attempt < 80; attempt++) {
-        const p = (await read(page)).state.player,
-          delta = target - p[axis];
-        if (Math.abs(delta) < 4) break;
-        await hold(
-          page,
-          [axis === "x" ? (delta > 0 ? "d" : "a") : delta > 0 ? "s" : "w"],
-          Math.min(200, (Math.abs(delta) / 150) * 1000),
-        );
-      }
-      expect(
-        Math.abs((await read(page)).state.player[axis] - target),
-      ).toBeLessThan(5);
-    }
+    // 以实际位置决定松键，避免短于输入往返耗时的墙钟脉冲反复越过目标。
+    await move(page,x,y);
+    for(const [axis,target]of [["x",x],["y",y]]as const)expect(Math.abs((await read(page)).state.player[axis]-target)).toBeLessThan(5);
     expect((await read(page)).companion.blocked).toBe(false);
   }
   await go(850, 860);

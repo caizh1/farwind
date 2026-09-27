@@ -1,3 +1,4 @@
+import {approachNpc} from './npc-navigation';
 import { move } from "./map-navigation";
 import { writeFile } from "node:fs/promises";
 import { captureGameAudio } from "../tools/capture-game-audio.mjs";
@@ -23,7 +24,7 @@ test("adventure-loop", async ({ page, context }) => {
   await page.addInitScript(captureGameAudio);
   await page.goto("/");
   await page.getByRole("button", { name: "启程 · 新游戏" }).click();
-  await move(page, 670, 690);
+  await approachNpc(page,"elder");
   await interact(page, "elder");
   await dismiss(page);
   await expect.poll(async () => (await snapshot(page)).state.quest).toBe(1);
@@ -83,7 +84,7 @@ test("adventure-loop", async ({ page, context }) => {
     .toBe(true);
   await move(page, 3550, 890);
   await interact(page, "shortcut");
-  await move(page, 670, 690);
+  await approachNpc(page,"elder");
   await interact(page, "elder");
   await dismiss(page);
   await expect.poll(async () => (await snapshot(page)).state.quest).toBe(7);

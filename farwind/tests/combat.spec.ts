@@ -40,7 +40,7 @@ test("真实键鼠：三连、断连、风步、暂停和续玩", async ({ page 
       intervals: [16, 16, 16],
     })
     .toBe("active");
-  await page.screenshot({ path: "docs/combat/regression/combo-stage-two.png" });
+  await page.screenshot({ path: `${process.env.FARWIND_EVIDENCE_ROOT??"docs"}/combat/regression/combo-stage-two.png` });
   await finishWindow(page);
   await page.keyboard.press("j");
   await expect
@@ -52,12 +52,14 @@ test("真实键鼠：三连、断连、风步、暂停和续玩", async ({ page 
     })
     .toBe("active");
   await page.screenshot({
-    path: "docs/combat/regression/combo-stage-three.png",
+    path: `${process.env.FARWIND_EVIDENCE_ROOT??"docs"}/combat/regression/combo-stage-three.png`,
   });
   expect((await read(page)).attackSerial).toBe(3);
   await expect
     .poll(async () => (await read(page)).session.combat.stage)
     .toBe(0);
+  // stage清零时仍可能处于收剑；独立下一刀应从完整待机开始。
+  await expect.poll(async()=>(await read(page)).animation.hero.phase).toBe("idle");
   await page.keyboard.press("j");
   await expect
     .poll(async () => (await read(page)).session.combat.stage)

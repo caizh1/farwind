@@ -7,6 +7,7 @@ import {EastDefense,prepareRaid,spawnLegal} from '../src/game/systems/defense';
 import {enemyNavigation,enemyAttackPermitted} from '../src/game/systems/enemy';
 import {enemyDefs} from '../src/data/world';
 import {motionBlocked,clearMotionLine,shotLineBlocker} from '../src/game/systems/obstacles';
+import {makeNightPlan,nightWarningSnapshot,mayStartNight} from '../src/game/systems/nightDirector';
 const player={x:670,y:720,hp:100};
 const step=(d:EastDefense,ms:number,dt=20)=>{for(let i=0;i<ms;i+=dt)d.update(d.now+dt,dt,player,{queries:2});};
 describe('三门常态防御',()=>{
@@ -24,18 +25,23 @@ describe('三门常态防御',()=>{
  it('保护与间隔只按有效时钟推进，预警未提交不出生',()=>{
   const s=initialDefense(),d=new EastDefense(s,0);s.protectionMs=100;s.cooldownMs=100;
   step(d,100);expect(s.protectionMs).toBe(0);expect(s.cooldownMs).toBe(100);expect(s.raid).toBeNull();
-  step(d,100);expect(s.raid?.phase).toBe('warning');expect(d.enemies).toEqual([]);
+  step(d,100);expect(s.cooldownMs).toBe(0);expect(s.raid).toBeNull();
+  // 自动调度由持久化夜间计划负责；驻防更新不能另起一波。
+  const world=initialState();world.defense=s;world.night.plan=makeNightPlan(world,2);world.night.plan.outcome='pending';world.time=world.night.plan.at;
+  expect(mayStartNight(world)).toBe(true);const next=nightWarningSnapshot(world);Object.assign(s,next.defense);d.awaitingCheckpoint=true;expect(s.raid?.phase).toBe('warning');expect(d.enemies).toEqual([]);
   step(d,4000);expect(s.raid?.ageMs).toBe(0);expect(d.enemies).toEqual([]);
   d.acknowledged(s.sequence);step(d,RAID_TIMING.warning);expect(d.enemies.length).toBeGreaterThanOrEqual(2);
   expect(s.raid?.phase).not.toBe('warning');
  });
- it('视口、近身、实体和人口上限禁止硬刷，合法点延迟重选',()=>{
+ it('视口、近身、实体和人口上限禁止硬刷，同一个夜间计划等待合法条件',()=>{
   const s=initialDefense();s.protectionMs=s.cooldownMs=0;const d=new EastDefense(s,0);
   const view={left:0,right:4200,top:0,bottom:2200};d.update(20,20,player,{queries:2},view);
-  expect(s.raid).toBeNull();expect(s.retryMs).toBe(RAID_TIMING.retry);
+  expect(s.raid).toBeNull();const world=initialState();world.defense=s;world.night.plan=makeNightPlan(world,2);world.night.plan.outcome='pending';world.time=world.night.plan.at;const before=structuredClone(world);
+  expect(()=>nightWarningSnapshot(world,view)).toThrow();expect(world).toEqual(before);
   s.retryMs=0;d.update(40,20,player,{queries:2},undefined,Array(12).fill(player));expect(s.raid).toBeNull();
   expect(()=>prepareRaid(s,RAID_GATES[1].spawns[0],'north-gate')).toThrow();
-  s.retryMs=0;d.update(60,20,player,{queries:2});expect(s.raid?.phase).toBe('warning');
+  expect(()=>nightWarningSnapshot(world,undefined,Array(24).fill(player))).toThrow();
+  s.retryMs=0;d.update(60,20,player,{queries:2});expect(s.raid).toBeNull();expect(nightWarningSnapshot(world).defense.raid?.phase).toBe('warning');
  });
  it('预警期间玩家靠近生成点则取消并延迟，不补刷',()=>{
   const s=prepareRaid(initialDefense(),player,'north-gate',3,true),d=new EastDefense(s,0);
@@ -48,7 +54,7 @@ describe('三门常态防御',()=>{
   Object.assign(old.defense.guards[0],{hp:0,dead:true,mode:'dead'});old.defense.guards[1].hp=57;
   for(const k of ['protectionMs','cooldownMs','retryMs','seed'])delete old.defense[k];
   delete old.defense.raid.gateId;delete old.defense.raid.spawns;
-  const migrated=validate(old);expect(migrated.schema_version).toBe(4);expect(migrated.map_version).toBe(6);
+  const migrated=validate(old);expect(migrated.schema_version).toBe(6);expect(migrated.map_version).toBe(6);
   expect(migrated.defense.guards).toHaveLength(9);expect(migrated.defense.guards[0].dead).toBe(true);expect(migrated.defense.guards[1].hp).toBe(57);
   expect(migrated.defense.raid?.members).toEqual(old.defense.raid.members);expect(validate(migrated)).toEqual(migrated);
   migrated.defense.guards.pop();expect(()=>validate(migrated)).toThrow();

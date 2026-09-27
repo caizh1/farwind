@@ -7,7 +7,8 @@ test("隔离满包夹具：正常击杀、整理后领取、存档往返不重�
   fixture.player.x = 2260;
   fixture.player.y = 1070;
   fixture.quest = 3;
-  fixture.killed = ["slime-1", "slime-2"];
+  // 隔离单只正式叶灵；第二只叶灵的远处掉落不属于本用例的领取目标。
+  fixture.killed = ["slime-1", "slime-2", "leaf-2"];
   fixture.bag = Array.from({ length: 24 }, (_, i) => ({
     id: "stone" as const,
     count: i ? 20 : 1,

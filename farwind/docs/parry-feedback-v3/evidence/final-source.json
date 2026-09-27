@@ -1,0 +1,87 @@
+{
+  "说明": "交付核查时真实工作区摘要；浏览器冻结副本另见runtime-snapshot，生产摘要另见production-source。保留并行改动，不提交。",
+  "文件": [
+    {
+      "路径": "src/game/scenes/World.ts",
+      "摘要": "1c182b36a1f366081f20d72e94a76c183daad80bae2f78909eebe11a66c132bd"
+    },
+    {
+      "路径": "src/game/systems/audio.ts",
+      "摘要": "945ed59dff83cca3ab017b8be3a77c6c01bb6df9b4eb4114a9e0b8aaed2e1fb6"
+    },
+    {
+      "路径": "src/data/animation.ts",
+      "摘要": "337f7c2965bbf9c48411c29576a2dacdc6158b894d8274ede3710fb3c3e9053f"
+    },
+    {
+      "路径": "src/game/systems/weaponTrail.ts",
+      "摘要": "3f209bdfa4205654200a2305bdc7a89a31290c92e30ce5c5590b0b0d05d386e9"
+    },
+    {
+      "路径": "src/game/systems/combatFeedback.ts",
+      "摘要": "ccaf4916331d364655c231634cbad362e558e8a40fe1f80a1116731deb02e101"
+    },
+    {
+      "路径": "src/game/systems/feedbackAudio.ts",
+      "摘要": "69ac93f181240f3b3373e4d26e7e968e1d3c7bd266bb8c07d4dc62848d366c84"
+    },
+    {
+      "路径": "src/game/entities/combatFeedbackView.ts",
+      "摘要": "559fd38be9bc290b4867a102ac0ac1a763c8b51f44df9ea9038cec93ab95c6f6"
+    },
+    {
+      "路径": "src/data/counterArt.ts",
+      "摘要": "603052f34e0492932f1d9607ee7949d380f673d2ef8d4737763a336e20ef1fcd"
+    },
+    {
+      "路径": "public/assets/animation/hero-counter-v3.png",
+      "摘要": "717991955e714533417e8f5c16c336428fc51da59b07fcf15e0364045f8f56dc"
+    },
+    {
+      "路径": "tests/parry-feedback-v3.test.ts",
+      "摘要": "6ec1b175b9eb364488ceb7acb1de33b4ff4e9b54a54e7e51daec0db7b0fbf1ee"
+    },
+    {
+      "路径": "tests/parry-feedback-v3.spec.ts",
+      "摘要": "8fe565a4c6ad874e5606b75d2a4ee6564441888219f6e4fe2cea0ba54bbd26df"
+    },
+    {
+      "路径": "package.json",
+      "摘要": "4be1faf9a205216071778fc6408ca5a810a65cbe5e290d8c351cf86d43b945cc"
+    },
+    {
+      "路径": "tools/capture-game-audio.mjs",
+      "摘要": "b5ff60b19c40bf3d2810bbee35840b0810196275fe048d1d0bf0b4c0e1fd4d82"
+    },
+    {
+      "路径": "tools/build-parry-feedback-evidence.mjs",
+      "摘要": "ebfd1c0bea5955a4e8fa16fcbaab83c5939035a5eedec57825bfc00763d76377"
+    },
+    {
+      "路径": "tests/parry-feedback-v3.production.ts",
+      "摘要": "2b9971ee2c1de4018b03a411fdb1762d3446c97fc319493dd992577c3f6cdb36"
+    }
+  ],
+  "玩法基线文件核查": [
+    {
+      "路径": "src/game/systems/combat.ts",
+      "与HEAD一致": true
+    },
+    {
+      "路径": "src/game/systems/contact.ts",
+      "与HEAD一致": true
+    },
+    {
+      "路径": "src/game/systems/timeline.ts",
+      "与HEAD一致": true
+    },
+    {
+      "路径": "src/game/systems/enemyAttack.ts",
+      "与HEAD一致": true
+    },
+    {
+      "路径": "src/game/systems/sprint.ts",
+      "与HEAD一致": true
+    }
+  ]
+}

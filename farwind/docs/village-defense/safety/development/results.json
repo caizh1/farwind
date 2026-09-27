@@ -1,0 +1,719 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/node_modules/.bin/playwright",
+      "test",
+      "tests/economy.spec.ts",
+      "tests/training.spec.ts",
+      "tests/adventure.spec.ts",
+      "tests/east-defense-recovery.spec.ts",
+      "tests/village-raids.spec.ts",
+      "--config",
+      "tools/playwright-safety.config.ts",
+      "--grep",
+      "新游戏真实采集|商店实际|满包|IDB写请求|交易待保存|正式森林战斗|真实导入旧结构|新游戏四面|隔离旧档|adventure-loop|玩家真实攻击|保留新剑风|主角与黑猫实际"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tools/playwright-safety.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "safety-defense.spec.ts",
+          "village-raids.spec.ts",
+          "east-defense-recovery.spec.ts",
+          "economy-production.spec.ts",
+          "training.spec.ts",
+          "economy.spec.ts",
+          "adventure.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/development/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "adventure.spec.ts",
+      "file": "adventure.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "adventure-loop",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 87716,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:36:59.070Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/adventure-adventure-loop/video-1.webm"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/adventure-adventure-loop/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0e432c2735e1cb75ffbd-09fa87c054fbf0880b19",
+          "file": "adventure.spec.ts",
+          "line": 20,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "east-defense-recovery.spec.ts",
+      "file": "east-defense-recovery.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "玩家真实攻击来袭怪并在村门内实际受击，不污染固定主线结算",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8166,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:38:27.554Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/east-defense-recovery-玩家真实攻击来袭怪并在村门内实际受击，不污染固定主线结算/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-cb0b4aff485f20135c56",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 46,
+          "column": 1
+        },
+        {
+          "title": "保留新剑风与弹反入口，真实第四刀和K可命中动态来袭怪",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6092,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:38:35.872Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/east-defense-recovery-保留新剑风与弹反入口，真实第四刀和K可命中动态来袭怪/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-20faea33154a53568f63",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 66,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "economy.spec.ts",
+      "file": "economy.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 161821,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:38:41.982Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/economy-新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/economy-新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/economy-新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/economy-新游戏真实采集和四服务路线、确认换药、买卖装备、教学桩增伤及重载/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-355bb8774f27f76b1f3d",
+          "file": "economy.spec.ts",
+          "line": 54,
+          "column": 1
+        },
+        {
+          "title": "商店实际负向检查、双击只成交一次以及窄屏可操作",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4075,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:42:13.350Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/economy-商店实际负向检查、双击只成交一次以及窄屏可操作/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-8c56afd759fdb79b832d",
+          "file": "economy.spec.ts",
+          "line": 175,
+          "column": 1
+        },
+        {
+          "title": "满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 27096,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:42:17.592Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/economy-满包不能购买，药师材料不足不消耗，旅馆确认收费不推进时间/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-68c098f29f896f6d0d48",
+          "file": "economy.spec.ts",
+          "line": 214,
+          "column": 1
+        },
+        {
+          "title": "IDB写请求成功后事务中止，钱物库存与上次有效档完全保留",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5213,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:42:44.698Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/economy-IDB写请求成功后事务中止，钱物库存与上次有效档完全保留/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-87114cfa589a5d0316c1",
+          "file": "economy.spec.ts",
+          "line": 252,
+          "column": 1
+        },
+        {
+          "title": "交易待保存时不能Esc关闭，世界和输入全部暂停",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3930,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:42:49.920Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/economy-交易待保存时不能Esc关闭，世界和输入全部暂停/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-912daf1358a217cd2f2e",
+          "file": "economy.spec.ts",
+          "line": 288,
+          "column": 1
+        },
+        {
+          "title": "正式森林战斗实际扣血及铁剑增伤，默认战斗数值保持",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5219,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:42:53.860Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/economy-正式森林战斗实际扣血及铁剑增伤，默认战斗数值保持/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-ae852512ccbee111e5eb",
+          "file": "economy.spec.ts",
+          "line": 338,
+          "column": 1
+        },
+        {
+          "title": "真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复迁移",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5505,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:42:59.087Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/economy-真实导入旧结构和旧建筑站位，恢复后钱和坐标不重复迁移/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3f9faea062a9b8a719e-e28817f61f58dbcabc54",
+          "file": "economy.spec.ts",
+          "line": 389,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "training.spec.ts",
+      "file": "training.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "新游戏四面训练、风步底座、暂停和同页继续：真实输入",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 32894,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tests/training.spec.ts:172:5",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tests/training.spec.ts",
+                      "column": 5,
+                      "line": 172
+                    },
+                    "snippet": "  170 |         s.combat.hitTargets.includes(\"training-dummy\"),\n  171 |     ),\n> 172 |   ).toBe(true);\n      |     ^\n  173 |   expect(new Set(hits.map((s: any) => s.combat.facing)).size).toBe(4);\n  174 |   await writeFile(`${dir}/runtime-trace.json`, JSON.stringify(trace, null, 2));\n  175 |   const audio = await page.evaluate(() => (window as any).__finishAudio());"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tests/training.spec.ts",
+                        "column": 5,
+                        "line": 172
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  170 |         s.combat.hitTargets.includes(\"training-dummy\"),\n  171 |     ),\n> 172 |   ).toBe(true);\n      |     ^\n  173 |   expect(new Set(hits.map((s: any) => s.combat.facing)).size).toBe(4);\n  174 |   await writeFile(`${dir}/runtime-trace.json`, JSON.stringify(trace, null, 2));\n  175 |   const audio = await page.evaluate(() => (window as any).__finishAudio());\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tests/training.spec.ts:172:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:43:50.966Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/training-新游戏四面训练、风步底座、暂停和同页继续：真实输入/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/training-新游戏四面训练、风步底座、暂停和同页继续：真实输入/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/training-新游戏四面训练、风步底座、暂停和同页继续：真实输入/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/training-新游戏四面训练、风步底座、暂停和同页继续：真实输入/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tests/training.spec.ts",
+                    "column": 5,
+                    "line": 172
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2410163d751908292b1d-73d06569bc94940db20c",
+          "file": "training.spec.ts",
+          "line": 58,
+          "column": 1
+        },
+        {
+          "title": "隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8575,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:44:37.677Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/training-隔离旧档满包及死亡恢复夹具：默认单靶存在、再训练不污染进度/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2410163d751908292b1d-6af5aa60b753508dc014",
+          "file": "training.spec.ts",
+          "line": 185,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "village-raids.spec.ts",
+      "file": "village-raids.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "主角与黑猫实际往返三门，正常模式无开发分区和按钮",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 45841,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:43:04.624Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/village-raids-主角与黑猫实际往返三门，正常模式无开发分区和按钮/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ed411b8f4bd61e90f8c4-aade11b32d8aa8458392",
+          "file": "village-raids.spec.ts",
+          "line": 44,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-27T00:36:58.468Z",
+    "duration": 468015.712,
+    "expected": 11,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

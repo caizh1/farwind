@@ -12,7 +12,6 @@ async function writeSave(s: State) {
     d = await db();
   return new Promise<void>((ok, no) => {
     const t = d.transaction("states", "readwrite");
-    t.objectStore("states").put(clean, "current");
     t.oncomplete = () => {
       d.close();
       ok();
@@ -21,6 +20,8 @@ async function writeSave(s: State) {
       d.close();
       no(Error("保存失败，上一份有效存档仍保留，请导出备份。"));
     };
+    try{t.objectStore("states").put(clean,"current");}
+    catch(e){t.abort();d.close();no(e);}
   });
 }
 export async function load() {

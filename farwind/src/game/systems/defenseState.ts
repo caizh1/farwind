@@ -1,8 +1,11 @@
+import {isSpace,validPlace} from './npcLifeState';
+import type {SpaceId} from '../../data/npcLife';
 import { GUARD_DEFS, RAID_TIMING, type GateId, type GuardId } from "../../data/defense";
-export type GuardMode = "post" | "patrol" | "intercept" | "attack" | "retreat" | "recover" | "dead";
+export type GuardMode = "post" | "patrol" | "intercept" | "attack" | "retreat" | "recover" | "dead" | "life" | "return";
 export type GuardState = {
   id: GuardId; x: number; y: number; hp: number; dead: boolean;
   weaponId: "watch-blade" | "watch-bow"; armorId: "watch-mail" | "watch-leather";
+  space?: SpaceId; offDuty?: boolean; towerTransitMs?: number;
   postId: string; mode: GuardMode; peaceMs: number; cooldownMs: number;
 };
 export type RaidMember = { id: string; type: "slime" | "leaf"; x: number; y: number;
@@ -29,8 +32,8 @@ export function validateDefense(raw: unknown): DefenseState {
       const d = GUARD_DEFS.find(d => d.id === g?.id);
       return !!d && point(g) && num(g.hp, d.maxHP) && typeof g.dead === "boolean" && g.dead === (g.hp === 0) &&
         g.weaponId === d.weaponId && g.armorId === d.armorId && g.postId === d.postId &&
-        ["post", "patrol", "intercept", "attack", "retreat", "recover", "dead"].includes(g.mode) &&
-        (g.dead ? g.mode === "dead" : g.mode !== "dead") && num(g.peaceMs, 8000) && num(g.cooldownMs, 5000);
+        ["post", "patrol", "intercept", "attack", "retreat", "recover", "dead", "life", "return"].includes(g.mode) &&
+        (g.space===undefined||isSpace(g.space)) && (g.offDuty===undefined||typeof g.offDuty==="boolean") && (g.towerTransitMs===undefined||num(g.towerTransitMs,1800)) && (g.space===undefined||validPlace({...g,space:g.space})) && (g.dead ? g.mode === "dead" : g.mode !== "dead") && num(g.peaceMs, 8000) && num(g.cooldownMs, 5000);
     })) throw Error("驻防存档损坏，请使用有效备份。");
   const r = s.raid;
   if (r !== null && (!r || r.sequence !== s.sequence || r.sequence <= s.completedSequence ||

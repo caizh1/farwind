@@ -1,3 +1,4 @@
+import {WATER} from "../src/game/systems/waterMotion";
 import { test, expect, type Page } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import { move } from "./map-navigation";
@@ -282,16 +283,16 @@ test("village-polish-render-lifecycle", async ({ page }) => {
           .filter((k: string) => k.startsWith("ground-")).length,
         纹理: scene.textures.getTextureKeys().length,
         对象: scene.children.length,
-        涟漪: scene.tweens.getTweens().length,
+        涟漪: scene.waterEffects.snapshot().counts.pondRipples+scene.waterEffects.snapshot().counts.fountainRipples,
         缩放监听: scene.scale.listenerCount("resize"),
       };
     });
   await page.waitForFunction(
-    () => (window as any).__farwind().session.sim > 300,
+    () => (window as any).__farwind().session.sim > 800,
   );
   const before = await resources();
   expect(before.地表).toBe(28);
-  expect(before.涟漪).toBe(2);
+  expect(before.涟漪).toBe(WATER.pond.ripples+WATER.fountain.impacts.length);
   await page.keyboard.press("Escape");
   await expect.poll(async () => (await read(page)).mode).toBe("pause");
   await page.waitForTimeout(100);
@@ -302,7 +303,9 @@ test("village-polish-render-lifecycle", async ({ page }) => {
       scale: t.targets[0].scaleX,
     }));
   });
+  const pausedWater=await page.evaluate(()=> (window as any).__polishGame.scene.getScene("World").waterEffects.snapshot().time);
   await page.waitForTimeout(450);
+  expect(await page.evaluate(()=> (window as any).__polishGame.scene.getScene("World").waterEffects.snapshot().time)).toBe(pausedWater);
   expect(
     await page.evaluate(() => {
       const s = (window as any).__polishGame.scene.getScene("World");
@@ -319,7 +322,7 @@ test("village-polish-render-lifecycle", async ({ page }) => {
     page.getByRole("button", { name: "继续旅途", exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "继续旅途", exact: true }).click();
-  await page.waitForTimeout(500);
+  await page.waitForFunction(()=> (window as any).__farwind().session.sim>800);
   const after = await resources();
   expect(after.对象).toBeLessThanOrEqual(before.对象);
   expect({ ...after, 对象: 0 }).toEqual({ ...before, 对象: 0 });

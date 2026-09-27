@@ -71,6 +71,6 @@ test("最终显示：宽限内持剑，接招不插空手；缓退松键按有�
     await page.waitForTimeout(750);
   }
   await page.screenshot({
-    path: "docs/combat-followup/evidence/ready-dash.png",
+    path: `${process.env.FARWIND_EVIDENCE_ROOT??"docs"}/combat-followup/evidence/ready-dash.png`,
   });
 });

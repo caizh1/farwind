@@ -25,13 +25,14 @@ type Space = {
 const space: Space = { blocked: motionBlocked, clear: clearMotionLine };
 
 // 小地图的有界局部A*；每条边连续检查脚底扫掠，不穿角、不跨水。
-export function localPath(
+export function* pathSearch(
   start: Point,
   goal: (p: Point) => boolean,
   target: Point,
   allowed: (p: Point) => boolean,
   query: Space = space,
-) {
+  limits: {radius:number;nodes:number} = NAV,
+): Generator<void, { path: Point[] | null; visited: number }> {
   const nodes = [
     { p: { ...start }, g: 0, f: distance(start, target), parent: -1 },
   ];
@@ -39,7 +40,7 @@ export function localPath(
     seen = new Map<string, number>([["0,0", 0]]),
     closed = new Set<number>();
   let visited = 0;
-  while (open.length && visited < NAV.nodes) {
+  while (open.length && visited < limits.nodes) {
     let best = 0;
     for (let i = 1; i < open.length; i++)
       if (nodes[open[i]].f < nodes[open[best]].f) best = i;
@@ -67,7 +68,7 @@ export function localPath(
       const p = { x: node.p.x + dx * NAV.cell, y: node.p.y + dy * NAV.cell };
       const key = `${Math.round((p.x - start.x) / NAV.cell)},${Math.round((p.y - start.y) / NAV.cell)}`;
       if (
-        distance(p, start) > NAV.radius ||
+        distance(p, start) > limits.radius ||
         !allowed(p) ||
         query.blocked(p.x, p.y) ||
         !query.clear(node.p, p)
@@ -84,7 +85,7 @@ export function localPath(
         });
       } else {
         // 生成数与展开数都有硬上限，避免不可达目标耗尽全图。
-        if (nodes.length >= NAV.nodes) continue;
+        if (nodes.length >= limits.nodes) continue;
         seen.set(key, nodes.length);
         nodes.push({
           p,
@@ -95,8 +96,16 @@ export function localPath(
         open.push(nodes.length - 1);
       }
     }
+    // 每次暂停已完成一个节点的所有边检查；恢复时保留原有优先级与父节点。
+    yield;
   }
   return { path: null, visited };
+}
+export function localPath(...args: Parameters<typeof pathSearch>) {
+  const search = pathSearch(...args);
+  let result = search.next();
+  while (!result.done) result = search.next();
+  return result.value;
 }
 export function nearestStanding(
   origin: Point,

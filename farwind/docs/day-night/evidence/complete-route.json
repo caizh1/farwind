@@ -1,0 +1,441 @@
+{
+  "说明": "同一真实新档连续恢复验证的证据链。不是从头单轮全过；所有恢复用未经结果字段改写的实际State，debug仅正式日历跳时，不虚耗保护/冷却。",
+  "前段日志": "../../../.parry-local/day-night/complete-journey.log",
+  "中断夜袭日志": "../../../.parry-local/day-night/complete-candidate.log",
+  "后半候选通过日志": "../../../.parry-local/day-night/complete-after-raid.log",
+  "最终源码后半通过日志": "../../../.parry-local/day-night/final-journey.log",
+  "检查点": [
+    {
+      "阶段": "前段实际新档",
+      "快照SHA256": "527c816e444ee31bdec9665c68d806687381d0ef69bd0cdaad92626b475be33b",
+      "原始实际快照": "/tmp/farwind-day-night-last-state.json",
+      "累计分钟": 2887.3401150035843,
+      "金币": 90,
+      "主线": 4,
+      "夜风": true,
+      "夜计划": {
+        "night": 2,
+        "at": 2691,
+        "gate": "south-gate",
+        "count": 2,
+        "outcome": "cancelled",
+        "raidSequence": null
+      },
+      "处理说明": "首次脚本仅等待保护，未耗尽原6分钟冷却；合法取消保留，不算全程通过"
+    },
+    {
+      "阶段": "继续正常耗尽保护与冷却",
+      "快照SHA256": "10e0a24e69011110218ce9b60dbc53bef664b8d5869c7c97cc6582d7ef22e5cc",
+      "原始实际快照": "/tmp/farwind-day-night-continuation-state.json",
+      "累计分钟": 5767.540094993161,
+      "金币": 90,
+      "主线": 4,
+      "夜风": true,
+      "夜计划": {
+        "night": 4,
+        "at": 5547,
+        "gate": "south-gate",
+        "count": 2,
+        "outcome": "cancelled",
+        "raidSequence": null
+      },
+      "处理说明": "原营房出口重叠真实发现；单调分离修复"
+    },
+    {
+      "阶段": "定位轮休召回循环依赖",
+      "快照SHA256": "3fce4ffa14bc7ccb30cf1b641c00c8eee411de16567a9c8cbc5a97f081e2d742",
+      "原始实际快照": "/tmp/farwind-day-night-current-path.json",
+      "累计分钟": 6960.024989999999,
+      "金币": 90,
+      "主线": 4,
+      "夜风": true,
+      "夜计划": {
+        "night": 5,
+        "at": 7046,
+        "gate": "north-gate",
+        "count": 4,
+        "outcome": "pending",
+        "raidSequence": null
+      },
+      "处理说明": "出生点合法而弓手offDuty；pending召回修复后从原计划继续"
+    },
+    {
+      "阶段": "正式夜袭结算与重载",
+      "快照SHA256": "5b4f49121bd1605d30f849a05f57dcda3cc0ae68e6dde9a4da6caa971f789599",
+      "原始实际快照": "/tmp/farwind-day-night-after-raid.json",
+      "累计分钟": 7214.189449993151,
+      "金币": 90,
+      "主线": 5,
+      "夜风": true,
+      "夜计划": {
+        "night": 5,
+        "at": 7046,
+        "gate": "north-gate",
+        "count": 4,
+        "outcome": "started",
+        "raidSequence": 1
+      },
+      "处理说明": "原实际检查点；脚本漏材料/敲门顺序，保留中断记录，再真实采集继续"
+    }
+  ],
+  "最终步骤": [
+    {
+      "步骤": "恢复前段真实同档，保存全部原值继续后半程",
+      "记录时间": "2026-09-27T02:47:09.782Z",
+      "累计分钟": 7214.462524993148,
+      "有效毫秒": 182.05000000000024,
+      "金币": 90,
+      "任务": 5,
+      "夜风": true,
+      "计划": {
+        "night": 5,
+        "at": 7046,
+        "gate": "north-gate",
+        "count": 4,
+        "outcome": "started",
+        "raidSequence": 1
+      },
+      "保护": 0,
+      "守卫": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "dead": false
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "dead": false
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "dead": false
+        }
+      ],
+      "位置": {
+        "x": 550.3169931226934,
+        "y": 650.3985048417234,
+        "hp": 26,
+        "stamina": 100
+      }
+    },
+    {
+      "步骤": "实际采集路标修复材料",
+      "记录时间": "2026-09-27T02:47:38.930Z",
+      "累计分钟": 7258.162429992435,
+      "有效毫秒": 29315.320000000072,
+      "金币": 90,
+      "任务": 5,
+      "夜风": true,
+      "计划": {
+        "night": 5,
+        "at": 7046,
+        "gate": "north-gate",
+        "count": 4,
+        "outcome": "started",
+        "raidSequence": 1
+      },
+      "保护": 0,
+      "守卫": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "dead": false
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "dead": false
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "dead": false
+        }
+      ],
+      "位置": {
+        "x": 2999.07038807023,
+        "y": 1031.4421231718077,
+        "hp": 66,
+        "stamina": 100
+      }
+    },
+    {
+      "步骤": "夜间顺序谜题、快捷传送与主线完成",
+      "记录时间": "2026-09-27T02:48:12.280Z",
+      "累计分钟": 7307.143414991749,
+      "有效毫秒": 61969.31,
+      "金币": 90,
+      "任务": 7,
+      "夜风": true,
+      "计划": {
+        "night": 5,
+        "at": 7046,
+        "gate": "north-gate",
+        "count": 4,
+        "outcome": "started",
+        "raidSequence": 1
+      },
+      "保护": 0,
+      "守卫": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "dead": false
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "dead": false
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "dead": false
+        }
+      ],
+      "位置": {
+        "x": 467.0829441212253,
+        "y": 595.5244015844535,
+        "hp": 66,
+        "stamina": 100
+      }
+    },
+    {
+      "步骤": "实际受击死亡后返回，主线与一次状态保留",
+      "记录时间": "2026-09-27T02:48:54.962Z",
+      "累计分钟": 7370.5783549907665,
+      "有效毫秒": 104259.27000000035,
+      "金币": 90,
+      "任务": 7,
+      "夜风": true,
+      "计划": {
+        "night": 5,
+        "at": 7046,
+        "gate": "north-gate",
+        "count": 4,
+        "outcome": "started",
+        "raidSequence": 1
+      },
+      "保护": 0,
+      "守卫": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "dead": false
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "dead": false
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "dead": false
+        }
+      ],
+      "位置": {
+        "x": 670,
+        "y": 720,
+        "hp": 100,
+        "stamina": 100
+      }
+    },
+    {
+      "步骤": "返回标题并继续同一存档",
+      "记录时间": "2026-09-27T02:48:55.262Z",
+      "累计分钟": 7371.058354990753,
+      "有效毫秒": 133.18999999999795,
+      "金币": 90,
+      "任务": 7,
+      "夜风": true,
+      "计划": {
+        "night": 5,
+        "at": 7046,
+        "gate": "north-gate",
+        "count": 4,
+        "outcome": "started",
+        "raidSequence": 1
+      },
+      "保护": 0,
+      "守卫": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "dead": false
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "dead": false
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "dead": false
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "dead": false
+        }
+      ],
+      "位置": {
+        "x": 670,
+        "y": 720,
+        "hp": 100,
+        "stamina": 100
+      }
+    }
+  ],
+  "最终代码": "final-runtime.json",
+  "最终实际快照": "complete-path-final-state.json",
+  "最终结果": "后半程1项通过1.8分钟；主线7，夜风已领，夜袭序号1，pageerror为空"
+}

@@ -1,0 +1,11 @@
+{
+  "说明": "全量在冻结副本执行，保护已有脏工作区证据，原断言未改。145项已全部结束：97通过、46失败、2跳过，退出码1。环境限制与确定原因分别记录；完整清单见full-run-summary.json。",
+  "预览目录已补齐": ".water-local/after/docs/sword-wind/assets",
+  "预览用例初始限制": "素材预览缺目录，默认配置也未启用recordVideo，而用例要求保存录屏。",
+  "全量副本": "5192较早水效实现；最终5221另做全部水景专项、截图与录屏。",
+  "独立预览复核": "补齐源目录并使用录屏配置，不改断言；1/1通过，结果见preview-browser-results.json。",
+  "测试进程内存错误": "V3-VISUAL-perfect-hit-combo的Node进程达到约4087MiB堆上限，报JavaScript heap out of memory并SIGABRT；该项未通过，不据此宣称游戏发生内存泄漏。",
+  "额外执行限制": "默认配置未录屏，部分剑风用例page.video()为null；副本部分证据目录缺失，写文件ENOENT；三项村庄致死恢复夹具.parry-local/m5/fixtures.json缺失；专用弹反生产服务4188未启动。原错误保留，不伪报通过。",
+  "旧水景断言": "visual-polish.spec.ts:294仍要求两个旧Tween，实际为0；本次明确替换原两个Tween，新独立水效生命周期专项通过，未放宽旧断言。",
+  "证据热重载限制": "隔离副本的Vite仍会监视HTML文件；保存基线trace的HTML和补齐素材预览时曾记录page reload通知。因此全量失败的归属受此限制影响，不能一概认定游戏代码回归。最终水效专项和直接生产构建检查单独通过。"
+}

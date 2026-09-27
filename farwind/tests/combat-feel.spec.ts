@@ -71,6 +71,8 @@ test("固定早按与乱按：单击不自动续刀，最多预约一刀，停�
   );
   // 方向和普通移动前置条件独立验证；固定60ms接招仍不读取合法窗口。
   await page.keyboard.down("d");
+  // 等输入进入有效模拟后再采样；保留原来的150像素/秒精确断言。
+  await expect.poll(()=>page.evaluate(()=>(window as any).__farwind().animation.hero.action)).toBe("walk");
   const before = await page.evaluate(() => (window as any).__farwind());
   await page.waitForTimeout(120);
   const after = await page.evaluate(() => (window as any).__farwind());
@@ -81,7 +83,7 @@ test("固定早按与乱按：单击不自动续刀，最多预约一刀，停�
     150 * simulated,
     1,
   );
-  await page.screenshot({ path: "docs/combat-feel/evidence/input-move.png" });
+  await page.screenshot({ path: `${process.env.FARWIND_EVIDENCE_ROOT??"docs"}/combat-feel/evidence/input-move.png` });
 });
 
 // 两个明确标识的导入夹具，只设置起点；敌人、碰撞、伤害仍走真实游戏链路。
@@ -158,7 +160,7 @@ test("隔离河岸夹具：风步与普攻踏步不穿障碍，范围内隔岸�
     westBank(after.state.player.y),
   );
   expect(after.enemies.find((e: any) => e.id === "slime-2").hp).toBe(hp);
-  await page.screenshot({ path: "docs/combat-feel/evidence/river-wall.png" });
+  await page.screenshot({ path: `${process.env.FARWIND_EVIDENCE_ROOT??"docs"}/combat-feel/evidence/river-wall.png` });
 });
 test("隔离多目标夹具：引近现有两只史莱姆，同一刀分别命中一次", async ({
   page,
@@ -207,5 +209,5 @@ test("隔离多目标夹具：引近现有两只史莱姆，同一刀分别命�
     e.id.startsWith("slime"),
   ))
     expect(e.hp).toBe(30);
-  await page.screenshot({ path: "docs/combat-feel/evidence/multi-target.png" });
+  await page.screenshot({ path: `${process.env.FARWIND_EVIDENCE_ROOT??"docs"}/combat-feel/evidence/multi-target.png` });
 });

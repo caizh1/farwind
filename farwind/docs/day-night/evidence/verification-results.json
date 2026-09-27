@@ -1,0 +1,121 @@
+{
+  "说明": "真实命令/结果精选，不将多次同一断言的通过数量相加成覆盖数。原日志与失败trace保留在.parry-local/day-night各独立目录。",
+  "记录时间": "2026-09-27T03:04:32.232605+00:00",
+  "环境": {
+    "系统": "macOS darwin27.0.0",
+    "处理器": "Apple M5 Pro",
+    "浏览器": "Chromium153.0.8010.12",
+    "Phaser": "4.2.1",
+    "测试隔离": "临时浏览器上下文、隔离IndexedDB测试档；没有操作真实存档"
+  },
+  "记录": [
+    {
+      "范围": "M0基线",
+      "命令": "npm run typecheck；npm test；npm run build",
+      "结果": "类型/构建通过，17文件296项通过约121秒",
+      "版本": "HEAD eac16f44dcc6c9b745dc5d6d24065ca841ba346c"
+    },
+    {
+      "范围": "全量浏览器首轮",
+      "命令": "npx playwright test --config tools/playwright-day-night-regression.config.ts --workers=1",
+      "结果": "107通过24失败2跳过，30.2分钟；24项后续分原因逐项复测，不改称该次全过",
+      "日志": "regression-delivery.log",
+      "版本": "delivery-runtime.json"
+    },
+    {
+      "范围": "最终全量单元",
+      "命令": "npm test",
+      "结果": "22文件433项全过，316.55秒",
+      "日志": "unit-final-integrated.log",
+      "版本": "final-runtime-before-water.json"
+    },
+    {
+      "范围": "最终昼夜浏览器",
+      "命令": "FARWIND_URL=http://127.0.0.1:5897 npx playwright test tests/day-night.spec.ts tests/day-night-failure.spec.ts --config tools/playwright-day-night.config.ts",
+      "结果": "14项全过3.4分钟；键鼠、写失败、一次奖励、旅馆、夜袭、三档DPR、焦点与资源",
+      "日志": "final-integrated-browser.log",
+      "版本": "final-runtime-before-water.json"
+    },
+    {
+      "范围": "正式构建",
+      "命令": "npm run build -- --outDir .parry-local/day-night/production",
+      "结果": "tsc通过、71模块；既有超过500kB分块提示",
+      "日志": "build-final-assets.log",
+      "版本": "final-runtime.json"
+    },
+    {
+      "范围": "正式浏览器",
+      "命令": "FARWIND_PRODUCTION_URL=http://127.0.0.1:5899 npx playwright test tests/day-night-production.spec.ts --config tools/playwright-day-night-production.config.ts",
+      "结果": "当前源码及资源正式2项通过14.2秒；此前修复版本也分别通过14.8/14.5秒",
+      "日志": "final-assets-production.log",
+      "版本": "final-runtime.json"
+    },
+    {
+      "范围": "剑风原断言及素材",
+      "命令": "FARWIND_URL=http://127.0.0.1:5897 FARWIND_PRODUCTION_URL=http://127.0.0.1:5899 npx playwright test tests/sword-wind.spec.ts tests/sword-wind-rise.spec.ts tests/sword-wind-assets.spec.ts --config tools/playwright-day-night-regression.config.ts --project 开发 --grep 'WIND-01|WIND-02|WIND-03|WIND-04|WIND-05|WIND-06|WIND-09|WIND-10|WIND-11|WIND-12|独立素材' --output .parry-local/day-night/wind-video-results",
+      "结果": "11项通过1.1分钟；原失败均在page.video空值保存，补配置后通过，未改核心断言",
+      "日志": "wind-video-confirmed.log",
+      "版本": "acceptance-runtime.json"
+    },
+    {
+      "范围": "真实活跃夜战连续证据",
+      "命令": "npx playwright test tests/day-night.spec.ts --config tools/playwright-day-night-regression.config.ts --project 开发 --grep 正式夜袭保存后才出生",
+      "结果": "1项通过18.4秒，录像17.72秒；实际出生、移动、守卫交战、K/J、保存重载",
+      "日志": "night-battle-video.log",
+      "版本": "final-runtime-before-water.json"
+    },
+    {
+      "范围": "同档最新后半",
+      "命令": "FARWIND_JOURNEY_CONTINUE=/tmp/farwind-day-night-after-raid.json FARWIND_URL=http://127.0.0.1:5897 npx playwright test tests/day-night-journey.spec.ts --config tools/playwright-day-night.config.ts",
+      "结果": "1项通过1.8分钟，从实际同档原快照恢复；不是从头单轮全过",
+      "日志": "final-journey.log",
+      "版本": "final-runtime-before-water.json"
+    },
+    {
+      "范围": "最后共享水效常数整理",
+      "命令": "npx vitest run tests/water-motion.test.ts tests/day-night.test.ts tests/economy.test.ts",
+      "结果": "3文件73项通过1.43秒",
+      "日志": "final-shared-targeted.log",
+      "版本": "final-runtime.json"
+    },
+    {
+      "范围": "最后共享资源变化",
+      "命令": "FARWIND_URL=http://127.0.0.1:5897 FARWIND_PRODUCTION_URL=http://127.0.0.1:5899 npx playwright test tests/day-night.spec.ts tests/visual-polish.spec.ts --config tools/playwright-day-night-regression.config.ts --project 开发 --grep '四阶段及夜间森林遗迹|village-polish-render-lifecycle' --output .parry-local/day-night/final-assets",
+      "结果": "当前源码及资源四阶段/水效生命周期2项通过29.8秒；常数整理后的上一版本27.0秒",
+      "日志": "final-assets.log",
+      "版本": "final-runtime.json"
+    },
+    {
+      "范围": "独立只读审查",
+      "命令": "源码/调用链反证审查，类型检查及筛选测试",
+      "结果": "VERDICT: PASS，无P0/P1；68项通过41项筛选未运行；没有再次浏览器或听感主张"
+    },
+    {
+      "范围": "性能同条件",
+      "命令": "FARWIND_MEASURE_URL=http://127.0.0.1:5897 node tools/measure-day-night.mjs",
+      "结果": "3场各30秒正常速率，同尺寸录像；中位8.3ms，P95 10.2/10.1/10.1ms，最大10.4/250/249.9ms；不宣称稳定60FPS",
+      "日志": "performance-final.log",
+      "版本": "final-runtime-before-water.json"
+    },
+    {
+      "范围": "连续光照及环境音采集",
+      "命令": "FARWIND_RECORD_URL=http://127.0.0.1:5897 node tools/record-day-night.mjs；ffmpeg volumedetect",
+      "结果": "正常模拟35秒跨19点；录音可解码，均值-67.6dB峰值-48.4dB；听感未验",
+      "日志": "transition-final.log；ambience-final-analysis.log",
+      "版本": "final-runtime-before-water.json"
+    },
+    {
+      "范围": "无录像及CPU长帧诊断",
+      "命令": "忽略目录内基于measure-day-night脚本的受控诊断，关闭录像、20秒CDP CPU采样",
+      "结果": "无录像30秒最大208.4ms；采样20秒最大250ms，最大采样间隔236.6ms为(program)；未确认根因，保留风险",
+      "日志": "performance-no-video.log；night-cpu-profile.log",
+      "版本": "final-runtime.json"
+    }
+  ],
+  "遗留验证边界": [
+    "环境音无可用监听输入，M2及完整验收blocked",
+    "短测偶发208—250ms长帧，关闭录像及CPU采样后仍未确认根因；正常速率长期性能未验。",
+    "首次全量133项没有再次整套一轮执行，而是24个失败逐项修复/补测"
+  ],
+  "工作区": "共享树含NPC/水效/反馈/驻防及历史证据；无提交/推送/部署"
+}

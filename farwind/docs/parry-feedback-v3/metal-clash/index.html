@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>双剑碰撞音色对照</title>
+<style>body{margin:0;background:#182f28;color:#fff3d6;font:16px/1.7 system-ui}main{max-width:900px;margin:auto;padding:32px 20px}section{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}article{padding:20px;background:#294337;border:1px solid #bca87b;border-radius:12px}h2{font-size:18px}audio{width:100%;max-width:100%}a{color:#c7ead8}</style>
+<main><h1>双剑碰撞音色对照</h1><p>新版突出短促金属接触，减少闷响。精准沿用同一声底，增加刃鸣。</p>
+<section>
+<article><h2>新版 · 普通招架</h2><audio controls preload="metadata" src="audio/parry-contact.wav"></audio></article>
+<article><h2>新版 · 精准招架</h2><audio controls preload="metadata" src="audio/parry-perfect-contact.wav"></audio></article>
+<article><h2>此前 · 普通招架</h2><audio controls preload="metadata" src="audio/previous-normal.wav"></audio></article>
+<article><h2>此前 · 精准招架</h2><audio controls preload="metadata" src="audio/previous-perfect.wav"></audio></article>
+</section><p><a href="http://127.0.0.1:5173/" target="_blank" rel="noopener">进入当前游戏练习</a> · K／右键架剑；村庄木桩旁开启“迎风架剑练习”。</p></main>
+<script>for(const a of document.querySelectorAll('audio')){a.volume=.6;a.addEventListener('play',()=>{for(const b of document.querySelectorAll('audio'))if(b!==a)b.pause()})}</script></html>

@@ -1,11 +1,76 @@
+import {synthFeedback,soundDuration,audioIdentity,FEEDBACK_AUDIO} from "./feedbackAudio";
+import {feedbackAudio,audibleFeedback,type FeedbackEvent,type FeedbackMode} from "./combatFeedback";
+import {synthSwordWindHowl} from './swordWindAudio';
 export class Sound {
   context?: AudioContext;
-  volume = 0.25;
+  private level = 0.25;
+  get volume(){return this.level;}
+  set volume(value:number){this.level=value;if(!value)this.silenceSwordWind();else if(this.context)for(const gain of this.windVoices.values())gain.gain.setTargetAtTime(value,this.context.currentTime,.004);}
   output?: DynamicsCompressorNode;
   lastPlayed=new Map<string,number>();
+  buses?:Record<'threat'|'player'|'battle'|'noncritical',GainNode>;
+  private feedbackBuffers=new Map<string,AudioBuffer>();
+  private voices=new Set<AudioBufferSourceNode>();
+  private strikeVoices=new Map<string,AudioBufferSourceNode>();
+  private variants=new Map<string,number>();
+  private windBuffer?:AudioBuffer;
+  private windVoices=new Map<AudioBufferSourceNode,GainNode>();
+  audioEvents:{id:string;kind:string;sim:number;submitted:number;scheduled:number;latency:number|null;variant:number}[]=[];
+  prepareFeedback() {
+    const c=this.context!;if(this.feedbackBuffers.size)return;
+    for(const kind of ['guard-start','enemy-charge','enemy-strike','parry-contact','parry-perfect-contact','deflect-release','counter-swing','counter-hit','afterguard'] as const)
+      for(const material of kind==='counter-hit'?['slime','leaf','straw'] as const:['slime'] as const)for(let v=0;v<FEEDBACK_AUDIO.variants;v++) {
+        const samples=synthFeedback(kind,material,v,c.sampleRate),buffer=c.createBuffer(1,samples.length,c.sampleRate);buffer.copyToChannel(samples,0);this.feedbackBuffers.set(`${kind}:${material}:${v}`,buffer);
+      }
+  }
+  feedbackBatch(events:readonly FeedbackEvent[],mode:FeedbackMode) {
+    for(const event of feedbackAudio(mode)?audibleFeedback(events):events)this.feedback(event,mode);
+  }
+  feedback(event:FeedbackEvent,mode:FeedbackMode) {
+    if(!feedbackAudio(mode)) {
+      const legacy:Record<string,string>={'guard-start':'guard','enemy-charge':'enemy-charge','enemy-strike':'enemy-strike','parry-contact':'parry','parry-perfect-contact':'parry-perfect','counter-start':'deflect','counter-hit':event.legacyHit??(event.material==='straw'?'straw':'hit')};
+      if(legacy[event.kind])this.play(legacy[event.kind]);return;
+    }
+    const c=this.context;if(!c||!this.volume||c.state!=='running'||soundDuration(event.kind)===0)return;
+    // 较早子步已发声的同一次来招也在成功时截停；不压低整个威胁声部。
+    if(['parry-contact','parry-perfect-contact','afterguard'].includes(event.kind)){this.strikeVoices.get(event.attackId)?.stop();this.strikeVoices.delete(event.attackId);}
+    const material=event.kind==='counter-hit'?event.material:'slime',key=`${event.kind}:${material}`,variant=(this.variants.get(key)??0)%FEEDBACK_AUDIO.variants;this.variants.set(key,variant+1);
+    const source=c.createBufferSource(),gain=c.createGain();source.buffer=this.feedbackBuffers.get(`${key}:${variant}`)!;
+    if(!source.buffer)return;
+    if(this.voices.size>=FEEDBACK_AUDIO.voices){const old=this.voices.values().next().value!;old.stop();this.voices.delete(old);}
+    gain.gain.value=this.volume;source.connect(gain);gain.connect(this.buses![audioIdentity(event.kind)]);
+    this.voices.add(source);if(event.kind==='enemy-strike')this.strikeVoices.set(event.attackId,source);const at=c.currentTime;source.start(at);source.onended=()=>{this.voices.delete(source);if(this.strikeVoices.get(event.attackId)===source)this.strikeVoices.delete(event.attackId);source.disconnect();gain.disconnect();};
+    this.audioEvents.push({id:event.id,kind:event.kind,sim:event.at,submitted:performance.now(),scheduled:at,latency:c.outputLatency??null,variant});if(this.audioEvents.length>96)this.audioEvents.shift();
+    if(event.kind==='parry-contact'||event.kind==='parry-perfect-contact'||event.kind==='counter-hit')for(const bus of ['battle','noncritical'] as const){const g=this.buses![bus].gain;g.cancelScheduledValues(at);g.setValueAtTime(g.value,at);g.linearRampToValueAtTime(10**(-FEEDBACK_AUDIO.duckDb/20),at+.003);g.linearRampToValueAtTime(1,at+FEEDBACK_AUDIO.duckRestore);}
+  }
+  private silenceSwordWind(){for(const voice of this.windVoices.keys())voice.stop();this.windVoices.clear();}
+  silenceFeedback(){this.silenceSwordWind();for(const voice of this.voices)voice.stop();this.voices.clear();this.strikeVoices.clear();if(this.buses&&this.context)for(const bus of Object.values(this.buses)){bus.gain.cancelScheduledValues(this.context.currentTime);bus.gain.setValueAtTime(1,this.context.currentTime);}}
+  clearFeedback(){this.silenceFeedback();this.audioEvents=[];this.variants.clear();}
+  diagnostic(){return {voices:this.voices.size,strikeVoices:this.strikeVoices.size,audioProfile:'双剑金属／同来招截停',windVoices:this.windVoices.size,windCached:!!this.windBuffer,cached:this.feedbackBuffers.size,events:this.audioEvents,state:this.context?.state??'unstarted',outputLatency:this.context?.outputLatency??null,buses:this.buses?Object.fromEntries(Object.entries(this.buses).map(([k,v])=>[k,v.gain.value])):null};}
+  private route(kind:string){return this.buses?.[kind.startsWith('enemy-')?'threat':kind.startsWith('wind-')||['attack','attack-heavy','hit','finish','straw','straw-heavy'].includes(kind)?'battle':['guard','parry','parry-perfect','deflect','counter'].includes(kind)?'player':'noncritical']??this.output??this.context!.destination;}
+  loops:{source:AudioBufferSourceNode;filter:BiquadFilterNode;gain:GainNode;target:number}[]=[];
+  ambience(night:number,active:boolean){
+    if(!active)this.silenceSwordWind();
+    if(!this.context)return;
+    const c=this.context;
+    if(active&&!this.loops.length){
+      for(let layer=0;layer<2;layer++){
+        const buffer=c.createBuffer(1,c.sampleRate*8,c.sampleRate),v=buffer.getChannelData(0);let seed=1729,pink=0;
+        for(let i=0;i<v.length;i++){seed=seed*16807%2147483647;pink=.98*pink+.02*(seed/1073741824-1);const envelope=layer?Math.pow(Math.max(0,Math.sin(i/c.sampleRate*5.5)*Math.sin(i/c.sampleRate*.75)),4):.5+.15*Math.sin(i/c.sampleRate*1.1);v[i]=pink*envelope;}
+        const source=c.createBufferSource(),filter=c.createBiquadFilter(),gain=c.createGain();source.buffer=buffer;source.loop=true;
+        filter.type=layer?"bandpass":"lowpass";filter.frequency.value=layer?2800:900;filter.Q.value=.5;gain.gain.value=0;
+        source.connect(filter);filter.connect(gain);gain.connect(this.route("ambience"));source.start();this.loops.push({source,filter,gain,target:0});
+      }
+    }
+    this.loops.forEach((l,i)=>{const target=active?this.volume*(i?night*.18:(1-night)*.15):0;if(target===0&&l.target!==0||Math.abs(target-l.target)>.0001){l.gain.gain.cancelScheduledValues(c.currentTime);l.gain.gain.setTargetAtTime(target,c.currentTime,.25);l.target=target;}});
+  }
+  destroy(){this.clearFeedback();for(const bus of Object.values(this.buses??{}))bus.disconnect();this.buses=undefined;this.feedbackBuffers.clear();this.windBuffer=undefined;for(const l of this.loops){l.source.stop();l.source.disconnect();l.filter.disconnect();l.gain.disconnect();}this.loops=[];void this.context?.close();this.context=undefined;this.output=undefined;}
   start() {
     this.context ??= new AudioContext();
     if(!this.output){this.output=this.context.createDynamicsCompressor();this.output.threshold.value=-9;this.output.knee.value=6;this.output.ratio.value=8;this.output.attack.value=.003;this.output.release.value=.1;this.output.connect(this.context.destination);}
+    if(!this.buses){this.buses={} as NonNullable<Sound['buses']>;for(const name of ['threat','player','battle','noncritical'] as const){const gain=this.context.createGain();gain.connect(this.output);this.buses[name]=gain;}}
+    this.prepareFeedback();
+    if(!this.windBuffer){const samples=synthSwordWindHowl(this.context.sampleRate);this.windBuffer=this.context.createBuffer(2,samples[0].length,this.context.sampleRate);samples.forEach((channel,i)=>this.windBuffer!.copyToChannel(channel,i));}
     void this.context.resume();
   }
   play(kind = "pick") {
@@ -13,8 +78,8 @@ export class Sound {
     const at=this.context.currentTime;
     if(at-(this.lastPlayed.get(kind)??-Infinity)<.025)return;this.lastPlayed.set(kind,at);
     if(kind.startsWith('wind-')){this.swordWindSound(kind);return;}
-    if(["enemy-charge","enemy-strike","enemy-stagger","deflect","counter"].includes(kind)){this.motionSound(kind);return;}
-    if(["guard","parry","parry-perfect"].includes(kind)) {this.parrySound(kind);return;}
+    if(["enemy-charge","enemy-strike","enemy-stagger","deflect","counter"].includes(kind)){this.legacyMotionSound(kind);return;}
+    if(["guard","parry","parry-perfect"].includes(kind)) {this.legacyParrySound(kind);return;}
     if (
       [
         "attack",
@@ -53,32 +118,41 @@ export class Sound {
     g.gain.setValueAtTime(this.volume * 0.3, c.currentTime);
     g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.2);
     o.connect(g);
-    g.connect(this.output??c.destination);
+    g.connect(this.route(kind));
     o.start();
     o.stop(c.currentTime + 0.21);
+    o.onended=()=>{o.disconnect();g.disconnect();};
   }
   private swordWindSound(kind:string){
+    if(kind==='wind-release'){this.swordWindHowl();return;}
     const c=this.context!,at=c.currentTime,charge=kind==='wind-charge',hit=kind==='wind-hit',dissolve=kind==='wind-dissolve',duration=charge?.11:hit?.13:dissolve?.06:.14;
     const noise=c.createBuffer(1,Math.ceil(c.sampleRate*duration),c.sampleRate),samples=noise.getChannelData(0);let seed=hit?941:charge?307:1709;
     for(let i=0;i<samples.length;i++){seed=seed*16807%2147483647;samples[i]=seed/1073741824-1;}
     const source=c.createBufferSource(),filter=c.createBiquadFilter(),gain=c.createGain();source.buffer=noise;filter.type=hit?'highpass':'bandpass';filter.Q.value=.7;
     filter.frequency.setValueAtTime(charge?700:hit?1600:dissolve?1100:5400,at);filter.frequency.exponentialRampToValueAtTime(charge?1500:hit?500:dissolve?350:850,at+duration);
     gain.gain.setValueAtTime(.001,at);gain.gain.linearRampToValueAtTime(this.volume*(charge?.2:hit?.8:dissolve?.15:.75),at+(charge?.045:.006));gain.gain.exponentialRampToValueAtTime(.001,at+duration);
-    source.connect(filter);filter.connect(gain);gain.connect(this.output??c.destination);source.start(at);source.stop(at+duration);source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect();};
+    source.connect(filter);filter.connect(gain);gain.connect(this.route(kind));source.start(at);source.stop(at+duration);source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect();};
   }
-  private motionSound(kind:string) {
+  private swordWindHowl(){
+    const c=this.context!;if(c.state!=='running'||!this.windBuffer)return;
+    if(this.windVoices.size>=2){const oldest=this.windVoices.keys().next().value!;oldest.stop();this.windVoices.delete(oldest);}
+    const source=c.createBufferSource(),gain=c.createGain();source.buffer=this.windBuffer;gain.gain.value=this.volume;
+    source.connect(gain);gain.connect(this.route('wind-release'));this.windVoices.set(source,gain);
+    source.onended=()=>{this.windVoices.delete(source);source.disconnect();gain.disconnect();};source.start(c.currentTime);
+  }
+  private legacyMotionSound(kind:string) {
     const c=this.context!,at=c.currentTime,charge=kind==="enemy-charge",contact=kind==="enemy-stagger",duration=charge?.23:contact?.14:.12;
     const buffer=c.createBuffer(1,Math.ceil(c.sampleRate*duration),c.sampleRate),samples=buffer.getChannelData(0);let seed=701;
     for(let i=0;i<samples.length;i++){seed=seed*16807%2147483647;samples[i]=seed/1073741824-1;}
     const source=c.createBufferSource(),filter=c.createBiquadFilter(),gain=c.createGain();source.buffer=buffer;filter.type="bandpass";filter.Q.value=.65;
     filter.frequency.setValueAtTime(charge?220:contact?420:3200,at);filter.frequency.exponentialRampToValueAtTime(charge?450:contact?110:650,at+duration);
     gain.gain.setValueAtTime(.001,at);gain.gain.linearRampToValueAtTime(this.volume*(charge?.18:contact?.35:.42),at+(charge?.1:.012));gain.gain.exponentialRampToValueAtTime(.001,at+duration);
-    source.connect(filter);filter.connect(gain);gain.connect(this.output??c.destination);source.start(at);source.stop(at+duration);source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect();};
+    source.connect(filter);filter.connect(gain);gain.connect(this.route(kind));source.start(at);source.stop(at+duration);source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect();};
   }
-  private parrySound(kind:string) {
+  private legacyParrySound(kind:string) {
     const c=this.context!,at=c.currentTime,perfect=kind==="parry-perfect",guard=kind==="guard";
     // 起手是短促剑身轻响；接触用独立的衰减金属谐波，避免通用提示上升音。
-    if(!guard)this.motionSound("enemy-stagger");
+    if(!guard)this.legacyMotionSound("enemy-stagger");
     const frequencies=guard?[620,930]:perfect?[780,1170,1950]:[650,1010];
     const duration=guard?0.06:perfect?0.17:0.13;
     frequencies.forEach((frequency,i)=>{
@@ -86,7 +160,7 @@ export class Sound {
       o.type="sine";o.frequency.setValueAtTime(frequency,begin);o.frequency.exponentialRampToValueAtTime(frequency*0.78,begin+duration);
       g.gain.setValueAtTime(0.001,begin);g.gain.linearRampToValueAtTime(this.volume*(guard?0.1:perfect?0.26:0.3)/(i+1),begin+0.003);
       g.gain.exponentialRampToValueAtTime(0.001,begin+duration);
-      o.connect(g);g.connect(this.output??c.destination);o.start(begin);o.stop(begin+duration);
+      o.connect(g);g.connect(this.route(kind));o.start(begin);o.stop(begin+duration);
       o.onended=()=>{o.disconnect();g.disconnect();};
     });
   }
@@ -131,7 +205,7 @@ export class Sound {
     gain.gain.exponentialRampToValueAtTime(0.001, at + duration);
     source.connect(filter);
     filter.connect(gain);
-    gain.connect(this.output??c.destination);
+    gain.connect(this.route(kind));
     source.start(at);
     source.stop(at + duration);
     source.onended = () => {
@@ -151,7 +225,7 @@ export class Sound {
       envelope.gain.setValueAtTime(this.volume * (heavy ? 0.65 : 0.38), at);
       envelope.gain.exponentialRampToValueAtTime(0.001, at + duration);
       body.connect(envelope);
-      envelope.connect(this.output??c.destination);
+      envelope.connect(this.route(kind));
       body.start(at);
       body.stop(at + duration);
       body.onended = () => {

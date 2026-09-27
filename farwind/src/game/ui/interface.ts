@@ -1,4 +1,5 @@
 import { showShop } from "./shop";
+import { clockLabel } from "../systems/worldClock";
 import { equipment, isEquipment, type ShopId } from "../../data/economy";
 import type { EconomyRequest } from "../systems/economy";
 import {
@@ -24,6 +25,7 @@ import { region } from "../../data/world";
 import type { PracticeMode } from "../systems/parryTraining";
 import { dialoguePortraitFor } from "../../data/dialoguePortraits";
 export type Actions = {
+  canMutate: ()=>boolean;
   trade: (request: EconomyRequest) => Promise<void>;
   start: (continued: boolean) => void;
   save: () => Promise<void>;
@@ -56,6 +58,7 @@ export class Interface {
   hud!: HTMLElement;
   toastEl!: HTMLElement;
   constructor() {
+    this.root.addEventListener("click",e=>{if(this.actions&&!this.actions.canMutate()){e.preventDefault();e.stopImmediatePropagation();}},true);
     this.root.innerHTML = `<div id="hud" hidden>
       <div class="top"><div class="vitals-stack"><section class="vitals"><img class="portrait" src="/assets/portrait.png" alt="旅行者"><div><b>旅人 <small>与小黑同行</small></b><div class="meter health"><i></i><span></span></div><div class="meter stamina"><i></i><span></span></div></div></section>
       <span id="combat-status">L 风步 · 就绪</span><span id="parry-status" role="status">K 架剑就绪</span><small id="sword-wind-status" hidden></small>
@@ -109,12 +112,14 @@ export class Interface {
   readPreferences() {
     const defaults = {
       version: 1,
+      nightVisibility: 0.5,
       minimap: false,
       quest: false,
       menuHintSeen: false,
     };
     try {
       const p = JSON.parse(localStorage.getItem("farwind-hud-v1") ?? "null");
+      if(Number.isFinite(p?.nightVisibility)&&p.nightVisibility>=0&&p.nightVisibility<=1)defaults.nightVisibility=p.nightVisibility;
       if (p?.version === 1)
         for (const key of ["minimap", "quest", "menuHintSeen"] as const)
           if (typeof p[key] === "boolean") defaults[key] = p[key];
@@ -199,6 +204,7 @@ export class Interface {
       (document.activeElement as HTMLElement).blur();
   }
   handleKey(e: KeyboardEvent) {
+    if(this.actions&&!this.actions.canMutate())return;
     const k = e.key.toLowerCase();
     if (this.paused) {
       if (k === "escape") {
@@ -490,7 +496,7 @@ export class Interface {
     if (mode === "pause") {
       this.shell(
         "在风中歇一会儿",
-        `<p class="pause-note">世界与时间已暂停。</p><button id="close" class="resume">继续旅途 <kbd>Esc</kbd></button><div class="pause-grid"><button id="pause-bag" data-panel="bag">行囊 <kbd>Tab</kbd></button><button id="pause-map" data-panel="map">完整地图 <kbd>M</kbd></button><button id="pause-quest" data-panel="quest">旅途手记 <kbd>Q</kbd></button><button id="pause-help" data-panel="help">操作说明 <span>查看操作</span></button></div><h2>存档与设置</h2><div class="pause-grid"><button id="save">保存旅途</button><button id="export">导出备份</button><button id="import">导入存档</button><button id="settings">设置</button><button id="title" class="wide">保存并返回标题</button></div><p class="backup-note">备份需下载到站点之外；清理站点数据会删除本地存档。</p>`,
+        `<p class="pause-note">世界与时间已暂停。</p><button id="close" class="resume" aria-label="继续旅途" aria-keyshortcuts="Escape">继续旅途 <kbd>Esc</kbd></button><div class="pause-grid"><button id="pause-bag" data-panel="bag">行囊 <kbd>Tab</kbd></button><button id="pause-map" data-panel="map">完整地图 <kbd>M</kbd></button><button id="pause-quest" data-panel="quest">旅途手记 <kbd>Q</kbd></button><button id="pause-help" data-panel="help">操作说明 <span>查看操作</span></button></div><h2>存档与设置</h2><div class="pause-grid"><button id="save">保存旅途</button><button id="export">导出备份</button><button id="import">导入存档</button><button id="settings">设置</button><button id="title" class="wide">保存并返回标题</button></div><p class="backup-note">备份需下载到站点之外；清理站点数据会删除本地存档。</p>`,
       );
       this.button("save", () => void this.actions.save().catch(() => {}));
       this.button("export", () => this.export());
@@ -506,8 +512,9 @@ export class Interface {
     if (mode === "settings") {
       this.shell(
         "旅途设置",
-        `<label>音效音量 <input id="volume" type="range" min="0" max="100" value="${Math.round(this.actions.getVolume() * 100)}"></label><p class="muted">使用程序合成音效，暂无背景音乐。</p><button id="fullscreen">切换全屏</button><button id="back">返回</button>`,
+        `<label>音效音量 <input id="volume" type="range" min="0" max="100" value="${Math.round(this.actions.getVolume() * 100)}"></label><label>夜间可见度 <input id="night-visibility" type="range" min="0" max="100" value="${Math.round(this.hudPreferences.nightVisibility*100)}"></label><p class="muted">可见度只调整表现。环境音与音效均使用程序合成。</p><button id="fullscreen">切换全屏</button><button id="back">返回</button>`,
       );
+      this.modal.querySelector<HTMLInputElement>("#night-visibility")!.oninput=(e)=>{this.hudPreferences.nightVisibility=Number((e.target as HTMLInputElement).value)/100;this.savePreferences();};
       this.modal.querySelector<HTMLInputElement>("#volume")!.oninput = (e) =>
         this.actions.volume(Number((e.target as HTMLInputElement).value) / 100);
       this.button("fullscreen", () => {
@@ -619,7 +626,7 @@ export class Interface {
       s.player.y,
     );
     const time = `${String(Math.floor(s.time / 60) % 24).padStart(2, "0")}:${String(Math.floor(s.time % 60)).padStart(2, "0")}`;
-    this.root.querySelector("#clock")!.textContent = time;
+    this.root.querySelector("#clock")!.textContent = clockLabel(s.time);
     this.root.querySelector("#day")!.textContent =
       `第 ${Math.floor(s.time / 1440) + 1} 日 · ${region(s.player.x, s.player.y)}`;
     this.root.querySelector("#objective")!.textContent = objectives[s.quest];

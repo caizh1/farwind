@@ -1,0 +1,560 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/node_modules/.bin/playwright",
+      "test",
+      "tests/safety-defense.spec.ts",
+      "tests/village-raids.spec.ts",
+      "tests/east-defense-recovery.spec.ts",
+      "tests/economy-production.spec.ts",
+      "--config",
+      "tools/playwright-safety.config.ts",
+      "--grep",
+      "安全近郊|主动拦截|低血三门|按有效时间|自动预警保存|事务中止|生产构建恢复|服务、暂停"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tools/playwright-safety.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "safety-defense.spec.ts",
+          "village-raids.spec.ts",
+          "east-defense-recovery.spec.ts",
+          "economy-production.spec.ts",
+          "training.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/village-defense/safety/production-v2/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "east-defense-recovery.spec.ts",
+      "file": "east-defense-recovery.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "实际守卫死亡后IDB请求成功但事务中止，暂停反馈与手动重存可恢复",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5233,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:33:25.206Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/east-defense-recovery-实际守卫死亡后IDB请求成功但事务中止，暂停反馈与手动重存可恢复/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-4dadc449ad3c7a8dd94c",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "title": "生产构建恢复活跃演练并自主结算，查询开关不暴露开发按钮",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13956,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:33:30.633Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/east-defense-recovery-生产构建恢复活跃演练并自主结算，查询开关不暴露开发按钮/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5f97ec76ebf1d1b58d48-b0e545349b3b3ff4c96e",
+          "file": "east-defense-recovery.spec.ts",
+          "line": 89,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "economy-production.spec.ts",
+      "file": "economy-production.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "生产构建的服务、暂停、实际成交和重载",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3506,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:33:44.603Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/economy-production-生产构建的服务、暂停、实际成交和重载/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a7c2d504b4e19f31485-f06d6cd6076f7f415804",
+          "file": "economy-production.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "safety-defense.spec.ts",
+      "file": "safety-defense.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "安全近郊实际漫步、远怪不追、主角与黑猫过门",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9494,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:33:48.127Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/safety-defense-安全近郊实际漫步、远怪不追、主角与黑猫过门/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ef109078ecafb50a4af-a7c3090f6eed2e00d9f8",
+          "file": "safety-defense.spec.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "实机主动拦截、一人守门、塔箭命中、归岗与脱战回血",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23953,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:33:57.632Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/safety-defense-实机主动拦截、一人守门、塔箭命中、归岗与脱战回血/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ef109078ecafb50a4af-39862423cf2720878cd1",
+          "file": "safety-defense.spec.ts",
+          "line": 17,
+          "column": 1
+        },
+        {
+          "title": "低血三门正式调度延期，暂停双方冻结、保存重载不复活",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7142,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:34:21.593Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/safety-defense-低血三门正式调度延期，暂停双方冻结、保存重载不复活/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0ef109078ecafb50a4af-836000d357e596248306",
+          "file": "safety-defense.spec.ts",
+          "line": 24,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "village-raids.spec.ts",
+      "file": "village-raids.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "东门按有效时间自动预警、离屏自主击退和保存恢复",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13920,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:34:28.754Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/village-raids-东门按有效时间自动预警、离屏自主击退和保存恢复/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ed411b8f4bd61e90f8c4-9375da10a0f0dbfbc79a",
+          "file": "village-raids.spec.ts",
+          "line": 12,
+          "column": 43
+        },
+        {
+          "title": "北门按有效时间自动预警、离屏自主击退和保存恢复",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12914,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:34:42.682Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/village-raids-北门按有效时间自动预警、离屏自主击退和保存恢复/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ed411b8f4bd61e90f8c4-d52d2f344b706e324b0f",
+          "file": "village-raids.spec.ts",
+          "line": 12,
+          "column": 43
+        },
+        {
+          "title": "南门按有效时间自动预警、离屏自主击退和保存恢复",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 18990,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tests/village-raids.spec.ts:24:96",
+                    "location": {
+                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tests/village-raids.spec.ts",
+                      "column": 96,
+                      "line": 24
+                    },
+                    "snippet": "  22 |  expect((await read(page)).state.defense.sequence).toBe(1);expect((await read(page)).defense.arrows).toEqual([]);\n  23 |  await page.waitForFunction(()=>(window as any).__farwind().defense.enemies.length>=1);\n> 24 |  await expect.poll(async()=>(await read(page)).defense.history.some((h:any)=>h.kind==='shot')).toBe(true);\n     |                                                                                                ^\n  25 |  const active=await read(page);if(active.session)expect(active.session.combat.hitStopRemaining).toBe(0);\n  26 |  await page.screenshot({path:`${root}/${gate.id}-offscreen.png`});\n  27 |  await expect.poll(async()=>(await read(page)).state.defense.raid,{timeout:60000}).toBeNull();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tests/village-raids.spec.ts",
+                        "column": 96,
+                        "line": 24
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  22 |  expect((await read(page)).state.defense.sequence).toBe(1);expect((await read(page)).defense.arrows).toEqual([]);\n  23 |  await page.waitForFunction(()=>(window as any).__farwind().defense.enemies.length>=1);\n> 24 |  await expect.poll(async()=>(await read(page)).defense.history.some((h:any)=>h.kind==='shot')).toBe(true);\n     |                                                                                                ^\n  25 |  const active=await read(page);if(active.session)expect(active.session.combat.hitStopRemaining).toBe(0);\n  26 |  await page.screenshot({path:`${root}/${gate.id}-offscreen.png`});\n  27 |  await expect.poll(async()=>(await read(page)).state.defense.raid,{timeout:60000}).toBeNull();\n    at /Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tests/village-raids.spec.ts:24:96"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:34:55.606Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/village-raids-南门按有效时间自动预警、离屏自主击退和保存恢复/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/village-raids-南门按有效时间自动预警、离屏自主击退和保存恢复/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/village-raids-南门按有效时间自动预警、离屏自主击退和保存恢复/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/village-raids-南门按有效时间自动预警、离屏自主击退和保存恢复/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/tests/village-raids.spec.ts",
+                    "column": 96,
+                    "line": 24
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ed411b8f4bd61e90f8c4-79f93fd4127c4d558043",
+          "file": "village-raids.spec.ts",
+          "line": 12,
+          "column": 43
+        },
+        {
+          "title": "自动预警保存事务中止时不生成小怪，手动重存可继续",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11713,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-27T00:35:21.502Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.parry-local/safety/runtime/.parry-local/safety-browser/village-raids-自动预警保存事务中止时不生成小怪，手动重存可继续/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ed411b8f4bd61e90f8c4-bbcff688266806bc2fdc",
+          "file": "village-raids.spec.ts",
+          "line": 35,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-27T00:33:24.481Z",
+    "duration": 129013.979,
+    "expected": 9,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
