@@ -288,7 +288,7 @@ test("固定边界夹具：0—5导入导出，旧档继承与乱序事实", asy
     const fs = await import("node:fs/promises");
     const exported = JSON.parse(await fs.readFile(path!, "utf8"));
     expect(exported.skills.swordWindStage).toBe(stage);
-    expect(exported.schema_version).toBe(7);
+    expect(exported.schema_version).toBe(8);
     await page.reload();
     await page.getByRole("button", { name: "继续旅途", exact: true }).click();
     await page.waitForFunction(() => (window as any).__farwind().mode === "");

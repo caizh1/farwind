@@ -1,0 +1,316 @@
+{
+  "结果": "通过",
+  "说明": "正式历史来袭与既有门卫死亡为起始前提；健康居民正常被真实敌人选中攻击后，正式前线检测、保存、飞援和落印均由游戏推进。无运行时写状态或直接调用技能。离地至落地不包含警报确认和起飞200毫秒；墙钟另含文件导入与加载，不伪称精确报警耗时。",
+  "原点": {
+    "x": 810,
+    "y": 725
+  },
+  "门": "north-gate",
+  "离地至落地有效毫秒": 610,
+  "加起飞有效毫秒": 810,
+  "导入至离地墙钟毫秒": 2059,
+  "导入至落地墙钟毫秒": 3374,
+  "起飞": {
+    "id": "xiaobao",
+    "label": "小宝 · 听风小宗师",
+    "art": "xiaobao-battle-back",
+    "x": 811.2947806942677,
+    "y": 706.5493751066871,
+    "w": 92,
+    "h": 92,
+    "kind": "npc",
+    "action": "idle",
+    "actionName": "听风待机",
+    "elapsed": 0,
+    "distance": 0,
+    "flip": false,
+    "texture": "xiaobao-battle-back",
+    "frame": 134,
+    "frameIndex": 0,
+    "lift": 88,
+    "demonstration": false,
+    "night": false,
+    "anchor": [
+      80,
+      148
+    ],
+    "state": {
+      "known": false,
+      "task": "guard",
+      "gate": "all",
+      "tactic": "steady",
+      "autoSupport": true,
+      "x": 811.2947806942677,
+      "y": 706.5493751066871,
+      "hp": 640,
+      "qi": 100,
+      "clock": 216.5599999999998,
+      "serial": 1,
+      "cooldowns": {
+        "palm": 0,
+        "triple": 0,
+        "star": 0,
+        "blade": 0,
+        "rock": 0,
+        "fire": 0,
+        "thunder": 0,
+        "chain": 0,
+        "unity": 0,
+        "guard": 0,
+        "rescue": 0,
+        "flight": 29988.44
+      },
+      "rest": 0,
+      "recovery": 0,
+      "peace": 6000,
+      "reduction": 0,
+      "shields": [],
+      "cast": null,
+      "effects": [],
+      "flight": {
+        "id": "flight:1",
+        "key": "1:raid-1",
+        "gate": "north-gate",
+        "priority": 3,
+        "stage": "cruise",
+        "age": 11.559999999999803,
+        "origin": {
+          "x": 810,
+          "y": 725
+        },
+        "goal": {
+          "x": 850,
+          "y": 155
+        },
+        "backups": [
+          {
+            "x": 938,
+            "y": 155
+          },
+          {
+            "x": 850,
+            "y": 243
+          }
+        ],
+        "safe": {
+          "x": 850,
+          "y": 155
+        },
+        "travelled": 18.495999999999686,
+        "leg": 571.4017850864661,
+        "rerouted": false,
+        "active": true,
+        "imprint": false
+      },
+      "support": {
+        "key": "raid-1",
+        "gate": "north-gate",
+        "age": 0,
+        "hits": 0,
+        "kills": 0,
+        "injured": false
+      },
+      "alarmCycle": 1,
+      "alarmActive": true,
+      "responded": [
+        "1:raid-1"
+      ],
+      "command": null,
+      "wait": null,
+      "affected": [],
+      "reports": []
+    },
+    "status": "踏风飞援 · 巡航",
+    "airborne": true,
+    "battleAction": {
+      "clip": "cruise",
+      "progress": 0.01926666666666634,
+      "lift": 88
+    },
+    "targetId": null,
+    "metrics": {
+      "decisions": 2,
+      "hits": 0,
+      "flights": 1,
+      "cancelled": 0,
+      "landingChecks": 32,
+      "steps": 58
+    },
+    "events": [
+      {
+        "id": "flight:1",
+        "kind": "flight",
+        "skill": "flight",
+        "point": {
+          "x": 810,
+          "y": 725
+        },
+        "from": {
+          "x": 850,
+          "y": 155
+        },
+        "at": 205
+      }
+    ],
+    "effects": [],
+    "navigation": {
+      "path": [],
+      "queries": 0,
+      "failed": false
+    },
+    "eta": 0.5955661156790415,
+    "visible": true,
+    "spriteRoot": [
+      811.2947806942677,
+      618.5493751066871
+    ],
+    "objects": 6,
+    "provisional": true
+  },
+  "落地": {
+    "id": "xiaobao",
+    "label": "小宝 · 听风小宗师",
+    "art": "xiaobao-motion",
+    "x": 850,
+    "y": 155,
+    "w": 92,
+    "h": 92,
+    "kind": "npc",
+    "action": "idle",
+    "actionName": "听风待机",
+    "elapsed": 0,
+    "distance": 0,
+    "flip": false,
+    "texture": "xiaobao-motion",
+    "frame": 0,
+    "frameIndex": 0,
+    "lift": 0,
+    "demonstration": false,
+    "night": false,
+    "anchor": [
+      80,
+      148
+    ],
+    "state": {
+      "known": false,
+      "task": "guard",
+      "gate": "all",
+      "tactic": "steady",
+      "autoSupport": true,
+      "x": 850,
+      "y": 155,
+      "hp": 640,
+      "qi": 100,
+      "clock": 816.5066666666656,
+      "serial": 1,
+      "cooldowns": {
+        "palm": 0,
+        "triple": 0,
+        "star": 0,
+        "blade": 0,
+        "rock": 0,
+        "fire": 0,
+        "thunder": 0,
+        "chain": 0,
+        "unity": 0,
+        "guard": 0,
+        "rescue": 0,
+        "flight": 29388.493333333336
+      },
+      "rest": 0,
+      "recovery": 0,
+      "peace": 6000,
+      "reduction": 0,
+      "shields": [
+        {
+          "id": "xiaobao",
+          "amount": 120,
+          "remaining": 1998.4933333333342
+        }
+      ],
+      "cast": null,
+      "effects": [],
+      "flight": null,
+      "support": {
+        "key": "raid-1",
+        "gate": "north-gate",
+        "age": 0,
+        "hits": 0,
+        "kills": 0,
+        "injured": true
+      },
+      "alarmCycle": 1,
+      "alarmActive": true,
+      "responded": [
+        "1:raid-1"
+      ],
+      "command": null,
+      "wait": null,
+      "affected": [],
+      "reports": []
+    },
+    "status": "踏风飞援 · 降落",
+    "airborne": false,
+    "battleAction": null,
+    "targetId": null,
+    "metrics": {
+      "decisions": 6,
+      "hits": 0,
+      "flights": 1,
+      "cancelled": 0,
+      "landingChecks": 64,
+      "steps": 214
+    },
+    "events": [
+      {
+        "id": "flight:1",
+        "kind": "flight",
+        "skill": "flight",
+        "point": {
+          "x": 810,
+          "y": 725
+        },
+        "from": {
+          "x": 850,
+          "y": 155
+        },
+        "at": 205
+      },
+      {
+        "id": "flight:1:imprint:xiaobao",
+        "kind": "shield",
+        "skill": "guard",
+        "point": {
+          "x": 850,
+          "y": 155
+        },
+        "target": "xiaobao",
+        "at": 815
+      },
+      {
+        "id": "flight:1:land",
+        "kind": "landing",
+        "skill": "flight",
+        "point": {
+          "x": 850,
+          "y": 155
+        },
+        "at": 815
+      }
+    ],
+    "effects": [],
+    "navigation": {
+      "path": [],
+      "queries": 0,
+      "failed": false
+    },
+    "eta": 0,
+    "visible": true,
+    "spriteRoot": [
+      850,
+      155
+    ],
+    "objects": 6,
+    "provisional": true
+  }
+}

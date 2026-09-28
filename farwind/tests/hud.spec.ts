@@ -372,7 +372,7 @@ test("hud-backup", async ({ page }) => {
   const { readFile } = await import("node:fs/promises");
   const saved = JSON.parse(await readFile((await exported.path())!, "utf8"));
   expect(saved).toEqual(before);
-  expect(saved.schema_version).toBe(7);
+  expect(saved.schema_version).toBe(8);
   expect(saved).not.toHaveProperty("hudPreferences");
   const chooser = page.waitForEvent("filechooser");
   await page.getByRole("button", { name: "导入存档", exact: true }).click();

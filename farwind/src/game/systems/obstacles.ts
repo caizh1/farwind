@@ -1,9 +1,9 @@
+import {WORLD_PLAYABLE as B} from "../../data/maps/windbell/bounds";
 import {
   props,
   terrainBlocked,
   solidPropAt,
-  WORLD,
-  POND,
+  WATERS,
   BRIDGES,
   propBounds,
   type Prop,
@@ -60,10 +60,10 @@ function terrainLineBlocker(
   if (
     [a, b].some(
       (p) =>
-        p.x < 30 ||
-        p.x > WORLD.width - 30 ||
-        p.y < 80 ||
-        p.y > WORLD.height - 30,
+        p.x < B.left ||
+        p.x > B.right ||
+        p.y < B.top ||
+        p.y > B.bottom,
     )
   )
     return "world-edge";
@@ -87,6 +87,7 @@ function terrainLineBlocker(
         return parts;
       });
   }
+  for(const POND of WATERS){
   const x = (a.x - POND.x) / (POND.rx + margin),
     y = (a.y - POND.y) / (POND.ry + margin);
   const dx = (b.x - a.x) / (POND.rx + margin),
@@ -96,7 +97,8 @@ function terrainLineBlocker(
       lo,
       Math.min(hi, -(x * dx + y * dy) / (dx * dx + dy * dy || 1)),
     );
-    if ((x + dx * t) ** 2 + (y + dy * t) ** 2 < 1 - EPS) return "pond";
+    if ((x + dx * t) ** 2 + (y + dy * t) ** 2 < 1 - EPS) return POND.id;
+  }
   }
   // 河道的既有规则：上下两段40像素半宽，1010～1180为通行桥。
   // x(t)-河心(y(t))是三次多项式；端点和导数根给出精确范围，无步进漏检。
@@ -168,10 +170,10 @@ export function shotLineBlocker(a:Point,b:Point,port?:FiringPort,objects:readonl
   return shotLineImpact(a,b,port,objects)?.id;
 }
 export function shotLineImpact(a:Point,b:Point,port?:FiringPort,objects:readonly Prop[]=props){
-  const inside=(p:Point)=>p.x>=30&&p.x<=WORLD.width-30&&p.y>=80&&p.y<=WORLD.height-30;
+  const inside=(p:Point)=>p.x>=B.left&&p.x<=B.right&&p.y>=B.top&&p.y<=B.bottom;
   let first: {id:string;fraction:number}|undefined;
   if(!inside(a))return {id:'world-edge',fraction:0};
-  if(!inside(b))first={id:'world-edge',fraction:rectInterval(a,b,{left:30,right:WORLD.width-30,top:80,bottom:WORLD.height-30})?.[1]??0};
+  if(!inside(b))first={id:'world-edge',fraction:rectInterval(a,b,{...B})?.[1]??0};
   for(const p of objects){
     if(!p.solid)continue;
     const fromPort=port && Math.hypot(a.x-port.origin.x,a.y-port.origin.y)<=2;

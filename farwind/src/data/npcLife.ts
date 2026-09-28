@@ -1,3 +1,4 @@
+import {buildingLot, VILLAGE_ANCHORS} from './maps/windbell/layout';
 import { GUARD_DEFS, type GuardId } from "./defense";
 export type ResidentId = "elder" | "healer" | "carpenter" | GuardId;
 export const CIVILIAN_IDS = ["elder", "healer", "carpenter"] as const;
@@ -96,6 +97,7 @@ export const GUARD_LANDINGS: Partial<Record<GuardId, Place>> = {
   "east-archer": { space: "village", x: 2030, y: 940 },
   "north-archer": { space: "village", x: 800, y: 390 },
   "south-archer": { space: "village", x: 1050, y: 1790 },
+  "west-archer": {space:"village",x:250,y:1750},
 };
 export const ROOM = {
   left: 380,
@@ -109,7 +111,7 @@ export const HOMES = [
     id: "elder-home",
     name: "岚爷爷的家",
     building: "resident-cottage-1",
-    door: { x: 550, y: 650 },
+    door: buildingLot('resident-cottage-1').door,
     owners: ["elder"],
     private: "风向笔记与旧风铃",
   },
@@ -117,7 +119,7 @@ export const HOMES = [
     id: "healer-home",
     name: "小满的药房与卧室",
     building: "shop",
-    door: { x: 1110, y: 460 },
+    door: buildingLot('shop').door,
     owners: ["healer"],
     private: "植物图鉴与晾药架",
   },
@@ -125,7 +127,7 @@ export const HOMES = [
     id: "carpenter-home",
     name: "阿禾的家",
     building: "west-cottage",
-    door: { x: 310, y: 900 },
+    door: buildingLot('west-cottage').door,
     owners: ["carpenter"],
     private: "木鸟与工具箱",
   },
@@ -133,7 +135,7 @@ export const HOMES = [
     id: "barracks",
     name: "风铃营房",
     building: "barracks-building",
-    door: { x: 1995, y: 650 },
+    door: buildingLot('barracks-building').door,
     owners: GUARD_DEFS.map((d) => d.id),
     private: "独立床铺与具名储物箱",
   },
@@ -141,7 +143,7 @@ export const HOMES = [
     id: "inn",
     name: "归风旅馆客房侧门",
     building: "inn-building",
-    door: { x: 1550, y: 1640 },
+    door: buildingLot('inn-building').door,
     owners: [] as ResidentId[],
     private: "六张临时床铺；住所受阻时按空位入住",
   },
@@ -163,7 +165,7 @@ export const FACILITIES = [
       kind: "bed",
       owner: id,
       capacity: 1,
-      place: indoor(h.id, 460 + (i % 5) * 110, 560 + Math.floor(i / 5) * 120),
+      place: h.id === "barracks" ? indoor(h.id,430+(i%4)*120,520+Math.floor(i/4)*100) : indoor(h.id,460+(i%5)*110,560+Math.floor(i/5)*120),
       label: `${id === "elder" ? "岚爷爷" : id === "healer" ? "小满" : id === "carpenter" ? "阿禾" : GUARD_DEFS.find((d) => d.id === id)!.name}的床位`,
     })),
   ),
@@ -196,7 +198,7 @@ export const FACILITIES = [
     kind: "work",
     owner: "carpenter",
     capacity: 1,
-    place: outdoor(412, 1010),
+    place: outdoor(VILLAGE_ANCHORS.carpenter.x, VILLAGE_ANCHORS.carpenter.y),
     label: "木工工作位",
   },
   {
@@ -242,7 +244,7 @@ export const FACILITIES = [
 ] as const;
 export const MAINTENANCE = [
   { id: "wind-bell", name: "广场风铃挂架", place: outdoor(720, 650) },
-  { id: "workbench", name: "木工台", place: outdoor(412, 1010) },
+  { id: "workbench", name: "木工台", place: outdoor(VILLAGE_ANCHORS.carpenter.x, VILLAGE_ANCHORS.carpenter.y) },
 ] as const;
 export type PersonDef = {
   id: ResidentId;
@@ -409,7 +411,7 @@ export const PEOPLE: PersonDef[] = [
         "在家睡觉",
         "bed:carpenter",
       ),
-      slot(6, 12, "work", outdoor(412, 1010), "修工具、做木工", "tools"),
+      slot(6, 12, "work", outdoor(VILLAGE_ANCHORS.carpenter.x, VILLAGE_ANCHORS.carpenter.y), "修工具、做木工", "tools"),
       slot(
         12,
         13,
@@ -419,7 +421,7 @@ export const PEOPLE: PersonDef[] = [
         "seat:carpenter-home",
       ),
       slot(13, 14, "work", outdoor(720, 650), "巡视广场风铃与挂架"),
-      slot(14, 18, "work", outdoor(412, 1010), "木工与保养工具", "tools"),
+      slot(14, 18, "work", outdoor(VILLAGE_ANCHORS.carpenter.x, VILLAGE_ANCHORS.carpenter.y), "木工与保养工具", "tools"),
       slot(18, 21, "habit", indoor("carpenter-home", 830, 800), "雕刻木鸟"),
       slot(
         21,
@@ -468,11 +470,11 @@ export const PEOPLE: PersonDef[] = [
           "habit",
           i % 3 === 2
             ? // 共用临水长椅旁分配独立落脚点，避免三门弓卫争抢同一目标。
-              outdoor([1540, 1504, 1576][Math.floor(i / 3)], 1390)
+              outdoor([1540, 1504, 1576, 1612][Math.floor(i / 3)], 1390)
             : indoor(
                 "barracks",
-                460 + (i % 5) * 110,
-                800 + Math.floor(i / 5) * 70,
+                430 + (i % 4) * 120,
+                820 + Math.floor(i / 4) * 30,
               ),
           i % 3 === 2 ? "临水休息" : i % 3 === 1 ? "训练、聊天" : "检查装备",
         ),

@@ -1,3 +1,7 @@
+import {beforeEach,afterEach} from "vitest";
+import {syncMapGeometry} from "../src/data/world";
+// 本组防御回归以四门开放后的正式几何为条件；关门准入另在地图测试覆盖。
+beforeEach(()=>syncMapGeometry(true));afterEach(()=>syncMapGeometry(false));
 import {legacyDefense} from './safety-fixtures';
 import {describe,it,expect} from 'vitest';
 import {mkdirSync,writeFileSync} from 'node:fs';
@@ -16,13 +20,13 @@ describe('M5集成迁移与恢复',()=>{
    if(schema===2)delete old.defense;
    if(schema===3){old.defense={guards:old.defense.guards.slice(0,3),sequence:0,completedSequence:0,raid:null};Object.assign(old.defense.guards[0],{hp:0,dead:true,mode:'dead'});old.defense.guards[1].hp=73;}
    let next=validate(old);expect(next.player.x).toBe(map===undefined?2900:2300);expect(next.pendingDrops[0].x).toBe(map===undefined?2920:2320);
-   expect([next.schema_version,next.map_version]).toEqual([7,6]);expect(next.bag[0]).toEqual(old.bag[0]);
+   expect([next.schema_version,next.map_version]).toEqual([13,8]);expect(next.bag[0]).toEqual(old.bag[0]);
    if(schema===3){expect(next.defense.guards[0].dead).toBe(true);expect(next.defense.guards[1].hp).toBe(73);}
    const first=stable(next);for(let n=0;n<10;n++)next=validate(JSON.parse(JSON.stringify(next)));expect(stable(next)).toEqual(first);
   }
  });
  it('各门活跃阶段恢复不复活成员、不重放飞箭、不改变结算号',()=>{
-  for(const gate of RAID_GATES)for(const phase of ['warning','approach','fighting','retreat']as const){
+  for(const gate of RAID_GATES.filter(g=>g.id!=='west-gate'))for(const phase of ['warning','approach','fighting','retreat']as const){
    const s=initialState();s.player={...s.player,...observer};s.defense=legacyDefense(s.defense,gate.id,phase==='warning');
    s.defense.raid!.phase=phase;s.defense.raid!.ageMs=phase==='retreat'?119900:2000;s.defense.raid!.members[0].hp=0;s.defense.raid!.members[1].hp=17;
    const clean=validate(s),d=new EastDefense(clean.defense,1000);expect(d.arrows).toEqual([]);expect(d.state.raid!.members[0].hp).toBe(0);expect(d.state.raid!.members[1].hp).toBe(17);
@@ -40,7 +44,7 @@ describe('M5集成迁移与恢复',()=>{
   expect(motionBlocked(e.x,e.y)).toBe(false);expect(e.hp).toBe(23);expect(d.state.guards[0]).toMatchObject({hp:0,dead:true,mode:'dead'});
  });
  it('三门全灭历史只结算一次；重复恢复保持冷却、任务与固定死亡隔离',()=>{
-  for(const gate of RAID_GATES){
+  for(const gate of RAID_GATES.filter(g=>g.id!=='west-gate')){
    const s=initialState();s.defense=legacyDefense(s.defense,gate.id);s.defense.raid!.members.forEach(m=>m.hp=0);
    const d=new EastDefense(s.defense,0);d.update(20,20,observer,{queries:2});expect(d.state.raid).toBeNull();expect(d.state.completedSequence).toBe(1);
    const finished=structuredClone(d.state);for(let n=0;n<5;n++){d.restore(20);expect(d.state).toEqual(finished);expect(d.enemies).toEqual([]);}
@@ -48,7 +52,7 @@ describe('M5集成迁移与恢复',()=>{
   }
  });
  it('生成可复用的正式历史档样本，浏览器只通过导入建立条件',()=>{
-  const base=initialState();Object.assign(base.player,observer);const probes=RAID_GATES.map(g=>{const s=structuredClone(base);s.defense=legacyDefense(s.defense,g.id);s.defense.raid!.members[3].type='leaf';s.defense.raid!.members[3].hp=72;Object.assign(s.player,g.inside);return validate(s);});
+  const base=initialState();Object.assign(base.player,observer);const probes=RAID_GATES.filter(g=>g.id!=="west-gate").map(g=>{const s=structuredClone(base);s.defense=legacyDefense(s.defense,g.id);s.defense.raid!.members[3].type='leaf';s.defense.raid!.members[3].hp=72;Object.assign(s.player,g.inside);return validate(s);});
   const deaths=RAID_GATES.map((g,i)=>{const s=structuredClone(base);s.defense=prepareRaid(s.defense,s.player,g.id,3);s.defense.guards[i*3].hp=1;Object.assign(s.defense.raid!.members[0],{x:GUARD_DEFS[i*3].post.x+8,y:GUARD_DEFS[i*3].post.y+7});return validate(s);});
   mkdirSync('.parry-local/m5',{recursive:true});writeFileSync('.parry-local/m5/fixtures.json',JSON.stringify({说明:'仅建立合法起始档；伤害、死亡、波次与时间由正式运行推进。',base,probes,deaths},null,2));expect(probes).toHaveLength(3);
  });

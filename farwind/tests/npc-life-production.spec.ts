@@ -152,7 +152,7 @@ test("正式构建：旧档迁移、动态药房交谈、原服务与隐藏调�
   expect(
     await page.getByRole("button", { name: "NPC 调试", exact: true }).count(),
   ).toBe(0);
-  expect((await read(page)).state.schema_version).toBe(7);
+  expect((await read(page)).state.schema_version).toBe(8);
   expect((await read(page)).state.defense.guards[2].dead).toBe(true);
   await page.waitForFunction(
     () =>

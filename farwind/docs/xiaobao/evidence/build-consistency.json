@@ -1,0 +1,187 @@
+{
+  "说明": "最终隔离交付构建7个模块哈希与9份角色资源一致。共享工作树在长测期间出现后续地图及存档相关源码修改，保持原样，不用固定包结果冒充当前源码验证。构建时源文件记录保留。",
+  "时间": "2026-09-28T10:44:42.515895+00:00",
+  "入口及模块": [
+    {
+      "文件": "damage-u9Nn75mP.js",
+      "符合": true
+    },
+    {
+      "文件": "game-BE9-UWAu.css",
+      "符合": true
+    },
+    {
+      "文件": "game-C61wBCzz.js",
+      "符合": true
+    },
+    {
+      "文件": "xiaobao-5S_LyH53.js",
+      "符合": true
+    },
+    {
+      "文件": "xiaobao-preview-5osY0aZY.css",
+      "符合": true
+    },
+    {
+      "文件": "xiaobaoCombat-BnZ0wp19.js",
+      "符合": true
+    },
+    {
+      "文件": "xiaobaoView-Cc8Hu_6B.js",
+      "符合": true
+    }
+  ],
+  "角色资产": [
+    {
+      "文件": "battle-back.png",
+      "符合": true
+    },
+    {
+      "文件": "battle-front.png",
+      "符合": true
+    },
+    {
+      "文件": "battle-side.png",
+      "符合": true
+    },
+    {
+      "文件": "combat-manifest.json",
+      "符合": true
+    },
+    {
+      "文件": "manifest.json",
+      "符合": true
+    },
+    {
+      "文件": "mastery.png",
+      "符合": true
+    },
+    {
+      "文件": "motion.png",
+      "符合": true
+    },
+    {
+      "文件": "portrait.webp",
+      "符合": true
+    },
+    {
+      "文件": "social.png",
+      "符合": true
+    }
+  ],
+  "源码早于构建": false,
+  "结果": "固定包通过，当前工作树后续修改未纳入本轮验证",
+  "构建后修改源码": [
+    "src/game/ui/interface.ts",
+    "src/game/scenes/World.ts",
+    "src/game/systems/state.ts",
+    "src/game/systems/training.ts",
+    "src/game/systems/terrainChunks.ts",
+    "src/game/systems/interactions.ts",
+    "src/game/systems/sleep.ts",
+    "src/game/systems/obstacles.ts",
+    "src/game/systems/defenseState.ts",
+    "src/game/systems/terrain.ts",
+    "src/game/systems/npcLifeState.ts",
+    "src/game/systems/swordWindGeometry.ts",
+    "src/game/systems/xiaobaoState.ts",
+    "src/game/systems/save.ts",
+    "src/data/windLessons.ts",
+    "src/data/dayNight.ts",
+    "src/data/village.ts",
+    "src/data/village-economy.ts",
+    "src/data/world.ts",
+    "src/data/npcLife.ts",
+    "src/data/maps/windbell/bounds.ts",
+    "src/data/maps/windbell/wilderness.ts",
+    "src/data/maps/windbell/layout.ts",
+    "src/data/maps/windbell/roads.ts"
+  ],
+  "当前源文件对照": [
+    {
+      "文件": "src/data/xiaobaoCombat.ts",
+      "构建时SHA256": "77ee79c37a28f315504cae85afa096f1c648fed8eac8942a7199f1b0c3258b84",
+      "当前SHA256": "77ee79c37a28f315504cae85afa096f1c648fed8eac8942a7199f1b0c3258b84",
+      "符合": true
+    },
+    {
+      "文件": "src/game/entities/xiaobaoView.ts",
+      "构建时SHA256": "9597658829f2d2a81b90eb29f9b0a3f194eb0a92e4b2d68fc15d82a2a56a8868",
+      "当前SHA256": "9597658829f2d2a81b90eb29f9b0a3f194eb0a92e4b2d68fc15d82a2a56a8868",
+      "符合": true
+    },
+    {
+      "文件": "src/game/scenes/World.ts",
+      "构建时SHA256": "1fa581cc54e8e875e2d32aa664874f44b0812fd35357744a55918fb65fb18a02",
+      "当前SHA256": "67de50b1307c5938b1fac9248a37967f5ab693fc821c24a0fddfc2503649adfd",
+      "符合": false
+    },
+    {
+      "文件": "src/game/systems/xiaobaoCombat.ts",
+      "构建时SHA256": "debcfde618bbaa074e1ab9473590f3daf65efce28b157719503aa32eaae38237",
+      "当前SHA256": "debcfde618bbaa074e1ab9473590f3daf65efce28b157719503aa32eaae38237",
+      "符合": true
+    },
+    {
+      "文件": "src/game/systems/xiaobaoState.ts",
+      "构建时SHA256": "79fa20bbacdaf1689f60f31d95e390bd798418625f3e31d4b6143421e28716e3",
+      "当前SHA256": "1088da38d09add8a17fe02de450851e91f66d8f6a51990bc65eb72066eca70e9",
+      "符合": false
+    },
+    {
+      "文件": "src/game/systems/xiaobaoWorld.ts",
+      "构建时SHA256": "8ed4c6f8f63a3e76385c76a84140af4f5e8e46e9184a1714ad8d61a1acb53a97",
+      "当前SHA256": "8ed4c6f8f63a3e76385c76a84140af4f5e8e46e9184a1714ad8d61a1acb53a97",
+      "符合": true
+    },
+    {
+      "文件": "src/game/systems/enemy.ts",
+      "构建时SHA256": "1edd9f358a29d89ab4aea342d74a2437549d690cee04d2284ee28e2b1f134cb4",
+      "当前SHA256": "1edd9f358a29d89ab4aea342d74a2437549d690cee04d2284ee28e2b1f134cb4",
+      "符合": true
+    },
+    {
+      "文件": "src/game/systems/defense.ts",
+      "构建时SHA256": "4c3034a6aaa2e4c685f71ffa87d6fc6f113402f5497626dd66507752ff882978",
+      "当前SHA256": "4c3034a6aaa2e4c685f71ffa87d6fc6f113402f5497626dd66507752ff882978",
+      "符合": true
+    },
+    {
+      "文件": "src/game/systems/defenseState.ts",
+      "构建时SHA256": "8752b0f776310d0b566d41a6a3999fe017e02a15689c27daa6e256e1ef2a714d",
+      "当前SHA256": "86711557378a6c02e3cb15ea54bed9c4764fa78af2467cd53e8c89546d391e22",
+      "符合": false
+    },
+    {
+      "文件": "src/game/systems/damage.ts",
+      "构建时SHA256": "f123a4202093aa6a09319fd9765ec678c8286d0faf1331777d01ab3f8889a91b",
+      "当前SHA256": "f123a4202093aa6a09319fd9765ec678c8286d0faf1331777d01ab3f8889a91b",
+      "符合": true
+    },
+    {
+      "文件": "src/game/systems/audio.ts",
+      "构建时SHA256": "047eb6243148dd5d9b4ed235cc46019b278a5d7cc8718ff33e28f440a2906d58",
+      "当前SHA256": "047eb6243148dd5d9b4ed235cc46019b278a5d7cc8718ff33e28f440a2906d58",
+      "符合": true
+    },
+    {
+      "文件": "src/style.css",
+      "构建时SHA256": "6551ee0e8dee567521ffbd8965d3acf41aa153075a978338ea09d8b64d0f250f",
+      "当前SHA256": "6551ee0e8dee567521ffbd8965d3acf41aa153075a978338ea09d8b64d0f250f",
+      "符合": true
+    },
+    {
+      "文件": "src/xiaobao-combat-preview.ts",
+      "构建时SHA256": "33bfec6ff2b932985bfa6dd559830db8ca495348a334b0bd471334c359a7303f",
+      "当前SHA256": "33bfec6ff2b932985bfa6dd559830db8ca495348a334b0bd471334c359a7303f",
+      "符合": true
+    },
+    {
+      "文件": "vite.config.ts",
+      "构建时SHA256": "8931d2d7c1c19f66243009bd72e2e84e86bc846dd33e0e21ec98724e4eed2ec2",
+      "当前SHA256": "8931d2d7c1c19f66243009bd72e2e84e86bc846dd33e0e21ec98724e4eed2ec2",
+      "符合": true
+    }
+  ],
+  "固定包结果": "通过"
+}

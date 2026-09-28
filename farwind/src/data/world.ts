@@ -1,13 +1,19 @@
+import {ARENA_STONES,type ArenaStoneId} from "./maps/windbell/elites";
+import {SHORTCUTS,type ShortcutId} from "./maps/windbell/shortcuts";
+import {WORLD_BOUNDS,WORLD_PLAYABLE} from "./maps/windbell/bounds";
+import {WILDERNESS_PROPS,WILD_WATERS,WILD_BRIDGES} from "./maps/windbell/wilderness";
+import {roads,roadWidth} from "./maps/windbell/roads";
+export {roads,roadWidth,villageRoutes} from "./maps/windbell/roads";
 import {lessonProps} from './windLessons';
 import {inProtected} from "./defenseZones";
 import {
   serviceBuildings,
   serviceEntrances,
-  serviceRoads,
   serviceClearance,
 } from "./village-economy";
 import { TOWERS } from "./defense";
-import { FIELD_TARGETS, TRAINING } from "../game/systems/training";
+import { BUILDING_LOTS, FIELD_TARGET_ANCHORS as FIELD_TARGETS, VILLAGE_ANCHORS, RESOURCE_ANCHORS, ORCHARD_TREES } from './maps/windbell/layout';
+const TRAINING = VILLAGE_ANCHORS.training;
 import type { ItemId } from "./content";
 import {
   VILLAGE_WALLS,
@@ -18,15 +24,16 @@ import {
   regionAt,
 } from "./village";
 export const WORLD = {
-  width: 4200,
-  height: 2200,
+  ...WORLD_BOUNDS,
   forest: 2050,
   ruins: 3300,
 } as const;
 export const POND = { x: 1280, y: 1120, rx: 260, ry: 230 } as const;
+export const WATERS = [{id:"pond",...POND},...WILD_WATERS];
 export const BRIDGES = [
   { x: 1030, y: 900, w: 120, h: 550 },
   { x: 1260, y: 1300, w: 100, h: 200 },
+ ...WILD_BRIDGES,
 ];
 export const VILLAGE_GATE = { x: 1870, y: 1010, postOffset: 88 } as const;
 export const villageAreas = [
@@ -34,9 +41,9 @@ export const villageAreas = [
   { id: "B", name: "西侧生活巷", x: 320, y: 990, detail: "木匠委托、收集木材" },
   {
     id: "C",
-    name: "南侧果园",
-    x: 470,
-    y: 1450,
+    name: "湖边果园",
+    x: 1820,
+    y: 1520,
     detail: "浆果、花圃与隐蔽宝箱",
   },
   { id: "D", name: "药师小院", x: 1120, y: 540, detail: "采药、兑换恢复药剂" },
@@ -67,6 +74,8 @@ export type Prop = {
   item?: ItemId;
   label?: string;
   index?: number;
+  displayAt?: {x:number;y:number};
+  ground?: boolean;
 };
 export const props: Prop[] = [
   {
@@ -340,15 +349,16 @@ export const props: Prop[] = [
 ];
 // 树冠与围栏沿道路边缘布置，入口保留至少 120 像素通路。
 props.push(...lessonProps);
+props.push({id:"community-ledger",art:"community-ledger",...VILLAGE_ANCHORS.ledger,w:88,h:88,kind:"sign",label:"公共委托簿"});
 const trees = [
   [140, 530],
   [520, 460],
   [200, 820],
   [160, 1230],
-  [800, 1160],
+  [770, 1180],
   [190, 1560],
   [680, 1560],
-  [830, 330],
+  [1240, 1620],
   [1300, 350],
   [1440, 260],
   [1660, 1040],
@@ -378,7 +388,7 @@ trees.forEach(([x, y], i) =>
     id: `tree-${i}`,
     art: i % 5 === 1 ? "pink" : "tree",
     x,
-    y: i === 7 ? 980 : y,
+    y,
     w: i < 15 ? 190 : 245,
     h: i < 15 ? 230 : 280,
     solid: [38, 27],
@@ -561,6 +571,12 @@ props.push(
   },
 );
 props.push(...serviceBuildings, ...serviceEntrances);
+for(const b of BUILDING_LOTS){const p=props.find(p=>p.id===b.id);if(p)Object.assign(p,{x:b.x,y:b.y,w:b.w,h:b.h,solid:[...b.solid]});}
+for(const [id,point] of Object.entries(RESOURCE_ANCHORS)){const p=props.find(p=>p.id===id);if(p)Object.assign(p,point);}
+Object.assign(props.find(p=>p.id==='carpenter')!,VILLAGE_ANCHORS.carpenter);
+Object.assign(props.find(p=>p.id==='carpenter-workbench')!,VILLAGE_ANCHORS.workbench);
+Object.assign(props.find(p=>p.id==='training-guide')!,{art:'training-book',w:72,h:64,label:'练习场教本'});
+
 props.push(...TOWERS.map(t => ({id:t.id,art:"east-watchtower",x:t.x,y:t.y,
   w:t.w,h:t.h,solid:[90,70] as [number,number],cover:"high" as const,owner:"village" as const,role:"boundary" as const})));
 // 保留树的稳定ID，只让湖东新旅馆门前有站位。
@@ -656,55 +672,19 @@ for (const portal of VILLAGE_PORTALS) {
     w: 65,
     h: 90,
     kind: "sign",
-    label: portal.open ? `${portal.name}路牌` : `${portal.name} · 暂不开放`,
+    label: portal.open ? `${portal.name}路牌` : `${portal.name} · 修复委托`,
   });
 }
+// 原开发预留牌与分割短栏改为低矮菜畦，主通路保持开放。
 for (const parcel of RESERVED_PARCELS) {
-  props.push({
-    id: `${parcel.id}-sign`,
-    art: "sign",
-    // 工坊路牌避开南塔正式射口；只平移该装饰，不改变地块、门洞或世界尺寸。
-    x: parcel.x + (parcel.id === "parcel-workshop" ? 90 : 30),
-    y: parcel.y + 40,
-    w: 52,
-    h: 72,
-    kind: "sign",
-    label: parcel.name,
+  for (let i=0;i<Math.max(1,Math.floor(parcel.w/140));i++) props.push({
+    id:`${parcel.id}-seedbed-${i}`,art:'herb-bed',x:parcel.x+65+i*130,y:parcel.y+80,
+    w:100,h:60,role:'decoration',owner:'village',
   });
-  // 短栏及空院保留生活尺度，入口开放，不伪造未实现的交互。
-  for (const [part, a, b] of [
-    [0, 0, parcel.w / 2 - 60],
-    [1, parcel.w / 2 + 60, parcel.w],
-  ] as const) {
-    const n = Math.ceil((b - a) / 125);
-    for (let i = 0; i < n; i++) {
-      const w = (b - a) / n;
-      props.push({
-        id: `${parcel.id}-rim-${part}-${i}`,
-        art: "fence",
-        frame: "boundary",
-        x: parcel.x + a + w * (i + 0.5),
-        y: parcel.y + parcel.h,
-        w: w + 2,
-        h: 40,
-        solid: [w + 2, 15],
-        role: "boundary",
-        cover: "low",
-        owner: "village",
-      });
-    }
-  }
 }
-for (const [i, x] of [230, 390, 550, 710].entries())
-  props.push({
-    id: `orchard-tree-${i}`,
-    art: i % 2 ? "pink" : "tree",
-    x,
-    y: 1280,
-    w: 145,
-    h: 180,
-    solid: [28, 22],
-  });
+ORCHARD_TREES.forEach((point,i)=>props.push({
+  id:`orchard-tree-${i}`,art:i%2?'pink':'tree',...point,w:145,h:180,solid:[28,22],
+}));
 const fences: number[][] = [
   ...[180, 290, 400, 510, 620, 730].map((x) => [x, 1620]),
   ...[1480, 1590, 1700, 1810].map((x) => [x, 330]),
@@ -767,93 +747,7 @@ hedgeLine("field-west", [1400, 330], [1400, 760]);
 hedgeLine("field-east", [1900, 330], [1900, 760]);
 lowFence("gate-fence-west", 1707, 1010, 110);
 lowFence("gate-fence-east", 1990, 1010, 60);
-export const roads = [
-  [
-    [820, 120],
-    [820, 320],
-    [820, 560],
-    [800, 600],
-    [800, 730],
-    [650, 780],
-    [900, 780],
-    [1120, 750],
-    [1390, 860],
-    [1600, 860],
-    [1760, 900],
-    [1870, 920],
-    [1870, 1080],
-    [2170, 1080],
-    [2800, 1100],
-    [3160, 1000],
-    [3480, 760],
-    [3750, 660],
-  ],
-  [
-    [330, 620],
-    [330, 780],
-    [470, 850],
-    [470, 1030],
-    [650, 1100],
-    [670, 1440],
-    [860, 1470],
-    [1040, 1500],
-    [1280, 1480],
-    [1550, 1400],
-    [1680, 1210],
-    [1870, 1080],
-  ],
-  [
-    [650, 780],
-    [650, 1100],
-  ],
-  [
-    [470, 1030],
-    [300, 1030],
-    [300, 1450],
-    [670, 1440],
-  ],
-  [
-    [1110, 750],
-    [1110, 640],
-  ],
-  [
-    [860, 1470],
-    [1090, 1450],
-    [1090, 900],
-    [1090, 820],
-    [1120, 750],
-  ],
-  [
-    [1280, 1480],
-    [1300, 1370],
-  ],
-  [
-    [2800, 1100],
-    [2670, 1430],
-    [2600, 1700],
-  ],
-  [
-    [3750, 660],
-    [3740, 400],
-  ],
-  [
-    [3510, 540],
-    [3740, 600],
-    [3970, 570],
-  ],
-  [
-    [1640, 860],
-    [1640, 710],
-  ],
-  [
-    [860, 1470],
-    [900, 1640],
-    [900, 2100],
-  ],
-  ...serviceRoads,
-] as number[][][];
-export const roadWidth = (index: number) =>
-  index >= 12 ? 65 : index === 0 ? 170 : index === 4 || index === 10 ? 80 : 115;
+
 export const showLayoutLabels = (development: boolean, search: string) =>
   development && new URLSearchParams(search).get("layoutDebug") === "1";
 export const inReworkArea = (x: number, y: number) =>
@@ -934,57 +828,7 @@ for (let i = 0; i < 45; i++) {
     h: 65,
   });
 }
-export const villageRoutes = [
-  {
-    name: "主线出发路线",
-    points: [
-      [670, 780],
-      [900, 780],
-      [1120, 750],
-      [1390, 860],
-      [1600, 860],
-      [1760, 900],
-      [1870, 920],
-      [1870, 1080],
-      [2110, 1080],
-    ],
-  },
-  {
-    name: "生活探索环线",
-    points: [
-      [670, 780],
-      [470, 850],
-      [470, 1030],
-      [300, 1030],
-      [300, 1450],
-      [670, 1440],
-      [860, 1470],
-      [1280, 1480],
-      [1550, 1400],
-      [1680, 1210],
-      [1870, 1080],
-      [1870, 920],
-      [1760, 900],
-      [1600, 860],
-      [1390, 860],
-      [1120, 750],
-      [900, 780],
-      [670, 780],
-    ],
-  },
-  {
-    name: "临水小径",
-    points: [
-      [1280, 1480],
-      [1090, 1450],
-      [1090, 900],
-      [1090, 820],
-      [1120, 750],
-      [900, 780],
-      [670, 780],
-    ],
-  },
-];
+
 export function routeSeconds(points: number[][]) {
   return Math.round(
     points
@@ -1009,10 +853,26 @@ export function region(x: number, y: number) {
   const p={x,y},r=regionAt(p);return r.id!=="village"&&inProtected(p)?"巡逻近郊":r.name;
 }
 
+props.push(...WILDERNESS_PROPS);
+const westBarrier:Prop={id:'west-gate-barrier',art:'vertical-fence',frame:'trim',x:80,y:1557,w:38,h:254,solid:[22,254],owner:'village',role:'boundary',cover:'low'};
+props.push(westBarrier);
+let geometryKey="";
+export let mapGeometryRevision=0;
+// 仅场景把已提交的进度投影到派生碰撞；生命、守军和任务状态不会被重建。
+export function syncMapGeometry(open:boolean,shortcuts:readonly ShortcutId[]=[],broken:readonly ArenaStoneId[]=[]){
+  const key=JSON.stringify([open,[...shortcuts].sort(),[...broken].sort()]);
+  if(geometryKey===key)return;
+  geometryKey=key;westBarrier.solid=open?undefined:[22,254];
+  for(const s of SHORTCUTS)props.find(p=>p.id===`barrier-${s.id}`)!.solid=shortcuts.includes(s.id)?undefined:[s.barrier.w,s.barrier.h];
+  for(const p of ARENA_STONES)props.find(s=>s.id===p.id)!.solid=broken.includes(p.id)?undefined:[...p.solid];
+  mapGeometryRevision++;
+}
+
+
 // 交互物只阻挡实际占地，互动视线忽略目标本体。
 props.forEach((p) => {
   if (p.kind === "chest") p.solid = [45, 28];
-  if (p.kind === "stone" || p.kind === "sign" || p.kind === "shortcut")
+  if (p.ground !== false && (p.kind === "stone" || p.kind === "sign" || p.kind === "shortcut"))
     p.solid = [35, 28];
 });
 
@@ -1043,16 +903,14 @@ export function solidPropAt(x: number, y: number, ignore?: string) {
 
 // 地形与渲染使用同一份池塘和桥梁尺寸，桥面优先于水域阻挡。
 export function terrainBlocked(x: number, y: number) {
-  if (x < 30 || x > WORLD.width - 30 || y < 80 || y > WORLD.height - 30)
+  if (x < WORLD_PLAYABLE.left || x > WORLD_PLAYABLE.right || y < WORLD_PLAYABLE.top || y > WORLD_PLAYABLE.bottom)
     return true;
   const bridge = BRIDGES.some(
     (b) => x >= b.x + 12 && x <= b.x + b.w - 12 && y >= b.y && y <= b.y + b.h,
   );
   if (
     !bridge &&
-    ((x - POND.x) / (POND.rx + 10)) ** 2 +
-      ((y - POND.y) / (POND.ry + 10)) ** 2 <
-      1
+    WATERS.some(p=>((x-p.x)/(p.rx+10))**2+((y-p.y)/(p.ry+10))**2<1)
   )
     return true;
   if (y >= 650 && y <= 1580 && !(y >= 1010 && y <= 1180)) {

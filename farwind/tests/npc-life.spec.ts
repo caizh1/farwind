@@ -12,7 +12,7 @@ async function start(page: Page) {
   await page.goto("/?npcDebug=1");
   await page.getByRole("button", { name: "启程 · 新游戏" }).click();
   await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
-  expect((await read(page)).state.schema_version).toBe(7);
+  expect((await read(page)).state.schema_version).toBe(8);
   expect((await read(page)).state.life.people.length).toBe(12);
 }
 async function advance(page: Page) {
@@ -516,7 +516,7 @@ test("旧档真实导入、死亡保留、夜间床位、暂停与失焦冻结",
   });
   await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
   let snap = await read(page);
-  expect(snap.state.schema_version).toBe(7);
+  expect(snap.state.schema_version).toBe(8);
   expect(snap.state.coins).toBe(73);
   expect(snap.state.defense.guards[0].dead).toBe(true);
   expect(snap.state.defense.guards[1].hp).toBeLessThan(75);

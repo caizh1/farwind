@@ -5,6 +5,8 @@ export type DamageEvent = {
   sourceId: string; targetId: string; attackId: string; amount: number;
   sourceType: "player-melee" | "player-wind" | "guard-melee" | "tower-arrow" | "enemy-melee" | "enemy-shot" | "companion-melee" | "companion-shot" | "companion-element";
   eventId: string | null;
+  origin?:{x:number;y:number};
+  breaksGuard?:boolean;
 };
 // 调用者负责攻击实例的命中去重；统一入口只负责阵营、存活与伤害后果。
 export function resolveDamage(event: DamageEvent, source: UnitRef, target: UnitRef) {

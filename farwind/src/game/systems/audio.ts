@@ -2,11 +2,12 @@ import {synthFeedback,soundDuration,audioIdentity,FEEDBACK_AUDIO} from "./feedba
 import {feedbackAudio,audibleFeedback,type FeedbackEvent,type FeedbackMode} from "./combatFeedback";
 import {synthSwordWindHowl} from './swordWindAudio';
 import type {XiaobaoEvent} from './xiaobaoCombat';
+import {synthCreature,type CreatureVoice} from './creatureAudio';
 export class Sound {
   context?: AudioContext;
   private level = 0.25;
   get volume(){return this.level;}
-  set volume(value:number){this.level=value;if(!value)this.silenceSwordWind();else if(this.context)for(const gain of this.windVoices.values())gain.gain.setTargetAtTime(value,this.context.currentTime,.004);}
+  set volume(value:number){this.level=value;if(!value)this.silenceFeedback();else if(this.context)for(const gain of this.windVoices.values())gain.gain.setTargetAtTime(value,this.context.currentTime,.004);}
   output?: DynamicsCompressorNode;
   lastPlayed=new Map<string,number>();
   buses?:Record<'threat'|'player'|'battle'|'noncritical',GainNode>;
@@ -16,6 +17,15 @@ export class Sound {
   private variants=new Map<string,number>();
   private windBuffer?:AudioBuffer;
   private xiaobaoBuffers=new Map<string,AudioBuffer>();
+  private creatureBuffers=new Map<string,AudioBuffer>();
+  creature(type:string,phase:CreatureVoice,distance:number,sim:number){
+    const c=this.context;if(!['wolf','burrow','guardian'].includes(type)||!c||c.state!=='running'||!this.volume||distance>1000)return;
+    const key=`${type}:${phase}`,at=c.currentTime;if(at-(this.lastPlayed.get(key)??-Infinity)<.07)return;this.lastPlayed.set(key,at);
+    let buffer=this.creatureBuffers.get(key);if(!buffer){const samples=synthCreature(type,phase,c.sampleRate);buffer=c.createBuffer(1,samples.length,c.sampleRate);buffer.copyToChannel(samples,0);this.creatureBuffers.set(key,buffer);}
+    const source=c.createBufferSource(),gain=c.createGain();source.buffer=buffer;gain.gain.value=this.volume*.8*Math.max(0,1-distance/1000);source.connect(gain);gain.connect(this.buses?.threat??this.output??c.destination);
+    if(this.voices.size>=12){const oldest=this.voices.values().next().value!;oldest.stop();this.voices.delete(oldest);}this.voices.add(source);source.onended=()=>{this.voices.delete(source);source.disconnect();gain.disconnect();};source.start();
+    this.audioEvents.push({id:`creature:${key}:${sim}`,kind:key,sim,submitted:performance.now(),scheduled:at,latency:c.outputLatency??null,variant:0});if(this.audioEvents.length>96)this.audioEvents.shift();
+  }
   private flightVoice?:{source:AudioBufferSourceNode;gain:GainNode};
   private windVoices=new Map<AudioBufferSourceNode,GainNode>();
   audioEvents:{id:string;kind:string;sim:number;submitted:number;scheduled:number;latency:number|null;variant:number}[]=[];
@@ -49,7 +59,7 @@ export class Sound {
   private silenceSwordWind(){for(const voice of this.windVoices.keys())voice.stop();this.windVoices.clear();}
   silenceFeedback(){this.xiaobaoFlight(false,0);this.silenceSwordWind();for(const voice of this.voices)voice.stop();this.voices.clear();this.strikeVoices.clear();if(this.buses&&this.context)for(const bus of Object.values(this.buses)){bus.gain.cancelScheduledValues(this.context.currentTime);bus.gain.setValueAtTime(1,this.context.currentTime);}}
   clearFeedback(){this.silenceFeedback();this.audioEvents=[];this.variants.clear();}
-  diagnostic(){return {voices:this.voices.size,strikeVoices:this.strikeVoices.size,audioProfile:'双剑金属／同来招截停',windVoices:this.windVoices.size,windCached:!!this.windBuffer,cached:this.feedbackBuffers.size,events:this.audioEvents,state:this.context?.state??'unstarted',outputLatency:this.context?.outputLatency??null,buses:this.buses?Object.fromEntries(Object.entries(this.buses).map(([k,v])=>[k,v.gain.value])):null};}
+  diagnostic(){return {voices:this.voices.size,strikeVoices:this.strikeVoices.size,audioProfile:'双剑金属／同来招截停',windVoices:this.windVoices.size,windCached:!!this.windBuffer,xiaobaoFlightVoices:this.flightVoice?1:0,xiaobaoCached:this.xiaobaoBuffers.size,cached:this.feedbackBuffers.size,events:this.audioEvents,state:this.context?.state??'unstarted',outputLatency:this.context?.outputLatency??null,buses:this.buses?Object.fromEntries(Object.entries(this.buses).map(([k,v])=>[k,v.gain.value])):null};}
   private route(kind:string){return this.buses?.[kind.startsWith('enemy-')?'threat':kind.startsWith('wind-')||['attack','attack-heavy','hit','finish','straw','straw-heavy'].includes(kind)?'battle':['guard','parry','parry-perfect','deflect','counter'].includes(kind)?'player':'noncritical']??this.output??this.context!.destination;}
   private xiaobaoBuffer(kind:string){
     const c=this.context!,old=this.xiaobaoBuffers.get(kind);if(old)return old;
@@ -64,7 +74,7 @@ export class Sound {
   xiaobao(event:XiaobaoEvent,distance:number,outside:boolean){
     const c=this.context;if(!outside||!c||c.state!=='running'||!this.volume||distance>1100)return;
     if(event.kind==='shield')return;
-    const kind=event.kind==='landing'?'landing':event.kind==='flight'?'flight':event.kind==='recover'?'recover':event.kind==='rest'?'guard':event.skill;
+    const kind=event.kind==='landing'?'landing':event.kind==='flight'?'flight':event.kind==='recover'?'recover':event.kind==='rest'?'guard':event.skill==='unity'&&event.stage!==undefined?event.stage===0?'rock':event.stage===6?'thunder':'fire':event.skill;
     const key=`xiaobao:${kind}`,at=c.currentTime;if(at-(this.lastPlayed.get(key)??-Infinity)<.06)return;this.lastPlayed.set(key,at);
     const source=c.createBufferSource(),gain=c.createGain();source.buffer=this.xiaobaoBuffer(kind);gain.gain.value=this.volume*Math.max(0,1-distance/1100)*.8;
     source.connect(gain);gain.connect(this.buses?.battle??this.output??c.destination);
@@ -93,7 +103,7 @@ export class Sound {
     }
     this.loops.forEach((l,i)=>{const target=active?this.volume*(i?night*.18:(1-night)*.15):0;if(target===0&&l.target!==0||Math.abs(target-l.target)>.0001){l.gain.gain.cancelScheduledValues(c.currentTime);l.gain.gain.setTargetAtTime(target,c.currentTime,.25);l.target=target;}});
   }
-  destroy(){this.clearFeedback();for(const bus of Object.values(this.buses??{}))bus.disconnect();this.buses=undefined;this.feedbackBuffers.clear();this.windBuffer=undefined;for(const l of this.loops){l.source.stop();l.source.disconnect();l.filter.disconnect();l.gain.disconnect();}this.loops=[];void this.context?.close();this.context=undefined;this.output=undefined;}
+  destroy(){this.clearFeedback();for(const bus of Object.values(this.buses??{}))bus.disconnect();this.buses=undefined;this.feedbackBuffers.clear();this.xiaobaoBuffers.clear();this.creatureBuffers.clear();this.windBuffer=undefined;for(const l of this.loops){l.source.stop();l.source.disconnect();l.filter.disconnect();l.gain.disconnect();}this.loops=[];void this.context?.close();this.context=undefined;this.output=undefined;}
   start() {
     this.context ??= new AudioContext();
     if(!this.output){this.output=this.context.createDynamicsCompressor();this.output.threshold.value=-9;this.output.knee.value=6;this.output.ratio.value=8;this.output.attack.value=.003;this.output.release.value=.1;this.output.connect(this.context.destination);}

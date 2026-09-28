@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>小宝 · 完整本领演武</title>
+  </head>
+  <body>
+    <main>
+      <header class="intro">
+        <img src="/assets/xiaobao/portrait.webp" alt="已认可的小宝身份原画" />
+        <div>
+          <p class="eyebrow">远风之地 · 村灯，我看着</p>
+          <h1>小宝 <span>听风小宗师</span></h1>
+          <p>近身震掌、远程星刃、落石、火莲与天雷。危急时踏风飞援。</p>
+          <p class="note">
+            十二项本领 · 十八组动作 · 三方向504帧 · 动作美术待验收
+          </p>
+        </div>
+      </header>
+      <section class="stage">
+        <div class="toolbar">
+          <label
+            >演武方式
+            <select id="mode">
+              <option value="skill">真实技能结算</option>
+              <option value="clip">主体动作逐帧</option>
+            </select></label
+          ><label
+            >选择本领
+            <select id="skill"></select></label
+          ><label
+            >选择动作
+            <select id="clip"></select></label
+          ><label
+            >朝向
+            <select id="facing">
+              <option value="3">右</option>
+              <option value="2">左</option>
+              <option value="0">正面</option>
+              <option value="1">背面</option>
+            </select></label
+          ><button id="pause">暂停</button
+          ><button id="restart">从头播放</button>
+        </div>
+        <div id="preview" aria-label="小宝完整技能演武画面"></div>
+        <div class="timeline">
+          <label for="scrub">逐帧查看</label
+          ><input id="scrub" type="range" min="0" max="1599" value="0" /><output
+            id="info"
+          ></output>
+        </div>
+      </section>
+      <section class="cards" id="skills" aria-label="十二项本领"></section>
+      <p id="result"></p>
+      <p class="note">
+        演武使用正式技能控制器、命中去重和伤害入口；木桩与危急前线是本页独立样本，不写入游戏存档。主体逐帧可检查三方向与左右镜像。
+      </p>
+      <footer>
+        <a href="/">进入游戏</a
+        ><a href="/xiaobao-preview.html">日常与演武动作</a>
+      </footer>
+    </main>
+    <script type="module" src="/src/xiaobao-combat-preview.ts"></script>
+  </body>
+</html>

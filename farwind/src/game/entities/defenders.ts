@@ -20,7 +20,7 @@ export class DefendersView {
     for (const g of defense.state.guards) {
       const d = GUARD_DEFS.find(d => d.id === g.id)!;
       const tower = TOWERS.find(t => t.occupantGuardId === g.id);
-      const key = d.role === "melee" ? "guard" : tower!.gateId !== "east-gate" && !g.dead ? "vertical" : "archer";
+      const key = d.role === "melee" ? "guard" : tower!.outward.x === 0 && !g.dead ? "vertical" : "archer";
       const r = defense.runtime.get(g.id)!;
       const action=life?.data.people.find(n=>n.id===g.id)?.action,
         sleeping=g.offDuty&&action?.kind==="sleep"&&action.phase==="perform";
@@ -42,7 +42,7 @@ export class DefendersView {
         (tower!.gateId === "south-gate" ? 4 : 0) + Math.min(pose,3) : pose;
       const data = art[key], f = data.frames[frame];
       const point = d.role === "archer" && !g.offDuty ? tower!.perch : g;
-      Actor.mirror(view.sprite,key === "guard" && r.facing === 2);
+      Actor.mirror(view.sprite,key === "guard" && r.facing === 2 || key === "archer" && tower?.outward.x === -1);
       view.sprite.setTexture(`defender-${key}`,frame).setOrigin(f.footX/f.w,f.footY/f.h).setScale(87/(key === "vertical" ? data.frames[frame].bodyHeight : data.frames[0].bodyHeight))
         .setPosition(point.x,point.y).setDepth(d.role === "archer" && !g.offDuty ? tower!.y+1 : g.y)
         .setAlpha(g.dead ? .65 : 1).setRotation(g.dead && key === "guard" ? Math.PI/2 : sleeping ? .5 : 0);

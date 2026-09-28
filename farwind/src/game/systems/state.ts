@@ -1,3 +1,9 @@
+import {initialEncounters,validateEncounters,unitState,settleEncounterDeath,type EncounterState} from "./encounterState";
+import {ENCOUNTERS} from '../../data/maps/windbell/encounters';
+import {initialDemonKing,validateDemonKing,demonMalice,type DemonKingState} from './demonKingState';
+import {initialFieldQuests,validateFieldQuests,type FieldQuestState} from "./fieldQuestState";
+import {SHORTCUT_IDS,type ShortcutId} from "../../data/maps/windbell/shortcuts";
+import {WORLD_PLAYABLE as B,CURRENT_MAP_VERSION} from "../../data/maps/windbell/bounds";
 import {initialSkills,validateSkills,migrateLegacySkills} from './skills';
 import {initialXiaobao,validateXiaobao,type XiaobaoState} from './xiaobaoState';
 import type {SkillState} from '../../data/windLessons';
@@ -18,7 +24,11 @@ import {initialNight,migratedNight,validateNight,type NightState} from "./nightD
 export type Slot = { id: ItemId; count: number } | null;
 export type State = {
   skills: SkillState;
-  schema_version: 8;
+  schema_version: 13;
+  demonKing:DemonKingState;
+  encounters:EncounterState;
+  fieldQuests:FieldQuestState;
+  mapProgress: {westRoad:"unknown"|"surveyed"|"open";shortcuts:ShortcutId[]};
   xiaobao: XiaobaoState;
   life: LifeState;
   night: NightState;
@@ -27,7 +37,7 @@ export type State = {
   equipment: { weapon: EquipmentId | null; armor: EquipmentId | null };
   shopStock: Record<string, number>;
   economyRevision: number;
-  map_version?: 2 | 3 | 4 | 5 | 6;
+  map_version?: 2 | 3 | 4 | 5 | 6 | 7 | 8;
   player: { x: number; y: number; hp: number; stamina: number };
   bag: Slot[];
   hotbar: (ItemId | null)[];
@@ -46,7 +56,11 @@ export type State = {
 };
 export const initialState = (): State => ({
   skills: initialSkills(),
-  schema_version: 8,
+  schema_version: 13,
+  demonKing:initialDemonKing(),
+  encounters:initialEncounters(),
+  fieldQuests:initialFieldQuests(),
+  mapProgress: {westRoad:"unknown",shortcuts:[]},
   xiaobao: initialXiaobao(),
   life: initialLife(),
   night: initialNight(),
@@ -55,7 +69,7 @@ export const initialState = (): State => ({
   equipment: { weapon: null, armor: null },
   shopStock: initialStock(),
   economyRevision: 0,
-  map_version: 6,
+  map_version: CURRENT_MAP_VERSION,
   player: { x: 670, y: 720, hp: 100, stamina: 100 },
   bag: Array(24).fill(null),
   hotbar: ["potion", "berry", null, null, null, null, null, null],
@@ -153,8 +167,38 @@ export function validate(raw: unknown): State {
   if(s&&(s as {schema_version:number}).schema_version===4){s.night=migratedNight(s.time);(s as {schema_version:number}).schema_version=5;}
   if(s&&(s as {schema_version:number}).schema_version===5){s.life=initialLife(s.time);(s as {schema_version:number}).schema_version=6;}
   if(s&&(s as {schema_version:number}).schema_version===6){s.skills=migrateLegacySkills(s.skills);(s as {schema_version:number}).schema_version=7;}
-  if(s&&(s as {schema_version:number}).schema_version===7){s.xiaobao=initialXiaobao();s.schema_version=8;}
-  if(s&&s.schema_version===8)s.skills=validateSkills(s.skills);
+  if(s&&(s as {schema_version:number}).schema_version===7){s.xiaobao=initialXiaobao();(s as {schema_version:number}).schema_version=8;}
+  if(s&&(s as {schema_version:number}).schema_version===8){
+    s.mapProgress={westRoad:"unknown",shortcuts:[]};
+    // 只补 M1 阶段尚不存在的西门岗位；已有九名卫兵的伤亡原样保留。
+    if(s.defense?.guards?.length===9){s.defense.guards.push(...initialDefense().guards.slice(9));const added=initialLife(s.time).people.filter(p=>p.id.startsWith('west-'));s.life.people.push(...added);}
+    (s as {schema_version:number}).schema_version=9;
+  }
+  if(s&&(s as {schema_version:number}).schema_version===9){if(s.mapProgress)s.mapProgress.shortcuts=[];(s as {schema_version:number}).schema_version=10;}
+  if(s&&(s as {schema_version:number}).schema_version===10){s.encounters=initialEncounters();s.fieldQuests=initialFieldQuests();(s as {schema_version:number}).schema_version=11;}
+  if(s&&(s as {schema_version:number}).schema_version===11){
+    // M3开发存档只补新增固定槽位，原有三组清剿、奖励及伤势不重置。
+    const fresh=initialEncounters();
+    if(!["south-reed-patrol","south-herb-patrol","south-spore-camp"].every(id=>s.encounters?.groups?.[id]))throw Error("M3遭遇记录缺失，不能重建为未清剿状态。");
+    if(s.encounters?.groups){for(const [id,g] of Object.entries(fresh.groups)){
+      if(!s.encounters.groups[id])s.encounters.groups[id]=g;
+      else for(const u of s.encounters.groups[id].members??[])Object.assign(u,{face:{x:0,y:1},guardOpen:0});
+    }}
+    (s as {schema_version:number}).schema_version=12;
+  }
+  if(s&&(s as {schema_version:number}).schema_version===12){
+    // 结构12的九组仍须完整；只补后来加入的遭遇槽位与可选字段。
+    const existing=['south-reed-patrol','south-herb-patrol','south-spore-camp','south-orchard-burrows','west-track-pack','north-stone-watch','west-wolf-den','north-boar-camp','east-thorn-camp'];
+    if(!s.encounters?.groups||existing.some(id=>!s.encounters.groups[id]))throw Error('旧据点记录缺失，不能覆盖清剿进度。');
+    s.encounters.broken??=[];const fresh=initialEncounters();
+    for(const d of ENCOUNTERS){
+      s.encounters.groups[d.id]??=fresh.groups[d.id];s.encounters.groups[d.id].warning??=null;
+      // 旧固定成员的死亡保持死亡；原有掉落留在旧列表，避免生成第二份。
+      d.members.forEach(m=>{if(s.killed?.includes(m.id)){s.encounters.groups[d.id].activated=true;settleEncounterDeath(s.encounters,m.id,false);}});
+    }
+    s.demonKing=initialDemonKing();s.schema_version=13;
+  }
+  if(s&&s.schema_version===13)s.skills=validateSkills(s.skills);
   const num = (n: unknown, min: number, max: number) =>
     typeof n === "number" && Number.isFinite(n) && n >= min && n <= max;
   const strarr = (a: unknown) =>
@@ -163,20 +207,23 @@ export function validate(raw: unknown): State {
     a.every((x) => typeof x === "string" && x.length < 80);
   if (
     !s ||
-    s.schema_version !== 8 ||
+    s.schema_version !== 13 ||
+    !s.mapProgress || !["unknown","surveyed","open"].includes(s.mapProgress.westRoad) ||
+    !Array.isArray(s.mapProgress.shortcuts) || s.mapProgress.shortcuts.length>3 || new Set(s.mapProgress.shortcuts).size!==s.mapProgress.shortcuts.length || !s.mapProgress.shortcuts.every(id=>SHORTCUT_IDS.includes(id)) ||
     (s.map_version !== undefined &&
       s.map_version !== 2 &&
       s.map_version !== 3 &&
       s.map_version !== 4 &&
       s.map_version !== 5 &&
-      s.map_version !== 6) ||
+      s.map_version !== 6 &&
+      s.map_version !== 7 && s.map_version !== CURRENT_MAP_VERSION) ||
     !s.player ||
     !num(
       s.player.x,
-      25,
-      s.map_version !== undefined ? WORLD.width - 25 : 3575,
+      s.map_version === CURRENT_MAP_VERSION ? B.left : 25,
+      s.map_version === CURRENT_MAP_VERSION ? B.right : s.map_version !== undefined ? 4175 : 3575,
     ) ||
-    !num(s.player.y, 25, 2175) ||
+    !num(s.player.y, s.map_version === CURRENT_MAP_VERSION ? B.top : 25, s.map_version === CURRENT_MAP_VERSION ? B.bottom : 2175) ||
     !num(s.player.hp, 1, 100) ||
     !num(s.player.stamina, 0, 100) ||
     !Array.isArray(s.bag) ||
@@ -204,8 +251,8 @@ export function validate(raw: unknown): State {
         d &&
         typeof d.enemyId === "string" &&
         Object.hasOwn(items, d.item) &&
-        num(d.x, 30, s.map_version !== undefined ? WORLD.width - 30 : 3570) &&
-        num(d.y, 80, 2170),
+        num(d.x, s.map_version === CURRENT_MAP_VERSION ? B.left : 30, s.map_version === CURRENT_MAP_VERSION ? B.right : s.map_version !== undefined ? 4170 : 3570) &&
+        num(d.y,s.map_version === CURRENT_MAP_VERSION ? B.top : 80,s.map_version === CURRENT_MAP_VERSION ? B.bottom : 2170),
     ) ||
     !num(s.dashCooldownRemaining, 0, 650) ||
     !Array.isArray(s.stones) ||
@@ -243,8 +290,12 @@ export function validate(raw: unknown): State {
     )
   )
     throw Error("存档交易或装备状态无效，请使用有效备份。");
+  s.encounters=validateEncounters(s.encounters);s.fieldQuests=validateFieldQuests(s.fieldQuests);
+  s.demonKing=validateDemonKing(s);
+  if(s.fieldQuests["south-supply"]==="complete"&&!s.encounters.groups["south-spore-camp"].cleared)throw Error("南部委托与据点进度不一致。");
   s.defense = validateDefense(s.defense);
-  s.xiaobao=validateXiaobao(s.xiaobao,s.killed,s.defense.raid?.members.map(m=>m.id)??[]);
+  if((s.defense.raid?.order?.malice??0)>demonMalice(s.encounters))throw Error('在途魔王派遣与清剿进度不一致。');
+  s.xiaobao=validateXiaobao(s.xiaobao,s.killed,s.defense.raid?.members.map(m=>m.id)??[],s.encounters);
   s.night=validateNight(s);
   s.life=validateLife(s.life,s.time);
   const validIds = (ids: string[], kind: string) =>
@@ -289,11 +340,16 @@ export function validate(raw: unknown): State {
   if (s.map_version === 4) s.map_version = 5;
   // 三门塔基版本6无坐标平移；旧档碰撞由场景就近修复。
   if (s.map_version === 5) s.map_version = 6;
+  // M1建筑归位只改变地图布局，主结构仍为8；正式入口不接收旧地图存档。
+  if (s.map_version === 6) s.map_version = 7;
+  if(s.map_version===7)s.map_version=CURRENT_MAP_VERSION;
   return structuredClone(Object.fromEntries(Object.keys(initialState()).map(key=>[key,s[key as keyof State]]))) as State;
 }
 export function parseSave(text: string) {
   if (text.length > 200000) throw Error("存档超过 200 KB 限制");
-  return validate(JSON.parse(text));
+  const raw = JSON.parse(text);
+  if(raw?.map_version !== CURRENT_MAP_VERSION)throw Error('第一张地图从全新旅途开始，此文件属于旧地图；原存档文件未改动。');
+  return validate(raw);
 }
 
 // 关键任务材料不可丢弃，避免有限敌人掉落耗尽后无法完成主线。

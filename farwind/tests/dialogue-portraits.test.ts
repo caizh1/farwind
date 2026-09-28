@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import sharp from "sharp";
@@ -45,7 +45,7 @@ describe("独立立绘与资源边界", () => {
 
 function fixture() {
   return {
-    state: initialState(), ui: { dialog: vi.fn(), message: vi.fn(), offerShop: vi.fn() }, combat: { dashCooldown: 0 }, sim: 0,
+    state: initialState(), ui: { dialog: vi.fn(), message: vi.fn(), offerShop: vi.fn(), modal: { append: vi.fn() } }, combat: { dashCooldown: 0 }, sim: 0,
     soundFx: { play: vi.fn() }, persist: vi.fn().mockResolvedValue(undefined),
     life: { dialogue: vi.fn().mockReturnValue("时段对白"), health: vi.fn().mockReturnValue(100), needsTreatment: vi.fn().mockReturnValue(false) },
   };
@@ -55,6 +55,8 @@ function talk(world: ReturnType<typeof fixture>, id: string) {
 }
 
 describe("立绘展示参数不增加任务副作用", () => {
+  beforeEach(() => vi.stubGlobal("document", { createElement: () => ({ textContent: "", onclick: null }) }));
+  afterEach(() => vi.unstubAllGlobals());
   it("药师只交谈不自动兑换，保留立绘来源与明确服务入口", () => {
     const w = fixture();
     w.state.quest = 2;

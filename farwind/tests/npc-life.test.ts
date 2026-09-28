@@ -35,17 +35,17 @@ const tick = (e: ReturnType<typeof setup>, ms: number) => {
   }
 };
 describe("居民生活 M1 基础与事务", () => {
-  it("十二个稳定身份、独立床位和卫兵唯一权威状态", () => {
+  it("十五个稳定身份、独立床位和卫兵唯一权威状态", () => {
     const { s, l } = setup();
-    expect(PEOPLE).toHaveLength(12);
-    expect(new Set(PRIVATE_STORAGE.map((s) => s.owner)).size).toBe(12);
+    expect(PEOPLE).toHaveLength(15);
+    expect(new Set(PRIVATE_STORAGE.map((s) => s.owner)).size).toBe(15);
     expect(
       new Set(
         FACILITIES.filter((f) => f.kind === "bed" && f.owner).map(
           (f) => f.owner,
         ),
       ).size,
-    ).toBe(12);
+    ).toBe(15);
     expect(s.life.people.slice(3).every((n) => n.body === null)).toBe(true);
     s.defense.guards[0].x += 5;
     expect(l.body("east-watch")!.x).toBe(s.defense.guards[0].x);
@@ -60,7 +60,7 @@ describe("居民生活 M1 基础与事务", () => {
     old.coins = 17;
     old.bag[0] = { id: "wood", count: 4 };
     const next = validate(old);
-    expect(next.schema_version).toBe(7);
+    expect(next.schema_version).toBe(13);
     expect(next.defense.guards[0].dead).toBe(true);
     expect(next.defense.guards[1].hp).toBe(73);
     expect(next.coins).toBe(17);
@@ -196,7 +196,7 @@ describe("居民生活 M1 基础与事务", () => {
     ];
     tick(e, 3000);
     expect(e.s.life.alarm).toBe(0);
-    expect(e.s.defense.guards.filter((g) => g.offDuty)).toHaveLength(3);
+    expect(e.s.defense.guards.filter((g) => g.offDuty)).toHaveLength(4);
     e.d.external = [
       { id: "近处样本", x: 760, y: 740, homeX: 760, homeY: 740, hp: 48 } as any,
     ];
@@ -566,7 +566,7 @@ describe("居民生活 M2/M3 连续模拟与恢复", () => {
       ).toBe("perform");
     }
   }, 30000);
-  it("和平午休结束后三门巡卫实际返岗，帧步长与快进均不能留下轮休者", () => {
+  it("和平午休结束后四门巡卫实际返岗，帧步长与快进均不能留下轮休者", () => {
     for (const step of [1000 / 60, 100]) {
       const e = setup();
       e.s.time = 720;
@@ -586,12 +586,12 @@ describe("居民生活 M2/M3 连续模拟与恢复", () => {
           if (old.space === (g.space??"village")) expect(Math.hypot(g.x-old.x,g.y-old.y)).toBeLessThanOrEqual(100 * step / 1000 + 1e-5);
         }
       }
-      expect([...left].sort()).toEqual(["east-patrol", "north-patrol", "south-patrol"]);
-      expect([...returned].sort(), `步长 ${step}`).toEqual(["east-patrol", "north-patrol", "south-patrol"]);
+      expect([...left].sort()).toEqual(["east-patrol", "north-patrol", "south-patrol", "west-patrol"]);
+      expect([...returned].sort(), `步长 ${step}`).toEqual(["east-patrol", "north-patrol", "south-patrol", "west-patrol"]);
       expect(e.s.defense.guards.every(g=>!g.offDuty)).toBe(true);
     }
   }, 30000);
-  it("三名弓卫分别到场临水休息，窗口结束后全部沿路返岗", () => {
+  it("四名弓卫分别到场临水休息，窗口结束后全部沿路返岗", () => {
     const e = setup(), rested = new Set<string>();
     let saved = false;
     e.s.time = 1140;
@@ -616,7 +616,7 @@ describe("居民生活 M2/M3 连续模拟与恢复", () => {
         }
       }
     }
-    expect([...rested].sort()).toEqual(["east-archer","north-archer","south-archer"]);
+    expect([...rested].sort()).toEqual(["east-archer","north-archer","south-archer","west-archer"]);
     for (const g of e.s.defense.guards.filter(g=>g.id.endsWith("archer"))) {
       expect(g.offDuty,g.id).toBe(false);
       expect(g.mode,g.id).toBe("post");
@@ -636,14 +636,14 @@ describe("居民生活 M2/M3 连续模拟与恢复", () => {
     for(let now=100;now<=80000;now+=100) {
       e.s.time=advanceTime(e.s.time,100);
       const budget={queries:2};e.d.update(now,100,e.s.player,budget);e.l.step(100,budget);e.l.consumeDefense(e.d.drainNotices());
-      for(const g of e.s.defense.guards.filter(g=>g.id.endsWith("archer"))) {
+      for(const g of e.s.defense.guards.filter(g=>g.id.endsWith("archer")&&g.id!=="west-archer")) {
         const n=e.s.life.people.find(n=>n.id===g.id)!;
         if(n.action?.label==="临水休息" && n.action.phase==="perform")rested.add(g.id);
         expect(g.hp).toBe(health.get(g.id));expect(g.dead).toBe(false);expect(n.project).toBeGreaterThanOrEqual(2);
       }
     }
     expect([...rested].sort()).toEqual(["east-archer","north-archer","south-archer"]);
-    for(const g of e.s.defense.guards.filter(g=>g.id.endsWith("archer"))) {
+    for(const g of e.s.defense.guards.filter(g=>g.id.endsWith("archer")&&g.id!=="west-archer")) {
       expect(g.offDuty,g.id).toBe(false);
       expect(e.s.life.people.find(n=>n.id===g.id)!.pathFailures,g.id).toBe(0);
     }

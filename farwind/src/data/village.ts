@@ -1,3 +1,5 @@
+import {GUARD_DEFS,RAID_GATES,TOWERS} from "./defense";
+import {WORLD_BOUNDS as B} from "./maps/windbell/bounds";
 export type Point = { x: number; y: number };
 export const VILLAGE_BOUNDS = {
   left: 80,
@@ -35,7 +37,7 @@ export const VILLAGE_PORTALS = [
   },
   {
     id: "west-gate",
-    name: "西侧预留门",
+    name: "西门旧道",
     x: 80,
     y: 1430,
     axis: "x",
@@ -66,32 +68,32 @@ export const MAP_REGIONS = [
   },
   {
     id: "north",
-    name: "北部山路",
-    polygon: rectangle(30, 80, 2100, 220),
+    name: "北部山林与旧哨站",
+    polygon: rectangle(B.left,B.top,2450,220),
     dangerous: true,
   },
   {
     id: "south",
-    name: "南部荒野",
-    polygon: rectangle(30, 1820, 2100, 2170),
+    name: "南部田野与湿地",
+    polygon: rectangle(B.left,1820,2100,B.bottom),
     dangerous: true,
   },
   {
     id: "west",
-    name: "西侧封闭外缘",
-    polygon: rectangle(30, 220, 80, 1820),
-    dangerous: false,
+    name: "西部旧农庄与林缘",
+    polygon: rectangle(B.left,220,80,1820),
+    dangerous: true,
   },
   {
     id: "forest",
     name: "翡翠森林",
-    polygon: rectangle(2100, 0, 3300, 2200),
+    polygon: rectangle(2100,220,B.right,B.bottom),
     dangerous: true,
   },
   {
     id: "ruins",
     name: "风之遗迹",
-    polygon: rectangle(3300, 0, 4200, 2200),
+    polygon: rectangle(2450,B.top,B.right,220),
     dangerous: true,
   },
 ] as const;
@@ -156,8 +158,7 @@ for (const [id, a, b, portal] of [
     VILLAGE_PORTALS[3],
   ],
 ] as const) {
-  if (!portal.open) VILLAGE_WALLS.push({ id, a, b });
-  else {
+  {
     const horizontal = a.y === b.y;
     VILLAGE_WALLS.push(
       {
@@ -183,7 +184,7 @@ for (const [id, a, b, portal] of [
 export const RESERVED_PARCELS = [
   {
     id: "parcel-residents",
-    name: "居民预留院",
+    name: "西巷菜园",
     x: 200,
     y: 1660,
     w: 550,
@@ -191,7 +192,7 @@ export const RESERVED_PARCELS = [
   },
   {
     id: "parcel-workshop",
-    name: "工坊预留院",
+    name: "工坊苗圃",
     x: 1100,
     y: 1640,
     w: 250,
@@ -199,7 +200,7 @@ export const RESERVED_PARCELS = [
   },
   {
     id: "parcel-guild",
-    name: "委托所预留院",
+    name: "临水菜地",
     x: 1400,
     y: 1650,
     w: 250,
@@ -207,46 +208,20 @@ export const RESERVED_PARCELS = [
   },
   {
     id: "parcel-activities",
-    name: "活动预留院",
+    name: "旅馆后院",
     x: 1810,
     y: 1650,
     w: 190,
     h: 140,
   },
 ] as const;
-// 岗位、塔位及来袭路线属于设计数据，M3接入单位前不生成自动炮台。
-export const DEFENSE_LAYOUT = VILLAGE_PORTALS.filter((p) => p.open).map(
-  (portal) => ({
-    portalId: portal.id,
-    towerId: `${portal.id}-tower`,
-    tower:
-      portal.id === "east-gate"
-        ? { x: 2030, y: 900 }
-        : portal.id === "north-gate"
-          ? { x: 680, y: 350 }
-          : { x: 1140, y: 1750 },
-    posts:
-      portal.id === "east-gate"
-        ? [
-            { x: 2010, y: 970 },
-            { x: 2010, y: 1160 },
-          ]
-        : portal.id === "north-gate"
-          ? [
-              { x: 740, y: 300 },
-              { x: 920, y: 300 },
-            ]
-          : [
-              { x: 810, y: 1720 },
-              { x: 990, y: 1720 },
-            ],
-    route: [
-      portalAnchor(portal, true),
-      { x: portal.x, y: portal.y },
-      portalAnchor(portal, false),
-    ],
-  }),
-);
+// 建筑净空、门口、塔位与实际驻防共用数据，不保留固定三门分支。
+export const DEFENSE_LAYOUT = VILLAGE_PORTALS.map(portal=>({
+  portalId:portal.id,towerId:`${portal.id}-tower`,
+  tower:TOWERS.find(t=>t.gateId===portal.id)!,
+  posts:GUARD_DEFS.filter(g=>g.id.startsWith(portal.id.split('-')[0]+'-')&&g.role==='melee').map(g=>g.post),
+  route:[RAID_GATES.find(g=>g.id===portal.id)!.entry,{x:portal.x,y:portal.y},RAID_GATES.find(g=>g.id===portal.id)!.inside],
+}));
 export function villageClearance(x: number, y: number, radius: number) {
   const point = { x, y };
   if (

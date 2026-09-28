@@ -1,7 +1,9 @@
 import { validate, type State } from "./state";
+// 第一张正式地图从新档开始，旧数据库保留供原版本读取或导出。
+export const SAVE_DATABASE = 'farwind-first-map';
 async function db() {
   return new Promise<IDBDatabase>((ok, no) => {
-    const r = indexedDB.open("farwind-save", 1);
+    const r = indexedDB.open(SAVE_DATABASE, 1);
     r.onupgradeneeded = () => r.result.createObjectStore("states");
     r.onsuccess = () => ok(r.result);
     r.onerror = () => no(r.error);

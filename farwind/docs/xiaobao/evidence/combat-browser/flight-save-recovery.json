@@ -1,0 +1,344 @@
+{
+  "结果": "通过",
+  "说明": "仅注入IndexedDB事务中止；警报、飞援及所有角色状态由真实游戏推进。失败时地面等待和暂停，上一份有效档保留，真实保存按钮提交成功后离地。",
+  "失败": {
+    "id": "xiaobao",
+    "label": "小宝 · 听风小宗师",
+    "art": "xiaobao-battle-front",
+    "x": 1700,
+    "y": 1080,
+    "w": 92,
+    "h": 92,
+    "kind": "npc",
+    "action": "idle",
+    "actionName": "听风待机",
+    "elapsed": 0,
+    "distance": 0,
+    "flip": false,
+    "texture": "xiaobao-battle-front",
+    "frame": 128,
+    "frameIndex": 0,
+    "lift": 5.130400000000006,
+    "demonstration": false,
+    "night": false,
+    "anchor": [
+      80,
+      148
+    ],
+    "state": {
+      "known": false,
+      "task": "guard",
+      "gate": "all",
+      "tactic": "steady",
+      "autoSupport": true,
+      "x": 1700,
+      "y": 1080,
+      "hp": 640,
+      "qi": 100,
+      "clock": 16.660000000000014,
+      "serial": 1,
+      "cooldowns": {
+        "palm": 0,
+        "triple": 0,
+        "star": 0,
+        "blade": 0,
+        "rock": 0,
+        "fire": 0,
+        "thunder": 0,
+        "chain": 0,
+        "unity": 0,
+        "guard": 0,
+        "rescue": 0,
+        "flight": 0
+      },
+      "rest": 0,
+      "recovery": 88.33999999999999,
+      "peace": 6000,
+      "reduction": 0,
+      "shields": [],
+      "cast": null,
+      "effects": [],
+      "flight": {
+        "id": "flight:1",
+        "key": "1:raid-1",
+        "gate": "north-gate",
+        "priority": 3,
+        "stage": "takeoff",
+        "age": 11.660000000000014,
+        "origin": {
+          "x": 1700,
+          "y": 1080
+        },
+        "goal": {
+          "x": 850,
+          "y": 155
+        },
+        "backups": [
+          {
+            "x": 938,
+            "y": 155
+          },
+          {
+            "x": 850,
+            "y": 243
+          }
+        ],
+        "safe": {
+          "x": 850,
+          "y": 155
+        },
+        "travelled": 0,
+        "leg": 1256.2344526401112,
+        "rerouted": false,
+        "active": true,
+        "imprint": false
+      },
+      "support": {
+        "key": "raid-1",
+        "gate": "north-gate",
+        "age": 0,
+        "hits": 0,
+        "kills": 0,
+        "injured": false
+      },
+      "alarmCycle": 1,
+      "alarmActive": true,
+      "responded": [],
+      "command": null,
+      "wait": null,
+      "affected": [],
+      "reports": []
+    },
+    "status": "踏风飞援 · 起飞",
+    "airborne": false,
+    "battleAction": {
+      "clip": "takeoff",
+      "progress": 0.058300000000000074,
+      "lift": 5.130400000000006
+    },
+    "targetId": null,
+    "metrics": {
+      "decisions": 1,
+      "hits": 0,
+      "flights": 0,
+      "cancelled": 0,
+      "landingChecks": 32,
+      "steps": 4
+    },
+    "events": [],
+    "effects": [],
+    "navigation": {
+      "path": [],
+      "queries": 0,
+      "failed": false
+    },
+    "eta": 1.2234865329000695,
+    "visible": true,
+    "spriteRoot": [
+      1700,
+      1074.8696
+    ],
+    "objects": 6,
+    "provisional": true
+  },
+  "上一份有效档": {
+    "known": false,
+    "task": "guard",
+    "gate": "all",
+    "tactic": "steady",
+    "autoSupport": true,
+    "x": 1700,
+    "y": 1080,
+    "hp": 640,
+    "qi": 100,
+    "clock": 0,
+    "serial": 0,
+    "cooldowns": {
+      "palm": 0,
+      "triple": 0,
+      "star": 0,
+      "blade": 0,
+      "rock": 0,
+      "fire": 0,
+      "thunder": 0,
+      "chain": 0,
+      "unity": 0,
+      "guard": 0,
+      "rescue": 0,
+      "flight": 0
+    },
+    "rest": 0,
+    "recovery": 0,
+    "peace": 6000,
+    "reduction": 0,
+    "shields": [],
+    "cast": null,
+    "effects": [],
+    "flight": null,
+    "support": null,
+    "alarmCycle": 0,
+    "alarmActive": false,
+    "responded": [],
+    "command": null,
+    "wait": null,
+    "affected": [],
+    "reports": []
+  },
+  "恢复": {
+    "id": "xiaobao",
+    "label": "小宝 · 听风小宗师",
+    "art": "xiaobao-battle-back",
+    "x": 1687.4851386483158,
+    "y": 1066.380886176108,
+    "w": 92,
+    "h": 92,
+    "kind": "npc",
+    "action": "idle",
+    "actionName": "听风待机",
+    "elapsed": 0,
+    "distance": 0,
+    "flip": false,
+    "texture": "xiaobao-battle-back",
+    "frame": 134,
+    "frameIndex": 0,
+    "lift": 88,
+    "demonstration": false,
+    "night": false,
+    "anchor": [
+      80,
+      148
+    ],
+    "state": {
+      "known": false,
+      "task": "guard",
+      "gate": "all",
+      "tactic": "steady",
+      "autoSupport": true,
+      "x": 1687.4851386483158,
+      "y": 1066.380886176108,
+      "hp": 640,
+      "qi": 100,
+      "clock": 216.56000000000014,
+      "serial": 1,
+      "cooldowns": {
+        "palm": 0,
+        "triple": 0,
+        "star": 0,
+        "blade": 0,
+        "rock": 0,
+        "fire": 0,
+        "thunder": 0,
+        "chain": 0,
+        "unity": 0,
+        "guard": 0,
+        "rescue": 0,
+        "flight": 29988.44
+      },
+      "rest": 0,
+      "recovery": 0,
+      "peace": 6000,
+      "reduction": 0,
+      "shields": [],
+      "cast": null,
+      "effects": [],
+      "flight": {
+        "id": "flight:1",
+        "key": "1:raid-1",
+        "gate": "north-gate",
+        "priority": 3,
+        "stage": "cruise",
+        "age": 11.560000000000144,
+        "origin": {
+          "x": 1700,
+          "y": 1080
+        },
+        "goal": {
+          "x": 850,
+          "y": 155
+        },
+        "backups": [
+          {
+            "x": 938,
+            "y": 155
+          },
+          {
+            "x": 850,
+            "y": 243
+          }
+        ],
+        "safe": {
+          "x": 850,
+          "y": 155
+        },
+        "travelled": 18.49600000000023,
+        "leg": 1256.2344526401112,
+        "rerouted": false,
+        "active": true,
+        "imprint": false
+      },
+      "support": {
+        "key": "raid-1",
+        "gate": "north-gate",
+        "age": 0,
+        "hits": 0,
+        "kills": 0,
+        "injured": false
+      },
+      "alarmCycle": 1,
+      "alarmActive": true,
+      "responded": [
+        "1:raid-1"
+      ],
+      "command": null,
+      "wait": null,
+      "affected": [],
+      "reports": []
+    },
+    "status": "踏风飞援 · 巡航",
+    "airborne": true,
+    "battleAction": {
+      "clip": "cruise",
+      "progress": 0.019266666666666907,
+      "lift": 88
+    },
+    "targetId": null,
+    "metrics": {
+      "decisions": 2,
+      "hits": 0,
+      "flights": 1,
+      "cancelled": 0,
+      "landingChecks": 32,
+      "steps": 58
+    },
+    "events": [
+      {
+        "id": "flight:1",
+        "kind": "flight",
+        "skill": "flight",
+        "point": {
+          "x": 1700,
+          "y": 1080
+        },
+        "from": {
+          "x": 850,
+          "y": 155
+        },
+        "at": 205
+      }
+    ],
+    "effects": [],
+    "navigation": {
+      "path": [],
+      "queries": 0,
+      "failed": false
+    },
+    "eta": 1.0235865329000695,
+    "visible": true,
+    "spriteRoot": [
+      1687.4851386483158,
+      978.3808861761081
+    ],
+    "objects": 6,
+    "provisional": true
+  }
+}

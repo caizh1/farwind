@@ -1,3 +1,7 @@
+import {southQuestObjective} from "../systems/fieldQuest";
+import {DEMON_KING,demonFormation} from '../../data/demonKing';
+import {demonMalice,demonKingSummary} from '../systems/demonKingState';
+import {SHORTCUTS} from "../../data/maps/windbell/shortcuts";
 import {WIND_NAMES,WIND_EFFECTS,WIND_LESSONS} from '../../data/windLessons';
 import {windLearningSource} from '../systems/skills';
 import { showShop } from "./shop";
@@ -7,7 +11,7 @@ import type { EconomyRequest } from "../systems/economy";
 import {
   WORLD,
   BRIDGES,
-  POND,
+  WATERS,
   roads,
   villageAreas,
   showLayoutLabels,
@@ -56,6 +60,7 @@ export class Interface {
   usedSlotTimer?: ReturnType<typeof setTimeout>;
   state?: State;
   combatStatus = "L 风步 · 就绪";
+  dialogClosed?:()=>void;
   actions!: Actions;
   modal!: HTMLElement;
   hud!: HTMLElement;
@@ -64,7 +69,7 @@ export class Interface {
     this.root.addEventListener("click",e=>{if(this.actions&&!this.actions.canMutate()){e.preventDefault();e.stopImmediatePropagation();}},true);
     this.root.innerHTML = `<div id="hud" hidden>
       <div class="top"><div class="vitals-stack"><section class="vitals"><img class="portrait" src="/assets/portrait.png" alt="旅行者"><div><b>旅人 <small>与小黑同行</small></b><div class="meter health"><i></i><span></span></div><div class="meter stamina"><i></i><span></span></div></div></section>
-      <span id="combat-status">L 风步 · 就绪</span><span id="parry-status" role="status">K 架剑就绪</span><small id="sword-wind-status" hidden></small>
+      <span id="combat-status">L 风步 · 就绪</span><span id="parry-status" role="status">K 架剑就绪</span><small id="sword-wind-status" hidden></small><button id="demon-king-summary" class="text-button" data-panel="quest" hidden></button>
       <section id="training-panel" hidden><b>木桩练习</b><small>J / 左键：攻击；连按接三连；L：风步</small><span id="training-stats"></span><button data-practice-menu="true">迎风架剑练习</button><span id="parry-feedback" hidden></span></section></div>
       <div class="hud-info"><section class="location"><button id="minimap-toggle" class="hud-summary" aria-expanded="false" aria-controls="minimap-details" aria-label="展开小地图"><b id="region">风铃村</b><span>·</span><span id="clock"></span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2Zm6-2v16m6-14v16"/></svg><span class="chevron" aria-hidden="true">▾</span></button><div id="minimap-details" class="hud-details map-details" hidden><small id="day"></small><canvas id="minimap" width="192" height="101" aria-label="位置小地图"></canvas><button class="text-button" data-panel="map">M 完整地图</button></div></section>
       <section class="quest-tracker"><button id="quest-toggle" class="hud-summary" aria-expanded="false" aria-controls="quest-details"><span id="objective-summary" class="ellipsis"></span><span class="chevron" aria-hidden="true">▾</span></button><div id="quest-details" class="hud-details quest-details" hidden><small>主线 · 失落的风</small><p id="objective"></p><button class="text-button" data-panel="quest">Q 旅途手记</button></div></section></div></div>
@@ -330,6 +335,8 @@ export class Interface {
   }
   close(toGame = false) {
     if (this.economyBusy) return;
+    const dialogClosed=this.mode==='dialog'?this.dialogClosed:undefined;
+    this.dialogClosed=undefined;
     if (!toGame && this.returnTo === "pause" && this.mode !== "pause") {
       this.open("pause");
       this.focusPanel(this.pauseFocus);
@@ -353,6 +360,7 @@ export class Interface {
     if (this.returnFocus?.isConnected && !this.returnFocus.closest("[hidden]"))
       this.returnFocus.focus({ preventScroll: true });
     this.returnFocus = null;
+    dialogClosed?.();
   }
   shop(id: ShopId) {
     showShop(this, id);
@@ -481,7 +489,7 @@ export class Interface {
     if (mode === "quest" && s)
       this.shell(
         "旅途手记",
-        `<h2>主线 · 失落的风</h2><p>${objectives[s.quest]}</p><ol class="journal">${objectives
+        `<h2>远处的黑焰 · ${DEMON_KING.name}</h2><p>${demonKingSummary(s)}</p><p>${demonMalice(s.encounters)?'每完整清剿一处据点，恶意增加 1；同一据点只计一次。当地巡游与当地来袭来源停止，远处的黑焰开始回应。':'魔物最初为了果腹而捕猎，远处的存在尚未将人类视为敌人。清剿保护村庄，也会改变它对人类的判断。'}</p><p>恶意 1～9：原编队增加 5 只，单次 6～8 只；每逢 10 点升档，逐步加入更高阶精英，编队最多 10 只。首夜安静，已制定的计划保持原编队。</p>${demonMalice(s.encounters)?`<p>当前新派遣：${demonFormation(demonMalice(s.encounters),1).count}～${demonFormation(demonMalice(s.encounters),3).count}只。${s.defense.raid?.order?.source==='demon-king'?`在途派遣按恶意 ${s.defense.raid.order.malice} 编队，共 ${s.defense.raid.members.length} 只；不会因清剿而临时升阶。`:''}</p>`:''}<h2>南路补给</h2><p>${southQuestObjective(s)}</p><p>从南门沿路过芦苇桥，药草洼地在西南岸，孢根巢地在洼地东南方。药师与公共委托簿均可办理。</p><h2>主线 · 失落的风</h2><p>${objectives[s.quest]}</p><ol class="journal">${objectives
           .slice(0, 7)
           .map(
             (q, i) =>
@@ -494,7 +502,7 @@ export class Interface {
     if (mode === "map" && s) {
       this.shell(
         "风的足迹",
-        `<p>风铃村 → 翡翠森林 → 风之遗迹</p><canvas id="world-map" width="840" height="440"></canvas><div class="map-guide">${villageAreas.map((a) => `<p><b>${showLayoutLabels(import.meta.env.DEV, window.location.search) ? `${a.id} ` : ""}${a.name}</b> · ${a.detail}</p>`).join("")}</div><div class="map-routes">${villageRoutes.map((r) => `<p><b>${r.name}</b> · 约 ${routeSeconds(r.points)} 秒（步行、不含停留）</p>`).join("")}</div><p class="muted">世界 4200 × 2200 · 金点是你的位置。临水木桥可步行，池水不可通行；遗迹南侧的归乡风径修复后开放。</p><button id="close">收起地图</button>`,
+        `<p>风铃村 · 四向荒野 · 远端风之遗迹</p><canvas id="world-map" width="840" height="630"></canvas><div class="map-guide">${villageAreas.map((a) => `<p><b>${showLayoutLabels(import.meta.env.DEV, window.location.search) ? `${a.id} ` : ""}${a.name}</b> · ${a.detail}</p>`).join("")}</div><div class="map-routes">${villageRoutes.map((r) => `<p><b>${r.name}</b> · 约 ${routeSeconds(r.points)} 秒（步行、不含停留）</p>`).join("")}</div><p class="muted">世界 6400 × 4800 · 金点是你的位置。临水木桥可步行，池水不可通行；遗迹南侧的归乡风径修复后开放。</p><button id="close">收起地图</button>`,
       );
       this.drawMap(this.modal.querySelector("canvas")!, s, "world-map");
     }
@@ -545,7 +553,8 @@ export class Interface {
     button.onclick = () => this.shop(id);
     this.modal.querySelector(".dialog-copy")?.append(button);
   }
-  dialog(name: string, text: string, source: string = "sign") {
+  dialog(name: string, text: string, source: string = "sign", closed?:()=>void) {
+    this.dialogClosed=closed;
     this.returnTo = "";
     this.returnFocus = null;
     this.mode = "dialog";
@@ -622,6 +631,8 @@ export class Interface {
   }
   update(s: State, prompt: string) {
     this.state = s;
+    const demon=this.root.querySelector<HTMLButtonElement>('#demon-king-summary')!;
+    demon.hidden=demonMalice(s.encounters)===0;demon.textContent=demonKingSummary(s);demon.title='查看旅途手记中的黑焰与来袭规则';
     this.root
       .querySelector(".health i")!
       .setAttribute("style", `width:${s.player.hp}%`);
@@ -640,15 +651,16 @@ export class Interface {
     this.root.querySelector("#clock")!.textContent = clockLabel(s.time);
     this.root.querySelector("#day")!.textContent =
       `第 ${Math.floor(s.time / 1440) + 1} 日 · ${region(s.player.x, s.player.y)}`;
-    this.root.querySelector("#objective")!.textContent = objectives[s.quest];
+    const objective=s.fieldQuests["south-supply"]==="active"?southQuestObjective(s):objectives[s.quest];
+    this.root.querySelector("#objective")!.textContent = objective;
     this.root.querySelector("#objective-summary")!.textContent =
-      `任务 · ${objectives[s.quest]}`;
+      `任务 · ${objective}`;
     const questToggle = this.root.querySelector("#quest-toggle")!;
     questToggle.setAttribute(
       "aria-label",
-      `${this.hudPreferences.quest ? "收起" : "展开"}任务详情：${objectives[s.quest]}`,
+      `${this.hudPreferences.quest ? "收起" : "展开"}任务详情：${objective}`,
     );
-    questToggle.setAttribute("title", objectives[s.quest]);
+    questToggle.setAttribute("title", objective);
     if (this.lastQuest !== undefined && this.lastQuest !== s.quest)
       this.message("目标已更新");
     this.lastQuest = s.quest;
@@ -692,7 +704,7 @@ export class Interface {
   drawMap(c: HTMLCanvasElement, s: State, mode: "minimap" | "world-map") {
     const mini = mode === "minimap";
     const w = mini ? 192 : 840,
-      h = mini ? 101 : 440;
+      h = mini ? 144 : 630;
     const dpr = Math.min(window.devicePixelRatio || 1, 3);
     if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) {
       c.width = Math.round(w * dpr);
@@ -704,22 +716,14 @@ export class Interface {
     ctx.globalAlpha = 1;
     const sx = w / WORLD.width,
       sy = h / WORLD.height;
+    const px=(x:number)=>(x-WORLD.left)*sx,py=(y:number)=>(y-WORLD.top)*sy;
     ctx.fillStyle = "#9cb67e";
     ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = "#477d66";
-    ctx.fillRect(WORLD.forest * sx, 0, (WORLD.ruins - WORLD.forest) * sx, h);
-    ctx.fillStyle = "#aaa78a";
-    ctx.fillRect(WORLD.ruins * sx, 0, w - WORLD.ruins * sx, h);
-    for (const r of MAP_REGIONS.filter(
-      (r) => r.id === "north" || r.id === "south",
-    )) {
+    const regionColors:Record<string,string>={village:'#9cb67e',west:'#a5ae7d',south:'#b9ba76',north:'#83a29b',forest:'#477d66',ruins:'#aaa78a'};
+    for (const r of MAP_REGIONS) {
       ctx.beginPath();
-      r.polygon.forEach((p, i) =>
-        i ? ctx.lineTo(p.x * sx, p.y * sy) : ctx.moveTo(p.x * sx, p.y * sy),
-      );
-      ctx.closePath();
-      ctx.fillStyle = "#b3a176";
-      ctx.fill();
+      r.polygon.forEach((p,i)=>i?ctx.lineTo(px(p.x),py(p.y)):ctx.moveTo(px(p.x),py(p.y)));
+      ctx.closePath();ctx.fillStyle=regionColors[r.id];ctx.fill();
     }
     // 地形合成完成后统一降低底层alpha，避免重叠区域累计成实色。
     if (mini) {
@@ -733,15 +737,16 @@ export class Interface {
     roads.forEach((path) => {
       ctx.beginPath();
       path.forEach(([x, y], i) =>
-        i ? ctx.lineTo(x * sx, y * sy) : ctx.moveTo(x * sx, y * sy),
+        i ? ctx.lineTo(px(x), py(y)) : ctx.moveTo(px(x), py(y)),
       );
       ctx.stroke();
     });
     ctx.fillStyle = "#4c9bad";
+    for(const POND of WATERS){
     ctx.beginPath();
     ctx.ellipse(
-      POND.x * sx,
-      POND.y * sy,
+      px(POND.x),
+      py(POND.y),
       POND.rx * sx,
       POND.ry * sy,
       0,
@@ -749,17 +754,23 @@ export class Interface {
       Math.PI * 2,
     );
     ctx.fill();
+    }
     ctx.fillStyle = "#c49a62";
     BRIDGES.forEach((b) =>
-      ctx.fillRect(b.x * sx, b.y * sy, b.w * sx, b.h * sy),
+      ctx.fillRect(px(b.x), py(b.y), b.w * sx, b.h * sy),
     );
+    for(const d of SHORTCUTS){
+      const open=s.mapProgress.shortcuts.includes(d.id);
+      ctx.fillStyle=open?"#e9f5bd":"#ba6946";ctx.beginPath();ctx.arc(px(d.barrier.x),py(d.barrier.y),mini?2:5,0,Math.PI*2);ctx.fill();
+      if(!mini){ctx.font="12px serif";ctx.textAlign="left";ctx.fillText(`${d.name}${open?"":" · 待修复"}`,px(d.barrier.x)+8,py(d.barrier.y)-8);}
+    }
     if (!mini) {
       ctx.strokeStyle = "#805634";
       ctx.lineWidth = 3;
       VILLAGE_WALLS.forEach(({ a, b }) => {
         ctx.beginPath();
-        ctx.moveTo(a.x * sx, a.y * sy);
-        ctx.lineTo(b.x * sx, b.y * sy);
+        ctx.moveTo(px(a.x), py(a.y));
+        ctx.lineTo(px(b.x), py(b.y));
         ctx.stroke();
       });
       ctx.font = "12px serif";
@@ -767,15 +778,15 @@ export class Interface {
       ctx.fillStyle = "#284b3b";
       VILLAGE_PORTALS.forEach((p) =>
         ctx.fillText(
-          p.open ? p.name : "西门（封闭）",
-          p.x * sx + (p.axis === "x" ? -22 : 0),
-          p.y * sy - 12,
+          p.open || s.mapProgress.westRoad === "open" ? p.name : "西门（待修复）",
+          px(p.x) + (p.axis === "x" ? -22 : 0),
+          py(p.y) - 12,
         ),
       );
       ctx.strokeStyle = "#637347";
       ctx.setLineDash([4, 3]);
       RESERVED_PARCELS.forEach((p) =>
-        ctx.strokeRect(p.x * sx, p.y * sy, p.w * sx, p.h * sy),
+        ctx.strokeRect(px(p.x), py(p.y), p.w * sx, p.h * sy),
       );
       ctx.setLineDash([]);
       ctx.font = "bold 14px serif";
@@ -783,22 +794,20 @@ export class Interface {
       if (showLayoutLabels(import.meta.env.DEV, window.location.search))
         villageAreas.forEach((a) => {
           ctx.fillStyle = "#284b3b";
-          ctx.fillRect(a.x * sx - 10, a.y * sy - 11, 20, 22);
+          ctx.fillRect(px(a.x) - 10, py(a.y) - 11, 20, 22);
           ctx.fillStyle = "#fff4cf";
-          ctx.fillText(a.id, a.x * sx, a.y * sy + 5);
+          ctx.fillText(a.id, px(a.x), py(a.y) + 5);
         });
       ctx.font = "18px serif";
       ctx.fillStyle = "#fff4cf";
-      ctx.fillText("风铃村", 200, h * 0.16);
-      ctx.fillText("翡翠森林", w * 0.64, h * 0.7);
-      ctx.fillText("风之遗迹", w * 0.88, h * 0.18);
+      for(const r of MAP_REGIONS){const x=r.polygon.reduce((n,p)=>n+p.x,0)/r.polygon.length,y=r.polygon.reduce((n,p)=>n+p.y,0)/r.polygon.length;ctx.fillText(r.name,px(x),py(y));}
       ctx.textAlign = "start";
     }
     ctx.fillStyle = "#fff6ca";
     ctx.beginPath();
     ctx.arc(
-      (s.player.x / WORLD.width) * w,
-      (s.player.y / WORLD.height) * h,
+      px(s.player.x),
+      py(s.player.y),
       mini ? 3 : 6,
       0,
       Math.PI * 2,
@@ -807,7 +816,7 @@ export class Interface {
     ctx.strokeStyle = "#8d512e";
     ctx.lineWidth = 2;
     ctx.stroke();
-    const xb=s.xiaobao;ctx.fillStyle='#b7ffe0';ctx.strokeStyle='#315e4c';ctx.beginPath();ctx.arc(xb.x*sx,xb.y*sy,mini?3:5,0,Math.PI*2);ctx.fill();ctx.stroke();
-    if(!mini){ctx.font='12px sans-serif';ctx.fillStyle='#174537';ctx.fillText(`小宝 · ${xb.flight?'飞援中':xb.rest?'调息中':xb.task==='guard'?'守村':xb.task==='follow'?'随行':'自由活动'}`,xb.x*sx+8,xb.y*sy-8);}
+    const xb=s.xiaobao;ctx.fillStyle='#b7ffe0';ctx.strokeStyle='#315e4c';ctx.beginPath();ctx.arc(px(xb.x),py(xb.y),mini?3:5,0,Math.PI*2);ctx.fill();ctx.stroke();
+    if(!mini){ctx.font='12px sans-serif';ctx.fillStyle='#174537';ctx.fillText(`小宝 · ${xb.flight?'飞援中':xb.rest?'调息中':xb.task==='guard'?'守村':xb.task==='follow'?'随行':'自由活动'}`,px(xb.x)+8,py(xb.y)-8);}
   }
 }

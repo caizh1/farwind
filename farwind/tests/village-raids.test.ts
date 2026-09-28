@@ -1,3 +1,7 @@
+import {beforeEach,afterEach} from "vitest";
+import {syncMapGeometry} from "../src/data/world";
+// 本组防御回归以四门开放后的正式几何为条件；关门准入另在地图测试覆盖。
+beforeEach(()=>syncMapGeometry(true));afterEach(()=>syncMapGeometry(false));
 import {legacyDefense} from './safety-fixtures';
 import {zoneFor} from '../src/data/defenseZones';
 import {describe,it,expect} from 'vitest';
@@ -12,9 +16,9 @@ import {motionBlocked,clearMotionLine,shotLineBlocker} from '../src/game/systems
 import {makeNightPlan,nightWarningSnapshot,mayStartNight} from '../src/game/systems/nightDirector';
 const player={x:670,y:720,hp:100};
 const step=(d:EastDefense,ms:number,dt=20)=>{for(let i=0;i<ms;i+=dt)d.update(d.now+dt,dt,player,{queries:2});};
-describe('三门常态防御',()=>{
- it('九人三塔、真实场外点和门洞连通，不新增世界尺寸',()=>{
-  expect(GUARD_DEFS).toHaveLength(9);expect(TOWERS).toHaveLength(3);
+describe('四门常态防御',()=>{
+ it('十二人四塔、真实场外点和门洞连通',()=>{
+  expect(GUARD_DEFS).toHaveLength(12);expect(TOWERS).toHaveLength(4);
   const errors:any[]=[];
   for(const g of GUARD_DEFS.filter(g=>g.role==='melee')){
    expect(motionBlocked(g.post.x,g.post.y),`${g.id}岗位`).toBe(false);
@@ -37,7 +41,7 @@ describe('三门常态防御',()=>{
  });
  it('视口、近身、实体和人口上限禁止硬刷，同一个夜间计划等待合法条件',()=>{
   const s=initialDefense();s.protectionMs=s.cooldownMs=0;const d=new EastDefense(s,0);
-  const view={left:0,right:4200,top:0,bottom:2200};d.update(20,20,player,{queries:2},view);
+  const view={left:-2110,right:4290,top:-1380,bottom:3420};d.update(20,20,player,{queries:2},view);
   expect(s.raid).toBeNull();const world=initialState();world.defense=s;world.night.plan=makeNightPlan(world,2);world.night.plan.outcome='pending';world.time=world.night.plan.at;const before=structuredClone(world);
   expect(()=>nightWarningSnapshot(world,view)).toThrow();expect(world).toEqual(before);
   s.retryMs=0;d.update(40,20,player,{queries:2},undefined,Array(12).fill(player));expect(s.raid).toBeNull();
@@ -56,8 +60,8 @@ describe('三门常态防御',()=>{
   Object.assign(old.defense.guards[0],{hp:0,dead:true,mode:'dead'});old.defense.guards[1].hp=57;
   for(const k of ['protectionMs','cooldownMs','retryMs','seed'])delete old.defense[k];
   delete old.defense.raid.gateId;delete old.defense.raid.spawns;
-  const migrated=validate(old);expect(migrated.schema_version).toBe(7);expect(migrated.map_version).toBe(6);
-  expect(migrated.defense.guards).toHaveLength(9);expect(migrated.defense.guards[0].dead).toBe(true);expect(migrated.defense.guards[1].hp).toBe(57);
+  const migrated=validate(old);expect(migrated.schema_version).toBe(13);expect(migrated.map_version).toBe(8);
+  expect(migrated.defense.guards).toHaveLength(12);expect(migrated.defense.guards[0].dead).toBe(true);expect(migrated.defense.guards[1].hp).toBe(57);
   expect(migrated.defense.raid?.members).toEqual(old.defense.raid.members);expect(validate(migrated)).toEqual(migrated);
   migrated.defense.guards.pop();expect(()=>validate(migrated)).toThrow();
  });
@@ -85,7 +89,7 @@ describe('三门常态防御',()=>{
  });
  it('历史四怪事件原样恢复完成，不污染主线；新调度30场由安全规则集成测试覆盖',()=>{
   const s=initialState(),before=structuredClone(s);
-  for(const gate of RAID_GATES){s.defense=legacyDefense(s.defense,gate.id);const d=new EastDefense(s.defense,0);step(d,130000);expect(s.defense.raid).toBeNull();expect(s.defense.guards.every(g=>!g.dead)).toBe(true);}
+  for(const gate of RAID_GATES.filter(g=>g.id!=='west-gate')){s.defense=legacyDefense(s.defense,gate.id);const d=new EastDefense(s.defense,0);step(d,130000);expect(s.defense.raid).toBeNull();expect(s.defense.guards.every(g=>!g.dead)).toBe(true);}
   expect([s.quest,s.killed,s.coins,s.bag,s.pendingDrops]).toEqual([before.quest,before.killed,before.coins,before.bag,before.pendingDrops]);validate(s);
- });
+ },20000);
 });

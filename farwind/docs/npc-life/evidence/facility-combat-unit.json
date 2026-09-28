@@ -11,12 +11,12 @@
     "space": "village",
     "speech": null,
     "metrics": {
-      "steps": 2015,
-      "decisions": 537,
-      "queries": 11,
-      "ms": 406.5662619999985,
-      "maxMs": 16.27570800000001,
-      "pathBatches": 27,
+      "steps": 2565,
+      "decisions": 865,
+      "queries": 21,
+      "ms": 11816.83627500006,
+      "maxMs": 308.4476249999998,
+      "pathBatches": 17,
       "maxExpandedPerBatch": 64
     },
     "stores": {
@@ -28,19 +28,9 @@
     },
     "reservations": [
       {
-        "facility": "bed:east-patrol",
-        "owner": "east-patrol",
-        "expires": 52300
-      },
-      {
-        "facility": "bed:south-patrol",
-        "owner": "south-patrol",
-        "expires": 52300
-      },
-      {
-        "facility": "seat:healer-home",
+        "facility": "pharmacy",
         "owner": "healer",
-        "expires": 52300
+        "expires": 63300
       }
     ],
     "tasks": [],
@@ -48,32 +38,50 @@
       {
         "id": "elder",
         "body": {
-          "space": "elder-home",
-          "x": 573.9496565598546,
-          "y": 803.3420170891077,
+          "space": "village",
+          "x": 562.0400000000002,
+          "y": 650,
           "hp": 100,
           "health": "healthy",
           "episode": 0,
           "recoverAt": 0
         },
-        "action": null,
-        "reason": "午饭与休息（评分 90）",
+        "action": {
+          "id": 9,
+          "kind": "work",
+          "target": {
+            "space": "village",
+            "x": 720,
+            "y": 650
+          },
+          "pickup": null,
+          "facility": null,
+          "task": null,
+          "phase": "travel",
+          "progress": 0,
+          "duration": 8000,
+          "started": 41180,
+          "failures": 0,
+          "label": "整理风向笔记",
+          "social": null
+        },
+        "reason": "整理风向笔记（评分 78）",
         "needs": {
-          "hunger": 0.3883333333333385,
-          "fatigue": 0.00016666666666666666
+          "hunger": 0.5716666666666702,
+          "fatigue": 0.09183333333333293
         },
         "alarm": 0,
         "candidates": [
           {
-            "kind": "rest",
+            "kind": "work",
             "target": {
-              "space": "elder-home",
-              "x": 570,
-              "y": 800
+              "space": "village",
+              "x": 720,
+              "y": 650
             },
-            "score": 89.90687045413318,
-            "label": "午饭与休息",
-            "facility": "seat:elder-home",
+            "score": 77.48296432287381,
+            "label": "整理风向笔记",
+            "facility": null,
             "task": null
           },
           {
@@ -83,7 +91,7 @@
               "x": 570,
               "y": 800
             },
-            "score": 19.906870454133184,
+            "score": 17.12644762904068,
             "label": "窗口错过或设施忙，回家等待",
             "facility": "seat:elder-home",
             "task": null
@@ -92,8 +100,8 @@
             "kind": "rest",
             "target": {
               "space": "elder-home",
-              "x": 573.9496565598546,
-              "y": 803.3420170891077,
+              "x": 694.7064539002216,
+              "y": 899.6684711819589,
               "hp": 100,
               "health": "healthy",
               "episode": 0,
@@ -105,7 +113,23 @@
             "task": null
           }
         ],
-        "path": null,
+        "path": {
+          "nav": {
+            "path": [],
+            "next": 0,
+            "failed": false,
+            "returning": false,
+            "queries": 0,
+            "visited": 0
+          },
+          "stuck": 0,
+          "queries": 0,
+          "batches": 0,
+          "maxExpanded": 0,
+          "failure": "",
+          "goal": "0:village:90:81",
+          "planning": false
+        },
         "memories": [
           {
             "eventId": "life:1",
@@ -122,14 +146,14 @@
             "eventId": "life:3",
             "sequence": 3,
             "kind": "damage",
-            "time": 790.8299999999902,
+            "time": 792.1799999999889,
             "subjects": [
               "wind-bell"
             ],
             "result": "巡视确认广场风铃挂架仍受损，完整度90%",
             "source": "seen",
             "importance": 40,
-            "expires": 5110.82999999999
+            "expires": 5112.179999999989
           },
           {
             "eventId": "life:4",
@@ -141,6 +165,19 @@
             "source": "alarm",
             "importance": 40,
             "expires": 5116.079999999985
+          },
+          {
+            "eventId": "life:5",
+            "sequence": 5,
+            "kind": "repair",
+            "time": 856.94999999993,
+            "subjects": [
+              "wind-bell"
+            ],
+            "result": "到场维修，消耗从工坊带来的两份木料，广场风铃挂架恢复至100%",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5176.94999999993
           }
         ]
       },
@@ -148,49 +185,49 @@
         "id": "healer",
         "body": {
           "space": "healer-home",
-          "x": 565.9621697743848,
-          "y": 798.2976507768808,
+          "x": 825.6767718491753,
+          "y": 799.9721265544499,
           "hp": 100,
           "health": "healthy",
           "episode": 0,
           "recoverAt": 0
         },
         "action": {
-          "id": 6,
-          "kind": "rest",
+          "id": 7,
+          "kind": "habit",
           "target": {
             "space": "healer-home",
-            "x": 570,
+            "x": 830,
             "y": 800
           },
           "pickup": null,
-          "facility": "seat:healer-home",
+          "facility": "pharmacy",
           "task": null,
           "phase": "perform",
-          "progress": 1780,
-          "duration": 3000,
-          "started": 38540,
+          "progress": 7680,
+          "duration": 8000,
+          "started": 40620,
           "failures": 0,
-          "label": "午饭与休息",
+          "label": "近日遇险，留在药房画图鉴",
           "social": null
         },
-        "reason": "午饭与休息（评分 86）",
+        "reason": "近日遇险，留在药房画图鉴（评分 80）",
         "needs": {
-          "hunger": 0.17366666666666614,
-          "fatigue": 0.33583333333371423
+          "hunger": 0.3523333333333365,
+          "fatigue": 0.4275000000003739
         },
         "alarm": 0,
         "candidates": [
           {
-            "kind": "rest",
+            "kind": "habit",
             "target": {
               "space": "healer-home",
-              "x": 570,
+              "x": 830,
               "y": 800
             },
-            "score": 85.92112370874652,
-            "label": "午饭与休息",
-            "facility": "seat:healer-home",
+            "score": 84.92218027590856,
+            "label": "近日遇险，留在药房画图鉴",
+            "facility": "pharmacy",
             "task": null
           },
           {
@@ -200,7 +237,7 @@
               "x": 570,
               "y": 800
             },
-            "score": 19.921123708746517,
+            "score": 15.397818079366404,
             "label": "窗口错过或设施忙，回家等待",
             "facility": "seat:healer-home",
             "task": null
@@ -209,8 +246,8 @@
             "kind": "rest",
             "target": {
               "space": "healer-home",
-              "x": 565.9621697743848,
-              "y": 798.2976507768808,
+              "x": 825.6767718491753,
+              "y": 799.9721265544499,
               "hp": 100,
               "health": "healthy",
               "episode": 0,
@@ -222,7 +259,23 @@
             "task": null
           }
         ],
-        "path": null,
+        "path": {
+          "nav": {
+            "path": [],
+            "next": 0,
+            "failed": false,
+            "returning": false,
+            "queries": 0,
+            "visited": 0
+          },
+          "stuck": 80,
+          "queries": 0,
+          "batches": 0,
+          "maxExpanded": 0,
+          "failure": "",
+          "goal": "0:healer-home:104:100",
+          "planning": false
+        },
         "memories": [
           {
             "eventId": "life:1",
@@ -252,8 +305,8 @@
         "id": "carpenter",
         "body": {
           "space": "village",
-          "x": 716.4874628850353,
-          "y": 654.0103033847038,
+          "x": 717.6781951401939,
+          "y": 654.1838923573705,
           "hp": 100,
           "health": "healthy",
           "episode": 0,
@@ -262,8 +315,8 @@
         "action": null,
         "reason": "带工具与木料维修（评分 144）",
         "needs": {
-          "hunger": 15.671666666667488,
-          "fatigue": 10.335833333333744
+          "hunger": 15.855000000001045,
+          "fatigue": 10.427500000000522
         },
         "alarm": 0,
         "candidates": [
@@ -274,7 +327,7 @@
               "x": 720,
               "y": 650
             },
-            "score": 148.9040404987939,
+            "score": 148.9138709252744,
             "label": "带工具与木料维修",
             "facility": null,
             "task": "repair:wind-bell:2"
@@ -283,20 +336,20 @@
             "kind": "work",
             "target": {
               "space": "village",
-              "x": 720,
-              "y": 650
+              "x": 480,
+              "y": 1425
             },
-            "score": 87.90404049879389,
-            "label": "巡视广场风铃与挂架",
-            "facility": null,
+            "score": 73.48069972816029,
+            "label": "木工与保养工具",
+            "facility": "tools",
             "task": null
           },
           {
             "kind": "rest",
             "target": {
               "space": "village",
-              "x": 716.4874628850353,
-              "y": 654.0103033847038,
+              "x": 717.6781951401939,
+              "y": 654.1838923573705,
               "hp": 100,
               "health": "healthy",
               "episode": 0,
@@ -314,7 +367,7 @@
               "x": 570,
               "y": 800
             },
-            "score": 8.277368117943443,
+            "score": 8.264352205038126,
             "label": "窗口错过或设施忙，回家等待",
             "facility": "seat:carpenter-home",
             "task": null
@@ -323,18 +376,23 @@
         "path": {
           "nav": {
             "path": [],
-            "next": 0,
+            "next": 35620,
             "failed": false,
             "returning": false,
             "queries": 0,
-            "visited": 0
+            "visited": 0,
+            "target": {
+              "space": "village",
+              "x": 720,
+              "y": 650
+            }
           },
-          "stuck": 120,
-          "queries": 0,
-          "batches": 0,
-          "maxExpanded": 0,
+          "stuck": 40,
+          "queries": 1,
+          "batches": 12,
+          "maxExpanded": 64,
           "failure": "",
-          "goal": "village:90:81",
+          "goal": "0:village:90:81",
           "planning": false
         },
         "memories": [
@@ -353,14 +411,14 @@
             "eventId": "life:3",
             "sequence": 3,
             "kind": "damage",
-            "time": 790.8299999999902,
+            "time": 792.1799999999889,
             "subjects": [
               "wind-bell"
             ],
             "result": "巡视确认广场风铃挂架仍受损，完整度90%",
             "source": "seen",
             "importance": 40,
-            "expires": 5110.82999999999
+            "expires": 5112.179999999989
           },
           {
             "eventId": "life:4",
@@ -377,14 +435,14 @@
             "eventId": "life:5",
             "sequence": 5,
             "kind": "repair",
-            "time": 840.419999999945,
+            "time": 856.94999999993,
             "subjects": [
               "wind-bell"
             ],
             "result": "到场维修，消耗从工坊带来的两份木料，广场风铃挂架恢复至100%",
             "source": "seen",
             "importance": 40,
-            "expires": 5160.4199999999455
+            "expires": 5176.94999999993
           }
         ]
       },
@@ -398,8 +456,8 @@
         "action": null,
         "reason": "值守或沿路返回岗位",
         "needs": {
-          "hunger": 15.671666666667488,
-          "fatigue": 10.335833333333744
+          "hunger": 15.855000000001045,
+          "fatigue": 10.427500000000522
         },
         "alarm": 0,
         "candidates": [],
@@ -433,55 +491,55 @@
         "id": "east-patrol",
         "body": {
           "space": "barracks",
-          "x": 573.4252733211038,
-          "y": 563.0729594937901
+          "x": 553.9653153707552,
+          "y": 817.5754928875955
         },
         "action": {
-          "id": 1,
-          "kind": "sleep",
+          "id": 2,
+          "kind": "habit",
           "target": {
             "space": "barracks",
-            "x": 570,
-            "y": 560
+            "x": 550,
+            "y": 820
           },
           "pickup": null,
-          "facility": "bed:east-patrol",
+          "facility": null,
           "task": null,
           "phase": "perform",
-          "progress": 3000,
-          "duration": 3000,
-          "started": 10720,
+          "progress": 4420,
+          "duration": 8000,
+          "started": 40420,
           "failures": 0,
-          "label": "轮休",
+          "label": "训练、聊天",
           "social": null
         },
-        "reason": "轮休（评分 80）",
+        "reason": "训练、聊天（评分 80）",
         "needs": {
-          "hunger": 15.671666666667488,
-          "fatigue": 0
+          "hunger": 15.855000000001045,
+          "fatigue": 0.09083333333333296
         },
         "alarm": 0,
         "candidates": [],
         "path": {
           "nav": {
             "path": [],
-            "next": 19060,
+            "next": 44320,
             "failed": false,
             "returning": false,
             "queries": 0,
             "visited": 0,
             "target": {
               "space": "barracks",
-              "x": 570,
-              "y": 560
+              "x": 550,
+              "y": 820
             }
           },
-          "stuck": 0,
-          "queries": 2,
-          "batches": 8,
+          "stuck": 100,
+          "queries": 1,
+          "batches": 2,
           "maxExpanded": 64,
           "failure": "",
-          "goal": "barracks:71:70",
+          "goal": "0:barracks:69:103",
           "planning": false
         },
         "memories": [
@@ -519,8 +577,8 @@
         "action": null,
         "reason": "值守或沿路返回岗位",
         "needs": {
-          "hunger": 15.671666666667488,
-          "fatigue": 10.335833333333744
+          "hunger": 15.855000000001045,
+          "fatigue": 10.427500000000522
         },
         "alarm": 0,
         "candidates": [],
@@ -560,8 +618,8 @@
         "action": null,
         "reason": "已阵亡",
         "needs": {
-          "hunger": 15.671666666667488,
-          "fatigue": 10.335833333333744
+          "hunger": 15.855000000001045,
+          "fatigue": 10.427500000000522
         },
         "alarm": 0,
         "candidates": [],
@@ -601,8 +659,8 @@
         "action": null,
         "reason": "已阵亡",
         "needs": {
-          "hunger": 15.671666666667488,
-          "fatigue": 10.335833333333744
+          "hunger": 15.855000000001045,
+          "fatigue": 10.427500000000522
         },
         "alarm": 0,
         "candidates": [],
@@ -642,8 +700,8 @@
         "action": null,
         "reason": "已阵亡",
         "needs": {
-          "hunger": 15.671666666667488,
-          "fatigue": 10.335833333333744
+          "hunger": 15.855000000001045,
+          "fatigue": 10.427500000000522
         },
         "alarm": 0,
         "candidates": [],
@@ -683,8 +741,8 @@
         "action": null,
         "reason": "值守或沿路返回岗位",
         "needs": {
-          "hunger": 15.671666666667488,
-          "fatigue": 10.335833333333744
+          "hunger": 15.855000000001045,
+          "fatigue": 10.427500000000522
         },
         "alarm": 0,
         "candidates": [],
@@ -718,50 +776,55 @@
         "id": "south-patrol",
         "body": {
           "space": "barracks",
-          "x": 680.4806148406735,
-          "y": 685.5270706677445
+          "x": 793.6889474739875,
+          "y": 847.1151245302065
         },
         "action": {
-          "id": 1,
-          "kind": "sleep",
+          "id": 2,
+          "kind": "habit",
           "target": {
             "space": "barracks",
-            "x": 680,
-            "y": 680
+            "x": 790,
+            "y": 850
           },
           "pickup": null,
-          "facility": "bed:south-patrol",
+          "facility": null,
           "task": null,
           "phase": "perform",
-          "progress": 3000,
-          "duration": 3000,
-          "started": 10720,
+          "progress": 4660,
+          "duration": 8000,
+          "started": 40420,
           "failures": 0,
-          "label": "轮休",
+          "label": "训练、聊天",
           "social": null
         },
-        "reason": "轮休（评分 80）",
+        "reason": "训练、聊天（评分 80）",
         "needs": {
-          "hunger": 15.671666666667488,
-          "fatigue": 0
+          "hunger": 15.855000000001045,
+          "fatigue": 0.09083333333333296
         },
         "alarm": 0,
         "candidates": [],
         "path": {
           "nav": {
             "path": [],
-            "next": 0,
+            "next": 44580,
             "failed": false,
             "returning": false,
             "queries": 0,
-            "visited": 0
+            "visited": 0,
+            "target": {
+              "space": "barracks",
+              "x": 790,
+              "y": 850
+            }
           },
-          "stuck": 100,
+          "stuck": 120,
           "queries": 1,
-          "batches": 19,
+          "batches": 3,
           "maxExpanded": 64,
           "failure": "",
-          "goal": "barracks:85:85",
+          "goal": "0:barracks:99:106",
           "planning": false
         },
         "memories": [
@@ -799,8 +862,165 @@
         "action": null,
         "reason": "值守或沿路返回岗位",
         "needs": {
-          "hunger": 15.671666666667488,
-          "fatigue": 10.335833333333744
+          "hunger": 15.855000000001045,
+          "fatigue": 10.427500000000522
+        },
+        "alarm": 0,
+        "candidates": [],
+        "path": null,
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "alarm",
+            "time": 780.03,
+            "subjects": [],
+            "result": "居民区威胁，集结与救护",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 5100.03
+          },
+          {
+            "eventId": "life:4",
+            "sequence": 4,
+            "kind": "clear",
+            "time": 796.0799999999854,
+            "subjects": [],
+            "result": "持续确认安全，先救护和检修再恢复日常",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 5116.079999999985
+          }
+        ]
+      },
+      {
+        "id": "west-watch",
+        "body": {
+          "space": "village",
+          "x": 200,
+          "y": 1340
+        },
+        "action": null,
+        "reason": "值守或沿路返回岗位",
+        "needs": {
+          "hunger": 15.855000000001045,
+          "fatigue": 10.427500000000522
+        },
+        "alarm": 0,
+        "candidates": [],
+        "path": null,
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "alarm",
+            "time": 780.03,
+            "subjects": [],
+            "result": "居民区威胁，集结与救护",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 5100.03
+          },
+          {
+            "eventId": "life:4",
+            "sequence": 4,
+            "kind": "clear",
+            "time": 796.0799999999854,
+            "subjects": [],
+            "result": "持续确认安全，先救护和检修再恢复日常",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 5116.079999999985
+          }
+        ]
+      },
+      {
+        "id": "west-patrol",
+        "body": {
+          "space": "barracks",
+          "x": 671.0592671841692,
+          "y": 875.8307565992543
+        },
+        "action": {
+          "id": 2,
+          "kind": "habit",
+          "target": {
+            "space": "barracks",
+            "x": 670,
+            "y": 880
+          },
+          "pickup": null,
+          "facility": null,
+          "task": null,
+          "phase": "perform",
+          "progress": 6620,
+          "duration": 8000,
+          "started": 40420,
+          "failures": 0,
+          "label": "训练、聊天",
+          "social": null
+        },
+        "reason": "训练、聊天（评分 80）",
+        "needs": {
+          "hunger": 15.855000000001045,
+          "fatigue": 0.09083333333333296
+        },
+        "alarm": 0,
+        "candidates": [],
+        "path": {
+          "nav": {
+            "path": [],
+            "next": 0,
+            "failed": false,
+            "returning": false,
+            "queries": 0,
+            "visited": 0
+          },
+          "stuck": 20,
+          "queries": 0,
+          "batches": 0,
+          "maxExpanded": 0,
+          "failure": "",
+          "goal": "0:barracks:84:110",
+          "planning": false
+        },
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "alarm",
+            "time": 780.03,
+            "subjects": [],
+            "result": "居民区威胁，集结与救护",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 5100.03
+          },
+          {
+            "eventId": "life:4",
+            "sequence": 4,
+            "kind": "clear",
+            "time": 796.0799999999854,
+            "subjects": [],
+            "result": "持续确认安全，先救护和检修再恢复日常",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 5116.079999999985
+          }
+        ]
+      },
+      {
+        "id": "west-archer",
+        "body": {
+          "space": "village",
+          "x": 160,
+          "y": 1710
+        },
+        "action": null,
+        "reason": "值守或沿路返回岗位",
+        "needs": {
+          "hunger": 15.855000000001045,
+          "fatigue": 10.427500000000522
         },
         "alarm": 0,
         "candidates": [],
@@ -867,7 +1087,7 @@
       {
         "id": "life:3",
         "sequence": 3,
-        "time": 790.8299999999902,
+        "time": 792.1799999999889,
         "kind": "damage",
         "place": {
           "space": "village",
@@ -899,7 +1119,7 @@
       {
         "id": "life:5",
         "sequence": 5,
-        "time": 840.419999999945,
+        "time": 856.94999999993,
         "kind": "repair",
         "place": {
           "space": "village",

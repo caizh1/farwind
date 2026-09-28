@@ -1,0 +1,3389 @@
+{
+  "说明": "正式等待路径诊断",
+  "模拟时间": 29420000,
+  "世界时间": 44609.99999999357,
+  "计划": {
+    "night": 31,
+    "at": 44601,
+    "gate": "south-gate",
+    "count": 1,
+    "order": {
+      "source": "wild",
+      "malice": 0,
+      "profileVersion": 1
+    },
+    "outcome": "started",
+    "raidSequence": 30
+  },
+  "小宝": {
+    "id": "xiaobao",
+    "label": "小宝 · 听风小宗师",
+    "art": "xiaobao-battle-front",
+    "x": 920.3326107697326,
+    "y": 1590.1365541656903,
+    "w": 92,
+    "h": 92,
+    "kind": "npc",
+    "action": "walkDown",
+    "actionName": "正面小步",
+    "elapsed": 0,
+    "distance": 2660493.4258365105,
+    "flip": false,
+    "texture": "xiaobao-battle-front",
+    "frame": 120,
+    "frameIndex": 0,
+    "lift": 0,
+    "demonstration": false,
+    "night": false,
+    "anchor": [
+      80,
+      148
+    ],
+    "state": {
+      "known": false,
+      "task": "guard",
+      "gate": "all",
+      "tactic": "steady",
+      "autoSupport": true,
+      "x": 920.3326107697326,
+      "y": 1590.1365541656903,
+      "hp": 640,
+      "qi": 100,
+      "clock": 29420000,
+      "serial": 73,
+      "cooldowns": {
+        "palm": 0,
+        "triple": 0,
+        "star": 0,
+        "blade": 0,
+        "rock": 0,
+        "fire": 0,
+        "thunder": 0,
+        "chain": 0,
+        "unity": 0,
+        "guard": 0,
+        "rescue": 0,
+        "flight": 0
+      },
+      "rest": 0,
+      "recovery": 0,
+      "peace": 6000,
+      "reduction": 0,
+      "shields": [],
+      "cast": null,
+      "effects": [],
+      "flight": null,
+      "support": {
+        "key": "raid-30",
+        "gate": "south-gate",
+        "age": 0,
+        "hits": 0,
+        "kills": 0,
+        "injured": false
+      },
+      "alarmCycle": 18,
+      "alarmActive": false,
+      "responded": [
+        "18:raid-28"
+      ],
+      "command": null,
+      "wait": null,
+      "affected": [],
+      "reports": [
+        {
+          "event": "raid-20",
+          "gate": "north-gate",
+          "hits": 1,
+          "kills": 1,
+          "injured": false,
+          "result": "威胁已解除",
+          "time": 30204.80999999755
+        },
+        {
+          "event": "raid-21",
+          "gate": "south-gate",
+          "hits": 1,
+          "kills": 1,
+          "injured": false,
+          "result": "威胁已解除",
+          "time": 31459.409999997177
+        },
+        {
+          "event": "raid-22",
+          "gate": "east-gate",
+          "hits": 2,
+          "kills": 2,
+          "injured": true,
+          "result": "威胁已解除",
+          "time": 32928.83999999674
+        },
+        {
+          "event": "raid-23",
+          "gate": "north-gate",
+          "hits": 2,
+          "kills": 2,
+          "injured": false,
+          "result": "威胁已解除",
+          "time": 34434.56999999634
+        },
+        {
+          "event": "raid-24",
+          "gate": "south-gate",
+          "hits": 1,
+          "kills": 1,
+          "injured": true,
+          "result": "威胁已解除",
+          "time": 35920.73999999589
+        },
+        {
+          "event": "raid-25",
+          "gate": "east-gate",
+          "hits": 2,
+          "kills": 2,
+          "injured": true,
+          "result": "威胁已解除",
+          "time": 37223.93999999543
+        },
+        {
+          "event": "raid-26",
+          "gate": "north-gate",
+          "hits": 3,
+          "kills": 3,
+          "injured": false,
+          "result": "威胁已解除",
+          "time": 38741.27999999511
+        },
+        {
+          "event": "raid-27",
+          "gate": "south-gate",
+          "hits": 2,
+          "kills": 2,
+          "injured": true,
+          "result": "威胁已解除",
+          "time": 40277.63999999463
+        },
+        {
+          "event": "raid-28",
+          "gate": "east-gate",
+          "hits": 1,
+          "kills": 1,
+          "injured": true,
+          "result": "威胁已解除",
+          "time": 41535.1499999942
+        },
+        {
+          "event": "raid-29",
+          "gate": "north-gate",
+          "hits": 1,
+          "kills": 1,
+          "injured": false,
+          "result": "威胁已解除",
+          "time": 42998.75999999387
+        }
+      ]
+    },
+    "status": "赶赴防线",
+    "airborne": false,
+    "battleAction": {
+      "clip": "chase",
+      "progress": 0.08156753596406252,
+      "lift": 0
+    },
+    "targetId": null,
+    "metrics": {
+      "decisions": 196134,
+      "hits": 49,
+      "flights": 15,
+      "cancelled": 16,
+      "landingChecks": 1024,
+      "steps": 5884000
+    },
+    "events": [
+      {
+        "id": "xiaobao:37:0:raid-14:1",
+        "kind": "hit",
+        "skill": "thunder",
+        "point": {
+          "x": 781.7560333628627,
+          "y": 172.75950607630634
+        },
+        "from": {
+          "x": 818.1585956795141,
+          "y": 611.9500242713439
+        },
+        "target": "raid-14:1",
+        "damage": 8,
+        "stage": 0,
+        "at": 14009375
+      },
+      {
+        "id": "flight:38",
+        "kind": "flight",
+        "skill": "flight",
+        "point": {
+          "x": 818.1585956795141,
+          "y": 611.9500242713439
+        },
+        "from": {
+          "x": 850,
+          "y": 155
+        },
+        "at": 14009605
+      },
+      {
+        "id": "flight:38:imprint:xiaobao",
+        "kind": "shield",
+        "skill": "guard",
+        "point": {
+          "x": 850,
+          "y": 155
+        },
+        "target": "xiaobao",
+        "at": 14010145
+      },
+      {
+        "id": "flight:38:imprint:north-patrol",
+        "kind": "shield",
+        "skill": "guard",
+        "point": {
+          "x": 812.7868968025701,
+          "y": 217.87423812427514
+        },
+        "target": "north-patrol",
+        "at": 14010145
+      },
+      {
+        "id": "flight:38:land",
+        "kind": "landing",
+        "skill": "flight",
+        "point": {
+          "x": 850,
+          "y": 155
+        },
+        "at": 14010145
+      },
+      {
+        "id": "xiaobao:39",
+        "kind": "release",
+        "skill": "star",
+        "point": {
+          "x": 925.3125606385059,
+          "y": 1640.2998064940048
+        },
+        "from": {
+          "x": 1017.7340820078078,
+          "y": 1957.3351591109385
+        },
+        "at": 14952525
+      },
+      {
+        "id": "xiaobao:39:0:raid-15:1",
+        "kind": "hit",
+        "skill": "star",
+        "point": {
+          "x": 1006.5780462566,
+          "y": 1942.6024313825842
+        },
+        "from": {
+          "x": 1010.5325151510036,
+          "y": 1932.6314834516754
+        },
+        "target": "raid-15:1",
+        "damage": 30,
+        "stage": 0,
+        "at": 14952960
+      },
+      {
+        "id": "flight:41",
+        "kind": "flight",
+        "skill": "flight",
+        "point": {
+          "x": 1763.9095324993361,
+          "y": 918.8986442885117
+        },
+        "from": {
+          "x": 2252.2253967444162,
+          "y": 1162.2253967444162
+        },
+        "at": 15852355
+      },
+      {
+        "id": "flight:41:imprint:xiaobao",
+        "kind": "shield",
+        "skill": "guard",
+        "point": {
+          "x": 2252.2253967444162,
+          "y": 1162.2253967444162
+        },
+        "target": "xiaobao",
+        "at": 15852950
+      },
+      {
+        "id": "flight:41:land",
+        "kind": "landing",
+        "skill": "flight",
+        "point": {
+          "x": 2252.2253967444162,
+          "y": 1162.2253967444162
+        },
+        "at": 15852950
+      },
+      {
+        "id": "xiaobao:42",
+        "kind": "release",
+        "skill": "guard",
+        "point": {
+          "x": 2222.5269119345835,
+          "y": 1132.5269119345835
+        },
+        "from": {
+          "x": 2222.5269119345835,
+          "y": 1132.5269119345835
+        },
+        "at": 15853155
+      },
+      {
+        "id": "xiaobao:42:xiaobao",
+        "kind": "shield",
+        "skill": "guard",
+        "point": {
+          "x": 2222.5269119345835,
+          "y": 1132.5269119345835
+        },
+        "target": "xiaobao",
+        "at": 15853155
+      },
+      {
+        "id": "xiaobao:43",
+        "kind": "release",
+        "skill": "fire",
+        "point": {
+          "x": 2209.1625937701588,
+          "y": 1119.1625937701588
+        },
+        "from": {
+          "x": 2133.473356109291,
+          "y": 1111.0242275951703
+        },
+        "at": 15854205
+      },
+      {
+        "id": "xiaobao:43:0:raid-16:2",
+        "kind": "hit",
+        "skill": "fire",
+        "point": {
+          "x": 2133.473356109291,
+          "y": 1111.0242275951703
+        },
+        "from": {
+          "x": 2133.473356109291,
+          "y": 1111.0242275951703
+        },
+        "target": "raid-16:2",
+        "damage": 48,
+        "stage": 0,
+        "at": 15854205
+      },
+      {
+        "id": "xiaobao:43:0:raid-16:3",
+        "kind": "hit",
+        "skill": "fire",
+        "point": {
+          "x": 2225.182528331951,
+          "y": 1137.009449141028
+        },
+        "from": {
+          "x": 2133.473356109291,
+          "y": 1111.0242275951703
+        },
+        "target": "raid-16:3",
+        "damage": 26,
+        "stage": 0,
+        "at": 15854205
+      },
+      {
+        "id": "xiaobao:43:pulse:0",
+        "kind": "release",
+        "skill": "fire",
+        "point": {
+          "x": 2133.473356109291,
+          "y": 1111.0242275951703
+        },
+        "stage": 0,
+        "at": 15854205
+      },
+      {
+        "id": "xiaobao:43:pulse:1",
+        "kind": "release",
+        "skill": "fire",
+        "point": {
+          "x": 2133.473356109291,
+          "y": 1111.0242275951703
+        },
+        "stage": 1,
+        "at": 15855005
+      },
+      {
+        "id": "xiaobao:43:pulse:2",
+        "kind": "release",
+        "skill": "fire",
+        "point": {
+          "x": 2133.473356109291,
+          "y": 1111.0242275951703
+        },
+        "stage": 2,
+        "at": 15855805
+      },
+      {
+        "id": "xiaobao:43:pulse:3",
+        "kind": "release",
+        "skill": "fire",
+        "point": {
+          "x": 2133.473356109291,
+          "y": 1111.0242275951703
+        },
+        "stage": 3,
+        "at": 15856605
+      },
+      {
+        "id": "xiaobao:43:pulse:4",
+        "kind": "release",
+        "skill": "fire",
+        "point": {
+          "x": 2133.473356109291,
+          "y": 1111.0242275951703
+        },
+        "stage": 4,
+        "at": 15857405
+      },
+      {
+        "id": "xiaobao:43:pulse:5",
+        "kind": "release",
+        "skill": "fire",
+        "point": {
+          "x": 2133.473356109291,
+          "y": 1111.0242275951703
+        },
+        "stage": 5,
+        "at": 15858205
+      },
+      {
+        "id": "xiaobao:44",
+        "kind": "release",
+        "skill": "rock",
+        "point": {
+          "x": 812.6424149411062,
+          "y": 652.9838705783276
+        },
+        "from": {
+          "x": 742.156657059057,
+          "y": 261.29667110195726
+        },
+        "at": 16813905
+      },
+      {
+        "id": "xiaobao:44:0:raid-17:1",
+        "kind": "hit",
+        "skill": "rock",
+        "point": {
+          "x": 771.0623776251817,
+          "y": 182.08396951641356
+        },
+        "from": {
+          "x": 742.156657059057,
+          "y": 261.29667110195726
+        },
+        "target": "raid-17:1",
+        "damage": 26,
+        "stage": 0,
+        "at": 16813905
+      },
+      {
+        "id": "xiaobao:44:0:raid-17:2",
+        "kind": "hit",
+        "skill": "rock",
+        "point": {
+          "x": 762.7980781962635,
+          "y": 207.54849742361995
+        },
+        "from": {
+          "x": 742.156657059057,
+          "y": 261.29667110195726
+        },
+        "target": "raid-17:2",
+        "damage": 48,
+        "stage": 0,
+        "at": 16813905
+      },
+      {
+        "id": "xiaobao:44:0:raid-17:3",
+        "kind": "hit",
+        "skill": "rock",
+        "point": {
+          "x": 742.156657059057,
+          "y": 261.29667110195726
+        },
+        "from": {
+          "x": 742.156657059057,
+          "y": 261.29667110195726
+        },
+        "target": "raid-17:3",
+        "damage": 12,
+        "stage": 0,
+        "at": 16813905
+      },
+      {
+        "id": "xiaobao:44:pulse:0",
+        "kind": "release",
+        "skill": "rock",
+        "point": {
+          "x": 742.156657059057,
+          "y": 261.29667110195726
+        },
+        "stage": 0,
+        "at": 16813905
+      },
+      {
+        "id": "xiaobao:44:pulse:1",
+        "kind": "release",
+        "skill": "rock",
+        "point": {
+          "x": 742.156657059057,
+          "y": 261.29667110195726
+        },
+        "stage": 1,
+        "at": 16814225
+      },
+      {
+        "id": "xiaobao:44:pulse:2",
+        "kind": "release",
+        "skill": "rock",
+        "point": {
+          "x": 742.156657059057,
+          "y": 261.29667110195726
+        },
+        "stage": 2,
+        "at": 16814545
+      },
+      {
+        "id": "xiaobao:45",
+        "kind": "release",
+        "skill": "star",
+        "point": {
+          "x": 926.6646417962456,
+          "y": 1652.6671140564242
+        },
+        "from": {
+          "x": 1025.4121139352485,
+          "y": 1964.5100949460461
+        },
+        "at": 17879175
+      },
+      {
+        "id": "xiaobao:45:0:raid-18:1",
+        "kind": "hit",
+        "skill": "star",
+        "point": {
+          "x": 1009.188238521273,
+          "y": 1942.4632502102777
+        },
+        "from": {
+          "x": 1015.4185115047353,
+          "y": 1932.950453931937
+        },
+        "target": "raid-18:1",
+        "damage": 48,
+        "stage": 0,
+        "at": 17879595
+      },
+      {
+        "id": "xiaobao:45:0:raid-18:3",
+        "kind": "hit",
+        "skill": "star",
+        "point": {
+          "x": 1026.056889584215,
+          "y": 1988.7489307378867
+        },
+        "from": {
+          "x": 1029.1542294358105,
+          "y": 1976.3276374840998
+        },
+        "target": "raid-18:3",
+        "damage": 48,
+        "stage": 0,
+        "at": 17879660
+      },
+      {
+        "id": "flight:48",
+        "kind": "flight",
+        "skill": "flight",
+        "point": {
+          "x": 1451.2200547312173,
+          "y": 850.1008166439244
+        },
+        "from": {
+          "x": 2278,
+          "y": 1100
+        },
+        "at": 18806755
+      },
+      {
+        "id": "flight:48:imprint:xiaobao",
+        "kind": "shield",
+        "skill": "guard",
+        "point": {
+          "x": 2278,
+          "y": 1100
+        },
+        "target": "xiaobao",
+        "at": 18807545
+      },
+      {
+        "id": "flight:48:land",
+        "kind": "landing",
+        "skill": "flight",
+        "point": {
+          "x": 2278,
+          "y": 1100
+        },
+        "at": 18807545
+      },
+      {
+        "id": "xiaobao:49",
+        "kind": "release",
+        "skill": "rescue",
+        "point": {
+          "x": 2254.900000000001,
+          "y": 1100
+        },
+        "from": {
+          "x": 2143.2770225847826,
+          "y": 1111.4276469022334
+        },
+        "at": 18807685
+      },
+      {
+        "id": "xiaobao:49:0:raid-19:1",
+        "kind": "hit",
+        "skill": "rescue",
+        "point": {
+          "x": 2180.766559768697,
+          "y": 1104.6959466567248
+        },
+        "from": {
+          "x": 2143.482367096141,
+          "y": 1111.4066243079287
+        },
+        "target": "raid-19:1",
+        "damage": 12,
+        "stage": 0,
+        "at": 18807840
+      },
+      {
+        "id": "xiaobao:50",
+        "kind": "release",
+        "skill": "star",
+        "point": {
+          "x": 823.8566407141597,
+          "y": 519.7016044469557
+        },
+        "from": {
+          "x": 729.9967705947975,
+          "y": 152.99903117843874
+        },
+        "at": 19813575
+      },
+      {
+        "id": "xiaobao:51",
+        "kind": "release",
+        "skill": "thunder",
+        "point": {
+          "x": 814.4464575590479,
+          "y": 468.8177353038649
+        },
+        "from": {
+          "x": 762.2514180763882,
+          "y": 159.69046127866577
+        },
+        "at": 19814525
+      },
+      {
+        "id": "xiaobao:51:0:raid-20:1",
+        "kind": "hit",
+        "skill": "thunder",
+        "point": {
+          "x": 762.2514180763882,
+          "y": 159.69046127866577
+        },
+        "from": {
+          "x": 814.4464575590479,
+          "y": 468.8177353038649
+        },
+        "target": "raid-20:1",
+        "damage": 8,
+        "stage": 0,
+        "at": 19814525
+      },
+      {
+        "id": "xiaobao:52",
+        "kind": "release",
+        "skill": "thunder",
+        "point": {
+          "x": 868.9483190184606,
+          "y": 1449.2462639021956
+        },
+        "from": {
+          "x": 991.0420742121871,
+          "y": 1918.3228955967356
+        },
+        "at": 20650925
+      },
+      {
+        "id": "xiaobao:52:0:raid-21:1",
+        "kind": "hit",
+        "skill": "thunder",
+        "point": {
+          "x": 991.0420742121871,
+          "y": 1918.3228955967356
+        },
+        "from": {
+          "x": 868.9483190184606,
+          "y": 1449.2462639021956
+        },
+        "target": "raid-21:1",
+        "damage": 8,
+        "stage": 0,
+        "at": 20650925
+      },
+      {
+        "id": "flight:53",
+        "kind": "flight",
+        "skill": "flight",
+        "point": {
+          "x": 1527.8057722859462,
+          "y": 850.0646537742354
+        },
+        "from": {
+          "x": 2278,
+          "y": 1100
+        },
+        "at": 21629305
+      },
+      {
+        "id": "flight:53:imprint:xiaobao",
+        "kind": "shield",
+        "skill": "guard",
+        "point": {
+          "x": 2278,
+          "y": 1100
+        },
+        "target": "xiaobao",
+        "at": 21630050
+      },
+      {
+        "id": "flight:53:land",
+        "kind": "landing",
+        "skill": "flight",
+        "point": {
+          "x": 2278,
+          "y": 1100
+        },
+        "at": 21630050
+      },
+      {
+        "id": "xiaobao:54",
+        "kind": "release",
+        "skill": "fire",
+        "point": {
+          "x": 2236.000000000002,
+          "y": 1100
+        },
+        "from": {
+          "x": 2168.3600243190076,
+          "y": 1106.9601969473608
+        },
+        "at": 21630555
+      },
+      {
+        "id": "xiaobao:54:0:raid-22:1",
+        "kind": "hit",
+        "skill": "fire",
+        "point": {
+          "x": 2168.3600243190076,
+          "y": 1106.9601969473608
+        },
+        "from": {
+          "x": 2168.3600243190076,
+          "y": 1106.9601969473608
+        },
+        "target": "raid-22:1",
+        "damage": 12,
+        "stage": 0,
+        "at": 21630555
+      },
+      {
+        "id": "xiaobao:54:0:raid-22:2",
+        "kind": "hit",
+        "skill": "fire",
+        "point": {
+          "x": 2170.2549668484007,
+          "y": 1121.3104335156443
+        },
+        "from": {
+          "x": 2168.3600243190076,
+          "y": 1106.9601969473608
+        },
+        "target": "raid-22:2",
+        "damage": 48,
+        "stage": 0,
+        "at": 21630555
+      },
+      {
+        "id": "xiaobao:54:pulse:0",
+        "kind": "release",
+        "skill": "fire",
+        "point": {
+          "x": 2168.3600243190076,
+          "y": 1106.9601969473608
+        },
+        "stage": 0,
+        "at": 21630555
+      },
+      {
+        "id": "xiaobao:54:pulse:1",
+        "kind": "release",
+        "skill": "fire",
+        "point": {
+          "x": 2168.3600243190076,
+          "y": 1106.9601969473608
+        },
+        "stage": 1,
+        "at": 21631355
+      },
+      {
+        "id": "xiaobao:54:pulse:2",
+        "kind": "release",
+        "skill": "fire",
+        "point": {
+          "x": 2168.3600243190076,
+          "y": 1106.9601969473608
+        },
+        "stage": 2,
+        "at": 21632155
+      },
+      {
+        "id": "xiaobao:54:pulse:3",
+        "kind": "release",
+        "skill": "fire",
+        "point": {
+          "x": 2168.3600243190076,
+          "y": 1106.9601969473608
+        },
+        "stage": 3,
+        "at": 21632955
+      },
+      {
+        "id": "xiaobao:54:pulse:4",
+        "kind": "release",
+        "skill": "fire",
+        "point": {
+          "x": 2168.3600243190076,
+          "y": 1106.9601969473608
+        },
+        "stage": 4,
+        "at": 21633755
+      },
+      {
+        "id": "xiaobao:54:pulse:5",
+        "kind": "release",
+        "skill": "fire",
+        "point": {
+          "x": 2168.3600243190076,
+          "y": 1106.9601969473608
+        },
+        "stage": 5,
+        "at": 21634555
+      },
+      {
+        "id": "xiaobao:55",
+        "kind": "release",
+        "skill": "star",
+        "point": {
+          "x": 821.1401133015689,
+          "y": 640.462410417077
+        },
+        "from": {
+          "x": 744.2537564552225,
+          "y": 216.51765086989496
+        },
+        "at": 22632975
+      },
+      {
+        "id": "xiaobao:55:0:raid-23:2",
+        "kind": "hit",
+        "skill": "star",
+        "point": {
+          "x": 743.8307099021921,
+          "y": 228.38634429004776
+        },
+        "from": {
+          "x": 748.0654834353343,
+          "y": 237.53518563583714
+        },
+        "target": "raid-23:2",
+        "damage": 30,
+        "stage": 0,
+        "at": 22633560
+      },
+      {
+        "id": "xiaobao:57",
+        "kind": "release",
+        "skill": "thunder",
+        "point": {
+          "x": 818.9962414861305,
+          "y": 602.6237287293397
+        },
+        "from": {
+          "x": 798.714450532112,
+          "y": 211.27651757137082
+        },
+        "at": 22634375
+      },
+      {
+        "id": "xiaobao:57:0:raid-23:1",
+        "kind": "hit",
+        "skill": "thunder",
+        "point": {
+          "x": 798.714450532112,
+          "y": 211.27651757137082
+        },
+        "from": {
+          "x": 818.9962414861305,
+          "y": 602.6237287293397
+        },
+        "target": "raid-23:1",
+        "damage": 26,
+        "stage": 0,
+        "at": 22634375
+      },
+      {
+        "id": "xiaobao:58",
+        "kind": "release",
+        "skill": "star",
+        "point": {
+          "x": 910.722340641947,
+          "y": 1486.3577479806397
+        },
+        "from": {
+          "x": 1005.9254740569557,
+          "y": 1938.2987893924749
+        },
+        "at": 23623125
+      },
+      {
+        "id": "flight:60",
+        "kind": "flight",
+        "skill": "flight",
+        "point": {
+          "x": 893.7460836331618,
+          "y": 1483.2968334160526
+        },
+        "from": {
+          "x": 1038,
+          "y": 1900
+        },
+        "at": 23624005
+      },
+      {
+        "id": "flight:60:land",
+        "kind": "landing",
+        "skill": "flight",
+        "point": {
+          "x": 1038,
+          "y": 1900
+        },
+        "at": 23624855
+      },
+      {
+        "id": "xiaobao:61",
+        "kind": "release",
+        "skill": "palm",
+        "point": {
+          "x": 978.0683829605913,
+          "y": 1901.7690231417705
+        },
+        "from": {
+          "x": 983.9294789378387,
+          "y": 1904.4437709876734
+        },
+        "at": 23625145
+      },
+      {
+        "id": "xiaobao:61:0:raid-24:2",
+        "kind": "hit",
+        "skill": "palm",
+        "point": {
+          "x": 983.9294789378387,
+          "y": 1904.4437709876734
+        },
+        "from": {
+          "x": 978.0683829605913,
+          "y": 1901.7690231417705
+        },
+        "target": "raid-24:2",
+        "damage": 26,
+        "stage": 0,
+        "at": 23625145
+      },
+      {
+        "id": "xiaobao:62",
+        "kind": "release",
+        "skill": "thunder",
+        "point": {
+          "x": 1814.8046941212606,
+          "y": 977.7391759225263
+        },
+        "from": {
+          "x": 2183.595958608611,
+          "y": 1102.4534333233357
+        },
+        "at": 24492125
+      },
+      {
+        "id": "xiaobao:62:0:raid-25:1",
+        "kind": "hit",
+        "skill": "thunder",
+        "point": {
+          "x": 2183.595958608611,
+          "y": 1102.4534333233357
+        },
+        "from": {
+          "x": 1814.8046941212606,
+          "y": 977.7391759225263
+        },
+        "target": "raid-25:1",
+        "damage": 30,
+        "stage": 0,
+        "at": 24492125
+      },
+      {
+        "id": "flight:63",
+        "kind": "flight",
+        "skill": "flight",
+        "point": {
+          "x": 1841.1046941212603,
+          "y": 977.7391759225263
+        },
+        "from": {
+          "x": 2252.2253967444162,
+          "y": 1162.2253967444162
+        },
+        "at": 24492655
+      },
+      {
+        "id": "flight:63:imprint:east-patrol",
+        "kind": "shield",
+        "skill": "guard",
+        "point": {
+          "x": 2146.876411670979,
+          "y": 1112.9332115666004
+        },
+        "target": "east-patrol",
+        "at": 24493190
+      },
+      {
+        "id": "flight:63:imprint:xiaobao",
+        "kind": "shield",
+        "skill": "guard",
+        "point": {
+          "x": 2252.2253967444162,
+          "y": 1162.2253967444162
+        },
+        "target": "xiaobao",
+        "at": 24493190
+      },
+      {
+        "id": "flight:63:land",
+        "kind": "landing",
+        "skill": "flight",
+        "point": {
+          "x": 2252.2253967444162,
+          "y": 1162.2253967444162
+        },
+        "at": 24493190
+      },
+      {
+        "id": "xiaobao:64",
+        "kind": "release",
+        "skill": "rescue",
+        "point": {
+          "x": 2249.255548263433,
+          "y": 1159.255548263433
+        },
+        "from": {
+          "x": 2146.876411670979,
+          "y": 1112.9332115666004
+        },
+        "at": 24493285
+      },
+      {
+        "id": "xiaobao:64:0:raid-25:2",
+        "kind": "hit",
+        "skill": "rescue",
+        "point": {
+          "x": 2184.501564671742,
+          "y": 1116.704220670494
+        },
+        "from": {
+          "x": 2147.214442476949,
+          "y": 1113.0861565642758
+        },
+        "target": "raid-25:2",
+        "damage": 30,
+        "stage": 0,
+        "at": 24493440
+      },
+      {
+        "id": "xiaobao:65",
+        "kind": "release",
+        "skill": "palm",
+        "point": {
+          "x": 2147.214442476949,
+          "y": 1113.0861565642758
+        },
+        "from": {
+          "x": 2184.52780027776,
+          "y": 1110.7563338347193
+        },
+        "at": 24493945
+      },
+      {
+        "id": "xiaobao:65:0:raid-25:3",
+        "kind": "hit",
+        "skill": "palm",
+        "point": {
+          "x": 2184.52780027776,
+          "y": 1110.7563338347193
+        },
+        "from": {
+          "x": 2147.214442476949,
+          "y": 1113.0861565642758
+        },
+        "target": "raid-25:3",
+        "damage": 26,
+        "stage": 0,
+        "at": 24493945
+      },
+      {
+        "id": "xiaobao:66",
+        "kind": "release",
+        "skill": "rock",
+        "point": {
+          "x": 828.9687530232882,
+          "y": 677.8963267231597
+        },
+        "from": {
+          "x": 743.8784247279898,
+          "y": 227.34501056392168
+        },
+        "at": 25505505
+      },
+      {
+        "id": "xiaobao:66:0:raid-26:1",
+        "kind": "hit",
+        "skill": "rock",
+        "point": {
+          "x": 780.0764102551411,
+          "y": 172.87142663596288
+        },
+        "from": {
+          "x": 743.8784247279898,
+          "y": 227.34501056392168
+        },
+        "target": "raid-26:1",
+        "damage": 26,
+        "stage": 0,
+        "at": 25505505
+      },
+      {
+        "id": "xiaobao:66:0:raid-26:2",
+        "kind": "hit",
+        "skill": "rock",
+        "point": {
+          "x": 787.38583185158,
+          "y": 166.55204551476925
+        },
+        "from": {
+          "x": 743.8784247279898,
+          "y": 227.34501056392168
+        },
+        "target": "raid-26:2",
+        "damage": 30,
+        "stage": 0,
+        "at": 25505505
+      },
+      {
+        "id": "xiaobao:66:0:raid-26:3",
+        "kind": "hit",
+        "skill": "rock",
+        "point": {
+          "x": 743.8784247279898,
+          "y": 227.34501056392168
+        },
+        "from": {
+          "x": 743.8784247279898,
+          "y": 227.34501056392168
+        },
+        "target": "raid-26:3",
+        "damage": 30,
+        "stage": 0,
+        "at": 25505505
+      },
+      {
+        "id": "xiaobao:66:pulse:0",
+        "kind": "release",
+        "skill": "rock",
+        "point": {
+          "x": 743.8784247279898,
+          "y": 227.34501056392168
+        },
+        "stage": 0,
+        "at": 25505505
+      },
+      {
+        "id": "xiaobao:66:pulse:1",
+        "kind": "release",
+        "skill": "rock",
+        "point": {
+          "x": 743.8784247279898,
+          "y": 227.34501056392168
+        },
+        "stage": 1,
+        "at": 25505825
+      },
+      {
+        "id": "xiaobao:66:pulse:2",
+        "kind": "release",
+        "skill": "rock",
+        "point": {
+          "x": 743.8784247279898,
+          "y": 227.34501056392168
+        },
+        "stage": 2,
+        "at": 25506145
+      },
+      {
+        "id": "xiaobao:67",
+        "kind": "release",
+        "skill": "thunder",
+        "point": {
+          "x": 865.3250549472566,
+          "y": 1444.1773578901666
+        },
+        "from": {
+          "x": 987.5587428329007,
+          "y": 1912.4969177441094
+        },
+        "at": 26527925
+      },
+      {
+        "id": "xiaobao:67:0:raid-27:1",
+        "kind": "hit",
+        "skill": "thunder",
+        "point": {
+          "x": 987.5587428329007,
+          "y": 1912.4969177441094
+        },
+        "from": {
+          "x": 865.3250549472566,
+          "y": 1444.1773578901666
+        },
+        "target": "raid-27:1",
+        "damage": 8,
+        "stage": 0,
+        "at": 26527925
+      },
+      {
+        "id": "xiaobao:68",
+        "kind": "release",
+        "skill": "star",
+        "point": {
+          "x": 878.3786050306219,
+          "y": 1504.5616567401805
+        },
+        "from": {
+          "x": 983.5708654058078,
+          "y": 1943.421172703544
+        },
+        "at": 26528625
+      },
+      {
+        "id": "flight:69",
+        "kind": "flight",
+        "skill": "flight",
+        "point": {
+          "x": 878.3786050306219,
+          "y": 1504.5616567401805
+        },
+        "from": {
+          "x": 1038,
+          "y": 1900
+        },
+        "at": 26529055
+      },
+      {
+        "id": "xiaobao:68:0:raid-27:3",
+        "kind": "hit",
+        "skill": "star",
+        "point": {
+          "x": 973.4107212504521,
+          "y": 1914.5571558184602
+        },
+        "from": {
+          "x": 973.8298358676421,
+          "y": 1902.7818377100723
+        },
+        "target": "raid-27:3",
+        "damage": 30,
+        "stage": 0,
+        "at": 26529210
+      },
+      {
+        "id": "flight:69:imprint:south-patrol",
+        "kind": "shield",
+        "skill": "guard",
+        "point": {
+          "x": 960.7749312333922,
+          "y": 1878.6600611678398
+        },
+        "target": "south-patrol",
+        "at": 26529575
+      },
+      {
+        "id": "flight:69:imprint:xiaobao",
+        "kind": "shield",
+        "skill": "guard",
+        "point": {
+          "x": 1038,
+          "y": 1900
+        },
+        "target": "xiaobao",
+        "at": 26529575
+      },
+      {
+        "id": "flight:69:land",
+        "kind": "landing",
+        "skill": "flight",
+        "point": {
+          "x": 1038,
+          "y": 1900
+        },
+        "at": 26529575
+      },
+      {
+        "id": "xiaobao:70",
+        "kind": "release",
+        "skill": "palm",
+        "point": {
+          "x": 1027.5000000000005,
+          "y": 1900
+        },
+        "from": {
+          "x": 987.453476615401,
+          "y": 1905.4659351544133
+        },
+        "at": 26529745
+      },
+      {
+        "id": "xiaobao:70:0:raid-27:2",
+        "kind": "hit",
+        "skill": "palm",
+        "point": {
+          "x": 987.453476615401,
+          "y": 1905.4659351544133
+        },
+        "from": {
+          "x": 1027.5000000000005,
+          "y": 1900
+        },
+        "target": "raid-27:2",
+        "damage": 8,
+        "stage": 0,
+        "at": 26529745
+      },
+      {
+        "id": "flight:71",
+        "kind": "flight",
+        "skill": "flight",
+        "point": {
+          "x": 1686.7695855609838,
+          "y": 850.0183091386208
+        },
+        "from": {
+          "x": 2278,
+          "y": 1100
+        },
+        "at": 27367255
+      },
+      {
+        "id": "flight:71:imprint:xiaobao",
+        "kind": "shield",
+        "skill": "guard",
+        "point": {
+          "x": 2278,
+          "y": 1100
+        },
+        "target": "xiaobao",
+        "at": 27367910
+      },
+      {
+        "id": "flight:71:land",
+        "kind": "landing",
+        "skill": "flight",
+        "point": {
+          "x": 2278,
+          "y": 1100
+        },
+        "at": 27367910
+      },
+      {
+        "id": "xiaobao:72",
+        "kind": "release",
+        "skill": "palm",
+        "point": {
+          "x": 2261.2000000000007,
+          "y": 1100
+        },
+        "from": {
+          "x": 2165.9730572474054,
+          "y": 1104.4381712418249
+        },
+        "at": 27368095
+      },
+      {
+        "id": "xiaobao:72:0:raid-28:1",
+        "kind": "hit",
+        "skill": "palm",
+        "point": {
+          "x": 2165.9730572474054,
+          "y": 1104.4381712418249
+        },
+        "from": {
+          "x": 2261.2000000000007,
+          "y": 1100
+        },
+        "target": "raid-28:1",
+        "damage": 12,
+        "stage": 0,
+        "at": 27368095
+      },
+      {
+        "id": "xiaobao:73",
+        "kind": "release",
+        "skill": "thunder",
+        "point": {
+          "x": 823.1382780837525,
+          "y": 645.510097865374
+        },
+        "from": {
+          "x": 765.6644058432045,
+          "y": 162.64840943816017
+        },
+        "at": 28343825
+      },
+      {
+        "id": "xiaobao:73:0:raid-29:1",
+        "kind": "hit",
+        "skill": "thunder",
+        "point": {
+          "x": 765.6644058432045,
+          "y": 162.64840943816017
+        },
+        "from": {
+          "x": 823.1382780837525,
+          "y": 645.510097865374
+        },
+        "target": "raid-29:1",
+        "damage": 8,
+        "stage": 0,
+        "at": 28343825
+      }
+    ],
+    "effects": [],
+    "navigation": {
+      "path": [],
+      "queries": 5152,
+      "failed": false
+    },
+    "eta": 0
+  },
+  "卫队": {
+    "guards": [
+      {
+        "id": "east-watch",
+        "x": 2009.9864846598423,
+        "y": 969.9810785237792,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-north-post",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village"
+      },
+      {
+        "id": "east-patrol",
+        "x": 2002.5025996017062,
+        "y": 1159.467651228426,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-south-post",
+        "mode": "patrol",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village"
+      },
+      {
+        "id": "east-archer",
+        "x": 2030,
+        "y": 900,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "east-gate-tower",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village"
+      },
+      {
+        "id": "north-watch",
+        "x": 740,
+        "y": 300,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-west-post",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village"
+      },
+      {
+        "id": "north-patrol",
+        "x": 871.4764575156494,
+        "y": 309.62383592606375,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-east-post",
+        "mode": "patrol",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village"
+      },
+      {
+        "id": "north-archer",
+        "x": 850.6900038934024,
+        "y": 511.9728218685045,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "north-gate-tower",
+        "mode": "return",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": true,
+        "towerTransitMs": 0,
+        "space": "village"
+      },
+      {
+        "id": "south-watch",
+        "x": 810,
+        "y": 1720,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-west-post",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village"
+      },
+      {
+        "id": "south-patrol",
+        "x": 956.8789664172331,
+        "y": 1865.01187499661,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-east-post",
+        "mode": "intercept",
+        "peaceMs": 0,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village"
+      },
+      {
+        "id": "south-archer",
+        "x": 1140,
+        "y": 1750,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "south-gate-tower",
+        "mode": "attack",
+        "peaceMs": 0,
+        "cooldownMs": 1360,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village"
+      },
+      {
+        "id": "west-watch",
+        "x": 200,
+        "y": 1340,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "west-north-post",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village"
+      },
+      {
+        "id": "west-patrol",
+        "x": 315.5418894585009,
+        "y": 1501.279186050625,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "west-south-post",
+        "mode": "patrol",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village"
+      },
+      {
+        "id": "west-archer",
+        "x": 931.4864343545137,
+        "y": 1508.5135656454863,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "west-gate-tower",
+        "mode": "return",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": true,
+        "towerTransitMs": 0,
+        "space": "village"
+      }
+    ],
+    "sequence": 30,
+    "completedSequence": 29,
+    "raid": {
+      "id": "raid-30",
+      "sequence": 30,
+      "gateId": "south-gate",
+      "spawns": [
+        {
+          "x": 1140,
+          "y": 2060
+        }
+      ],
+      "phase": "approach",
+      "ageMs": 2160,
+      "order": {
+        "source": "wild",
+        "malice": 0,
+        "profileVersion": 1
+      },
+      "members": [
+        {
+          "id": "raid-30:1",
+          "type": "slime",
+          "x": 1029.4683222915226,
+          "y": 1967.8902685762746,
+          "hp": 48,
+          "cooldownMs": 0,
+          "targetId": null,
+          "eliteLevel": 0
+        }
+      ]
+    },
+    "protectionMs": 0,
+    "cooldownMs": 0,
+    "retryMs": 0,
+    "seed": 8,
+    "arrows": [
+      {
+        "id": "south-archer:25",
+        "sourceId": "south-archer",
+        "eventId": "raid-30",
+        "x": 1067.2062644597281,
+        "y": 2108.5877487139314,
+        "origin": {
+          "x": 1160,
+          "y": 1601
+        },
+        "vx": -77.32811295022191,
+        "vy": 422.9897905949477,
+        "age": 1200,
+        "travelled": 515.9999999999948,
+        "damage": 22,
+        "hit": [],
+        "released": {
+          "sourceId": "south-archer",
+          "faction": "village",
+          "attackId": "south-archer:25",
+          "amount": 22,
+          "sourceType": "tower-arrow",
+          "eventId": "raid-30"
+        },
+        "port": {
+          "origin": {
+            "x": 1160,
+            "y": 1601
+          },
+          "structureId": "south-gate-tower",
+          "lowCoverIds": [
+            "north-wall-a-0",
+            "north-wall-a-1",
+            "north-wall-a-2",
+            "north-wall-a-3",
+            "north-wall-a-4",
+            "north-wall-b-0",
+            "north-wall-b-1",
+            "north-wall-b-2",
+            "north-wall-b-3",
+            "north-wall-b-4",
+            "north-wall-b-5",
+            "north-wall-b-6",
+            "north-wall-b-7",
+            "south-wall-a-0",
+            "south-wall-a-1",
+            "south-wall-a-2",
+            "south-wall-a-3",
+            "south-wall-a-4",
+            "south-wall-b-0",
+            "south-wall-b-1",
+            "south-wall-b-2",
+            "south-wall-b-3",
+            "south-wall-b-4",
+            "south-wall-b-5",
+            "south-wall-b-6",
+            "south-wall-b-7",
+            "east-wall-a-0",
+            "east-wall-a-1",
+            "east-wall-a-2",
+            "east-wall-a-3",
+            "east-wall-a-4",
+            "east-wall-b-0",
+            "east-wall-b-1",
+            "east-wall-b-2",
+            "east-wall-b-3",
+            "east-wall-b-4",
+            "west-wall-a-0",
+            "west-wall-a-1",
+            "west-wall-a-2",
+            "west-wall-a-3",
+            "west-wall-a-4",
+            "west-wall-a-5",
+            "west-wall-a-6",
+            "west-wall-a-7",
+            "west-wall-b-0",
+            "west-wall-b-1",
+            "fence-0",
+            "fence-1",
+            "fence-2",
+            "fence-3",
+            "fence-4",
+            "fence-5",
+            "fence-6",
+            "fence-7",
+            "fence-8",
+            "fence-9",
+            "court-back-0",
+            "court-back-1",
+            "court-back-2",
+            "court-back-3",
+            "court-back-4",
+            "court-front-west",
+            "court-front-east",
+            "court-west-0",
+            "court-west-1",
+            "court-west-2",
+            "court-west-3",
+            "court-west-4",
+            "court-west-5",
+            "court-west-6",
+            "court-west-7",
+            "court-corner-0",
+            "court-corner-1",
+            "court-corner-2",
+            "court-corner-3",
+            "court-gate-west-0",
+            "court-gate-west-1",
+            "court-gate-west-2",
+            "court-east-0",
+            "court-east-1",
+            "court-east-2",
+            "court-east-3",
+            "court-east-4",
+            "court-east-5",
+            "court-east-6",
+            "court-east-7",
+            "court-east-8",
+            "court-east-9",
+            "court-east-10",
+            "field-front-0",
+            "field-front-1",
+            "field-front-2",
+            "field-front-3",
+            "field-west-0",
+            "field-west-1",
+            "field-west-2",
+            "field-west-3",
+            "field-west-4",
+            "field-west-5",
+            "field-west-6",
+            "field-west-7",
+            "field-west-8",
+            "field-west-9",
+            "field-west-10",
+            "field-west-11",
+            "field-west-12",
+            "field-west-13",
+            "field-west-14",
+            "field-west-15",
+            "field-east-0",
+            "field-east-1",
+            "field-east-2",
+            "field-east-3",
+            "field-east-4",
+            "field-east-5",
+            "field-east-6",
+            "field-east-7",
+            "field-east-8",
+            "field-east-9",
+            "field-east-10",
+            "field-east-11",
+            "field-east-12",
+            "field-east-13",
+            "field-east-14",
+            "field-east-15",
+            "gate-fence-west",
+            "gate-fence-east",
+            "west-gate-barrier"
+          ]
+        }
+      }
+    ],
+    "threats": [
+      {
+        "id": "raid-30:1",
+        "gateId": "south-gate",
+        "reason": "approach",
+        "lastSeen": 29419960,
+        "progress": 181.90499669631495,
+        "approachMs": 2080,
+        "lastProgress": 29419960,
+        "assigned": [
+          "south-patrol",
+          "south-archer"
+        ]
+      }
+    ],
+    "managedIds": [],
+    "units": [
+      {
+        "id": "east-watch",
+        "x": 2009.9864846598423,
+        "y": 969.9810785237792,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-north-post",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village",
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 36209,
+        "facing": 0,
+        "moved": 0,
+        "distance": 140193.19019724557,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "east-watch",
+          "name": "岑风",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-north-post",
+          "post": {
+            "x": 2010,
+            "y": 970
+          },
+          "cover": {
+            "x": 1920,
+            "y": 1060
+          },
+          "patrol": [
+            {
+              "x": 2010,
+              "y": 970
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "east-patrol",
+        "x": 2002.5025996017062,
+        "y": 1159.467651228426,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-south-post",
+        "mode": "patrol",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village",
+        "nav": {
+          "path": [
+            {
+              "x": 1987.9025996017067,
+              "y": 1159.467651228426
+            },
+            {
+              "x": 1967.9025996017067,
+              "y": 1159.467651228426
+            },
+            {
+              "x": 1967.9025996017067,
+              "y": 1179.467651228426
+            },
+            {
+              "x": 1967.9025996017067,
+              "y": 1199.467651228426
+            },
+            {
+              "x": 1960,
+              "y": 1210
+            }
+          ],
+          "next": 29420500,
+          "failed": false,
+          "returning": false,
+          "queries": 2308,
+          "visited": 18,
+          "target": {
+            "x": 1960,
+            "y": 1210
+          }
+        },
+        "attack": null,
+        "serial": 29,
+        "patrol": 6883,
+        "facing": 2,
+        "moved": 0.900000000000091,
+        "distance": 708723.9165069733,
+        "flashUntil": 27367050,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": "raid-28:1",
+        "blockedUntil": 27370100,
+        "stuckMs": 0,
+        "definition": {
+          "id": "east-patrol",
+          "name": "青禾",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-south-post",
+          "post": {
+            "x": 2010,
+            "y": 1160
+          },
+          "cover": {
+            "x": 1910,
+            "y": 1190
+          },
+          "patrol": [
+            {
+              "x": 2010,
+              "y": 1160
+            },
+            {
+              "x": 1960,
+              "y": 1210
+            },
+            {
+              "x": 1940,
+              "y": 1140
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "east-archer",
+        "x": 2030,
+        "y": 900,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "east-gate-tower",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village",
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 16,
+        "patrol": 34220,
+        "facing": 3,
+        "moved": 0,
+        "distance": 106500.96969373386,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": "raid-28:1",
+        "blockedUntil": 27367600,
+        "stuckMs": 0,
+        "definition": {
+          "id": "east-archer",
+          "name": "弦雨",
+          "role": "archer",
+          "maxHP": 100,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "east-gate-tower",
+          "post": {
+            "x": 2030,
+            "y": 900
+          },
+          "cover": {
+            "x": 2030,
+            "y": 900
+          },
+          "patrol": [
+            {
+              "x": 2030,
+              "y": 900
+            }
+          ],
+          "leash": 0
+        }
+      },
+      {
+        "id": "north-watch",
+        "x": 740,
+        "y": 300,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-west-post",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village",
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 7,
+        "patrol": 33403,
+        "facing": 1,
+        "moved": 0,
+        "distance": 167218.71911330114,
+        "flashUntil": 16814010,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": "raid-26:3",
+        "blockedUntil": 25507520,
+        "stuckMs": 0,
+        "definition": {
+          "id": "north-watch",
+          "name": "松岚",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-west-post",
+          "post": {
+            "x": 740,
+            "y": 300
+          },
+          "cover": {
+            "x": 760,
+            "y": 486
+          },
+          "patrol": [
+            {
+              "x": 740,
+              "y": 300
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "north-patrol",
+        "x": 871.4764575156494,
+        "y": 309.62383592606375,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-east-post",
+        "mode": "patrol",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village",
+        "nav": {
+          "path": [],
+          "next": 29417340,
+          "failed": false,
+          "returning": false,
+          "queries": 2596,
+          "visited": 36,
+          "target": {
+            "x": 920,
+            "y": 300
+          }
+        },
+        "attack": null,
+        "serial": 13,
+        "patrol": 3702,
+        "facing": 3,
+        "moved": 0.8999999999999642,
+        "distance": 701356.6390591075,
+        "flashUntil": 22634490,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": "raid-29:1",
+        "blockedUntil": 28345840,
+        "stuckMs": 0,
+        "definition": {
+          "id": "north-patrol",
+          "name": "石泉",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-east-post",
+          "post": {
+            "x": 920,
+            "y": 300
+          },
+          "cover": {
+            "x": 860,
+            "y": 450
+          },
+          "patrol": [
+            {
+              "x": 920,
+              "y": 300
+            },
+            {
+              "x": 860,
+              "y": 410
+            },
+            {
+              "x": 860,
+              "y": 450
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "north-archer",
+        "x": 850.6900038934024,
+        "y": 511.9728218685045,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "north-gate-tower",
+        "mode": "return",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": true,
+        "towerTransitMs": 0,
+        "space": "village",
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 10,
+        "patrol": 27972,
+        "facing": 1,
+        "moved": 1.7200000000000124,
+        "distance": 126401.62085745283,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": "raid-29:1",
+        "blockedUntil": 28344120,
+        "stuckMs": 0,
+        "definition": {
+          "id": "north-archer",
+          "name": "林弦",
+          "role": "archer",
+          "maxHP": 100,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "north-gate-tower",
+          "post": {
+            "x": 680,
+            "y": 350
+          },
+          "cover": {
+            "x": 680,
+            "y": 350
+          },
+          "patrol": [
+            {
+              "x": 680,
+              "y": 350
+            }
+          ],
+          "leash": 0
+        }
+      },
+      {
+        "id": "south-watch",
+        "x": 810,
+        "y": 1720,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-west-post",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village",
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 34890,
+        "facing": 2,
+        "moved": 0,
+        "distance": 137064.56545856438,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "south-watch",
+          "name": "麦川",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-west-post",
+          "post": {
+            "x": 810,
+            "y": 1720
+          },
+          "cover": {
+            "x": 790,
+            "y": 1592
+          },
+          "patrol": [
+            {
+              "x": 810,
+              "y": 1720
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "south-patrol",
+        "x": 956.8789664172331,
+        "y": 1865.01187499661,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-east-post",
+        "mode": "intercept",
+        "peaceMs": 0,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village",
+        "nav": {
+          "path": [],
+          "next": 29418620,
+          "failed": false,
+          "returning": false,
+          "queries": 1877,
+          "visited": 13
+        },
+        "attack": null,
+        "serial": 18,
+        "patrol": 5605,
+        "facing": 0,
+        "moved": 2.0000000000001212,
+        "distance": 678803.3073774804,
+        "flashUntil": 26528990,
+        "targetId": "raid-30:1",
+        "chaseMs": 1660,
+        "blockedTarget": "raid-27:2",
+        "blockedUntil": 26531760,
+        "stuckMs": 0,
+        "definition": {
+          "id": "south-patrol",
+          "name": "望禾",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-east-post",
+          "post": {
+            "x": 990,
+            "y": 1720
+          },
+          "cover": {
+            "x": 1020,
+            "y": 1590
+          },
+          "patrol": [
+            {
+              "x": 990,
+              "y": 1720
+            },
+            {
+              "x": 1030,
+              "y": 1680
+            },
+            {
+              "x": 950,
+              "y": 1630
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "south-archer",
+        "x": 1140,
+        "y": 1750,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "south-gate-tower",
+        "mode": "attack",
+        "peaceMs": 0,
+        "cooldownMs": 1360,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village",
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": {
+          "id": "south-archer:26",
+          "start": 29419860,
+          "contact": 29420310,
+          "end": 29420530,
+          "targetId": "raid-30:1",
+          "hit": false,
+          "direction": {
+            "x": -0.419521001838643,
+            "y": 0.9077456301279017
+          }
+        },
+        "serial": 26,
+        "patrol": 28254,
+        "facing": 0,
+        "moved": 0,
+        "distance": 130294.71651419203,
+        "flashUntil": 0,
+        "targetId": "raid-30:1",
+        "chaseMs": 1660,
+        "blockedTarget": "raid-27:2",
+        "blockedUntil": 26530800,
+        "stuckMs": 0,
+        "definition": {
+          "id": "south-archer",
+          "name": "晴羽",
+          "role": "archer",
+          "maxHP": 100,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "south-gate-tower",
+          "post": {
+            "x": 1140,
+            "y": 1750
+          },
+          "cover": {
+            "x": 1140,
+            "y": 1750
+          },
+          "patrol": [
+            {
+              "x": 1140,
+              "y": 1750
+            }
+          ],
+          "leash": 0
+        }
+      },
+      {
+        "id": "west-watch",
+        "x": 200,
+        "y": 1340,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "west-north-post",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village",
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 37821,
+        "facing": 2,
+        "moved": 0,
+        "distance": 10276.863114593372,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "west-watch",
+          "name": "禾岩",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "west-north-post",
+          "post": {
+            "x": 200,
+            "y": 1340
+          },
+          "cover": {
+            "x": 360,
+            "y": 1280
+          },
+          "patrol": [
+            {
+              "x": 200,
+              "y": 1340
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "west-patrol",
+        "x": 315.5418894585009,
+        "y": 1501.279186050625,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "west-south-post",
+        "mode": "patrol",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": false,
+        "towerTransitMs": 0,
+        "space": "village",
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 10094,
+        "facing": 1,
+        "moved": 0.8999999999999992,
+        "distance": 623595.6851890577,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "west-patrol",
+          "name": "鹿宁",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "west-south-post",
+          "post": {
+            "x": 280,
+            "y": 1530
+          },
+          "cover": {
+            "x": 350,
+            "y": 1510
+          },
+          "patrol": [
+            {
+              "x": 280,
+              "y": 1530
+            },
+            {
+              "x": 300,
+              "y": 1540
+            },
+            {
+              "x": 330,
+              "y": 1470
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "west-archer",
+        "x": 931.4864343545137,
+        "y": 1508.5135656454863,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "west-gate-tower",
+        "mode": "return",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "offDuty": true,
+        "towerTransitMs": 0,
+        "space": "village",
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 30145,
+        "facing": 2,
+        "moved": 1.720000000000059,
+        "distance": 59793.039771483105,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "west-archer",
+          "name": "远翎",
+          "role": "archer",
+          "maxHP": 100,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "west-gate-tower",
+          "post": {
+            "x": 160,
+            "y": 1710
+          },
+          "cover": {
+            "x": 160,
+            "y": 1710
+          },
+          "patrol": [
+            {
+              "x": 160,
+              "y": 1710
+            }
+          ],
+          "leash": 0
+        }
+      }
+    ],
+    "enemies": [
+      {
+        "id": "raid-30:1",
+        "type": "slime",
+        "x": 1029.4683222915226,
+        "y": 1967.8902685762746,
+        "hp": 48,
+        "cooldownMs": 0,
+        "targetId": null,
+        "eliteLevel": 0,
+        "kind": "defense-enemy",
+        "maxHP": 48,
+        "homeX": 1140,
+        "homeY": 2060,
+        "eventId": "raid-30",
+        "cool": 29417840,
+        "windup": 0,
+        "staggerUntil": 0,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "ai": "接近目标",
+        "disabled": false,
+        "recovered": false,
+        "flashUntil": 0,
+        "playerAggroUntil": 0
+      }
+    ],
+    "history": [
+      {
+        "kind": "hit",
+        "id": "north-patrol",
+        "eventKey": "raid-23:1:1:north-patrol:22634340:hit",
+        "sourceId": "raid-23:1",
+        "at": 22634360,
+        "damage": 4,
+        "x": 826.9011164726592,
+        "y": 239.65805732825515
+      },
+      {
+        "kind": "hit",
+        "id": "raid-23:1",
+        "sourceId": "xiaobao",
+        "at": 22634360,
+        "damage": 180,
+        "x": 798.714450532112,
+        "y": 211.27651757137082
+      },
+      {
+        "kind": "death",
+        "id": "raid-23:1",
+        "sourceId": "xiaobao",
+        "at": 22634360,
+        "x": 798.714450532112,
+        "y": 211.27651757137082
+      },
+      {
+        "kind": "ended",
+        "id": "raid-23",
+        "at": 22634380
+      },
+      {
+        "kind": "started",
+        "id": "南门",
+        "at": 23620380
+      },
+      {
+        "kind": "shot",
+        "id": "south-archer:19",
+        "sourceId": "south-archer",
+        "at": 23621360
+      },
+      {
+        "kind": "hit",
+        "id": "raid-24:2",
+        "sourceId": "south-archer",
+        "at": 23622200,
+        "damage": 22,
+        "x": 1103.624443484714,
+        "y": 2016.1120733382759
+      },
+      {
+        "kind": "shot",
+        "id": "south-archer:20",
+        "sourceId": "south-archer",
+        "at": 23622860
+      },
+      {
+        "kind": "hit",
+        "id": "raid-24:1",
+        "sourceId": "south-patrol",
+        "at": 23623340,
+        "damage": 18,
+        "x": 1002.795677955431,
+        "y": 1934.0464046071004
+      },
+      {
+        "kind": "hit",
+        "id": "raid-24:1",
+        "sourceId": "south-archer",
+        "at": 23623600,
+        "damage": 22,
+        "x": 1002.795677955431,
+        "y": 1934.0464046071004
+      },
+      {
+        "kind": "hit",
+        "id": "south-patrol",
+        "eventKey": "raid-24:1:1:south-patrol:23623760:hit",
+        "sourceId": "raid-24:1",
+        "at": 23623780,
+        "damage": 4,
+        "x": 959.5417754430651,
+        "y": 1875.2782833029567
+      },
+      {
+        "kind": "hit",
+        "id": "raid-24:1",
+        "sourceId": "south-patrol",
+        "at": 23624340,
+        "damage": 18,
+        "x": 982.6416879077336,
+        "y": 1906.6636237921905
+      },
+      {
+        "kind": "death",
+        "id": "raid-24:1",
+        "sourceId": "south-patrol",
+        "at": 23624340,
+        "x": 982.6416879077336,
+        "y": 1906.6636237921905
+      },
+      {
+        "kind": "shot",
+        "id": "south-archer:21",
+        "sourceId": "south-archer",
+        "at": 23624360
+      },
+      {
+        "kind": "hit",
+        "id": "south-patrol",
+        "eventKey": "raid-24:2:1:south-patrol:23624740:hit",
+        "sourceId": "raid-24:2",
+        "at": 23624760,
+        "damage": 4,
+        "x": 959.5417754430651,
+        "y": 1875.2782833029567
+      },
+      {
+        "kind": "hit",
+        "id": "raid-24:2",
+        "sourceId": "xiaobao",
+        "at": 23625140,
+        "damage": 72,
+        "x": 983.9294789378387,
+        "y": 1904.4437709876734
+      },
+      {
+        "kind": "death",
+        "id": "raid-24:2",
+        "sourceId": "xiaobao",
+        "at": 23625140,
+        "x": 983.9294789378387,
+        "y": 1904.4437709876734
+      },
+      {
+        "kind": "ended",
+        "id": "raid-24",
+        "at": 23625160
+      },
+      {
+        "kind": "started",
+        "id": "东门",
+        "at": 24489160
+      },
+      {
+        "kind": "shot",
+        "id": "east-archer:14",
+        "sourceId": "east-archer",
+        "at": 24490140
+      },
+      {
+        "kind": "hit",
+        "id": "raid-25:3",
+        "sourceId": "east-archer",
+        "at": 24491040,
+        "damage": 22,
+        "x": 2346.6227132734616,
+        "y": 1117.5677660497183
+      },
+      {
+        "kind": "hit",
+        "id": "raid-25:1",
+        "sourceId": "east-patrol",
+        "at": 24491580,
+        "damage": 18,
+        "x": 2216.290481117584,
+        "y": 1093.122399194686
+      },
+      {
+        "kind": "hit",
+        "id": "east-patrol",
+        "eventKey": "raid-25:1:1:east-patrol:24492040:hit",
+        "sourceId": "raid-25:1",
+        "at": 24492060,
+        "damage": 4,
+        "x": 2146.876411670979,
+        "y": 1112.9332115666004
+      },
+      {
+        "kind": "hit",
+        "id": "raid-25:1",
+        "sourceId": "xiaobao",
+        "at": 24492120,
+        "damage": 180,
+        "x": 2183.595958608611,
+        "y": 1102.4534333233357
+      },
+      {
+        "kind": "death",
+        "id": "raid-25:1",
+        "sourceId": "xiaobao",
+        "at": 24492120,
+        "x": 2183.595958608611,
+        "y": 1102.4534333233357
+      },
+      {
+        "kind": "hit",
+        "id": "east-patrol",
+        "eventKey": "raid-25:2:1:east-patrol:24492360:hit",
+        "sourceId": "raid-25:2",
+        "at": 24492380,
+        "damage": 4,
+        "x": 2146.876411670979,
+        "y": 1112.9332115666004
+      },
+      {
+        "kind": "hit",
+        "id": "raid-25:2",
+        "sourceId": "east-patrol",
+        "at": 24492580,
+        "damage": 18,
+        "x": 2184.501564671742,
+        "y": 1116.704220670494
+      },
+      {
+        "kind": "hit",
+        "id": "raid-25:2",
+        "sourceId": "xiaobao",
+        "at": 24493420,
+        "damage": 96,
+        "x": 2184.501564671742,
+        "y": 1116.704220670494
+      },
+      {
+        "kind": "death",
+        "id": "raid-25:2",
+        "sourceId": "xiaobao",
+        "at": 24493420,
+        "x": 2184.501564671742,
+        "y": 1116.704220670494
+      },
+      {
+        "kind": "hit",
+        "id": "east-patrol",
+        "eventKey": "raid-25:3:1:east-patrol:24493560:hit",
+        "sourceId": "raid-25:3",
+        "at": 24493580,
+        "damage": 0,
+        "x": 2146.876411670979,
+        "y": 1112.9332115666004
+      },
+      {
+        "kind": "hit",
+        "id": "raid-25:3",
+        "sourceId": "xiaobao",
+        "at": 24493940,
+        "damage": 72,
+        "x": 2184.52780027776,
+        "y": 1110.7563338347193
+      },
+      {
+        "kind": "death",
+        "id": "raid-25:3",
+        "sourceId": "xiaobao",
+        "at": 24493940,
+        "x": 2184.52780027776,
+        "y": 1110.7563338347193
+      },
+      {
+        "kind": "ended",
+        "id": "raid-25",
+        "at": 24493960
+      },
+      {
+        "kind": "started",
+        "id": "北门",
+        "at": 25502960
+      },
+      {
+        "kind": "shot",
+        "id": "north-archer:9",
+        "sourceId": "north-archer",
+        "at": 25503940
+      },
+      {
+        "kind": "hit",
+        "id": "raid-26:1",
+        "sourceId": "north-archer",
+        "at": 25503980,
+        "damage": 22,
+        "x": 685.7451962175801,
+        "y": 139.72355886527373
+      },
+      {
+        "kind": "hit",
+        "id": "raid-26:2",
+        "sourceId": "north-patrol",
+        "at": 25505140,
+        "damage": 18,
+        "x": 784.2090495410202,
+        "y": 165.34041266967319
+      },
+      {
+        "kind": "hit",
+        "id": "raid-26:3",
+        "sourceId": "north-watch",
+        "at": 25505160,
+        "damage": 18,
+        "x": 743.8784247279898,
+        "y": 227.34501056392168
+      },
+      {
+        "kind": "hit",
+        "id": "raid-26:1",
+        "sourceId": "xiaobao",
+        "at": 25505500,
+        "damage": 96,
+        "x": 780.0764102551411,
+        "y": 172.87142663596288
+      },
+      {
+        "kind": "death",
+        "id": "raid-26:1",
+        "sourceId": "xiaobao",
+        "at": 25505500,
+        "x": 780.0764102551411,
+        "y": 172.87142663596288
+      },
+      {
+        "kind": "hit",
+        "id": "raid-26:2",
+        "sourceId": "xiaobao",
+        "at": 25505500,
+        "damage": 96,
+        "x": 787.38583185158,
+        "y": 166.55204551476925
+      },
+      {
+        "kind": "death",
+        "id": "raid-26:2",
+        "sourceId": "xiaobao",
+        "at": 25505500,
+        "x": 787.38583185158,
+        "y": 166.55204551476925
+      },
+      {
+        "kind": "hit",
+        "id": "raid-26:3",
+        "sourceId": "xiaobao",
+        "at": 25505500,
+        "damage": 96,
+        "x": 743.8784247279898,
+        "y": 227.34501056392168
+      },
+      {
+        "kind": "death",
+        "id": "raid-26:3",
+        "sourceId": "xiaobao",
+        "at": 25505500,
+        "x": 743.8784247279898,
+        "y": 227.34501056392168
+      },
+      {
+        "kind": "ended",
+        "id": "raid-26",
+        "at": 25505520
+      },
+      {
+        "kind": "started",
+        "id": "南门",
+        "at": 26524520
+      },
+      {
+        "kind": "shot",
+        "id": "south-archer:22",
+        "sourceId": "south-archer",
+        "at": 26525500
+      },
+      {
+        "kind": "hit",
+        "id": "raid-27:2",
+        "sourceId": "south-archer",
+        "at": 26526340,
+        "damage": 22,
+        "x": 1103.624443484714,
+        "y": 2016.1120733382759
+      },
+      {
+        "kind": "shot",
+        "id": "south-archer:23",
+        "sourceId": "south-archer",
+        "at": 26527000
+      },
+      {
+        "kind": "hit",
+        "id": "raid-27:1",
+        "sourceId": "south-patrol",
+        "at": 26527500,
+        "damage": 18,
+        "x": 1001.6820413247091,
+        "y": 1931.6534424735923
+      },
+      {
+        "kind": "hit",
+        "id": "raid-27:1",
+        "sourceId": "south-archer",
+        "at": 26527760,
+        "damage": 22,
+        "x": 1001.6820413247091,
+        "y": 1931.6534424735923
+      },
+      {
+        "kind": "hit",
+        "id": "raid-27:1",
+        "sourceId": "xiaobao",
+        "at": 26527920,
+        "damage": 180,
+        "x": 987.5587428329007,
+        "y": 1912.4969177441094
+      },
+      {
+        "kind": "death",
+        "id": "raid-27:1",
+        "sourceId": "xiaobao",
+        "at": 26527920,
+        "x": 987.5587428329007,
+        "y": 1912.4969177441094
+      },
+      {
+        "kind": "hit",
+        "id": "raid-27:3",
+        "sourceId": "south-patrol",
+        "at": 26528500,
+        "damage": 18,
+        "x": 984.6997703119584,
+        "y": 1946.6282856907756
+      },
+      {
+        "kind": "shot",
+        "id": "south-archer:24",
+        "sourceId": "south-archer",
+        "at": 26528500
+      },
+      {
+        "kind": "hit",
+        "id": "south-patrol",
+        "eventKey": "raid-27:3:1:south-patrol:26528700:hit",
+        "sourceId": "raid-27:3",
+        "at": 26528720,
+        "damage": 4,
+        "x": 960.7749312333922,
+        "y": 1878.6600611678398
+      },
+      {
+        "kind": "hit",
+        "id": "south-patrol",
+        "eventKey": "raid-27:2:1:south-patrol:26528840:hit",
+        "sourceId": "raid-27:2",
+        "at": 26528860,
+        "damage": 4,
+        "x": 960.7749312333922,
+        "y": 1878.6600611678398
+      },
+      {
+        "kind": "hit",
+        "id": "raid-27:3",
+        "sourceId": "xiaobao",
+        "at": 26529200,
+        "damage": 96,
+        "x": 973.4107212504521,
+        "y": 1914.5571558184602
+      },
+      {
+        "kind": "death",
+        "id": "raid-27:3",
+        "sourceId": "xiaobao",
+        "at": 26529200,
+        "x": 973.4107212504521,
+        "y": 1914.5571558184602
+      },
+      {
+        "kind": "hit",
+        "id": "raid-27:2",
+        "sourceId": "south-patrol",
+        "at": 26529500,
+        "damage": 18,
+        "x": 987.453476615401,
+        "y": 1905.4659351544133
+      },
+      {
+        "kind": "hit",
+        "id": "raid-27:2",
+        "sourceId": "xiaobao",
+        "at": 26529740,
+        "damage": 72,
+        "x": 987.453476615401,
+        "y": 1905.4659351544133
+      },
+      {
+        "kind": "death",
+        "id": "raid-27:2",
+        "sourceId": "xiaobao",
+        "at": 26529740,
+        "x": 987.453476615401,
+        "y": 1905.4659351544133
+      },
+      {
+        "kind": "ended",
+        "id": "raid-27",
+        "at": 26529760
+      },
+      {
+        "kind": "started",
+        "id": "东门",
+        "at": 27363760
+      },
+      {
+        "kind": "shot",
+        "id": "east-archer:16",
+        "sourceId": "east-archer",
+        "at": 27364740
+      },
+      {
+        "kind": "hit",
+        "id": "raid-28:1",
+        "sourceId": "east-patrol",
+        "at": 27366460,
+        "damage": 18,
+        "x": 2199.5409786234122,
+        "y": 1099.034963445149
+      },
+      {
+        "kind": "hit",
+        "id": "east-patrol",
+        "eventKey": "raid-28:1:1:east-patrol:27366900:hit",
+        "sourceId": "raid-28:1",
+        "at": 27366920,
+        "damage": 4,
+        "x": 2128.039642092727,
+        "y": 1110.5440638951864
+      },
+      {
+        "kind": "hit",
+        "id": "raid-28:1",
+        "sourceId": "east-patrol",
+        "at": 27367460,
+        "damage": 18,
+        "x": 2165.9730572474054,
+        "y": 1104.4381712418249
+      },
+      {
+        "kind": "hit",
+        "id": "raid-28:1",
+        "sourceId": "xiaobao",
+        "at": 27368080,
+        "damage": 72,
+        "x": 2165.9730572474054,
+        "y": 1104.4381712418249
+      },
+      {
+        "kind": "death",
+        "id": "raid-28:1",
+        "sourceId": "xiaobao",
+        "at": 27368080,
+        "x": 2165.9730572474054,
+        "y": 1104.4381712418249
+      },
+      {
+        "kind": "ended",
+        "id": "raid-28",
+        "at": 27368100
+      },
+      {
+        "kind": "started",
+        "id": "北门",
+        "at": 28341100
+      },
+      {
+        "kind": "shot",
+        "id": "north-archer:10",
+        "sourceId": "north-archer",
+        "at": 28342080
+      },
+      {
+        "kind": "hit",
+        "id": "raid-29:1",
+        "sourceId": "north-archer",
+        "at": 28342120,
+        "damage": 22,
+        "x": 685.7451962175801,
+        "y": 139.72355886527373
+      },
+      {
+        "kind": "hit",
+        "id": "raid-29:1",
+        "sourceId": "north-patrol",
+        "at": 28343520,
+        "damage": 18,
+        "x": 765.6644058432045,
+        "y": 162.64840943816017
+      },
+      {
+        "kind": "hit",
+        "id": "raid-29:1",
+        "sourceId": "xiaobao",
+        "at": 28343820,
+        "damage": 180,
+        "x": 765.6644058432045,
+        "y": 162.64840943816017
+      },
+      {
+        "kind": "death",
+        "id": "raid-29:1",
+        "sourceId": "xiaobao",
+        "at": 28343820,
+        "x": 765.6644058432045,
+        "y": 162.64840943816017
+      },
+      {
+        "kind": "ended",
+        "id": "raid-29",
+        "at": 28343840
+      },
+      {
+        "kind": "started",
+        "id": "南门",
+        "at": 29417840
+      },
+      {
+        "kind": "shot",
+        "id": "south-archer:25",
+        "sourceId": "south-archer",
+        "at": 29418820
+      }
+    ],
+    "critical": false,
+    "awaitingCheckpoint": false
+  }
+}

@@ -113,9 +113,9 @@ export const lessonProps: Prop[] = WIND_LESSONS.map((l) => ({
   id: `lesson-${l.id}`,
   x: l.x,
   y: l.y,
-  w: 62,
-  h: 86,
-  art: "sign",
+  w: 72,
+  h: 64,
+  art: "training-book",
   kind: "sign",
   label: `传承 · ${l.name}`,
 }));

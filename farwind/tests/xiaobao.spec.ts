@@ -34,7 +34,9 @@ test("小宝：十二组固定预览、真实键盘交谈演武、暂停恢复�
   const walked = (await read()).xiaobao;
   expect(Math.hypot(walked.x - walking.x, walked.y - walking.y)).toBeGreaterThan(3);
   expect(walked.distance).toBeGreaterThan(walking.distance); expect(walked.frameIndex).not.toBe(walking.frameIndex);
-  await move(page, 800, 785);
+  // 站到散步路线中部；旧坐标仅在小宝经过交互半径边缘时短暂可交谈，
+  // 等待条件成立到真实E输入之间的渲染帧会让移动人物离开95像素范围。
+  await move(page, 835, 705);
   await page.waitForFunction(() => (window as any).__farwind().target === "xiaobao");
   await page.keyboard.press("e");
   await expect(page.getByRole("heading", { name: "小宝 · 听风小宗师", exact: true })).toBeVisible();

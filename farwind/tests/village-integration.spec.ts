@@ -27,7 +27,7 @@ for(const [i,id]of ['east-watch','north-watch','south-watch'].entries())test(`${
 });
 test('结构1旧地图从正式导入迁移，保存及重开不重复坐标迁移',async({page})=>{
  await mkdir(root,{recursive:true});await page.goto('/');const old:any=initialState();old.schema_version=1;old.skills={swordWind:false};delete old.map_version;for(const k of ['coins','equipment','shopStock','economyRevision','defense','skills'])delete old[k];old.player.x=1700;old.player.y=1180;old.killed=['slime-1','slime-2','leaf-1','leaf-2'];old.bag[0]={id:'herb',count:7};await fixture(page,old);
- await pause(page);const first=await read(page);expect([first.state.schema_version,first.state.map_version]).toEqual([7,6]);expect(first.state.player.x).toBe(2300);expect(first.state.bag[0]).toEqual({id:'herb',count:7});
+ await pause(page);const first=await read(page);expect([first.state.schema_version,first.state.map_version]).toEqual([8,6]);expect(first.state.player.x).toBe(2300);expect(first.state.bag[0]).toEqual({id:'herb',count:7});
  await page.getByRole('button',{name:'保存旅途',exact:true}).click();await expect(page.locator('#toast')).toContainText('已保存');
  for(let n=0;n<3;n++){await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();await pause(page);const d=await read(page);expect(d.state.player).toEqual(first.state.player);expect(d.state.bag).toEqual(first.state.bag);expect(d.state.coins).toBe(120);expect(d.state.defense.guards).toHaveLength(9);}
  await page.screenshot({path:`${root}/legacy-repeated.png`});await writeFile(`${root}/legacy-repeated.json`,JSON.stringify({说明:'真实旧结构字段与旧地图坐标，正式导入／保存／页面重开验证仅迁移一次；服务成交另有生产用例。',首次迁移:first.state,重复重开:(await read(page)).state},null,2));

@@ -1,0 +1,838 @@
+{
+  "说明": "固定基准：恶意一点，八只普通派遣，十二名健康卫兵，开放道路；按正式防御模拟推进，未加入生活排班或主角助战。",
+  "模拟毫秒": 23250,
+  "来袭结算号": 1,
+  "在途事件": null,
+  "派遣单位": [
+    {
+      "身份": "raid-1:1",
+      "剩余生命": 0
+    },
+    {
+      "身份": "raid-1:2",
+      "剩余生命": 0
+    },
+    {
+      "身份": "raid-1:3",
+      "剩余生命": 0
+    },
+    {
+      "身份": "raid-1:4",
+      "剩余生命": 0
+    },
+    {
+      "身份": "raid-1:5",
+      "剩余生命": 0
+    },
+    {
+      "身份": "raid-1:6",
+      "剩余生命": 0
+    },
+    {
+      "身份": "raid-1:7",
+      "剩余生命": 0
+    },
+    {
+      "身份": "raid-1:8",
+      "剩余生命": 0
+    }
+  ],
+  "守卫": [
+    {
+      "id": "west-watch",
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908,
+      "hp": 0,
+      "dead": true,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "west-north-post",
+      "mode": "dead",
+      "peaceMs": 0,
+      "cooldownMs": 0
+    },
+    {
+      "id": "west-patrol",
+      "x": 189.67178420492547,
+      "y": 1431.200914724112,
+      "hp": 172,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "west-south-post",
+      "mode": "attack",
+      "peaceMs": 0,
+      "cooldownMs": 700
+    },
+    {
+      "id": "west-archer",
+      "x": 160,
+      "y": 1710,
+      "hp": 100,
+      "dead": false,
+      "weaponId": "watch-bow",
+      "armorId": "watch-leather",
+      "postId": "west-gate-tower",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    }
+  ],
+  "通知": [
+    {
+      "kind": "hit",
+      "id": "raid-1:6",
+      "sourceId": "west-watch",
+      "at": 6050,
+      "damage": 18,
+      "x": 106.91375223390601,
+      "y": 1379.8489845876315
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:6:1:west-watch:6450:hit",
+      "sourceId": "raid-1:6",
+      "at": 6450,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:3:1:west-watch:6550:hit",
+      "sourceId": "raid-1:3",
+      "at": 6550,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:3",
+      "sourceId": "west-watch",
+      "at": 7050,
+      "damage": 18,
+      "x": 135.66860919645026,
+      "y": 1349.9315905740962
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:5:1:west-watch:7200:hit",
+      "sourceId": "raid-1:5",
+      "at": 7200,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:6",
+      "sourceId": "west-patrol",
+      "at": 7250,
+      "damage": 18,
+      "x": 137.90180462663506,
+      "y": 1365.85825162236
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:2:1:west-watch:7300:hit",
+      "sourceId": "raid-1:2",
+      "at": 7300,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:8:1:west-watch:7300:hit",
+      "sourceId": "raid-1:8",
+      "at": 7300,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:1:1:west-watch:8000:hit",
+      "sourceId": "raid-1:1",
+      "at": 8000,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:6:2:west-watch:8050:hit",
+      "sourceId": "raid-1:6",
+      "at": 8050,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:5",
+      "sourceId": "west-watch",
+      "at": 8050,
+      "damage": 18,
+      "x": 136.72766299083537,
+      "y": 1357.1175870277323
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:4:1:west-watch:8100:hit",
+      "sourceId": "raid-1:4",
+      "at": 8100,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:7:1:west-watch:8100:hit",
+      "sourceId": "raid-1:7",
+      "at": 8100,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:3:2:west-watch:8150:hit",
+      "sourceId": "raid-1:3",
+      "at": 8150,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:8",
+      "sourceId": "west-patrol",
+      "at": 8250,
+      "damage": 18,
+      "x": 140.61281002216873,
+      "y": 1370.8392057408164
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:5:2:west-watch:8800:hit",
+      "sourceId": "raid-1:5",
+      "at": 8800,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:2:2:west-watch:8900:hit",
+      "sourceId": "raid-1:2",
+      "at": 8900,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:8:2:west-watch:8900:hit",
+      "sourceId": "raid-1:8",
+      "at": 8900,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:3",
+      "sourceId": "west-watch",
+      "at": 9050,
+      "damage": 18,
+      "x": 169.66432279564688,
+      "y": 1350.4714580406055
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:7",
+      "sourceId": "west-patrol",
+      "at": 9250,
+      "damage": 18,
+      "x": 140.38615656071465,
+      "y": 1373.165369509952
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:1:2:west-watch:9600:hit",
+      "sourceId": "raid-1:1",
+      "at": 9600,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:4:2:west-watch:9700:hit",
+      "sourceId": "raid-1:4",
+      "at": 9700,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:7:2:west-watch:9700:hit",
+      "sourceId": "raid-1:7",
+      "at": 9700,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:6:3:west-watch:9750:hit",
+      "sourceId": "raid-1:6",
+      "at": 9750,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:3:3:west-watch:9850:hit",
+      "sourceId": "raid-1:3",
+      "at": 9850,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:5",
+      "sourceId": "west-watch",
+      "at": 10050,
+      "damage": 18,
+      "x": 170.1427070400755,
+      "y": 1350.8378711752941
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:7",
+      "sourceId": "west-patrol",
+      "at": 10250,
+      "damage": 18,
+      "x": 167.9924151216229,
+      "y": 1353.3185942487578
+    },
+    {
+      "kind": "death",
+      "id": "raid-1:7",
+      "sourceId": "west-patrol",
+      "at": 10250,
+      "x": 167.9924151216229,
+      "y": 1353.3185942487578
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:5:3:west-watch:10500:hit",
+      "sourceId": "raid-1:5",
+      "at": 10500,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:2:3:west-watch:10600:hit",
+      "sourceId": "raid-1:2",
+      "at": 10600,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:8:3:west-watch:10600:hit",
+      "sourceId": "raid-1:8",
+      "at": 10600,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:1",
+      "sourceId": "west-watch",
+      "at": 11050,
+      "damage": 18,
+      "x": 168.1616132644746,
+      "y": 1351.502689597911
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:2",
+      "sourceId": "west-patrol",
+      "at": 11250,
+      "damage": 18,
+      "x": 200.97768286079176,
+      "y": 1350.7198519987398
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:1:3:west-watch:11300:hit",
+      "sourceId": "raid-1:1",
+      "at": 11300,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:4:3:west-watch:11400:hit",
+      "sourceId": "raid-1:4",
+      "at": 11400,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:6:4:west-watch:11450:hit",
+      "sourceId": "raid-1:6",
+      "at": 11450,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:3:4:west-watch:11550:hit",
+      "sourceId": "raid-1:3",
+      "at": 11550,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:3",
+      "sourceId": "west-watch",
+      "at": 12050,
+      "damage": 18,
+      "x": 169.66432279564688,
+      "y": 1350.4714580406055
+    },
+    {
+      "kind": "death",
+      "id": "raid-1:3",
+      "sourceId": "west-watch",
+      "at": 12050,
+      "x": 169.66432279564688,
+      "y": 1350.4714580406055
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:5:4:west-watch:12200:hit",
+      "sourceId": "raid-1:5",
+      "at": 12200,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:2",
+      "sourceId": "west-patrol",
+      "at": 12250,
+      "damage": 18,
+      "x": 200.97768286079176,
+      "y": 1350.7198519987398
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:2:4:west-watch:12300:hit",
+      "sourceId": "raid-1:2",
+      "at": 12300,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:8:4:west-watch:12300:hit",
+      "sourceId": "raid-1:8",
+      "at": 12300,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:1:4:west-watch:13000:hit",
+      "sourceId": "raid-1:1",
+      "at": 13000,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:5",
+      "sourceId": "west-watch",
+      "at": 13050,
+      "damage": 18,
+      "x": 170.1427070400755,
+      "y": 1350.8378711752941
+    },
+    {
+      "kind": "death",
+      "id": "raid-1:5",
+      "sourceId": "west-watch",
+      "at": 13050,
+      "x": 170.1427070400755,
+      "y": 1350.8378711752941
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:4:4:west-watch:13100:hit",
+      "sourceId": "raid-1:4",
+      "at": 13100,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:6:5:west-watch:13150:hit",
+      "sourceId": "raid-1:6",
+      "at": 13150,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:8",
+      "sourceId": "west-patrol",
+      "at": 13250,
+      "damage": 18,
+      "x": 169.1226346453115,
+      "y": 1352.313820455819
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:2:5:west-watch:14000:hit",
+      "sourceId": "raid-1:2",
+      "at": 14000,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:8:5:west-watch:14000:hit",
+      "sourceId": "raid-1:8",
+      "at": 14000,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:1:5:west-watch:14700:hit",
+      "sourceId": "raid-1:1",
+      "at": 14700,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:4:5:west-watch:14800:hit",
+      "sourceId": "raid-1:4",
+      "at": 14800,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:6:6:west-watch:14850:hit",
+      "sourceId": "raid-1:6",
+      "at": 14850,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:2",
+      "sourceId": "west-patrol",
+      "at": 15250,
+      "damage": 18,
+      "x": 200.97768286079176,
+      "y": 1350.7198519987398
+    },
+    {
+      "kind": "death",
+      "id": "raid-1:2",
+      "sourceId": "west-patrol",
+      "at": 15250,
+      "x": 200.97768286079176,
+      "y": 1350.7198519987398
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:8:6:west-watch:15700:hit",
+      "sourceId": "raid-1:8",
+      "at": 15700,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:8",
+      "sourceId": "west-patrol",
+      "at": 16250,
+      "damage": 18,
+      "x": 169.12263464531227,
+      "y": 1352.313820455819
+    },
+    {
+      "kind": "death",
+      "id": "raid-1:8",
+      "sourceId": "west-patrol",
+      "at": 16250,
+      "x": 169.12263464531227,
+      "y": 1352.313820455819
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:1:6:west-watch:16400:hit",
+      "sourceId": "raid-1:1",
+      "at": 16400,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:4:6:west-watch:16500:hit",
+      "sourceId": "raid-1:4",
+      "at": 16500,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:6:7:west-watch:16550:hit",
+      "sourceId": "raid-1:6",
+      "at": 16550,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:1",
+      "sourceId": "west-patrol",
+      "at": 17250,
+      "damage": 18,
+      "x": 168.16161326447389,
+      "y": 1351.502689597911
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:1:7:west-watch:18100:hit",
+      "sourceId": "raid-1:1",
+      "at": 18100,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:4:7:west-watch:18200:hit",
+      "sourceId": "raid-1:4",
+      "at": 18200,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:6:8:west-watch:18250:hit",
+      "sourceId": "raid-1:6",
+      "at": 18250,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:6",
+      "sourceId": "west-patrol",
+      "at": 19250,
+      "damage": 18,
+      "x": 168.88985701936696,
+      "y": 1351.867518657094
+    },
+    {
+      "kind": "death",
+      "id": "raid-1:6",
+      "sourceId": "west-patrol",
+      "at": 19250,
+      "x": 168.88985701936696,
+      "y": 1351.867518657094
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:1:8:west-watch:19800:hit",
+      "sourceId": "raid-1:1",
+      "at": 19800,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "west-watch",
+      "eventKey": "raid-1:4:8:west-watch:19900:hit",
+      "sourceId": "raid-1:4",
+      "at": 19900,
+      "damage": 4,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "death",
+      "id": "west-watch",
+      "eventKey": "raid-1:4:8:west-watch:19900:death",
+      "sourceId": "raid-1:4",
+      "at": 19900,
+      "x": 171.9032387463336,
+      "y": 1350.5070130489908
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:1",
+      "sourceId": "west-patrol",
+      "at": 20250,
+      "damage": 18,
+      "x": 170.22087572435197,
+      "y": 1366.991501940632
+    },
+    {
+      "kind": "death",
+      "id": "raid-1:1",
+      "sourceId": "west-patrol",
+      "at": 20250,
+      "x": 170.22087572435197,
+      "y": 1366.991501940632
+    },
+    {
+      "kind": "hit",
+      "id": "west-patrol",
+      "eventKey": "raid-1:4:9:west-patrol:20750:hit",
+      "sourceId": "raid-1:4",
+      "at": 20750,
+      "damage": 4,
+      "x": 189.67178420492547,
+      "y": 1431.200914724112
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:4",
+      "sourceId": "west-patrol",
+      "at": 21250,
+      "damage": 18,
+      "x": 195.96951139318966,
+      "y": 1398.1097756772588
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:4",
+      "sourceId": "west-patrol",
+      "at": 22250,
+      "damage": 18,
+      "x": 195.96951139318966,
+      "y": 1398.1097756772588
+    },
+    {
+      "kind": "hit",
+      "id": "west-patrol",
+      "eventKey": "raid-1:4:10:west-patrol:22350:hit",
+      "sourceId": "raid-1:4",
+      "at": 22350,
+      "damage": 4,
+      "x": 189.67178420492547,
+      "y": 1431.200914724112
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:4",
+      "sourceId": "west-patrol",
+      "at": 23250,
+      "damage": 18,
+      "x": 189.61290775496954,
+      "y": 1431.5102785205781
+    },
+    {
+      "kind": "death",
+      "id": "raid-1:4",
+      "sourceId": "west-patrol",
+      "at": 23250,
+      "x": 189.61290775496954,
+      "y": 1431.5102785205781
+    },
+    {
+      "kind": "ended",
+      "id": "raid-1",
+      "at": 23250
+    }
+  ]
+}

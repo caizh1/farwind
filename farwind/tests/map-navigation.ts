@@ -42,20 +42,38 @@ export async function move(page: Page, tx: number, ty: number) {
     step = 10,
     cols = WORLD.width / step;
   const key = (x: number, y: number) =>
-    Math.round(y / step) * cols + Math.round(x / step);
+    Math.round((y - WORLD.top) / step) * cols +
+    Math.round((x - WORLD.left) / step);
   const startKey = key(start.x, start.y),
     end = key(tx, ty),
     queue = [startKey],
     prev = new Map<number, number>([[startKey, -1]]);
+  const cost = new Map([[startKey, 0]]),
+    closed = new Set<number>();
+  const heuristic = (n: number) =>
+    Math.abs((n % cols) - (end % cols)) +
+    Math.abs(Math.floor(n / cols) - Math.floor(end / cols));
   const blocked = (x: number, y: number) =>
     terrainBlocked(x, y) || solidPropAt(x, y);
   const safe = (x: number, y: number) =>
     [-6, 0, 6].every((ox) =>
       [-6, 0, 6].every((oy) => !blocked(x + ox, y + oy)),
     );
-  for (let i = 0; i < queue.length && !prev.has(end); i++) {
-    const n = queue[i],
-      x = n % cols,
+  // 有目标的 A*；不再为每一步键盘行程扫描整个扩展地图。
+  while (queue.length) {
+    let best = 0;
+    for (let i = 1; i < queue.length; i++) {
+      const a = queue[i],
+        b = queue[best],
+        fa = cost.get(a)! + heuristic(a),
+        fb = cost.get(b)! + heuristic(b);
+      if (fa < fb || (fa === fb && heuristic(a) < heuristic(b))) best = i;
+    }
+    const n = queue.splice(best, 1)[0];
+    if (n === end) break;
+    if (closed.has(n)) continue;
+    closed.add(n);
+    const x = n % cols,
       y = Math.floor(n / cols);
     for (const [dx, dy] of [
       [1, 0],
@@ -70,24 +88,32 @@ export async function move(page: Page, tx: number, ty: number) {
         nx < 3 ||
         nx >= cols - 3 ||
         ny < 8 ||
-        ny >= 217 ||
-        prev.has(k) ||
+        ny >= WORLD.height / step - 3 ||
+        closed.has(k) ||
+        (cost.has(k) && cost.get(k)! <= cost.get(n)! + 1) ||
         !clearMotionLine(
-          { x: x * step, y: y * step },
-          { x: nx * step, y: ny * step },
+          { x: WORLD.left + x * step, y: WORLD.top + y * step },
+          { x: WORLD.left + nx * step, y: WORLD.top + ny * step },
         ) ||
-        !safe(nx * step, ny * step) ||
-        !safe(((x + nx) * step) / 2, ((y + ny) * step) / 2)
+        !safe(WORLD.left + nx * step, WORLD.top + ny * step) ||
+        !safe(
+          WORLD.left + ((x + nx) * step) / 2,
+          WORLD.top + ((y + ny) * step) / 2,
+        )
       )
         continue;
       prev.set(k, n);
+      cost.set(k, cost.get(n)! + 1);
       queue.push(k);
     }
   }
   expect(prev.has(end), `可到达 ${tx},${ty}`).toBe(true);
   const path: number[][] = [];
   for (let n = end; n !== startKey; n = prev.get(n)!)
-    path.unshift([(n % cols) * step, Math.floor(n / cols) * step]);
+    path.unshift([
+      WORLD.left + (n % cols) * step,
+      WORLD.top + Math.floor(n / cols) * step,
+    ]);
   const turns = path.filter(
     (p, i) =>
       i === path.length - 1 ||

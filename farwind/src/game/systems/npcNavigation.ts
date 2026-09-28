@@ -1,3 +1,4 @@
+import {mapGeometryRevision} from "../../data/world";
 import {
   HOMES,
   PRIVATE_STORAGE,
@@ -55,7 +56,10 @@ export const spaceBlocked = (space: SpaceId, x: number, y: number) =>
 // ponytail: 静态家具与地图的有界缓存；改变碰撞布局时需统一失效。
 const blockedCache = new Map<string, boolean>(),
   lineCache = new Map<string, boolean>();
+let geometryRevision=-1;
+function checkGeometry(){if(geometryRevision!==mapGeometryRevision){blockedCache.clear();lineCache.clear();geometryRevision=mapGeometryRevision;}}
 const cachedBlocked = (space: SpaceId, x: number, y: number) => {
+  checkGeometry();
   const k = `${space}:${x}:${y}`;
   if (!blockedCache.has(k)) {
     if (blockedCache.size > 32000) blockedCache.clear();
@@ -64,6 +68,7 @@ const cachedBlocked = (space: SpaceId, x: number, y: number) => {
   return blockedCache.get(k)!;
 };
 const cachedLine = (space: SpaceId, a: Point, b: Point) => {
+  checkGeometry();
   const k = `${space}:${a.x}:${a.y}:${b.x}:${b.y}`;
   if (!lineCache.has(k)) {
     if (lineCache.size > 64000) lineCache.clear();
@@ -154,7 +159,7 @@ export function moveLife(
     runtime.stuck = 0;
     return body.space === target.space;
   }
-  const key = `${goal.space}:${Math.round(goal.x / 8)}:${Math.round(goal.y / 8)}`;
+  const key = `${mapGeometryRevision}:${goal.space}:${Math.round(goal.x / 8)}:${Math.round(goal.y / 8)}`;
   if (runtime.goal !== key) {
     runtime.nav = enemyNavigation();
     runtime.search = null;

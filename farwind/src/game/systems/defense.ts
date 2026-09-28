@@ -1,3 +1,4 @@
+import {creatureReach} from '../../data/maps/windbell/elites';
 import { GUARD_LANDINGS, type Place } from '../../data/npcLife';
 import type {GuardId} from '../../data/defense';
 import { DEFENSE, DEFENSE_RULES, raidInterval, TOWERS, RAID_GATES, RAID_TIMING, GUARD_DEFS, GUARD_WEAPONS, GUARD_ARMOR, type GateId } from "../../data/defense";
@@ -5,9 +6,13 @@ import { props } from "../../data/world";
 import { regionAt, inPolygon } from "../../data/village";
 import { localPath, nearestStanding, enemyNavigation, enemyAttackSpace, type EnemyBody, NAV } from "./enemy";
 import { motionBlocked, clearMotionLine, clearMeleeLine, shotLineBlocker, shotLineImpact, type Point, type Rect, type FiringPort } from "./obstacles";
-import { createEnemyAttack, advanceEnemyAttack, delayEnemyAttack, type EnemyContact } from "./enemyAttack";
+import { createEnemyAttack, creatureCooldown, advanceEnemyAttack, delayEnemyAttack, type EnemyContact } from "./enemyAttack";
 import { resolveDamage, resolveReleasedDamage, type ReleasedAttack, type DamageEvent } from "./damage";
 import type { DefenseState, GuardState } from "./defenseState";
+import { movementFacing } from "./locomotion";
+import {enemyProtection,turnToward} from './enemyTraits';
+import {enemyProfile} from '../../data/enemies';
+import {DEMON_KING,validRaidOrder,demonFormation,raidUnitProfile,type RaidOrder} from '../../data/demonKing';
 import {DEFENSE_ZONES,zoneFor,inProtected,locallyProtected,inAlert,inActivity,routeRemaining} from '../../data/defenseZones';
 const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 export type DefenseEnemy = EnemyBody & { kind: "defense-enemy"; eventId: string; flashUntil: number;
@@ -29,27 +34,46 @@ export function nextRandom(seed: number) {
 }
 export function spawnLegal(gateId: GateId, spawns: readonly Point[], player: Point, view?: Rect, occupied: readonly Point[] = []) {
   const gate = RAID_GATES.find(g => g.id === gateId)!;
-  return spawns.every(p => {
+  return spawns.length>0 && spawns.length<=DEMON_KING.maxUnits && spawns.every(p => {
     const region = regionAt(p).id;
-    if (region !== (gateId === "east-gate" ? "forest" : gateId === "north-gate" ? "north" : "south") ||
+    if (region !== gate.outsideRegion ||
       inProtected(p) || !inPolygon(p,zoneFor(gateId).spawn) || dist(p, player) < 220 || occupied.some(q => dist(p, q) < 60) || motionBlocked(p.x, p.y) ||
       view && p.x > view.left - 100 && p.x < view.right + 100 && p.y > view.top - 100 && p.y < view.bottom + 100) return false;
     return !!localPath(p, q => dist(q, gate.entry) < 25 && clearMotionLine(q, gate.entry), gate.entry, q => dist(q, gate) <= 480).path;
   }) && !!localPath(gate.entry, q => dist(q, gate.inside) < 25 && clearMotionLine(q, gate.inside),
     gate.inside, q => dist(q, gate) <= 480).path;
 }
-export function prepareRaid(s: DefenseState, player: Point, gateId: GateId, count = 3, warning = false, view?: Rect, occupied: readonly Point[] = []): DefenseState {
+// 编队必须找到足量且互不重叠的真实城外站位；找不到时整次延期。
+export function raidSpawnPoints(gateId:GateId,count:number,player:Point,view?:Rect,occupied:readonly Point[]=[],order?:RaidOrder):Point[]{
+  const gate=RAID_GATES.find(g=>g.id===gateId)!;
+  if(order?.source!=='demon-king')return gate.spawns.slice(0,count).map(p=>({...p}));
+  const polygon=zoneFor(gateId).spawn, gap=DEMON_KING.spawnGap;
+  const left=Math.min(...polygon.map(p=>p.x))+12,right=Math.max(...polygon.map(p=>p.x))-12;
+  const top=Math.min(...polygon.map(p=>p.y))+12,bottom=Math.max(...polygon.map(p=>p.y))-12;
+  const points:Point[]=[];
+  for(let y=top;y<=bottom;y+=gap)for(let x=left;x<=right;x+=gap){
+    const p={x,y};
+    if(points.length<count&&points.every(q=>dist(p,q)>=gap)&&spawnLegal(gateId,[p],player,view,occupied))points.push(p);
+  }
+  return points.length===count?points:[];
+}
+export function prepareRaid(s: DefenseState, player: Point, gateId: GateId, count = 3, warning = false, view?: Rect, occupied: readonly Point[] = [],order?:RaidOrder): DefenseState {
   if (s.raid) throw Error("已有演练或来袭正在进行，不能重复生成。");
   if (s.sequence >= 1e9) throw Error("来袭序号已到上限。");
-  if (!Number.isInteger(count) || count < 1 || count > DEFENSE.unitLimit) throw Error("来袭人数无效。");
+  if (!validRaidOrder(order) || !Number.isInteger(count) || count < 1 || count > (order?.source==='demon-king'?DEMON_KING.maxUnits:DEFENSE.unitLimit)) throw Error("来袭人数无效。");
+  const formation=order?.source==='demon-king'?demonFormation(order.malice,1):null;
+  if(formation&&(count<formation.count||count>demonFormation(order!.malice,3).count))throw Error('魔王编队人数与恶意档位不一致。');
   const gate = RAID_GATES.find(g => g.id === gateId);
   if (!gate) throw Error("出口未开放。");
-  const spawns = gate.spawns.slice(0, count).map(p => ({...p}));
-  if (!spawnLegal(gateId, spawns, player, view, occupied)) throw Error("城外生成点近身、在视口内或不可达，请稍后再试。");
+  const spawns = raidSpawnPoints(gateId,count,player,view,occupied,order);
+  if (spawns.length!==count || !spawnLegal(gateId, spawns, player, view, occupied)) throw Error("城外生成点近身、在视口内或不可达，请稍后再试。");
   const next = structuredClone(s), sequence = ++next.sequence, id = gateId === "east-gate" && !warning ? `east-raid-${sequence}` : `raid-${sequence}`;
   next.raid = { id, sequence, gateId, spawns, phase: warning ? "warning" : "approach", ageMs: 0,
-    members: spawns.map((p, i) => ({ id: `${id}:${i + 1}`, type: "slime",
-      ...p, hp: 48, cooldownMs: 0, targetId: null })) };
+    ...(order?{order:{...order}}:{}),
+    members: spawns.map((p, i) => {
+      const eliteLevel=formation&&i<formation.elites?formation.eliteLevel:0,type=eliteLevel?'leaf':'slime';
+      return {id:`${id}:${i+1}`,type,...p,hp:raidUnitProfile(type,eliteLevel).maxHP,cooldownMs:0,targetId:null,...(order?{eliteLevel}:{})};
+    }) };
   return next;
 }
 export function prepareEastRaid(s: DefenseState, player: Point) { return prepareRaid(s, player, "east-gate"); }
@@ -106,7 +130,7 @@ export class EastDefense {
       const home = this.state.raid!.spawns[i], gate = this.gate();
       const safe = m.hp > 0 && (motionBlocked(m.x, m.y) || dist(m,gate) >= 700)
         ? nearestStanding(m, [home, gate.entry], p => dist(p, gate) < 700) : m;
-      return { ...m, ...(safe ?? home), kind: "defense-enemy", maxHP: m.type === "slime" ? 48 : 72,
+      return { ...m, ...(safe ?? home), kind: "defense-enemy", maxHP: raidUnitProfile(m.type,m.eliteLevel??0).maxHP,
         homeX: home.x, homeY: home.y, eventId: this.state.raid!.id,
         cool: now + m.cooldownMs, windup: 0, staggerUntil: 0, nav: enemyNavigation(),
         ai: m.hp > 0 ? `接近${gate.name}` : "死亡", disabled: false, recovered: false, flashUntil: 0, playerAggroUntil: 0 };
@@ -173,10 +197,11 @@ export class EastDefense {
     // 允许识别警戒带逼近者并前往固定拦截点，移动硬边界仍只约束卫兵。
     return this.guardAllowed(g,g);
   }
-  canScheduleAtGate(gateId:GateId,player:Point,spawns:readonly Point[],view?:Rect,occupied:readonly Point[]=[]){
+  canScheduleAtGate(gateId:GateId,player:Point,spawns:readonly Point[],view?:Rect,occupied:readonly Point[]=[],order=this.state.raid?.order){
     const raid=this.state.raid;
     if(raid&&(raid.phase!=='warning'||raid.gateId!==gateId)||!raid&&(this.state.protectionMs||this.state.cooldownMs||this.state.retryMs)||
-      occupied.length+this.state.guards.filter(g=>!g.dead).length+spawns.length>24)return false;
+      !validRaidOrder(order)||occupied.length+this.state.guards.filter(g=>!g.dead).length+spawns.length>(order?.source==='demon-king'?34:24)||
+      order?.source==='demon-king'&&spawns.some((p,i)=>spawns.slice(0,i).some(q=>dist(p,q)<DEMON_KING.spawnGap)))return false;
     const defs=GUARD_DEFS.filter(d=>this.guardGate(d.id)===gateId);
     if(defs.length!==3||!defs.every(d=>{const g=this.state.guards.find(g=>g.id===d.id),r=this.runtime.get(d.id);
       return g&&!g.dead&&!g.offDuty&&(g.space??"village")==="village"&&g.hp>=d.maxHP*DEFENSE_RULES.health&&g.postId===d.postId&&
@@ -239,7 +264,7 @@ export class EastDefense {
     return true;
   }
   damageEnemy(e: DefenseHostile, event: DamageEvent, source: number|ReleasedAttack) {
-    const target={id:e.id,hp:e.hp,faction:'hostile' as const,armor:0};
+    const target={id:e.id,hp:e.hp,faction:'hostile' as const,armor:0,...enemyProtection(e,event.origin??this.victim(event.sourceId),this.now,event.breaksGuard)};
     const hit=typeof source==='number'?resolveDamage(event,{id:event.sourceId,hp:source,faction:'village',armor:0},target):resolveReleasedDamage(event,source,target);
     if (!hit.applied) return false;
     e.hp = hit.hp; e.flashUntil = this.now + 130;
@@ -331,6 +356,7 @@ export class EastDefense {
         e.attack.cancelled = true; e.attack = null; e.cool = now + 250;
       }
       if (now < e.staggerUntil) { e.ai = "硬直"; continue; }
+      if(e.type==='guardian'&&target&&!e.attack)e.face=turnToward(e.face??{x:0,y:1},{x:target.x-e.x,y:target.y-e.y},dt);
       if (e.attack && target) {
         const event = advanceEnemyAttack(e.attack,e,target,now,fixed ? enemyAttackSpace(e) : undefined);
         e.windup = Math.max(0, e.attack.contactAt - now); e.ai = "攻击";
@@ -343,19 +369,24 @@ export class EastDefense {
           else this.civilianContact?.(target.id,e,event);
           event.attack.resolved = true;
         }
+        if(e.attack.wallAt!==undefined){e.wallHit={at:e.attack.wallAt,until:e.attack.wallAt+850,direction:{...e.attack.direction}};e.staggerSince=e.attack.wallAt;e.staggerUntil=e.attack.wallAt+850;e.cool=e.attack.wallAt+1400;}
         if (now >= e.attack.recoveryUntil || e.attack.cancelled) e.attack = null;
         continue;
       }
       e.targetId = target?.id ?? null;
       const destination = !fixed && raid?.phase === "retreat" ? { x: e.homeX, y: e.homeY } : target ??
         (fixed ? {x:e.homeX,y:e.homeY} : locallyProtected(this.gate().id,e)?this.gate().inside:this.gate().entry);
-      if (target && (fixed || raid?.phase !== "retreat") && dist(e, target) < 73 && clearMeleeLine(e, target) && now >= e.cool) {
-        e.attack = createEnemyAttack(e.id, e.attackSerial = (e.attackSerial ?? 0) + 1, e.type, now, e, target);
-        e.cool = e.attack.recoveryUntil + 850; e.ai = "前摇";
+      const aligned=e.type!=='guardian'||!target||dist(e,target)<1||((target.x-e.x)*(e.face?.x??0)+(target.y-e.y)*(e.face?.y??1))/dist(e,target)>.94;
+      const added=['wolf','burrow','guardian'].includes(e.type),reach=e.elite?creatureReach(e.type,e.elite):added?enemyProfile(e.type).reach:73;
+      if (target && (fixed || raid?.phase !== "retreat") && dist(e, target) < reach && clearMeleeLine(e, target) && now >= e.cool && aligned) {
+        e.attack = createEnemyAttack(e.id, e.attackSerial = (e.attackSerial ?? 0) + 1, e.type, now, e, target,undefined,e.elite);
+        if(!fixed)e.attack.damage=raidUnitProfile(e.type,e.eliteLevel??0).damage;
+        if(e.type==='guardian'){e.attack.direction={...e.face!};e.attack.locked=true;}
+        e.cool = e.elite?creatureCooldown(e.attack):e.attack.recoveryUntil + 850; e.ai = "前摇";
         if (raid && !fixed) raid.phase = "fighting";
       } else if (dist(e, destination) > (target ? 43 : 8)) {
-        this.move(e, e.nav, destination, DEFENSE.enemySpeed, dt, budget,
-          p => fixed ? dist(p,{x:e.homeX,y:e.homeY}) <= 420 : dist(p,this.gate()) < 700, this.hostiles().filter(p => p.hp > 0 && p !== e));
+        this.move(e, e.nav, destination, added?enemyProfile(e.type).speed:DEFENSE.enemySpeed, dt, budget,
+          p => fixed ? dist(p,{x:e.homeX,y:e.homeY}) <= (e.leashRadius??420) : dist(p,this.gate()) < 700, this.hostiles().filter(p => p.hp > 0 && p !== e));
         e.ai = raid?.phase === "retreat" ? "撤离" : "接近目标";
       } else e.ai = "等待冷却";
     }
@@ -376,7 +407,7 @@ export class EastDefense {
         const close=(g.space??"village")===destination.space&&dist(g,destination)<6;
         if(!close)r.moved=this.lifeMove(g,destination,dtMs,budget);
         else if(!order){if(d.role==="archer"){g.mode="return";g.towerTransitMs=1800;}else{g.offDuty=false;g.mode="post";}}
-        if(r.moved>.001){const dx=g.x-old.x,dy=g.y-old.y;r.distance+=r.moved;r.facing=Math.abs(dx)>Math.abs(dy)?dx<0?2:3:dy<0?1:0;}
+        if(r.moved>.001){const dx=g.x-old.x,dy=g.y-old.y;r.distance+=r.moved;r.facing=movementFacing(dx,dy,r.facing);}
         g.peaceMs=Math.min(8000,g.peaceMs+dtMs);if(g.peaceMs>=8000)g.hp=Math.min(d.maxHP,g.hp+d.maxHP*DEFENSE.regenPerSecond*dt);
         continue;
       }
@@ -415,7 +446,7 @@ export class EastDefense {
             if(!attack.hit&&now>=attack.contact){attack.hit=true;
               if(ranged)this.fire(g,victim,attack.id);
               else if(inActivity(gate,victim)&&dist(g,victim)<=weapon.range+8&&clearMeleeLine(g,victim))
-                this.damageEnemy(victim,{sourceId:g.id,targetId:victim.id,attackId:attack.id,amount:weapon.damage,sourceType:'guard-melee',eventId:victim.eventId??null},g.hp);
+                this.damageEnemy(victim,{sourceId:g.id,targetId:victim.id,attackId:attack.id,amount:weapon.damage,sourceType:'guard-melee',eventId:victim.eventId??null,origin:{x:g.x,y:g.y}},g.hp);
             }
             if(now>=attack.end)r.attack=null;
           }
@@ -442,7 +473,7 @@ export class EastDefense {
       }
       if(r.moved>.001){const dx=g.x-old.x,dy=g.y-old.y;
         r.distance+=r.moved;
-        r.facing=Math.abs(dx)>Math.abs(dy)?dx<0?2:3:dy<0?1:0;}
+        r.facing=movementFacing(dx,dy,r.facing);}
     }
     this.updateArrows(dtMs);
     if (this.state.raid && this.state.raid.phase !== "warning" && (this.enemies.every(e => e.hp <= 0) || raid?.phase === "retreat" &&
@@ -478,7 +509,7 @@ export class EastDefense {
         return {e,u};
       }).filter(h=>h.u>=0&&h.u<=1&&a.travelled+segment*h.u<wallDistance).sort((a,b)=>a.u-b.u||a.e.id.localeCompare(b.e.id));
       if(hits[0]){const e=hits[0].e;a.hit.add(e.id);
-        this.damageEnemy(e,{sourceId:a.sourceId,targetId:e.id,attackId:a.id,amount:a.damage,sourceType:'tower-arrow',eventId:a.eventId},a.released);return false;
+        this.damageEnemy(e,{sourceId:a.sourceId,targetId:e.id,attackId:a.id,amount:a.damage,sourceType:'tower-arrow',eventId:a.eventId,origin:a.origin},a.released);return false;
       }
       if(wallDistance<=a.travelled+segment)return false;
       a.age+=elapsed;a.travelled+=segment;Object.assign(a,next);

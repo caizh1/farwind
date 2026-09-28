@@ -144,6 +144,45 @@
         "mode": "post",
         "peaceMs": 8000,
         "cooldownMs": 0
+      },
+      {
+        "id": "west-watch",
+        "x": 200,
+        "y": 1340,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "west-north-post",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0
+      },
+      {
+        "id": "west-patrol",
+        "x": 310.68981011920823,
+        "y": 1493.9220574908563,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "west-south-post",
+        "mode": "patrol",
+        "peaceMs": 8000,
+        "cooldownMs": 0
+      },
+      {
+        "id": "west-archer",
+        "x": 160,
+        "y": 1630,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "west-gate-tower",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0
       }
     ],
     "sequence": 0,
@@ -745,6 +784,185 @@
             {
               "x": 1140,
               "y": 1750
+            }
+          ],
+          "leash": 0
+        }
+      },
+      {
+        "id": "west-watch",
+        "x": 200,
+        "y": 1340,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "west-north-post",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 700,
+        "facing": 3,
+        "moved": 0,
+        "distance": 0,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "west-watch",
+          "name": "禾岩",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "west-north-post",
+          "post": {
+            "x": 200,
+            "y": 1340
+          },
+          "cover": {
+            "x": 360,
+            "y": 1280
+          },
+          "patrol": [
+            {
+              "x": 200,
+              "y": 1340
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "west-patrol",
+        "x": 310.68981011920823,
+        "y": 1493.9220574908563,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "west-south-post",
+        "mode": "patrol",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 12,
+        "facing": 0,
+        "moved": 0.9000000000000503,
+        "distance": 619.1999999999888,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "west-patrol",
+          "name": "鹿宁",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "west-south-post",
+          "post": {
+            "x": 280,
+            "y": 1530
+          },
+          "cover": {
+            "x": 350,
+            "y": 1510
+          },
+          "patrol": [
+            {
+              "x": 280,
+              "y": 1530
+            },
+            {
+              "x": 300,
+              "y": 1540
+            },
+            {
+              "x": 330,
+              "y": 1470
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "west-archer",
+        "x": 160,
+        "y": 1630,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "west-gate-tower",
+        "mode": "post",
+        "peaceMs": 8000,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 700,
+        "facing": 3,
+        "moved": 0,
+        "distance": 0,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "west-archer",
+          "name": "远翎",
+          "role": "archer",
+          "maxHP": 100,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "west-gate-tower",
+          "post": {
+            "x": 160,
+            "y": 1630
+          },
+          "cover": {
+            "x": 160,
+            "y": 1630
+          },
+          "patrol": [
+            {
+              "x": 160,
+              "y": 1630
             }
           ],
           "leash": 0

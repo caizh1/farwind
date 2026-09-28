@@ -1,0 +1,162 @@
+{
+  "说明": "魔王任务共享源码交接摘要。现有共享文件包含其他任务改动，摘要用于完整文件三方比对，不代表全部差异由本任务产生。",
+  "生成时间": "2026-09-28T21:39:29+08:00",
+  "停止共享源码入口编辑": "2026-09-28 21:33:00 中国标准时间",
+  "工作目录": "/Users/archer/Documents/ChatGPT/Game/farwind",
+  "存档结构版本": 13,
+  "地图版本": 8,
+  "旧档迁移": "十二迁移到十三；保留魔王初见字段、清剿事实、王令快照与在途伤亡。后续首图十四迁移保留这些意义。",
+  "最后关键修正": "小宝历史袭击目标支持合法成员一至十，序号上限十亿。",
+  "文件": [
+    {
+      "路径": "src/data/demonKing.ts",
+      "摘要": "04f4709bc7a32716dfd31fb73c7b81c80fd9640b68ac7875876a66c1d852e41c"
+    },
+    {
+      "路径": "src/data/defenseZones.ts",
+      "摘要": "9ed644f763c8b06a6fa5c386bea48489c40af04e4d858c1c91be3279c29c8353"
+    },
+    {
+      "路径": "src/game/systems/demonKingState.ts",
+      "摘要": "3fc1c61b1de7471e7c86c417029671b5e27ca4d2d5f6a595b428b2382b47cff1"
+    },
+    {
+      "路径": "src/game/systems/state.ts",
+      "摘要": "d7f33a67498ad499ab6c33d447ef7d66c365686f1cb974b0beda73ee8517062f"
+    },
+    {
+      "路径": "src/game/scenes/World.ts",
+      "摘要": "65cd3f8343b5af9994ba8f15c0eba0c3881606534f0a742e8afbe8f252f3172f"
+    },
+    {
+      "路径": "src/game/systems/defense.ts",
+      "摘要": "6923eb90bde212d31025b26ad39025445a61ecdb2cdc1793cce2a5bd2a812d5d"
+    },
+    {
+      "路径": "src/game/systems/defenseState.ts",
+      "摘要": "8b0ec173e299b0a9c81c7622baff0504feab08e6d65487bc5a38a62515ac8cf8"
+    },
+    {
+      "路径": "src/game/systems/enemy.ts",
+      "摘要": "dbab75601ee85a41cc7b06ddcbcaad2d6a31f0f343fa7b6cb465ea52b85411d9"
+    },
+    {
+      "路径": "src/game/entities/enemyView.ts",
+      "摘要": "5b61e89e561e8f758eb4dae38668a070992a38060b748f691db98a0e2e1cd9c3"
+    },
+    {
+      "路径": "src/game/systems/enemyAnimation.ts",
+      "摘要": "6c352656b44ae9be51dcfa8867e734817de4224acc4979f4f4ff9fd60f7a8cd3"
+    },
+    {
+      "路径": "src/game/systems/nightDirector.ts",
+      "摘要": "41b79c769253d79696d520d7fd8137bee7f6de9488b09be74d4faefd189ae08f"
+    },
+    {
+      "路径": "src/game/systems/xiaobaoState.ts",
+      "摘要": "0903080977f623c545db247521a47eb7000047c41fefe1d2bffcdff22ed6b127"
+    },
+    {
+      "路径": "src/game/ui/interface.ts",
+      "摘要": "12a6e8923d9c2d4d8c62b1278734dce01f187f57244f09068e8af336a462911a"
+    },
+    {
+      "路径": "tests/demon-king.test.ts",
+      "摘要": "304fe0c51bee5c7c366b676d6a3ed48f77e3b08cabaa479bd40f0f443719460f"
+    },
+    {
+      "路径": "tests/demon-king.spec.ts",
+      "摘要": "a76551949e7e3c1728b42dd9cf6c91f370095bd9463a9b4dd35b0e0dea644ff1"
+    },
+    {
+      "路径": "tools/playwright-demon-king.config.ts",
+      "摘要": "8414aae7b08e9cde501eea37bd0e7847b80fdcff1470add13bcd25d605d1e015"
+    },
+    {
+      "路径": "tests/day-night.test.ts",
+      "摘要": "eae71616623cfafdcdfa106f5658ea279a5a12ca4fef4d44ad504d8f2c09b98a"
+    },
+    {
+      "路径": "tests/east-defense.test.ts",
+      "摘要": "b9e868e53412c8ada17bcc24969f14d991d99ea0c4b27e4166a39f22aecc0b52"
+    },
+    {
+      "路径": "tests/economy.test.ts",
+      "摘要": "314a24b35a0b161b63fc45382a7229a385e00066111011bf33e6e3f33d92c448"
+    },
+    {
+      "路径": "tests/encounters.test.ts",
+      "摘要": "d5d48cc32dc5ebea8b2b984d36735d2a3e2679b541d289d2f306ebc95343d47d"
+    },
+    {
+      "路径": "tests/npc-life.test.ts",
+      "摘要": "7c78c6331c683f74594e6809279ded4df407341ac16cd3588ac9026a180adeba"
+    },
+    {
+      "路径": "tests/safety-defense.test.ts",
+      "摘要": "4739ea1e9cb363407c014b5f438b35762a0140389c1b9a40ae87251d4e3aaa10"
+    },
+    {
+      "路径": "tests/skill-growth.test.ts",
+      "摘要": "ec772cf83c156a6658395417c0d8bc8360f688b19a6eafc1f2e83b5a3d43c751"
+    },
+    {
+      "路径": "tests/village-integration.test.ts",
+      "摘要": "c53c989f7aacffbbc7a7e6c57db4a0f27ee8b23280be968b12657fa0b1525b8b"
+    },
+    {
+      "路径": "tests/village-raids.test.ts",
+      "摘要": "858293b6659a16decfb861281321c7e465335fcfcad8ff599f87f551b029b0a0"
+    },
+    {
+      "路径": "tests/xiaobao-combat.test.ts",
+      "摘要": "8048d7edfdc8ab8f1e2711e9253f7e30b0faaa72cb2fedb9cd024fd9e7ecf0c8"
+    },
+    {
+      "路径": "tests/wilderness-enemies.test.ts",
+      "摘要": "76d2ffbcb80cffb4f4bd460ddbe058d9eb91400bdd837aba92499c56aaf66ebd"
+    },
+    {
+      "路径": "tests/wilderness-map.test.ts",
+      "摘要": "a559b500f13e8fca826fb70e72a92f5d0baca992a3ceab70f8a55e510e5e271c"
+    },
+    {
+      "路径": ".gitignore",
+      "摘要": "5a6a7a1365272ac170ba88bec5be3e90573bb829be94054608abee4f7a48ea4e"
+    },
+    {
+      "路径": "package.json",
+      "摘要": "30c2055f2078c92c21ab60a887bd7641de498e73ee3e0896a305e10dbb81c3d9"
+    }
+  ],
+  "正式构建": [
+    {
+      "路径": ".demon-king-local/final-production/assets/damage-u9Nn75mP.js",
+      "摘要": "5a8ab7a63a9425aa8b004fa2f94b1ead7b3ef2782f1d9a1fda6bad3e9048fdec"
+    },
+    {
+      "路径": ".demon-king-local/final-production/assets/game-SslZqFia.js",
+      "摘要": "0b9e0c4211d570d0d13c675d7a358f11143020fdff1816e47c7bc0dc8f535c5d"
+    },
+    {
+      "路径": ".demon-king-local/final-production/assets/xiaobao-DmOtt1Na.js",
+      "摘要": "d21353e05508c234295c1fbad5fcf341a3021f22c9a4412da3f83721a754ec9d"
+    },
+    {
+      "路径": ".demon-king-local/final-production/assets/xiaobaoCombat-B2FiSGxx.js",
+      "摘要": "7137eea5ec9aaa3e391add0cd2e6b5235cde04bf3e9d2e2fb0f1ba53f068beed"
+    },
+    {
+      "路径": ".demon-king-local/final-production/assets/xiaobaoView-B2DyvZvx.js",
+      "摘要": "89bec4101ec39b776c271486b869c36f2b61e04ac45436e20afb0b1564f48442"
+    }
+  ],
+  "测试": {
+    "全量": "四十五组，七百三十项通过；末次修复之前完成。",
+    "末次修复相关": "四组，七十项通过，包含三十一项恶意专项。",
+    "正式续跑": "六只结算、保存、导出、刷新继续通过。",
+    "类型和构建": "通过。"
+  },
+  "审查结论": "PASS",
+  "提交与发布": "未提交、未推送、未部署。"
+}

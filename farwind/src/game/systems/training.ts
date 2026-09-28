@@ -1,18 +1,13 @@
+import {VILLAGE_ANCHORS, FIELD_TARGET_ANCHORS} from '../../data/maps/windbell/layout';
 import { attackConfig, type Attack, type Target } from "./combat";
 export const TRAINING = {
-  id: "training-dummy",
-  x: 850,
-  y: 650,
+  ...VILLAGE_ANCHORS.training,
   near: 185,
   linger: 3000,
   fade: 250,
   recoil: 330,
 } as const;
-export const FIELD_TARGETS = [
-  { id: "field-dummy-west", x: 1510, y: 470 },
-  { id: "field-dummy-east", x: 1760, y: 470 },
-  { id: "field-dummy-south", x: 1540, y: 650 },
-] as const;
+export const FIELD_TARGETS = FIELD_TARGET_ANCHORS;
 export class TrainingDummy implements Target {
   readonly kind = "trainingDummy" as const;
   constructor(

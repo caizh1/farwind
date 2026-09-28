@@ -1,0 +1,20 @@
+{
+  "说明": "相同最终构建、设备、页面尺寸；真实新游戏委托后计量。无同伴基线仅在本测量页暂时断开World的小宝引用，排除其推进与显示，但不卸载图集。隔离操作只服务性能对照，不计作功能或战斗验收。",
+  "方法边界": "CDP脚本CPU增量除以呈现帧数估计平均总开销；逐帧累积tick计量核心决策、导航与技能，排除环境投影、绘制和声音。不同阶段场景演进会引入误差；核心99分位不能冒充全部新增逻辑99分位。",
+  "入口SHA256": "2b14213145670f3af0a8ef02a8bf444a979a7b530ddaee96dd9ecb331918c586",
+  "浏览器": "153.0.8010.12",
+  "GPU": [
+    {
+      "vendorId": 4203,
+      "deviceId": 0,
+      "vendorString": "Google Inc. (Apple)",
+      "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Version 27.0 (Build 26A428))",
+      "driverVendor": "Apple",
+      "driverVersion": "27.0"
+    }
+  ],
+  "阶段": [],
+  "错误": [],
+  "结果": "失败",
+  "首因": "page.evaluate: Error: 正式模块缺失，拒绝伪造测量。\n    at eval (eval at evaluate (:311:30), <anonymous>:17:37)\n    at async <anonymous>:337:30\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tools/measure-xiaobao-performance.mjs:53:26"
+}

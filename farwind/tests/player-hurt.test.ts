@@ -1,3 +1,4 @@
+import {WORLD_PLAYABLE} from "../src/data/maps/windbell/bounds";
 import {describe,it,expect} from 'vitest';
 import sharp from 'sharp';
 import {CombatController,PLAYER_HURT,type ActionKind} from '../src/game/systems/combat';
@@ -50,7 +51,7 @@ describe('主角真实受击后的动作和位移',()=>{
   });
   it('正式地图树干碰撞和世界边缘也拦住击退',()=>{
     const tree=props.find(p=>p.id==='tree-14')!,bounds=propBounds(tree,true);
-    const points=[{x:bounds.left-1,y:(bounds.top+bounds.bottom)/2,direction:{x:1,y:0}},{x:31,y:100,direction:{x:-1,y:0}}];
+    const points=[{x:bounds.left-1,y:(bounds.top+bounds.bottom)/2,direction:{x:1,y:0}},{x:WORLD_PLAYABLE.left+1,y:100,direction:{x:-1,y:0}}];
     for(const point of points){const p={x:point.x,y:point.y},c=new CombatController();expect(motionBlocked(p.x,p.y)).toBe(false);
       c.takeHit(0,3,point.direction,p);for(let prev=0;prev<220;prev+=5)tick(c,prev,prev+5,p,motionBlocked,clearMotionLine);
       expect(motionBlocked(p.x,p.y)).toBe(false);expect(Math.hypot(p.x-point.x,p.y-point.y)).toBeLessThan(2);

@@ -38,6 +38,27 @@ describe('五怪共享真实战斗边界',()=>{
   });
 });
 describe('孢子独立飞行与弹反',()=>{
+  it('普通孢卫和母孢每轮都能命中处于锁向位置的静止玩家，各方向与中远距离一致',()=>{
+    for(const elite of [undefined,'brood'] as const)for(const serial of [1,2])for(const angle of [0,Math.PI/2,Math.PI,-Math.PI/2,.7])for(const distance of [150,230,340]){
+      const root={x:850,y:700},target={x:root.x+Math.cos(angle)*distance,y:root.y+Math.sin(angle)*distance};
+      const a=createEnemyAttack('spore',serial,'spore',0,root,target,undefined,elite),shots=new EnemyProjectiles();
+      advanceEnemyAttack(a,root,target,a.lockAt,open);shots.launch(a,root,a.contactAt);
+      const hits=shots.update(a.contactAt+SPORE.life,target,()=>true);
+      expect(hits,`${elite??'普通孢卫'}第${serial}轮，方向${angle}，距离${distance}`).toHaveLength(1);
+      const p={...target,stamina:100},combat=new CombatController();
+      expect(adjudicateContact(hits[0],combat,p,{valid:true,immune:false,clear:()=>true})).toBe('hurt');
+      expect(shots.update(a.contactAt+SPORE.life+20,target,()=>true)).toEqual([]);
+    }
+  });
+  it('母孢锁向后的横移仍可躲开弹道，真实障碍仍阻挡中央弹',()=>{
+    const root={x:850,y:700},target={x:1080,y:700};
+    for(const blocked of [false,true]){
+      const a=createEnemyAttack('brood',1,'spore',0,root,target,undefined,'brood'),shots=new EnemyProjectiles();
+      advanceEnemyAttack(a,root,target,a.lockAt,open);
+      const moved={x:target.x,y:target.y+80};advanceEnemyAttack(a,root,moved,a.contactAt,open);shots.launch(a,root,a.contactAt);
+      expect(shots.update(a.contactAt+SPORE.life,blocked?target:moved,()=>!blocked)).toEqual([]);
+    }
+  });
   it('不造成喷口第二份近战伤害，锁向弹丸有真实飞行时间',()=>{
     const root={x:850,y:700},p={x:1080,y:700},a=createEnemyAttack('spore',1,'spore',0,root,p),system=new EnemyProjectiles();
     advanceEnemyAttack(a,root,p,a.lockAt,open);const predicted=predictEnemyContact(a,root,p,0,open)!;

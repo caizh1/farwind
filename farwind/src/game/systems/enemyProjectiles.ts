@@ -1,4 +1,4 @@
-import { createEnemyAttack, SPORE, sporeOrigin, sporeContactAt, type EnemyAttack, type EnemyContact } from './enemyAttack';
+import { createEnemyAttack, sporeDirections, SPORE, sporeOrigin, sporeContactAt, type EnemyAttack, type EnemyContact } from './enemyAttack';
 import { clearMeleeLine, type Point } from './obstacles';
 import type {ReleasedAttack} from './damage';
 
@@ -9,9 +9,11 @@ export class EnemyProjectiles {
   launch(attack: EnemyAttack, root: Point, now: number) {
     if(attack.type!=='spore'||attack.cancelled||attack.launched||now<attack.contactAt)return;
     attack.launched=true;attack.emitted=true;
-    const origin=sporeOrigin(root,attack.direction),a=createEnemyAttack(attack.attackerId,0,'spore',attack.contactAt,origin,{x:origin.x+attack.direction.x,y:origin.y+attack.direction.y});
-    Object.assign(a,{attackId:attack.attackId+':spore',direction:{...attack.direction},locked:true,startedAt:attack.contactAt,lockAt:attack.contactAt,contactAt:attack.contactAt,activeUntil:attack.contactAt+SPORE.life,recoveryUntil:attack.contactAt+SPORE.life,chargeSound:true,strikeSound:true});
+    for(const [index,direction] of sporeDirections(attack).entries()){
+    const origin=sporeOrigin(root,direction),a=createEnemyAttack(attack.attackerId,0,'spore',attack.contactAt,origin,{x:origin.x+direction.x,y:origin.y+direction.y});
+    Object.assign(a,{attackId:attack.attackId+':spore'+(attack.elite==='brood'?`:${index}`:''),damage:attack.damage,direction:{...direction},locked:true,startedAt:attack.contactAt,lockAt:attack.contactAt,contactAt:attack.contactAt,activeUntil:attack.contactAt+SPORE.life,recoveryUntil:attack.contactAt+SPORE.life,chargeSound:true,strikeSound:true});
     this.shots.push({...origin,id:a.attackId,attack:a,born:attack.contactAt,now:attack.contactAt,state:'flying',released:Object.freeze({sourceId:attack.attackerId,faction:'hostile',attackId:a.attackId,amount:a.damage,sourceType:'enemy-shot',eventId:null})});
+    }
   }
   update(now: number,target: Point,clear=clearMeleeLine,others:readonly (Point&{id:string})[]=[]): EnemyContact[] {
     const contacts:EnemyContact[]=[];

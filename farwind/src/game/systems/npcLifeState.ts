@@ -1,3 +1,5 @@
+import {validOutdoorPoint} from "../../data/maps/windbell/bounds";
+import {VILLAGE_ANCHORS} from '../../data/maps/windbell/layout';
 import {
   PEOPLE,
   FACILITIES,
@@ -175,7 +177,7 @@ export const initialLife = (time = 480): LifeState => ({
             ...[
               { x: 670, y: 620 },
               { x: 1110, y: 570 },
-              { x: 330, y: 1010 },
+              { ...VILLAGE_ANCHORS.carpenter },
             ][i],
             hp: 100,
             health: "healthy",
@@ -251,7 +253,7 @@ export function validPlace(p: unknown): p is Place {
     Number.isFinite(q.x) &&
     Number.isFinite(q.y) &&
     (q.space === "village"
-      ? q.x >= 30 && q.x <= 4170 && q.y >= 80 && q.y <= 2170
+      ? validOutdoorPoint(q)
       : q.x >= ROOM.left &&
         q.x <= ROOM.right &&
         q.y >= ROOM.top &&

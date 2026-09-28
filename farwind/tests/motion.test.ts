@@ -1,7 +1,29 @@
 import { describe, it, expect } from "vitest";
-import { Locomotion } from "../src/game/systems/locomotion";
+import { Locomotion, movementFacing, type Facing } from "../src/game/systems/locomotion";
 import { Follower } from "../src/game/systems/follower";
 describe("实际位移驱动的动作", () => {
+  it("斜向数值误差保持朝向轴，明显转弯、反向和停止均正确", () => {
+    for (const previous of [0, 1, 2, 3] as const) {
+      let facing: Facing = previous;
+      const x = previous === 2 ? -1 : 1, y = previous === 1 ? -1 : 1;
+      for (let i = 0; i < 120; i++) {
+        facing = movementFacing(x, y * (1 + (i % 2 ? 1e-13 : -1e-13)), facing);
+        expect(facing).toBe(previous);
+      }
+      expect(movementFacing(0, 0, facing)).toBe(previous);
+      expect(movementFacing(1e-10, -1e-10, facing)).toBe(previous);
+      expect(movementFacing(-3, 1, facing)).toBe(2);
+      expect(movementFacing(3, 1, facing)).toBe(3);
+      expect(movementFacing(1, -3, facing)).toBe(1);
+      expect(movementFacing(1, 3, facing)).toBe(0);
+    }
+    expect(movementFacing(-1, 1, 3)).toBe(2);
+    expect(movementFacing(1, -1, 0)).toBe(1);
+    expect(movementFacing(1, 1.19, 3)).toBe(3);
+    expect(movementFacing(1, 1.21, 3)).toBe(0);
+    expect(movementFacing(1.19, 1, 0)).toBe(0);
+    expect(movementFacing(1.21, 1, 0)).toBe(3);
+  });
   it("连续移动保留相位，不重复切换动作；帧序号不改变方向", () => {
     const m = new Locomotion();
     for (let i = 0; i < 120; i++) {

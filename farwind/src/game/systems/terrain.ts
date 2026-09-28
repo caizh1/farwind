@@ -1,3 +1,7 @@
+import {MAP_REGIONS} from "../../data/village";
+import {WILD_WATERS,WILD_BRIDGES} from "../../data/maps/windbell/wilderness";
+import {groundChunks} from './terrainChunks';
+import {SERVICE_SIGNS,VILLAGE_ANCHORS} from '../../data/maps/windbell/layout';
 import { TRAINING } from "./training";
 import Phaser from "phaser";
 import {
@@ -30,13 +34,10 @@ export function makeTerrain(this: World) {
       .getSourceImage() as HTMLImageElement,
     herb = this.textures.get("herb").getSourceImage() as HTMLImageElement,
     flowerBed = this.textures.get("orchard-flower-bed").getSourceImage() as HTMLImageElement;
-  const groundKeys: string[] = [];
-  this.events.once("shutdown", () => groundKeys.forEach(key => this.textures.remove(key)));
-  for (let cy = 0; cy < WORLD.height; cy += 550)
-    for (let cx = 0; cx < WORLD.width; cx += 600) {
-      const key = `ground-${cx}-${cy}`,
-        texture = this.textures.createCanvas(key, 600, 550)!;
-      groundKeys.push(key);
+  const tiles=new Map<string,Phaser.GameObjects.Image>();
+  let peak=0,created=0,released=0;
+  const drawTile=(cx:number,cy:number,key:string)=>{
+      const texture = this.textures.createCanvas(key, 600, 550)!;
       const c = texture.context;
       c.translate(-cx, -cy);
       const gp = c.createPattern(grass, "repeat")!;
@@ -45,21 +46,17 @@ export function makeTerrain(this: World) {
       rp.setTransform(new DOMMatrix().scale(0.25));
       c.fillStyle = gp;
       c.fillRect(cx, cy, 600, 550);
-      c.save();
       const fp = c.createPattern(forest, "repeat")!;
       fp.setTransform(new DOMMatrix().scale(0.6));
-      c.fillStyle = fp;
-      c.fillRect(2100, 0, 1200, WORLD.height);
-      for (let band = 0; band < 12; band++) {
-        c.globalAlpha = band / 12;
-        c.fillRect(1860 + band * 20, 0, 20, 2200);
+      for(const region of MAP_REGIONS){
+        if(region.id==='village')continue;
+        c.save();c.beginPath();region.polygon.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.closePath();c.clip();
+        c.fillStyle=region.id==='forest'||region.id==='north'?fp:region.id==='ruins'?rp:gp;c.fillRect(cx,cy,600,550);
+        c.fillStyle=region.id==='north'?'#688c9235':region.id==='south'?'#baa15d35':region.id==='west'?'#877d5330':'#64817425';c.fillRect(cx,cy,600,550);c.restore();
       }
-      c.restore();
-      {
-        c.fillStyle = rp;
-        c.fillRect(WORLD.ruins, 0, WORLD.width - WORLD.ruins, WORLD.height);
-        c.fillStyle = "#64817465";
-        c.fillRect(WORLD.ruins, 0, WORLD.width - WORLD.ruins, WORLD.height);
+      for(const p of WILD_WATERS){
+        c.beginPath();c.ellipse(p.x,p.y,p.rx+12,p.ry+12,0,0,Math.PI*2);c.fillStyle='#aaa477';c.fill();
+        c.beginPath();c.ellipse(p.x,p.y,p.rx,p.ry,0,0,Math.PI*2);c.fillStyle=c.createPattern(this.textures.get('water').getSourceImage() as HTMLImageElement,'repeat')!;c.fill();
       }
       c.beginPath();
       c.moveTo(2620, 650);
@@ -93,6 +90,9 @@ export function makeTerrain(this: World) {
           c.lineWidth = 6;
           c.stroke();
         }
+      }
+      for(const b of WILD_BRIDGES){
+        c.fillStyle="#76583b";c.fillRect(b.x,b.y,b.w,b.h);c.strokeStyle="#b99a66";c.lineWidth=3;for(let y=b.y+4;y<b.y+b.h;y+=18){c.beginPath();c.moveTo(b.x+3,y);c.lineTo(b.x+b.w-3,y);c.stroke();}
       }
       c.beginPath();
       c.ellipse(TRAINING.x, TRAINING.y, 76, 52, 0, 0, Math.PI * 2);
@@ -131,10 +131,10 @@ export function makeTerrain(this: World) {
       c.fill();
       c.restore();
       // 低矮花床保持地面装饰和原区域，所有区块从同一世界坐标采样。
-      c.drawImage(flowerBed, 230, 1480, 210, 80);
+      c.drawImage(flowerBed, 1730, 1480, 210, 80);
       for (let i = 0; i < 4; i++) {
         c.fillStyle = "#8b6541";
-        c.fillRect(200 + i * 17, 1070, 12, 40);
+        c.fillRect(VILLAGE_ANCHORS.workbench.x - 95 + i * 17, VILLAGE_ANCHORS.workbench.y - 45, 12, 40);
       }
       // 地面缓存保留静态岸底；动态水面及上层装饰不重复烘焙。
       c.beginPath();
@@ -171,8 +171,48 @@ export function makeTerrain(this: World) {
         c.fill();
       }
       texture.refresh();
-      this.add.image(cx, cy, key).setOrigin(0).setDepth(-20);
-    }
+      tiles.set(key,this.add.image(cx, cy, key).setOrigin(0).setDepth(WORLD.top-1000));
+      created++;peak=Math.max(peak,tiles.size);
+  };
+  const refresh=()=>{
+    if(this.active&&this.state.life.playerSpace!=='village')return;
+    const camera=this.cameras.main;
+    // 相机的scroll以未缩放视窗为参照；按中心还原真实世界可视矩形。
+    const width=camera.width/camera.zoom,height=camera.height/camera.zoom;
+    const cx=camera.scrollX+camera.width/2,cy=camera.scrollY+camera.height/2;
+    const wanted=groundChunks({left:cx-width/2,top:cy-height/2,right:cx+width/2,bottom:cy+height/2},WORLD.width,WORLD.height,1,{x:WORLD.left,y:WORLD.top});
+    const keys=new Set(wanted.map(c=>c.key));
+    for(const [key,im] of tiles)if(!keys.has(key)){im.destroy();this.textures.remove(key);tiles.delete(key);released++;}
+    let prefetched=0;
+    const before=created;
+    for(const tile of wanted)if(!tiles.has(tile.key)&&(tile.visible||prefetched++<1))drawTile(tile.x,tile.y,tile.key);
+    // 场景本帧排序发生在prerender之前，新块必须当帧归入地面层。
+    if(created!==before)this.children.depthSort();
+  };
+  this.events.on('prerender',refresh);
+  this.events.once('shutdown',()=>{
+    this.events.off('prerender',refresh);
+    for(const [key,im] of tiles){im.destroy();this.textures.remove(key);}tiles.clear();
+  });
+  this.data.set('groundSnapshot',()=>({resident:tiles.size,peak,created,released,heroDepth:this.hero?.sprite.depth,floorDepth:WORLD.top-1000,limit:'当前视野加一圈，预取每帧一块'}));
+  // 店招与门前交互分离；纯表现纹理不参与地面碰撞。
+  const signKeys:string[]=[];
+  for(const sign of SERVICE_SIGNS){
+    const key=`plaque-${sign.id}`;signKeys.push(key);
+    const tex=this.textures.createCanvas(key,224,72)!,c=tex.context;
+    c.fillStyle='#3e4d39';c.beginPath();c.roundRect(3,3,218,66,9);c.fill();
+    c.fillStyle='#806747';c.beginPath();c.roundRect(6,7,212,58,7);c.fill();
+    c.strokeStyle='#d4b880';c.lineWidth=2;c.strokeRect(13,13,198,46);
+    c.fillStyle='#fff0c8';c.font='bold 31px "PingFang SC",serif';c.textAlign='center';c.textBaseline='middle';c.fillText(sign.name,112,36);
+    tex.refresh();
+  }
+  const book=this.textures.createCanvas('training-book',144,128)!,bc=book.context;
+  signKeys.push('training-book');
+  bc.fillStyle='#6f5039';bc.fillRect(28,72,10,51);bc.fillRect(106,72,10,51);bc.fillRect(14,62,116,18);
+  bc.fillStyle='#40584b';bc.beginPath();bc.moveTo(15,28);bc.lineTo(70,34);bc.lineTo(129,28);bc.lineTo(122,72);bc.lineTo(70,77);bc.lineTo(22,72);bc.closePath();bc.fill();
+  bc.fillStyle='#eee1b8';bc.beginPath();bc.moveTo(20,18);bc.lineTo(71,28);bc.lineTo(124,18);bc.lineTo(118,62);bc.lineTo(71,70);bc.lineTo(26,61);bc.closePath();bc.fill();
+  bc.strokeStyle='#aa936c';bc.lineWidth=2;for(let y=32;y<=53;y+=8){bc.beginPath();bc.moveTo(30,y);bc.lineTo(61,y+5);bc.moveTo(81,y+5);bc.lineTo(114,y);bc.stroke();}book.refresh();
+  this.events.once('shutdown',()=>signKeys.forEach(key=>this.textures.remove(key)));
   const debug = showLayoutLabels(import.meta.env.DEV, window.location.search);
   this.data.set("layoutLabelCount", debug ? villageAreas.length : 0);
   if (debug)

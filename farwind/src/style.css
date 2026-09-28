@@ -203,7 +203,7 @@ button:focus-visible {
 }
 .map-details canvas {
   width: 192px;
-  height: 101px;
+  height: 144px;
   border: 1px solid rgb(200 176 120 / 0.38);
   border-radius: 5px;
 }
@@ -577,7 +577,8 @@ button:focus-visible {
 .xiaobao-command-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:7px;min-width:0;}
 .xiaobao-command-grid button {min-width:0;white-space:normal;font-size:13px;padding:8px;}
 .xiaobao-management details {font-size:12px;line-height:1.6;min-width:0;overflow-wrap:anywhere;}
-.dialog-copy:has(.xiaobao-management) {overflow:auto;min-height:0;}
+.dialog-copy:has(.xiaobao-management) {overflow:auto;min-height:0;scrollbar-color:#bfa574 #254c40;}
+.dialog-copy:has(.xiaobao-management) > * {flex-shrink:0;}
 .xiaobao-actions button {
   flex: 1 1 150px;
   min-width: 0;
@@ -596,6 +597,8 @@ button:focus-visible {
   overflow-y: auto;
   scrollbar-color: #bfa574 #254c40;
 }
+.dialog-copy:has(.xiaobao-management) .dialog-text {flex:0 0 auto;overflow:visible;}
+.dialog-panel:has(.xiaobao-management) {height:min(580px,calc(100dvh - 52px));}
 .dialog-copy header {
   flex-shrink: 0;
   margin-bottom: 12px;
@@ -1058,6 +1061,7 @@ kbd {
 
 /* 传承操作与手记使用正常文档流，窄屏允许按钮换行。 */
 .lesson-actions {display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;min-width:0;}
+.xiaobao-feedback {margin:0;padding:8px 10px;color:#ffe4a7;background:#243a30;border:1px solid #bc9d65;border-radius:7px;white-space:normal;overflow-wrap:anywhere;}
 .lesson-actions button {flex:1 1 145px;min-width:0;white-space:normal;}
 .skill-journal {border-top:1px solid #748673;margin-top:20px;padding-top:12px;}
 .skill-journal p,.skill-journal li {overflow-wrap:anywhere;}

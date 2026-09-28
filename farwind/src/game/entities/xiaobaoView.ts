@@ -16,6 +16,7 @@ export class XiaobaoView {
   wind: Phaser.GameObjects.Graphics;
   floor: Phaser.GameObjects.Graphics;
   effects: Phaser.GameObjects.Graphics;
+  shieldTargets: {id:string;x:number;y:number}[]=[];
   static preload(scene: Phaser.Scene) {
     for (const sheet of ["motion", "social", "mastery"])
       scene.load.spritesheet(`xiaobao-${sheet}`, `/assets/xiaobao/${sheet}.png`, { frameWidth: XIAOBAO.frameSize, frameHeight: XIAOBAO.frameSize });
@@ -34,7 +35,8 @@ export class XiaobaoView {
     this.render(world.state.life.playerSpace === "village");
   }
   reset() { this.controller.reset(); this.render(false); }
-  render(visible: boolean) {
+  render(visible: boolean, allies?: {id:string;x:number;y:number}[]) {
+    if(allies)this.shieldTargets=allies;
     const c = this.controller, pose = c.pose;
     this.sprite.setTexture(pose.texture, pose.frame).setPosition(c.x, c.y - pose.lift).setDepth(c.airborne?8800:c.y).setVisible(visible);
     Actor.mirror(this.sprite, c.flip);
@@ -72,14 +74,16 @@ export class XiaobaoView {
       }
     }
     for(const event of c.visuals){const u=(d.clock-event.at)/800,alpha=1-u;
-      if(event.kind==='hit'&&['thunder','chain'].includes(event.skill)){
+      if(event.kind==='hit'&&(['thunder','chain'].includes(event.skill)||event.skill==='unity'&&event.stage===6)){
         const start=event.skill==='chain'?event.from??event.point:{x:event.point.x-20,y:event.point.y-160},end={x:event.point.x,y:event.point.y-28};
         ink.lineStyle(2.5,0xffedb0,alpha);ink.beginPath();ink.moveTo(start.x,start.y-28);
         for(let i=1;i<=6;i++){const t=i/6;ink.lineTo(start.x+(end.x-start.x)*t+(i===6?0:Math.sin(i*5)*9),start.y-28+(end.y-start.y+28)*t);}ink.strokePath();
       }else if(event.kind==='hit'){ink.lineStyle(2,0xffeac1,alpha).strokeCircle(event.point.x,event.point.y-26,4+u*16);}
       if(event.kind==='release'&&['palm','triple','rescue'].includes(event.skill)){const cast=d.cast,dx=cast?.direction.x??1,dy=cast?.direction.y??0;ink.lineStyle(2.2,0xbbeedc,alpha*.8).strokeEllipse(event.point.x+dx*u*62,event.point.y-27+dy*u*62,22+u*25,30);}
+      if(event.kind==='release'&&event.skill==='unity'&&event.stage===0){circle(event.point.x,event.point.y,12+u*100,0xd4dbb7,alpha);for(let i=0;i<7;i++){const angle=i*Math.PI*2/7,r=12+u*65,x=event.point.x+Math.cos(angle)*r,y=event.point.y+Math.sin(angle)*r;ink.fillStyle(0x9b9580,alpha).fillTriangle(x-6,y-12*(1-u),x+6,y-10*(1-u),x,y-23*(1-u));}}
       if(event.kind==='landing')circle(event.point.x,event.point.y,120*u,0xc4efde,alpha*.75);
     }
+    for(const shield of d.shields){const target=this.shieldTargets.find(a=>a.id===shield.id);if(target&&target.id!=='xiaobao'&&shield.remaining>0&&shield.amount>0)ink.lineStyle(2,0xbdeadc,.65*Math.min(1,shield.remaining/300)).strokeEllipse(target.x,target.y-25,44,48);}
     const own=d.shields.find(s=>s.id==='xiaobao'&&s.remaining>0&&s.amount>0);
     if(own||d.rest)ink.lineStyle(2,0xbdeadc,.6).strokeEllipse(c.x,c.y-25,44,48);
     if(d.flight){const lift=c.pose.lift;ink.lineStyle(2,0xc6eede,.72).strokeEllipse(c.x,c.y-lift-2,36,11);
@@ -91,12 +95,14 @@ export class XiaobaoView {
     world.soundFx.play("talk");
     world.state.xiaobao.known=true;
     world.ui.dialog(`${XIAOBAO.name} · ${XIAOBAO.title}`, `${XIAOBAO.story}\n\n“村灯，我看着。一起！”\n${XIAOBAO_TASK_NAMES[this.controller.data.task]} · 生命${Math.ceil(this.controller.data.hp)}/640 · 真气${Math.floor(this.controller.data.qi)}/100\n${this.controller.data.rest?`护风调息还需${(this.controller.data.rest/1000).toFixed(1)}秒`:this.controller.status}`, XIAOBAO.id);
+    const feedback=document.createElement('p');feedback.className='xiaobao-feedback';feedback.hidden=true;feedback.setAttribute('role','status');
+    const explain=(message:string)=>{feedback.textContent=message;feedback.hidden=false;feedback.scrollIntoView({block:'nearest'});world.ui.message(message);};
     const actions = document.createElement("div");
     actions.className = "xiaobao-actions";
     for (const [kind, label] of [["palm", "请演示听风掌"], ["step", "请演示踏叶轻步"], ["all", "看一套小宗师演武"]] as const) {
       const button = document.createElement("button"); button.textContent = label;
       button.addEventListener("click", () => {
-        if(this.controller.busy||this.controller.data.rest||this.controller.data.task!=='free'){world.ui.message('请在脱战后解除委托，再请小宝演武；完整本领可在演武页查看。');return;}
+        if(this.controller.busy||this.controller.data.rest||this.controller.data.task!=='free'){explain('请在脱战后解除委托，再请小宝演武；完整本领可在演武页查看。');return;}
         this.controller.perform(kind, world.state.player);
         world.ui.close(); world.ui.focusGame();
         world.ui.message(`小宝轻轻抱拳，开始${kind === "all" ? "演武" : kind === "palm" ? "演示听风掌" : "演示踏叶轻步"}。`);
@@ -106,15 +112,16 @@ export class XiaobaoView {
     world.ui.modal.querySelector("#dialog-text")!.after(actions);
     const panel=document.createElement('section');panel.className='xiaobao-management';
     const buttons=document.createElement('div');buttons.className='xiaobao-command-grid';
-    const act=(label:string,run:()=>void|Promise<void>)=>{const b=document.createElement('button');b.textContent=label;b.onclick=async()=>{b.disabled=true;try{await run();}catch(e){world.ui.message((e as Error).message);}finally{if(b.isConnected)b.disabled=false;}};buttons.append(b);};
+    const act=(label:string,run:()=>void|Promise<void>)=>{const b=document.createElement('button');b.textContent=label;b.onclick=async()=>{b.disabled=true;feedback.hidden=true;try{await run();}catch(e){explain((e as Error).message);}finally{if(b.isConnected)b.disabled=false;}};buttons.append(b);};
+    const saveSetting=async(control:HTMLSelectElement|HTMLInputElement,change:Parameters<World['configureXiaobao']>[0],sync:()=>void)=>{control.disabled=true;feedback.hidden=true;try{await world.configureXiaobao(change);}catch(e){explain((e as Error).message);}finally{sync();if(control.isConnected)control.disabled=false;}};
     for(const [task,label]of [['guard','委托守村'],['follow','与我出征'],['free','解除委托']] as const)act(label,async()=>{await world.configureXiaobao({task});world.ui.close(true);world.ui.message(task==='guard'?'村灯，我看着。':task==='follow'?'一起！小宝已加入队伍。':'小宝回广场自由活动。');});
     const gate=document.createElement('select');gate.setAttribute('aria-label','驻防范围');gate.append(new Option('全村巡护','all'),...RAID_GATES.map(g=>new Option(`${g.name}驻防`,g.id)));gate.value=this.controller.data.gate;
-    gate.onchange=async()=>{try{await world.configureXiaobao({gate:gate.value as typeof this.controller.data.gate});}catch(e){gate.value=this.controller.data.gate;world.ui.message((e as Error).message);}};
+    gate.onchange=()=>{void saveSetting(gate,{gate:gate.value as typeof this.controller.data.gate},()=>{gate.value=this.controller.data.gate;});};
     const tactic=document.createElement('select');tactic.setAttribute('aria-label','小宝战术');for(const [id,name]of Object.entries(XIAOBAO_TACTIC_NAMES))tactic.append(new Option(name,id));tactic.value=this.controller.data.tactic;
-    tactic.onchange=async()=>{try{await world.configureXiaobao({tactic:tactic.value as typeof this.controller.data.tactic});}catch(e){tactic.value=this.controller.data.tactic;world.ui.message((e as Error).message);}};
+    tactic.onchange=()=>{void saveSetting(tactic,{tactic:tactic.value as typeof this.controller.data.tactic},()=>{tactic.value=this.controller.data.tactic;});};
     const support=document.createElement('label'),toggle=document.createElement('input');toggle.type='checkbox';toggle.checked=this.controller.data.autoSupport;support.append(toggle,'出征时村庄危急自动回援');
-    toggle.onchange=async()=>{try{await world.configureXiaobao({autoSupport:toggle.checked});}catch(e){toggle.checked=this.controller.data.autoSupport;world.ui.message((e as Error).message);}};
-    panel.append(gate,tactic,support,buttons);
+    toggle.onchange=()=>{void saveSetting(toggle,{autoSupport:toggle.checked},()=>{toggle.checked=this.controller.data.autoSupport;});};
+    panel.append(gate,tactic,support,feedback,buttons);
     for(const [kind,label]of [['focus','集火当前目标'],['protect','保护我'],['wait','在此等候'],['return','归队'],['rock','落石压制'],['fire','火域封路'],['thunder','天雷点杀'],['unity','五行归元']] as const)act(label,()=>{this.controller.command(kind,xiaobaoEnvironment(world));world.ui.close(true);world.ui.message(`小宝收到：${label}`);});
     const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='查看十二项本领与守村回报';details.append(summary);
     for(const [key,s]of Object.entries(XIAOBAO_SKILLS)){const row=document.createElement('p');row.textContent=`${s.name} · ${s.range}距离 · ${s.damage.reduce((a,b)=>a+b,0)}原始伤害 · 耗气${s.qi} · 冷却${s.cooldown/1000}秒${this.controller.data.cooldowns[key as keyof typeof XIAOBAO_SKILLS]>0?`（还需${(this.controller.data.cooldowns[key as keyof typeof XIAOBAO_SKILLS]/1000).toFixed(1)}秒）`:''}`;if(key==='chain')row.textContent+='；五个不同目标合计520';if(key==='guard'||key==='flight')row.textContent+='；每人120护盾，最多五人';details.append(row);}

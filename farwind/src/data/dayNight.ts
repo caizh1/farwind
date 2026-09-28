@@ -1,3 +1,4 @@
+import {VILLAGE_ANCHORS,buildingLot} from './maps/windbell/layout';
 export const DAY_NIGHT = {
   day: 1440, speed: 1.5, dawn: 360, daylight: 480, dusk: 1020, night: 1140,
   raidStart: 1200, raidEnd: 1440, sleepCost: 12, maxTime: 1e8,
@@ -18,8 +19,8 @@ export const LIGHT_KEYS = [
 ] as const;
 export const WORLD_LIGHTS = [
   {x:670,y:785,r:180}, {x:550,y:564,r:105}, {x:326,y:841,r:95},
-  {x:840,y:1330,r:100}, {x:1630,y:1520,r:130}, {x:1685,y:1640,r:140},
-  {x:975,y:1190,r:100}, {x:2005,y:1570,r:100},
+  {...buildingLot('resident-cottage-2').door,r:100}, {x:1630,y:1520,r:130}, {x:1685,y:1640,r:140},
+  {...VILLAGE_ANCHORS.general,r:100}, {...VILLAGE_ANCHORS.smith,r:100},
   {x:2012,y:1080,r:135}, {x:2190,y:1080,r:135},
   {x:2030,y:796,r:105}, {x:730,y:220,r:130}, {x:910,y:220,r:130},
   {x:680,y:270,r:100}, {x:930,y:1750,r:130}, {x:1100,y:1750,r:130},

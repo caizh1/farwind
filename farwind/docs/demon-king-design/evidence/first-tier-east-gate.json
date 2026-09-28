@@ -1,0 +1,843 @@
+{
+  "说明": "固定基准：恶意一点，八只普通派遣，十二名健康卫兵，开放道路；按正式防御模拟推进，未加入生活排班或主角助战。",
+  "模拟毫秒": 25150,
+  "来袭结算号": 1,
+  "在途事件": null,
+  "派遣单位": [
+    {
+      "身份": "east-raid-1:1",
+      "剩余生命": 0
+    },
+    {
+      "身份": "east-raid-1:2",
+      "剩余生命": 0
+    },
+    {
+      "身份": "east-raid-1:3",
+      "剩余生命": 0
+    },
+    {
+      "身份": "east-raid-1:4",
+      "剩余生命": 0
+    },
+    {
+      "身份": "east-raid-1:5",
+      "剩余生命": 0
+    },
+    {
+      "身份": "east-raid-1:6",
+      "剩余生命": 0
+    },
+    {
+      "身份": "east-raid-1:7",
+      "剩余生命": 0
+    },
+    {
+      "身份": "east-raid-1:8",
+      "剩余生命": 0
+    }
+  ],
+  "守卫": [
+    {
+      "id": "east-watch",
+      "x": 1970.6733155106122,
+      "y": 1116.4705895513641,
+      "hp": 104,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "east-north-post",
+      "mode": "attack",
+      "peaceMs": 0,
+      "cooldownMs": 700
+    },
+    {
+      "id": "east-patrol",
+      "x": 1910,
+      "y": 1190,
+      "hp": 0,
+      "dead": true,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "east-south-post",
+      "mode": "dead",
+      "peaceMs": 0,
+      "cooldownMs": 0
+    },
+    {
+      "id": "east-archer",
+      "x": 2030,
+      "y": 900,
+      "hp": 100,
+      "dead": false,
+      "weaponId": "watch-bow",
+      "armorId": "watch-leather",
+      "postId": "east-gate-tower",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    }
+  ],
+  "通知": [
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:7:2:east-patrol:5950:hit",
+      "sourceId": "east-raid-1:7",
+      "at": 5950,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:5:3:east-patrol:6100:hit",
+      "sourceId": "east-raid-1:5",
+      "at": 6100,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:3:2:east-patrol:6150:hit",
+      "sourceId": "east-raid-1:3",
+      "at": 6150,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:1:3:east-patrol:6400:hit",
+      "sourceId": "east-raid-1:1",
+      "at": 6400,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:2",
+      "sourceId": "east-patrol",
+      "at": 6400,
+      "damage": 18,
+      "x": 2147.031742159342,
+      "y": 1112.3774096027253
+    },
+    {
+      "kind": "death",
+      "id": "east-raid-1:2",
+      "sourceId": "east-patrol",
+      "at": 6400,
+      "x": 2147.031742159342,
+      "y": 1112.3774096027253
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:8:2:east-patrol:6750:hit",
+      "sourceId": "east-raid-1:8",
+      "at": 6750,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:6:3:east-patrol:6900:hit",
+      "sourceId": "east-raid-1:6",
+      "at": 6900,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:4:2:east-patrol:6950:hit",
+      "sourceId": "east-raid-1:4",
+      "at": 6950,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:4",
+      "sourceId": "east-patrol",
+      "at": 7400,
+      "damage": 18,
+      "x": 2146.914056357204,
+      "y": 1112.5889106150003
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:7:3:east-patrol:7650:hit",
+      "sourceId": "east-raid-1:7",
+      "at": 7650,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:5:4:east-patrol:7800:hit",
+      "sourceId": "east-raid-1:5",
+      "at": 7800,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:3:3:east-patrol:7850:hit",
+      "sourceId": "east-raid-1:3",
+      "at": 7850,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:1:4:east-patrol:8100:hit",
+      "sourceId": "east-raid-1:1",
+      "at": 8100,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:4",
+      "sourceId": "east-patrol",
+      "at": 8400,
+      "damage": 18,
+      "x": 2146.914056357204,
+      "y": 1112.5889106150003
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:8:3:east-patrol:8450:hit",
+      "sourceId": "east-raid-1:8",
+      "at": 8450,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:6:4:east-patrol:8600:hit",
+      "sourceId": "east-raid-1:6",
+      "at": 8600,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:4:3:east-patrol:8650:hit",
+      "sourceId": "east-raid-1:4",
+      "at": 8650,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:7:4:east-patrol:9350:hit",
+      "sourceId": "east-raid-1:7",
+      "at": 9350,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:6",
+      "sourceId": "east-patrol",
+      "at": 9400,
+      "damage": 18,
+      "x": 2148.453164177548,
+      "y": 1113.1253682290555
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:5:5:east-patrol:9500:hit",
+      "sourceId": "east-raid-1:5",
+      "at": 9500,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:3:4:east-patrol:9550:hit",
+      "sourceId": "east-raid-1:3",
+      "at": 9550,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:1:5:east-patrol:9800:hit",
+      "sourceId": "east-raid-1:1",
+      "at": 9800,
+      "damage": 4,
+      "x": 2145.123904709355,
+      "y": 1113.5988167547403
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:8:4:east-patrol:10150:hit",
+      "sourceId": "east-raid-1:8",
+      "at": 10150,
+      "damage": 4,
+      "x": 2111.837126171881,
+      "y": 1124.4150256375824
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:4:4:east-patrol:10350:hit",
+      "sourceId": "east-raid-1:4",
+      "at": 10350,
+      "damage": 4,
+      "x": 2092.8161098647533,
+      "y": 1130.595716427778
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:6:5:east-patrol:10400:hit",
+      "sourceId": "east-raid-1:6",
+      "at": 10400,
+      "damage": 4,
+      "x": 2088.0608557879714,
+      "y": 1132.1408891253268
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:3",
+      "sourceId": "east-watch",
+      "at": 11500,
+      "damage": 18,
+      "x": 2083.147996988636,
+      "y": 1082.8217787598958
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:3:5:east-watch:11950:hit",
+      "sourceId": "east-raid-1:3",
+      "at": 11950,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:3",
+      "sourceId": "east-watch",
+      "at": 12500,
+      "damage": 18,
+      "x": 2067.43967342395,
+      "y": 1052.668029892017
+    },
+    {
+      "kind": "death",
+      "id": "east-raid-1:3",
+      "sourceId": "east-watch",
+      "at": 12500,
+      "x": 2067.43967342395,
+      "y": 1052.668029892017
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:7:5:east-watch:12750:hit",
+      "sourceId": "east-raid-1:7",
+      "at": 12750,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:5:7:east-watch:13000:hit",
+      "sourceId": "east-raid-1:5",
+      "at": 13000,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:6:6:east-watch:13000:hit",
+      "sourceId": "east-raid-1:6",
+      "at": 13000,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:8:5:east-watch:13200:hit",
+      "sourceId": "east-raid-1:8",
+      "at": 13200,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:7",
+      "sourceId": "east-watch",
+      "at": 13500,
+      "damage": 18,
+      "x": 2069.6900844656425,
+      "y": 1052.0657640761044
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:4:6:east-patrol:13800:hit",
+      "sourceId": "east-raid-1:4",
+      "at": 13800,
+      "damage": 4,
+      "x": 1910,
+      "y": 1190
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:1:7:east-patrol:14000:hit",
+      "sourceId": "east-raid-1:1",
+      "at": 14000,
+      "damage": 4,
+      "x": 1910,
+      "y": 1190
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:7:6:east-watch:14350:hit",
+      "sourceId": "east-raid-1:7",
+      "at": 14350,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:8",
+      "sourceId": "east-watch",
+      "at": 14500,
+      "damage": 18,
+      "x": 2070.7027359651393,
+      "y": 1051.1490069207478
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:5:8:east-watch:14600:hit",
+      "sourceId": "east-raid-1:5",
+      "at": 14600,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:6:7:east-watch:14600:hit",
+      "sourceId": "east-raid-1:6",
+      "at": 14600,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:8:6:east-watch:14800:hit",
+      "sourceId": "east-raid-1:8",
+      "at": 14800,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:4:7:east-patrol:15450:hit",
+      "sourceId": "east-raid-1:4",
+      "at": 15450,
+      "damage": 4,
+      "x": 1910,
+      "y": 1190
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:8",
+      "sourceId": "east-watch",
+      "at": 15500,
+      "damage": 18,
+      "x": 2052.0988818092674,
+      "y": 1022.6903244047409
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:1:8:east-patrol:15600:hit",
+      "sourceId": "east-raid-1:1",
+      "at": 15600,
+      "damage": 4,
+      "x": 1910,
+      "y": 1190
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:7:7:east-watch:16050:hit",
+      "sourceId": "east-raid-1:7",
+      "at": 16050,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:5:9:east-watch:16300:hit",
+      "sourceId": "east-raid-1:5",
+      "at": 16300,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:6:8:east-watch:16300:hit",
+      "sourceId": "east-raid-1:6",
+      "at": 16300,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:8:7:east-watch:16500:hit",
+      "sourceId": "east-raid-1:8",
+      "at": 16500,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:8",
+      "sourceId": "east-watch",
+      "at": 16500,
+      "damage": 18,
+      "x": 2052.0988818092674,
+      "y": 1022.6903244047409
+    },
+    {
+      "kind": "death",
+      "id": "east-raid-1:8",
+      "sourceId": "east-watch",
+      "at": 16500,
+      "x": 2052.0988818092674,
+      "y": 1022.6903244047409
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:4:8:east-patrol:17150:hit",
+      "sourceId": "east-raid-1:4",
+      "at": 17150,
+      "damage": 4,
+      "x": 1910,
+      "y": 1190
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:1:9:east-patrol:17300:hit",
+      "sourceId": "east-raid-1:1",
+      "at": 17300,
+      "damage": 4,
+      "x": 1910,
+      "y": 1190
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:5",
+      "sourceId": "east-watch",
+      "at": 17500,
+      "damage": 18,
+      "x": 2049.7164026166656,
+      "y": 990.7756286781066
+    },
+    {
+      "kind": "death",
+      "id": "east-raid-1:5",
+      "sourceId": "east-watch",
+      "at": 17500,
+      "x": 2049.7164026166656,
+      "y": 990.7756286781066
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:7:8:east-watch:17750:hit",
+      "sourceId": "east-raid-1:7",
+      "at": 17750,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:6:9:east-watch:18000:hit",
+      "sourceId": "east-raid-1:6",
+      "at": 18000,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:7",
+      "sourceId": "east-watch",
+      "at": 18500,
+      "damage": 18,
+      "x": 2052.14447591397,
+      "y": 1022.9427212997815
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:4:9:east-patrol:18850:hit",
+      "sourceId": "east-raid-1:4",
+      "at": 18850,
+      "damage": 4,
+      "x": 1910,
+      "y": 1190
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:1:10:east-patrol:19000:hit",
+      "sourceId": "east-raid-1:1",
+      "at": 19000,
+      "damage": 4,
+      "x": 1910,
+      "y": 1190
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:7:9:east-watch:19450:hit",
+      "sourceId": "east-raid-1:7",
+      "at": 19450,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:7",
+      "sourceId": "east-watch",
+      "at": 19500,
+      "damage": 18,
+      "x": 2043.3716716381246,
+      "y": 1008.3811999116257
+    },
+    {
+      "kind": "death",
+      "id": "east-raid-1:7",
+      "sourceId": "east-watch",
+      "at": 19500,
+      "x": 2043.3716716381246,
+      "y": 1008.3811999116257
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:6:10:east-watch:19700:hit",
+      "sourceId": "east-raid-1:6",
+      "at": 19700,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:6",
+      "sourceId": "east-watch",
+      "at": 20500,
+      "damage": 18,
+      "x": 2046.8910880020426,
+      "y": 990.7231777753452
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:4:10:east-patrol:20550:hit",
+      "sourceId": "east-raid-1:4",
+      "at": 20550,
+      "damage": 4,
+      "x": 1910,
+      "y": 1190
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:1:11:east-patrol:20700:hit",
+      "sourceId": "east-raid-1:1",
+      "at": 20700,
+      "damage": 4,
+      "x": 1910,
+      "y": 1190
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:6:11:east-watch:21400:hit",
+      "sourceId": "east-raid-1:6",
+      "at": 21400,
+      "damage": 4,
+      "x": 2050.74085535616,
+      "y": 1020.6129245631006
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:6",
+      "sourceId": "east-watch",
+      "at": 21500,
+      "damage": 18,
+      "x": 2051.234374005911,
+      "y": 1024.4446229799712
+    },
+    {
+      "kind": "death",
+      "id": "east-raid-1:6",
+      "sourceId": "east-watch",
+      "at": 21500,
+      "x": 2051.234374005911,
+      "y": 1024.4446229799712
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:4:11:east-patrol:22250:hit",
+      "sourceId": "east-raid-1:4",
+      "at": 22250,
+      "damage": 4,
+      "x": 1910,
+      "y": 1190
+    },
+    {
+      "kind": "hit",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:1:12:east-patrol:22400:hit",
+      "sourceId": "east-raid-1:1",
+      "at": 22400,
+      "damage": 4,
+      "x": 1910,
+      "y": 1190
+    },
+    {
+      "kind": "death",
+      "id": "east-patrol",
+      "eventKey": "east-raid-1:1:12:east-patrol:22400:death",
+      "sourceId": "east-raid-1:1",
+      "at": 22400,
+      "x": 1910,
+      "y": 1190
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:4",
+      "sourceId": "east-watch",
+      "at": 23150,
+      "damage": 18,
+      "x": 1924.2337030563692,
+      "y": 1172.417953551063
+    },
+    {
+      "kind": "death",
+      "id": "east-raid-1:4",
+      "sourceId": "east-watch",
+      "at": 23150,
+      "x": 1924.2337030563692,
+      "y": 1172.417953551063
+    },
+    {
+      "kind": "hit",
+      "id": "east-watch",
+      "eventKey": "east-raid-1:1:13:east-watch:23800:hit",
+      "sourceId": "east-raid-1:1",
+      "at": 23800,
+      "damage": 4,
+      "x": 1970.6733155106122,
+      "y": 1116.4705895513641
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:1",
+      "sourceId": "east-watch",
+      "at": 24150,
+      "damage": 18,
+      "x": 1940.5121567202668,
+      "y": 1138.4051470852546
+    },
+    {
+      "kind": "hit",
+      "id": "east-raid-1:1",
+      "sourceId": "east-watch",
+      "at": 25150,
+      "damage": 18,
+      "x": 1940.5121567202668,
+      "y": 1138.4051470852546
+    },
+    {
+      "kind": "death",
+      "id": "east-raid-1:1",
+      "sourceId": "east-watch",
+      "at": 25150,
+      "x": 1940.5121567202668,
+      "y": 1138.4051470852546
+    },
+    {
+      "kind": "ended",
+      "id": "east-raid-1",
+      "at": 25150
+    }
+  ]
+}

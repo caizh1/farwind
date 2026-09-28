@@ -1,7 +1,7 @@
+import {WORLD_PLAYABLE as B} from "../../data/maps/windbell/bounds";
 import {
   props,
   propBounds,
-  WORLD,
   type Prop,
 } from "../../data/world";
 import { TRAINING, FIELD_TARGETS } from "./training";
@@ -59,7 +59,7 @@ export function firstSwordWindBlocker(a:Point,b:Point,radius:number,objects:read
     const r=propBounds(p),t=firstRectContact(a,b,{left:r.left-radius,right:r.right+radius,top:r.top-radius,bottom:r.bottom+radius});
     if(t!==null)candidates.push({id:p.id,t});
   }
-  const bounds={left:30+radius,right:WORLD.width-30-radius,top:80+radius,bottom:WORLD.height-30-radius};
+  const bounds={left:B.left+radius,right:B.right-radius,top:B.top+radius,bottom:B.bottom-radius};
   if(a.x<bounds.left||a.x>bounds.right||a.y<bounds.top||a.y>bounds.bottom)candidates.push({id:'world-edge',t:0});
   else for(const [s,d,min,max] of [[a.x,b.x-a.x,bounds.left,bounds.right],[a.y,b.y-a.y,bounds.top,bounds.bottom]])if(Math.abs(d)>EPS){
     const t=d>0?(max-s)/d:(min-s)/d;if(t>=0&&t<=1)candidates.push({id:'world-edge',t});

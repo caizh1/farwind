@@ -1,5 +1,13 @@
 # 居民生活首版演示
 
+## 2026-09-28 松岚开局抽搐修复验收
+
+刷新本地游戏，在独立浏览器配置中通过“启程 · 新游戏”开始，不覆盖要保留的旅途。八点观察北门松岚走向营房取手册：斜向行走应保持一个朝向，沿路实际拐弯才换正面或侧面。途中按 Esc 确认世界冻结，保存、刷新并继续旅途，仍应从保存位置实际移动。旧档可直接继续，本次不需要重开或迁移。
+
+运行 `npx playwright test tests/guard-facing.spec.ts tests/npc-life.spec.ts --config tools/playwright-npc-life.config.ts --grep 'GUARD-FACING-01|GUARD-RETURN-01|GUARD-REST-02' --workers=1 --output .npc-life-local/guard-facing-regression-results --reporter=list`，验证自然开局、旧卡住档与夜间轮休。[本轮录像](evidence/guard-facing.webm)与[修复报告](GUARD-FACING-FIX.md)保留真实操作和未通过的工作区基线检查。当前源码主存档八，以下七和六为历史批次。
+
+正式构建复验：先运行 `npm run build -- --outDir .npc-life-local/guard-facing-production`，再运行 `FARWIND_FACING_PRODUCTION=1 npx playwright test --config tools/playwright-guard-facing-production.config.ts --workers=1`。它用独立端口与新浏览器配置，避免覆盖实际旅途。[正式录像](evidence/guard-facing-production.webm)已通过相同新游戏、暂停、保存和继续流程。
+
 ## 2026-09-28 卫兵返岗修复验收
 
 当前工作树主存档为七、生活子版本为四。本轮无需新档或重新迁移，下文版本六为此前批次记录。

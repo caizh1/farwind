@@ -1,0 +1,843 @@
+{
+  "说明": "固定基准：恶意一点，八只普通派遣，十二名健康卫兵，开放道路；按正式防御模拟推进，未加入生活排班或主角助战。",
+  "模拟毫秒": 24700,
+  "来袭结算号": 1,
+  "在途事件": null,
+  "派遣单位": [
+    {
+      "身份": "raid-1:1",
+      "剩余生命": 0
+    },
+    {
+      "身份": "raid-1:2",
+      "剩余生命": 0
+    },
+    {
+      "身份": "raid-1:3",
+      "剩余生命": 0
+    },
+    {
+      "身份": "raid-1:4",
+      "剩余生命": 0
+    },
+    {
+      "身份": "raid-1:5",
+      "剩余生命": 0
+    },
+    {
+      "身份": "raid-1:6",
+      "剩余生命": 0
+    },
+    {
+      "身份": "raid-1:7",
+      "剩余生命": 0
+    },
+    {
+      "身份": "raid-1:8",
+      "剩余生命": 0
+    }
+  ],
+  "守卫": [
+    {
+      "id": "north-watch",
+      "x": 798.7033881295804,
+      "y": 272.36187897186255,
+      "hp": 80,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "north-west-post",
+      "mode": "attack",
+      "peaceMs": 0,
+      "cooldownMs": 700
+    },
+    {
+      "id": "north-patrol",
+      "x": 860,
+      "y": 450,
+      "hp": 57.53500000000021,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "north-east-post",
+      "mode": "recover",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    },
+    {
+      "id": "north-archer",
+      "x": 680,
+      "y": 350,
+      "hp": 100,
+      "dead": false,
+      "weaponId": "watch-bow",
+      "armorId": "watch-leather",
+      "postId": "north-gate-tower",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    }
+  ],
+  "通知": [
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:3:1:north-patrol:5600:hit",
+      "sourceId": "raid-1:3",
+      "at": 5600,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:5:2:north-patrol:6000:hit",
+      "sourceId": "raid-1:5",
+      "at": 6000,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:1:1:north-patrol:6050:hit",
+      "sourceId": "raid-1:1",
+      "at": 6050,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:8:2:north-patrol:6100:hit",
+      "sourceId": "raid-1:8",
+      "at": 6100,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:5",
+      "sourceId": "north-patrol",
+      "at": 6350,
+      "damage": 18,
+      "x": 854.2079871016628,
+      "y": 212.5215005153601
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:4:2:north-patrol:6550:hit",
+      "sourceId": "raid-1:4",
+      "at": 6550,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:7:2:north-patrol:6850:hit",
+      "sourceId": "raid-1:7",
+      "at": 6850,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:2:2:north-patrol:7150:hit",
+      "sourceId": "raid-1:2",
+      "at": 7150,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:3:2:north-patrol:7200:hit",
+      "sourceId": "raid-1:3",
+      "at": 7200,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:7",
+      "sourceId": "north-patrol",
+      "at": 7350,
+      "damage": 18,
+      "x": 853.2831263000219,
+      "y": 214.43007348837781
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:1:2:north-patrol:7650:hit",
+      "sourceId": "raid-1:1",
+      "at": 7650,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:5:3:north-patrol:7700:hit",
+      "sourceId": "raid-1:5",
+      "at": 7700,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:8:3:north-patrol:7800:hit",
+      "sourceId": "raid-1:8",
+      "at": 7800,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:4:3:north-patrol:8250:hit",
+      "sourceId": "raid-1:4",
+      "at": 8250,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:2",
+      "sourceId": "north-patrol",
+      "at": 8350,
+      "damage": 18,
+      "x": 855.1642176580904,
+      "y": 213.51429625360612
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:7:3:north-patrol:8550:hit",
+      "sourceId": "raid-1:7",
+      "at": 8550,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:2:3:north-patrol:8850:hit",
+      "sourceId": "raid-1:2",
+      "at": 8850,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:3:3:north-patrol:8900:hit",
+      "sourceId": "raid-1:3",
+      "at": 8900,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:1:3:north-patrol:9350:hit",
+      "sourceId": "raid-1:1",
+      "at": 9350,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:1",
+      "sourceId": "north-patrol",
+      "at": 9350,
+      "damage": 18,
+      "x": 853.0372047314311,
+      "y": 212.47761952009276
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:5:4:north-patrol:9400:hit",
+      "sourceId": "raid-1:5",
+      "at": 9400,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:8:4:north-patrol:9500:hit",
+      "sourceId": "raid-1:8",
+      "at": 9500,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:2",
+      "sourceId": "north-watch",
+      "at": 9700,
+      "damage": 18,
+      "x": 873.0487441587129,
+      "y": 242.43044592552013
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:4:4:north-patrol:9950:hit",
+      "sourceId": "raid-1:4",
+      "at": 9950,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:7:4:north-patrol:10250:hit",
+      "sourceId": "raid-1:7",
+      "at": 10250,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:5",
+      "sourceId": "north-patrol",
+      "at": 10350,
+      "damage": 18,
+      "x": 854.2079871016628,
+      "y": 212.5215005153601
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:2:4:north-patrol:10550:hit",
+      "sourceId": "raid-1:2",
+      "at": 10550,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:3:4:north-patrol:10600:hit",
+      "sourceId": "raid-1:3",
+      "at": 10600,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:7",
+      "sourceId": "north-watch",
+      "at": 10700,
+      "damage": 18,
+      "x": 853.2831263000219,
+      "y": 214.43007348837781
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:1:4:north-patrol:11050:hit",
+      "sourceId": "raid-1:1",
+      "at": 11050,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:5:5:north-patrol:11100:hit",
+      "sourceId": "raid-1:5",
+      "at": 11100,
+      "damage": 4,
+      "x": 856.3460923033422,
+      "y": 215.4251807343528
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:8:5:north-patrol:11200:hit",
+      "sourceId": "raid-1:8",
+      "at": 11200,
+      "damage": 4,
+      "x": 856.5018406699787,
+      "y": 225.42396778310479
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:7",
+      "sourceId": "north-watch",
+      "at": 11700,
+      "damage": 18,
+      "x": 853.2831263000219,
+      "y": 214.43007348837781
+    },
+    {
+      "kind": "death",
+      "id": "raid-1:7",
+      "sourceId": "north-watch",
+      "at": 11700,
+      "x": 853.2831263000219,
+      "y": 214.43007348837781
+    },
+    {
+      "kind": "hit",
+      "id": "north-patrol",
+      "eventKey": "raid-1:4:5:north-patrol:11750:hit",
+      "sourceId": "raid-1:4",
+      "at": 11750,
+      "damage": 4,
+      "x": 857.3584566864797,
+      "y": 280.41729655124067
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:1",
+      "sourceId": "north-watch",
+      "at": 12700,
+      "damage": 18,
+      "x": 811.5977619871857,
+      "y": 232.78200529554337
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:1:5:north-watch:12800:hit",
+      "sourceId": "raid-1:1",
+      "at": 12800,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:5:6:north-watch:12950:hit",
+      "sourceId": "raid-1:5",
+      "at": 12950,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:4:6:north-watch:13400:hit",
+      "sourceId": "raid-1:4",
+      "at": 13400,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:8:6:north-watch:13400:hit",
+      "sourceId": "raid-1:8",
+      "at": 13400,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:1",
+      "sourceId": "north-watch",
+      "at": 13700,
+      "damage": 18,
+      "x": 801.0659999972032,
+      "y": 265.10973316785737
+    },
+    {
+      "kind": "death",
+      "id": "raid-1:1",
+      "sourceId": "north-watch",
+      "at": 13700,
+      "x": 801.0659999972032,
+      "y": 265.10973316785737
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:2:6:north-watch:14000:hit",
+      "sourceId": "raid-1:2",
+      "at": 14000,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:3:6:north-watch:14050:hit",
+      "sourceId": "raid-1:3",
+      "at": 14050,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:5:7:north-watch:14550:hit",
+      "sourceId": "raid-1:5",
+      "at": 14550,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:4",
+      "sourceId": "north-watch",
+      "at": 14700,
+      "damage": 18,
+      "x": 805.2722660107494,
+      "y": 270.0668136683637
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:8:7:north-watch:15000:hit",
+      "sourceId": "raid-1:8",
+      "at": 15000,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:4:7:north-watch:15050:hit",
+      "sourceId": "raid-1:4",
+      "at": 15050,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:2:7:north-watch:15650:hit",
+      "sourceId": "raid-1:2",
+      "at": 15650,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:3:7:north-watch:15700:hit",
+      "sourceId": "raid-1:3",
+      "at": 15700,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:5",
+      "sourceId": "north-watch",
+      "at": 15700,
+      "damage": 18,
+      "x": 801.3660729230246,
+      "y": 271.34348200559805
+    },
+    {
+      "kind": "death",
+      "id": "raid-1:5",
+      "sourceId": "north-watch",
+      "at": 15700,
+      "x": 801.3660729230246,
+      "y": 271.34348200559805
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:8:8:north-watch:16700:hit",
+      "sourceId": "raid-1:8",
+      "at": 16700,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:8",
+      "sourceId": "north-watch",
+      "at": 16700,
+      "damage": 18,
+      "x": 801.3026159204697,
+      "y": 270.93551126866424
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:4:8:north-watch:16750:hit",
+      "sourceId": "raid-1:4",
+      "at": 16750,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:2:8:north-watch:17350:hit",
+      "sourceId": "raid-1:2",
+      "at": 17350,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:3:8:north-watch:17400:hit",
+      "sourceId": "raid-1:3",
+      "at": 17400,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:4",
+      "sourceId": "north-watch",
+      "at": 17700,
+      "damage": 18,
+      "x": 805.2722660107494,
+      "y": 270.0668136683637
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:8:9:north-watch:18400:hit",
+      "sourceId": "raid-1:8",
+      "at": 18400,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:4:9:north-watch:18450:hit",
+      "sourceId": "raid-1:4",
+      "at": 18450,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:4",
+      "sourceId": "north-watch",
+      "at": 18700,
+      "damage": 18,
+      "x": 773.1749285575185,
+      "y": 281.28113167765173
+    },
+    {
+      "kind": "death",
+      "id": "raid-1:4",
+      "sourceId": "north-watch",
+      "at": 18700,
+      "x": 773.1749285575185,
+      "y": 281.28113167765173
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:2:9:north-watch:19050:hit",
+      "sourceId": "raid-1:2",
+      "at": 19050,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:3:9:north-watch:19100:hit",
+      "sourceId": "raid-1:3",
+      "at": 19100,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:8",
+      "sourceId": "north-watch",
+      "at": 19700,
+      "damage": 18,
+      "x": 801.3026159204697,
+      "y": 270.93551126866356
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:8:10:north-watch:20100:hit",
+      "sourceId": "raid-1:8",
+      "at": 20100,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:3",
+      "sourceId": "north-watch",
+      "at": 20700,
+      "damage": 18,
+      "x": 772.9386390509746,
+      "y": 274.0937965971968
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:2:10:north-watch:20750:hit",
+      "sourceId": "raid-1:2",
+      "at": 20750,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:3:10:north-watch:20800:hit",
+      "sourceId": "raid-1:3",
+      "at": 20800,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:2",
+      "sourceId": "north-watch",
+      "at": 21700,
+      "damage": 18,
+      "x": 804.7886358709839,
+      "y": 275.7780547735283
+    },
+    {
+      "kind": "death",
+      "id": "raid-1:2",
+      "sourceId": "north-watch",
+      "at": 21700,
+      "x": 804.7886358709839,
+      "y": 275.7780547735283
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:8:11:north-watch:21800:hit",
+      "sourceId": "raid-1:8",
+      "at": 21800,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:3:11:north-watch:22500:hit",
+      "sourceId": "raid-1:3",
+      "at": 22500,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:8",
+      "sourceId": "north-watch",
+      "at": 22700,
+      "damage": 18,
+      "x": 801.3026159204697,
+      "y": 270.93551126866356
+    },
+    {
+      "kind": "death",
+      "id": "raid-1:8",
+      "sourceId": "north-watch",
+      "at": 22700,
+      "x": 801.3026159204697,
+      "y": 270.93551126866356
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:3",
+      "sourceId": "north-watch",
+      "at": 23700,
+      "damage": 18,
+      "x": 772.9386390509746,
+      "y": 274.0937965971968
+    },
+    {
+      "kind": "hit",
+      "id": "north-watch",
+      "eventKey": "raid-1:3:12:north-watch:24200:hit",
+      "sourceId": "raid-1:3",
+      "at": 24200,
+      "damage": 4,
+      "x": 798.7033881295804,
+      "y": 272.36187897186255
+    },
+    {
+      "kind": "hit",
+      "id": "raid-1:3",
+      "sourceId": "north-watch",
+      "at": 24700,
+      "damage": 18,
+      "x": 806.8620824237025,
+      "y": 271.81344799725497
+    },
+    {
+      "kind": "death",
+      "id": "raid-1:3",
+      "sourceId": "north-watch",
+      "at": 24700,
+      "x": 806.8620824237025,
+      "y": 271.81344799725497
+    },
+    {
+      "kind": "ended",
+      "id": "raid-1",
+      "at": 24700
+    }
+  ]
+}

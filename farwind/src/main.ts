@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { World } from "./game/scenes/World";
 import "./style.css";
+import "./commission.css";
 const root = document.querySelector("#game")!;
 try {
   const probe = document.createElement("canvas");

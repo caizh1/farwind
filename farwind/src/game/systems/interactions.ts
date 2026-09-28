@@ -1,3 +1,9 @@
+import {appendSouthQuest} from "./fieldQuest";
+import {openCommissions} from "../ui/commissions";
+import {regionalThreat} from "./wildThreat";
+import {ENCOUNTERS} from '../../data/maps/windbell/encounters';
+import {SHORTCUT_IDS,type ShortcutId} from "../../data/maps/windbell/shortcuts";
+import {openShortcut,openWestRoad,surveyWestRoad} from "./mapTravel";
 import {LESSON_IDS,type LessonId} from '../../data/windLessons';
 import {lifeInteract,offerHelp} from '../ui/npcLife';
 import type {ResidentId} from '../../data/npcLife';
@@ -8,6 +14,12 @@ import { add, remove, count, reward } from "./state";
 import type { World } from "../scenes/World";
 
 export function interact(this: World, p: Prop) {
+  if(p.id.startsWith('camp-root-')){const d=ENCOUNTERS.find(d=>d.id===p.id.slice(10));if(d){const t=regionalThreat(this.state.encounters,d.direction);this.ui.dialog(d.name,t.cleared?'营地已经清空。这个方向的巡游不再补充，据点不再组织袭村。':'足迹与巢穴通往附近道路。清理营地全部守卫，可以切断该方向巡游与袭村的来源。');return;}}
+  if(p.id.startsWith("repair-")&&SHORTCUT_IDS.includes(p.id.slice(7) as ShortcutId)){openShortcut(this,p.id.slice(7) as ShortcutId);return;}
+  if(p.id === "community-ledger"){openCommissions(this);return;}
+  if(p.id==="south-camp-root"){const t=regionalThreat(this.state.encounters,"south");this.ui.dialog("孢根巢地",t.cleared?"孢根已经干枯。南侧巡游不再补充，这处据点也不再组织向南门的袭击。":"潮湿土壤中的孢根仍在生长。清理此处守卫，便能切断通往采集道与村门的怪物活动来源。");return;}
+  if(p.id === "west-gate-sign"){openWestRoad(this);return;}
+  if(p.id === "west-road-survey"){surveyWestRoad(this);return;}
   if(p.id === "xiaobao"){this.xiaobao?.open(this);return;}
   if(p.id.startsWith("lesson-")&&LESSON_IDS.includes(p.id.slice(7) as LessonId)){this.lessons?.open(p.id.slice(7) as LessonId);return;}
   if(p.id==="waterside-night"){void this.discoverNight();return;}
@@ -25,14 +37,14 @@ export function interact(this: World, p: Prop) {
         `${this.life.dialogue("healer")}\n带来药草×2和浆果×1，我可以替你调制恢复药剂。先查看药师服务，核对材料并确认后才调药；只是交谈不会消耗材料。`,
         p.id,
       );
-      this.ui.offerShop("healer");offerHelp(this,"healer");
+      this.ui.offerShop("healer");offerHelp(this,"healer");appendSouthQuest(this);
     } else this.ui.shop(p.id.slice(8) as ShopId);
     return;
   }
   if (p.id === "barracks-sign") {
     this.ui.dialog(
       "风铃营房",
-      "这里是卫队驻地。九名卫兵分守东、北、南门。遇到普通来袭会自行拦截；目前没有招募或复活服务。",
+      "这里是卫队驻地。十二名卫兵分守东、北、南、西门，各有床位和轮休安排。遇到普通来袭会自行拦截；目前没有招募或复活服务。",
     );
     return;
   }
@@ -135,7 +147,7 @@ export function interact(this: World, p: Prop) {
     );
   if (p.id === "training-guide")
     this.ui.dialog(
-      "练习场须知",
+      "练习场教本",
       "J / 左键挥剑，连续按下接三连击；从木桩四面靠近练习朝向。L 风步可快速移动，不能穿过木桩与围栏。练习不消耗任务物品、不掉落战利品。",
     );
   if (
@@ -149,15 +161,10 @@ export function interact(this: World, p: Prop) {
     this.ui.dialog(
       p.label!,
       p.id === "west-gate-sign"
-        ? "西侧预留出口尚未开放，木栅仍封闭。请走北门、南门或东门。"
+        ? "西侧旧道已被荒草和断栅阻断。眼下可从北门或南门绕行，修复旧道后这里会重新成为通路。"
         : p.id === "east-gate-sign"
           ? "沿石路穿过东门进入翡翠森林，原主线仍从这里出发。"
           : "门外的山路与荒野尚未深入探明。谨慎前行，沿路返回。",
-    );
-  if (p.id.startsWith("parcel-") && p.id.endsWith("-sign"))
-    this.ui.dialog(
-      p.label!,
-      "这座小院留给未来村庄建设，目前可以散步，没有商店或委托服务。",
     );
   if (p.id === "clue")
     this.ui.dialog(

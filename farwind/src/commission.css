@@ -1,0 +1,664 @@
+/* 木匣委托簿：图片承载材质，文字、图标与操作均使用正常文档流。 */
+#modal:has(.commission-panel) {
+  padding: 16px;
+  background: #142b288a;
+  backdrop-filter: blur(5px);
+}
+.panel.commission-panel {
+  width: min(1120px, 100%);
+  min-width: 0;
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  padding: 16px 26px 20px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 16px;
+  overflow: hidden;
+  text-align: left;
+  color: #243d31;
+  background: none;
+  border: 26px solid transparent;
+  border-radius: 0;
+  border-image: url("/assets/commission/ledger-frame.webp") 90 fill / 26px / 0
+    stretch;
+  box-shadow: 0 20px 70px #10271dc0;
+  font-size: 18px;
+  line-height: 1.65;
+}
+.commission-panel > header {
+  display: none;
+}
+.commission-panel h2,
+.commission-panel h3,
+.commission-tabs button,
+.commission-index button,
+.commission-actions button {
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+}
+.commission-panel h2 {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+.commission-panel h3 {
+  margin: 0 0 10px;
+  font-size: 23px;
+  line-height: 1.4;
+}
+.commission-panel p {
+  margin: 0;
+  line-height: 1.75;
+}
+.commission-panel button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+  margin: 0;
+  color: inherit;
+  font-size: inherit;
+  line-height: 1.4;
+  transition:
+    filter 120ms,
+    background-color 120ms;
+}
+.commission-panel button:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+.commission-panel button:focus-visible {
+  outline: 3px solid #6c824c;
+  outline-offset: 3px;
+}
+.commission-panel button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.commission-panel img {
+  display: block;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+.commission-tabs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid #b098614f;
+  padding-bottom: 12px;
+}
+.commission-tabs button {
+  min-height: 54px;
+  min-width: 170px;
+  padding: 10px 24px;
+  background: #ddcd9d4a;
+  border: 1px solid #b29a66;
+  border-radius: 3px;
+  font-size: 23px;
+  letter-spacing: 2px;
+  box-shadow: none;
+}
+.commission-tabs button[aria-pressed="true"],
+.commission-actions .commission-primary {
+  color: #f6edce;
+  background: none;
+  border: 12px solid transparent;
+  padding: 6px 15px;
+  border-image: url("/assets/commission/ink-button.webp") 28 fill / 12px / 0
+    stretch;
+}
+.commission-tabs small {
+  margin-left: auto;
+  color: #78613e;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+.commission-scroll {
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: #a28a57 #ecdfbb;
+  padding: 3px 5px 8px;
+}
+.commission-index {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.commission-index button {
+  flex: 1 1 240px;
+  justify-content: flex-start;
+  min-height: 49px;
+  padding: 8px 16px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  font-size: 21px;
+}
+.commission-index button[aria-pressed="true"] {
+  background: #fffae785;
+  border-bottom-color: #355b47;
+}
+.commission-index img {
+  width: 28px;
+  height: 28px;
+}
+.commission-index small {
+  margin-left: auto;
+  color: #766442;
+  font:
+    13px "PingFang SC",
+    sans-serif;
+  white-space: nowrap;
+}
+.commission-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.95fr);
+  gap: 22px;
+  align-items: start;
+}
+.commission-copy {
+  min-width: 0;
+}
+.commission-heading {
+  margin-bottom: 20px;
+}
+.commission-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.commission-title img {
+  width: 38px;
+  height: 38px;
+}
+.commission-status {
+  padding: 3px 12px;
+  color: #695327;
+  background: #dec39080;
+  border: 1px solid #b09a67;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-size: 14px;
+}
+.commission-status.complete {
+  color: #315841;
+  background: #a4b37b55;
+}
+.commission-heading > p {
+  margin-top: 8px;
+}
+.commission-story {
+  margin-bottom: 21px !important;
+}
+.commission-goals {
+  border-top: 1px solid #b39c6855;
+  padding-top: 16px;
+  margin-bottom: 17px;
+}
+.commission-goals ul {
+  display: grid;
+  gap: 9px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.commission-goals li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.commission-goals input {
+  flex: 0 0 21px;
+  width: 21px;
+  height: 21px;
+  margin: 0;
+  accent-color: #496749;
+  opacity: 1;
+}
+.commission-route-copy {
+  margin-bottom: 22px;
+}
+.commission-route-copy p {
+  font-size: 17px;
+  color: #586044;
+}
+.commission-rewards {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr);
+  gap: 16px;
+  border-top: 1px solid #b39c6855;
+  padding-top: 16px;
+}
+.commission-rewards > section + section {
+  border-left: 1px solid #b39c6855;
+  padding-left: 16px;
+}
+.commission-rewards h3 {
+  font-size: 20px;
+}
+.commission-rewards small {
+  display: block;
+  margin-top: 7px;
+  color: #657446;
+  font-size: 13px;
+}
+.commission-item-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+.commission-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 16px;
+}
+.commission-item img {
+  width: 45px;
+  height: 50px;
+}
+.commission-item span {
+  white-space: nowrap;
+}
+.commission-art {
+  margin: 0;
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+.commission-route-image {
+  width: 100%;
+  height: auto;
+  max-height: 454px;
+}
+.commission-ledger-image {
+  width: 100%;
+  height: auto;
+  max-height: 380px;
+  padding: 24px;
+}
+.commission-art figcaption {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-family: "Songti SC", serif;
+  font-size: 14px;
+  color: #63583d;
+}
+.commission-hint {
+  margin-top: 13px !important;
+  color: #7a5d34;
+  font-size: 13px;
+}
+.commission-footer {
+  display: grid;
+  gap: 10px;
+}
+.commission-footer [hidden] {
+  display: none;
+}
+#commission-feedback {
+  padding: 8px 12px;
+  background: #fff9e799;
+  border-left: 3px solid #758452;
+  font-size: 15px;
+}
+.commission-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 14px;
+}
+.commission-actions button {
+  min-height: 52px;
+  padding: 10px 20px;
+  border: 1px solid #9b8453;
+  border-radius: 4px;
+  box-shadow: none;
+  background: #f4e8caa0;
+  font-size: 20px;
+}
+.commission-actions .commission-primary {
+  min-width: 300px;
+}
+.commission-actions kbd {
+  font:
+    12px "PingFang SC",
+    sans-serif;
+  padding: 2px 5px;
+  border: 1px solid #ad9971;
+  border-radius: 3px;
+}
+.commission-journal {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 40px;
+}
+.commission-journal h2 {
+  font-size: 29px;
+  margin: 6px 0 14px;
+}
+.commission-journal small {
+  color: #84703f;
+}
+.commission-journal ol {
+  padding-left: 25px;
+}
+.commission-journal li {
+  margin: 12px 0;
+}
+.commission-journal .done {
+  color: #727961;
+}
+.commission-journal .current {
+  color: #253e2e;
+  font-weight: 700;
+}
+.commission-journal .skill-journal {
+  border-top: 1px solid #b39c6855;
+  padding-top: 18px;
+  margin-top: 24px;
+}
+.commission-journal .skill-journal p {
+  margin: 12px 0;
+}
+@media (max-height: 780px) and (min-width: 801px) {
+  .panel.commission-panel {
+    gap: 10px;
+    padding: 9px 22px 13px;
+    border-width: 22px;
+    border-image-width: 22px;
+    font-size: 16px;
+  }
+  .commission-tabs {
+    padding-bottom: 8px;
+  }
+  .commission-tabs button {
+    min-height: 44px;
+    font-size: 21px;
+  }
+  .commission-index {
+    margin-bottom: 15px;
+  }
+  .commission-index button {
+    min-height: 42px;
+  }
+  .commission-panel h2 {
+    font-size: 32px;
+  }
+  .commission-heading {
+    margin-bottom: 8px;
+  }
+  .commission-heading > p {
+    margin-top: 4px;
+    font-size: 15px;
+  }
+  .commission-panel h3 {
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+  .commission-panel p {
+    line-height: 1.55;
+  }
+  .commission-story {
+    margin-bottom: 12px !important;
+  }
+  .commission-goals {
+    padding-top: 9px;
+    margin-bottom: 10px;
+  }
+  .commission-goals ul {
+    gap: 5px;
+  }
+  .commission-route-copy {
+    margin-bottom: 10px;
+  }
+  .commission-route-copy p {
+    font-size: 14px;
+  }
+  .commission-rewards {
+    padding-top: 10px;
+  }
+  .commission-rewards h3 {
+    margin-bottom: 5px;
+  }
+  .commission-item img {
+    width: 33px;
+    height: 38px;
+  }
+  .commission-item {
+    font-size: 14px;
+  }
+  .commission-route-image {
+    max-height: 335px;
+  }
+}
+@media (max-width: 800px) {
+  .panel.commission-panel {
+    padding: 12px 16px;
+    border-width: 18px;
+    border-image-width: 18px;
+    gap: 12px;
+    font-size: 16px;
+  }
+  .commission-tabs button {
+    flex: 1 1 130px;
+    min-width: 0;
+    font-size: 20px;
+  }
+  .commission-tabs small {
+    display: none;
+  }
+  .commission-detail {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .commission-art {
+    grid-row: 2;
+  }
+  .commission-route-image {
+    max-height: 300px;
+  }
+  .commission-index {
+    gap: 2px;
+    margin-bottom: 15px;
+  }
+  .commission-index button {
+    flex-basis: 100%;
+    font-size: 18px;
+  }
+  .commission-panel h2 {
+    font-size: 28px;
+  }
+  .commission-title {
+    gap: 8px;
+  }
+  .commission-title img {
+    width: 30px;
+    height: 30px;
+  }
+  .commission-journal {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .commission-actions .commission-primary {
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+  .commission-actions button {
+    min-height: 48px;
+    font-size: 17px;
+  }
+}
+@media (max-width: 440px) {
+  #modal:has(.commission-panel) {
+    padding: 8px;
+  }
+  .panel.commission-panel {
+    max-height: calc(100dvh - 16px);
+    padding: 8px 10px;
+    border-width: 14px;
+    border-image-width: 14px;
+  }
+  .commission-tabs {
+    gap: 5px;
+  }
+  .commission-tabs button {
+    padding: 7px 9px;
+    font-size: 18px;
+    min-height: 44px;
+    letter-spacing: 0;
+  }
+  .commission-title {
+    column-gap: 6px;
+  }
+  .commission-title img {
+    width: 26px;
+    height: 26px;
+  }
+  .commission-status {
+    font-size: 12px;
+    padding: 2px 7px;
+  }
+  .commission-rewards {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    gap: 8px;
+  }
+  .commission-rewards > section + section {
+    padding-left: 8px;
+  }
+  .commission-item img {
+    width: 30px;
+    height: 36px;
+  }
+  .commission-item {
+    font-size: 12px;
+    gap: 4px;
+  }
+}
+@media (max-height: 500px) and (min-width: 561px) {
+  #modal:has(.commission-panel) {
+    padding: 10px;
+  }
+  .panel.commission-panel {
+    max-height: calc(100dvh - 20px);
+    border-width: 14px;
+    border-image-width: 14px;
+    padding: 6px 14px;
+    gap: 7px;
+    font-size: 14px;
+  }
+  .commission-tabs {
+    padding-bottom: 5px;
+    gap: 8px;
+  }
+  .commission-tabs button {
+    min-height: 38px;
+    font-size: 17px;
+    padding: 5px 12px;
+  }
+  .commission-tabs button[aria-pressed="true"] {
+    border-width: 8px;
+    border-image-width: 8px;
+    padding: 2px 10px;
+  }
+  .commission-index {
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+  .commission-index button {
+    flex-basis: 220px;
+    min-height: 34px;
+    padding: 4px 9px;
+    font-size: 16px;
+    gap: 6px;
+  }
+  .commission-index img {
+    width: 22px;
+    height: 22px;
+  }
+  .commission-index small {
+    font-size: 12px;
+  }
+  .commission-detail {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.8fr);
+    gap: 18px;
+  }
+  .commission-art {
+    grid-row: auto;
+  }
+  .commission-route-image,
+  .commission-ledger-image {
+    max-height: 230px;
+  }
+  .commission-panel h2 {
+    font-size: 25px;
+  }
+  .commission-panel h3 {
+    font-size: 17px;
+    margin-bottom: 5px;
+  }
+  .commission-panel p {
+    line-height: 1.55;
+  }
+  .commission-heading {
+    margin-bottom: 9px;
+  }
+  .commission-story {
+    margin-bottom: 12px !important;
+  }
+  .commission-goals {
+    padding-top: 9px;
+    margin-bottom: 12px;
+  }
+  .commission-goals ul {
+    gap: 5px;
+  }
+  .commission-title img {
+    width: 26px;
+    height: 26px;
+  }
+  .commission-route-copy p {
+    font-size: 14px;
+  }
+  .commission-item {
+    font-size: 14px;
+  }
+  .commission-item img {
+    width: 33px;
+    height: 38px;
+  }
+  .commission-actions {
+    gap: 10px;
+  }
+  .commission-actions button {
+    min-height: 42px;
+    font-size: 16px;
+    padding: 6px 12px;
+  }
+  .commission-actions .commission-primary {
+    flex: 0 1 auto;
+    border-width: 8px;
+    border-image-width: 8px;
+    padding: 3px 12px;
+  }
+  .commission-footer {
+    gap: 5px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .commission-panel button {
+    transition: none;
+  }
+}

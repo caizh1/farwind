@@ -18,7 +18,7 @@ describe("地图扩展的通行与兼容性", () => {
       cols = WORLD.width / step,
       rows = WORLD.height / step;
     const seen = new Set<number>(),
-      queue = [72 * cols + 67];
+      queue = [((720-WORLD.top)/step) * cols + (670-WORLD.left)/step];
     seen.add(queue[0]);
     for (let i = 0; i < queue.length; i++) {
       const n = queue[i],
@@ -39,7 +39,7 @@ describe("地图扩展的通行与兼容性", () => {
           ny < 0 ||
           ny >= rows ||
           seen.has(k) ||
-          blocked(nx * step, ny * step)
+          blocked(WORLD.left+nx * step, WORLD.top+ny * step)
         )
           continue;
         seen.add(k);
@@ -50,8 +50,8 @@ describe("地图扩展的通行与兼容性", () => {
       const reachable = Array.from(seen).some(
         (k) =>
           Math.hypot(
-            (k % cols) * step - p.x,
-            Math.floor(k / cols) * step - p.y,
+            WORLD.left+(k % cols) * step - p.x,
+            WORLD.top+Math.floor(k / cols) * step - p.y,
           ) < 65,
       );
       expect(reachable, `${p.id} 必须可接近`).toBe(true);
@@ -65,8 +65,8 @@ describe("地图扩展的通行与兼容性", () => {
       ])
         expect(
           seen.has(
-            Math.round((t.y + dy) / step) * cols +
-              Math.round((t.x + dx) / step),
+            Math.round((t.y + dy-WORLD.top) / step) * cols +
+              Math.round((t.x + dx-WORLD.left) / step),
           ),
           `${t.id} 四面通行`,
         ).toBe(true);
@@ -88,7 +88,7 @@ describe("地图扩展的通行与兼容性", () => {
       }
     expect(terrainBlocked(POND.x, POND.y)).toBe(true);
     for (let y = 900; y <= 1450; y += 5) expect(blocked(1090, y)).toBe(false);
-    expect(terrainBlocked(4190, 700)).toBe(true);
+    expect(terrainBlocked(WORLD.right-10, 700)).toBe(true);
   });
   it("旧档森林坐标和待领取掉落只迁移一次，物品进度不变", () => {
     const old = initialState();
@@ -108,6 +108,6 @@ describe("地图扩展的通行与兼容性", () => {
     const village = initialState();
     delete village.map_version;
     expect(validate(village).player).toEqual(village.player);
-    expect(() => validate({ ...old, map_version: 7 })).toThrow();
+    expect(() => validate({ ...old, map_version: 9 })).toThrow();
   });
 });

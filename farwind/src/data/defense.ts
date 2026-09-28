@@ -14,15 +14,19 @@ export const TOWERS = [EAST_TOWER,
   { id: "south-gate-tower", gateId: "south-gate", x: 1140, y: 1750, w: 200, h: 270,
     perch: { x: 1160, y: 1630 }, muzzle: { x: 1160, y: 1601 },
     occupantGuardId: "south-archer", range: 550, outward: { x: 0, y: 1 } },
+  { id: "west-gate-tower", gateId: "west-gate", x: 160, y: 1710, w: 200, h: 270,
+    perch: { x: 180, y: 1590 }, muzzle: { x: 90, y: 1580 },
+    occupantGuardId: "west-archer", range: 550, outward: { x: -1, y: 0 } },
 ] as const;
 export type GateId = typeof TOWERS[number]["gateId"];
 export const RAID_GATES = [
-  { id: "east-gate", name: "东门", x: 2100, y: 1080, inside: { x: 1940, y: 1080 },
+  { id: "east-gate", outsideRegion:"forest", name: "东门", x: 2100, y: 1080, inside: { x: 1940, y: 1080 },
     entry: { x: 2140, y: 1080 }, spawns: [{ x: 2370, y: 1090 }, { x: 2390, y: 1140 }, { x: 2470, y: 1140 }, { x: 2430, y: 1180 }] },
-  { id: "north-gate", name: "北门", x: 820, y: 220, inside: { x: 820, y: 380 },
+  { id: "north-gate", outsideRegion:"north", name: "北门", x: 820, y: 220, inside: { x: 820, y: 380 },
     entry: { x: 820, y: 180 }, spawns: [{ x: 620, y: 120 }, { x: 660, y: 110 }, { x: 680, y: 130 }, { x: 640, y: 90 }] },
-  { id: "south-gate", name: "南门", x: 900, y: 1820, inside: { x: 900, y: 1660 },
+  { id: "south-gate", outsideRegion:"south", name: "南门", x: 900, y: 1820, inside: { x: 900, y: 1660 },
     entry: { x: 900, y: 1860 }, spawns: [{ x: 1140, y: 2060 }, { x: 1200, y: 2090 }, { x: 1160, y: 2110 }, { x: 1240, y: 2070 }] },
+  {id:"west-gate",outsideRegion:"west",name:"西门",x:80,y:1430,inside:{x:240,y:1430},entry:{x:40,y:1430},spawns:[{x:-340,y:1390},{x:-360,y:1460},{x:-330,y:1530},{x:-370,y:1510}]},
 ] as const;
 export const GUARD_WEAPONS = {
   "watch-blade": { damage: 18, range: 76, windup: 280, cooldown: 1000 },
@@ -64,6 +68,9 @@ export const GUARD_DEFS = [
   { id: "south-archer", name: "晴羽", role: "archer", maxHP: 100,
     weaponId: "watch-bow", armorId: "watch-leather", postId: "south-gate-tower",
     post: { x: 1140, y: 1750 }, cover: { x: 1140, y: 1750 }, patrol: [{ x: 1140, y: 1750 }], leash: 0 },
+  {id:"west-watch",name:"禾岩",role:"melee",maxHP:180,weaponId:"watch-blade",armorId:"watch-mail",postId:"west-north-post",post:{x:200,y:1340},cover:{x:360,y:1280},patrol:[{x:200,y:1340}],leash:300},
+  {id:"west-patrol",name:"鹿宁",role:"melee",maxHP:180,weaponId:"watch-blade",armorId:"watch-mail",postId:"west-south-post",post:{x:280,y:1530},cover:{x:350,y:1510},patrol:[{x:280,y:1530},{x:300,y:1540},{x:330,y:1470}],leash:300},
+  {id:"west-archer",name:"远翎",role:"archer",maxHP:100,weaponId:"watch-bow",armorId:"watch-leather",postId:"west-gate-tower",post:{x:160,y:1710},cover:{x:160,y:1710},patrol:[{x:160,y:1710}],leash:0},
 ] as const;
 export type GuardId = typeof GUARD_DEFS[number]["id"];
 export const RAID_SPAWNS = [{ x: 2430, y: 1080 }, { x: 2390, y: 1140 }, { x: 2470, y: 1120 }] as const;

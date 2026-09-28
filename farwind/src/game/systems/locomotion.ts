@@ -8,6 +8,16 @@ export type MotionSample = {
   intentY?: number;
   attack?: boolean;
 };
+// 接近斜向时保留原来的朝向轴；浮点残差不能触发整行动画切换。
+// 轴上的正反方向立即更新，明显转弯也不需要等待计时器。
+export function movementFacing(dx: number, dy: number, previous: Facing): Facing {
+  const ax = Math.abs(dx), ay = Math.abs(dy);
+  if (ax + ay <= 1e-7) return previous;
+  if (ax > ay * 1.2) return dx < 0 ? 2 : 3;
+  if (ay > ax * 1.2) return dy < 0 ? 1 : 0;
+  if (previous >= 2 && ax > 0) return dx < 0 ? 2 : 3;
+  return ay > 0 ? dy < 0 ? 1 : 0 : previous;
+}
 // 只累计自主位移。帧率、世界时钟、传送和受击闪烁均不驱动步态。
 export class Locomotion {
   direction: Facing = 0;
@@ -34,15 +44,8 @@ export class Locomotion {
     // 碰撞扫掠的数值残差不作为动画速度；实际脚底位移仍由碰撞系统决定。
     if (!moving) this.speed = 0;
     const x = moving ? s.dx : (s.intentX ?? 0),
-      y = moving ? s.dy : (s.intentY ?? 0),
-      ax = Math.abs(x),
-      ay = Math.abs(y);
-    if (ax + ay > 1e-7) {
-      if (ax > ay * 1.2) this.direction = x < 0 ? 2 : 3;
-      else if (ay > ax * 1.2) this.direction = y < 0 ? 1 : 0;
-      else if (this.direction >= 2 && ax > 0) this.direction = x < 0 ? 2 : 3;
-      else if (ay > 0) this.direction = y < 0 ? 1 : 0;
-    }
+      y = moving ? s.dy : (s.intentY ?? 0);
+    this.direction = movementFacing(x, y, this.direction);
     const running =
       this.speed >
       (this.action === "run" ? (this.cat ? 155 : 175) : this.cat ? 180 : 190);

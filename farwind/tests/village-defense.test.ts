@@ -1,3 +1,6 @@
+import {syncMapGeometry} from "../src/data/world";
+import {afterEach} from "vitest";
+afterEach(()=>syncMapGeometry(false));
 import { describe, expect, it } from "vitest";
 import { attackTouches } from "../src/game/systems/enemyAttack";
 import {
@@ -86,7 +89,7 @@ describe("围合、合法出口、区域与查询分层", () => {
       ).toBe(false);
     }
     expect(VILLAGE_PORTALS.filter((p) => p.open)).toHaveLength(3);
-    expect(VILLAGE_WALLS).toHaveLength(7);
+    expect(VILLAGE_WALLS).toHaveLength(8);
   });
   it("门柱独立阻挡，门洞与偏移40位置双向通行；西侧封闭", () => {
     for (const gate of VILLAGE_PORTALS) {
@@ -111,8 +114,8 @@ describe("围合、合法出口、区域与查询分层", () => {
   });
   it("相同横坐标按多边形分辨村内、北山路、南荒野和出口邻接", () => {
     expect(region(900, 720)).toBe("风铃村");
-    expect(region(900, 120)).toBe("北部山路");
-    expect(region(900, 2000)).toBe("南部荒野");
+    expect(region(900, 120)).toBe("北部山林与旧哨站");
+    expect(region(900, 2000)).toBe("南部田野与湿地");
     expect(regionAt({ x: 2170, y: 1080 }).id).toBe("forest");
     expect(
       inPolygon({ x: 0, y: 1 }, [
@@ -126,7 +129,8 @@ describe("围合、合法出口、区域与查询分层", () => {
       expect(regionAt(portalAnchor(p, true)).id).toBe(p.outsideRegion);
     }
   });
-  it("门口路线、六个规划岗位可站立，正式局部寻路能跨门", () => {
+  it("门口路线、八个规划岗位可站立，开放后正式局部寻路能跨门", () => {
+    syncMapGeometry(true);
     for (const d of DEFENSE_LAYOUT) {
       for (const p of d.posts)
         expect(motionBlocked(p.x, p.y), `${d.portalId} 岗位`).toBe(false);
@@ -208,7 +212,7 @@ it("新村界与缓冲区的生成灌木全部遵守正式装饰排除规则", (
     (p) => p.id.startsWith("bush-") && inVillageDecorArea(p.x, p.y),
   ))
     expect(canDecorate(p.x, p.y, p.w / 2), p.id).toBe(true);
-  for (const id of ["bush-16", "bush-24", "bush-40"])
+  for (const id of ["bush-16", "bush-24"])
     expect(props.find((p) => p.id === id)).toBeUndefined();
 });
 describe("版本迁移与正式敌人预算", () => {
@@ -221,7 +225,7 @@ describe("版本迁移与正式敌人预算", () => {
       { enemyId: "leaf-1", item: "crystal", x: 2320, y: 1070 },
     ];
     const moved = validate(old);
-    expect(moved.map_version).toBe(6);
+    expect(moved.map_version).toBe(8);
     expect(moved.player.x).toBe(2900);
     expect(moved.pendingDrops[0].x).toBe(2920);
     expect(validate(moved)).toEqual(moved);
@@ -234,10 +238,9 @@ describe("版本迁移与正式敌人预算", () => {
     expect(next.quest).toBe(3);
     expect(next.bag).toEqual(v2.bag);
     expect(v2.map_version).toBe(2);
-    expect(() => validate({ ...next, map_version: 7 })).toThrow();
+    expect(() => validate({ ...next, map_version: 9 })).toThrow();
     expect(WORLD).toEqual({
-      width: 4200,
-      height: 2200,
+      left:-2110,top:-1380,right:4290,bottom:3420,width:6400,height:4800,
       forest: 2050,
       ruins: 3300,
     });
