@@ -15,7 +15,7 @@ export class ParryTraining {
   this.reset();this.mode=mode;this.target=target;this.next=mode==="chain"?now:now+500;this.previous=now;
   const d=Math.hypot(p.x-target.x,p.y-target.y)||1;
   this.projection=mode==="off"?null:{id:`practice-${target.id}`,x:target.x+(p.x-target.x)/d*34,y:target.y+(p.y-target.y)/d*34,hp:1,kind:"trainingProjection",staggerUntil:0,type:["leaf","spore","boar","raven"].includes(mode)?mode:"slime"};
-  this.feedback=mode==="chain"?"先 J 轻击；收手 K，成功自动反斩；J 接二、三刀。":"投影与正式怪物共用出手动作；K 成功自动反斩，J 接连击。";
+  this.feedback=mode==="chain"?"先 J 轻击；收手 K，成功自动反斩；J 接二、三刀。":mode==="spore"?"远程弹反自动发出剑气；J 接第二刀。观察孢子飞行，面向来弹架剑。":"投影与正式怪物共用出手动作；K 成功自动反斩，J 接连击。";
  }
  started(now:number){if(this.lastContact?.result==="hurt"&&now>this.lastContact.at&&now-this.lastContact.at<180)this.feedback=`按晚 · 接触后 ${Math.round(now-this.lastContact.at)} 毫秒架剑`;}
  update(now:number,p:Point,c:CombatController):EnemyContact|null {
@@ -34,7 +34,7 @@ export class ParryTraining {
  }
  observe(contact:EnemyContact,result:ContactResult,c:CombatController,p:Point){
   this.lastContact={at:contact.at,result};
-  if(result==="normal"||result==="perfect"){this.feedback=`${result==="perfect"?"精准成功":"普通成功"} · 提前 ${Math.round(contact.at-c.parry!.start)} 毫秒`;}
+  if(result==="normal"||result==="perfect"){this.feedback=`${result==="perfect"?"精准成功":"普通成功"} · 提前 ${Math.round(contact.at-c.parry!.start)} 毫秒${contact.projectileId?" · 自动剑气；J 接第二刀":""}`;}
   else if(result==="invalid")this.feedback="未接触 · 距离或遮挡使来招挥空";
   else if(result==="hurt"){
    const a=c.parry??c.lastParry,attempted=(c.lastParryRequestAt??-Infinity)>=contact.attack.startedAt;

@@ -1,0 +1,1239 @@
+{
+  "说明": "真实键鼠，仅合法起始存档；没有修改运行中生命、位置、计时器。A类时间驱动与B类画面驱动按各测试说明区分。",
+  "输入": [],
+  "接触": [],
+  "反馈": {
+    "mode": "D",
+    "generation": 4,
+    "events": [],
+    "effects": [],
+    "pending": 0,
+    "delayed": 0,
+    "reactions": 0,
+    "bladeGlow": null,
+    "visual": {
+      "bladeGlow": null,
+      "flashes": []
+    },
+    "audio": {
+      "voices": 0,
+      "strikeVoices": 0,
+      "audioProfile": "双剑金属／同来招截停",
+      "windVoices": 0,
+      "windCached": true,
+      "cached": 33,
+      "events": [],
+      "state": "running",
+      "outputLatency": 0.024,
+      "buses": {
+        "threat": 1,
+        "player": 1,
+        "battle": 1,
+        "noncritical": 1
+      }
+    },
+    "frames": []
+  },
+  "木桩": {
+    "kind": "trainingDummy",
+    "id": "training-dummy",
+    "x": 850,
+    "y": 650,
+    "hp": 1,
+    "comboId": -1,
+    "stages": [],
+    "damage": 0,
+    "lastStage": 0,
+    "lastDamage": 0,
+    "lastHit": null,
+    "complete": false,
+    "swordWind": null,
+    "windDamage": 0,
+    "visible": false,
+    "age": 3033.34
+  },
+  "战斗": {
+    "hurt": null,
+    "parry": null,
+    "parrySerial": 1,
+    "parryBuffered": null,
+    "parryCooldownRemaining": 0,
+    "regenPaused": false,
+    "afterguard": null,
+    "autoCounter": null,
+    "intentFacing": 0,
+    "automatic": false,
+    "primaryTarget": null,
+    "delivery": "blade",
+    "sourceContactId": null,
+    "windDirection": null,
+    "status": "K 架剑就绪",
+    "attackConfig": null,
+    "counterAttack": null,
+    "lastRejection": "",
+    "phase": "idle",
+    "effectiveFacing": 1,
+    "ready": false,
+    "reservationOwner": null,
+    "hitStopRemaining": 0,
+    "lastHitStopRequested": 0,
+    "bufferArrivedAt": null,
+    "bufferExpiresAt": null,
+    "stage": 0,
+    "attackInstanceId": null,
+    "comboId": null,
+    "facing": null,
+    "hitRegion": null,
+    "hitTargets": [],
+    "buffered": false,
+    "bufferRemaining": 0,
+    "dashRemaining": 0,
+    "dashCooldownRemaining": 0,
+    "dashInvulnerable": false,
+    "trailSamples": 0,
+    "invulnerableSources": []
+  },
+  "生命": 100,
+  "敌人": [
+    {
+      "id": "slime-1",
+      "x": 2450,
+      "y": 1060,
+      "hp": 48,
+      "art": {
+        "pose": {
+          "action": "idle",
+          "frame": 0,
+          "index": 0,
+          "facing": 0,
+          "phase": "idle",
+          "elapsed": 33.34,
+          "provisional": true
+        },
+        "root": [
+          2450,
+          1060
+        ],
+        "frame": 0,
+        "origin": [
+          0.5,
+          0.859375
+        ],
+        "scale": [
+          0.7333333333333333,
+          0.7333333333333333
+        ],
+        "flip": false,
+        "provisional": true
+      },
+      "wallHit": null,
+      "type": "slime",
+      "flashRemaining": 0,
+      "windup": 0,
+      "attack": null,
+      "pose": null,
+      "parried": null,
+      "staggerRemaining": 0,
+      "staggerUntil": 0,
+      "home": {
+        "x": 2450,
+        "y": 1060
+      },
+      "footprint": {
+        "left": 2438,
+        "right": 2462,
+        "top": 1050,
+        "bottom": 1070
+      },
+      "ai": "家园",
+      "attackRejected": "家园追击边界",
+      "meleeBlocker": "east-gate-post-0",
+      "waypoint": null,
+      "path": [],
+      "queries": 0,
+      "visited": 0,
+      "recovered": false,
+      "disabled": false
+    },
+    {
+      "id": "slime-2",
+      "x": 2670,
+      "y": 1230,
+      "hp": 48,
+      "art": {
+        "pose": {
+          "action": "idle",
+          "frame": 0,
+          "index": 0,
+          "facing": 0,
+          "phase": "idle",
+          "elapsed": 33.34,
+          "provisional": true
+        },
+        "root": [
+          2670,
+          1230
+        ],
+        "frame": 0,
+        "origin": [
+          0.5,
+          0.859375
+        ],
+        "scale": [
+          0.7333333333333333,
+          0.7333333333333333
+        ],
+        "flip": false,
+        "provisional": true
+      },
+      "wallHit": null,
+      "type": "slime",
+      "flashRemaining": 0,
+      "windup": 0,
+      "attack": null,
+      "pose": null,
+      "parried": null,
+      "staggerRemaining": 0,
+      "staggerUntil": 0,
+      "home": {
+        "x": 2670,
+        "y": 1230
+      },
+      "footprint": {
+        "left": 2658,
+        "right": 2682,
+        "top": 1220,
+        "bottom": 1240
+      },
+      "ai": "家园",
+      "attackRejected": "家园追击边界",
+      "meleeBlocker": "village-gate-post-west",
+      "waypoint": null,
+      "path": [],
+      "queries": 0,
+      "visited": 0,
+      "recovered": false,
+      "disabled": false
+    },
+    {
+      "id": "leaf-1",
+      "x": 2920,
+      "y": 1070,
+      "hp": 72,
+      "art": {
+        "pose": {
+          "action": "idle",
+          "frame": 0,
+          "index": 0,
+          "facing": 0,
+          "phase": "idle",
+          "elapsed": 33.34,
+          "provisional": true
+        },
+        "root": [
+          2920,
+          1070
+        ],
+        "frame": 0,
+        "origin": [
+          0.5,
+          0.859375
+        ],
+        "scale": [
+          1.3,
+          1.3
+        ],
+        "flip": false,
+        "provisional": true
+      },
+      "wallHit": null,
+      "type": "leaf",
+      "flashRemaining": 0,
+      "windup": 0,
+      "attack": null,
+      "pose": null,
+      "parried": null,
+      "staggerRemaining": 0,
+      "staggerUntil": 0,
+      "home": {
+        "x": 2920,
+        "y": 1070
+      },
+      "footprint": {
+        "left": 2908,
+        "right": 2932,
+        "top": 1060,
+        "bottom": 1080
+      },
+      "ai": "家园",
+      "attackRejected": "家园追击边界",
+      "meleeBlocker": "east-wall-a-4",
+      "waypoint": null,
+      "path": [],
+      "queries": 0,
+      "visited": 0,
+      "recovered": false,
+      "disabled": false
+    },
+    {
+      "id": "leaf-2",
+      "x": 3170,
+      "y": 930,
+      "hp": 72,
+      "art": {
+        "pose": {
+          "action": "idle",
+          "frame": 0,
+          "index": 0,
+          "facing": 0,
+          "phase": "idle",
+          "elapsed": 33.34,
+          "provisional": true
+        },
+        "root": [
+          3170,
+          930
+        ],
+        "frame": 0,
+        "origin": [
+          0.5,
+          0.859375
+        ],
+        "scale": [
+          1.3,
+          1.3
+        ],
+        "flip": false,
+        "provisional": true
+      },
+      "wallHit": null,
+      "type": "leaf",
+      "flashRemaining": 0,
+      "windup": 0,
+      "attack": null,
+      "pose": null,
+      "parried": null,
+      "staggerRemaining": 0,
+      "staggerUntil": 0,
+      "home": {
+        "x": 3170,
+        "y": 930
+      },
+      "footprint": {
+        "left": 3158,
+        "right": 3182,
+        "top": 920,
+        "bottom": 940
+      },
+      "ai": "家园",
+      "attackRejected": "家园追击边界",
+      "meleeBlocker": "east-wall-a-4",
+      "waypoint": null,
+      "path": [],
+      "queries": 0,
+      "visited": 0,
+      "recovered": false,
+      "disabled": false
+    },
+    {
+      "id": "spore-1",
+      "x": 2730,
+      "y": 1840,
+      "hp": 60,
+      "art": {
+        "pose": {
+          "action": "idle",
+          "frame": 0,
+          "index": 0,
+          "facing": 0,
+          "phase": "idle",
+          "elapsed": 33.34,
+          "provisional": true
+        },
+        "root": [
+          2730,
+          1840
+        ],
+        "frame": 0,
+        "origin": [
+          0.5,
+          0.859375
+        ],
+        "scale": [
+          1.2,
+          1.2
+        ],
+        "flip": false,
+        "provisional": true
+      },
+      "wallHit": null,
+      "type": "spore",
+      "flashRemaining": 0,
+      "windup": 0,
+      "attack": null,
+      "pose": null,
+      "parried": null,
+      "staggerRemaining": 0,
+      "staggerUntil": 0,
+      "home": {
+        "x": 2730,
+        "y": 1840
+      },
+      "footprint": {
+        "left": 2718,
+        "right": 2742,
+        "top": 1830,
+        "bottom": 1850
+      },
+      "ai": "家园",
+      "attackRejected": "家园追击边界",
+      "meleeBlocker": "tree-11",
+      "waypoint": null,
+      "path": [],
+      "queries": 0,
+      "visited": 0,
+      "recovered": false,
+      "disabled": false
+    },
+    {
+      "id": "boar-1",
+      "x": 3150,
+      "y": 340,
+      "hp": 90,
+      "art": {
+        "pose": {
+          "action": "idle",
+          "frame": 0,
+          "index": 0,
+          "facing": 0,
+          "phase": "idle",
+          "elapsed": 33.34,
+          "provisional": true
+        },
+        "root": [
+          3150,
+          340
+        ],
+        "frame": 0,
+        "origin": [
+          0.5,
+          0.859375
+        ],
+        "scale": [
+          1.0833333333333335,
+          1.0833333333333335
+        ],
+        "flip": false,
+        "provisional": true
+      },
+      "wallHit": null,
+      "type": "boar",
+      "flashRemaining": 0,
+      "windup": 0,
+      "attack": null,
+      "pose": null,
+      "parried": null,
+      "staggerRemaining": 0,
+      "staggerUntil": 0,
+      "home": {
+        "x": 3150,
+        "y": 340
+      },
+      "footprint": {
+        "left": 3138,
+        "right": 3162,
+        "top": 330,
+        "bottom": 350
+      },
+      "ai": "家园",
+      "attackRejected": "家园追击边界",
+      "meleeBlocker": "barracks-building",
+      "waypoint": null,
+      "path": [],
+      "queries": 0,
+      "visited": 0,
+      "recovered": false,
+      "disabled": false
+    },
+    {
+      "id": "raven-1",
+      "x": 3250,
+      "y": 1830,
+      "hp": 64,
+      "art": {
+        "pose": {
+          "action": "idle",
+          "frame": 0,
+          "index": 0,
+          "facing": 0,
+          "phase": "idle",
+          "elapsed": 33.34,
+          "provisional": true
+        },
+        "root": [
+          3250,
+          1830
+        ],
+        "frame": 0,
+        "origin": [
+          0.5,
+          0.859375
+        ],
+        "scale": [
+          1.3666666666666667,
+          1.3666666666666667
+        ],
+        "flip": false,
+        "provisional": true
+      },
+      "wallHit": null,
+      "type": "raven",
+      "flashRemaining": 0,
+      "windup": 0,
+      "attack": null,
+      "pose": null,
+      "parried": null,
+      "staggerRemaining": 0,
+      "staggerUntil": 0,
+      "home": {
+        "x": 3250,
+        "y": 1830
+      },
+      "footprint": {
+        "left": 3238,
+        "right": 3262,
+        "top": 1820,
+        "bottom": 1840
+      },
+      "ai": "家园",
+      "attackRejected": "家园追击边界",
+      "meleeBlocker": "east-wall-b-0",
+      "waypoint": null,
+      "path": [],
+      "queries": 0,
+      "visited": 0,
+      "recovered": false,
+      "disabled": false
+    }
+  ],
+  "驻防": {
+    "guards": [
+      {
+        "id": "east-watch",
+        "x": 1967.2365434658652,
+        "y": 907.2365434658647,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-north-post",
+        "mode": "life",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0,
+        "offDuty": true,
+        "towerTransitMs": 0,
+        "space": "village"
+      },
+      {
+        "id": "east-patrol",
+        "x": 1965.7286944425343,
+        "y": 1187.705890771226,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-south-post",
+        "mode": "patrol",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0
+      },
+      {
+        "id": "east-archer",
+        "x": 2030,
+        "y": 900,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "east-gate-tower",
+        "mode": "post",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-watch",
+        "x": 790.5329023350179,
+        "y": 350.53290233501775,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-west-post",
+        "mode": "life",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0,
+        "offDuty": true,
+        "towerTransitMs": 0,
+        "space": "village"
+      },
+      {
+        "id": "north-patrol",
+        "x": 871.0740924048106,
+        "y": 323.97731949505345,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-east-post",
+        "mode": "patrol",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0
+      },
+      {
+        "id": "north-archer",
+        "x": 680,
+        "y": 350,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "north-gate-tower",
+        "mode": "post",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-watch",
+        "x": 851.1410141668383,
+        "y": 1688.8589858331623,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-west-post",
+        "mode": "life",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0,
+        "offDuty": true,
+        "towerTransitMs": 0,
+        "space": "village"
+      },
+      {
+        "id": "south-patrol",
+        "x": 1023.0934140875064,
+        "y": 1680.1357771913697,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-east-post",
+        "mode": "patrol",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0
+      },
+      {
+        "id": "south-archer",
+        "x": 1140,
+        "y": 1750,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "south-gate-tower",
+        "mode": "post",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0
+      }
+    ],
+    "sequence": 0,
+    "completedSequence": 0,
+    "raid": null,
+    "protectionMs": 298483.4533333333,
+    "cooldownMs": 481729,
+    "retryMs": 0,
+    "seed": 1729,
+    "arrows": [],
+    "threats": [
+      {
+        "id": "slime-1",
+        "gateId": "east-gate",
+        "reason": "observe",
+        "lastSeen": 5,
+        "progress": 350.9649594494154,
+        "approachMs": 0,
+        "lastProgress": 5,
+        "assigned": []
+      }
+    ],
+    "managedIds": [],
+    "units": [
+      {
+        "id": "east-watch",
+        "x": 1967.2365434658652,
+        "y": 907.2365434658647,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-north-post",
+        "mode": "life",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0,
+        "offDuty": true,
+        "towerTransitMs": 0,
+        "space": "village",
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 0,
+        "facing": 1,
+        "moved": 0.28724000000005295,
+        "distance": 1.4344800000001354,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "east-watch",
+          "name": "岑风",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-north-post",
+          "post": {
+            "x": 2010,
+            "y": 970
+          },
+          "cover": {
+            "x": 1920,
+            "y": 1060
+          },
+          "patrol": [
+            {
+              "x": 2010,
+              "y": 970
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "east-patrol",
+        "x": 1965.7286944425343,
+        "y": 1187.705890771226,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "east-south-post",
+        "mode": "patrol",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [
+            {
+              "x": 1965.7286944425343,
+              "y": 1169.2061907712255
+            },
+            {
+              "x": 1985.7286944425343,
+              "y": 1169.2061907712255
+            },
+            {
+              "x": 2010,
+              "y": 1160
+            }
+          ],
+          "next": 605,
+          "failed": false,
+          "returning": false,
+          "queries": 1,
+          "visited": 7,
+          "target": {
+            "x": 2010,
+            "y": 1160
+          }
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 0,
+        "facing": 1,
+        "moved": 0.15030000000001564,
+        "distance": 1.50029999999947,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "east-patrol",
+          "name": "青禾",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-south-post",
+          "post": {
+            "x": 2010,
+            "y": 1160
+          },
+          "cover": {
+            "x": 1910,
+            "y": 1190
+          },
+          "patrol": [
+            {
+              "x": 2010,
+              "y": 1160
+            },
+            {
+              "x": 1960,
+              "y": 1210
+            },
+            {
+              "x": 1940,
+              "y": 1140
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "east-archer",
+        "x": 2030,
+        "y": 900,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "east-gate-tower",
+        "mode": "post",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 8,
+        "facing": 3,
+        "moved": 0,
+        "distance": 0,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "east-archer",
+          "name": "弦雨",
+          "role": "archer",
+          "maxHP": 100,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "east-gate-tower",
+          "post": {
+            "x": 2030,
+            "y": 900
+          },
+          "cover": {
+            "x": 2030,
+            "y": 900
+          },
+          "patrol": [
+            {
+              "x": 2030,
+              "y": 900
+            }
+          ],
+          "leash": 0
+        }
+      },
+      {
+        "id": "north-watch",
+        "x": 790.5329023350179,
+        "y": 350.53290233501775,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-west-post",
+        "mode": "life",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0,
+        "offDuty": true,
+        "towerTransitMs": 0,
+        "space": "village",
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 0,
+        "facing": 3,
+        "moved": 0,
+        "distance": 0,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "north-watch",
+          "name": "松岚",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-west-post",
+          "post": {
+            "x": 740,
+            "y": 300
+          },
+          "cover": {
+            "x": 760,
+            "y": 486
+          },
+          "patrol": [
+            {
+              "x": 740,
+              "y": 300
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "north-patrol",
+        "x": 871.0740924048106,
+        "y": 323.97731949505345,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "north-east-post",
+        "mode": "patrol",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 0,
+        "facing": 3,
+        "moved": 0,
+        "distance": 0,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "north-patrol",
+          "name": "石泉",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-east-post",
+          "post": {
+            "x": 920,
+            "y": 300
+          },
+          "cover": {
+            "x": 860,
+            "y": 450
+          },
+          "patrol": [
+            {
+              "x": 920,
+              "y": 300
+            },
+            {
+              "x": 860,
+              "y": 410
+            },
+            {
+              "x": 860,
+              "y": 450
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "north-archer",
+        "x": 680,
+        "y": 350,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "north-gate-tower",
+        "mode": "post",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 8,
+        "facing": 3,
+        "moved": 0,
+        "distance": 0,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "north-archer",
+          "name": "林弦",
+          "role": "archer",
+          "maxHP": 100,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "north-gate-tower",
+          "post": {
+            "x": 680,
+            "y": 350
+          },
+          "cover": {
+            "x": 680,
+            "y": 350
+          },
+          "patrol": [
+            {
+              "x": 680,
+              "y": 350
+            }
+          ],
+          "leash": 0
+        }
+      },
+      {
+        "id": "south-watch",
+        "x": 851.1410141668383,
+        "y": 1688.8589858331623,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-west-post",
+        "mode": "life",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0,
+        "offDuty": true,
+        "towerTransitMs": 0,
+        "space": "village",
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 0,
+        "facing": 3,
+        "moved": 0,
+        "distance": 0,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "south-watch",
+          "name": "麦川",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-west-post",
+          "post": {
+            "x": 810,
+            "y": 1720
+          },
+          "cover": {
+            "x": 790,
+            "y": 1592
+          },
+          "patrol": [
+            {
+              "x": 810,
+              "y": 1720
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "south-patrol",
+        "x": 1023.0934140875064,
+        "y": 1680.1357771913697,
+        "hp": 180,
+        "dead": false,
+        "weaponId": "watch-blade",
+        "armorId": "watch-mail",
+        "postId": "south-east-post",
+        "mode": "patrol",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 0,
+        "facing": 0,
+        "moved": 0.15030000000004645,
+        "distance": 1.5002999999999291,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "south-patrol",
+          "name": "望禾",
+          "role": "melee",
+          "maxHP": 180,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-east-post",
+          "post": {
+            "x": 990,
+            "y": 1720
+          },
+          "cover": {
+            "x": 1020,
+            "y": 1590
+          },
+          "patrol": [
+            {
+              "x": 990,
+              "y": 1720
+            },
+            {
+              "x": 1030,
+              "y": 1680
+            },
+            {
+              "x": 950,
+              "y": 1630
+            }
+          ],
+          "leash": 300
+        }
+      },
+      {
+        "id": "south-archer",
+        "x": 1140,
+        "y": 1750,
+        "hp": 100,
+        "dead": false,
+        "weaponId": "watch-bow",
+        "armorId": "watch-leather",
+        "postId": "south-gate-tower",
+        "mode": "post",
+        "peaceMs": 1516.5466666666664,
+        "cooldownMs": 0,
+        "nav": {
+          "path": [],
+          "next": 0,
+          "failed": false,
+          "returning": false,
+          "queries": 0,
+          "visited": 0
+        },
+        "attack": null,
+        "serial": 0,
+        "patrol": 8,
+        "facing": 3,
+        "moved": 0,
+        "distance": 0,
+        "flashUntil": 0,
+        "targetId": null,
+        "chaseMs": 0,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "stuckMs": 0,
+        "definition": {
+          "id": "south-archer",
+          "name": "晴羽",
+          "role": "archer",
+          "maxHP": 100,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "south-gate-tower",
+          "post": {
+            "x": 1140,
+            "y": 1750
+          },
+          "cover": {
+            "x": 1140,
+            "y": 1750
+          },
+          "patrol": [
+            {
+              "x": 1140,
+              "y": 1750
+            }
+          ],
+          "leash": 0
+        }
+      }
+    ],
+    "enemies": [],
+    "history": [],
+    "critical": false,
+    "awaitingCheckpoint": false
+  }
+}

@@ -3,7 +3,7 @@ import type {Point} from './obstacles';
 export type FeedbackMode='A'|'B'|'C'|'D';
 export type FeedbackKind='guard-start'|'enemy-charge'|'enemy-strike'|'parry-contact'|'parry-perfect-contact'|'deflect-release'|'counter-start'|'counter-swing'|'counter-hit'|'afterguard';
 export type FeedbackMaterial='slime'|'leaf'|'straw';
-export type FeedbackEvent=Readonly<{id:string;kind:FeedbackKind;at:number;targetId:string;attackId:string;point:Readonly<Point>;incoming:Readonly<Point>;blade:Readonly<Point>;deflect:Readonly<Point>;quality:CounterKind;material:FeedbackMaterial;until?:number;alive?:boolean;depth?:number;legacyHit?:'hit'|'straw'}>;
+export type FeedbackEvent=Readonly<{id:string;kind:FeedbackKind;at:number;targetId:string;attackId:string;sourceContactId?:string;point:Readonly<Point>;incoming:Readonly<Point>;blade:Readonly<Point>;deflect:Readonly<Point>;quality:CounterKind;material:FeedbackMaterial;until?:number;alive?:boolean;depth?:number;legacyHit?:'hit'|'straw'}>;
 export const FEEDBACK={history:96,effects:32,reactions:24,contactLife:150,hitLife:115,afterguardLife:65,peak:60,recover:160,secondaryLife:95,release:20,counterMotion:20} as const;
 // 仅影响成功反馈；红刃在拨开后建立，沿正式反斩的收势衰减，不表示额外伤害。
 export const BLADE_GLOW={start:20,rise:40,fade:145,maxLife:450,width:6,edgeWidth:2.6} as const;
@@ -46,7 +46,7 @@ export class CombatFeedback {
   if(event.kind==='counter-hit') {const r=this.reactions.get(event.targetId);if(r&&event.alive!==false)r.hit=event;else if(event.alive===false)this.reactions.delete(event.targetId);}
   if(event.kind==='guard-start')this.glow=null;
   if(event.kind==='counter-start'){
-   if(this.glow&&this.glow.event.targetId===event.targetId)this.glow={...this.glow,counterId:event.attackId,until:Math.min(this.glow.until,event.until??this.glow.until)};
+   if(this.glow&&(event.sourceContactId?event.sourceContactId===this.glow.event.attackId:this.glow.event.targetId===event.targetId))this.glow={...this.glow,counterId:event.attackId,until:Math.min(this.glow.until,event.until??this.glow.until)};
    this.swings.push(event);if(this.swings.length>FEEDBACK.effects)this.swings.shift();
   }
   return true;

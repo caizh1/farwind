@@ -1,6 +1,7 @@
 import {synthFeedback,soundDuration,audioIdentity,FEEDBACK_AUDIO} from "./feedbackAudio";
 import {feedbackAudio,audibleFeedback,type FeedbackEvent,type FeedbackMode} from "./combatFeedback";
 import {synthSwordWindHowl} from './swordWindAudio';
+import type {XiaobaoEvent} from './xiaobaoCombat';
 export class Sound {
   context?: AudioContext;
   private level = 0.25;
@@ -14,6 +15,8 @@ export class Sound {
   private strikeVoices=new Map<string,AudioBufferSourceNode>();
   private variants=new Map<string,number>();
   private windBuffer?:AudioBuffer;
+  private xiaobaoBuffers=new Map<string,AudioBuffer>();
+  private flightVoice?:{source:AudioBufferSourceNode;gain:GainNode};
   private windVoices=new Map<AudioBufferSourceNode,GainNode>();
   audioEvents:{id:string;kind:string;sim:number;submitted:number;scheduled:number;latency:number|null;variant:number}[]=[];
   prepareFeedback() {
@@ -44,10 +47,36 @@ export class Sound {
     if(event.kind==='parry-contact'||event.kind==='parry-perfect-contact'||event.kind==='counter-hit')for(const bus of ['battle','noncritical'] as const){const g=this.buses![bus].gain;g.cancelScheduledValues(at);g.setValueAtTime(g.value,at);g.linearRampToValueAtTime(10**(-FEEDBACK_AUDIO.duckDb/20),at+.003);g.linearRampToValueAtTime(1,at+FEEDBACK_AUDIO.duckRestore);}
   }
   private silenceSwordWind(){for(const voice of this.windVoices.keys())voice.stop();this.windVoices.clear();}
-  silenceFeedback(){this.silenceSwordWind();for(const voice of this.voices)voice.stop();this.voices.clear();this.strikeVoices.clear();if(this.buses&&this.context)for(const bus of Object.values(this.buses)){bus.gain.cancelScheduledValues(this.context.currentTime);bus.gain.setValueAtTime(1,this.context.currentTime);}}
+  silenceFeedback(){this.xiaobaoFlight(false,0);this.silenceSwordWind();for(const voice of this.voices)voice.stop();this.voices.clear();this.strikeVoices.clear();if(this.buses&&this.context)for(const bus of Object.values(this.buses)){bus.gain.cancelScheduledValues(this.context.currentTime);bus.gain.setValueAtTime(1,this.context.currentTime);}}
   clearFeedback(){this.silenceFeedback();this.audioEvents=[];this.variants.clear();}
   diagnostic(){return {voices:this.voices.size,strikeVoices:this.strikeVoices.size,audioProfile:'双剑金属／同来招截停',windVoices:this.windVoices.size,windCached:!!this.windBuffer,cached:this.feedbackBuffers.size,events:this.audioEvents,state:this.context?.state??'unstarted',outputLatency:this.context?.outputLatency??null,buses:this.buses?Object.fromEntries(Object.entries(this.buses).map(([k,v])=>[k,v.gain.value])):null};}
   private route(kind:string){return this.buses?.[kind.startsWith('enemy-')?'threat':kind.startsWith('wind-')||['attack','attack-heavy','hit','finish','straw','straw-heavy'].includes(kind)?'battle':['guard','parry','parry-perfect','deflect','counter'].includes(kind)?'player':'noncritical']??this.output??this.context!.destination;}
+  private xiaobaoBuffer(kind:string){
+    const c=this.context!,old=this.xiaobaoBuffers.get(kind);if(old)return old;
+    const stone=kind==='rock'||kind==='unity',fire=kind==='fire',thunder=kind==='thunder'||kind==='chain',bell=['guard','landing','recover'].includes(kind),duration=kind==='cruise'?.4:thunder?.24:stone?.22:fire?.3:bell?.32:.14;
+    const buffer=c.createBuffer(1,Math.ceil(c.sampleRate*duration),c.sampleRate),data=buffer.getChannelData(0);let seed=4711,pink=0;
+    for(let i=0;i<data.length;i++){const t=i/c.sampleRate,u=t/duration;seed=seed*16807%2147483647;const noise=seed/1073741824-1;pink=.92*pink+.08*noise;
+      const envelope=kind==='cruise'?1:Math.min(1,t/.008)*(1-u)**2,frequency=bell?900:stone?82:thunder?124:fire?220:kind==='star'?760:380;
+      data[i]=envelope*(bell?(Math.sin(t*frequency*Math.PI*2)+.28*Math.sin(t*frequency*2.7*Math.PI*2))*.3:thunder?noise*.25+pink*.6:stone?pink*.8+Math.sin(t*frequency*Math.PI*2)*.22:fire?pink*.6:pink*.5+Math.sin(t*frequency*Math.PI*2)*.12);
+    }
+    this.xiaobaoBuffers.set(kind,buffer);return buffer;
+  }
+  xiaobao(event:XiaobaoEvent,distance:number,outside:boolean){
+    const c=this.context;if(!outside||!c||c.state!=='running'||!this.volume||distance>1100)return;
+    if(event.kind==='shield')return;
+    const kind=event.kind==='landing'?'landing':event.kind==='flight'?'flight':event.kind==='recover'?'recover':event.kind==='rest'?'guard':event.skill;
+    const key=`xiaobao:${kind}`,at=c.currentTime;if(at-(this.lastPlayed.get(key)??-Infinity)<.06)return;this.lastPlayed.set(key,at);
+    const source=c.createBufferSource(),gain=c.createGain();source.buffer=this.xiaobaoBuffer(kind);gain.gain.value=this.volume*Math.max(0,1-distance/1100)*.8;
+    source.connect(gain);gain.connect(this.buses?.battle??this.output??c.destination);
+    if(this.voices.size>=12){const oldest=this.voices.values().next().value!;oldest.stop();this.voices.delete(oldest);}this.voices.add(source);
+    source.onended=()=>{this.voices.delete(source);source.disconnect();gain.disconnect();};source.start();
+    this.audioEvents.push({id:event.id,kind:key,sim:event.at,submitted:performance.now(),scheduled:at,latency:c.outputLatency??null,variant:0});if(this.audioEvents.length>96)this.audioEvents.shift();
+  }
+  xiaobaoFlight(active:boolean,distance:number){
+    const c=this.context;if(!active||!c||!this.volume||distance>1100){if(this.flightVoice){this.flightVoice.source.stop();this.flightVoice.source.disconnect();this.flightVoice.gain.disconnect();this.flightVoice=undefined;}return;}
+    if(!this.flightVoice){const source=c.createBufferSource(),gain=c.createGain();source.buffer=this.xiaobaoBuffer('cruise');source.loop=true;gain.gain.value=0;source.connect(gain);gain.connect(this.buses?.battle??this.output??c.destination);source.start();this.flightVoice={source,gain};}
+    this.flightVoice.gain.gain.setTargetAtTime(this.volume*.22*Math.max(0,1-distance/1100),c.currentTime,.025);
+  }
   loops:{source:AudioBufferSourceNode;filter:BiquadFilterNode;gain:GainNode;target:number}[]=[];
   ambience(night:number,active:boolean){
     if(!active)this.silenceSwordWind();

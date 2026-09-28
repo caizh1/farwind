@@ -62,6 +62,9 @@ export const LIFE = {
   maxGateAway: 1,
   retryLimit: 3,
   pathRetryMs: 1800,
+  personalSpace: 18,
+  progressDistance: 12,
+  routeStuckMs: 8000,
   transferMs: 1500,
   pathNodesPerBatch: 64,
   speechMs: 4500,
@@ -464,7 +467,8 @@ export const PEOPLE: PersonDef[] = [
           begin + 3,
           "habit",
           i % 3 === 2
-            ? outdoor(1540, 1390)
+            ? // 共用临水长椅旁分配独立落脚点，避免三门弓卫争抢同一目标。
+              outdoor([1540, 1504, 1576][Math.floor(i / 3)], 1390)
             : indoor(
                 "barracks",
                 460 + (i % 5) * 110,

@@ -6,6 +6,11 @@ export type DialoguePortrait = {
 
 // 对话专属独立立绘；世界图集继续由场景加载，未知标识不替换成其他人的脸。
 export const dialoguePortraits = {
+  xiaobao: {
+    src: "/assets/xiaobao/portrait.webp",
+    alt: "小宝，短黑发、笑眼圆脸与小门牙，穿星星练功服和青绿披肩",
+    objectPosition: "50% 0%",
+  },
   healer: {
     src: "/assets/portraits/healer-neutral.webp",
     alt: "药师小满，棕色发髻，绿衣与米白围裙，手持药草和药篮",

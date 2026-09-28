@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run tests/skill-location.test.ts tests/skill-growth.test.ts tests/enemy-combat-v1.test.ts tests/slime-animation.test.ts tests/logic.test.ts tests/motion.test.ts tests/combat.test.ts tests/training.test.ts tests/map-expansion.test.ts tests/obstacles.test.ts tests/level-rework.test.ts tests/village-defense.test.ts tests/parry.test.ts tests/parry-v2.test.ts tests/parry-feedback-v3.test.ts tests/dialogue-portraits.test.ts tests/economy.test.ts tests/sword-wind-assets.test.ts tests/sword-wind.test.ts tests/east-defense.test.ts tests/village-raids.test.ts tests/village-integration.test.ts tests/day-night.test.ts tests/npc-life.test.ts tests/npc-life-combat.test.ts tests/npc-life-facility.test.ts tests/npc-navigation.test.ts tests/npc-speech.test.ts tests/npc-social.test.ts tests/npc-art.test.ts tests/sword-wind-audio.test.ts tests/water-motion.test.ts tests/safety-defense.test.ts",
+    "test": "vitest run tests/xiaobao.test.ts tests/skill-location.test.ts tests/skill-growth.test.ts tests/enemy-combat-v1.test.ts tests/slime-animation.test.ts tests/logic.test.ts tests/motion.test.ts tests/player-hurt.test.ts tests/combat.test.ts tests/training.test.ts tests/map-expansion.test.ts tests/obstacles.test.ts tests/level-rework.test.ts tests/village-defense.test.ts tests/parry.test.ts tests/parry-v2.test.ts tests/parry-feedback-v3.test.ts tests/parry-ranged.test.ts tests/dialogue-portraits.test.ts tests/economy.test.ts tests/sword-wind-assets.test.ts tests/sword-wind.test.ts tests/east-defense.test.ts tests/village-raids.test.ts tests/village-integration.test.ts tests/day-night.test.ts tests/npc-life.test.ts tests/npc-life-combat.test.ts tests/npc-life-facility.test.ts tests/npc-navigation.test.ts tests/npc-speech.test.ts tests/npc-social.test.ts tests/npc-art.test.ts tests/sword-wind-audio.test.ts tests/water-motion.test.ts tests/safety-defense.test.ts",
     "test:skill-growth": "npm run build -- --outDir .skill-growth-local/production && playwright test --config tools/playwright-skill-growth.config.ts",
     "test:e2e": "playwright test",
     "assets:sword-wind": "node tools/pack-sword-wind.mjs",
@@ -24,7 +24,11 @@
     "assets:sword-wind:audio": "node tools/export-sword-wind-audio.mjs",
     "test:sword-wind:audio": "playwright test --config tools/playwright-sword-wind-audio.config.ts",
     "test:defense-safety": "vitest run tests/safety-defense.test.ts && playwright test --config tools/playwright-safety.config.ts",
-    "assets:npc-life": "node tools/prepare-npc-life-art.mjs"
+    "assets:npc-life": "node tools/prepare-npc-life-art.mjs",
+    "assets:player-hurt": "node tools/pack-player-hurt.mjs",
+    "test:player-hurt": "vitest run tests/player-hurt.test.ts && playwright test --config tools/playwright-player-hurt.config.ts",
+    "assets:xiaobao": "node tools/pack-xiaobao.mjs",
+    "test:xiaobao": "vitest run tests/xiaobao.test.ts && playwright test --config tools/playwright-xiaobao.config.ts"
   },
   "dependencies": {
     "phaser": "4.2.1"

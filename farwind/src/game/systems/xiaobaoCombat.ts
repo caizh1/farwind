@@ -1,0 +1,478 @@
+import { Xiaobao } from "./xiaobao";
+import { XIAOBAO } from "../../data/xiaobao";
+import { XIAOBAO_SKILLS as SKILLS, XIAOBAO_STATS as STATS, xiaobaoBattlePose,
+  type XiaobaoSkill, type XiaobaoBattleClip, type XiaobaoTask } from "../../data/xiaobaoCombat";
+import { zoneFor, inActivity } from "../../data/defenseZones";
+import { regionAt } from "../../data/village";
+import type { GateId } from "../../data/defense";
+import { clearMeleeLine, clearMotionLine, motionBlocked, type Point } from "./obstacles";
+import { enemyNavigation, type EnemyBody } from "./enemy";
+import { aim, attackTouches, type EnemyContact } from "./enemyAttack";
+import { initialXiaobao, type XiaobaoState, type XiaobaoCast, type XiaobaoEffect } from "./xiaobaoState";
+import type { DamageEvent, ReleasedAttack } from "./damage";
+const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
+const point = (p: Point): Point => ({ x: p.x, y: p.y });
+export type XiaobaoAlly = Point & { id: string; hp: number; maxHP: number; role: "player" | "guard" | "resident" | "self" | "facility"; threatAt: number | null };
+export type XiaobaoFront = { key: string; gate: GateId; major: boolean; priority: number; point: Point; enemies: string[]; injured: boolean };
+export type XiaobaoEvent = { id: string; kind: "release" | "hit" | "flight" | "landing" | "shield" | "rest" | "recover";
+  skill: XiaobaoSkill; at: number; point: Point; from?: Point; target?: string; damage?: number };
+export type XiaobaoEnvironment = {
+  now: number; minute: number; player: Point & { hp: number; outside: boolean; region: string };
+  enemies: EnemyBody[]; allies: XiaobaoAlly[]; fronts: () => XiaobaoFront[];
+  recent: { id: string; at: number } | null;
+  move: (body: Point, nav: EnemyBody["nav"], target: Point, speed: number, dt: number,
+    budget: { queries: number }, allowed: (p: Point) => boolean, peers?: Point[]) => number;
+  hit: (enemy: EnemyBody, event: DamageEvent, released: ReleasedAttack, control: number, knock: number, task: XiaobaoTask, at: number) => { applied: boolean; killed: boolean; damage: number };
+  blocked?: (p: Point) => boolean; clear?: (a: Point, b: Point) => boolean; melee?: (a: Point, b: Point) => boolean;
+  takeoffClear?: (p: Point) => boolean; message: (s: string) => void;
+};
+// 日常序列保持原实现。长期任务与短时动作分开，释放实例与施法者生命分开。
+export class XiaobaoCombat extends Xiaobao {
+  data: XiaobaoState = initialXiaobao();
+  nav = enemyNavigation();
+  facing = 0;
+  status = "听风待机";
+  targetId: string | null = null;
+  private nextDecision = 0;
+  private fronts: XiaobaoFront[] = [];
+  private hurtUntil = 0;
+  private stuck = 0;
+  private patrol = 0;
+  private now = 0;
+  events: XiaobaoEvent[] = [];
+  visuals: XiaobaoEvent[] = [];
+  history: XiaobaoEvent[] = [];
+  metrics = { decisions: 0, hits: 0, flights: 0, cancelled: 0, landingChecks: 0, steps: 0 };
+  constructor() { super(); }
+  bind(state: XiaobaoState, restore = false) {
+    this.data = state; this.x = state.x; this.y = state.y;
+    if (restore) {
+      this.events = []; this.visuals = []; this.history = []; this.nav = enemyNavigation(); this.nextDecision = state.clock;
+      this.targetId = null; this.fronts = []; this.stuck = 0; this.demonstration = false;
+      this.elapsed = 0; this.motion.reset();
+      // 未支付的前摇统一取消；已释放近战、弹体和领域只推进余下阶段。
+      if (state.cast && !state.cast.released) { state.cast = null; state.recovery = Math.max(state.recovery, 300); }
+      if (!this.airborne && motionBlocked(this.x, this.y)) {
+        const safe = this.candidates(this).find(p => !motionBlocked(p.x, p.y));
+        if (safe) { this.x = safe.x; this.y = safe.y; state.x = safe.x; state.y = safe.y; }
+      }
+    }
+  }
+  override reset() { super.reset(); this.bind(initialXiaobao(), true); }
+  get airborne() { return !!this.data.flight && this.data.flight.stage !== "takeoff"; }
+  get available() { return this.data.hp > 0 && !this.data.rest && !this.airborne; }
+  get busy() { return !!this.data.cast || !!this.data.flight || !!this.data.command || this.data.effects.length > 0; }
+  protection(id: string) {
+    return { shield: this.data.shields.find(s => s.id === id && s.remaining > 0), reduction: id === "xiaobao" && this.data.reduction > 0 ? .8 : 0 };
+  }
+  emit(event: Omit<XiaobaoEvent, "at">) {
+    const e = { ...event, at: this.data.clock }; this.events.push(e); this.visuals.push(e); this.history.push(e);
+    if (this.visuals.length > 48) this.visuals.shift(); if (this.history.length > 96) this.history.shift();
+  }
+  drain() { return this.events.splice(0); }
+  cancel(recovery = 300) { if (this.data.cast) this.metrics.cancelled++; this.data.cast = null; this.data.recovery = Math.max(this.data.recovery, recovery); }
+  taskChanged() { if(this.data.cast&&!this.data.cast.released)this.cancel(); this.data.command = null; this.data.wait = null; this.targetId = null; this.demonstration = false; this.nav = enemyNavigation(); }
+  command(kind: NonNullable<XiaobaoState["command"]>["kind"] | "wait" | "return", env: XiaobaoEnvironment) {
+    if (this.data.task !== "follow") throw Error("请先委托小宝与你出征。");
+    if (kind === "wait") { this.data.wait = { ...point(this), region: env.player.region }; this.data.command = null; return; }
+    if (kind === "return") { this.data.wait = null; this.data.command = null; this.targetId = null; return; }
+    const target = env.recent && env.now - env.recent.at <= 1500 ? env.enemies.find(e => e.id === env.recent!.id && e.hp > 0 && !e.disabled) : undefined;
+    if (kind !== "protect" && (!env.player.outside || !target)) throw Error("请先攻击一个仍存活的敌人，再下达指令。");
+    this.data.command = { kind, target: target?.id ?? null, center: point(target ?? env.player), remaining: 5000 };
+    this.data.wait = null;
+  }
+  transitioned(destination: Point, env?: XiaobaoEnvironment) {
+    if (this.data.task !== "follow") return;
+    this.data.wait = null; this.data.command = null; this.targetId = null;
+    this.cancel();
+    if (this.data.flight) {
+      const safe = this.candidates(destination).find(p => !(env?.blocked?.(p) ?? motionBlocked(p.x, p.y)));
+      if (safe) { this.data.flight.active = false; this.data.flight.goal = safe; this.data.flight.safe = safe;
+        this.data.flight.origin = point(this); this.data.flight.leg = distance(this, safe); this.data.flight.stage = "cruise"; this.data.flight.age = 0; }
+      return;
+    }
+    const safe = this.candidates({ x: destination.x + 76, y: destination.y + 25 }).find(p => !(env?.blocked?.(p) ?? motionBlocked(p.x, p.y)));
+    if (safe) { this.x = safe.x; this.y = safe.y; this.data.x = safe.x; this.data.y = safe.y; this.motion.reset(); this.nav = enemyNavigation(); }
+  }
+  receive(contact: EnemyContact, source: EnemyBody, damage: (event: DamageEvent) => { applied: boolean; hp: number; damage: number }, now: number) {
+    if (!this.available || !contact.projectileId && source.hp <= 0 || source.disabled || contact.attack.cancelled || contact.attack.resolved ||
+      !attackTouches(contact, this) || !clearMeleeLine(contact.origin, this)) return false;
+    const hit = damage({ sourceId: source.id, targetId: "xiaobao", attackId: contact.attack.attackId,
+      amount: contact.attack.damage, sourceType: contact.projectileId?'enemy-shot':"enemy-melee", eventId: contact.projectileId?null:(source as EnemyBody & { eventId?: string }).eventId ?? null });
+    if (!hit.applied) return false;
+    contact.attack.resolved = true; this.data.hp = hit.hp; this.data.peace = 0; this.hurtUntil = this.data.clock + 180;
+    if (hit.hp === 0) {
+      this.cancel(0); this.data.flight=null; this.data.command = null; this.data.rest = 30000; this.status = "护风调息";
+      this.emit({ id: `rest:${++this.data.serial}`, kind: "rest", skill: "guard", point: point(this) });
+    }
+    this.now = now;
+    return true;
+  }
+  can(skill: Exclude<XiaobaoSkill, "flight">, reserve = false) {
+    const s = SKILLS[skill];
+    if (!this.available || this.data.recovery > 0 || this.data.cooldowns[skill] > 0 || this.data.qi < s.qi + (reserve && s.qi > 0 ? 18 : 0)) return false;
+    if (["star", "blade"].includes(skill) && this.data.effects.filter(e => ["star", "blade"].includes(e.skill)).length >= 2) return false;
+    if (["rock", "fire", "unity"].includes(skill) && this.data.effects.filter(e => ["rock", "fire", "unity"].includes(e.skill)).length >= 2) return false;
+    if (skill === "chain" && this.data.effects.some(e => e.skill === "chain")) return false;
+    return true;
+  }
+  start(skill: Exclude<XiaobaoSkill, "flight">, target: EnemyBody | null, center?: Point) {
+    if (this.data.cast || !this.can(skill)) return false;
+    const goal = point(center ?? target ?? this), id = `xiaobao:${++this.data.serial}`;
+    this.data.cast = { id, skill, age: 0, stage: 0, released: false, origin: point(this), center: goal,
+      direction: aim(this, goal), target: target?.id ?? null, task: this.data.task };
+    this.facing = this.direction(this.data.cast.direction); this.demonstration = false; this.status = SKILLS[skill].name;
+    return true;
+  }
+  direction(d: Point) { return Math.abs(d.x) > Math.abs(d.y) ? d.x < 0 ? 2 : 3 : d.y < 0 ? 1 : 0; }
+  valid(e: EnemyBody, env: XiaobaoEnvironment, origin: Point, range: number) {
+    return e.hp > 0 && !e.disabled && distance(origin, e) <= range + 1e-7 && (env.melee ?? clearMeleeLine)(origin, e);
+  }
+  shield(env: XiaobaoEnvironment, radius: number, ms: number, id: string) {
+    const allies = env.allies.filter(a => a.hp > 0 && a.role !== "facility" && distance(this, a) <= radius)
+      .sort((a, b) => Number(b.threatAt !== null) - Number(a.threatAt !== null) || a.hp / a.maxHP - b.hp / b.maxHP || distance(this, a) - distance(this, b) || a.id.localeCompare(b.id)).slice(0, 5);
+    for (const a of allies) {
+      const old = this.data.shields.find(s => s.id === a.id);
+      if (old) { old.amount = Math.max(old.amount, 120); old.remaining = Math.max(old.remaining, ms); }
+      else this.data.shields.push({ id: a.id, amount: 120, remaining: ms });
+      this.emit({ id: `${id}:${a.id}`, kind: "shield", skill: "guard", point: point(a), target: a.id });
+    }
+  }
+  hit(e: EnemyBody, c: XiaobaoCast, stage: number, amount: number, env: XiaobaoEnvironment, control = 0, knock = 0, from = c.center) {
+    if (e.hp <= 0 || e.disabled) return false;
+    const event: DamageEvent = { sourceId: "xiaobao", targetId: e.id, attackId: `${c.id}:${stage}:${e.id}`, amount,
+      sourceType: ["palm", "triple", "rescue"].includes(c.skill) ? "companion-melee" : ["star", "blade"].includes(c.skill) ? "companion-shot" : "companion-element",
+      eventId: (e as EnemyBody & { eventId?: string }).eventId ?? null };
+    const source: ReleasedAttack = Object.freeze({ sourceId: "xiaobao", faction: "village", attackId: event.attackId, amount,
+      sourceType: event.sourceType as ReleasedAttack["sourceType"], eventId: event.eventId });
+    const hit = env.hit(e, event, source, Math.min(800, control), knock, c.task, this.now);
+    if (!hit.applied) return false;
+    this.data.peace = 0; this.metrics.hits++;
+    if (this.data.support) { this.data.support.hits++; if (hit.killed) this.data.support.kills++; }
+    this.emit({ id: event.attackId, kind: "hit", skill: c.skill, point: point(e), from: point(from), target: e.id, damage: hit.damage });
+    return true;
+  }
+  castTick(dt: number, env: XiaobaoEnvironment) {
+    const c = this.data.cast; if (!c) return;
+    const s = SKILLS[c.skill]; c.age += dt;
+    if (!c.released && c.target && !env.enemies.some(e => e.id === c.target && this.valid(e, env, this, s.range))) { this.cancel(); return; }
+    while (c.stage < (c.skill === "triple" ? 3 : 1) && c.age + 1e-7 >= s.times[c.stage]) {
+      const target = env.enemies.find(e => e.id === c.target);
+      if (!c.released) {
+        if (!this.can(c.skill) || c.target && (!target || !this.valid(target, env, this, s.range))) { this.cancel(); return; }
+        c.released = true; this.data.qi -= s.qi; this.data.cooldowns[c.skill] = s.cooldown;
+        this.emit({ id: c.id, kind: "release", skill: c.skill, point: point(this), from: point(c.center) });
+      }
+      if (c.skill === "palm" || c.skill === "triple") {
+        if (c.skill === "triple") this.groundStep(c.direction.x * 12, c.direction.y * 12, env);
+        const candidates = env.enemies.filter(e => this.valid(e, env, this, s.range) &&
+          ((e.x - this.x) * c.direction.x + (e.y - this.y) * c.direction.y) / Math.max(.001, distance(this, e)) >= Math.cos(50 * Math.PI / 180))
+          .sort((a, b) => distance(this, a) - distance(this, b) || a.id.localeCompare(b.id)).slice(0, 3);
+        for (const e of candidates) this.hit(e, c, c.stage, s.damage[c.stage], env, c.skill === "palm" ? 180 : c.stage === 2 ? 350 : 120, c.skill === "palm" ? 18 : c.stage === 2 ? 30 : 0, this);
+      } else if (c.skill === "guard") { this.shield(env, 96, 2500, c.id); this.data.reduction = 600; }
+      else if (c.skill === "thunder" && target && this.valid(target, env, this, s.range)) this.hit(target, c, 0, 180, env, 600, 0, this);
+      else if (c.skill !== "rescue") {
+        const effect: XiaobaoEffect = { ...structuredClone(c), age: s.times[0]-dt, stage: 0, hit: [], last: point(this), returnAt: s.range, travelled: 0 };
+        this.data.effects.push(effect);
+      }
+      c.stage++;
+    }
+    if (c.skill === "rescue" && c.released && c.stage === 1) {
+      const d = distance(this, c.center), step = Math.min(d, 700 * dt / 1000, Math.max(0, 140 - distance(c.origin, this)));
+      this.groundStep(c.direction.x * step, c.direction.y * step, env);
+      if (distance(this, c.center) <= 2 || c.age >= 280 || step < .001) {
+        for (const e of env.enemies.filter(e => this.valid(e, env, this, 48)).sort((a,b)=>distance(this,a)-distance(this,b)||a.id.localeCompare(b.id)).slice(0,2)) this.hit(e,c,0,96,env,400,0,this);
+        c.stage = 2;
+      }
+    }
+    if (c.age + 1e-7 >= s.recovery) this.data.cast = null;
+  }
+  groundStep(dx: number, dy: number, env: XiaobaoEnvironment) {
+    const to = { x: this.x + dx, y: this.y + dy };
+    if (!(env.blocked?.(to) ?? motionBlocked(to.x, to.y)) && (env.clear ?? clearMotionLine)(this, to)) { this.x = to.x; this.y = to.y; }
+  }
+  effectStages(e: XiaobaoEffect, env: XiaobaoEnvironment, fireHits = new Set<string>()) {
+    const s = SKILLS[e.skill];
+    while (e.stage < s.times.length && e.age + 1e-7 >= s.times[e.stage]) {
+      const stage = e.stage++;
+      if (e.skill === "chain") {
+        const target = stage === 0 ? env.enemies.find(t => t.id === e.target && this.valid(t, env, e.origin, 440)) :
+          env.enemies.filter(t => !e.hit.includes(t.id) && this.valid(t, env, e.last, 150)).sort((a,b)=>distance(e.last,a)-distance(e.last,b)||a.id.localeCompare(b.id))[0];
+        if (!target || e.hit.includes(target.id)) { e.stage = s.times.length; break; }
+        const from = point(stage === 0 ? e.origin : e.last); e.hit.push(target.id); e.last = point(target);
+        this.hit(target, e, stage, s.damage[stage], env, 250, 0, from);
+      } else {
+        const radius = e.skill === "rock" && stage > 0 ? 70 : s.radius;
+        for (const t of env.enemies.filter(t => this.valid(t, env, e.center, radius)).sort((a,b)=>a.id.localeCompare(b.id))) {
+          const key = `${stage}:${t.id}`;
+          if (e.hit.includes(key)) continue;
+          e.hit.push(key);
+          const fire = e.skill === "fire" || e.skill === "unity" && stage > 0 && stage < 6;
+          const fireKey = `${this.now}:${t.id}`;
+          if (fire && fireHits.has(fireKey)) continue;
+          if (fire) fireHits.add(fireKey);
+          this.hit(t, e, stage, s.damage[stage], env, e.skill === "rock" && stage === 0 ? 450 : e.skill === "unity" && stage === 6 ? 600 : 0);
+        }
+        this.emit({ id: `${e.id}:pulse:${stage}`, kind: "release", skill: e.skill, point: point(e.center) });
+      }
+    }
+  }
+  effectsTick(dt: number, env: XiaobaoEnvironment) {
+    const fireHits = new Set<string>();
+    // 同时同源领域先处理伤害较大的实例，避免重叠火域重复扣血。
+    for (const e of [...this.data.effects].sort((a,b)=>Number(b.skill === "fire")-Number(a.skill === "fire")||a.id.localeCompare(b.id))) {
+      e.age += dt;
+      if (["star", "blade"].includes(e.skill)) this.shot(e, dt, env); else this.effectStages(e, env, fireHits);
+    }
+    this.data.effects = this.data.effects.filter(e => ["star", "blade"].includes(e.skill) ? e.stage < 2 : e.stage < SKILLS[e.skill].times.length);
+  }
+  shot(e: XiaobaoEffect, dt: number, env: XiaobaoEnvironment) {
+    const blade = e.skill === "blade", range = blade ? e.returnAt : 480, speed = blade ? 600 : 700;
+    let remaining = speed * dt / 1000;
+    while (remaining > 1e-7 && e.stage < 2) {
+      const phase = blade ? e.stage : 0, limit = phase ? e.returnAt * 2 : range, length = Math.min(remaining, Math.max(0, limit - e.travelled));
+      const direction = { x: e.direction.x * (phase ? -1 : 1), y: e.direction.y * (phase ? -1 : 1) }, old = point(e.last);
+      const next = { x: old.x + direction.x * length, y: old.y + direction.y * length };
+      let wall = 1;
+      if (!(env.melee ?? clearMeleeLine)(old, next)) {
+        let lo = 0, hi = 1;
+        for (let i = 0; i < 16; i++) { const u=(lo+hi)/2,p={x:old.x+(next.x-old.x)*u,y:old.y+(next.y-old.y)*u}; if((env.melee??clearMeleeLine)(old,p))lo=u;else hi=u; }
+        wall = lo;
+      }
+      const touches = env.enemies.filter(t => t.hp > 0 && !t.disabled && !e.hit.includes(`${phase}:${t.id}`)).map(t => {
+        const dx=next.x-old.x,dy=next.y-old.y,fx=old.x-t.x,fy=old.y-t.y,a=dx*dx+dy*dy,b=2*(fx*dx+fy*dy),c=fx*fx+fy*fy-(blade?22:10)**2,disc=b*b-4*a*c;
+        return { t, u: c<=0?0:a>0&&disc>=0?(-b-Math.sqrt(disc))/(2*a):Infinity };
+      }).filter(h=>h.u>=0&&h.u<=wall&&h.u<=1&&(env.melee??clearMeleeLine)(old,h.t)).sort((a,b)=>a.u-b.u||a.t.id.localeCompare(b.t.id));
+      for (const { t, u } of touches) {
+        const count=e.hit.filter(k=>k.startsWith(`${phase}:`)).length,cap=blade?4:2;
+        if(count>=cap)break;
+        e.hit.push(`${phase}:${t.id}`); this.hit(t,e,phase,blade?phase?54:90:count?72:96,env,0,0,old);
+        if(!blade&&count+1===cap){e.stage=2;e.last={x:old.x+(next.x-old.x)*u,y:old.y+(next.y-old.y)*u};return;}
+      }
+      e.last={x:old.x+(next.x-old.x)*wall,y:old.y+(next.y-old.y)*wall};e.travelled+=length*wall;remaining-=length;
+      if(wall<1||e.travelled+1e-7>=limit){
+        if(blade&&!phase){e.returnAt=e.travelled;e.stage=1;}else e.stage=2;
+      }
+      if(length<1e-7){if(blade&&!phase)e.stage=1;else e.stage=2;}
+    }
+    if(e.age>SKILLS[e.skill].times[0]+1500)e.stage=2;
+  }
+  candidates(center: Point) {
+    return [point(center), ...Array.from({length:15},(_,i)=>({x:center.x+Math.cos(i*Math.PI/4)*(i<8?88:130),y:center.y+Math.sin(i*Math.PI/4)*(i<8?88:130)}))];
+  }
+  landingPoints(center: Point, env: XiaobaoEnvironment) {
+    return this.candidates(center).filter(p => {
+      this.metrics.landingChecks++;
+      return !(env.blocked?.(p) ?? motionBlocked(p.x,p.y)) && !env.allies.some(a=>a.id!=='xiaobao'&&a.hp>0&&distance(p,a)<30) &&
+        !env.enemies.some(e=>e.hp>0&&!e.disabled&&distance(p,e)<34);
+    }).slice(0,3);
+  }
+  beginFlight(front: XiaobaoFront, env: XiaobaoEnvironment) {
+    if(this.data.rest||this.data.cooldowns.flight||this.data.flight||!this.available)return false;
+    if(env.takeoffClear&&!env.takeoffClear(this))return false;
+    const choices=this.landingPoints(front.point,env),safe=this.landingPoints(zoneFor(front.gate).intercept,env)[0];
+    if(!choices.length||!safe||distance(this,choices[0])>5000)return false;
+    this.cancel(100);this.demonstration=false;this.targetId=null;
+    const key=`${this.data.alarmCycle}:${front.key}`;
+    this.data.flight={id:`flight:${++this.data.serial}`,key,gate:front.gate,priority:front.priority,stage:'takeoff',age:0,origin:point(this),
+      goal:choices[0],backups:choices.slice(1),safe,travelled:0,leg:distance(this,choices[0]),rerouted:false,active:true,imprint:false};
+    this.data.support={key:front.key,gate:front.gate,age:0,hits:0,kills:0,injured:front.injured};
+    this.status="踏风飞援 · 起飞";return true;
+  }
+  flightTick(dt: number, env: XiaobaoEnvironment) {
+    const f=this.data.flight;if(!f)return;
+    f.age+=dt;
+    const front=this.fronts.find(t=>t.major&&t.gate===f.gate&&t.key===this.data.support?.key);
+    if(!front&&f.active){
+      f.active=false;
+      if(f.stage==='takeoff'){this.data.flight=null;this.status="危机已解除";return;}
+      const nearby=this.landingPoints(this,env)[0];if(nearby){f.goal=nearby;f.origin=point(this);f.leg=distance(this,nearby);f.stage='cruise';f.age=0;}
+    }
+    if(f.stage==='takeoff'){
+      if(f.age>=200){
+        this.data.cooldowns.flight=30000;this.data.responded.push(f.key);this.data.responded=this.data.responded.slice(-32);
+        f.stage='cruise';f.age=0;this.metrics.flights++;
+        this.emit({id:f.id,kind:'flight',skill:'flight',point:point(this),from:point(f.goal)});
+      }return;
+    }
+    if(f.stage==='cruise'){
+      const d=distance(this,f.goal),step=Math.min(d,1600*dt/1000);if(d>0){this.facing=this.direction(aim(this,f.goal));this.x+=(f.goal.x-this.x)/d*step;this.y+=(f.goal.y-this.y)/d*step;f.travelled=Math.min(5000,f.travelled+step);}
+      this.status="踏风飞援 · 巡航";
+      if(distance(this,f.goal)<.001&&f.age>=200){
+        if(this.landingPoints(f.goal,env).some(p=>distance(p,f.goal)<1)) {f.stage='landing';f.age=0;}
+        else {const backup=f.backups.find(p=>this.landingPoints(p,env).some(q=>distance(p,q)<1));
+          if(backup){f.origin=point(this);f.goal=backup;f.leg=distance(this,backup);f.age=0;f.backups=f.backups.filter(p=>p!==backup);}
+          else {f.stage='hover';f.age=0;}}
+      }return;
+    }
+    if(f.stage==='hover'){
+      this.status="飞援待降 · 寻找安全地面";
+      if(f.age>=1000&&this.data.clock>=this.nextLandingCheck){this.nextLandingCheck=this.data.clock+150;
+        const safe=this.landingPoints(f.safe,env)[0];if(safe){f.goal=safe;f.origin=point(this);f.leg=distance(this,safe);f.stage='cruise';f.age=0;f.active=false;}}
+      return;
+    }
+    this.status="踏风飞援 · 降落";
+    if(f.age>=250){
+      if(!this.landingPoints(f.goal,env).some(p=>distance(p,f.goal)<1)){f.stage='hover';f.age=0;return;}
+      if(f.active&&front&&!f.imprint){f.imprint=true;this.shield(env,120,2000,`${f.id}:imprint`);}
+      this.emit({id:`${f.id}:land`,kind:'landing',skill:'flight',point:point(this)});
+      this.data.flight=null;this.data.recovery=0;
+    }
+  }
+  private nextLandingCheck=0;
+  choose(env: XiaobaoEnvironment) {
+    this.metrics.decisions++;
+    this.fronts=env.fronts().sort((a,b)=>b.priority-a.priority||distance(this,a.point)-distance(this,b.point)||a.key.localeCompare(b.key));
+    const major=this.fronts.filter(f=>f.major);
+    if(major.length&&!this.data.alarmActive){this.data.alarmActive=true;this.data.alarmCycle++;this.data.responded=[];}
+    if(!major.length)this.data.alarmActive=false;
+    const urgent=env.allies.filter(a=>a.hp>0&&a.threatAt!==null&&a.threatAt-env.now<=600&&distance(this,a)<600).sort((a,b)=>a.threatAt!-b.threatAt!||a.hp/a.maxHP-b.hp/b.maxHP||a.id.localeCompare(b.id))[0];
+    const protectPlayer=env.player.hp<30&&env.allies.some(a=>a.id==='player'&&a.threatAt!==null&&a.threatAt-env.now<=600);
+    const front=major.find(f=>!this.data.responded.includes(`${this.data.alarmCycle}:${f.key}`));
+    if(this.data.flight){
+      const f=this.data.flight;
+      if(front&&front.priority>f.priority&&f.stage==='cruise'&&!f.rerouted&&f.age<Math.max(200,f.leg/1600*1000)/2&&f.travelled+distance(this,front.point)<=5000){
+        const landing=this.landingPoints(front.point,env)[0];if(landing){f.goal=landing;f.origin=point(this);f.leg=distance(this,landing);f.age=0;f.rerouted=true;f.gate=front.gate;f.priority=front.priority;f.key=`${this.data.alarmCycle}:${front.key}`;this.data.responded.push(f.key);
+          this.data.support={key:front.key,gate:front.gate,age:0,hits:0,kills:0,injured:front.injured};}
+      }return;
+    }
+    if(!this.available)return;
+    if(this.data.task==='follow'&&env.player.outside&&env.player.hp<=0){if(this.data.cast&&!this.data.cast.released)this.cancel();return;}
+    if(front&&(this.data.task!=='follow'||this.data.autoSupport)&&!protectPlayer&&distance(this,front.point)>240){
+      if(this.beginFlight(front,env))return;
+      if(this.data.cooldowns.flight>0){this.status="飞援冷却 · 沿地面支援";this.data.support??={key:front.key,gate:front.gate,age:0,hits:0,kills:0,injured:front.injured};}
+    }
+    if(protectPlayer)this.status="先护住旅人";
+    if(this.data.cast)return;
+    const pending=this.data.command;
+    if(pending){
+      const target=env.enemies.find(e=>e.id===pending.target);
+      if(pending.kind==='protect'){if(urgent&&distance(this,urgent)<=96&&this.start('guard',null)){this.data.command=null;return;}}
+      else if(!target||target.hp<=0||target.disabled||!env.player.outside){this.data.command=null;env.message("指定目标已失效，指令已取消。");}
+      else if(pending.kind==='focus')this.targetId=target.id;
+      else if(this.valid(target,env,this,SKILLS[pending.kind].range)){
+        if(this.start(pending.kind,target,pending.center)){this.data.command=null;return;}
+      }else if(!(env.melee??clearMeleeLine)(this,target)){this.data.command=null;env.message("指定目标被地形遮挡，指令已取消。");}
+    }
+    if(urgent&&distance(this,urgent)<=96&&this.can('guard')){this.start('guard',null);return;}
+    const anchor=this.anchor(env),support=this.data.support,gate=support?.gate??(this.data.gate==='all'?this.fronts[0]?.gate:this.data.gate);
+    const candidates=env.enemies.filter(e=>this.valid(e,env,this,600)&&this.allowed(e,env,anchor,gate)&&(
+      this.data.task==='follow'&&!support ? env.player.outside&&(e.targetId==='player'||e.targetId==='xiaobao'||(e.playerAggroUntil??0)>env.now||env.recent?.id===e.id&&env.now-env.recent.at<=1500||this.data.command?.target===e.id) :
+      this.fronts.some(f=>f.enemies.includes(e.id))||e.targetId==='xiaobao'||env.allies.some(a=>a.threatAt!==null&&e.targetId===a.id)));
+    candidates.sort((a,b)=>Number(!!b.attack&&!b.attack.cancelled&&!b.attack.resolved)-Number(!!a.attack&&!a.attack.cancelled&&!a.attack.resolved)||
+      Number(b.id===this.targetId)-Number(a.id===this.targetId)||distance(this,a)-distance(this,b)||a.id.localeCompare(b.id));
+    const target=candidates[0];
+    if(!target){this.targetId=null;return;}
+    if(this.data.task==='follow'&&!support&&!this.data.wait&&distance(this,env.player)>180){this.targetId=null;return;}
+    this.targetId=target.id;this.data.peace=0;
+    const d=distance(this,target),cluster=candidates.filter(e=>distance(target,e)<=110).length,wide=candidates.filter(e=>distance(target,e)<=200).length;
+    const reserve=this.data.tactic==='steady'&&!!urgent;
+    const picks: Exclude<XiaobaoSkill,'flight'>[]=[];
+    if(urgent&&distance(this,urgent)<=140&&distance(this,urgent)>96)picks.push('rescue');
+    if(this.data.tactic==='full'&&wide>=4||wide>=3&&urgent&&urgent.hp/urgent.maxHP<.3)picks.push('unity');
+    if(cluster>=3)picks.push('rock');
+    if(cluster>=2)picks.push('fire');
+    if(candidates.length>=3)picks.push('chain','blade');
+    if(target.type==='spore'||urgent)picks.push('thunder');
+    if(d<=96&&target.hp<=72)picks.push('palm');
+    if(d<=112&&target.hp>72)picks.push('triple');
+    picks.push('star','palm');
+    for(const skill of picks)if(d<=SKILLS[skill].range&&this.can(skill,reserve)){this.start(skill,target,skill==='rescue'?point(urgent??target):undefined);return;}
+  }
+  anchor(env: XiaobaoEnvironment): Point {
+    if(this.data.support)return zoneFor(this.data.support.gate).intercept;
+    if(this.data.task==='follow')return this.data.wait??env.player;
+    if(this.data.task==='guard'&&this.data.gate!=='all')return zoneFor(this.data.gate).intercept;
+    return XIAOBAO.home;
+  }
+  allowed(p: Point, env: XiaobaoEnvironment, anchor: Point, gate?: GateId) {
+    if(this.data.wait&&!this.data.support)return distance(p,this.data.wait)<=120;
+    if(this.data.task==='follow'&&!this.data.support)return distance(p,env.player)<=320;
+    if(gate)return inActivity(gate,p)||distance(p,zoneFor(gate).intercept)<=80;
+    return this.data.task==='guard'||distance(p,anchor)<=600;
+  }
+  travel(env: XiaobaoEnvironment, dt: number, budget: { queries: number }) {
+    const anchor=this.anchor(env),front=this.fronts.find(f=>this.data.gate==='all'||this.data.gate===f.gate||this.data.support?.gate===f.gate);
+    let destination:Point=anchor,speed=170;
+    const target=env.enemies.find(e=>e.id===this.targetId&&e.hp>0&&!e.disabled);
+    if(target){destination=target;speed=230;if(distance(this,target)<80)return;}
+    else if(this.data.support||front&&this.data.task!=='follow'){destination=front?.point??anchor;speed=420;}
+    else if(this.data.task==='follow'){
+      destination=this.data.wait??{x:env.player.x+82,y:env.player.y+24};
+      if(distance(this,destination)<30)return;
+      speed=distance(this,env.player)>360?280:170;
+    }else if(this.data.task==='guard'&&this.data.gate==='all'){
+      const route=[XIAOBAO.home,{x:1180,y:960},{x:810,y:1000},{x:780,y:720}];destination=route[this.patrol%route.length];speed=90;
+      if(distance(this,destination)<12){this.patrol++;return;}
+    }else if(distance(this,anchor)<10)return;
+    // 正式村道长途先到近处路点，再在480局部半径内绕障。
+    destination=this.route(destination,env);
+    const old=point(this),allowed=(p:Point)=>!target||this.allowed(p,env,anchor,this.data.support?.gate??(this.data.gate==='all'?front?.gate:this.data.gate));
+    env.move(this,this.nav,destination,speed,dt/1000,budget,allowed,env.allies.filter(a=>a.id!=='xiaobao'));
+    const dx=this.x-old.x,dy=this.y-old.y;
+    this.motion.update({dx,dy,dt:dt/1000});
+    if(Math.hypot(dx,dy)>.001){this.facing=this.motion.direction;this.action=this.facing===0?'walkDown':this.facing===1?'walkUp':'walkSide';this.stuck=0;this.status=speed>=420?'赶赴防线':speed>=280?'风行追赶':'归队／巡护';}
+    else {this.stuck+=dt;this.action='idle';if(this.stuck>=2000){this.nav.path=[];this.nav.target=undefined;this.nav.next=0;this.status="小宝正在找路";this.stuck=0;}}
+  }
+  route(goal: Point, env: XiaobaoEnvironment) {
+    if(distance(this,goal)<430||(env.clear??clearMotionLine)(this,goal))return goal;
+    // 连通村道骨架，按目标方向选择相邻节点；局部路径仍使用共享查询预算。
+    const nodes=[{x:810,y:725},{x:820,y:1080},{x:1300,y:1080},{x:1740,y:1080},{x:2150,y:1100},{x:820,y:340},{x:850,y:155},{x:900,y:1470},{x:950,y:1850}];
+    const nearest=nodes.reduce((a,b)=>distance(this,a)<distance(this,b)?a:b);
+    if(distance(this,nearest)>50)return nearest;
+    const links=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[1,7],[7,8]];
+    const start=nodes.indexOf(nearest),end=nodes.indexOf(nodes.reduce((a,b)=>distance(goal,a)<distance(goal,b)?a:b));
+    const queue=[[start]],seen=new Set([start]);
+    while(queue.length){const path=queue.shift()!,last=path[path.length-1];if(last===end)return nodes[path[1]??end];
+      for(const [a,b]of links){const next=a===last?b:b===last?a:-1;if(next>=0&&!seen.has(next)){seen.add(next);queue.push([...path,next]);}}}
+    return goal;
+  }
+  tick(dt: number, env: XiaobaoEnvironment, budget: { queries: number }) {
+    if(!(dt>0)||!Number.isFinite(dt))return;
+    let left=dt;
+    while(left>1e-7){const slice=Math.min(5,left);left-=slice;this.now=env.now-left;this.metrics.steps++;this.data.clock+=slice;
+      for(const skill of Object.keys(SKILLS) as XiaobaoSkill[])this.data.cooldowns[skill]=Math.max(0,this.data.cooldowns[skill]-slice);
+      this.data.recovery=Math.max(0,this.data.recovery-slice);this.data.reduction=Math.max(0,this.data.reduction-slice);
+      this.data.shields=this.data.shields.filter(s=>{s.remaining=Math.max(0,s.remaining-slice);return s.remaining>0;});
+      if(this.data.command){this.data.command.remaining-=slice;if(this.data.command.remaining<=0){this.data.command=null;env.message("指令等待超过5秒，已取消。");}}
+      if(this.data.wait&&(!env.player.outside||env.player.region!==this.data.wait.region))this.data.wait=null;
+      if(this.data.task==='follow'&&!env.player.outside&&this.data.cast&&!this.data.cast.released)this.cancel();
+      this.visuals=this.visuals.filter(e=>this.data.clock-e.at<800);
+      if(this.data.clock>=this.nextDecision){this.nextDecision=this.data.clock+150;this.choose(env);}
+      if(this.data.rest){this.effectsTick(slice,env);this.data.rest=Math.max(0,this.data.rest-slice);this.status="护风调息";
+        if(!this.data.rest){this.data.hp=320;this.data.qi=50;this.data.recovery=1000;
+          const safe=this.landingPoints(this,env)[0];if(safe){this.x=safe.x;this.y=safe.y;}
+          this.emit({id:`recover:${this.data.serial}`,kind:'recover',skill:'guard',point:point(this)});}continue;}
+      if(this.data.flight){this.effectsTick(slice,env);this.flightTick(slice,env);continue;}
+      const fighting=!!this.targetId||env.allies.some(a=>a.threatAt!==null&&distance(this,a)<600);
+      this.data.peace=fighting?0:Math.min(6000,this.data.peace+slice);
+      this.data.qi=Math.min(100,this.data.qi+(fighting?6:10)*slice/1000);
+      if(this.data.peace>=6000)this.data.hp=Math.min(640,this.data.hp+9.6*slice/1000);
+      if(this.data.support){this.data.support.age+=slice;const matching=this.fronts.find(f=>f.gate===this.data.support!.gate);
+        if(matching){this.data.support.injured ||= matching.injured;this.data.support.age=0;}
+        else if(this.data.support.age>=1500){const s=this.data.support;this.data.reports.push({event:s.key,gate:s.gate,hits:s.hits,kills:s.kills,injured:s.injured,result:s.hits?'威胁已解除':'查探后归队',time:env.minute});this.data.reports=this.data.reports.slice(-10);this.data.support=null;this.targetId=null;}}
+      if(this.data.cast){this.castTick(slice,env);this.effectsTick(slice,env);continue;}
+      this.effectsTick(slice,env);
+      if(this.data.recovery>0)continue;
+      if(this.data.task==='free'&&!this.data.support&&!this.targetId&&distance(this,XIAOBAO.home)<180){super.update(slice,env.minute,env.clear??clearMotionLine);this.status=this.night?'安心小憩':'听风待机';}
+      else this.travel(env,slice,budget);
+    }
+    this.data.x=this.x;this.data.y=this.y;
+  }
+  get battleAction(): {clip: XiaobaoBattleClip;progress:number;lift:number} | null {
+    const f=this.data.flight;
+    if(f)return {clip:f.stage==='takeoff'?'takeoff':f.stage==='landing'?'landing':'cruise',progress:f.stage==='takeoff'?f.age/200:f.stage==='landing'?f.age/250:(f.age%600)/600,
+      lift:f.stage==='takeoff'?88*f.age/200:f.stage==='landing'?88*(1-f.age/250):88};
+    if(this.data.rest)return {clip:'rest',progress:(this.data.clock%1600)/1600,lift:0};
+    if(this.data.recovery>500)return {clip:'recover',progress:1-this.data.recovery/1000,lift:0};
+    if(this.data.clock<this.hurtUntil)return {clip:'hurt',progress:1-(this.hurtUntil-this.data.clock)/180,lift:0};
+    if(this.data.cast)return {clip:this.data.cast.skill,progress:this.data.cast.age/SKILLS[this.data.cast.skill].recovery,lift:this.data.cast.skill==='rescue'?Math.sin(Math.PI*this.data.cast.age/480)*10:0};
+    if(this.status.includes('追赶')||this.status.includes('防线'))return {clip:'chase',progress:(this.motion.distance%42)/42,lift:0};
+    return null;
+  }
+  override get pose() { const action=this.battleAction;return action?{...xiaobaoBattlePose(action.clip,action.progress,this.facing),lift:action.lift}:super.pose; }
+  override get flip() { return this.battleAction?this.facing===2:super.flip; }
+  override snapshot() { return {...super.snapshot(),state:structuredClone(this.data),status:this.status,airborne:this.airborne,
+    battleAction:this.battleAction,targetId:this.targetId,metrics:{...this.metrics},events:[...this.history],effects:structuredClone(this.data.effects),
+    navigation:{path:this.nav.path,queries:this.nav.queries,failed:this.nav.failed},eta:this.data.flight?(distance(this,this.data.flight.goal)/1600+(this.data.flight.stage==='takeoff'?(200-this.data.flight.age)/1000:0)+.25):0}; }
+}

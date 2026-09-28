@@ -1,5 +1,70 @@
 # 居民生活首版验收报告
 
+## 2026-09-28 卫兵返岗打转修复
+
+本轮起点为 `codex/initial-game`、提交 `46883d86fbb222571d3cf3246ec7602d290dcae1`，远端为 `caizh1/farwind`。保留已有修改，未提交、推送或发布。当前主存档七、生活子版本四，本轮没有改存档结构、迁移和二十万字符限制；后文版本六和较早数量属于历史批次。
+
+### 首因与反证
+
+旧规划器忽略同伴占位，青禾被岑风挡住后不断侧让又回到旧路点，每次微动都清零卡住计时；返岗没有生活行动，普通行动失败处理不能解决它。[修复前对照](evidence/guard-return-before.json)四十秒仍距岗位约二百零六像素，只在离线移除站岗者占位后约二点四七秒到达。游戏没有移走岑风或取消碰撞。
+
+同空间占位现在参与已有分步预算，失效路段会绕行，十二像素净移动才算进展。多日检查又发现三弓卫共用临水目标，于是分配独立落脚点，并复核旧档同名习惯的目标。[相同旧缓存路线的最终检查](evidence/guard-return-navigation.json)二点五秒实际到岗，最小同伴距离十八点九七像素，一次查询、两批搜索、每批最多六十四节点。完整规则见[修复记录](GUARD-RETURN-FIX.md)。
+
+### 实际运行与结果
+
+| 检查 | 实际结果 |
+| --- | --- |
+| `npm run typecheck` | 通过；最新正式构建再次检查类型。 |
+| 七个相关单元文件的共享导航首轮回归 | 一百四十五项通过，约一百点零八秒。 |
+| `npm test -- --maxWorkers=1` | 最终三十六文件、六百一十一项全部通过，约一百零一点九二秒。此前六百零九和六百一十项批次也通过，不替代最终批次。 |
+| 三文件定向缺陷及守备检查 | 九项通过；九十二项仅因筛选未在该次执行，随后已在全量运行。 |
+| `npx vitest run tests/npc-navigation.test.ts --maxWorkers=1` | 最后五项全部通过，约零点五七秒，保存相同路线记录。 |
+| 原完整居民浏览器十五场景批次 | 首次十四通过、一失败，约七点六分钟；失败和追踪保留。 |
+| 原配药危机与返岗单独补验 | 两项通过，约一点一分钟；未修改旧测试或放宽任何断言。 |
+| 最终新增返岗及夜间浏览器两场景 | 两项全部通过，约五十四点八秒；暂停、在途存档和旧目标恢复都有真实断言。 |
+| `npm run build -- --outDir .npc-life-local/production` | 最新构建通过，主包 `game-CdVOgWZu.js`，保留既有大包提示。 |
+| `npx playwright test --config tools/playwright-npc-life-production.config.ts --workers=1` | 最新正式构建五项全部通过，约两分钟，覆盖真实轻伤救护、友方保护、旧档服务、短句去重、旅馆及实际维修。 |
+
+相关定向和浏览器命令实际如下：
+
+```sh
+npx vitest run tests/npc-navigation.test.ts tests/npc-life.test.ts tests/day-night.test.ts tests/npc-life-combat.test.ts tests/npc-life-facility.test.ts tests/npc-social.test.ts tests/safety-defense.test.ts --maxWorkers=1
+npx vitest run tests/npc-navigation.test.ts tests/npc-life.test.ts tests/day-night.test.ts --maxWorkers=1 -t '青禾绕过|同伴进入|和平午休结束|三名弓卫分别|旧档中的共用休息|营房共用出口|计划先召回'
+npx playwright test tests/npc-life.spec.ts tests/npc-life-social-art.spec.ts tests/npc-life-combat.spec.ts tests/npc-life-facility.spec.ts --config tools/playwright-npc-life.config.ts --workers=1
+npx playwright test tests/npc-life-combat.spec.ts tests/npc-life.spec.ts --config tools/playwright-npc-life.config.ts --grep '配药中遇真实警报|GUARD-RETURN-01' --workers=1 --trace on
+npx playwright test tests/npc-life.spec.ts --config tools/playwright-npc-life.config.ts --grep 'GUARD-RETURN-01|GUARD-REST-02' --workers=1 --trace on
+```
+
+新增夜间场景后，共十六个居民场景分批完成覆盖。没有把首次失败批次写成全通过，也没有删除旧断言或跳过旧测试取得通过结果。
+
+### 首次失败和测试前提
+
+原配药救援脚本在 `tests/npc-life-combat.spec.ts:63` 调用固定路线辅助器时，等待玩家到达横坐标八百五十超时。现场生命十、显示受击恢复；真实失能、药草未扣和暂停读档此前已通过。仅替换为修复前生活寻路的隔离对照通过，当前实现单独补验也通过。保留为固定键盘路线的时序敏感风险，不凭单次超时认定严重业务回归，也未宣称找到全部环境波动原因。[原失败记录](evidence/guard-return-first-failure.json)及完整追踪保留于 `.npc-life-local/guard-return-first-results/`。
+
+新增返岗测试首次没有等游戏进入暂停模式就取样，之后八百毫秒出现约二十七毫秒模拟差异；两次取样模式均仍为空。[原始采样](evidence/guard-return-pause-first-failure.json)与追踪保留。现在先等模式为暂停再保存基线，原全状态冻结断言不变；最终暂停、在途保存和重载通过。
+
+编写测试时还校正了跨空间坐标原点、弓卫真实生命上限及第六日八点尚属检查装备窗口的前提。位移只在同空间比较，生命与原值严格相等，额外诊断推进至十点再要求全员返岗并增加零路线失败断言。缺陷回归均先获得有意义的失败：青禾不能到岗、东门弓卫未完成临水休息、旧共用目标无人完成；修复后全部通过。
+
+### 多日、预算与可玩证据
+
+[最终五日样本](evidence/guard-return-five-day.json)四万八千步，十二人路线失败均零、有效预约四条、存档一万九千一百八十九字符。药品十二、药草十六、木料十二、食物二十一，均在定义上限；查询五百一十次，生活累计约六千九百八十七毫秒、最长步骤约九点三九毫秒。不将历史不同负载的耗时变化直接称为提速，也不以此证明设备图形帧率。
+
+另按真实世界的“驻防先推进、生活随后推进、通知统一分发”顺序运行五日并继续至第六日十点，零路线失败、九人均实际在岗，见[追加诊断](evidence/guard-return-world-soak.json)。正常八点允许每门一人检查装备，不能把合法轮休当作卡住。
+
+浏览器保留[绕行](evidence/guard-return-route.png)、[实际到岗](evidence/guard-return-arrived.png)、[返岗采样](evidence/guard-return-browser.json)、[录像](evidence/guard-return.webm)、[夜间三个落脚点](evidence/guard-rest-night.png)及[夜间采样](evidence/guard-rest-browser.json)。夜间样本由正常规则模拟生成；返岗阶段明确使用两次公开全世界快进，不冒称实时等待，不改写运行卫兵。
+
+最终分支、核心文件摘要、构建包摘要和检查结果见[收尾记录](evidence/guard-return-validation.json)，夜间全流程另有[录像](evidence/guard-rest.webm)。新增浏览器最终追踪保留于 `.npc-life-local/guard-return-final-results/`。
+
+### 本轮开放审查
+
+VERDICT: PASS
+
+P0/P1 BLOCKERS: 空。覆盖唯一身体权威、同伴快照、路段失效、分步预算、目标切换、进展计时、共用入口已有重叠、睡觉和临水目标、旧档行动、取消预约、死亡与原始生命、暂停存档、资源提交、主线交易、射界与最低守备。成立的共用目标和旧目标复用缺陷已修复、回归，没有仍成立且有可达严重影响的 P0/P1。
+
+UNVERIFIED RISKS: 未穷尽全部多人拥堵与动态地图组合；目标设备长时帧率未验证；旧键盘路线首次超时的全部环境因素尚未确定。不将证据不足认定阻塞，也不声称消除了全部画面卡顿。
+
+NON-BLOCKING FINDINGS: 真正无法通过时安全等待或取消生活安排，禁止穿墙、穿人和瞬移。三弓卫临水聚集的角色及姓名表现仍比较密集；本轮没有重做美术或战斗系统。
+
 ## 最终增量：真实设施受击、配药中断与全流程收尾
 
 本节记录当前源码的收尾结果；下方各阶段记录保留原命令、失败和历史样本，不代表当前批次。三居民、九卫兵、五处室内、职责交接、两级警报、真实救护、有限维修、关系记忆与正式迁移已接入主流程。本轮补齐广场风铃挂架的真实敌人目标与阿禾自主巡视、取工具和木料、到场维修；没有扩大原来袭纵深。小满的浏览器样本已加强为药房内正在配药，真实警报打断后出屋、发现真实伤员并救治。

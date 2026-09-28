@@ -566,6 +566,88 @@ describe("居民生活 M2/M3 连续模拟与恢复", () => {
       ).toBe("perform");
     }
   }, 30000);
+  it("和平午休结束后三门巡卫实际返岗，帧步长与快进均不能留下轮休者", () => {
+    for (const step of [1000 / 60, 100]) {
+      const e = setup();
+      e.s.time = 720;
+      const returned = new Set<string>(), left = new Set<string>();
+      for (let now = step; e.s.time < 16.2 * 60; now += step) {
+        const before = new Map(e.s.defense.guards.map(g=>[g.id,{space:g.space??"village",x:g.x,y:g.y}]));
+        e.s.time = advanceTime(e.s.time, step);
+        const budget = { queries: 2 };
+        e.d.update(now, step, { x: 2200, y: 1100, hp: 56 }, budget);
+        e.l.step(step, budget);
+        e.l.consumeDefense(e.d.drainNotices());
+        for (const g of e.s.defense.guards.filter(g=>g.id.endsWith("patrol"))) {
+          const old = before.get(g.id)!;
+          if (g.offDuty) left.add(g.id);
+          if (e.s.time > 900 && !g.offDuty && left.has(g.id)) returned.add(g.id);
+          // 过门切换空间使用各自坐标原点，只比较同一空间内的真实位移。
+          if (old.space === (g.space??"village")) expect(Math.hypot(g.x-old.x,g.y-old.y)).toBeLessThanOrEqual(100 * step / 1000 + 1e-5);
+        }
+      }
+      expect([...left].sort()).toEqual(["east-patrol", "north-patrol", "south-patrol"]);
+      expect([...returned].sort(), `步长 ${step}`).toEqual(["east-patrol", "north-patrol", "south-patrol"]);
+      expect(e.s.defense.guards.every(g=>!g.offDuty)).toBe(true);
+    }
+  }, 30000);
+  it("三名弓卫分别到场临水休息，窗口结束后全部沿路返岗", () => {
+    const e = setup(), rested = new Set<string>();
+    let saved = false;
+    e.s.time = 1140;
+    for (let now=100; e.s.time<1380; now+=100) {
+      e.s.time=advanceTime(e.s.time,100);
+      const budget={queries:2};
+      e.d.update(now,100,e.s.player,budget);
+      e.l.step(100,budget);e.l.consumeDefense(e.d.drainNotices());
+      if (!saved && e.s.time >= 1260) {
+        saved = true;
+        const sample = structuredClone(e.s);
+        Object.assign(sample.player, {x:1650,y:1420});
+        mkdirSync("docs/npc-life/evidence", {recursive:true});
+        writeFileSync("docs/npc-life/evidence/guard-rest-save.json",JSON.stringify(validate(sample),null,2));
+      }
+      for (const g of e.s.defense.guards.filter(g=>g.id.endsWith("archer"))) {
+        const n=e.s.life.people.find(n=>n.id===g.id)!;
+        if(n.action?.label==="临水休息" && n.action.phase==="perform") {
+          rested.add(g.id);
+          expect(g.space).toBe("village");
+          expect(Math.hypot(g.x-n.action.target.x,g.y-n.action.target.y)).toBeLessThan(6);
+        }
+      }
+    }
+    expect([...rested].sort()).toEqual(["east-archer","north-archer","south-archer"]);
+    for (const g of e.s.defense.guards.filter(g=>g.id.endsWith("archer"))) {
+      expect(g.offDuty,g.id).toBe(false);
+      expect(g.mode,g.id).toBe("post");
+      expect(e.s.life.people.find(n=>n.id===g.id)!.pathFailures,g.id).toBe(0);
+    }
+  }, 30000);
+  it("旧档中的共用休息目标会重新评估，保留身体、生命与已提交进度", () => {
+    const e=setup(), rested=new Set<string>(), health=new Map(e.s.defense.guards.map(g=>[g.id,g.hp]));
+    e.s.time=1310;
+    for (const [id,x,y] of [["east-archer",1531.3,1371.9],["north-archer",1545.6,1376.9],["south-archer",1533.9,1406.1]] as const) {
+      const g=e.s.defense.guards.find(g=>g.id===id)!, n=e.s.life.people.find(n=>n.id===id)!;
+      Object.assign(g,{space:"village",x,y,offDuty:true,mode:"life",towerTransitMs:0});
+      n.gear="carried";n.project=2;
+      e.l.begin(n,{kind:"habit",target:{space:"village",x:1540,y:1390},facility:null,task:null,score:80,label:"临水休息"});
+    }
+    e.s=validate(e.s);e.d=new EastDefense(e.s.defense,0);e.l=new NpcLife(e.s,e.d);
+    for(let now=100;now<=80000;now+=100) {
+      e.s.time=advanceTime(e.s.time,100);
+      const budget={queries:2};e.d.update(now,100,e.s.player,budget);e.l.step(100,budget);e.l.consumeDefense(e.d.drainNotices());
+      for(const g of e.s.defense.guards.filter(g=>g.id.endsWith("archer"))) {
+        const n=e.s.life.people.find(n=>n.id===g.id)!;
+        if(n.action?.label==="临水休息" && n.action.phase==="perform")rested.add(g.id);
+        expect(g.hp).toBe(health.get(g.id));expect(g.dead).toBe(false);expect(n.project).toBeGreaterThanOrEqual(2);
+      }
+    }
+    expect([...rested].sort()).toEqual(["east-archer","north-archer","south-archer"]);
+    for(const g of e.s.defense.guards.filter(g=>g.id.endsWith("archer"))) {
+      expect(g.offDuty,g.id).toBe(false);
+      expect(e.s.life.people.find(n=>n.id===g.id)!.pathFailures,g.id).toBe(0);
+    }
+  },30000);
 });
 describe("夜间睡眠首因诊断", () => {
   it("到达独立床位", () => {

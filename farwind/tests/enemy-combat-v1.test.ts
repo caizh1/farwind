@@ -50,12 +50,13 @@ describe('孢子独立飞行与弹反',()=>{
     expect(system.update(a.contactAt+100,{x:300,y:0},()=>false)).toEqual([]);expect(system.shots[0].state).toBe('burst');system.update(a.contactAt+SPORE.burst+101,{x:300,y:0});expect(system.shots).toEqual([]);
     const b=createEnemyAttack('spore',2,'spore',0,{x:0,y:0},{x:500,y:0});system.launch(b,{x:0,y:0},b.contactAt);system.update(b.contactAt+SPORE.life+300,{x:10000,y:0},()=>true);system.update(b.contactAt+SPORE.life+600,{x:10000,y:0},()=>true);expect(system.shots).toEqual([]);
   });
-  it('弹丸用正式架剑方向、时窗和单次奖励，成功进入打散而非反伤本体',()=>{
+  it('弹丸用正式架剑方向、时窗和单次奖励，打散后预约专用剑气而非即时反伤本体',()=>{
     const a=createEnemyAttack('spore',1,'spore',0,{x:850,y:700},{x:1080,y:700}),system=new EnemyProjectiles();system.launch(a,{x:850,y:700},a.contactAt);
     const at=sporeContactAt(system.shots[0],a.direction,{x:1080,y:700},a.contactAt,a.contactAt+SPORE.life,()=>true)!,p={x:1080,y:700,stamina:100},c=new CombatController();c.requestParry(at-40,2);c.flushActions(at-40,p);
     const contact=system.update(at+1,p,()=>true)[0],result=adjudicateContact(contact,c,p,{valid:true,immune:false,clear:()=>true});expect(result).toBe('perfect');const stamina=p.stamina;
     expect(adjudicateContact(contact,c,p,{valid:true,immune:false,clear:()=>true})).toBe('invalid');expect(p.stamina).toBe(stamina);
     system.settle(contact.projectileId!,at,true);expect(system.shots[0]).toMatchObject({state:'burst',deflected:true});expect(a.cancelled).toBe(false);
+    expect(c.autoCounter).toMatchObject({delivery:'wind',sourceContactId:contact.attack.attackId,target:'spore'});
     system.reset();expect(system.shots).toEqual([]);
   });
 });

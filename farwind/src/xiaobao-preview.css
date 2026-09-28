@@ -1,0 +1,28 @@
+:root { color: #314b3d; background: #ece7d6; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 1100px; margin: 0 auto; padding: 30px 26px; }
+.intro { display: grid; grid-template-columns: 160px minmax(0,1fr); align-items: center; gap: 30px; margin-bottom: 24px; }
+.intro img { width: 160px; height: 218px; object-fit: contain; filter: drop-shadow(0 8px 14px #30473528); }
+.eyebrow { color: #8b784f; font-size: 12px; letter-spacing: 3px; }
+h1 { margin: 10px 0; font-size: 34px; }
+h1 span { font-size: 16px; color: #728568; margin-left: 12px; }
+p { line-height: 1.75; margin: 8px 0; }
+.note { color: #8d815f; font-size: 12px; }
+.stage { border: 1px solid #bdba94; border-radius: 15px; overflow: hidden; background: #f5f0df; box-shadow: 0 12px 30px #42594312; }
+.toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 16px; }
+label { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; min-width: 0; }
+select, button { font: inherit; color: #365643; padding: 9px 12px; border: 1px solid #b7bea0; background: #fffbee; border-radius: 8px; }
+button { cursor: pointer; }
+button:hover, button[aria-pressed="true"] { background: #dce8ce; border-color: #799275; }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid #809c6b; outline-offset: 3px; }
+#preview { width: 100%; height: auto; aspect-ratio: 980 / 412; }
+#preview canvas { display: block; }
+.timeline { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 15px 18px; }
+.timeline input { flex: 1 1 200px; min-width: 0; accent-color: #718e62; }
+output { font-size: 12px; color: #76876c; }
+.cards { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 10px; margin-top: 20px; }
+.cards button { min-width: 0; font-size: 13px; }
+footer { margin-top: 24px; font-size: 13px; color: #7c8167; }
+a { color: #496d52; margin-left: 12px; }
+@media(max-width: 700px) { main { padding: 20px 14px; } .intro { grid-template-columns: 108px minmax(0,1fr); gap: 14px; } .intro img { width: 108px; height: 170px; } h1 { font-size: 27px; } h1 span { display: block; margin: 5px 0; } .cards { grid-template-columns: repeat(3,minmax(0,1fr)); } .toolbar { gap: 8px; } }

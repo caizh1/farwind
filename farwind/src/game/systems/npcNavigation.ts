@@ -81,6 +81,7 @@ export type LifeNav = {
   search: { iterator: ReturnType<typeof pathSearch>; origin: Point } | null;
   failure: string;
   goal: string;
+  progress: Point | null;
 };
 export const lifeNavigation = (): LifeNav => ({
   nav: enemyNavigation(),
@@ -92,7 +93,17 @@ export const lifeNavigation = (): LifeNav => ({
   search: null,
   failure: "",
   goal: "",
+  progress: null,
 });
+function recordProgress(body: Point, runtime: LifeNav, ms: number) {
+  if (
+    runtime.progress &&
+    distance(body, runtime.progress) >= LIFE.progressDistance
+  ) {
+    runtime.progress = { x: body.x, y: body.y };
+    runtime.stuck = 0;
+  } else runtime.stuck += ms;
+}
 export function moveLife(
   body: Place,
   target: Place,
@@ -135,25 +146,68 @@ export function moveLife(
       runtime.nav = enemyNavigation();
       runtime.search = null;
       runtime.stuck = 0;
+      runtime.progress = null;
       return false;
     }
   } else goal = target;
-  if (distance(body, goal) <= 5) return body.space === target.space;
+  if (distance(body, goal) <= 5) {
+    runtime.stuck = 0;
+    return body.space === target.space;
+  }
   const key = `${goal.space}:${Math.round(goal.x / 8)}:${Math.round(goal.y / 8)}`;
   if (runtime.goal !== key) {
     runtime.nav = enemyNavigation();
     runtime.search = null;
     runtime.goal = key;
     runtime.stuck = 0;
+    runtime.progress = { x: body.x, y: body.y };
   }
+  runtime.progress ??= { x: body.x, y: body.y };
   const nav = runtime.nav,
     query = {
       blocked: (x: number, y: number) =>
         cachedBlocked(body.space, x, y) || !safe({ space: body.space, x, y }),
       clear: (a: Point, b: Point) => cachedLine(body.space, a, b),
     };
+  // 同伴只作为当前空间的临时障碍，不写入静态缓存；搜索使用本次占位快照。
+  // 门口与交谈目标附近保留原有会合规则，进入后仍按实际空间分离重叠。
+  const occupants = peers
+      .filter(
+        (p) => p !== body && p.space === body.space && distance(p, goal) > 8,
+      )
+      .map((p) => ({ x: p.x, y: p.y })),
+    occupiedPoint = (x: number, y: number) =>
+      occupants.some((p) => distance(p, { x, y }) < LIFE.personalSpace),
+    peerClear = (a: Point, b: Point) =>
+      occupants.every((p) => {
+        const dx = b.x - a.x,
+          dy = b.y - a.y,
+          u = Math.max(
+            0,
+            Math.min(
+              1,
+              ((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy || 1),
+            ),
+          ),
+          before = distance(p, a),
+          after = distance(p, b),
+          nearest = distance(p, { x: a.x + u * dx, y: a.y + u * dy });
+        return (
+          nearest >= Math.min(LIFE.personalSpace, before) - 1e-7 &&
+          (before >= LIFE.personalSpace || after > before + 1e-7)
+        );
+      }),
+    planningQuery = {
+      blocked: (x: number, y: number) =>
+        query.blocked(x, y) || occupiedPoint(x, y),
+      clear: (a: Point, b: Point) => query.clear(a, b) && peerClear(a, b),
+    };
   // 共用房门的已有重叠先局部散开，不必等完整路线规划；每步仍遵守碰撞与安全。
-  if (peers.some((p) => p.space === body.space && distance(p, body) < 18)) {
+  if (
+    peers.some(
+      (p) => p.space === body.space && distance(p, body) < LIFE.personalSpace,
+    )
+  ) {
     const dx = goal.x - body.x,
       dy = goal.y - body.y,
       len = Math.hypot(dx, dy),
@@ -176,20 +230,30 @@ export function moveLife(
             peers.every(
               (p) =>
                 p.space !== body.space ||
-                distance(p, q) > Math.min(18, distance(p, body)) + 1e-7,
+                distance(p, q) >
+                  Math.min(LIFE.personalSpace, distance(p, body)) + 1e-7,
             ),
         );
     if (free) {
       Object.assign(body, free);
       runtime.nav = enemyNavigation();
       runtime.search = null;
-      runtime.stuck = 0;
+      recordProgress(body, runtime, ms);
       runtime.failure = "入口侧让，先分离已有重叠";
       return false;
     }
   }
+  // 已有路线也会被后来进入的同伴挡住；丢弃失效路段后按共享预算绕行。
+  if (nav.path.length && !planningQuery.clear(body, nav.path[0])) {
+    nav.path = [];
+    runtime.search = null;
+    nav.next = Math.min(nav.next, now);
+  }
   let waypoint: Point | undefined;
-  if (!query.blocked(goal.x, goal.y) && query.clear(body, goal) && safe(goal)) {
+  if (
+    !planningQuery.blocked(goal.x, goal.y) &&
+    planningQuery.clear(body, goal)
+  ) {
     waypoint = goal;
     nav.failed = false;
     nav.path = [];
@@ -207,25 +271,25 @@ export function moveLife(
           y: Math.round(body.y / 20) * 20,
         },
         origin =
-          !query.blocked(rounded.x, rounded.y) &&
-          query.clear(body, rounded) &&
+          !planningQuery.blocked(rounded.x, rounded.y) &&
+          planningQuery.clear(body, rounded) &&
           !peers.some(
             (p) =>
               p.space === body.space &&
-              distance(p, rounded) < 18 &&
+              distance(p, rounded) < LIFE.personalSpace &&
               distance(p, rounded) <= distance(p, body),
           )
             ? rounded
             : body;
-      if (!query.blocked(goal.x, goal.y))
+      if (!planningQuery.blocked(goal.x, goal.y))
         runtime.search = {
           origin,
           iterator: pathSearch(
             origin,
-            (p) => distance(p, goal) < 18 && query.clear(p, goal),
+            (p) => distance(p, goal) < 18 && planningQuery.clear(p, goal),
             goal,
             () => true,
-            query,
+            planningQuery,
             { radius: 2400, nodes: 8192 },
           ),
         };
@@ -260,7 +324,7 @@ export function moveLife(
   }
   if (!waypoint) {
     // 正在逐步计算时不算撞墙；搜索总节点上限仍为8192，换目标或取消即释放。
-    if (!runtime.search) runtime.stuck += ms;
+    if (!runtime.search) recordProgress(body, runtime, ms);
     runtime.failure = runtime.search
       ? "分步规划安全路线"
       : nav.failed
@@ -276,47 +340,23 @@ export function moveLife(
       x: body.x + ((waypoint.x - body.x) / d) * step,
       y: body.y + ((waypoint.y - body.y) / d) * step,
     };
-  const occupied = peers.some(
-    (p) =>
-      p !== body &&
-      p.space === body.space &&
-      distance(p, next) < 18 &&
-      // 共用房门可能已有重叠；允许逐步远离，仍禁止进入新的拥挤位置。
-      distance(p, next) <= distance(p, body) + 1e-7 &&
-      distance(p, goal) > 8,
-  );
-  // 同路排队时允许小步侧让，必须通过相同碰撞/视线/安全检查，且不靠近任何现有重叠者。
-  const sidestep = occupied
-    ? [1, -1]
-        .map((sign) => ({
-          space: body.space,
-          x: body.x - ((sign * (waypoint.y - body.y)) / d) * step,
-          y: body.y + ((sign * (waypoint.x - body.x)) / d) * step,
-        }))
-        .find(
-          (q) =>
-            !query.blocked(q.x, q.y) &&
-            query.clear(body, q) &&
-            peers.every(
-              (p) =>
-                p.space !== body.space ||
-                distance(p, q) > Math.min(18, distance(p, body)) + 1e-7,
-            ),
-        )
-    : undefined;
-  const proposed = occupied ? sidestep : next;
-  if (
-    proposed &&
-    !query.blocked(proposed.x, proposed.y) &&
-    query.clear(body, proposed)
-  ) {
-    Object.assign(body, proposed);
-    runtime.stuck = 0;
+  const occupied = !peerClear(body, next);
+  if (!occupied && !query.blocked(next.x, next.y) && query.clear(body, next)) {
+    Object.assign(body, next);
     runtime.failure = "";
   } else {
-    runtime.stuck += ms;
-    runtime.failure = occupied ? "入口排队" : "通路受阻";
-    if (runtime.stuck > 1800) nav.path = [];
+    runtime.failure = occupied ? "同伴占路，等待绕行" : "通路受阻";
+    nav.path = [];
+    runtime.search = null;
+    nav.next = Math.max(nav.next, now + LIFE.pathRetryMs);
+  }
+  recordProgress(body, runtime, ms);
+  // 小幅摆动不算行程进展；返岗即使没有生活行动，也会通过此入口有限重规划。
+  if (runtime.stuck > LIFE.pathRetryMs && now >= nav.next) {
+    nav.path = [];
+    runtime.search = null;
+    nav.next = now + LIFE.pathRetryMs;
+    runtime.failure = "持续没有行程进展，重新规划";
   }
   runtime.last = old;
   return false;

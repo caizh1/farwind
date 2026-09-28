@@ -43,9 +43,9 @@ export const SWORD_WIND = {
     ],
   },
 } as const;
-export type SwordWindConfig = Omit<typeof SWORD_WIND, 'name' | 'distance' | 'width' | 'lifetime'> & {
+export type SwordWindConfig = Omit<typeof SWORD_WIND, 'name' | 'distance' | 'width' | 'lifetime' | 'hitStop'> & {
   name:string; stage:Exclude<SwordWindStage,0>; distance:number; width:number; lifetime:number;
-  damage:number; angles:readonly number[]; trialLesson?:string;
+  damage:number; hitStop:number; angles:readonly number[]; trialLesson?:string;
 };
 export function resolveSwordWindConfig(stage:Exclude<SwordWindStage,0>=1):SwordWindConfig {
   if(!Number.isInteger(stage)||stage<1||stage>5)throw Error('剑风阶段无效');

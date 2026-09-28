@@ -1,4 +1,5 @@
-import { attackConfig, facingVector, type Attack, type Target } from "./combat";
+import { attackConfig, COMBAT, facingVector, type Attack, type Target } from "./combat";
+import { counterVisual } from '../../data/animation';
 import {
   resolveSwordWindConfig,
   type SwordWindConfig,
@@ -92,9 +93,9 @@ export function swordWindBirth(
   root: Point,
   config: SwordWindConfig,
 ) {
-  const [x, y] = facingVector(attack.facing),
+  const [x, y] = attack.delivery==='wind'&&attack.windDirection?[attack.windDirection.x,attack.windDirection.y]:facingVector(attack.facing),
     angle = Math.atan2(y, x),
-    tip =
+    tip = attack.delivery==='wind'?counterVisual(attack,attack.start+attackConfig(attack).windup,true).weapon!.tip:
       SWORD_WIND_RELEASES[
         attack.facing === 0 ? 0 : attack.facing === 1 ? 1 : 2
       ];
@@ -109,7 +110,7 @@ export function swordWindBirth(
   const ax = attachment.x * Math.cos(angle) - attachment.y * Math.sin(angle),
     ay = attachment.x * Math.sin(angle) + attachment.y * Math.cos(angle);
   const visual = {
-    x: tip.x * (attack.facing === 2 ? -1 : 1) - ax,
+    x: tip.x * (attack.delivery!=='wind'&&attack.facing === 2 ? -1 : 1) - ax,
     y: tip.y - ay,
   };
   // 可见前缘与碰撞前缘共用接触平面。上身投影只转回地面高度，不把剑尖屏幕高度当地图坐标。
@@ -134,11 +135,14 @@ export class SwordWindSystem {
   events:WindEvent[]=[];
   clear(){this.winds=[];this.lastAttackId=0;this.events=[];}
   launch(attack:Attack,root:Point,at:number,damage:number) {
-    if(attack.stage!==4||attack.id<=this.lastAttackId)return null;
+    if((attack.stage!==4&&attack.delivery!=='wind')||attack.id<=this.lastAttackId)return null;
     this.lastAttackId=attack.id;
-    const config={...structuredClone(attack.swordWind??resolveSwordWindConfig()),damage},birth=swordWindBirth(attack,root,config);
+    // 专用反击始终单刃、300px；不读取已学剑风等级，也不授予永久本领。
+    const config={...structuredClone(attack.delivery==='wind'?resolveSwordWindConfig(1):attack.swordWind??resolveSwordWindConfig()),damage};
+    if(attack.delivery==='wind'){config.name='迎风反斩·剑气';config.hitStop=COMBAT.hitStop[0];}
+    const birth=swordWindBirth(attack,root,config);
     const hit=new Set<string>(),snapshot:Attack={...attack,hit:new Set(),config:{...attackConfig(attack)},swordWind:config};
-    const [dx,dy]=facingVector(attack.facing),baseForward=Math.hypot(birth.position.x-root.x,birth.position.y-root.y);
+    const [dx,dy]=attack.delivery==='wind'&&attack.windDirection?[attack.windDirection.x,attack.windDirection.y]:facingVector(attack.facing),baseForward=Math.hypot(birth.position.x-root.x,birth.position.y-root.y);
     const created=config.angles.map(offset=>{
       const direction={x:dx*Math.cos(offset)-dy*Math.sin(offset),y:dx*Math.sin(offset)+dy*Math.cos(offset)},position={x:root.x+direction.x*baseForward,y:root.y+direction.y*baseForward};
       // 上身投影不旋转到地面；侧刃只旋转平面偏移，中央刃严格保留原锚点。
@@ -161,6 +165,7 @@ export class SwordWindSystem {
         if(wall)pending.push({wind:w,kind:'end',pathOrder:Math.hypot(a.x-w.origin.x,a.y-w.origin.y)+Math.hypot(b.x-a.x,b.y-a.y)*wall.t,at:start+(end-start)*wall.t,point:mix(a,b,wall.t),reason:'obstacle'});
         for(const motion of targets){
           const target=motion.target;
+          if(w.attack.delivery==='wind'&&target.id!==w.attack.primaryTarget)continue;
           if(target.hp<=0||target.disabled||w.hit.has(target.id)||w.config.trialLesson&&target.lessonId!==w.config.trialLesson)continue;
           const u=(at:number)=>now>prev?Math.max(0,Math.min(1,(at-prev)/(now-prev))):1;
           const old=mix(motion.previous,motion.current,u(start)),current=mix(motion.previous,motion.current,u(end)),radius=w.config.width/2+(target.radius??14);

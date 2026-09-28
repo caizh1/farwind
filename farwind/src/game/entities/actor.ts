@@ -181,6 +181,7 @@ export class Actor {
       anchor: this.presentation.anchor,
       origin: [this.sprite.originX, this.sprite.originY],
       scale: [this.sprite.scaleX, this.sprite.scaleY],
+      alpha: this.sprite.alpha,
       provisional: this.presentation.provisional,
     };
   }

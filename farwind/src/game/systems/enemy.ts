@@ -172,6 +172,8 @@ export type EnemyBody = Point & {
   attackSerial?: number;
   targetId?: string | null;
   playerAggroUntil?: number;
+  companionAggroUntil?: number;
+  companionControlGrace?: number;
   parried?: {at:number;until:number;direction:Point;perfect:boolean};
   wallHit?: {at:number;until:number};
   nav: {
@@ -229,6 +231,7 @@ export function updateEnemy(
   now: number,
   dtMs: number,
   budget?: {queries:number},
+  targetId = "player",
 ): EnemyContact | null {
   const dt = dtMs/1000, prev=now-dtMs;
   if (e.hp <= 0 || e.disabled) {
@@ -255,7 +258,7 @@ export function updateEnemy(
     return null;
   }
   // 从局部驻防交还给野怪AI时，不把未释放的守卫攻击转嫁给玩家。
-  if(e.attack&&e.targetId&&e.targetId!=="player"){e.attack.cancelled=true;e.attack=null;e.cool=now+250;}
+  if(e.attack&&e.targetId&&e.targetId!==targetId){e.attack.cancelled=true;e.attack=null;e.cool=now+250;}
   if (e.attack) {
     const attack=e.attack;
     const contact=advanceEnemyAttack(attack,e,player,now,enemyAttackSpace(e));
@@ -268,7 +271,7 @@ export function updateEnemy(
   }
   const profile=enemyProfile(e.type);
   if (d < profile.reach && now > e.cool && safe && clearMeleeLine(e, player)) {
-    e.targetId="player";
+    e.targetId=targetId;
     e.attack=createEnemyAttack(e.id,e.attackSerial=(e.attackSerial??0)+1,e.type,now,e,player);
     e.cool=e.attack.contactAt+ENEMY_ATTACK[enemyKind(e.type)].cooldown;
     e.windup = e.attack.contactAt-now;
@@ -277,7 +280,7 @@ export function updateEnemy(
     return null;
   }
   // 近郊不主动吸引远处野怪；已在追击或被玩家挑衅的敌人继续受原家园边界约束。
-  const engaged=e.nav.mode==="chase"&&!e.nav.returning||(e.playerAggroUntil??0)>now;
+  const engaged=e.nav.mode==="chase"&&!e.nav.returning||(e.playerAggroUntil??0)>now||(e.companionAggroUntil??0)>now;
   const canChase = d < 380 && safe && distance(e, home) < 420 && (!inProtected(player)||engaged);
   if (!canChase && distance(e, home) > 8) e.nav.returning = true;
   if (e.nav.returning && distance(e, home) <= 8) e.nav.returning = false;

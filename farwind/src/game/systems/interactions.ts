@@ -8,6 +8,7 @@ import { add, remove, count, reward } from "./state";
 import type { World } from "../scenes/World";
 
 export function interact(this: World, p: Prop) {
+  if(p.id === "xiaobao"){this.xiaobao?.open(this);return;}
   if(p.id.startsWith("lesson-")&&LESSON_IDS.includes(p.id.slice(7) as LessonId)){this.lessons?.open(p.id.slice(7) as LessonId);return;}
   if(p.id==="waterside-night"){void this.discoverNight();return;}
   if(lifeInteract(this,p))return;
@@ -198,6 +199,7 @@ export function interact(this: World, p: Prop) {
       this.slash?.clear();
       s.player.x = 740;
       s.player.y = 780;
+      this.xiaobao?.controller.transitioned(s.player);
       this.cat.place(662, 798);
       this.hero.place(s.player.x, s.player.y);
       this.follower.reset(s.player);

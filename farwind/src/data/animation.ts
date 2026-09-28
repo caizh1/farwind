@@ -2,7 +2,7 @@ import {COUNTER_WEAPONS} from "./counterArt";
 import {FEEDBACK} from '../game/systems/combatFeedback';
 import type { Facing, MotionAction } from "../game/systems/locomotion";
 import {SWORD_WIND_WEAPONS, SWORD_WIND_HERO_PROVISIONAL} from './swordWindArt';
-import { COMBAT, PARRY, resolveStrike, type StrikeConfig, type ParryAction } from "../game/systems/combat";
+import { COMBAT, PARRY, PLAYER_HURT, resolveStrike, type StrikeConfig, type ParryAction, type HurtReaction } from "../game/systems/combat";
 export const COMBAT_ACTION_ART = {
   frameSize: 160,
   displaySize: 145,
@@ -15,11 +15,16 @@ export type CombatVisual = {
   clip: string;
   frameIndex: number;
   facing: Facing;
-  phase: "windup" | "active" | "recovery" | "ready" | "settle" | "dash" | "guard" | "brace" | "deflect";
+  phase: "windup" | "active" | "recovery" | "ready" | "settle" | "dash" | "guard" | "brace" | "deflect" | "hurt";
   phaseProgress: number;
   provisional: boolean;
 };
 export type WeaponPose={grip:{x:number;y:number};tip:{x:number;y:number};visible:boolean;progress:number;alpha:number;provisional:boolean};
+export function hurtVisual(hurt:HurtReaction,now:number):CombatVisual {
+ const elapsed=Math.max(0,now-hurt.start),pose=elapsed<PLAYER_HURT.poses[1]?0:elapsed<PLAYER_HURT.poses[2]?1:2;
+ return {texture:'hero-hurt',frame:(hurt.facing===0?0:hurt.facing===1?1:2)*3+pose,clip:`hero/hurt/${hurt.facing}`,
+   frameIndex:pose,facing:hurt.facing,phase:'hurt',phaseProgress:Math.min(1,elapsed/PLAYER_HURT.duration),provisional:true};
+}
 export function swordWindVisual(facing:Facing,elapsed:number,m:StrikeConfig):CombatVisual {
  const end=m.windup+m.active,total=end+m.recovery,t=Math.max(0,Math.min(total,elapsed));
  const phase=t<m.windup?'windup':t<end?'active':'recovery',start=phase==='windup'?0:phase==='active'?m.windup:end,duration=phase==='windup'?m.windup:phase==='active'?m.active:m.recovery,progress=Math.min(1,(t-start)/duration);

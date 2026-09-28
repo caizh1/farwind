@@ -936,7 +936,10 @@ export class NpcLife {
       }
       if (g.mode === "return") {
         if (n.action) this.cancel(n, "返岗途中，完成前不重新领取轮休");
-        n.reason = "沿原路返回岗位";
+        n.reason =
+          this.nav(n.id).stuck > LIFE.routeStuckMs
+            ? "返岗通路受阻，安全等待并按预算重新规划"
+            : "沿原路返回岗位";
         return;
       }
       if (n.action?.kind === "escort" && !this.guardAlert(g.id)) {
@@ -1039,7 +1042,15 @@ export class NpcLife {
         n.reason = "轮休路线受阻，暂停领取并等待通路恢复";
         return;
       }
-      if (n.action?.kind === c.kind && n.action.label === c.label && g.offDuty)
+      // 同名习惯也要检查地点，旧档的共用落脚点不能覆盖更新后的个人日程。
+      if (
+        n.action?.kind === c.kind &&
+        n.action.label === c.label &&
+        g.offDuty &&
+        (c.kind !== "habit" ||
+          (n.action.target.space === c.target.space &&
+            distance(n.action.target, c.target) <= 8))
+      )
         return;
       if (n.action) this.cancel(n, "轮休日程改变");
       if (this.begin(n, c)) this.defense.leaveGuard(g.id);
@@ -1578,7 +1589,7 @@ export class NpcLife {
               if (a.kind !== "escort") n.gear = "carried";
               this.travelPhase(n, a);
             }
-          } else if (this.nav(n.id).stuck > 8000) {
+          } else if (this.nav(n.id).stuck > LIFE.routeStuckMs) {
             this.cancel(n, "救援会合通路受阻，报告并返岗");
             this.defense.recallGuard(guard.id);
           }
@@ -1621,7 +1632,7 @@ export class NpcLife {
               } else n.gear = "carried";
               this.travelPhase(n, a);
             }
-          } else if (this.nav(n.id).stuck > 8000) {
+          } else if (this.nav(n.id).stuck > LIFE.routeStuckMs) {
             a.failures++;
             n.pathFailures++;
             this.nav(n.id).stuck = 0;
@@ -1711,7 +1722,7 @@ export class NpcLife {
       }
       if (g) {
         const r = this.nav(n.id);
-        if (r.stuck > 8000) {
+        if (r.stuck > LIFE.routeStuckMs) {
           n.blockedTarget = { ...a.target };
           n.blockedUntil = l.elapsed + 30000;
           n.pathFailures++;
@@ -1721,7 +1732,7 @@ export class NpcLife {
         }
       }
       if (!reached) {
-        if (this.nav(n.id).stuck > 8000) {
+        if (this.nav(n.id).stuck > LIFE.routeStuckMs) {
           a.failures++;
           n.pathFailures++;
           this.nav(n.id).stuck = 0;
@@ -1862,10 +1873,11 @@ export class NpcLife {
         eventId: source.eventId ?? null,
       },
       { id: source.id, faction: "hostile", hp: source.hp, armor: 0 },
-      { id, faction: "village", hp: body.hp, armor: 0 },
+      { id, faction: "village", hp: body.hp, armor: 0,...this.defense.protection?.(id) },
     );
     if (!hit.applied) return false;
     attack.resolved = true;
+    if (hit.damage === 0) return true;
     if (facility) return this.damageFacility(id, hit.damage, false, source.id);
     if (!n?.body) return false;
     n.body.hp = hit.hp;

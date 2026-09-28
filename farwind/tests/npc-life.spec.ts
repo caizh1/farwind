@@ -1,10 +1,10 @@
 import { prepareRaid } from "../src/game/systems/defense";
 import { test, expect, type Page } from "@playwright/test";
-import { initialState } from "../src/game/systems/state";
+import { initialState, validate } from "../src/game/systems/state";
 import { NpcLife } from "../src/game/systems/npcLife";
 import { EastDefense } from "../src/game/systems/defense";
 import { FACILITIES } from "../src/data/npcLife";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { move } from "./map-navigation";
 test.use({ headless: false });
 const read = (page: Page) => page.evaluate(() => (window as any).__farwind());
@@ -43,6 +43,209 @@ async function roomMove(page: Page, x: number, y: number) {
     }
   }
 }
+const returnTest = test.extend({ video: "on" });
+// 卡住位置的存档自行绕行，暂停和中途读档后青禾实际返岗。
+returnTest("GUARD-RETURN-01", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  // 导入旧代码真实模拟生成的卡住存档，不改写浏览器运行时。
+  const state = validate(
+      JSON.parse(
+        readFileSync("docs/npc-life/evidence/guard-return-save.json", "utf8"),
+      ),
+    ),
+    guard = state.defense.guards.find((g) => g.id === "east-patrol")!;
+  await page.goto("/?npcDebug=1");
+  page.once("dialog", (d) => d.accept());
+  const chooser = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "导入存档" }).click();
+  await (
+    await chooser
+  ).setFiles({
+    name: "guard-return-save.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(validate(state))),
+  });
+  await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(() => (window as any).__farwind().mode === "pause");
+  const paused = (await read(page)).state,
+    pausedGuard = paused.defense.guards.find((g: any) => g.id === guard.id);
+  expect(pausedGuard.offDuty).toBe(true);
+  expect(pausedGuard.mode).toBe("return");
+  await page.waitForTimeout(800);
+  expect((await read(page)).state).toEqual(paused);
+  await page.getByRole("button", { name: "保存旅途", exact: true }).click();
+  await expect(page.locator("#toast")).toContainText("已保存");
+  await page.reload();
+  await page.getByRole("button", { name: "继续旅途" }).click();
+  await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
+  const samples: any[] = [];
+  const sample = async () => {
+    const snap = await read(page),
+      g = snap.state.defense.guards.find((g: any) => g.id === guard.id),
+      watch = snap.state.defense.guards.find((g: any) => g.id === "east-watch");
+    samples.push({
+      时间: snap.state.life.elapsed,
+      空间: g.space,
+      横坐标: g.x,
+      纵坐标: g.y,
+      状态: g.mode,
+      轮休: g.offDuty,
+      与岑风距离: Math.hypot(g.x - watch.x, g.y - watch.y),
+    });
+    expect(watch.x).toBe(2010);
+    expect(watch.y).toBe(970);
+    expect(samples.at(-1).与岑风距离).toBeGreaterThanOrEqual(18 - 1e-5);
+    for (const prefix of ["east", "north", "south"])
+      expect(
+        snap.state.defense.guards.filter(
+          (g: any) => g.id.startsWith(prefix) && !g.dead && !g.offDuty,
+        ).length,
+      ).toBeGreaterThanOrEqual(2);
+    return snap;
+  };
+  await sample();
+  await page.screenshot({
+    path: "docs/npc-life/evidence/guard-return-route.png",
+  });
+  for (let i = 0; i < 60; i++) {
+    const snap = await sample();
+    if (!snap.state.defense.guards.find((g: any) => g.id === guard.id).offDuty)
+      break;
+    await page.waitForTimeout(200);
+  }
+  const restored = await sample(),
+    arrived = restored.state.defense.guards.find((g: any) => g.id === guard.id);
+  expect(arrived.offDuty).toBe(false);
+  expect(["post", "patrol"]).toContain(arrived.mode);
+  expect(arrived.space).toBe("village");
+  expect(Math.hypot(arrived.x - 2010, arrived.y - 1160)).toBeLessThan(12);
+  expect(arrived.hp).toBe(guard.hp);
+  expect(errors).toEqual([]);
+  await page.screenshot({
+    path: "docs/npc-life/evidence/guard-return-arrived.png",
+  });
+  writeFileSync(
+    "docs/npc-life/evidence/guard-return-browser.json",
+    JSON.stringify(
+      {
+        说明: "重现样本经正式存档导入，真实浏览器推进；无运行时坐标或生命注入。",
+        暂停和中途存档恢复: "通过",
+        实际返岗: "通过",
+        页面错误: errors,
+        行程采样: samples,
+        生活指标: restored.npcLife.metrics,
+      },
+      null,
+      2,
+    ),
+  );
+});
+// 三门弓卫真实离开营房、分别临水休息，再按日程沿路返岗。
+returnTest("GUARD-REST-02", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  const state = validate(
+    JSON.parse(
+      readFileSync("docs/npc-life/evidence/guard-rest-save.json", "utf8"),
+    ),
+  );
+  await page.goto("/?npcDebug=1");
+  page.once("dialog", (d) => d.accept());
+  const chooser = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "导入存档" }).click();
+  await (
+    await chooser
+  ).setFiles({
+    name: "guard-rest-save.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(state)),
+  });
+  await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
+  const rested = new Set<string>(),
+    samples: any[] = [];
+  for (let i = 0; i < 140; i++) {
+    const snap = await read(page);
+    const archers = snap.state.defense.guards.filter((g: any) =>
+      g.id.endsWith("archer"),
+    );
+    samples.push({
+      时间: snap.state.time,
+      弓卫: archers.map((g: any) => ({
+        身份: g.id,
+        空间: g.space,
+        横坐标: g.x,
+        纵坐标: g.y,
+        轮休: g.offDuty,
+        状态: g.mode,
+      })),
+    });
+    for (const g of archers) {
+      const n = snap.state.life.people.find((n: any) => n.id === g.id);
+      if (n.action?.label === "临水休息" && n.action.phase === "perform") {
+        rested.add(g.id);
+        expect(g.space).toBe("village");
+        expect(
+          Math.hypot(g.x - n.action.target.x, g.y - n.action.target.y),
+        ).toBeLessThan(6);
+      }
+      expect(
+        snap.state.defense.guards.filter(
+          (o: any) =>
+            o.id.split("-")[0] === g.id.split("-")[0] && !o.dead && !o.offDuty,
+        ).length,
+      ).toBeGreaterThanOrEqual(2);
+    }
+    if (rested.size === 3) break;
+    await page.waitForTimeout(500);
+  }
+  expect([...rested].sort()).toEqual([
+    "east-archer",
+    "north-archer",
+    "south-archer",
+  ]);
+  await page.screenshot({
+    path: "docs/npc-life/evidence/guard-rest-night.png",
+  });
+  // 公开开发快进同时推进真实行走、战斗与生活，明确区别于实时等待。
+  await page.getByRole("button", { name: "NPC 调试", exact: true }).click();
+  for (let i = 0; i < 2; i++) {
+    const elapsed = (await read(page)).state.life.elapsed;
+    await page.getByRole("button", { name: "推进1小时", exact: true }).click();
+    await page.waitForFunction(
+      (t) => (window as any).__farwind().state.life.elapsed >= t + 40000,
+      elapsed,
+    );
+  }
+  await page.getByRole("button", { name: "NPC 调试", exact: true }).click();
+  const returned = await read(page);
+  for (const g of returned.state.defense.guards.filter((g: any) =>
+    g.id.endsWith("archer"),
+  )) {
+    expect(g.offDuty, g.id).toBe(false);
+    expect(g.mode, g.id).toBe("post");
+    expect(
+      returned.state.life.people.find((n: any) => n.id === g.id).pathFailures,
+      g.id,
+    ).toBe(0);
+  }
+  expect(errors).toEqual([]);
+  writeFileSync(
+    "docs/npc-life/evidence/guard-rest-browser.json",
+    JSON.stringify(
+      {
+        说明: "固定真实日程模拟存档导入，临水步行与休息正常推进；返岗阶段使用两次公开全世界快进。未注入运行时位置、伤情或岗位。",
+        实际休息: [...rested],
+        全部返岗: "通过",
+        页面错误: errors,
+        行程: samples,
+      },
+      null,
+      2,
+    ),
+  );
+});
 test("补给演练：药房装药中保存、重载、真实领取和到场救护", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
@@ -195,7 +398,8 @@ test("居民真实日常、动态位置、药房室内与存档恢复", async ({
 });
 test("和平轮休真实进入营房，森林敌人不取消全村日常", async ({ page }) => {
   const old: any = initialState();
-  old.schema_version = 5;old.skills={swordWind:false};
+  old.schema_version = 5;
+  old.skills = { swordWind: false };
   delete old.life;
   old.time = 1140;
   await page.goto("/?npcDebug=1");
@@ -292,7 +496,8 @@ test("旧档真实导入、死亡保留、夜间床位、暂停与失焦冻结",
   context,
 }) => {
   const old: any = initialState();
-  old.schema_version = 5;old.skills={swordWind:false};
+  old.schema_version = 5;
+  old.skills = { swordWind: false };
   delete old.life;
   old.time = 1320;
   old.coins = 73;
@@ -547,7 +752,8 @@ test("床位演练：小满沿路入住旅馆备用床，室内存档保留而�
   page,
 }) => {
   const old: any = initialState();
-  old.schema_version = 5;old.skills={swordWind:false};
+  old.schema_version = 5;
+  old.skills = { swordWind: false };
   delete old.life;
   old.time = 1310;
   await page.goto("/?npcDebug=1");

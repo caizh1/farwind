@@ -60,11 +60,14 @@ export class EastDefense {
   civilianTargets?: () => CivilianTarget[];
   facilityTargets?: () => CivilianTarget[];
   civilianContact?: (id:string, source:DefenseHostile, contact:EnemyContact) => boolean;
+  companionTarget?: () => CivilianTarget | undefined;
+  companionContact?: (source:DefenseHostile, contact:EnemyContact) => boolean;
+  protection?: (id:string) => Pick<import('./damage').UnitRef,'shield'|'reduction'>;
   // 报告时钟沿存档推进，重建后的攻击序号复用不能吞掉新的伤情。
   eventTime?: () => number;
   victim(id:string|null|undefined,player=this.player):CivilianTarget|undefined {
     if(id==='player')return player.hp>0?{...player,id}:undefined;
-    return this.state.guards.find(g=>g.id===id&&!g.dead&&(g.space??'village')==='village') ?? this.civilianTargets?.().find(n=>n.id===id) ?? this.facilityTargets?.().find(f=>f.id===id);
+    return this.state.guards.find(g=>g.id===id&&!g.dead&&(g.space??'village')==='village') ?? this.civilianTargets?.().find(n=>n.id===id) ?? this.facilityTargets?.().find(f=>f.id===id) ?? (id==='xiaobao'?this.companionTarget?.():undefined);
   }
   leaveGuard(id:GuardId){const g=this.state.guards.find(g=>g.id===id)!;if(g.dead||g.offDuty)return;g.offDuty=true;g.mode="life";g.towerTransitMs=GUARD_DEFS.find(d=>d.id===id)!.role==="archer"?1800:0;this.runtime.get(id)!.attack=null;}
   recallGuard(id:GuardId){const g=this.state.guards.find(g=>g.id===id)!;this.peaceOrders.delete(id);if(!g.dead&&g.offDuty)g.mode="return";}
@@ -221,7 +224,7 @@ export class EastDefense {
     const g = this.state.guards.find(g => g.id === event.targetId);
     if (!g) return false;
     const hit = resolveDamage(event, { ...source, faction: "hostile", armor: 0 },
-      { id: g.id, faction: "village", hp: g.hp, armor: GUARD_ARMOR[g.armorId] });
+      { id: g.id, faction: "village", hp: g.hp, armor: GUARD_ARMOR[g.armorId],...this.protection?.(g.id) });
     if (!hit.applied) return false;
     g.hp = hit.hp; g.peaceMs = 0;
     this.runtime.get(g.id)!.flashUntil = this.now + 130;
@@ -286,7 +289,8 @@ export class EastDefense {
     const localGate=this.enemies.includes(e as DefenseEnemy)?this.gate().id:DEFENSE_ZONES.find(z=>inActivity(z.gateId,e)||inAlert(z.gateId,e))?.gateId;
     const guards = this.state.guards.filter(g => !g.dead && (g.space??"village")==="village" && this.guardGate(g.id)===localGate && GUARD_DEFS.find(d => d.id === g.id)!.role === "melee");
     const civilians=(this.civilianTargets?.()??[]).filter(n=>dist(e,n)<380&&clearMeleeLine(e,n));
-    const all = [...guards, ...civilians, ...(player.hp > 0 && dist(e, player) < 380 ? [{ ...player, id: "player" }] : [])]
+    const companion=this.companionTarget?.();
+    const all = [...guards, ...civilians, ...(companion&&dist(e,companion)<380?[companion]:[]), ...(player.hp > 0 && dist(e, player) < 380 ? [{ ...player, id: "player" }] : [])]
       .filter(p => this.external.includes(e) ? dist(p,{x:e.homeX,y:e.homeY}) <= 420 : dist(p,this.gate()) < 600)
       .filter(p=>this.external.includes(e)||locallyProtected(this.gate().id,e)||p.id==='player'||dist(e,p)<110)
       .sort((a, b) => dist(e, a) - dist(e, b) || a.id.localeCompare(b.id));
@@ -335,6 +339,7 @@ export class EastDefense {
           if(this.state.guards.some(g=>g.id===target.id))
             this.damageGuard({ sourceId: e.id, targetId: target.id, attackId: event.attack.attackId,
               amount: event.attack.damage, sourceType: "enemy-melee", eventId: e.eventId ?? null }, e);
+          else if(target.id==='xiaobao')this.companionContact?.(e,event);
           else this.civilianContact?.(target.id,e,event);
           event.attack.resolved = true;
         }

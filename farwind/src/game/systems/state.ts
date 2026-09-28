@@ -1,4 +1,5 @@
 import {initialSkills,validateSkills,migrateLegacySkills} from './skills';
+import {initialXiaobao,validateXiaobao,type XiaobaoState} from './xiaobaoState';
 import type {SkillState} from '../../data/windLessons';
 import {initialLife,validateLife,type LifeState} from './npcLifeState';
 import {
@@ -17,7 +18,8 @@ import {initialNight,migratedNight,validateNight,type NightState} from "./nightD
 export type Slot = { id: ItemId; count: number } | null;
 export type State = {
   skills: SkillState;
-  schema_version: 7;
+  schema_version: 8;
+  xiaobao: XiaobaoState;
   life: LifeState;
   night: NightState;
   defense: DefenseState;
@@ -44,7 +46,8 @@ export type State = {
 };
 export const initialState = (): State => ({
   skills: initialSkills(),
-  schema_version: 7,
+  schema_version: 8,
+  xiaobao: initialXiaobao(),
   life: initialLife(),
   night: initialNight(),
   defense: initialDefense(),
@@ -149,8 +152,9 @@ export function validate(raw: unknown): State {
   if (s && version === 3) { s.defense = migrateEastDefense(s.defense); (s as {schema_version:number}).schema_version = 4; }
   if(s&&(s as {schema_version:number}).schema_version===4){s.night=migratedNight(s.time);(s as {schema_version:number}).schema_version=5;}
   if(s&&(s as {schema_version:number}).schema_version===5){s.life=initialLife(s.time);(s as {schema_version:number}).schema_version=6;}
-  if(s&&(s as {schema_version:number}).schema_version===6){s.skills=migrateLegacySkills(s.skills);s.schema_version=7;}
-  if(s&&s.schema_version===7)s.skills=validateSkills(s.skills);
+  if(s&&(s as {schema_version:number}).schema_version===6){s.skills=migrateLegacySkills(s.skills);(s as {schema_version:number}).schema_version=7;}
+  if(s&&(s as {schema_version:number}).schema_version===7){s.xiaobao=initialXiaobao();s.schema_version=8;}
+  if(s&&s.schema_version===8)s.skills=validateSkills(s.skills);
   const num = (n: unknown, min: number, max: number) =>
     typeof n === "number" && Number.isFinite(n) && n >= min && n <= max;
   const strarr = (a: unknown) =>
@@ -159,7 +163,7 @@ export function validate(raw: unknown): State {
     a.every((x) => typeof x === "string" && x.length < 80);
   if (
     !s ||
-    s.schema_version !== 7 ||
+    s.schema_version !== 8 ||
     (s.map_version !== undefined &&
       s.map_version !== 2 &&
       s.map_version !== 3 &&
@@ -240,6 +244,7 @@ export function validate(raw: unknown): State {
   )
     throw Error("存档交易或装备状态无效，请使用有效备份。");
   s.defense = validateDefense(s.defense);
+  s.xiaobao=validateXiaobao(s.xiaobao,s.killed,s.defense.raid?.members.map(m=>m.id)??[]);
   s.night=validateNight(s);
   s.life=validateLife(s.life,s.time);
   const validIds = (ids: string[], kind: string) =>

@@ -57,6 +57,8 @@ export const COMBAT = {
     invulnEnd: 140,
   },
 } as const;
+export const PLAYER_HURT = {duration:220,knock:14,knockDuration:110,sparkLife:120,poses:[0,55,140]} as const;
+export type HurtReaction = {start:number;until:number;facing:Facing;direction:{x:number;y:number};root:{x:number;y:number}};
 export const PARRY = {
   precise: 90,
   active: 240,
@@ -97,6 +99,8 @@ export const actionPriority = { attack: 1, parry: 2, dash: 3 } as const;
 export type ActionRequest = { kind: ActionKind; at: number; sequence: number; axis: {x:number;y:number} };
 export type Target = { id: string; x: number; y: number; hp: number };
 export type Attack = {
+  delivery?: "blade" | "wind";
+  sourceContactId?: string;
   released?:boolean;
   swordWind?:SwordWindConfig;
   windDirection?:{x:number;y:number};
@@ -161,6 +165,7 @@ export function inStrike(
     d = Math.hypot(dx, dy);
   return (
     a.stage !== 4 &&
+    a.delivery !== 'wind' &&
     e.hp > 0 &&
     d <= m.range &&
     d > 0 &&
@@ -183,10 +188,11 @@ export class CombatController {
   lastParryRequestAt: number | null = null;
   regenUntil = 0;
   actionLockUntil = 0;
+  hurtReaction: HurtReaction | null = null;
   parryPending: {at:number;until:number;facing:Facing} | null = null;
   dashPending: {at:number;until:number;axis:{x:number;y:number};facing:Facing} | null = null;
   afterguard: {until:number;facing:Facing} | null = null;
-  autoCounter: {at:number;successAt:number;kind:CounterKind;target:string;facing:Facing} | null = null;
+  autoCounter: {at:number;successAt:number;kind:CounterKind;target:string;facing:Facing;delivery?:Attack["delivery"];sourceContactId?:string;direction?:{x:number;y:number}} | null = null;
   intentFacing: Facing = 0;
   setIntent(axis:{x:number;y:number}) {
     if(!Math.hypot(axis.x,axis.y))return;
@@ -245,8 +251,18 @@ export class CombatController {
     this.dashUntil = 0;
     this.dashStart = -1;
     this.dashArmed = false;
+    this.hurtReaction = null;
     // 受伤不重置风步冷却、恢复暂停或模拟时钟。
   }
+  // 仅在真实伤害应用后调用；练习切换等动作清理仍使用 hurt()。
+  takeHit(now:number,facing:Facing,direction:{x:number;y:number},root:{x:number;y:number}) {
+    this.hurt();
+    const length=Math.hypot(direction.x,direction.y),[x,y]=facingVector(facing);
+    this.hurtReaction={start:now,until:now+PLAYER_HURT.duration,facing,
+      direction:length>1e-7?{x:direction.x/length,y:direction.y/length}:{x,y},root:{x:root.x,y:root.y}};
+    this.actionLockUntil=this.hurtReaction.until;
+  }
+  hurting(now:number) {return !!this.hurtReaction&&now>=this.hurtReaction.start&&now<this.hurtReaction.until;}
   parryLegalAt(now: number) {
     const a = this.attack;
     let legal = Math.max(now, this.dashUntil, this.parryCooldown, this.actionLockUntil);
@@ -262,6 +278,7 @@ export class CombatController {
     return legal;
   }
   requestParry(now: number, facing: Facing) {
+    if(this.hurting(now)){this.lastRejection="受击恢复中";return false;}
     if (this.parryPending && now > this.parryPending.until) this.parryPending = null;
     if (this.parryPending || (this.parry && this.parry.successAt === undefined && now < this.parry.actionUntil)) return false;
     this.lastParryRequestAt=now;
@@ -271,6 +288,7 @@ export class CombatController {
   }
   // 同时输入在共同入口只取最高优先级；拒绝不会转为下一种动作。
   requestActions(requests: ActionRequest[], now: number, p: {stamina:number}, fallback: Facing) {
+    if(this.hurting(now)){if(requests.length)this.lastRejection="受击恢复中";return;}
     const top = [...requests].sort((a,b)=>actionPriority[b.kind]-actionPriority[a.kind] || a.sequence-b.sequence)[0];
     if (!top) return;
     const {axis} = top, facing: Facing = Math.hypot(axis.x,axis.y)
@@ -287,6 +305,7 @@ export class CombatController {
   }
   flushActions(now: number, p: {stamina:number}) {
     const started: ActionKind[] = [];
+    if(this.hurting(now)){this.clearInputs();return started;}
     if(this.autoCounter && now>=this.autoCounter.at && (this.dashPending||this.parryPending)) {this.autoCounter=null;this.pending=false;}
     if (this.afterguard && now >= this.afterguard.until) this.afterguard = null;
     if (this.parry && now >= this.parry.actionUntil) this.parry = null;
@@ -325,7 +344,7 @@ export class CombatController {
     if (!a || a.successAt !== undefined || now < a.start || now >= a.start+PARRY.active) return null;
     return now < a.start+PARRY.precise ? "perfect" : "normal";
   }
-  succeedParry(now: number, kind: CounterKind, p: {stamina:number;x?:number;y?:number},target="",origin?:{x:number;y:number}) {
+  succeedParry(now: number, kind: CounterKind, p: {stamina:number;x?:number;y?:number},target="",origin?:{x:number;y:number},counter?:{delivery:Attack["delivery"];sourceContactId:string;direction?:{x:number;y:number}}) {
     const a = this.parry;
     if (!a || a.successAt !== undefined) return false;
     a.successAt = now;
@@ -334,9 +353,9 @@ export class CombatController {
     this.actionLockUntil=a.actionUntil;
     this.parryCooldown = a.actionUntil;
     this.afterguard = {until:now+PARRY.afterguard,facing:a.facing};
-    const dx=origin?(origin.x-(p.x??0)):0,dy=origin?(origin.y-(p.y??0)):0;
+    const dx=counter?.direction?.x??(origin?(origin.x-(p.x??0)):0),dy=counter?.direction?.y??(origin?(origin.y-(p.y??0)):0);
     const facing:Facing=Math.hypot(dx,dy)>1e-7?Math.abs(dx)>Math.abs(dy)?dx<0?2:3:dy<0?1:0:a.facing;
-    this.autoCounter={at:a.actionUntil,successAt:now,kind,target,facing};
+    this.autoCounter={at:a.actionUntil,successAt:now,kind,target,facing,delivery:counter?.delivery,sourceContactId:counter?.sourceContactId,direction:counter?.direction?{...counter.direction}:undefined};
     if(this.pending&&this.requestedAt<now){this.pending=false;this.reservationOwner=null;}
     if(this.pending)this.bufferUntil=a.actionUntil+strikeDuration(resolveStrike(1,kind))-COMBAT.chainWindow+COMBAT.buffer;
     p.stamina = Math.min(100,p.stamina+PARRY.cost+(kind==="perfect"?PARRY.bonus:0));
@@ -360,7 +379,8 @@ export class CombatController {
     if(this.pending) boundaries.push(this.requestedAt,this.bufferUntil);
     if(this.dashPending) boundaries.push(this.parry?.actionUntil??0,this.dashPending.until);
     if(this.parry)boundaries.push(this.parry.actionUntil,this.parry.start+PARRY.precise,this.parry.start+PARRY.active);
-    boundaries.push(this.dashUntil,this.dashStart+COMBAT.dash.invulnStart,this.dashStart+COMBAT.dash.invulnEnd,this.regenUntil);
+    boundaries.push(this.dashUntil,this.dashStart+COMBAT.dash.invulnStart,this.dashStart+COMBAT.dash.invulnEnd,this.regenUntil,
+      this.hurtReaction?.until??0,this.hurtReaction?this.hurtReaction.start+PLAYER_HURT.knockDuration:0);
     return Math.min(...boundaries.filter(t=>t>now+1e-7));
   }
   reset(cooldown = 0) {
@@ -372,6 +392,7 @@ export class CombatController {
     this.lastParryRequestAt=null;
     this.regenUntil = 0;
     this.actionLockUntil=0;
+    this.hurtReaction=null;
     this.parryPending = null;
     this.dashPending = null;
     this.afterguard = null;
@@ -395,6 +416,7 @@ export class CombatController {
     this.dashCooldown = cooldown;
   }
   requestAttack(now: number) {
+    if(this.hurting(now)){this.lastRejection="受击恢复中";return;}
     if (this.pending && now > this.bufferUntil) this.pending = false;
     if (this.dashUntil > now || this.pending) return;
     if (
@@ -488,6 +510,7 @@ export class CombatController {
   }
   effectiveFacing(now: number, fallback: Facing): Facing {
     return (
+      (this.hurting(now)?this.hurtReaction!.facing:undefined) ??
       (this.parry && now < this.parry.actionUntil ? this.parry.facing : undefined) ??
       this.attack?.facing ??
       (now < this.settleUntil ? this.lastFacing : fallback)
@@ -502,6 +525,7 @@ export class CombatController {
     return strikeDuration(this.attack?.stage === stage ? attackConfig(this.attack) : resolveStrike(stage));
   }
   phase(now: number) {
+    if(this.hurting(now))return "hurt";
     const a = this.attack;
     if (!a) return "idle";
     const t = now - a.start,
@@ -569,7 +593,7 @@ export class CombatController {
         const [vx, vy] = facingVector(a.facing);
         // 移动前后都检测，避免长步长先越过目标才检测扇形。
         const resolve = () => {
-          if(a.stage===4)return;
+          if(a.stage===4||a.delivery==='wind')return;
           for (const e of targets)
             if ((!a.primaryTarget||a.primaryTarget===e.id) && !a.hit.has(e.id) && inStrike(p, e, a, clearLine)) {
               a.hit.add(e.id);
@@ -577,7 +601,7 @@ export class CombatController {
             }
         };
         if (stop >= from && cursor < until) {
-          if(a.stage===4 && !a.released) {a.released=true;released(a,{...p},from);}
+          if((a.stage===4||a.delivery==='wind') && !a.released) {a.released=true;released(a,{...p},from);}
           if (!a.sounded) {
             a.sounded = true;
             swung(a.stage);
@@ -623,6 +647,9 @@ export class CombatController {
           facing: auto?.facing ?? facing,
           primaryTarget: auto?.target || undefined,
           automatic: !!auto,
+          delivery: auto?.delivery,
+          sourceContactId: auto?.sourceContactId,
+          windDirection: auto?.direction ? {...auto.direction} : undefined,
           start: consumeAt,
           enter: !a && consumeAt >= this.settleUntil,
           hit: new Set(),
@@ -661,11 +688,18 @@ export class CombatController {
         );
     }
     if (this.dashUntil <= now) this.dashStart = -1;
+    const hurt=this.hurtReaction;
+    if(hurt&&now>prev) {
+      const progress=(time:number)=>{const u=Math.max(0,Math.min(1,(time-hurt.start)/PLAYER_HURT.knockDuration));return 1-(1-u)**2;};
+      const distance=(progress(now)-progress(prev))*PLAYER_HURT.knock;
+      if(distance>0)sweepMove(p,hurt.direction.x*distance,hurt.direction.y*distance,blocked,motionClear);
+    }
   }
   clearAttackReservation(){this.pending=false;this.bufferUntil=0;this.reservationOwner=null;}
   diagnostic(now: number) {
     const m = this.attack ? attackConfig(this.attack) : null;
     return {
+      hurt:this.hurtReaction?{...this.hurtReaction,remaining:Math.max(0,this.hurtReaction.until-now),active:this.hurting(now)}:null,
       parry: this.parry ? {...this.parry, elapsed:now-this.parry.start, remaining:Math.max(0,this.parry.actionUntil-now)} : null,
       parrySerial: this.parrySerial,
       parryBuffered: this.parryPending,
@@ -676,7 +710,10 @@ export class CombatController {
       intentFacing: this.intentFacing,
       automatic: !!this.attack?.automatic,
       primaryTarget: this.attack?.primaryTarget ?? null,
-      status: this.parryPending ? this.lastRejection==="体力不足"?"体力不足":"已缓冲" : this.parry ? this.parry.successAt!==undefined?"成功 · 自动反斩":now<this.parry.start+PARRY.active?"架剑已发动":"空弹恢复" : pStatus(this,now),
+      delivery: this.attack?.delivery ?? this.autoCounter?.delivery ?? (this.attack?.stage===4?'wind':'blade'),
+      sourceContactId: this.attack?.sourceContactId ?? this.autoCounter?.sourceContactId ?? null,
+      windDirection: this.attack?.windDirection ?? this.autoCounter?.direction ?? null,
+      status: this.hurting(now)?"受击恢复中":this.parryPending ? this.lastRejection==="体力不足"?"体力不足":"已缓冲" : this.parry ? this.parry.successAt!==undefined?"成功 · 自动反斩":now<this.parry.start+PARRY.active?"架剑已发动":"空弹恢复" : pStatus(this,now),
       attackConfig: m,
       counterAttack: this.attack?.counter ?? null,
       lastRejection: this.lastRejection,

@@ -55,6 +55,8 @@ export function lifeInteract(world: World, p: Prop) {
   return false;
 }
 function transition(world: World) {
+  const companion=world.xiaobao?.controller;
+  if(companion?.data.task==='follow'){companion.data.wait=null;companion.data.command=null;if(companion.data.cast&&!companion.data.cast.released)companion.cancel();}
   // 同一帧已切换空间；立刻清掉上一空间的交互提示，保存期间也不显示旧门牌。
   world.target = undefined;
   world.ui.update(world.state, "");

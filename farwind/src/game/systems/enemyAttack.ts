@@ -5,7 +5,7 @@ export const ENEMY_ATTACK={slime:{windup:450,lock:120,active:100,recovery:260,st
 export type AttackGeometry={a:Point;b:Point;radius:number};
 type AttackSpace={blocked:(x:number,y:number)=>boolean;clear:(a:Point,b:Point)=>boolean;melee:(a:Point,b:Point,id?:string)=>boolean;wall?:(a:Point,b:Point)=>boolean};
 export type EnemyAttack={attackId:string;attackerId:string;type:EnemyKind;startedAt:number;lockAt:number;contactAt:number;activeUntil:number;recoveryUntil:number;direction:Point;locked:boolean;shape:"sweep";range:number;halfAngle:number;parryable:boolean;damage:number;cancelled:boolean;resolved:boolean;emitted:boolean;motionAt:number;scanAt:number;previousGeometry?:AttackGeometry;geometry?:AttackGeometry;actualContactAt?:number;chargeSound?:boolean;strikeSound?:boolean;wallAt?:number;launched?:boolean};
-export type EnemyContact={at:number;attack:EnemyAttack;origin:Point;geometry?:AttackGeometry;normal?:Point;training?:boolean;projectileId?:string};
+export type EnemyContact={at:number;attack:EnemyAttack;origin:Point;geometry?:AttackGeometry;normal?:Point;training?:boolean;projectileId?:string;targetId?:string};
 export const SPORE = { speed: 250, life: 1600, radius: 14, muzzle: 24, burst: 260 } as const;
 export function sporeOrigin(root:Point,d:Point):Point{return {x:root.x+d.x*SPORE.muzzle,y:root.y+d.y*SPORE.muzzle};}
 export function sporeContactAt(origin:Point,d:Point,target:Point,started:number,ended:number,clear=(a:Point,b:Point)=>clearMeleeLine(a,b)):number|null {

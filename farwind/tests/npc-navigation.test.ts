@@ -106,3 +106,98 @@ describe("生活寻路预算", () => {
     ).toBeLessThanOrEqual(LIFE.speed * 0.016 + 0.001);
   });
 });
+
+describe("人物占位与持续行程进展", () => {
+  it("青禾绕过站岗者及旧缓存路点，实际抵达东门南岗", () => {
+    const body: Place = {
+        space: "village",
+        x: 2020.5385757220781,
+        y: 953.7161862884818,
+      },
+      target: Place = { space: "village", x: 2010, y: 1160 },
+      peer: Place = { space: "village", x: 2010, y: 970 },
+      nav = lifeNavigation();
+    // 录屏首因诊断捕获的旧路点：首段会进入岑风的占位圈。
+    nav.goal = "village:251:145";
+    nav.nav.path = [
+      { x: 2020, y: 960 },
+      ...Array.from({ length: 9 }, (_, i) => ({ x: 2040, y: 980 + i * 20 })),
+      { ...target },
+    ];
+    nav.nav.target = target;
+    let reached = false,
+      elapsed = 0,
+      separation = Infinity;
+    for (let now = 0; now < 15000 && !reached; now += 1000 / 60) {
+      elapsed = now + 1000 / 60;
+      reached = moveLife(
+        body,
+        target,
+        1000 / 60,
+        now,
+        { queries: 2 },
+        nav,
+        () => true,
+        [peer],
+      );
+      expect(
+        Math.hypot(body.x - peer.x, body.y - peer.y),
+      ).toBeGreaterThanOrEqual(18 - 1e-6);
+      separation = Math.min(
+        separation,
+        Math.hypot(body.x - peer.x, body.y - peer.y),
+      );
+    }
+    expect(reached).toBe(true);
+    expect(
+      Math.hypot(body.x - target.x, body.y - target.y),
+    ).toBeLessThanOrEqual(5);
+    expect(peer).toEqual({ space: "village", x: 2010, y: 970 });
+    expect(nav.maxExpanded).toBeLessThanOrEqual(LIFE.pathNodesPerBatch);
+    expect(nav.queries).toBeLessThan(10);
+    writeFileSync(
+      "docs/npc-life/evidence/guard-return-navigation.json",
+      JSON.stringify(
+        {
+          说明: "修复前相同位置、旧缓存路线、同一站岗者及六十分之一秒步长；保留碰撞与共享预算。",
+          实际到达: reached,
+          模拟毫秒: elapsed,
+          最终位置: body,
+          最小同伴距离: separation,
+          寻路查询: nav.queries,
+          搜索批次: nav.batches,
+          最多展开节点: nav.maxExpanded,
+        },
+        null,
+        2,
+      ),
+    );
+  });
+  it("同伴进入已有路线会重新绕行，跨空间同坐标不阻挡", () => {
+    for (const space of ["village", "barracks"] as const) {
+      const body: Place = { space: "village", x: 670, y: 720 },
+        target: Place = { space: "village", x: 820, y: 720 },
+        peer: Place = { space, x: 740, y: 720 },
+        nav = lifeNavigation();
+      let reached = false;
+      for (let now = 0; now < 10000 && !reached; now += 50) {
+        reached = moveLife(
+          body,
+          target,
+          50,
+          now,
+          { queries: 2 },
+          nav,
+          () => true,
+          now < 200 ? [] : [peer],
+        );
+        if (space === "village")
+          expect(
+            Math.hypot(body.x - peer.x, body.y - peer.y),
+          ).toBeGreaterThanOrEqual(18 - 1e-6);
+      }
+      expect(reached, space).toBe(true);
+      if (space === "barracks") expect(nav.queries).toBe(0);
+    }
+  });
+});

@@ -9,8 +9,8 @@ import { add, count, initialState } from "../src/game/systems/state";
 import type { World } from "../src/game/scenes/World";
 
 describe("独立立绘与资源边界", () => {
-  it("三个稳定标识映射不同资源，文本和未知标识不借用别人的脸", () => {
-    expect(new Set(Object.values(dialoguePortraits).map(p => p.src)).size).toBe(3);
+  it("已登记身份各用独立立绘，文本和未知标识不借用别人的脸", () => {
+    expect(new Set(Object.values(dialoguePortraits).map(p => p.src)).size).toBe(Object.keys(dialoguePortraits).length);
     for (const id of ["sign", "rune", "cat", "unknown", "__proto__", "constructor", "小满", ""])
       expect(dialoguePortraitFor(id)).toBeUndefined();
   });
