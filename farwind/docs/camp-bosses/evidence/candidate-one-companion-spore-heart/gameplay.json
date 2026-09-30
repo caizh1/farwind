@@ -1,0 +1,1374 @@
+{
+  "说明": "关闭测试授予的正式构建；从新游戏出发，键鼠领取、购买、穿戴、步行、识招、弹反、风步与战斗。诊断只读，不修改坐标、生命、时钟或清剿。",
+  "路径": "带小宝",
+  "首领": "孢心巢母",
+  "节点": [
+    {
+      "名称": "驻守杂兵全灭，清除尚未完成",
+      "模拟毫秒": 28703.690000000206,
+      "玩家": {
+        "x": 1210.8150513107907,
+        "y": 2813.233364510333,
+        "hp": 90,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1290.4247520070028,
+        "y": 2732.441080279705,
+        "hp": 638,
+        "qi": 94.63178000000113,
+        "clock": 28703.690000000206,
+        "serial": 6,
+        "cooldowns": {
+          "palm": 691.309999999794,
+          "triple": 0,
+          "star": 1321.309999999794,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 3221.309999999794,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 0,
+        "reduction": 0,
+        "shields": [],
+        "cast": {
+          "id": "xiaobao:6",
+          "skill": "palm",
+          "age": 348.69000000020606,
+          "stage": 1,
+          "released": true,
+          "fixedCenter": false,
+          "origin": {
+            "x": 1290.4247520070028,
+            "y": 2732.441080279705
+          },
+          "center": {
+            "x": 1307.336577982061,
+            "y": 2810.6286748788884
+          },
+          "direction": {
+            "x": 0.2114092244614639,
+            "y": 0.97739763648814
+          },
+          "target": "wild-camp-slime-b",
+          "task": "follow"
+        },
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [
+          {
+            "id": "wild-margin-slime",
+            "hp": 48,
+            "x": 507.5525593636375,
+            "y": 2148.1118601590892,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          },
+          {
+            "id": "wild-herb-spore",
+            "hp": 60,
+            "x": 626.2772706351482,
+            "y": 2464.7654452442057,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          }
+        ],
+        "reports": []
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "warning",
+          "warning": 2291.309999999794,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1287.6272387331942,
+            "y": 2809.817085240764,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1232.1234805856031,
+            "y": 2822.6644593559786,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1311.1419440223676,
+            "y": 2828.221832335675,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 1600,
+            "x": 1250,
+            "y": 2820,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "危险区": [],
+      "世界时间": 523.0555350000154,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 5,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 5
+        }
+      }
+    },
+    {
+      "名称": "首领第一阶段正式入场",
+      "模拟毫秒": 31011.580000000267,
+      "玩家": {
+        "x": 1201.2572252226414,
+        "y": 2813.233364510333,
+        "hp": 90,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1285.2976939193893,
+        "y": 2807.4008459769225,
+        "hp": 638,
+        "qi": 100,
+        "clock": 31011.580000000267,
+        "serial": 6,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 913.4199999997327,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 2058.0200000000514,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [
+          {
+            "id": "wild-margin-slime",
+            "hp": 48,
+            "x": 566.7198041910038,
+            "y": 2133.320048952251,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          },
+          {
+            "id": "wild-herb-spore",
+            "hp": 60,
+            "x": 655.4537615629083,
+            "y": 2499.9930648127483,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          }
+        ],
+        "reports": []
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 0,
+              "move": -1,
+              "part": 0,
+              "nextAt": 633.4199999997327,
+              "exposedUntil": -31011.580000000267,
+              "transformUntil": -31011.580000000267,
+              "controlImmuneUntil": -31011.580000000267,
+              "startedAt": -16.58000000026732
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1287.6272387331942,
+            "y": 2809.817085240764,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1232.1234805856031,
+            "y": 2822.6644593559786,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1311.1419440223676,
+            "y": 2828.221832335675,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 1600,
+            "x": 1370,
+            "y": 2820,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-spore-heart",
+        "x": 1370,
+        "y": 2820,
+        "hp": 1600,
+        "type": "spore",
+        "behavior": {
+          "boss": "spore-heart",
+          "battle": {
+            "phase": 1,
+            "next": 0,
+            "move": -1,
+            "part": 0,
+            "nextAt": 31645,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 30995
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0,
+            "y": 1
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 2,
+            "index": 2,
+            "facing": 0,
+            "phase": "idle",
+            "elapsed": 31011.580000000267,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": [],
+      "世界时间": 526.5173700000249,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 6,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 5
+        }
+      }
+    },
+    {
+      "名称": "暂停保存重开保持首领战",
+      "模拟毫秒": 286.29,
+      "玩家": {
+        "x": 1319.552509070294,
+        "y": 2813.233364510333,
+        "hp": 90,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1373.1040392117197,
+        "y": 2828.3078258260944,
+        "hp": 618,
+        "qi": 82.17633474984531,
+        "clock": 33673.52912497418,
+        "serial": 8,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 2161.4708750258224,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 5451.470875025822,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 286.29,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [
+          {
+            "id": "boss-spore-heart",
+            "hp": 1434.4,
+            "x": 1370,
+            "y": 2820,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          },
+          {
+            "id": "wild-herb-spore",
+            "hp": 60,
+            "x": 715.3159179528315,
+            "y": 2572.496568762781,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          },
+          {
+            "id": "wild-margin-slime",
+            "hp": 48,
+            "x": 555.7841639008492,
+            "y": 2136.0539590247804,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          }
+        ],
+        "reports": []
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 1,
+              "move": -1,
+              "part": 0,
+              "nextAt": 41.470875025822295,
+              "exposedUntil": -33673.52912497418,
+              "transformUntil": -33673.52912497418,
+              "controlImmuneUntil": 1281.4708750258224,
+              "startedAt": -2678.5291249741776
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [
+              {
+                "x": 1170.0728168891237,
+                "y": 2629.5317396569235,
+                "id": "boss-spore-heart:战斗0:1:spore:2",
+                "attack": {
+                  "attackId": "boss-spore-heart:战斗0:1:spore:2",
+                  "attackerId": "boss-spore-heart",
+                  "type": "spore",
+                  "startedAt": -1008.5291249741776,
+                  "lockAt": -1008.5291249741776,
+                  "contactAt": -1008.5291249741776,
+                  "activeUntil": 591.4708750258224,
+                  "recoveryUntil": 591.4708750258224,
+                  "direction": {
+                    "x": -0.7240268403625555,
+                    "y": -0.6897717988107477
+                  },
+                  "locked": true,
+                  "shape": "sweep",
+                  "range": 100,
+                  "halfAngle": 1.3962634015954636,
+                  "parryable": true,
+                  "damage": 22,
+                  "cancelled": false,
+                  "resolved": false,
+                  "emitted": false,
+                  "motionAt": 0,
+                  "scanAt": -1008.5291249741776,
+                  "boss": "spore-heart",
+                  "bossAttempt": 0,
+                  "bossSkill": 0,
+                  "chargeSound": true,
+                  "strikeSound": true
+                },
+                "born": -1008.5291249741776,
+                "now": 0,
+                "state": "flying",
+                "released": {
+                  "sourceId": "boss-spore-heart",
+                  "faction": "hostile",
+                  "attackId": "boss-spore-heart:战斗0:1:spore:2",
+                  "amount": 22,
+                  "sourceType": "enemy-shot",
+                  "eventId": null
+                }
+              }
+            ],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1287.6272387331942,
+            "y": 2809.817085240764,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1232.1234805856031,
+            "y": 2822.6644593559786,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1311.1419440223676,
+            "y": 2828.221832335675,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 1434.4,
+            "x": 1370,
+            "y": 2820,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.993826553027653,
+              "y": -0.11094495255383893
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-spore-heart",
+        "x": 1370,
+        "y": 2820,
+        "hp": 1434.4,
+        "type": "spore",
+        "behavior": {
+          "boss": "spore-heart",
+          "battle": {
+            "phase": 1,
+            "next": 1,
+            "move": -1,
+            "part": 0,
+            "nextAt": 327.7608750258223,
+            "exposedUntil": -33387.23912497418,
+            "transformUntil": -33387.23912497418,
+            "controlImmuneUntil": 1567.7608750258223,
+            "startedAt": -2392.2391249741777
+          },
+          "attempt": 0,
+          "face": {
+            "x": -0.993826553027653,
+            "y": -0.11094495255383893
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 127,
+            "index": 1,
+            "facing": 2,
+            "phase": "idle",
+            "elapsed": 286.29,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": [],
+      "世界时间": 530.5102936874988,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 6,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 5
+        }
+      }
+    },
+    {
+      "名称": "当前招式结束后进入第二阶段",
+      "模拟毫秒": 12535.709999999995,
+      "玩家": {
+        "x": 1263.5463926702344,
+        "y": 2813.7414916199027,
+        "hp": 90,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1306.6894274566125,
+        "y": 2825.744577370554,
+        "hp": 582,
+        "qi": 58.333868083178125,
+        "clock": 45922.94912497414,
+        "serial": 21,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 3674.2900000000045,
+          "star": 1604.2900000000045,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 644.2900000000045,
+          "chain": 0,
+          "unity": 0,
+          "guard": 1569.2900000000045,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 0,
+        "reduction": 0,
+        "shields": [],
+        "cast": {
+          "id": "xiaobao:21",
+          "skill": "triple",
+          "age": 508.46000000000276,
+          "stage": 2,
+          "released": true,
+          "fixedCenter": false,
+          "origin": {
+            "x": 1282.7698603825952,
+            "y": 2827.7078172926167
+          },
+          "center": {
+            "x": 1362.0901284199754,
+            "y": 2821.1974688252803
+          },
+          "direction": {
+            "x": 0.9966486280840607,
+            "y": -0.08180166341926885
+          },
+          "target": "boss-spore-heart",
+          "task": "follow"
+        },
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [
+          {
+            "id": "boss-spore-heart",
+            "hp": 800,
+            "x": 1362.0901284199754,
+            "y": 2821.1974688252803,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          },
+          {
+            "id": "wild-herb-spore",
+            "hp": 60,
+            "x": 724.8483052412691,
+            "y": 2583.911246286275,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          },
+          {
+            "id": "wild-margin-slime",
+            "hp": 48,
+            "x": 572.3718543968356,
+            "y": 2131.907036400792,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          }
+        ],
+        "reports": []
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 2,
+              "next": 4,
+              "move": -1,
+              "part": 0,
+              "nextAt": 1114.2900000000045,
+              "exposedUntil": -85.70999999999549,
+              "transformUntil": 1114.2900000000045,
+              "controlImmuneUntil": 2794.2900000000045,
+              "startedAt": -14927.949124974173
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1287.6272387331942,
+            "y": 2809.817085240764,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1232.1234805856031,
+            "y": 2822.6644593559786,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1311.1419440223676,
+            "y": 2828.221832335675,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 800,
+            "x": 1362.0901284199754,
+            "y": 2821.1974688252803,
+            "serial": 6,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.9917090364446682,
+              "y": -0.12850364599491887
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-spore-heart",
+        "x": 1362.0901284199754,
+        "y": 2821.1974688252803,
+        "hp": 800,
+        "type": "spore",
+        "behavior": {
+          "boss": "spore-heart",
+          "battle": {
+            "phase": 2,
+            "next": 4,
+            "move": -1,
+            "part": 0,
+            "nextAt": 13650,
+            "exposedUntil": 12450,
+            "transformUntil": 13650,
+            "controlImmuneUntil": 15330,
+            "startedAt": -2392.2391249741777
+          },
+          "attempt": 0,
+          "face": {
+            "x": -0.9917090364446682,
+            "y": -0.12850364599491887
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 180,
+            "index": 0,
+            "facing": 2,
+            "phase": "阶段转换",
+            "elapsed": 12535.709999999995,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": [],
+      "世界时间": 548.8844236875632,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 6,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 5
+        }
+      }
+    },
+    {
+      "名称": "首领死亡后正式清除，恶意只结算一次",
+      "模拟毫秒": 26761.40000000014,
+      "玩家": {
+        "x": 1411.164237755654,
+        "y": 3053.845853149067,
+        "hp": 90,
+        "stamina": 92.883859007709
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1400.7099309725702,
+        "y": 2910.358302674547,
+        "hp": 528,
+        "qi": 57.7210080831801,
+        "clock": 60148.63912497423,
+        "serial": 37,
+        "cooldowns": {
+          "palm": 883.5999999998603,
+          "triple": 0,
+          "star": 1063.5999999998603,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 108.5999999998603,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 8.340000000000146,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [
+          {
+            "id": "wild-herb-spore",
+            "hp": 60,
+            "x": 720.58043895905,
+            "y": 2578.867790619112,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          },
+          {
+            "id": "wild-margin-slime",
+            "hp": 48,
+            "x": 563.5439457025144,
+            "y": 2134.114013574372,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          }
+        ],
+        "reports": []
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": true,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "defeated",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1287.6272387331942,
+            "y": 2809.817085240764,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1232.1234805856031,
+            "y": 2822.6644593559786,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1311.1419440223676,
+            "y": 2828.221832335675,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1362.0901284199754,
+            "y": 2821.1974688252803,
+            "serial": 11,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.7651209168409528,
+              "y": 0.6438866224829178
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-spore-heart",
+        "x": 1362.0901284199754,
+        "y": 2821.1974688252803,
+        "hp": 0,
+        "type": "spore",
+        "behavior": {
+          "boss": "spore-heart",
+          "battle": {
+            "phase": 2,
+            "next": 6,
+            "move": -1,
+            "part": 0,
+            "nextAt": 27820,
+            "exposedUntil": 27820,
+            "transformUntil": 13650,
+            "controlImmuneUntil": 29925,
+            "startedAt": -2392.2391249741777
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.7651209168409528,
+            "y": 0.6438866224829178
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "death",
+            "frame": 184,
+            "index": 4,
+            "facing": 3,
+            "phase": "death",
+            "elapsed": 8.340000000000146,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": [],
+      "世界时间": 570.2229586876092,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 5,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": true,
+          "pressure": 10,
+          "raidBudget": 0,
+          "renewablePatrols": 0,
+          "remaining": 5
+        }
+      }
+    },
+    {
+      "名称": "保存重开保留正式清除结果",
+      "模拟毫秒": 133.11333333333332,
+      "玩家": {
+        "x": 1411.164237755654,
+        "y": 3053.845853149067,
+        "hp": 90,
+        "stamina": 96.33420567437538
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1420.957409318813,
+        "y": 2947.0380493460984,
+        "hp": 528,
+        "qi": 60.18554141651332,
+        "clock": 60395.09245830756,
+        "serial": 37,
+        "cooldowns": {
+          "palm": 637.1466666665305,
+          "triple": 0,
+          "star": 817.1466666665305,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 254.79333333332997,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [
+          {
+            "id": "wild-herb-spore",
+            "hp": 60,
+            "x": 713.4166810934602,
+            "y": 2570.401531385939,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          },
+          {
+            "id": "wild-margin-slime",
+            "hp": 48,
+            "x": 549.1982545243649,
+            "y": 2137.700436368904,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          }
+        ],
+        "reports": []
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": true,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "defeated",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1287.6272387331942,
+            "y": 2809.817085240764,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1232.1234805856031,
+            "y": 2822.6644593559786,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1311.1419440223676,
+            "y": 2828.221832335675,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1362.0901284199754,
+            "y": 2821.1974688252803,
+            "serial": 11,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.7651209168409528,
+              "y": 0.6438866224829178
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "危险区": [],
+      "世界时间": 570.5926386876104,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": true
+      },
+      "威胁": {
+        "active": 5,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": true,
+          "pressure": 10,
+          "raidBudget": 0,
+          "renewablePatrols": 0,
+          "remaining": 5
+        }
+      }
+    }
+  ],
+  "错误": [],
+  "结果": "通过",
+  "帧间隔": {
+    "样本数": 3267,
+    "中位毫秒": 8.300000000000182,
+    "百分之九十五毫秒": 10,
+    "最大毫秒": 150.10000000000014
+  },
+  "耗时秒": 28.80004912497405,
+  "墙钟秒": 31.401,
+  "药剂消耗": 0,
+  "受到伤害": 0,
+  "弹反输入": 1,
+  "弹反成功": 1,
+  "风步输入": 3,
+  "观察到的技能": [
+    0,
+    1,
+    2,
+    3
+  ]
+}

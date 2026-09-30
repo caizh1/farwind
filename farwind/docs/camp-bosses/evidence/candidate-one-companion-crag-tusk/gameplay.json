@@ -1,0 +1,1393 @@
+{
+  "说明": "关闭测试授予的正式构建；从新游戏出发，键鼠领取、购买、穿戴、步行、识招、弹反、风步与战斗。诊断只读，不修改坐标、生命、时钟或清剿。",
+  "路径": "带小宝",
+  "首领": "崩岩獠王",
+  "节点": [
+    {
+      "名称": "驻守杂兵全灭，清除尚未完成",
+      "模拟毫秒": 49698.723333333626,
+      "玩家": {
+        "x": 1541.5301382070165,
+        "y": -653.0975277978406,
+        "hp": 86,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1540.641409441653,
+        "y": -547.3451737217281,
+        "hp": 640,
+        "qi": 59.07723333333647,
+        "clock": 49698.723333333626,
+        "serial": 5,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 2076.276666666374,
+          "blade": 0,
+          "rock": 0,
+          "fire": 11006.276666666374,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 5956.276666666374,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 48.723333333626215,
+        "reduction": 0,
+        "shields": [
+          {
+            "id": "xiaobao",
+            "amount": 118.4,
+            "remaining": 456.2766666663738
+          }
+        ],
+        "cast": null,
+        "effects": [
+          {
+            "id": "xiaobao:4",
+            "skill": "fire",
+            "age": 1393.7233333336262,
+            "stage": 2,
+            "released": true,
+            "fixedCenter": false,
+            "origin": {
+              "x": 1522.9426649523728,
+              "y": -525.073860666942
+            },
+            "center": {
+              "x": 1528.5889101962407,
+              "y": -533.3986018275237
+            },
+            "direction": {
+              "x": 0.5613185491616375,
+              "y": -0.8275998346828461
+            },
+            "target": "wild-rock-guardian",
+            "task": "follow",
+            "hit": [
+              "0:wild-rock-boar",
+              "0:wild-rock-guardian"
+            ],
+            "last": {
+              "x": 1522.9426649523728,
+              "y": -525.073860666942
+            },
+            "returnAt": 400,
+            "travelled": 0
+          },
+          {
+            "id": "xiaobao:5",
+            "skill": "star",
+            "age": 643.7233333336262,
+            "stage": 0,
+            "released": true,
+            "fixedCenter": false,
+            "origin": {
+              "x": 1526.3471021425469,
+              "y": -531.9245764994782
+            },
+            "center": {
+              "x": 1601.5199868357463,
+              "y": -603.0569064011947
+            },
+            "direction": {
+              "x": 0.7263582108539304,
+              "y": -0.6873163387590004
+            },
+            "target": "wild-rock-boar",
+            "task": "follow",
+            "hit": [
+              "0:wild-rock-boar"
+            ],
+            "last": {
+              "x": 1742.4081628267506,
+              "y": -736.3723199940666
+            },
+            "returnAt": 480,
+            "travelled": 297.45800000001697
+          }
+        ],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [
+          {
+            "id": "wild-pass-guardian",
+            "hp": 50.400000000000006,
+            "x": 1137.2912397203017,
+            "y": -402.9901206542248,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          }
+        ],
+        "reports": []
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "warning",
+          "warning": 2211.276666666374,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1601.5199868357463,
+            "y": -603.0569064011947,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1528.5889101962407,
+            "y": -533.3986018275237,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.5613185491616376,
+              "y": 0.8275998346828461
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 2200,
+            "x": 1480,
+            "y": -730,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "危险区": [],
+      "世界时间": 554.5480850001273,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 4,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 7
+        }
+      }
+    },
+    {
+      "名称": "首领第一阶段正式入场",
+      "模拟毫秒": 51915.703333333666,
+      "玩家": {
+        "x": 1545.6334715375378,
+        "y": -653.0975277978406,
+        "hp": 86,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1605.8271904572707,
+        "y": -608.6239611500846,
+        "hp": 640,
+        "qi": 81.24703333333623,
+        "clock": 51915.703333333666,
+        "serial": 5,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 8789.296666666334,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 3739.296666666334,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 2265.703333333666,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [
+          {
+            "id": "xiaobao:4",
+            "skill": "fire",
+            "age": 3610.703333333666,
+            "stage": 5,
+            "released": true,
+            "fixedCenter": false,
+            "origin": {
+              "x": 1522.9426649523728,
+              "y": -525.073860666942
+            },
+            "center": {
+              "x": 1528.5889101962407,
+              "y": -533.3986018275237
+            },
+            "direction": {
+              "x": 0.5613185491616375,
+              "y": -0.8275998346828461
+            },
+            "target": "wild-rock-guardian",
+            "task": "follow",
+            "hit": [
+              "0:wild-rock-boar",
+              "0:wild-rock-guardian"
+            ],
+            "last": {
+              "x": 1522.9426649523728,
+              "y": -525.073860666942
+            },
+            "returnAt": 400,
+            "travelled": 0
+          }
+        ],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [
+          {
+            "id": "wild-pass-guardian",
+            "hp": 50.400000000000006,
+            "x": 1137.2912397203017,
+            "y": -402.9901206542248,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          },
+          {
+            "id": "boss-crag-tusk",
+            "hp": 2200,
+            "x": 1420,
+            "y": -626.0769515458674,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          }
+        ],
+        "reports": []
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 0,
+              "move": -1,
+              "part": 0,
+              "nextAt": 644.2966666663342,
+              "exposedUntil": -51915.703333333666,
+              "transformUntil": -51915.703333333666,
+              "controlImmuneUntil": -51915.703333333666,
+              "startedAt": -5.703333333665796
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1601.5199868357463,
+            "y": -603.0569064011947,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1528.5889101962407,
+            "y": -533.3986018275237,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.5613185491616376,
+              "y": 0.8275998346828461
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 2200,
+            "x": 1420,
+            "y": -626.0769515458674,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-crag-tusk",
+        "x": 1420,
+        "y": -626.0769515458674,
+        "hp": 2200,
+        "type": "boar",
+        "behavior": {
+          "boss": "crag-tusk",
+          "battle": {
+            "phase": 1,
+            "next": 0,
+            "move": -1,
+            "part": 0,
+            "nextAt": 52560,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 51910
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0,
+            "y": 1
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 1,
+            "index": 1,
+            "facing": 0,
+            "phase": "idle",
+            "elapsed": 51915.703333333666,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": [],
+      "世界时间": 557.873555000137,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 5,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 7
+        }
+      }
+    },
+    {
+      "名称": "暂停保存重开保持首领战",
+      "模拟毫秒": 87.31999999999988,
+      "玩家": {
+        "x": 1431.4854613717166,
+        "y": -648.7308271981616,
+        "hp": 86,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1565.9326807572706,
+        "y": -620.9225978635097,
+        "hp": 640,
+        "qi": 69.77852000000195,
+        "clock": 53789.87333333373,
+        "serial": 7,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 1585.1266666662702,
+          "blade": 0,
+          "rock": 0,
+          "fire": 6915.1266666662705,
+          "thunder": 5885.1266666662705,
+          "chain": 0,
+          "unity": 0,
+          "guard": 1865.1266666662702,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 87.31999999999988,
+        "reduction": 0,
+        "shields": [],
+        "cast": {
+          "id": "xiaobao:7",
+          "skill": "thunder",
+          "age": 534.8733333337298,
+          "stage": 1,
+          "released": true,
+          "fixedCenter": false,
+          "origin": {
+            "x": 1565.9326807572706,
+            "y": -620.9225978635097
+          },
+          "center": {
+            "x": 1416.0507488784529,
+            "y": -621.5599375344921
+          },
+          "direction": {
+            "x": -0.9999909591876757,
+            "y": -0.004252239752482453
+          },
+          "target": "boss-crag-tusk",
+          "task": "follow"
+        },
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [
+          {
+            "id": "boss-crag-tusk",
+            "hp": 1923.1999999999998,
+            "x": 1416.0507488784529,
+            "y": -621.5599375344921,
+            "control": 320.1266666662703,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          },
+          {
+            "id": "wild-pass-guardian",
+            "hp": 50.400000000000006,
+            "x": 1137.2912397203017,
+            "y": -402.9901206542248,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          }
+        ],
+        "reports": []
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 1,
+              "move": 0,
+              "part": 0,
+              "nextAt": -1229.8733333337298,
+              "exposedUntil": 320.1266666662703,
+              "transformUntil": -53789.87333333373,
+              "controlImmuneUntil": 3285.1266666662705,
+              "startedAt": -1879.8733333337298
+            },
+            "attack": {
+              "attackId": "boss-crag-tusk:战斗0:1",
+              "attackerId": "boss-crag-tusk",
+              "type": "boar",
+              "startedAt": -1229.8733333337298,
+              "lockAt": -579.8733333337298,
+              "contactAt": -279.8733333337297,
+              "activeUntil": 120.1266666662703,
+              "recoveryUntil": 340.1266666662703,
+              "direction": {
+                "x": 0.6582085202578305,
+                "y": -0.7528356685625337
+              },
+              "locked": true,
+              "shape": "sweep",
+              "range": 340,
+              "halfAngle": 1.3962634015954636,
+              "parryable": true,
+              "damage": 30,
+              "cancelled": true,
+              "resolved": true,
+              "emitted": true,
+              "motionAt": 0,
+              "scanAt": -279.8733333337297,
+              "boss": "crag-tusk",
+              "bossSkill": 0,
+              "bossPart": 0,
+              "bossAttempt": 0,
+              "step": 300,
+              "bossCocoon": false,
+              "bossGeometry": {
+                "kind": "sector",
+                "point": {
+                  "x": 1420,
+                  "y": -626.0769515458674
+                },
+                "radius": 40,
+                "halfAngle": 0.65,
+                "offset": 0,
+                "rear": false
+              },
+              "chargeSound": true,
+              "previousGeometry": {
+                "kind": "sector",
+                "a": {
+                  "x": 1420,
+                  "y": -626.0769515458674
+                },
+                "b": {
+                  "x": 1420,
+                  "y": -626.0769515458674
+                },
+                "radius": 40,
+                "halfAngle": 0.65,
+                "direction": {
+                  "x": 0.6582085202578305,
+                  "y": -0.7528356685625337
+                }
+              },
+              "geometry": {
+                "kind": "sector",
+                "a": {
+                  "x": 1420,
+                  "y": -626.0769515458674
+                },
+                "b": {
+                  "x": 1420,
+                  "y": -626.0769515458674
+                },
+                "radius": 40,
+                "halfAngle": 0.65,
+                "direction": {
+                  "x": 0.6582085202578305,
+                  "y": -0.7528356685625337
+                }
+              },
+              "actualContactAt": -279.8733333337297,
+              "strikeSound": true
+            },
+            "hazards": [],
+            "shots": [],
+            "stagger": 320.1266666662703,
+            "parried": {
+              "at": -279.8733333337297,
+              "until": 320.1266666662703,
+              "direction": {
+                "x": 0.6582085202578305,
+                "y": -0.7528356685625337
+              },
+              "perfect": false
+            }
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1601.5199868357463,
+            "y": -603.0569064011947,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1528.5889101962407,
+            "y": -533.3986018275237,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.5613185491616376,
+              "y": 0.8275998346828461
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 1923.1999999999998,
+            "x": 1416.0507488784529,
+            "y": -621.5599375344921,
+            "serial": 1,
+            "cooldown": 340.1266666662703,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.6582085202578305,
+              "y": -0.7528356685625337
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-crag-tusk",
+        "x": 1416.0507488784529,
+        "y": -621.5599375344921,
+        "hp": 1923.1999999999998,
+        "type": "boar",
+        "behavior": {
+          "boss": "crag-tusk",
+          "battle": {
+            "phase": 1,
+            "next": 1,
+            "move": 0,
+            "part": 0,
+            "nextAt": -1142.5533333337298,
+            "exposedUntil": 407.4466666662702,
+            "transformUntil": -53702.55333333373,
+            "controlImmuneUntil": 3372.44666666627,
+            "startedAt": -1792.5533333337298
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.6582085202578305,
+            "y": -0.7528356685625337
+          },
+          "guardOpen": 0,
+          "attack": {
+            "direction": {
+              "x": 0.6582085202578305,
+              "y": -0.7528356685625337
+            },
+            "startedAt": -1142.5533333337298,
+            "lockAt": -492.5533333337298,
+            "contactAt": -192.55333333372982,
+            "activeUntil": 207.44666666627018,
+            "recoveryUntil": 427.4466666662702,
+            "cancelled": true,
+            "skill": 0,
+            "part": 0,
+            "geometry": {
+              "kind": "sector",
+              "point": {
+                "x": 1420,
+                "y": -626.0769515458674
+              },
+              "radius": 40,
+              "halfAngle": 0.65,
+              "offset": 0,
+              "rear": false
+            }
+          },
+          "pose": {
+            "action": "parry",
+            "frame": 113,
+            "index": 5,
+            "facing": 1,
+            "phase": "stagger",
+            "elapsed": 279.8733333337297,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": [],
+      "世界时间": 560.6848100001446,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 5,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 7
+        }
+      }
+    },
+    {
+      "名称": "当前招式结束后进入第二阶段",
+      "模拟毫秒": 10053.089999999993,
+      "玩家": {
+        "x": 1384.30585085322,
+        "y": -590.173673987227,
+        "hp": 86,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1412.7373628230362,
+        "y": -628.4947671926546,
+        "hp": 604,
+        "qi": 78.42386000000234,
+        "clock": 63755.64333333373,
+        "serial": 18,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 3151.910000000007,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 0,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [
+          {
+            "id": "boss-crag-tusk",
+            "hp": 1100,
+            "x": 1412.1627393861536,
+            "y": -628.5516027286922,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          },
+          {
+            "id": "wild-pass-guardian",
+            "hp": 50.400000000000006,
+            "x": 1137.7766600609232,
+            "y": -404.53567559474914,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          }
+        ],
+        "reports": []
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 2,
+              "next": 3,
+              "move": -1,
+              "part": 0,
+              "nextAt": 1086.9100000000071,
+              "exposedUntil": -113.08999999999287,
+              "transformUntil": 1086.9100000000071,
+              "controlImmuneUntil": 635.4300000000003,
+              "startedAt": -11845.643333333723
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1601.5199868357463,
+            "y": -603.0569064011947,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1528.5889101962407,
+            "y": -533.3986018275237,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.5613185491616376,
+              "y": 0.8275998346828461
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 1100,
+            "x": 1412.1627393861536,
+            "y": -628.5516027286922,
+            "serial": 5,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.7882772901624145,
+              "y": -0.615320171792052
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-crag-tusk",
+        "x": 1412.1627393861536,
+        "y": -628.5516027286922,
+        "hp": 1100,
+        "type": "boar",
+        "behavior": {
+          "boss": "crag-tusk",
+          "battle": {
+            "phase": 2,
+            "next": 3,
+            "move": -1,
+            "part": 0,
+            "nextAt": 11140,
+            "exposedUntil": 9940,
+            "transformUntil": 11140,
+            "controlImmuneUntil": 10688.519999999993,
+            "startedAt": -1792.5533333337298
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.7882772901624145,
+            "y": -0.615320171792052
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 180,
+            "index": 0,
+            "facing": 3,
+            "phase": "阶段转换",
+            "elapsed": 10053.089999999993,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": [],
+      "世界时间": 575.6334650001904,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 5,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 7
+        }
+      }
+    },
+    {
+      "名称": "首领死亡后正式清除，恶意只结算一次",
+      "模拟毫秒": 24160.430000000015,
+      "玩家": {
+        "x": 1426.5538756071994,
+        "y": -626.2169639695753,
+        "hp": 86,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1386.4213408507405,
+        "y": -641.5097974731598,
+        "hp": 586,
+        "qi": 36.084340000003195,
+        "clock": 77862.98333333389,
+        "serial": 35,
+        "cooldowns": {
+          "palm": 779.5699999999852,
+          "triple": 2869.569999999985,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 1219.5699999999888,
+          "unity": 0,
+          "guard": 189.5699999999888,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 0,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [
+          {
+            "id": "elite-rock-ram",
+            "hp": 108,
+            "x": 1252.6375271690097,
+            "y": -724.0890829944799,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          },
+          {
+            "id": "wild-outpost-raven",
+            "hp": 64,
+            "x": 894.0931007809103,
+            "y": -745.1685368167035,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          }
+        ],
+        "reports": []
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": true,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "defeated",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1601.5199868357463,
+            "y": -603.0569064011947,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1528.5889101962407,
+            "y": -533.3986018275237,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.5613185491616376,
+              "y": 0.8275998346828461
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1425.428833780295,
+            "y": -632.5189672979938,
+            "serial": 10,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.9920787986558177,
+              "y": 0.1256171057524783
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-crag-tusk",
+        "x": 1425.428833780295,
+        "y": -632.5189672979938,
+        "hp": 0,
+        "type": "boar",
+        "behavior": {
+          "boss": "crag-tusk",
+          "battle": {
+            "phase": 2,
+            "next": 7,
+            "move": 2,
+            "part": 1,
+            "nextAt": 24200,
+            "exposedUntil": 21850,
+            "transformUntil": 11140,
+            "controlImmuneUntil": 24520,
+            "startedAt": -1792.5533333337298
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.9920787986558177,
+            "y": 0.1256171057524783
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "death",
+            "frame": 184,
+            "index": 4,
+            "facing": 3,
+            "phase": "death",
+            "elapsed": 17.538313239012496,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": [],
+      "世界时间": 596.7944750002475,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 3,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 7
+        }
+      }
+    },
+    {
+      "名称": "保存重开保留正式清除结果",
+      "模拟毫秒": 91.58999999999986,
+      "玩家": {
+        "x": 1426.5538756071994,
+        "y": -637.2343720382088,
+        "hp": 86,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1392.0445145427987,
+        "y": -639.8023550342817,
+        "hp": 586,
+        "qi": 37.59490000000319,
+        "clock": 78053.68333333387,
+        "serial": 36,
+        "cooldowns": {
+          "palm": 588.8699999999847,
+          "triple": 2678.869999999985,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 1028.8699999999883,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 208.41000000000014,
+        "peace": 91.58999999999986,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [
+          {
+            "id": "elite-rock-ram",
+            "hp": 108,
+            "x": 1245.3685339118704,
+            "y": -735.2854010512187,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          },
+          {
+            "id": "wild-outpost-raven",
+            "hp": 64,
+            "x": 890.5383423922968,
+            "y": -748.2789504067399,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          }
+        ],
+        "reports": []
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": true,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "defeated",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1601.5199868357463,
+            "y": -603.0569064011947,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1528.5889101962407,
+            "y": -533.3986018275237,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.5613185491616376,
+              "y": 0.8275998346828461
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1425.428833780295,
+            "y": -632.5189672979938,
+            "serial": 10,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.9920787986558177,
+              "y": 0.1256171057524783
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "危险区": [],
+      "世界时间": 597.080525000248,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 3,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 7
+        }
+      }
+    }
+  ],
+  "错误": [],
+  "结果": "通过",
+  "帧间隔": {
+    "样本数": 2995,
+    "中位毫秒": 8.300000000001091,
+    "百分之九十五毫秒": 10,
+    "最大毫秒": 124.70000000000005
+  },
+  "耗时秒": 25.761853333333402,
+  "墙钟秒": 28.804,
+  "药剂消耗": 0,
+  "受到伤害": 0,
+  "弹反输入": 5,
+  "弹反成功": 5,
+  "风步输入": 1,
+  "观察到的技能": [
+    0,
+    1,
+    2,
+    3
+  ]
+}
