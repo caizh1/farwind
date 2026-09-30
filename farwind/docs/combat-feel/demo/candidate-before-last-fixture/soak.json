@@ -1,0 +1,7298 @@
+{
+  "说明": "正常墙钟持续运行；每轮显式重置隔离初始状态，战斗只由键盘与正式AI结算。原始帧包含慢帧及停顿；软件渲染和同时运行回归的负载不能作为目标设备帧率验收。",
+  "版本": "candidate-final",
+  "环境": {
+    "浏览器": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+    "分辨率": [
+      1280,
+      720
+    ],
+    "渲染器": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+    "核心数": 18
+  },
+  "持续秒": 600.11,
+  "统计": {
+    "帧数": 6342,
+    "中位数": 83.39999999999418,
+    "P95": 150,
+    "P99": 200,
+    "大于50毫秒": 5710,
+    "大于100毫秒": 1756,
+    "最大帧": 4966.600000000002
+  },
+  "轮次": [
+    {
+      "轮次": 0,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 594,
+        "保存": {
+          "session": 1,
+          "requested": 1,
+          "persisted": 1,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 1,
+          "events": [
+            {
+              "id": "1:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9245239930897664,
+                "y": 0.3811238462774973
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "1:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 0,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "1:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 22364.19999998808,
+              "scheduled": 0.21333333333333335,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "1:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 22364.299999952316,
+              "scheduled": 0.21333333333333335,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 600,
+        "保存": {
+          "session": 1,
+          "requested": 2,
+          "persisted": 2,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 2,
+        "血量": 100,
+        "击杀": 1,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 1,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 599,
+        "保存": {
+          "session": 2,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 2,
+          "events": [
+            {
+              "id": "2:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "2:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "2:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 39438.09999996424,
+              "scheduled": 17.285333333333334,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "2:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 39438.09999996424,
+              "scheduled": 17.285333333333334,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 593,
+        "保存": {
+          "session": 2,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 2,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 597,
+        "保存": {
+          "session": 3,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 3,
+          "events": [
+            {
+              "id": "3:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "3:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "3:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 49851.19999998808,
+              "scheduled": 27.696,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "3:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 49851.19999998808,
+              "scheduled": 27.696,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 593,
+        "保存": {
+          "session": 3,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 3,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 597,
+        "保存": {
+          "session": 4,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 4,
+          "events": [
+            {
+              "id": "4:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "4:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "4:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 60205.19999998808,
+              "scheduled": 38.053333333333335,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "4:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 60205.299999952316,
+              "scheduled": 38.053333333333335,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 594,
+        "保存": {
+          "session": 4,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 4,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 5,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 5,
+          "events": [
+            {
+              "id": "5:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "5:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "5:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 70817.89999997616,
+              "scheduled": 48.666666666666664,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "5:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 70817.89999997616,
+              "scheduled": 48.666666666666664,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 605,
+        "保存": {
+          "session": 5,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 78,
+        "击杀": 2,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 5,
+      "样板": "slime",
+      "剑风": false,
+      "开始": {
+        "对象": 591,
+        "保存": {
+          "session": 6,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 6,
+          "events": [
+            {
+              "id": "6:charge:slime-1:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-1",
+              "attackId": "slime-1:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -1,
+                "y": 0
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 1,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "6:charge:slime-1:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 81469.79999995232,
+              "scheduled": 59.31733333333333,
+              "latency": 0.024,
+              "variant": 0
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 586,
+        "保存": {
+          "session": 6,
+          "requested": 2,
+          "persisted": 2,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 1,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 6,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 597,
+        "保存": {
+          "session": 7,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 7,
+          "events": [
+            {
+              "id": "7:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "7:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "7:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 92047.79999995232,
+              "scheduled": 69.89333333333333,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "7:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 92047.89999997616,
+              "scheduled": 69.89333333333333,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 593,
+        "保存": {
+          "session": 7,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 72,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 7,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 597,
+        "保存": {
+          "session": 8,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 8,
+          "events": [
+            {
+              "id": "8:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "8:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "8:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 102607.59999996424,
+              "scheduled": 80.45333333333333,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "8:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 102607.59999996424,
+              "scheduled": 80.45333333333333,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 598,
+        "保存": {
+          "session": 8,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 8,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 597,
+        "保存": {
+          "session": 9,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 9,
+          "events": [
+            {
+              "id": "9:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "9:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "9:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 113040,
+              "scheduled": 90.88533333333334,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "9:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 113040,
+              "scheduled": 90.88533333333334,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 609,
+        "保存": {
+          "session": 9,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 1,
+        "音频": 1,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 9,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 600,
+        "保存": {
+          "session": 10,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 10,
+          "events": [
+            {
+              "id": "10:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "10:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "10:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 123436,
+              "scheduled": 101.28533333333333,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "10:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 123436,
+              "scheduled": 101.28533333333333,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 593,
+        "保存": {
+          "session": 10,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 10,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 597,
+        "保存": {
+          "session": 11,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 11,
+          "events": [
+            {
+              "id": "11:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "11:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "11:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 133838.09999996424,
+              "scheduled": 111.68533333333333,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "11:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 133838.09999996424,
+              "scheduled": 111.68533333333333,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 598,
+        "保存": {
+          "session": 11,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 11,
+      "样板": "guardian",
+      "剑风": false,
+      "开始": {
+        "对象": 591,
+        "保存": {
+          "session": 12,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 12,
+          "events": [],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 0,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 586,
+        "保存": {
+          "session": 12,
+          "requested": 2,
+          "persisted": 2,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 1,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 12,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 597,
+        "保存": {
+          "session": 13,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 13,
+          "events": [
+            {
+              "id": "13:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "13:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "13:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 154679.39999997616,
+              "scheduled": 132.528,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "13:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 154679.39999997616,
+              "scheduled": 132.528,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 597,
+        "保存": {
+          "session": 13,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 13,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 597,
+        "保存": {
+          "session": 14,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 14,
+          "events": [
+            {
+              "id": "14:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "14:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "14:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 165156.39999997616,
+              "scheduled": 143.00266666666667,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "14:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 165156.39999997616,
+              "scheduled": 143.00266666666667,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 593,
+        "保存": {
+          "session": 14,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 14,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 597,
+        "保存": {
+          "session": 15,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 15,
+          "events": [
+            {
+              "id": "15:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "15:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 0,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "15:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 175653,
+              "scheduled": 153.49866666666668,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "15:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 175653,
+              "scheduled": 153.49866666666668,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 609,
+        "保存": {
+          "session": 15,
+          "requested": 2,
+          "persisted": 2,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 2,
+        "血量": 100,
+        "击杀": 2,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 15,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 600,
+        "保存": {
+          "session": 16,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 16,
+          "events": [
+            {
+              "id": "16:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "16:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 0,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "16:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 186138.5,
+              "scheduled": 163.984,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "16:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 186138.59999996424,
+              "scheduled": 163.984,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 596,
+        "保存": {
+          "session": 16,
+          "requested": 2,
+          "persisted": 2,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 2,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 16,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 17,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 17,
+          "events": [
+            {
+              "id": "17:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "17:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "17:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 196668.69999998808,
+              "scheduled": 174.51733333333334,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "17:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 196668.69999998808,
+              "scheduled": 174.51733333333334,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 598,
+        "保存": {
+          "session": 17,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 17,
+      "样板": "spore",
+      "剑风": false,
+      "开始": {
+        "对象": 593,
+        "保存": {
+          "session": 18,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 18,
+          "events": [
+            {
+              "id": "18:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -1,
+                "y": 0
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 1,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "18:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 207349.59999996424,
+              "scheduled": 185.19466666666668,
+              "latency": 0.024,
+              "variant": 0
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 587,
+        "保存": {
+          "session": 18,
+          "requested": 1,
+          "persisted": 1,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 1,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 18,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 19,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 19,
+          "events": [
+            {
+              "id": "19:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "19:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "19:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 217845.39999997616,
+              "scheduled": 195.69066666666666,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "19:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 217845.39999997616,
+              "scheduled": 195.69066666666666,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 605,
+        "保存": {
+          "session": 19,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 19,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 600,
+        "保存": {
+          "session": 20,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 20,
+          "events": [
+            {
+              "id": "20:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "20:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 0,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "20:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 228496.39999997616,
+              "scheduled": 206.34133333333332,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "20:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 228496.39999997616,
+              "scheduled": 206.34133333333332,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 598,
+        "保存": {
+          "session": 20,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 20,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 600,
+        "保存": {
+          "session": 21,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 21,
+          "events": [
+            {
+              "id": "21:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "21:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "21:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 239240.5,
+              "scheduled": 217.088,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "21:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 239240.5,
+              "scheduled": 217.088,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 595,
+        "保存": {
+          "session": 21,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 72,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 21,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 599,
+        "保存": {
+          "session": 22,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 22,
+          "events": [
+            {
+              "id": "22:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "22:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 0,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "22:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 249840,
+              "scheduled": 227.68533333333335,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "22:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 249840,
+              "scheduled": 227.68533333333335,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 594,
+        "保存": {
+          "session": 22,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 22,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 23,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 23,
+          "events": [
+            {
+              "id": "23:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "23:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "23:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 260562.5,
+              "scheduled": 238.41066666666666,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "23:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 260562.5,
+              "scheduled": 238.41066666666666,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 593,
+        "保存": {
+          "session": 23,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 72,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 23,
+      "样板": "boar",
+      "剑风": false,
+      "开始": {
+        "对象": 587,
+        "保存": {
+          "session": 24,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 24,
+          "events": [
+            {
+              "id": "24:charge:boar-1:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "boar-1",
+              "attackId": "boar-1:1",
+              "point": {
+                "x": 3245.217391304348,
+                "y": 853.0869565217391
+              },
+              "incoming": {
+                "x": -1,
+                "y": 0
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 932
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 1,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "24:charge:boar-1:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 271134.39999997616,
+              "scheduled": 248.98133333333334,
+              "latency": 0.024,
+              "variant": 0
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 587,
+        "保存": {
+          "session": 24,
+          "requested": 1,
+          "persisted": 1,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 80,
+        "击杀": 1,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 24,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 25,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 25,
+          "events": [
+            {
+              "id": "25:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9245239930897664,
+                "y": 0.3811238462774973
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "25:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "25:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 281689.09999996424,
+              "scheduled": 259.536,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "25:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 281689.09999996424,
+              "scheduled": 259.536,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 602,
+        "保存": {
+          "session": 25,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 25,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 600,
+        "保存": {
+          "session": 26,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 26,
+          "events": [
+            {
+              "id": "26:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "26:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "26:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 292402,
+              "scheduled": 270.2506666666667,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "26:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 292402,
+              "scheduled": 270.2506666666667,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 599,
+        "保存": {
+          "session": 26,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 78,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 26,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 600,
+        "保存": {
+          "session": 27,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 27,
+          "events": [
+            {
+              "id": "27:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "27:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 0,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "27:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 302967,
+              "scheduled": 280.8106666666667,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "27:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 302967,
+              "scheduled": 280.8106666666667,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 598,
+        "保存": {
+          "session": 27,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 27,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 600,
+        "保存": {
+          "session": 28,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 28,
+          "events": [
+            {
+              "id": "28:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "28:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "28:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 313676,
+              "scheduled": 291.52,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "28:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 313676,
+              "scheduled": 291.52,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 593,
+        "保存": {
+          "session": 28,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 28,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 29,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 29,
+          "events": [
+            {
+              "id": "29:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "29:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "29:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 324352.09999996424,
+              "scheduled": 302.19733333333335,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "29:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 324352.09999996424,
+              "scheduled": 302.19733333333335,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 596,
+        "保存": {
+          "session": 29,
+          "requested": 2,
+          "persisted": 2,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 2,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 29,
+      "样板": "slime",
+      "剑风": false,
+      "开始": {
+        "对象": 591,
+        "保存": {
+          "session": 30,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 30,
+          "events": [
+            {
+              "id": "30:charge:slime-1:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-1",
+              "attackId": "slime-1:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -1,
+                "y": 0
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 0,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "30:charge:slime-1:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 334932.7999999523,
+              "scheduled": 312.77866666666665,
+              "latency": 0.024,
+              "variant": 0
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 587,
+        "保存": {
+          "session": 30,
+          "requested": 1,
+          "persisted": 1,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 1,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 30,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 31,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 31,
+          "events": [
+            {
+              "id": "31:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "31:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 0,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "31:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 345501.5,
+              "scheduled": 323.34933333333333,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "31:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 345501.5,
+              "scheduled": 323.34933333333333,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 610,
+        "保存": {
+          "session": 31,
+          "requested": 2,
+          "persisted": 2,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 2,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 31,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 601,
+        "保存": {
+          "session": 32,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 32,
+          "events": [
+            {
+              "id": "32:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "32:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "32:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 356077.2999999523,
+              "scheduled": 333.92533333333336,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "32:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 356077.2999999523,
+              "scheduled": 333.92533333333336,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 598,
+        "保存": {
+          "session": 32,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 32,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 600,
+        "保存": {
+          "session": 33,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 33,
+          "events": [
+            {
+              "id": "33:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "33:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "33:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 366599.5,
+              "scheduled": 344.448,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "33:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 366599.5,
+              "scheduled": 344.448,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 602,
+        "保存": {
+          "session": 33,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 33,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 34,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 34,
+          "events": [
+            {
+              "id": "34:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "34:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "34:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 377238.09999996424,
+              "scheduled": 355.0826666666667,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "34:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 377238.09999996424,
+              "scheduled": 355.0826666666667,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 601,
+        "保存": {
+          "session": 34,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 1,
+        "音频": 2,
+        "血量": 100,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 34,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 601,
+        "保存": {
+          "session": 35,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 35,
+          "events": [
+            {
+              "id": "35:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "35:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 0,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "35:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 388038.7999999523,
+              "scheduled": 365.8826666666667,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "35:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 388038.7999999523,
+              "scheduled": 365.8826666666667,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 597,
+        "保存": {
+          "session": 35,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 35,
+      "样板": "guardian",
+      "剑风": false,
+      "开始": {
+        "对象": 590,
+        "保存": {
+          "session": 36,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 36,
+          "events": [],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 0,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 592,
+        "保存": {
+          "session": 36,
+          "requested": 1,
+          "persisted": 1,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 1,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 36,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 37,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 37,
+          "events": [
+            {
+              "id": "37:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "37:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 0,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "37:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 409658.7999999523,
+              "scheduled": 387.504,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "37:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 409658.89999997616,
+              "scheduled": 387.504,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 603,
+        "保存": {
+          "session": 37,
+          "requested": 2,
+          "persisted": 2,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 2,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 37,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 600,
+        "保存": {
+          "session": 38,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 38,
+          "events": [
+            {
+              "id": "38:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "38:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 0,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "38:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 420537,
+              "scheduled": 398.384,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "38:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 420537.09999996424,
+              "scheduled": 398.384,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 600,
+        "保存": {
+          "session": 38,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 38,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 600,
+        "保存": {
+          "session": 39,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 39,
+          "events": [
+            {
+              "id": "39:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "39:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "39:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 431182.09999996424,
+              "scheduled": 409.02933333333334,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "39:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 431182.09999996424,
+              "scheduled": 409.02933333333334,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 596,
+        "保存": {
+          "session": 39,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 39,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 40,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 40,
+          "events": [
+            {
+              "id": "40:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "40:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "40:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 441765,
+              "scheduled": 419.61066666666665,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "40:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 441765.09999996424,
+              "scheduled": 419.61066666666665,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 596,
+        "保存": {
+          "session": 40,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 1,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 40,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 599,
+        "保存": {
+          "session": 41,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 41,
+          "events": [
+            {
+              "id": "41:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "41:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "41:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 452280.7999999523,
+              "scheduled": 430.128,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "41:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 452280.7999999523,
+              "scheduled": 430.128,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 599,
+        "保存": {
+          "session": 41,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 41,
+      "样板": "spore",
+      "剑风": false,
+      "开始": {
+        "对象": 593,
+        "保存": {
+          "session": 42,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 42,
+          "events": [
+            {
+              "id": "42:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -1,
+                "y": 0
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 1,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "42:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 462622,
+              "scheduled": 440.46933333333334,
+              "latency": 0.024,
+              "variant": 0
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 587,
+        "保存": {
+          "session": 42,
+          "requested": 2,
+          "persisted": 2,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 1,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 42,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 43,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 43,
+          "events": [
+            {
+              "id": "43:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "43:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "43:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 472963.6999999881,
+              "scheduled": 450.8106666666667,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "43:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 472963.7999999523,
+              "scheduled": 450.8106666666667,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 596,
+        "保存": {
+          "session": 43,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 1,
+        "音频": 1,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 43,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 599,
+        "保存": {
+          "session": 44,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 44,
+          "events": [
+            {
+              "id": "44:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "44:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "44:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 483577.5,
+              "scheduled": 461.424,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "44:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 483577.59999996424,
+              "scheduled": 461.424,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 593,
+        "保存": {
+          "session": 44,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 72,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 44,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 45,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 45,
+          "events": [
+            {
+              "id": "45:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "45:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "45:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 494111.6999999881,
+              "scheduled": 471.95733333333334,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "45:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 494111.6999999881,
+              "scheduled": 471.95733333333334,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 599,
+        "保存": {
+          "session": 45,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 72,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 45,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 600,
+        "保存": {
+          "session": 46,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 46,
+          "events": [
+            {
+              "id": "46:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "46:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "46:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 504693.2999999523,
+              "scheduled": 482.53866666666664,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "46:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 504693.2999999523,
+              "scheduled": 482.53866666666664,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 593,
+        "保存": {
+          "session": 46,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 46,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 47,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 47,
+          "events": [
+            {
+              "id": "47:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "47:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "47:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 515276.89999997616,
+              "scheduled": 493.12,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "47:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 515276.89999997616,
+              "scheduled": 493.12,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 598,
+        "保存": {
+          "session": 47,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 47,
+      "样板": "boar",
+      "剑风": false,
+      "开始": {
+        "对象": 588,
+        "保存": {
+          "session": 48,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 48,
+          "events": [
+            {
+              "id": "48:charge:boar-1:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "boar-1",
+              "attackId": "boar-1:1",
+              "point": {
+                "x": 3245.217391304348,
+                "y": 853.0869565217391
+              },
+              "incoming": {
+                "x": -1,
+                "y": 0
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 932
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 1,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "48:charge:boar-1:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 525736.5999999642,
+              "scheduled": 503.584,
+              "latency": 0.024,
+              "variant": 0
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 587,
+        "保存": {
+          "session": 48,
+          "requested": 1,
+          "persisted": 1,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 80,
+        "击杀": 1,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 48,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 49,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 49,
+          "events": [
+            {
+              "id": "49:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9245239930897664,
+                "y": 0.3811238462774973
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "49:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "49:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 536284.0999999642,
+              "scheduled": 514.128,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "49:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 536284.0999999642,
+              "scheduled": 514.128,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 601,
+        "保存": {
+          "session": 49,
+          "requested": 3,
+          "persisted": 3,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 49,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 600,
+        "保存": {
+          "session": 50,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 50,
+          "events": [
+            {
+              "id": "50:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "50:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 0,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "50:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 546855.8999999762,
+              "scheduled": 524.6986666666667,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "50:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 546856,
+              "scheduled": 524.6986666666667,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 594,
+        "保存": {
+          "session": 50,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 50,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 51,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 51,
+          "events": [
+            {
+              "id": "51:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "51:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "51:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 557301.6999999881,
+              "scheduled": 535.1466666666666,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "51:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 557301.7999999523,
+              "scheduled": 535.1466666666666,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 594,
+        "保存": {
+          "session": 51,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 72,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 51,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 52,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 52,
+          "events": [
+            {
+              "id": "52:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "52:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "52:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 567916.3999999762,
+              "scheduled": 545.76,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "52:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 567916.3999999762,
+              "scheduled": 545.76,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 595,
+        "保存": {
+          "session": 52,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 52,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 596,
+        "保存": {
+          "session": 53,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 53,
+          "events": [
+            {
+              "id": "53:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "53:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "53:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 578449.6999999881,
+              "scheduled": 556.2933333333333,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "53:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 578449.6999999881,
+              "scheduled": 556.2933333333333,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 603,
+        "保存": {
+          "session": 53,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 72,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 53,
+      "样板": "slime",
+      "剑风": false,
+      "开始": {
+        "对象": 591,
+        "保存": {
+          "session": 54,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 54,
+          "events": [
+            {
+              "id": "54:charge:slime-1:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-1",
+              "attackId": "slime-1:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -1,
+                "y": 0
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 1,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "54:charge:slime-1:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 588919.7999999523,
+              "scheduled": 566.7626666666666,
+              "latency": 0.024,
+              "variant": 0
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 587,
+        "保存": {
+          "session": 54,
+          "requested": 2,
+          "persisted": 2,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 100,
+        "击杀": 1,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 54,
+      "样板": "group",
+      "剑风": true,
+      "开始": {
+        "对象": 598,
+        "保存": {
+          "session": 55,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 55,
+          "events": [
+            {
+              "id": "55:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "55:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "55:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 599375.7999999523,
+              "scheduled": 577.2213333333333,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "55:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 599375.7999999523,
+              "scheduled": 577.2213333333333,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 599,
+        "保存": {
+          "session": 55,
+          "requested": 5,
+          "persisted": 5,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 78,
+        "击杀": 4,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    },
+    {
+      "轮次": 55,
+      "样板": "group",
+      "剑风": false,
+      "开始": {
+        "对象": 599,
+        "保存": {
+          "session": 56,
+          "requested": 0,
+          "persisted": 0,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈": {
+          "mode": "D",
+          "generation": 56,
+          "events": [
+            {
+              "id": "56:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "slime-2",
+              "attackId": "slime-2:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.9230769230769231,
+                "y": 0.38461538461538464
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            },
+            {
+              "id": "56:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "at": 5,
+              "targetId": "wild-thorn-spore",
+              "attackId": "wild-thorn-spore:1",
+              "point": {
+                "x": 3225.217391304348,
+                "y": 1203.086956521739
+              },
+              "incoming": {
+                "x": -0.939793423488437,
+                "y": -0.3417430630867044
+              },
+              "blade": {
+                "x": 0.5181194370983268,
+                "y": -0.8553082771146981
+              },
+              "deflect": {
+                "x": 0.27052256862703633,
+                "y": -0.9627136333632292
+              },
+              "quality": "normal",
+              "material": "straw",
+              "alive": true,
+              "depth": 1282
+            }
+          ],
+          "effects": [],
+          "pending": 0,
+          "delayed": 0,
+          "reactions": 0,
+          "bladeGlow": null
+        },
+        "音频": {
+          "voices": 2,
+          "strikeVoices": 0,
+          "audioProfile": "双剑金属／同来招截停",
+          "windVoices": 0,
+          "windCached": true,
+          "xiaobaoFlightVoices": 0,
+          "xiaobaoCached": 0,
+          "cached": 96,
+          "events": [
+            {
+              "id": "56:charge:slime-2:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 609844.5999999642,
+              "scheduled": 587.6906666666666,
+              "latency": 0.024,
+              "variant": 0
+            },
+            {
+              "id": "56:charge:wild-thorn-spore:1",
+              "kind": "enemy-charge",
+              "sim": 5,
+              "submitted": 609844.5999999642,
+              "scheduled": 587.6906666666666,
+              "latency": 0.024,
+              "variant": 1
+            }
+          ],
+          "state": "running",
+          "outputLatency": 0.024,
+          "buses": {
+            "threat": 1,
+            "player": 1,
+            "battle": 1,
+            "noncritical": 1
+          }
+        }
+      },
+      "结束": {
+        "对象": 594,
+        "保存": {
+          "session": 56,
+          "requested": 4,
+          "persisted": 4,
+          "dirty": false,
+          "queued": 0,
+          "writing": false
+        },
+        "反馈队列": 0,
+        "反馈对象": 0,
+        "音频": 0,
+        "血量": 86,
+        "击杀": 3,
+        "剑风释放": 0,
+        "堆内存": 116000000
+      }
+    }
+  ],
+  "错误": []
+}
