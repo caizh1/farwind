@@ -1,0 +1,2533 @@
+{
+  "说明": "先生成分镜、后开发的正式无授予构建；真实新游戏、购买和装备、步行清驻守、正常服药和逐招观察。诊断只读。",
+  "首领": "缚枝祭主",
+  "招式": [
+    {
+      "技能": 0,
+      "名称": "十字镰斩",
+      "攻击": {
+        "attackId": "boss-bound-branch:战斗0:1",
+        "attackerId": "boss-bound-branch",
+        "type": "leaf",
+        "startedAt": -698.8433333333815,
+        "lockAt": -348.84333333338145,
+        "contactAt": -48.84333333338145,
+        "activeUntil": 151.15666666661855,
+        "recoveryUntil": 371.15666666661855,
+        "direction": {
+          "x": -0.9982259414034687,
+          "y": -0.05953964989113461
+        },
+        "locked": true,
+        "shape": "sweep",
+        "range": 140,
+        "halfAngle": 1.3962634015954636,
+        "parryable": true,
+        "damage": 22,
+        "cancelled": false,
+        "resolved": true,
+        "emitted": true,
+        "motionAt": 0,
+        "scanAt": 0,
+        "boss": "bound-branch",
+        "bossSkill": 0,
+        "bossPart": 0,
+        "bossAttempt": 0,
+        "step": 0,
+        "bossCocoon": false,
+        "bossGeometry": {
+          "kind": "sector",
+          "point": {
+            "x": 3518.56677471293,
+            "y": 1100.4688602733554
+          },
+          "radius": 135,
+          "halfAngle": 0.72,
+          "offset": -0.65,
+          "rear": false
+        },
+        "chargeSound": true,
+        "previousGeometry": {
+          "kind": "sector",
+          "a": {
+            "x": 3518.56677471293,
+            "y": 1100.4688602733554
+          },
+          "b": {
+            "x": 3518.56677471293,
+            "y": 1100.4688602733554
+          },
+          "radius": 135,
+          "halfAngle": 0.72,
+          "direction": {
+            "x": -0.8307040859590785,
+            "y": 0.5567142189408242
+          }
+        },
+        "geometry": {
+          "kind": "sector",
+          "a": {
+            "x": 3518.56677471293,
+            "y": 1100.4688602733554
+          },
+          "b": {
+            "x": 3518.56677471293,
+            "y": 1100.4688602733554
+          },
+          "radius": 135,
+          "halfAngle": 0.72,
+          "direction": {
+            "x": -0.8307040859590785,
+            "y": 0.5567142189408242
+          }
+        },
+        "actualContactAt": -48.84333333338145,
+        "strikeSound": true
+      },
+      "首领": {
+        "x": 3518.56677471293,
+        "y": 1100.4688602733554
+      },
+      "特效": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:1",
+          "kind": "镰枝斩弧",
+          "phase": "出手",
+          "point": {
+            "x": 3518.56677471293,
+            "y": 1100.4688602733554
+          },
+          "radius": 135,
+          "elapsed": 48.84333333338145,
+          "skill": 0,
+          "direction": {
+            "x": -0.8307040859590785,
+            "y": 0.5567142189408242
+          }
+        }
+      ]
+    },
+    {
+      "技能": 1,
+      "名称": "棘针齐射",
+      "攻击": {
+        "attackId": "boss-bound-branch:战斗0:3",
+        "attackerId": "boss-bound-branch",
+        "type": "leaf",
+        "startedAt": -913.2433333333756,
+        "lockAt": -313.24333333337563,
+        "contactAt": -13.243333333375631,
+        "activeUntil": 166.75666666662437,
+        "recoveryUntil": 386.75666666662437,
+        "direction": {
+          "x": -0.8294355630143319,
+          "y": -0.5586024049421005
+        },
+        "locked": true,
+        "shape": "sweep",
+        "range": 340,
+        "halfAngle": 1.3962634015954636,
+        "parryable": true,
+        "damage": 22,
+        "cancelled": false,
+        "resolved": false,
+        "emitted": true,
+        "motionAt": 0,
+        "scanAt": 0,
+        "boss": "bound-branch",
+        "bossSkill": 1,
+        "bossPart": 0,
+        "bossAttempt": 0,
+        "step": 0,
+        "bossShotAngles": [
+          -0.75,
+          -0.35,
+          0,
+          0.75
+        ],
+        "bossCocoon": false,
+        "bossGeometry": {
+          "kind": "sector",
+          "point": {
+            "x": 3437.6695855293915,
+            "y": 1133.472452497291
+          },
+          "radius": 115,
+          "halfAngle": 1.2566370614359172,
+          "offset": 0,
+          "rear": false
+        },
+        "chargeSound": true,
+        "strikeSound": true,
+        "launched": true
+      },
+      "首领": {
+        "x": 3437.6695855293915,
+        "y": 1133.472452497291
+      },
+      "特效": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:3",
+          "kind": "齐射喷闪",
+          "phase": "出手",
+          "point": {
+            "x": 3437.6695855293915,
+            "y": 1133.472452497291
+          },
+          "radius": 40,
+          "elapsed": 13.243333333375631,
+          "skill": 1,
+          "direction": {
+            "x": -0.8294355630143319,
+            "y": -0.5586024049421005
+          }
+        }
+      ]
+    },
+    {
+      "技能": 2,
+      "名称": "缠根封路",
+      "攻击": {
+        "attackId": "boss-bound-branch:战斗0:4",
+        "attackerId": "boss-bound-branch",
+        "type": "leaf",
+        "startedAt": -1147.6133333334146,
+        "lockAt": -597.6133333334146,
+        "contactAt": -47.61333333341463,
+        "activeUntil": 2152.3866666665854,
+        "recoveryUntil": 2372.3866666665854,
+        "direction": {
+          "x": -0.6826419879372535,
+          "y": -0.7307529789915842
+        },
+        "locked": true,
+        "shape": "sweep",
+        "range": 340,
+        "halfAngle": 1.3962634015954636,
+        "parryable": false,
+        "damage": 30,
+        "cancelled": false,
+        "resolved": false,
+        "emitted": false,
+        "motionAt": 0,
+        "scanAt": 0,
+        "boss": "bound-branch",
+        "bossSkill": 2,
+        "bossPart": 0,
+        "bossAttempt": 0,
+        "step": 0,
+        "bossArea": "circle",
+        "bossCocoon": false,
+        "bossGeometry": {
+          "kind": "circle",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473,
+            "hp": 90,
+            "stamina": 100
+          },
+          "radius": 38,
+          "halfAngle": 1.2566370614359172,
+          "offset": 0,
+          "rear": false
+        },
+        "chargeSound": true,
+        "launched": true,
+        "strikeSound": true
+      },
+      "首领": {
+        "x": 3412.466444831088,
+        "y": 1134.2771293342848
+      },
+      "特效": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 47.61333333341463
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 47.61333333341463
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 47.61333333341463
+        }
+      ]
+    },
+    {
+      "技能": 3,
+      "名称": "护心结茧",
+      "攻击": {
+        "attackId": "boss-bound-branch:战斗0:5",
+        "attackerId": "boss-bound-branch",
+        "type": "leaf",
+        "startedAt": -950.7499999999991,
+        "lockAt": -350.7499999999991,
+        "contactAt": -50.74999999999909,
+        "activeUntil": 2349.250000000001,
+        "recoveryUntil": 2569.250000000001,
+        "direction": {
+          "x": -0.6603694421479877,
+          "y": -0.7509408764191465
+        },
+        "locked": true,
+        "shape": "sweep",
+        "range": 260,
+        "halfAngle": 1.3962634015954636,
+        "parryable": false,
+        "damage": 22,
+        "cancelled": false,
+        "resolved": false,
+        "emitted": false,
+        "motionAt": 0,
+        "scanAt": 0,
+        "boss": "bound-branch",
+        "bossSkill": 3,
+        "bossPart": 0,
+        "bossAttempt": 0,
+        "step": 0,
+        "bossCocoon": true,
+        "bossGeometry": {
+          "kind": "sector",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1121.6643471830564
+          },
+          "radius": 115,
+          "halfAngle": 1.2566370614359172,
+          "offset": 0,
+          "rear": false
+        },
+        "chargeSound": true,
+        "strikeSound": true
+      },
+      "首领": {
+        "x": 3380.773409624587,
+        "y": 1121.6643471830564
+      },
+      "特效": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 50.74999999999909,
+          "skill": 3
+        }
+      ]
+    }
+  ],
+  "特效": [
+    {
+      "时刻": 50543.84333333338,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:1",
+          "kind": "镰枝斩弧",
+          "phase": "出手",
+          "point": {
+            "x": 3518.56677471293,
+            "y": 1100.4688602733554
+          },
+          "radius": 135,
+          "elapsed": 48.84333333338145,
+          "skill": 0,
+          "direction": {
+            "x": -0.8307040859590785,
+            "y": 0.5567142189408242
+          }
+        }
+      ],
+      "对象": 617,
+      "纹理": 214
+    },
+    {
+      "时刻": 52727.813333333375,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:2",
+          "kind": "镰枝斩弧",
+          "phase": "出手",
+          "point": {
+            "x": 3461.9338785889317,
+            "y": 1128.938430764971
+          },
+          "radius": 135,
+          "elapsed": 52.81333333337534,
+          "skill": 0,
+          "direction": {
+            "x": -0.5582322692201614,
+            "y": -0.8296847193972594
+          }
+        }
+      ],
+      "对象": 617,
+      "纹理": 214
+    },
+    {
+      "时刻": 52792.94333333337,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:2",
+          "kind": "镰枝斩弧",
+          "phase": "出手",
+          "point": {
+            "x": 3461.9338785889317,
+            "y": 1128.938430764971
+          },
+          "radius": 135,
+          "elapsed": 117.94333333337272,
+          "skill": 0,
+          "direction": {
+            "x": -0.5582322692201614,
+            "y": -0.8296847193972594
+          }
+        }
+      ],
+      "对象": 617,
+      "纹理": 214
+    },
+    {
+      "时刻": 52861.803333333366,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:2",
+          "kind": "镰枝斩弧",
+          "phase": "出手",
+          "point": {
+            "x": 3461.9338785889317,
+            "y": 1128.938430764971
+          },
+          "radius": 135,
+          "elapsed": 186.80333333336603,
+          "skill": 0,
+          "direction": {
+            "x": -0.5582322692201614,
+            "y": -0.8296847193972594
+          }
+        }
+      ],
+      "对象": 617,
+      "纹理": 214
+    },
+    {
+      "时刻": 55118.243333333376,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:3",
+          "kind": "齐射喷闪",
+          "phase": "出手",
+          "point": {
+            "x": 3437.6695855293915,
+            "y": 1133.472452497291
+          },
+          "radius": 40,
+          "elapsed": 13.243333333375631,
+          "skill": 1,
+          "direction": {
+            "x": -0.8294355630143319,
+            "y": -0.5586024049421005
+          }
+        }
+      ],
+      "对象": 620,
+      "纹理": 213
+    },
+    {
+      "时刻": 55328.54333333338,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:3",
+          "kind": "齐射喷闪",
+          "phase": "出手",
+          "point": {
+            "x": 3437.6695855293915,
+            "y": 1133.472452497291
+          },
+          "radius": 40,
+          "elapsed": 223.54333333337854,
+          "skill": 1,
+          "direction": {
+            "x": -0.8294355630143319,
+            "y": -0.5586024049421005
+          }
+        }
+      ],
+      "对象": 621,
+      "纹理": 213
+    },
+    {
+      "时刻": 57762.613333333415,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 47.61333333341463
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 47.61333333341463
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 47.61333333341463
+        }
+      ],
+      "对象": 617,
+      "纹理": 214
+    },
+    {
+      "时刻": 304.21333333333337,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 517.5266666667669
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 517.5266666667669
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 517.5266666667669
+        }
+      ],
+      "对象": 606,
+      "纹理": 213
+    },
+    {
+      "时刻": 379.2233333333332,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 592.5366666667667
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 592.5366666667667
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 592.5366666667667
+        }
+      ],
+      "对象": 606,
+      "纹理": 213
+    },
+    {
+      "时刻": 440.00666666666655,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 653.3200000001001
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 653.3200000001001
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 653.3200000001001
+        }
+      ],
+      "对象": 606,
+      "纹理": 213
+    },
+    {
+      "时刻": 498.6066666666665,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 711.9200000001001
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 711.9200000001001
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 711.9200000001001
+        }
+      ],
+      "对象": 606,
+      "纹理": 213
+    },
+    {
+      "时刻": 546.1033333333331,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 759.4166666667667
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 759.4166666667667
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 759.4166666667667
+        }
+      ],
+      "对象": 606,
+      "纹理": 213
+    },
+    {
+      "时刻": 624.1999999999997,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 837.5133333334333
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 837.5133333334333
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 837.5133333334333
+        }
+      ],
+      "对象": 606,
+      "纹理": 213
+    },
+    {
+      "时刻": 682.4999999999997,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 895.8133333334332
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 895.8133333334332
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 895.8133333334332
+        }
+      ],
+      "对象": 607,
+      "纹理": 214
+    },
+    {
+      "时刻": 751.8599999999996,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 965.1733333334331
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 965.1733333334331
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 965.1733333334331
+        }
+      ],
+      "对象": 607,
+      "纹理": 214
+    },
+    {
+      "时刻": 840.9899999999997,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 1054.3033333334333
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 1054.3033333334333
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 1054.3033333334333
+        }
+      ],
+      "对象": 612,
+      "纹理": 218
+    },
+    {
+      "时刻": 899.2599999999998,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 1112.5733333334333
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 1112.5733333334333
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 1112.5733333334333
+        }
+      ],
+      "对象": 612,
+      "纹理": 218
+    },
+    {
+      "时刻": 957.7699999999999,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 1171.0833333334335
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 1171.0833333334335
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 1171.0833333334335
+        }
+      ],
+      "对象": 612,
+      "纹理": 218
+    },
+    {
+      "时刻": 1019.3599999999999,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 1232.6733333334334
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 1232.6733333334334
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 1232.6733333334334
+        }
+      ],
+      "对象": 612,
+      "纹理": 218
+    },
+    {
+      "时刻": 1082.3799999999997,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 1295.6933333334332
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 1295.6933333334332
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 1295.6933333334332
+        }
+      ],
+      "对象": 612,
+      "纹理": 218
+    },
+    {
+      "时刻": 1140.5499999999995,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 1353.863333333433
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 1353.863333333433
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 1353.863333333433
+        }
+      ],
+      "对象": 612,
+      "纹理": 218
+    },
+    {
+      "时刻": 1201.3799999999994,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 1414.693333333433
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 1414.693333333433
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 1414.693333333433
+        }
+      ],
+      "对象": 612,
+      "纹理": 218
+    },
+    {
+      "时刻": 1265.8499999999995,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 1479.163333333433
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 1479.163333333433
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 1479.163333333433
+        }
+      ],
+      "对象": 611,
+      "纹理": 218
+    },
+    {
+      "时刻": 1325.9899999999993,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 1539.3033333334329
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 1539.3033333334329
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 1539.3033333334329
+        }
+      ],
+      "对象": 611,
+      "纹理": 218
+    },
+    {
+      "时刻": 1400.9099999999999,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 1614.2233333334334
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 1614.2233333334334
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 1614.2233333334334
+        }
+      ],
+      "对象": 612,
+      "纹理": 218
+    },
+    {
+      "时刻": 1448.36,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 1661.6733333334334
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 1661.6733333334334
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 1661.6733333334334
+        }
+      ],
+      "对象": 612,
+      "纹理": 218
+    },
+    {
+      "时刻": 1519.4699999999998,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 1732.7833333334333
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 1732.7833333334333
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 1732.7833333334333
+        }
+      ],
+      "对象": 612,
+      "纹理": 218
+    },
+    {
+      "时刻": 1585.2300000000002,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 1798.5433333334338
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 1798.5433333334338
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 1798.5433333334338
+        }
+      ],
+      "对象": 611,
+      "纹理": 217
+    },
+    {
+      "时刻": 1643.5800000000002,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 1856.8933333334337
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 1856.8933333334337
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 1856.8933333334337
+        }
+      ],
+      "对象": 611,
+      "纹理": 217
+    },
+    {
+      "时刻": 1701.7800000000004,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 1915.093333333434
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 1915.093333333434
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 1915.093333333434
+        }
+      ],
+      "对象": 611,
+      "纹理": 217
+    },
+    {
+      "时刻": 4340.749999999999,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 50.74999999999909,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 4496.12,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 206.1199999999999,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 4574.55,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 284.5500000000002,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 4632.820000000001,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 342.8200000000006,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 4691.13,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 401.1300000000001,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 4749.19,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 459.1899999999996,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 4807.47,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 517.4700000000003,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 4865.42,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 575.4200000000001,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 4923.8099999999995,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 633.8099999999995,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 4982.719999999999,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 692.7199999999993,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5040.9,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 750.8999999999996,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5098.91,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 808.9099999999999,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5165.67,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 875.6700000000001,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5224.23,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 934.2299999999996,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5282.6,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 992.6000000000004,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5341.1100000000015,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1051.1100000000015,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5407.470000000001,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1117.4700000000012,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5466.040000000001,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1176.0400000000009,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5524.460000000002,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1234.4600000000019,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5582.730000000001,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1292.7300000000014,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5640.8200000000015,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1350.8200000000015,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5698.850000000001,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1408.8500000000013,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5765.830000000002,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1475.8300000000017,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5824.27,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1534.2700000000004,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5882.5,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1592.5,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5940.39,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1650.3900000000003,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 5999.180000000002,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1709.180000000002,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 6057.8200000000015,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1767.8200000000015,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 6124.310000000001,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1834.3100000000013,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 6182.32,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1892.3199999999997,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 6240.899999999999,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 1950.8999999999987,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 6307.159999999999,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 2017.159999999999,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 6365.499999999999,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 2075.499999999999,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 6432.799999999999,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 2142.7999999999993,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 6491.16,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 2201.16,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 6549.5199999999995,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 2259.5199999999995,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 6607.669999999998,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 2317.6699999999983,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 6665.899999999998,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:5",
+          "kind": "护心枝壳",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1077.5843471830565
+          },
+          "radius": 40,
+          "elapsed": 2375.899999999998,
+          "skill": 3
+        }
+      ],
+      "对象": 610,
+      "纹理": 217
+    },
+    {
+      "时刻": 6965.999999999997,
+      "效果": [
+        {
+          "boss": "bound-branch",
+          "id": "风核:8410",
+          "kind": "风核暴露",
+          "phase": "出手",
+          "point": {
+            "x": 3380.773409624587,
+            "y": 1068.3043471830565
+          },
+          "radius": 20,
+          "elapsed": 55.99999999999727
+        }
+      ],
+      "对象": 611,
+      "纹理": 217
+    }
+  ],
+  "服药": [
+    {
+      "时刻": 46710.39333333339,
+      "之前生命": 56
+    },
+    {
+      "时刻": 50543.84333333338,
+      "之前生命": 58
+    },
+    {
+      "时刻": 52727.813333333375,
+      "之前生命": 60
+    },
+    {
+      "时刻": 55423.50333333337,
+      "之前生命": 60
+    }
+  ],
+  "错误": [],
+  "结果": "通过",
+  "暂停与重开": {
+    "暂停": {
+      "objects": 2,
+      "effects": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 213.31333333343355
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 213.31333333343355
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 213.31333333343355
+        }
+      ]
+    },
+    "恢复": {
+      "objects": 2,
+      "effects": [
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面0",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3281.1537347998205,
+            "y": 1110.9015469400276
+          },
+          "radius": 38,
+          "elapsed": 344.94333333343354
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面1",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3339.6139731191474,
+            "y": 1056.2901879050473
+          },
+          "radius": 38,
+          "elapsed": 344.94333333343354
+        },
+        {
+          "boss": "bound-branch",
+          "id": "boss-bound-branch:战斗0:4:地面2",
+          "kind": "破土根枝",
+          "phase": "出手",
+          "point": {
+            "x": 3398.0742114384743,
+            "y": 1001.678828870067
+          },
+          "radius": 38,
+          "elapsed": 344.94333333343354
+        }
+      ]
+    },
+    "保存危险区": [
+      {
+        "id": "boss-bound-branch:战斗0:4:地面0",
+        "owner": "boss-bound-branch",
+        "attempt": 0,
+        "kind": "circle",
+        "point": {
+          "x": 3281.1537347998205,
+          "y": 1110.9015469400276
+        },
+        "born": -1313.3133333334335,
+        "activeAt": -213.31333333343355,
+        "expires": 1986.6866666665665,
+        "radius": 38,
+        "speed": 0,
+        "damage": 30,
+        "used": []
+      },
+      {
+        "id": "boss-bound-branch:战斗0:4:地面1",
+        "owner": "boss-bound-branch",
+        "attempt": 0,
+        "kind": "circle",
+        "point": {
+          "x": 3339.6139731191474,
+          "y": 1056.2901879050473
+        },
+        "born": -1313.3133333334335,
+        "activeAt": -213.31333333343355,
+        "expires": 1986.6866666665665,
+        "radius": 38,
+        "speed": 0,
+        "damage": 30,
+        "used": [
+          "player"
+        ]
+      },
+      {
+        "id": "boss-bound-branch:战斗0:4:地面2",
+        "owner": "boss-bound-branch",
+        "attempt": 0,
+        "kind": "circle",
+        "point": {
+          "x": 3398.0742114384743,
+          "y": 1001.678828870067
+        },
+        "born": -1313.3133333334335,
+        "activeAt": -213.31333333343355,
+        "expires": 1986.6866666665665,
+        "radius": 38,
+        "speed": 0,
+        "damage": 30,
+        "used": []
+      }
+    ],
+    "恢复危险区": [
+      {
+        "id": "boss-bound-branch:战斗0:4:地面0",
+        "owner": "boss-bound-branch",
+        "attempt": 0,
+        "kind": "circle",
+        "point": {
+          "x": 3281.1537347998205,
+          "y": 1110.9015469400276
+        },
+        "born": -1444.9433333334337,
+        "activeAt": -344.94333333343354,
+        "expires": 1855.0566666665663,
+        "radius": 38,
+        "speed": 0,
+        "damage": 30,
+        "used": []
+      },
+      {
+        "id": "boss-bound-branch:战斗0:4:地面1",
+        "owner": "boss-bound-branch",
+        "attempt": 0,
+        "kind": "circle",
+        "point": {
+          "x": 3339.6139731191474,
+          "y": 1056.2901879050473
+        },
+        "born": -1444.9433333334337,
+        "activeAt": -344.94333333343354,
+        "expires": 1855.0566666665663,
+        "radius": 38,
+        "speed": 0,
+        "damage": 30,
+        "used": [
+          "player"
+        ]
+      },
+      {
+        "id": "boss-bound-branch:战斗0:4:地面2",
+        "owner": "boss-bound-branch",
+        "attempt": 0,
+        "kind": "circle",
+        "point": {
+          "x": 3398.0742114384743,
+          "y": 1001.678828870067
+        },
+        "born": -1444.9433333334337,
+        "activeAt": -344.94333333343354,
+        "expires": 1855.0566666665663,
+        "radius": 38,
+        "speed": 0,
+        "damage": 30,
+        "used": []
+      }
+    ]
+  },
+  "结束": {
+    "模拟毫秒": 6991.129999999997,
+    "对象": 611,
+    "纹理": 217,
+    "玩家": {
+      "x": 3313.0158220949015,
+      "y": 1044.613625396044,
+      "hp": 14,
+      "stamina": 100
+    }
+  }
+}

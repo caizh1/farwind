@@ -1,0 +1,78 @@
+{
+  "说明": "独立重建核对候选程序、样式、四张首领图集与当前源码。",
+  "核对": [
+    {
+      "文件": ".camp-boss-local/vfx-confirmation/index.html",
+      "一致": false
+    },
+    {
+      "文件": ".camp-boss-local/vfx-confirmation/assets/xiaobaoView-CD1lzxc2.js",
+      "一致": true
+    },
+    {
+      "文件": ".camp-boss-local/vfx-confirmation/assets/damage-C0hX35a0.js",
+      "一致": true
+    },
+    {
+      "文件": ".camp-boss-local/vfx-confirmation/assets/xiaobao-CBaLPEDp.js",
+      "一致": true
+    },
+    {
+      "文件": ".camp-boss-local/vfx-confirmation/assets/game-Dg43T7S7.js",
+      "一致": false
+    },
+    {
+      "文件": ".camp-boss-local/vfx-confirmation/assets/xiaobaoCombat-CBmbE5Lz.js",
+      "一致": true
+    },
+    {
+      "文件": ".camp-boss-local/vfx-confirmation/assets/game-BJqLe9Pz.css",
+      "一致": true
+    },
+    {
+      "文件": ".camp-boss-local/vfx-confirmation/assets/xiaobao-preview-5osY0aZY.css",
+      "一致": true
+    },
+    {
+      "文件": ".camp-boss-local/vfx-confirmation/assets/camp-bosses/bound-branch.png",
+      "一致": true
+    },
+    {
+      "文件": ".camp-boss-local/vfx-confirmation/assets/camp-bosses/thorn-crown.png",
+      "一致": true
+    },
+    {
+      "文件": ".camp-boss-local/vfx-confirmation/assets/camp-bosses/spore-heart.png",
+      "一致": true
+    },
+    {
+      "文件": ".camp-boss-local/vfx-confirmation/assets/camp-bosses/crag-tusk.png",
+      "一致": true
+    }
+  ],
+  "源码漂移": [
+    "src/game/systems/runeCombat.ts"
+  ],
+  "通过": false,
+  "特效接入源码核对": [
+    {
+      "文件": "src/game/entities/campBossEffects.ts",
+      "与实机固定包源码一致": true
+    },
+    {
+      "文件": "src/game/entities/campBossView.ts",
+      "与实机固定包源码一致": true
+    },
+    {
+      "文件": "src/game/scenes/World.ts",
+      "与实机固定包源码一致": true
+    }
+  ],
+  "最终记录时源码漂移": [
+    "src/game/systems/runeWorld.ts",
+    "src/game/systems/runeCombat.ts",
+    "src/game/systems/runeLab.ts",
+    "src/game/entities/runeView.ts"
+  ],
+  "范围说明": "实机使用已冻结正式包。符文战斗的并发改动另验，不把全包重建差异归为特效验收通过。"
+}

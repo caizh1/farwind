@@ -1,0 +1,191 @@
+{
+  "说明": "先生成并展示四张动画分镜，再开发攻击特效；正式构建关闭测试授予，真实新游戏与键鼠操作，诊断只读。",
+  "设计": "docs/camp-bosses/vfx-design/ANIMATION-DESIGN.md",
+  "实现": "现有角色图集加原生图形特效，主弧和地面边界读取正式攻击数据；每帧复用两个图形对象。",
+  "相关逻辑": {
+    "文件数": 8,
+    "通过": 203,
+    "新增特效测试": 24,
+    "默认测试脚本已接入": true
+  },
+  "全量初跑": {
+    "通过": 948,
+    "超时": 2,
+    "初跑测试总数": 950,
+    "超时原因": "east-defense 与 npc-life-combat 各有一项达到原有 5000 毫秒时限；无断言失败。",
+    "串行复核": {
+      "文件数": 2,
+      "通过": 19,
+      "断言与超时设置未修改": true
+    },
+    "边界": "初跑之后已把新增 24 项特效测试加入默认列表，不宣称更新后的默认全量一次全绿。"
+  },
+  "运行画面": {
+    "通过场景": 4,
+    "技能画面": 16,
+    "路径": [
+      {
+        "首领": "孢心巢母",
+        "结果": "通过",
+        "已拍摄技能": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "特效采样数": 40,
+        "浏览器错误": [],
+        "录像": "docs/camp-bosses/evidence/vfx/spore-heart/gameplay.webm",
+        "逐招画面": [
+          "docs/camp-bosses/evidence/vfx/spore-heart/skill-0.png",
+          "docs/camp-bosses/evidence/vfx/spore-heart/skill-1.png",
+          "docs/camp-bosses/evidence/vfx/spore-heart/skill-2.png",
+          "docs/camp-bosses/evidence/vfx/spore-heart/skill-3.png"
+        ],
+        "暂停与重开": "未单独测试"
+      },
+      {
+        "首领": "荆冠猎王",
+        "结果": "通过",
+        "已拍摄技能": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "特效采样数": 24,
+        "浏览器错误": [],
+        "录像": "docs/camp-bosses/evidence/vfx/thorn-crown/gameplay.webm",
+        "逐招画面": [
+          "docs/camp-bosses/evidence/vfx/thorn-crown/skill-0.png",
+          "docs/camp-bosses/evidence/vfx/thorn-crown/skill-1.png",
+          "docs/camp-bosses/evidence/vfx/thorn-crown/skill-2.png",
+          "docs/camp-bosses/evidence/vfx/thorn-crown/skill-3.png"
+        ],
+        "暂停与重开": "未单独测试"
+      },
+      {
+        "首领": "崩岩獠王",
+        "结果": "通过",
+        "已拍摄技能": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "特效采样数": 58,
+        "浏览器错误": [],
+        "录像": "docs/camp-bosses/evidence/vfx/crag-tusk/gameplay.webm",
+        "逐招画面": [
+          "docs/camp-bosses/evidence/vfx/crag-tusk/skill-0.png",
+          "docs/camp-bosses/evidence/vfx/crag-tusk/skill-1.png",
+          "docs/camp-bosses/evidence/vfx/crag-tusk/skill-2.png",
+          "docs/camp-bosses/evidence/vfx/crag-tusk/skill-3.png"
+        ],
+        "暂停与重开": "未单独测试"
+      },
+      {
+        "首领": "缚枝祭主",
+        "结果": "通过",
+        "已拍摄技能": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "特效采样数": 80,
+        "浏览器错误": [],
+        "录像": "docs/camp-bosses/evidence/vfx/bound-branch/gameplay.webm",
+        "逐招画面": [
+          "docs/camp-bosses/evidence/vfx/bound-branch/skill-0.png",
+          "docs/camp-bosses/evidence/vfx/bound-branch/skill-1.png",
+          "docs/camp-bosses/evidence/vfx/bound-branch/skill-2.png",
+          "docs/camp-bosses/evidence/vfx/bound-branch/skill-3.png"
+        ],
+        "暂停与重开": "通过"
+      }
+    ]
+  },
+  "缚枝完整独战": {
+    "结果": "通过",
+    "有效战斗秒": 109.93086333333329,
+    "墙钟战斗秒": 119.911,
+    "药剂": 2,
+    "受到伤害": 60,
+    "弹反成功": 25,
+    "弹反输入": 26,
+    "观察技能": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "实际二阶段攻击特效": "通过",
+    "实际破茧风核特效": "通过",
+    "暂停与保存重开": "通过",
+    "正式清除、地图、委托、恶意与再读档": "通过",
+    "记录": "docs/camp-bosses/evidence/vfx/balance/solo-bound-branch/gameplay.json",
+    "录像": "docs/camp-bosses/evidence/vfx/balance/solo-bound-branch/gameplay.webm"
+  },
+  "类型检查": "通过",
+  "正式构建": "通过",
+  "差异空白检查": "通过",
+  "固定包": {
+    "说明": "最终正式无授予候选。逐招与两阶段复核固定使用此包，设计图不加载为运行纹理。",
+    "输出目录": ".camp-boss-local/vfx-production",
+    "构建时源码漂移": [],
+    "文件": {
+      ".camp-boss-local/vfx-production/index.html": "6c102c2ecfd32c3fc4d2684ded79ee14de12372f041996ee4808d77a7448a392",
+      ".camp-boss-local/vfx-production/assets/xiaobaoView-CD1lzxc2.js": "acafd75d6d587ed1ecb2e0afb087770af331b5d047ad31845ed5b80363be771c",
+      ".camp-boss-local/vfx-production/assets/damage-C0hX35a0.js": "34754f342cc529cb7afe061f1fd512527df0ea64412f976c62247020d3fd662c",
+      ".camp-boss-local/vfx-production/assets/xiaobao-CBaLPEDp.js": "2525fd2181509499e7b5bc2026f49f4d2dd7faaa2f277642bf97286bdc30251b",
+      ".camp-boss-local/vfx-production/assets/game-Dg43T7S7.js": "23552f4573be38810c2d9912c87649e7bcb09433d40b1fb95e3500c751bdbcde",
+      ".camp-boss-local/vfx-production/assets/xiaobaoCombat-CBmbE5Lz.js": "ad11c413bc7aa834a25395eda2f3276ba3b9a4ff59ade39806ea5c713582e5fd",
+      ".camp-boss-local/vfx-production/assets/game-BJqLe9Pz.css": "c69ed393548e30caf6e803a5688b7632231ee83092ad0d0463e844964844d262",
+      ".camp-boss-local/vfx-production/assets/xiaobao-preview-5osY0aZY.css": "94cd4592d8639bbf7a6a3e6329d7d58c35a20c49a381ae7436186552739f2e14",
+      ".camp-boss-local/vfx-production/assets/camp-bosses/bound-branch.png": "688b0af789446398b4406ad596bad0e824fada5969879e073d26c229b73ef975",
+      ".camp-boss-local/vfx-production/assets/camp-bosses/thorn-crown.png": "d244d6e9bba30f604bc86fc37ee7a86f0f1550340fa3ad0c3ce687fc8d654cb1",
+      ".camp-boss-local/vfx-production/assets/camp-bosses/spore-heart.png": "29b6bc248652f4060994002488181960249dbf389f7309c564f450b7c055cb2a",
+      ".camp-boss-local/vfx-production/assets/camp-bosses/crag-tusk.png": "3d27169fc02540ac63c0b811a9d5c8840043b3307bca50302e3044c6c2ed7283"
+    }
+  },
+  "源码核对": [
+    {
+      "文件": "src/game/entities/campBossEffects.ts",
+      "与实机固定包源码一致": true
+    },
+    {
+      "文件": "src/game/entities/campBossView.ts",
+      "与实机固定包源码一致": true
+    },
+    {
+      "文件": "src/game/scenes/World.ts",
+      "与实机固定包源码一致": true
+    }
+  ],
+  "其他任务源码漂移": [
+    "src/game/systems/runeWorld.ts",
+    "src/game/systems/runeCombat.ts",
+    "src/game/systems/runeLab.ts",
+    "src/game/entities/runeView.ts"
+  ],
+  "源码边界": "本次特效源码与固定包一致；后续符文改动不在实机固定包验收范围。",
+  "对抗式审查": {
+    "判定": "PASS",
+    "P0/P1阻塞": [],
+    "记录": "docs/camp-bosses/vfx-design/REVIEW.md"
+  },
+  "难度": "本次未调整血量或伤害。缚枝实战样本通过，不代表重新校准全部独战与同行路径。",
+  "性能": {
+    "新增复用图形对象": 2,
+    "新增运行位图纹理": 0,
+    "本机单次完整独战帧间隔": {
+      "样本数": 12779,
+      "中位毫秒": 8.30000000000291,
+      "百分之九十五毫秒": 10.299999999999272,
+      "最大毫秒": 149.10000000000014
+    },
+    "边界": "包含路线、加载、保存及截图交互；长时间混战与目标设备性能未验收。"
+  },
+  "交付": "保留原有未提交改动，没有提交、推送或部署。"
+}
