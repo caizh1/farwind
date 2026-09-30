@@ -3,7 +3,7 @@ import {ENCOUNTERS,ENCOUNTER_UNITS} from "../src/data/maps/windbell/encounters";
 import {initialEncounters,validateEncounters,settleEncounterDeath,advanceEncounters,resetEncounter,unitState} from "../src/game/systems/encounterState";
 import {regionalThreat,sourceAllowsRaid} from "../src/game/systems/wildThreat";
 import {WildernessEncounters} from "../src/game/systems/encounterRuntime";
-import {enemyNavigation,type EnemyBody} from "../src/game/systems/enemy";
+import {ENEMY_PURSUIT,enemyLeashRadius,enemyNavigation,type EnemyBody} from "../src/game/systems/enemy";
 import {motionBlocked,clearMotionLine} from "../src/game/systems/obstacles";
 const outsideView={left:0,right:1600,top:0,bottom:1400};
 function harness(){const data=initialEncounters();let bodies:EnemyBody[]=[];const busy=new Set<string>();const runtime=new WildernessEncounters({read:()=>data,bodies:()=>bodies,spawn:(d,s)=>{bodies.push({...d,hp:s.hp,x:s.x,y:s.y,homeX:d.x,homeY:d.y,cool:0,windup:0,staggerUntil:0,attackSerial:s.serial,nav:enemyNavigation(),ai:"家园",disabled:false,recovered:false});},release:id=>{bodies=bodies.filter(e=>e.id!==id);},busy:id=>busy.has(id)});return {data,runtime,bodies:()=>bodies,busy};}
@@ -34,7 +34,7 @@ describe("首条荒野遭遇与据点闭环",()=>{
  });
  it("清剿永久据点减少巡游与南门预算，重复读档不恢复据点",()=>{
   const s=initialEncounters(),camp=ENCOUNTERS.find(d=>d.kind==="camp")!;const before=regionalThreat(s,"south");
-  s.groups[camp.id].activated=true;camp.members.forEach(m=>settleEncounterDeath(s,m.id,true));const next=validateEncounters(JSON.parse(JSON.stringify(s)));
+  s.groups[camp.id].activated=true;camp.members.forEach(m=>{if(m.boss)s.groups[camp.id].boss!.stage='battle';settleEncounterDeath(s,m.id,true);});const next=validateEncounters(JSON.parse(JSON.stringify(s)));
   expect(regionalThreat(next,"south").pressure).toBeLessThan(before.pressure);expect(regionalThreat(next,"south").renewablePatrols).toBe(0);expect(sourceAllowsRaid(next,"south-gate")).toBe(false);expect(sourceAllowsRaid(next,"east-gate")).toBe(true);
   expect(resetEncounter(next,camp.id)).toBe(false);next.groups["south-reed-patrol"].activated=true;settleEncounterDeath(next,"wild-reed-slime",false);for(let i=0;i<2400;i++)advanceEncounters(next,250);expect(resetEncounter(next,"south-reed-patrol")).toBe(false);
  });
@@ -48,7 +48,7 @@ import {initialState,validate,add,count} from "../src/game/systems/state";
 import {southQuestSnapshot} from "../src/game/systems/fieldQuest";
 import {StateCommit} from "../src/game/systems/stateCommit";
 import {makeNightPlan,advanceNight,mayStartNight} from "../src/game/systems/nightDirector";
-function clearCamp(s:ReturnType<typeof initialState>){const d=ENCOUNTERS.find(g=>g.kind==="camp")!;s.encounters.groups[d.id].activated=true;for(const u of d.members)settleEncounterDeath(s.encounters,u.id,false);}
+function clearCamp(s:ReturnType<typeof initialState>){const d=ENCOUNTERS.find(g=>g.kind==="camp")!;s.encounters.groups[d.id].activated=true;for(const u of d.members){if(u.boss)s.encounters.groups[d.id].boss!.stage='battle';settleEncounterDeath(s.encounters,u.id,false);}}
 describe("南路委托保存与来源调度",()=>{
  it("药师倒下时公共委托簿仍可接取和完成，一次发放启程补给与奖励",()=>{
   const s=initialState();Object.assign(s.player,{x:560,y:810});const healer=s.life.people.find(p=>p.id==="healer")!.body!;Object.assign(healer,{hp:0,health:"down"});
@@ -71,7 +71,14 @@ it("巡逻不取消正常仇恨，脱离活动范围后按原家园返回",()=>{
  const h=harness();h.runtime.update(20,20,{x:900,y:1000},outsideView);const e=h.bodies()[0];e.patrolTarget={x:1170,y:2050};e.leashRadius=260;
  for(let now=20;now<1500;now+=20)updateEnemy(e,{x:900,y:1000},now,20,{queries:2});expect(e.x).toBeGreaterThan(1080);
  const target={x:e.x+140,y:e.y+25};updateEnemy(e,target,1520,20,{queries:2});expect(e.nav.mode).toBe("chase");
- updateEnemy(e,{x:3000,y:3000},1540,20,{queries:2});expect(e.nav.returning).toBe(true);
+ updateEnemy(e,{x:3000,y:3000},1540,20,{queries:2});expect(e.nav.returning).toBe(false);
+ updateEnemy(e,{x:3000,y:3000},1540+ENEMY_PURSUIT.lostDelay,ENEMY_PURSUIT.lostDelay,{queries:2});expect(e.nav.returning).toBe(true);
+});
+it('普通遭遇在扩大范围内保存伤势，仍拒绝范围外及世界外坐标',()=>{
+ const s=initialEncounters(),d=ENCOUNTERS.find(d=>d.id==='south-reed-margin')!,g=s.groups[d.id],u=g.members[0];g.activated=true;u.x=-800;u.hp=19;
+ expect(validateEncounters(s).groups[d.id].members[0]).toEqual(u);
+ u.x=d.members[0].x-enemyLeashRadius({leashRadius:d.radius})-101;expect(()=>validateEncounters(s)).toThrow('荒野遭遇存档');
+ u.x=-2200;expect(()=>validateEncounters(s)).toThrow('荒野遭遇存档');
 });
 it("小宝影响的遭遇单位保留同一份伤势与成员身份，死者不能在读档中复活",()=>{
  const s=initialState(),u=s.encounters.groups["south-reed-patrol"].members[0];s.encounters.groups["south-reed-patrol"].activated=true;u.hp=24;

@@ -17,13 +17,13 @@ import {sourceAllowsRaid} from '../src/game/systems/wildThreat';
 beforeEach(()=>syncMapGeometry(true));afterEach(()=>syncMapGeometry(false));
 const camps=ENCOUNTERS.filter(d=>d.kind==='camp'),player={x:670,y:720,hp:100};
 const order=(malice:number):RaidOrder=>({source:'demon-king',malice,profileVersion:1});
-function clear(s:State,id=camps[0].id,reward=false){const d=ENCOUNTERS.find(d=>d.id===id)!;s.encounters.groups[id].activated=true;for(const m of d.members)settleEncounterDeath(s.encounters,m.id,reward);}
+function clear(s:State,id=camps[0].id,reward=false){const d=ENCOUNTERS.find(d=>d.id===id)!;s.encounters.groups[id].activated=true;for(const m of d.members){if(m.boss&&!s.encounters.groups[id].cleared)s.encounters.groups[id].boss!.stage='battle';settleEncounterDeath(s.encounters,m.id,reward);}}
 function planned(){const s=initialState();clear(s);s.time=2460;s.night.plan=makeNightPlan(s,2);s.night.plan.outcome='pending';s.time=s.night.plan.at;s.defense.protectionMs=s.defense.cooldownMs=0;return s;}
 describe('魔王恶意的清剿事实与恢复',()=>{
  it.each([true,false])('末击奖励归属为%s，完整清剿只增加一次且读档不重复',reward=>{
   const s=initialState(),d=camps[0];s.encounters.groups[d.id].activated=true;
   for(const m of d.members.slice(0,-1))settleEncounterDeath(s.encounters,m.id,reward);
-  expect(demonMalice(s.encounters)).toBe(0);settleEncounterDeath(s.encounters,d.members.at(-1)!.id,reward);
+  expect(demonMalice(s.encounters)).toBe(0);s.encounters.groups[d.id].boss!.stage='battle';settleEncounterDeath(s.encounters,d.members.at(-1)!.id,reward);
   expect(demonMalice(s.encounters)).toBe(1);expect(settleEncounterDeath(s.encounters,d.members.at(-1)!.id,reward)).toBe(false);
   expect(resetEncounter(s.encounters,d.id)).toBe(false);expect(demonMalice(parseSave(JSON.stringify(s)).encounters)).toBe(1);
   clear(s,camps[1].id);expect(demonMalice(validate(s).encounters)).toBe(2);expect(demonKingSummary(s)).toContain('？？？');
@@ -37,7 +37,7 @@ describe('魔王恶意的清剿事实与恢复',()=>{
   const old:any=planned();old.schema_version=12;delete old.demonKing;old.night.plan=null;
   old.defense=prepareRaid(old.defense,player,'east-gate');old.defense.raid.members[0].hp=13;old.defense.raid.members[1].hp=0;
   Object.assign(old.defense.guards[0],{hp:0,dead:true,mode:'dead'});
-  const next=validate(old);expect(next.schema_version).toBe(13);expect(next.defense).toEqual(old.defense);expect(next.time).toBe(old.time);
+  const next=validate(old);expect(next.schema_version).toBe(14);expect(next.defense).toEqual(old.defense);expect(next.time).toBe(old.time);
   expect(demonMalice(next.encounters)).toBe(1);expect(next.demonKing.introduced).toBe(false);expect(validate(next)).toEqual(next);
  });
  it('初见在完整观看后持久化，失败不会消费，不能在零恶意时伪造初见',async()=>{

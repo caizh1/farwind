@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import {CombatFeedback,FEEDBACK,BLADE_GLOW,feedbackVisual} from '../systems/combatFeedback';
+import {CombatFeedback,FEEDBACK,BLADE_GLOW,feedbackVisual,isHitFeedback} from '../systems/combatFeedback';
 import type {Actor} from './actor';
 export class CombatFeedbackView {
  private ink=new Map<string,Phaser.GameObjects.Graphics>();
@@ -27,7 +27,15 @@ export class CombatFeedbackView {
   const visible=feedbackVisual(this.feedback.mode)?this.feedback.effects:[];
   for(const [id,g] of this.ink)if(!visible.some(e=>e.id===id)){g.destroy();this.ink.delete(id);}
   for(const e of visible){let g=this.ink.get(e.id);if(!g){g=this.scene.add.graphics();this.ink.set(e.id,g);}g.clear().setDepth(e.depth??e.point.y+35);
-   const age=Math.max(0,now-e.at),life=e.kind==='counter-hit'?FEEDBACK.hitLife:e.kind==='afterguard'?FEEDBACK.afterguardLife:FEEDBACK.contactLife,u=age/life,alpha=Math.max(0,1-u),p=e.point,b=e.blade,d=e.deflect;
+   const age=Math.max(0,now-e.at),life=isHitFeedback(e.kind)?e.kind==='kill'?190:e.kind==='guard-break'?180:FEEDBACK.hitLife:e.kind==='counter-hit'?FEEDBACK.hitLife:e.kind==='afterguard'?FEEDBACK.afterguardLife:FEEDBACK.contactLife,u=age/life,alpha=Math.max(0,1-u),p=e.point,b=e.blade,d=e.deflect;
+   if(isHitFeedback(e.kind)){
+    const hard=e.guarded,strong=e.kind==='guard-break'||e.kind==='interrupt'||e.kind==='kill'||e.stage===3,length=hard?9:strong?19:11,color=hard?0xbfd2dc:e.kind==='kill'?0xffd2a4:0xffedc2;
+    g.lineStyle(strong?3:1.8,color,alpha).lineBetween(p.x-b.x*length,p.y-b.y*length,p.x+b.x*length,p.y+b.y*length);
+    for(let i=0;i<(strong?5:3);i++){const angle=Math.atan2(e.incoming.y,e.incoming.x)+(i-(strong?2:1))*.38,r=5+u*(strong?25:13);g.lineStyle(hard?1.4:1,color,alpha).lineBetween(p.x+Math.cos(angle)*3,p.y+Math.sin(angle)*3,p.x+Math.cos(angle)*r,p.y+Math.sin(angle)*r);}
+    if(e.kind==='guard-break')g.lineStyle(2,0xf7d4a0,alpha*.7).strokeCircle(p.x,p.y,7+u*13);
+    if(e.kind==='kill')g.fillStyle(color,alpha*.55).fillCircle(p.x,p.y,4*(1-u));
+    continue;
+   }
    if(e.kind==='counter-hit') {
     const length=13+u*7;g.lineStyle(3,0xffedc2,alpha).lineBetween(p.x-b.x*length,p.y-b.y*length,p.x+b.x*length,p.y+b.y*length);
     g.lineStyle(1,0xffffff,alpha).lineBetween(p.x-b.x*length,p.y-b.y*length,p.x+b.x*length,p.y+b.y*length);

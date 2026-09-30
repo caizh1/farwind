@@ -1065,3 +1065,25 @@ kbd {
 .lesson-actions button {flex:1 1 145px;min-width:0;white-space:normal;}
 .skill-journal {border-top:1px solid #748673;margin-top:20px;padding-top:12px;}
 .skill-journal p,.skill-journal li {overflow-wrap:anywhere;}
+
+/* 三个独立网格区域顶端对齐；展开地图不会把首领血条挤入战斗区。 */
+.top { display: grid; grid-template-columns: max-content minmax(0, 440px) var(--info-width); grid-template-areas: 'vitals boss info'; gap: 8px 14px; }
+.vitals-stack { grid-area: vitals; }
+.hud-info { grid-area: info; min-width: 0; }
+.camp-boss-status { grid-area: boss; align-self: start; justify-self: center; display: flex; width: 100%; min-width: 0; max-width: 440px; flex-direction: column; gap: 3px; padding: 7px 10px; border: 1px solid #c9ad78; border-radius: 9px; background: #263e35e8; color: #f4ead2; box-sizing: border-box; }
+.camp-boss-status[hidden] { display: none; }
+.boss-title { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-width: 0; }
+.boss-title b { font-size: 14px; white-space: nowrap; }
+.boss-title span { font-size: 11px; line-height: 1.5; white-space: nowrap; }
+.camp-boss-status progress { display: block; width: 100%; min-width: 0; height: 6px; border: 0; accent-color: #cc8760; }
+.camp-boss-status progress::-webkit-progress-bar { background: #173a2e; border-radius: 5px; }
+.camp-boss-status progress::-webkit-progress-value { background: #cd8f69; border-radius: 5px; }
+.camp-boss-status [data-boss-state] { font-size: 11px; line-height: 16px; color: #efc993; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.camp-boss-status[data-exposed="true"] { border-color: #b4efd2; }
+.camp-boss-status[data-exposed="true"] [data-boss-state] { color: #b4efd2; }
+.camp-map-status { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 8px 14px; padding: 0; list-style: none; }
+.camp-map-status li { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.camp-map-status i { width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%; background: #a34f3d; }
+.camp-map-status li[data-cleared="true"] i { background: #56766a; }
+@media(max-width:1100px) { .top { grid-template-columns: minmax(0, 1fr) var(--info-width); grid-template-areas: 'boss boss' 'vitals info'; } .top:not(:has(.camp-boss-status:not([hidden]))) { grid-template-areas: 'vitals info'; } }
+@media(max-width:480px) { .top { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 8px; } .hud-info { width: 100%; } .vitals { min-width: 0; width: 100%; box-sizing: border-box; } .vitals > div { min-width: 0; width: auto; flex: 1; } .vitals .portrait { width: 32px; height: 36px; flex-shrink: 0; } .vitals b { font-size: 12px; } }

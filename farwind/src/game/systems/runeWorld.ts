@@ -1,0 +1,60 @@
+import type {World} from '../scenes/World';
+import {RuneCombat,type RuneEvent,type RuneTarget} from './runeCombat';
+import {RuneView} from '../entities/runeView';
+import {runeLock,runeSnapshot,acquisitionReady,type RuneRequest} from './runeState';
+import {RUNES,RETURN_RUNE,runeById} from '../../data/runes';
+import {STRIKES,attackConfig,sweepMove,type Attack} from './combat';
+import {outgoingDamage} from './economy';
+import {resolveDamage,type DamageEvent} from './damage';
+import {enemyProtection} from './enemyTraits';
+import {firstSwordWindBlocker} from './swordWindGeometry';
+import {clearMotionLine,clearMeleeLine,motionBlocked} from './obstacles';
+import {delayEnemyAttack} from './enemyAttack';
+import {props} from '../../data/world';
+import {RETURN_WIND_ORB} from '../../data/economy';
+import {save} from './save';
+import {leaveRoom} from '../ui/npcLife';
+export class RuneWorld {
+ engine:RuneCombat;view:RuneView;eligible=new Set<string>();space='';
+ attacks=new Map<number,{base:number;A:number}>();returning?:{point:{x:number;y:number};start:number;committed:boolean;origin:{x:number;y:number};node:string};lastReturnNotice=0;
+ constructor(public world:World){const w=world;this.engine=new RuneCombat({state:()=>w.state,targets:()=>w.combatTargets(),A:()=>outgoingDamage(w.state,STRIKES[0].damage),visible:e=>{const v=w.cameras.main.worldView;return e.x>=v.x-100&&e.x<=v.right+100&&e.y>=v.y-100&&e.y<=v.bottom+100;},clear:(a,b)=>clearMeleeLine(a,b),blocker:firstSwordWindBlocker,damage:(e,ev)=>this.damage(e,ev),push:(e,d,amount)=>{if(e.kind==='trainingDummy'||e.boss)return 'immune';const before={x:e.x,y:e.y};sweepMove(e,d.x*amount,d.y*amount,(x,y)=>w.blocked(x,y),clearMotionLine);return Math.hypot(e.x-before.x,e.y-before.y)<amount*.75?'wall':'moved';},sound:(family,phase,now)=>w.soundFx.rune(family,phase,now),checkpoint:()=>{void w.persist().catch(()=>{});}});w.enemyProjectiles.speedScale=shot=>1-this.engine.timeSlow({...shot,boss:shot.attack.boss});this.view=new RuneView(w,this.engine);this.reset();}
+ reset(){this.engine.clear();this.engine.equipped='';this.engine.rebind();this.view.clear();this.attacks.clear();this.returning=undefined;this.space=this.world.state.life.playerSpace;this.eligible=new Set(RUNES.filter(r=>acquisitionReady(this.world.state,r)).map(r=>r.id));}
+ clear(){this.engine.clear();this.view.clear();this.returning=undefined;this.attacks.clear();for(const e of [...this.world.enemies,...this.world.defense.enemies]){e.runeSlow=0;}}
+ safety(){const w=this.world,p=w.state.player;return {combat:w.state.runes.peace<8000||[...w.enemies,...w.defense.enemies].some(e=>e.hp>0&&!e.disabled&&Math.hypot(e.x-p.x,e.y-p.y)<380&&clearMeleeLine(p,e)),boss:Object.values(w.state.encounters.groups).some(g=>g.boss?.stage==='battle'||g.boss?.stage==='warning'),defense:!!w.state.defense.raid,trial:!!w.lessons?.trial,story:w.ui.mode==='dialog',action:!!w.combat.attack||!!w.combat.parry||w.sim<w.combat.dashUntil};}
+ lock(){return runeLock(this.safety());}
+ async change(request:RuneRequest){const w=this.world;if(request.kind==='claim'&&request.shop&&w.target?.id!=='service-general')throw Error('请到风铃杂货铺购买符文。');await w.economy.run(()=>w.state,s=>runeSnapshot(s,request,this.safety()),save,next=>{w.publishState(next);this.engine.rebind();this.view.clear();});}
+ capture(attack:Attack){if(this.engine.has('r01')||this.engine.has('r27'))this.engine.fx('thunder-charge',this.world.state.player,28,this.engine.has('r27')?'r27':'r01',attackConfig(attack).windup+90);if(this.engine.has('r06'))this.engine.fx('moon',this.world.state.player,38,'r06',280);if(this.engine.has('r18'))this.engine.fx('wind-band',this.world.state.player,42,'r18',260);this.attacks.set(attack.id,{base:outgoingDamage(this.world.state,attackConfig(attack).damage),A:outgoingDamage(this.world.state,STRIKES[0].damage)});if(this.attacks.size>64)this.attacks.delete(this.attacks.keys().next().value!);}
+ prepare(attack:Attack,target:RuneTarget,base?:number){const snapshot=this.attacks.get(attack.id),ev=this.engine.native(`attack:${attack.id}`,target,base??snapshot?.base??outgoingDamage(this.world.state,attackConfig(attack).damage),attack.stage,attack.stage===4||attack.delivery==='wind');if(snapshot)ev.A=snapshot.A;return ev;}
+ damage(e:RuneTarget,ev:RuneEvent){const w=this.world;
+ if(e.kind==='trainingDummy'){w.float(e.x,e.y,`${ev.critical?'✧ ':''}${Math.round(ev.amount)}`);return {applied:true,damage:ev.amount,killed:false};}
+ if(e.kind==='trainingProjection')return {applied:false,damage:0,killed:false};
+ const target=e as typeof w.enemies[number];const event:DamageEvent={sourceId:'player',targetId:e.id,attackId:ev.eventId,amount:ev.amount,sourceType:ev.tags.includes('replay_hit')?'player-replay':ev.sourceKind==='phantom'?'player-phantom':'player-rune',eventId:'eventId' in target?target.eventId as string:null,origin:{...ev.point}};
+ if(e.kind==='defense-enemy'){let result={applied:false,damage:0,killed:false};w.defense.damageEnemy(e as typeof w.defense.enemies[number],event,w.state.player.hp,hit=>result={applied:true,...hit});return result;}
+ const hit=resolveDamage(event,{id:'player',faction:'village',hp:w.state.player.hp,armor:0},{id:e.id,hp:e.hp,faction:'hostile',armor:0,...enemyProtection(target,ev.point,w.sim),...(ev.tags.includes('replay_hit')?{reduction:0}: {})});
+ if(!hit.applied)return hit;e.hp=hit.hp;target.flashUntil=w.sim+110;target.playerAggroUntil=w.sim+2500;w.float(e.x,e.y,`${ev.critical?'✧ ':''}${Math.round(hit.damage)}`);
+ if(hit.killed){w.recordEnemyDefeat(target,'player');void w.persist().catch(()=>{});}return hit;
+ }
+ advance(delta:number){const w=this.world;if(this.space!==w.state.life.playerSpace){this.clear();this.space=w.state.life.playerSpace;}this.engine.advance(delta);
+ for(const e of [...w.enemies,...w.defense.enemies]){e.runeSlow=this.engine.movementSlow(e);const slow=this.engine.timeSlow(e),delay=delta*slow;if(delay&&e.attack&&!e.attack.cancelled)delayEnemyAttack(e.attack,delay);if(delay&&e.cool>w.sim)e.cool+=delay;if(delay&&e.bossBattle&&e.bossBattle.nextAt>w.sim)e.bossBattle.nextAt+=delay;}
+ }
+ milestone(){const s=this.world.state;const earned=RUNES.filter(r=>r.acquisition.kind!=='shop'&&!this.eligible.has(r.id)&&acquisitionReady(s,r));for(const r of earned){this.eligible.add(r.id);if(!s.runes.owned.includes(r.id))s.runes.owned.push(r.id);}if(earned.length){this.world.ui.message(`获得符文：${earned.map(r=>r.name).join('、')}（R 查看）`);void this.world.persist().catch(()=>{});}}
+ destination(){const w=this.world,s=w.state;const candidates=s.runes.nodes.map(id=>{const p=props.find(p=>p.id===id);return p?{id,point:{x:p.x,y:p.y+65}}:null;}).filter((p):p is NonNullable<typeof p>=>!!p&&this.validNode(p.id,p.point)).sort((a,b)=>Math.hypot(a.point.x-s.player.x,a.point.y-s.player.y)-Math.hypot(b.point.x-s.player.x,b.point.y-s.player.y));return candidates[0]??{id:'initial',point:{...RETURN_WIND_ORB.respawn}};}
+ validNode(id:string,p:{x:number;y:number}){const w=this.world;return !motionBlocked(p.x,p.y)&&(id==='initial'||id==='waymark'&&w.state.shortcut&&w.state.runes.nodes.includes(id))&&![...w.enemies,...w.defense.enemies].some(e=>e.hp>0&&!e.disabled&&Math.hypot(e.x-p.x,e.y-p.y)<380);}
+ cancelReturn(){this.returning=undefined;this.engine.effects=this.engine.effects.filter(f=>f.rune!==RETURN_RUNE.id);}
+ update(){const w=this.world,engine=this.engine,s=w.state;
+ this.milestone();
+ if(w.keys.take('g')){const lock=this.lock();if(lock&&engine.now-this.lastReturnNotice>1000){this.lastReturnNotice=engine.now;w.ui.message(`归风不可用：${lock}`);}}
+ if(!this.returning&&w.keys.held.has('g')&&!this.lock()&&!engine.cooldown(RETURN_RUNE.id)){
+ const d=this.destination();if(this.validNode(d.id,d.point)){this.returning={point:d.point,node:d.id,start:engine.now,committed:false,origin:{x:s.player.x,y:s.player.y}};engine.fx('return-wind',s.player,70,RETURN_RUNE.id,1800);engine.ctx.sound('wind','release',engine.now);}}
+ const r=this.returning;if(r){const age=engine.now-r.start;
+ if(!r.committed&&(!w.keys.held.has('g')||this.lock()||w.keys.axis().x||w.keys.axis().y||Math.hypot(s.player.x-r.origin.x,s.player.y-r.origin.y)>1||w.combat.pending)){this.cancelReturn();return;}
+ if(!r.committed&&age>=1200){if(!this.validNode(r.node,r.point)){this.cancelReturn();w.ui.message('路标当前不安全，归风中断。');return;}if(age>=1440){if(s.life.playerSpace!=='village'){s.life.outside={...r.point};leaveRoom(w);this.space='village';this.returning=r;}s.player.x=r.point.x;s.player.y=r.point.y;r.committed=true;engine.startCooldown(RETURN_RUNE.id,60000);engine.fx('return-wind',r.point,85,RETURN_RUNE.id,650);w.hero.place(s.player.x,s.player.y);w.follower.reset(s.player);w.cat.place(s.player.x-35,s.player.y+25);w.xiaobao?.controller.transitioned(s.player);engine.ctx.sound('wind','finish',engine.now);void w.persist().catch(()=>{});}}
+ if(r.committed&&age>=2000)this.returning=undefined;
+ }
+ if(s.shortcut&&w.target?.id==='waymark'&&Math.hypot(s.player.x-w.target.x,s.player.y-w.target.y)<95&&!s.runes.nodes.includes('waymark')){s.runes.nodes.push('waymark');w.ui.message('安全风之路标已激活，长按 G 归风。');void w.persist().catch(()=>{});}
+ this.view.draw();
+ }
+ alpha(){const r=this.returning;if(!r)return 1;const age=this.engine.now-r.start;if(r.committed)return Math.min(1,(age-1440)/480);return age<1200?1:Math.max(.08,1-(age-1200)/240);}
+ snapshot(){return {...this.engine.snapshot(),lock:this.lock(),returning:this.returning,destination:this.destination()};}
+ destroy(){this.clear();this.view.destroy();}
+}

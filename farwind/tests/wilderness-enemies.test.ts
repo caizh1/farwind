@@ -48,7 +48,7 @@ describe('新增荒野敌人真实差异',()=>{
  it('M3开发存档补槽位且幂等，原有清剿、伤势、奖励和伤亡保留',()=>{
   const s:any=initialState();s.schema_version=11;for(const id of Object.keys(s.encounters.groups))if(!['south-reed-patrol','south-herb-patrol','south-spore-camp'].includes(id))delete s.encounters.groups[id];
   s.encounters.groups['south-reed-patrol'].activated=true;settleEncounterDeath(s.encounters,'wild-reed-slime',false);s.coins=144;s.defense.guards[0].hp=0;s.defense.guards[0].dead=true;s.defense.guards[0].mode='dead';for(const g of Object.values(s.encounters.groups) as any[])for(const u of g.members){delete u.face;delete u.guardOpen;}
-  const v=validate(s);expect(v.schema_version).toBe(13);expect(Object.keys(v.encounters.groups)).toHaveLength(ENCOUNTERS.length);expect(v.encounters.groups['south-reed-patrol'].cleared).toBe(true);expect(v.coins).toBe(144);expect(v.defense.guards[0].dead).toBe(true);expect(validate(v)).toEqual(v);
+  const v=validate(s);expect(v.schema_version).toBe(14);expect(Object.keys(v.encounters.groups)).toHaveLength(ENCOUNTERS.length);expect(v.encounters.groups['south-reed-patrol'].cleared).toBe(true);expect(v.coins).toBe(144);expect(v.defense.guards[0].dead).toBe(true);expect(validate(v)).toEqual(v);
  });
  for(const type of ['wolf','burrow','guardian'])it(`${type}声音有限长度、无直流偏置和超幅，不能以合成检查代替设备听感`,()=>{
   for(const phase of ['charge','strike','hurt','death'] as const){const s=synthCreature(type,phase,48000);expect(s.length).toBeLessThan(25000);expect(Math.max(...s.map(Math.abs))).toBeLessThan(1);expect(Math.abs(s.reduce((a,b)=>a+b,0)/s.length)).toBeLessThan(.05);expect(s.some(x=>Math.abs(x)>.01)).toBe(true);}

@@ -94,8 +94,10 @@ describe("委托簿正式操作与保存边界", () => {
     await f.handlers.get("commission-submit")!();
     const camp = ENCOUNTERS.find((group) => group.id === "south-spore-camp")!;
     f.world.state.encounters.groups[camp.id].activated = true;
-    for (const member of camp.members)
+    for (const member of camp.members){
+      if(member.boss)f.world.state.encounters.groups[camp.id].boss!.stage='battle';
       settleEncounterDeath(f.world.state.encounters, member.id, false);
+    }
     add(f.world.state, "herb", 2);
     const coins = f.world.state.coins;
     f.handlers.get("commission-south")!();

@@ -68,6 +68,7 @@ export type XiaobaoEnvironment = {
   allies: XiaobaoAlly[];
   fronts: () => XiaobaoFront[];
   recent: { id: string; at: number } | null;
+  playerThreats?: string[];
   move: (
     body: Point,
     nav: EnemyBody["nav"],
@@ -110,6 +111,11 @@ export class XiaobaoCombat extends Xiaobao {
   private road: Point[] = [];
   private roadGoal: Point | null = null;
   private flightSaved: string | null = null;
+  private regrouping = false;
+  private guardPlayer = false;
+  private get support() {
+    return this.guardPlayer ? null : this.data.support;
+  }
   events: XiaobaoEvent[] = [];
   visuals: XiaobaoEvent[] = [];
   history: XiaobaoEvent[] = [];
@@ -145,6 +151,8 @@ export class XiaobaoCombat extends Xiaobao {
       this.nextLandingCheck = 0;
       this.patrol = 0;
       this.now = 0;
+      this.regrouping = false;
+      this.guardPlayer = false;
       this.metrics = {
         decisions: 0,
         hits: 0,
@@ -232,6 +240,8 @@ export class XiaobaoCombat extends Xiaobao {
     this.nav = enemyNavigation();
     this.road = [];
     this.roadGoal = null;
+    this.regrouping = false;
+    this.guardPlayer = false;
   }
   command(
     kind: NonNullable<XiaobaoState["command"]>["kind"] | "wait" | "return",
@@ -241,12 +251,15 @@ export class XiaobaoCombat extends Xiaobao {
     if (kind === "wait") {
       this.data.wait = { ...point(this), region: env.player.region };
       this.data.command = null;
+      this.regrouping = false;
+      this.guardPlayer = false;
       return;
     }
     if (kind === "return") {
       this.data.wait = null;
       this.data.command = null;
       this.targetId = null;
+      this.regrouping = false;
       return;
     }
     const target =
@@ -288,6 +301,8 @@ export class XiaobaoCombat extends Xiaobao {
     this.data.wait = null;
     this.data.command = null;
     this.targetId = null;
+    this.regrouping = false;
+    this.guardPlayer = false;
     this.cancel();
     if (this.data.flight) {
       const safe = this.candidates(destination).find(
@@ -305,7 +320,7 @@ export class XiaobaoCombat extends Xiaobao {
       return;
     }
     const safe = this.candidates({
-      x: destination.x + 76,
+      x: destination.x + 150,
       y: destination.y + 25,
     }).find((p) => !(env?.blocked?.(p) ?? motionBlocked(p.x, p.y)));
     if (safe) {
@@ -504,9 +519,10 @@ export class XiaobaoCombat extends Xiaobao {
     if (!hit.applied) return false;
     this.data.peace = 0;
     this.metrics.hits++;
-    if (this.data.support) {
-      this.data.support.hits++;
-      if (hit.killed) this.data.support.kills++;
+    const support = this.support;
+    if (support) {
+      support.hits++;
+      if (hit.killed) support.kills++;
     }
     this.emit({
       id: event.attackId,
@@ -1066,6 +1082,12 @@ export class XiaobaoCombat extends Xiaobao {
   }
   choose(env: XiaobaoEnvironment) {
     this.metrics.decisions++;
+    const following = this.data.task === "follow" && !this.data.wait &&
+      env.player.outside && env.player.hp > 0;
+    const threatensPlayer = (e: EnemyBody) => e.targetId === "player" ||
+      env.playerThreats?.includes(e.id) || (e.playerAggroUntil ?? 0) > env.now;
+    this.guardPlayer = following && env.enemies.some(e =>
+      this.valid(e, env, env.player, 320) && threatensPlayer(e));
     this.fronts = env
       .fronts()
       .sort(
@@ -1092,18 +1114,19 @@ export class XiaobaoCombat extends Xiaobao {
       )
       .sort(
         (a, b) =>
+          (following ? Number(b.role === "player") - Number(a.role === "player") : 0) ||
           a.threatAt! - b.threatAt! ||
           a.hp / a.maxHP - b.hp / b.maxHP ||
           a.id.localeCompare(b.id),
       )[0];
     const protectPlayer =
-      env.player.hp < 30 &&
+      this.guardPlayer || (env.player.hp < 30 &&
       env.allies.some(
         (a) =>
           a.id === "player" &&
           a.threatAt !== null &&
           a.threatAt - env.now <= 600,
-      );
+      ));
     const front = major.find(
       (f) => !this.data.responded.includes(`${this.data.alarmCycle}:${f.key}`),
     );
@@ -1186,6 +1209,10 @@ export class XiaobaoCombat extends Xiaobao {
         };
     }
     if (protectPlayer) this.status = "先护住旅人";
+    // 尚未释放的进攻可让位给主角遇险；已释放实例仍正常结算。
+    if (this.guardPlayer && this.data.cast && !this.data.cast.released &&
+      this.data.cast.target && !env.enemies.some(e =>
+        e.id === this.data.cast!.target && threatensPlayer(e))) this.cancel(0);
     if (
       urgent &&
       distance(this, urgent) <= 96 &&
@@ -1233,7 +1260,7 @@ export class XiaobaoCombat extends Xiaobao {
       return;
     }
     const anchor = this.anchor(env),
-      support = this.data.support,
+      support = this.support,
       gate =
         support?.gate ??
         (this.data.gate === "all" ? this.fronts[0]?.gate : this.data.gate);
@@ -1244,6 +1271,7 @@ export class XiaobaoCombat extends Xiaobao {
         (this.data.task === "follow" && !support
           ? env.player.outside &&
             (e.targetId === "player" ||
+              env.playerThreats?.includes(e.id) ||
               e.targetId === "xiaobao" ||
               (e.playerAggroUntil ?? 0) > env.now ||
               (env.recent?.id === e.id && env.now - env.recent.at <= 1500) ||
@@ -1256,6 +1284,12 @@ export class XiaobaoCombat extends Xiaobao {
       env.allies.find((a) => a.id === e.targetId && a.threatAt !== null);
     candidates.sort(
       (a, b) =>
+        (following
+          ? Number(!!b.attack && !b.attack.cancelled && !b.attack.resolved && b.targetId === "player") -
+              Number(!!a.attack && !a.attack.cancelled && !a.attack.resolved && a.targetId === "player") ||
+            Number(b.id === this.data.command?.target) - Number(a.id === this.data.command?.target) ||
+            Number(!!threatensPlayer(b)) - Number(!!threatensPlayer(a))
+          : 0) ||
         (this.data.tactic === "protect"
           ? Number(!!victim(b)) - Number(!!victim(a)) ||
             (victim(a)?.hp ?? Infinity) / (victim(a)?.maxHP ?? 1) -
@@ -1269,15 +1303,6 @@ export class XiaobaoCombat extends Xiaobao {
     );
     const target = candidates[0];
     if (!target) {
-      this.targetId = null;
-      return;
-    }
-    if (
-      this.data.task === "follow" &&
-      !support &&
-      !this.data.wait &&
-      distance(this, env.player) > 180
-    ) {
       this.targetId = null;
       return;
     }
@@ -1315,28 +1340,29 @@ export class XiaobaoCombat extends Xiaobao {
       }
   }
   anchor(env: XiaobaoEnvironment): Point {
-    if (this.data.support) return xiaobaoGatePoint(this.data.support.gate);
+    if (this.support) return xiaobaoGatePoint(this.support.gate);
     if (this.data.task === "follow") return this.data.wait ?? env.player;
     if (this.data.task === "guard" && this.data.gate !== "all")
       return xiaobaoGatePoint(this.data.gate);
     return XIAOBAO.home;
   }
   allowed(p: Point, env: XiaobaoEnvironment, anchor: Point, gate?: GateId) {
-    if (this.data.wait && !this.data.support)
+    if (this.data.wait && !this.support)
       return distance(p, this.data.wait) <= 120;
-    if (this.data.task === "follow" && !this.data.support)
+    if (this.data.task === "follow" && !this.support)
       return distance(p, env.player) <= 320;
     if (gate)
       return inActivity(gate, p) || distance(p, xiaobaoGatePoint(gate)) <= 80;
     return this.data.task === "guard" || distance(p, anchor) <= 600;
   }
   travel(env: XiaobaoEnvironment, dt: number, budget: { queries: number }) {
+    this.action = "idle";
     const anchor = this.anchor(env),
       front = this.fronts.find(
         (f) =>
           this.data.gate === "all" ||
           this.data.gate === f.gate ||
-          this.data.support?.gate === f.gate,
+          this.support?.gate === f.gate,
       );
     let destination: Point = anchor,
       speed = 170;
@@ -1344,19 +1370,32 @@ export class XiaobaoCombat extends Xiaobao {
       (e) => e.id === this.targetId && e.hp > 0 && !e.disabled,
     );
     if (target) {
+      this.regrouping = false;
       destination = target;
       speed = 230;
+      this.status = "就近护卫";
       if (distance(this, target) < 80) return;
-    } else if (this.data.support || (front && this.data.task !== "follow")) {
+    } else if (this.support || (front && this.data.task !== "follow")) {
       destination = front?.point ?? anchor;
       speed = 420;
     } else if (this.data.task === "follow") {
-      destination = this.data.wait ?? {
-        x: env.player.x + 82,
-        y: env.player.y + 24,
-      };
-      if (distance(this, destination) < 30) return;
-      speed = distance(this, env.player) > 360 ? 280 : 170;
+      this.status = this.data.wait ? "原地等候" : "留距巡护";
+      if (this.data.wait) {
+        destination = this.data.wait;
+        if (distance(this, destination) < 10) return;
+      } else {
+        const gap = distance(this, env.player);
+        // 留出护卫空间；越出距离带才归队，停在带内后不跟着微小移动抖动。
+        if (gap < 120 || gap > 220) this.regrouping = true;
+        if (Math.abs(gap - 160) < 8) this.regrouping = false;
+        if (!this.regrouping) return;
+        const angle = gap > 0.001 ? Math.atan2(this.y - env.player.y, this.x - env.player.x) : 0;
+        destination = [0, Math.PI / 4, -Math.PI / 4, Math.PI / 2, -Math.PI / 2, Math.PI]
+          .map(turn => ({ x: env.player.x + Math.cos(angle + turn) * 160,
+            y: env.player.y + Math.sin(angle + turn) * 160 }))
+          .find(p => !(env.blocked?.(p) ?? motionBlocked(p.x, p.y))) ?? env.player;
+        speed = gap > 360 ? 280 : 170;
+      }
     } else if (this.data.task === "guard" && this.data.gate === "all") {
       const route = XIAOBAO_ROADS.patrol;
       destination = route[this.patrol % route.length];
@@ -1369,11 +1408,12 @@ export class XiaobaoCombat extends Xiaobao {
     // 正式村道长途先到近处路点，再在480局部半径内绕障。
     destination = this.route(destination, env);
     const gate =
-        this.data.support?.gate ??
-        (this.data.gate === "all" ? front?.gate : this.data.gate),
+        this.support?.gate ??
+        (this.data.task === "follow" ? undefined : this.data.gate === "all" ? front?.gate : this.data.gate),
       travelAnchor = gate ? xiaobaoGatePoint(gate) : anchor;
     const entering =
-        !!gate && !inActivity(gate, this) && distance(this, travelAnchor) > 80,
+        (!!gate && !inActivity(gate, this) && distance(this, travelAnchor) > 80) ||
+        (this.data.task === "follow" && !this.support && !this.allowed(this, env, anchor, gate)),
       bound = distance(this, travelAnchor) + 80;
     const old = point(this),
       allowed = (p: Point) =>

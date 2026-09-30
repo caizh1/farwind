@@ -4,6 +4,12 @@ import { createEnemyAttack, advanceEnemyAttack, ENEMY_ATTACK, delayEnemyAttack, 
 import { enemyKind, enemyProfile } from '../../data/enemies';
 import {creatureReach,type EliteKind} from '../../data/maps/windbell/elites';
 import {turnToward,wolfFlank} from './enemyTraits';
+import {advanceEnemyRecoil,type EnemyRecoil} from './enemyReaction';
+import {CAMP_BOSSES,BOSS_RULES,type CampBossKind} from '../../data/maps/windbell/campBosses';
+import type {BossBattle} from './campBossState';
+import {updateCampBoss} from './campBossCombat';
+import {ENEMY_PURSUIT,BOSS_PURSUIT,enemyLeashRadius} from '../../data/enemyPursuit';
+export {ENEMY_PURSUIT,enemyLeashRadius} from '../../data/enemyPursuit';
 import {
   clearMotionLine,
   clearMeleeLine,
@@ -149,10 +155,10 @@ export function nearestStanding(
   }
   return null;
 }
-export function repairEnemyPoint(origin: Point, home: Point) {
-  // 固定野怪仍受原420回家半径约束；安全来自实体，不再依赖玩家横坐标。
+export function repairEnemyPoint(origin: Point, home: Point, radius = 420) {
+  // 掉落沿用原范围；实体位置修复使用自身实际活动边界。
   const allowed = (p: Point) =>
-    distance(p, home) <= 420;
+    distance(p, home) <= radius;
   const anchors = [
     home,
     ...enemyDefs.map((d) => ({ x: d.x, y: d.y })),
@@ -161,11 +167,15 @@ export function repairEnemyPoint(origin: Point, home: Point) {
   return nearestStanding(origin, anchors, allowed);
 }
 export type EnemyBody = Point & {
+  runeSlow?:number;
   eliteLevel?:number;
   maxHP?:number;
   id: string;
   type: string;
   elite?: EliteKind;
+  boss?:CampBossKind;
+  bossBattle?:BossBattle;
+  bossAttempt?:number;
   hp: number;
   homeX: number;
   homeY: number;
@@ -186,6 +196,7 @@ export type EnemyBody = Point & {
   companionControlLimit?: number;
   parried?: {at:number;until:number;direction:Point;perfect:boolean};
   wallHit?: {at:number;until:number;direction?:Point};
+  recoil?:EnemyRecoil;
   nav: {
     path: Point[];
     target?: Point;
@@ -193,6 +204,8 @@ export type EnemyBody = Point & {
     next: number;
     failed: boolean;
     returning: boolean;
+    lastSeen?: Point;
+    lostAt?: number;
     queries: number;
     visited: number;
   };
@@ -209,17 +222,23 @@ export const enemyNavigation = (): EnemyBody["nav"] => ({
   queries: 0,
   visited: 0,
 });
-export function enemyAttackSpace(e:Pick<EnemyBody,"homeX"|"homeY"|"leashRadius">) {
-  return {blocked:(x:number,y:number)=>motionBlocked(x,y)||distance({x,y},{x:e.homeX,y:e.homeY})>(e.leashRadius??420),clear:clearMotionLine,melee:clearMeleeLine,
+export function enemyAttackSpace(e:Pick<EnemyBody,"homeX"|"homeY"|"leashRadius"|"boss">) {
+  return {blocked:(x:number,y:number)=>motionBlocked(x,y)||distance({x,y},{x:e.homeX,y:e.homeY})>enemyLeashRadius(e),clear:clearMotionLine,melee:clearMeleeLine,
     // 家园边界只停止追击；只有真正的地形或障碍接触才播放撞墙失衡。
     wall:(a:Point,b:Point)=>motionBlocked(b.x,b.y)||!clearMotionLine(a,b)};
 }
-export const enemyAttackPermitted=(e:Pick<EnemyBody,"homeX"|"homeY"|"leashRadius">,player:Point)=>distance(player,{x:e.homeX,y:e.homeY})<=(e.leashRadius??420)+100;
+export const enemyAttackPermitted=(e:Pick<EnemyBody,"homeX"|"homeY"|"leashRadius"|"boss">,player:Point)=>distance(player,{x:e.homeX,y:e.homeY})<=enemyLeashRadius(e)+100;
 export function staggerEnemy(e:Pick<EnemyBody,"staggerUntil"|"staggerSince">,now:number,duration:number) {
   e.staggerUntil=Math.max(e.staggerUntil,now+duration);
   e.staggerSince=now;
 }
 export function companionControl(e: EnemyBody, now:number, duration:number) {
+  if(e.boss&&e.bossBattle){
+    if(now<e.bossBattle.entryUntil||now<e.bossBattle.controlImmuneUntil)return;
+    const ms=Math.min(BOSS_RULES.control,duration);
+    staggerEnemy(e,now,ms);e.bossBattle.controlImmuneUntil=now+ms+BOSS_RULES.controlImmunity;
+    return;
+  }
   const continuing=now<e.staggerUntil;
   const grace=!continuing&&now<(e.companionControlGrace??0);
   if(!continuing||e.companionControlLimit===undefined)e.companionControlLimit=now+800;
@@ -230,7 +249,7 @@ export function companionControl(e: EnemyBody, now:number, duration:number) {
 export function validateEnemyPosition(e: EnemyBody) {
   if (e.hp <= 0 || e.disabled) return;
   if (!motionBlocked(e.x, e.y) && !motionBlocked(e.homeX, e.homeY)) return;
-  const point = repairEnemyPoint(e, { x: e.homeX, y: e.homeY });
+  const point = repairEnemyPoint(e, { x: e.homeX, y: e.homeY }, enemyLeashRadius(e));
   e.recovered = true;
   e.windup = 0;
   if(e.attack)e.attack.cancelled=true;
@@ -250,8 +269,10 @@ export function updateEnemy(
   dtMs: number,
   budget?: {queries:number},
   targetId = "player",
+  permission: (enemy:EnemyBody,targetId:string)=>boolean = ()=>true,
 ): EnemyContact | null {
-  const dt = dtMs/1000, prev=now-dtMs;
+  const dt = dtMs/1000*(1-(e.runeSlow??0)), prev=now-dtMs;
+  advanceEnemyRecoil(e,now);
   if (e.hp <= 0 || e.disabled) {
     e.ai = e.hp <= 0 ? "死亡" : "无合法位置";
     return null;
@@ -261,6 +282,7 @@ export function updateEnemy(
   const d = distance(e, player),
     home = { x: e.homeX, y: e.homeY };
   const safe = enemyAttackPermitted(e,player);
+  if(e.boss){const event=updateCampBoss(e,player,now,dtMs*(1-(e.runeSlow??0)),targetId,safe&&permission(e,targetId));if(event!==undefined)return event;}
   e.rejection = !safe
     ? "家园追击边界"
     : d >= creatureReach(e.type,e.elite)
@@ -290,7 +312,8 @@ export function updateEnemy(
   }
   const profile=enemyProfile(e.type);
   const aligned=e.type!=='guardian'||d<1||((player.x-e.x)*(e.face?.x??0)+(player.y-e.y)*(e.face?.y??1))/d>.94;
-  if (d < creatureReach(e.type,e.elite) && now > e.cool && safe && aligned && clearMeleeLine(e, player)) {
+  const permitted=permission(e,targetId);
+  if (!e.boss && d < creatureReach(e.type,e.elite) && now > e.cool && safe && aligned && clearMeleeLine(e, player)&&permitted) {
     e.targetId=targetId;
     e.attack=createEnemyAttack(e.id,e.attackSerial=(e.attackSerial??0)+1,e.type,now,e,player,undefined,e.elite);
     if(e.type==='guardian'){e.attack.direction={...e.face!};e.attack.locked=true;}
@@ -298,40 +321,69 @@ export function updateEnemy(
     e.windup = e.attack.contactAt-now;
     e.ai = "前摇";
     e.nav.path = [];
+    e.nav.mode = "chase";
+    e.nav.returning = false;
+    e.nav.lastSeen = {...player};
+    e.nav.lostAt = undefined;
     return null;
   }
-  // 近郊不主动吸引远处野怪；已在追击或被玩家挑衅的敌人继续受原家园边界约束。
-  const engaged=e.nav.mode==="chase"&&!e.nav.returning||(e.playerAggroUntil??0)>now||(e.companionAggroUntil??0)>now;
+  const radius=enemyLeashRadius(e),homeDistance=distance(e,home),targetHomeDistance=distance(player,home);
+  const pursuit=e.boss?BOSS_PURSUIT:ENEMY_PURSUIT;
+  const provoked=(e.playerAggroUntil??0)>now||(e.companionAggroUntil??0)>now;
+  if(e.nav.returning&&homeDistance<=8)e.nav.returning=false;
+  // 回撤可以被重新接近或挑衅打断；边界内留出余量，避免在同一条边缘来回切换。
+  const reentry=homeDistance<radius-ENEMY_PURSUIT.returnInset&&targetHomeDistance<radius-ENEMY_PURSUIT.returnInset;
+  const noticed=d<ENEMY_PURSUIT.alertDistance&&(!inProtected(player)||provoked)&&
+    (e.type==='wolf'?clearMeleeLine(e,player)||provoked:e.type!=='burrow'||provoked);
+  if(e.nav.returning&&reentry&&(noticed||(provoked||e.boss)&&d<pursuit.chaseDistance))e.nav.returning=false;
+  // 首领只在正式入场后有身体，入场即交战；普通怪仍需近距离感知或挑衅。
+  const engaged=(!!e.boss||e.nav.mode==="chase")&&!e.nav.returning||provoked;
   const senses=e.type==='wolf'?engaged||clearMeleeLine(e,player):e.type==='burrow'?engaged:false;
-  const canChase = d < 380 && safe && distance(e, home) < (e.leashRadius??420) && (!inProtected(player)||engaged) && (!['wolf','burrow'].includes(e.type)||senses);
-  if (!canChase && (!e.patrolTarget||e.nav.mode==="chase"||e.nav.returning) && distance(e, home) > 8) e.nav.returning = true;
-  if (e.nav.returning && distance(e, home) <= 8) e.nav.returning = false;
-  const chase = canChase && !e.nav.returning;
-  let target = chase ? player : e.nav.returning ? home : e.patrolTarget??home;
+  const canChase = d < (engaged?pursuit.chaseDistance:ENEMY_PURSUIT.alertDistance) && safe &&
+    homeDistance<=radius&&targetHomeDistance<=radius &&
+    (!inProtected(player)||engaged) && (!['wolf','burrow'].includes(e.type)||senses);
+  let chase=canChase&&!e.nav.returning,tracking=chase;
+  let target=player;
+  if(chase){e.nav.lastSeen={...player};e.nav.lostAt=undefined;}
+  else if(engaged&&!e.nav.returning&&homeDistance<=radius&&e.nav.lastSeen&&distance(e.nav.lastSeen,home)<=radius){
+    // 丢失目标后只前往最后看到的位置，不读取范围外目标的新位置。
+    e.nav.lostAt??=now;
+    if(now-e.nav.lostAt<pursuit.lostDelay){chase=true;target=e.nav.lastSeen;}
+  }
+  if(!chase){
+    if((!e.patrolTarget||e.nav.mode==="chase"||e.nav.returning)&&homeDistance>8)e.nav.returning=true;
+    e.nav.lastSeen=undefined;e.nav.lostAt=undefined;
+    target=e.nav.returning?home:e.patrolTarget??home;
+  }
+  if(tracking&&!permitted&&e.type!=='spore'&&d<150){const side=[...e.id].reduce((n,c)=>n+c.charCodeAt(0),0)%2?1:-1,dx=(e.x-player.x)/(d||1),dy=(e.y-player.y)/(d||1),flank={x:player.x-dy*92*side,y:player.y+dx*92*side};if(!motionBlocked(flank.x,flank.y)&&allowedFlank(flank))target=flank;}
+  function allowedFlank(p:Point){return distance(p,home)<radius&&clearMotionLine(e,p);}
   // 镰灵远处侧向接近；近身仍走向真实目标，不改攻击方向与碰撞。
-  if(chase&&e.type==='leaf'&&d>145){const sign=e.id.endsWith('2')?-1:1,dx=(e.x-player.x)/d,dy=(e.y-player.y)/d;
-    const flank={x:player.x-dy*75*sign,y:player.y+dx*75*sign};if(!motionBlocked(flank.x,flank.y)&&distance(flank,home)<(e.leashRadius??420))target=flank;}
-  if(chase&&e.type==='wolf'&&d>165){const flank=wolfFlank(e,player);if(!motionBlocked(flank.x,flank.y)&&distance(flank,home)<(e.leashRadius??420))target=flank;}
+  if(tracking&&!e.boss&&e.type==='leaf'&&d>145){const sign=e.id.endsWith('2')?-1:1,dx=(e.x-player.x)/d,dy=(e.y-player.y)/d;
+    const flank={x:player.x-dy*75*sign,y:player.y+dx*75*sign};if(!motionBlocked(flank.x,flank.y)&&distance(flank,home)<radius)target=flank;}
+  if(tracking&&!e.boss&&e.type==='wolf'&&d>165){const flank=wolfFlank(e,player);if(!motionBlocked(flank.x,flank.y)&&distance(flank,home)<radius)target=flank;}
   // 孢卫进入中距离后等待喷射冷却，玩家过近时只在合法空间后撤。
-  if(chase&&e.type==='spore'&&d<155){const retreat={x:e.x+(e.x-player.x)/(d||1)*65,y:e.y+(e.y-player.y)/(d||1)*65};
-    if(distance(retreat,home)<(e.leashRadius??420)&&!motionBlocked(retreat.x,retreat.y)&&clearMotionLine(e,retreat))target=retreat;}
+  if(tracking&&!e.boss&&e.type==='spore'&&d<155){const retreat={x:e.x+(e.x-player.x)/(d||1)*65,y:e.y+(e.y-player.y)/(d||1)*65};
+    if(distance(retreat,home)<radius&&!motionBlocked(retreat.x,retreat.y)&&clearMotionLine(e,retreat))target=retreat;}
   const
     mode = chase ? "chase" : "return";
   const reached = (p: Point) =>
-    chase
-      ? (e.type==='spore'?distance(p,player)>=155&&distance(p,player)<270:distance(p, player) < Math.max(70,creatureReach(e.type,e.elite)-10)) && clearMeleeLine(p, player)
+    tracking
+      ? (e.boss?distance(p,player)<100:!permitted&&e.type!=='spore'?distance(p,target)<12:e.type==='spore'?distance(p,player)>=155&&distance(p,player)<270:distance(p, player) < Math.max(70,creatureReach(e.type,e.elite)-10)) && clearMeleeLine(p, player)
       : distance(p, target) <= 8;
   if (reached(e)) {
-    e.ai = chase ? "等待冷却" : "家园";
+    e.ai = chase ? tracking?"等待冷却":"搜索目标" : "家园";
+    e.nav.mode=mode;
+    e.nav.target={...target};
     e.nav.path = [];
     return null;
   }
   const allowed = (p: Point) =>
-    distance(p, home) <= (chase ? e.leashRadius??420 : Math.max(e.leashRadius??420, distance(e, home) + 1));
+    distance(p, home) <= (chase ? radius : Math.max(radius, homeDistance + 1));
   const changed =
     e.nav.mode !== mode ||
     !e.nav.target ||
     distance(e.nav.target, target) >= 32;
+  e.nav.mode=mode;
   let waypoint: Point | undefined;
   if (allowed(target) && clearMotionLine(e, target)) {
     waypoint = target;
@@ -346,15 +398,16 @@ export function updateEnemy(
       (!budget||budget.queries>0)
     ) {
       if(budget)budget.queries--;
+      const targetDistance=distance(e,target),distant=targetDistance>NAV.radius-NAV.cell*2;
+      // 大范围追击和返家分段推进，仍保留每次查询的半径、节点与帧预算。
+      const goal=(q:Point)=>chase?reached(q):distance(q,target)<30&&clearMotionLine(q,target);
       const result = localPath(
         e,
-        chase
-          ? reached
-          : (q) => distance(q, target) < 30 && clearMotionLine(q, target),
+        q=>goal(q)||distant&&distance(q,target)<=targetDistance-NAV.radius/2,
         target,
         allowed,
       );
-      if (!chase && result.path) result.path.push(target);
+      if (!chase && result.path&&goal(result.path.at(-1)??e)) result.path.push(target);
       e.nav.path = result.path ?? [];
       e.nav.target = { ...target };
       e.nav.mode = mode;
@@ -372,7 +425,7 @@ export function updateEnemy(
     return null;
   }
   const length = distance(e, waypoint),
-    step = Math.min(length, profile.speed * dt);
+    step = Math.min(length, (e.boss?CAMP_BOSSES[e.boss].speed:profile.speed) * dt);
   const next = {
     x: e.x + ((waypoint.x - e.x) / length) * step,
     y: e.y + ((waypoint.y - e.y) / length) * step,
@@ -384,7 +437,7 @@ export function updateEnemy(
     clearMotionLine(e, next)
   ) {
     Object.assign(e, next);
-    e.ai = chase ? (e.nav.path.length ? "绕障" : "追击") : "回家";
+    e.ai = chase ? tracking?(e.nav.path.length ? "绕障" : "追击"):"搜索目标" : "回家";
   } else {
     e.nav.path = [];
     e.ai = "受阻等待";

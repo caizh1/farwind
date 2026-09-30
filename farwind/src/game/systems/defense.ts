@@ -7,6 +7,7 @@ import { regionAt, inPolygon } from "../../data/village";
 import { localPath, nearestStanding, enemyNavigation, enemyAttackSpace, type EnemyBody, NAV } from "./enemy";
 import { motionBlocked, clearMotionLine, clearMeleeLine, shotLineBlocker, shotLineImpact, type Point, type Rect, type FiringPort } from "./obstacles";
 import { createEnemyAttack, creatureCooldown, advanceEnemyAttack, delayEnemyAttack, type EnemyContact } from "./enemyAttack";
+import {advanceEnemyRecoil} from './enemyReaction';
 import { resolveDamage, resolveReleasedDamage, type ReleasedAttack, type DamageEvent } from "./damage";
 import type { DefenseState, GuardState } from "./defenseState";
 import { movementFacing } from "./locomotion";
@@ -78,6 +79,9 @@ export function prepareRaid(s: DefenseState, player: Point, gateId: GateId, coun
 }
 export function prepareEastRaid(s: DefenseState, player: Point) { return prepareRaid(s, player, "east-gate"); }
 export class EastDefense {
+  runeEnemyScale:(id:string)=>number=()=>1;
+  playerAttackPermit?: (enemy:EnemyBody,targetId:string)=>boolean;
+  enemyDamage?: (enemy:DefenseHostile,event:DamageEvent,result:{damage:number;killed:boolean;guarded:boolean})=>void;
   observerSpace="village";
   peaceOrders=new Map<string,Place>();
   lifeMove?: (guard:GuardState,target:Place,ms:number,budget:{queries:number})=>number;
@@ -104,7 +108,7 @@ export class EastDefense {
   nextScan=0;
   player:Point & {hp:number}={x:670,y:720,hp:100};
   allHostiles():DefenseHostile[]{return [...this.enemies,...this.external];}
-  ownsFixed(e:EnemyBody){return e.hp>0&&!e.disabled&&DEFENSE_ZONES.some(z=>
+  ownsFixed(e:EnemyBody){return !e.boss&&e.hp>0&&!e.disabled&&DEFENSE_ZONES.some(z=>
     (locallyProtected(z.gateId,e)||this.threatReason(z.gateId,e as DefenseHostile)!==null)&&
     (inActivity(z.gateId,e)||inAlert(z.gateId,e)));}
   // 更新所有权在时间片起点冻结，不能移动后重新归属再更新一次。
@@ -263,11 +267,13 @@ export class EastDefense {
     }
     return true;
   }
-  damageEnemy(e: DefenseHostile, event: DamageEvent, source: number|ReleasedAttack) {
-    const target={id:e.id,hp:e.hp,faction:'hostile' as const,armor:0,...enemyProtection(e,event.origin??this.victim(event.sourceId),this.now,event.breaksGuard)};
+  damageEnemy(e: DefenseHostile, event: DamageEvent, source: number|ReleasedAttack,settled?: (result:{damage:number;killed:boolean})=>void) {
+    const target={id:e.id,hp:e.hp,faction:'hostile' as const,armor:0,...enemyProtection(e,event.origin??this.victim(event.sourceId),this.now,event.breaksGuard),...(event.sourceType==='player-replay'?{reduction:0}: {})};
     const hit=typeof source==='number'?resolveDamage(event,{id:event.sourceId,hp:source,faction:'village',armor:0},target):resolveReleasedDamage(event,source,target);
     if (!hit.applied) return false;
     e.hp = hit.hp; e.flashUntil = this.now + 130;
+    settled?.(hit);
+    this.enemyDamage?.(e,event,{damage:hit.damage,killed:hit.killed,guarded:target.reduction>0});
     if (event.sourceType === "player-melee" || event.sourceType === "player-wind") e.playerAggroUntil = this.now + 2500;
     this.note({ kind: "hit", id: e.id, sourceId: event.sourceId, at: this.now, damage: hit.damage, x: e.x, y: e.y });
     if (hit.killed) {
@@ -343,6 +349,7 @@ export class EastDefense {
     } else if (raid) { raid.ageMs = Math.min(DEFENSE.eventLimit, raid.ageMs + dtMs);
       if (raid.ageMs >= 90000) raid.phase = "retreat"; }
     for (const e of this.hostiles()) {
+      advanceEnemyRecoil(e,now);
       const fixed = this.external.includes(e);
       if (e.hp <= 0 || e.disabled) continue;
       if(e.attack&&!e.attack.cancelled){
@@ -364,7 +371,7 @@ export class EastDefense {
         else if (event) {
           if(this.state.guards.some(g=>g.id===target.id))
             this.damageGuard({ sourceId: e.id, targetId: target.id, attackId: event.attack.attackId,
-              amount: event.attack.damage, sourceType: "enemy-melee", eventId: e.eventId ?? null }, e);
+              amount: event.attack.damage*this.runeEnemyScale(e.id), sourceType: "enemy-melee", eventId: e.eventId ?? null }, e);
           else if(target.id==='xiaobao')this.companionContact?.(e,event);
           else this.civilianContact?.(target.id,e,event);
           event.attack.resolved = true;
@@ -378,14 +385,14 @@ export class EastDefense {
         (fixed ? {x:e.homeX,y:e.homeY} : locallyProtected(this.gate().id,e)?this.gate().inside:this.gate().entry);
       const aligned=e.type!=='guardian'||!target||dist(e,target)<1||((target.x-e.x)*(e.face?.x??0)+(target.y-e.y)*(e.face?.y??1))/dist(e,target)>.94;
       const added=['wolf','burrow','guardian'].includes(e.type),reach=e.elite?creatureReach(e.type,e.elite):added?enemyProfile(e.type).reach:73;
-      if (target && (fixed || raid?.phase !== "retreat") && dist(e, target) < reach && clearMeleeLine(e, target) && now >= e.cool && aligned) {
+      if (target && (fixed || raid?.phase !== "retreat") && dist(e, target) < reach && clearMeleeLine(e, target) && now >= e.cool && aligned&&(this.playerAttackPermit?.(e,target.id)??true)) {
         e.attack = createEnemyAttack(e.id, e.attackSerial = (e.attackSerial ?? 0) + 1, e.type, now, e, target,undefined,e.elite);
         if(!fixed)e.attack.damage=raidUnitProfile(e.type,e.eliteLevel??0).damage;
         if(e.type==='guardian'){e.attack.direction={...e.face!};e.attack.locked=true;}
         e.cool = e.elite?creatureCooldown(e.attack):e.attack.recoveryUntil + 850; e.ai = "前摇";
         if (raid && !fixed) raid.phase = "fighting";
       } else if (dist(e, destination) > (target ? 43 : 8)) {
-        this.move(e, e.nav, destination, added?enemyProfile(e.type).speed:DEFENSE.enemySpeed, dt, budget,
+        this.move(e, e.nav, destination, added?enemyProfile(e.type).speed:DEFENSE.enemySpeed, dt*(1-(e.runeSlow??0)), budget,
           p => fixed ? dist(p,{x:e.homeX,y:e.homeY}) <= (e.leashRadius??420) : dist(p,this.gate()) < 700, this.hostiles().filter(p => p.hp > 0 && p !== e));
         e.ai = raid?.phase === "retreat" ? "撤离" : "接近目标";
       } else e.ai = "等待冷却";

@@ -4,7 +4,8 @@ import art from "../../data/defense-art.json";
 import { GUARD_DEFS, TOWERS } from "../../data/defense";
 import type { EastDefense, DefenseEnemy } from "../systems/defense";
 import type { NpcLife } from "../systems/npcLife";
-type View = { sprite: Phaser.GameObjects.Sprite; shadow: Phaser.GameObjects.Ellipse; name?: Phaser.GameObjects.Text; body?:DefenseEnemy; deathAt?:number };
+import { NPC_WALK, NpcMotion, npcWalkPose } from "../systems/npcAnimation";
+type View = { sprite: Phaser.GameObjects.Sprite; shadow: Phaser.GameObjects.Ellipse; name?: Phaser.GameObjects.Text; body?:DefenseEnemy; deathAt?:number; motion?: NpcMotion };
 export class DefendersView {
   guards = new Map<string, View>();
   enemies = new Map<string, View>();
@@ -27,23 +28,33 @@ export class DefendersView {
       let view = this.guards.get(g.id);
       if (!view) {
         view = { sprite: this.scene.add.sprite(g.x, g.y, `defender-${key}`, 0),
+          motion: new NpcMotion(),
           shadow: this.scene.add.ellipse(g.x, g.y - 3, 30, 10, 0x173b30, 0.22),
           name: this.scene.add.text(g.x, g.y + 14, "", {fontSize:"13px",color:"#fff4d5",stroke:"#355443",strokeThickness:3}).setOrigin(.5,0) };
         this.guards.set(g.id, view);
+        view.motion!.direction = r.facing;
       }
+      const motion = view.motion!;
+      motion.sample({ ...g, space: `${g.space ?? "village"}:${g.offDuty ? "ground" : d.role}` }, now,
+        !g.dead && !r.attack && now >= r.flashUntil && !(g.towerTransitMs! > 0) && (d.role === "melee" || g.offDuty));
+      const groundArcher = d.role === "archer" && g.offDuty && !g.dead && !r.attack && now >= r.flashUntil,
+        facing = motion.speed > 0 ? motion.direction : r.facing;
       let pose = 0;
       if (g.dead) pose = key === "archer" ? 7 : 5;
       else if (now < r.flashUntil) pose = key === "archer" ? 6 : 5;
       else if (r.attack) pose = key !== "guard" ? now < r.attack.contact - 180 ? 1 : now < r.attack.contact ? 2 : 3
         : now < r.attack.contact ? 3 : 4;
-      else if (r.moved > .001 && key === "guard") pose = 1 + Math.floor(r.distance / 32) % 2;
-      const row = r.facing === 1 ? 1 : r.facing >= 2 ? 2 : 0;
+      else if (motion.speed > 0 && key === "guard") pose = 1 + Math.floor(motion.distance / 32) % 2;
+      const row = facing === 1 ? 1 : facing >= 2 ? 2 : 0;
       const frame = key === "guard" ? row * 6 + pose : key === "vertical" ?
         (tower!.gateId === "south-gate" ? 4 : 0) + Math.min(pose,3) : pose;
       const data = art[key], f = data.frames[frame];
       const point = d.role === "archer" && !g.offDuty ? tower!.perch : g;
-      Actor.mirror(view.sprite,key === "guard" && r.facing === 2 || key === "archer" && tower?.outward.x === -1);
-      view.sprite.setTexture(`defender-${key}`,frame).setOrigin(f.footX/f.w,f.footY/f.h).setScale(87/(key === "vertical" ? data.frames[frame].bodyHeight : data.frames[0].bodyHeight))
+      const walking = groundArcher ? npcWalkPose("archer", motion) : null;
+      Actor.mirror(view.sprite,walking ? motion.direction === 2 : key === "guard" && facing === 2 || key === "archer" && tower?.outward.x === -1);
+      view.sprite.setTexture(walking?.texture ?? `defender-${key}`,walking?.frame ?? frame)
+        .setOrigin(walking ? .5 : f.footX/f.w,walking ? NPC_WALK.footY/NPC_WALK.frameSize : f.footY/f.h)
+        .setScale(87/(walking ? NPC_WALK.bodyHeight : key === "vertical" ? data.frames[frame].bodyHeight : data.frames[0].bodyHeight))
         .setPosition(point.x,point.y).setDepth(d.role === "archer" && !g.offDuty ? tower!.y+1 : g.y)
         .setAlpha(g.dead ? .65 : 1).setRotation(g.dead && key === "guard" ? Math.PI/2 : sleeping ? .5 : 0);
       if (now < r.flashUntil) view.sprite.setTint(0xffaaaa); else view.sprite.clearTint();
@@ -80,5 +91,11 @@ export class DefendersView {
         .lineBetween(a.x-dx*18+dy*3,a.y-dy*18-dx*3,a.x-dx*13,a.y-dy*13);
       this.arrows.fillStyle(0xb4c5c1).fillTriangle(a.x+dx*3,a.y+dy*3,a.x-dx*4-dy*2,a.y-dy*4+dx*2,a.x-dx*4+dy*2,a.y-dy*4-dx*2);
     }
+  }
+  snapshot() {
+    return [...this.guards].map(([id, v]) => ({ id, texture: v.sprite.texture.key, frame: v.sprite.frame.name,
+      x: v.sprite.x, y: v.sprite.y, visible: v.sprite.visible, flip: v.sprite.flipX,
+      origin: [v.sprite.originX, v.sprite.originY],
+      motion: { action: v.motion!.action, speed: v.motion!.speed, distance: v.motion!.distance, direction: v.motion!.direction } }));
   }
 }

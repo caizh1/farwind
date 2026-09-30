@@ -1,0 +1,2551 @@
+{
+  "说明": "关闭测试授予的正式构建；真实键鼠新游戏、领取补给、购买铁剑、装备、步行及清杂兵。诊断只读。检查展开小地图、顶部血条、四种显形、主角反应、输入及保存重开。",
+  "首领": "崩岩獠王",
+  "节点": [
+    {
+      "名称": "地面先出现异动，驻守死亡仍不能清除",
+      "模拟毫秒": 40703.96666666733,
+      "世界分钟": 541.0559500000716,
+      "玩家": {
+        "x": 1482.8691725217377,
+        "y": -628.8584886730082,
+        "hp": 88,
+        "stamina": 100
+      },
+      "据点": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "warning",
+          "warning": 2402.0341666501845,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1480.8739970658844,
+            "y": -720.1305667367075,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1527.8853068475028,
+            "y": -600.1362918228014,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.2948827986171759,
+              "y": -0.955533429598202
+            },
+            "guardOpen": 412.0341666501845
+          },
+          {
+            "hp": 2500,
+            "x": 1480,
+            "y": -730,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "动画": {
+        "hero": {
+          "action": "attack",
+          "presentationState": "active",
+          "weapon": {
+            "grip": {
+              "x": 2.71875,
+              "y": -59.8125
+            },
+            "tip": {
+              "x": 31.71875,
+              "y": -103.3125
+            },
+            "visible": true,
+            "progress": 0.8163819445817959,
+            "alpha": 0.18361805541820408,
+            "provisional": true
+          },
+          "key": "hero/combat/0/2",
+          "texture": "hero-combat-action",
+          "frame": 9,
+          "frameIndex": 3,
+          "direction": 0,
+          "phase": "active",
+          "phaseProgress": 0.8163819445817959,
+          "speed": 133.33333333333695,
+          "flip": false,
+          "root": [
+            1482.8691725217377,
+            -628.8584886730082
+          ],
+          "anchor": [
+            80,
+            154
+          ],
+          "origin": [
+            0.5,
+            0.9625
+          ],
+          "scale": [
+            0.90625,
+            0.90625
+          ],
+          "alpha": 1,
+          "provisional": true
+        },
+        "reaction": {
+          "visible": false,
+          "text": "",
+          "root": [
+            0,
+            0
+          ]
+        },
+        "camera": {
+          "view": {
+            "x": 842.7661543816348,
+            "y": -1188.0962216349444
+          },
+          "zoom": 0.78125
+        }
+      }
+    },
+    {
+      "名称": "显形姿态、专属粒子与旅人提剑反应",
+      "模拟毫秒": 43462.336666667325,
+      "世界分钟": 545.1935050000822,
+      "玩家": {
+        "x": 1482.8691725217377,
+        "y": -604.9205997863177,
+        "hp": 88,
+        "stamina": 100
+      },
+      "据点": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 0,
+              "move": -1,
+              "part": 0,
+              "nextAt": 1697.6633333326754,
+              "entryUntil": 1047.6633333326754,
+              "exposedUntil": -43462.336666667325,
+              "transformUntil": -43462.336666667325,
+              "controlImmuneUntil": -43462.336666667325,
+              "startedAt": -352.3366666673246
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1480.8739970658844,
+            "y": -720.1305667367075,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1527.8853068475028,
+            "y": -600.1362918228014,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.2948827986171759,
+              "y": -0.955533429598202
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 2500,
+            "x": 1480,
+            "y": -730,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-crag-tusk",
+        "x": 1480,
+        "y": -730,
+        "hp": 2500,
+        "type": "boar",
+        "behavior": {
+          "boss": "crag-tusk",
+          "battle": {
+            "phase": 1,
+            "next": 0,
+            "move": -1,
+            "part": 0,
+            "nextAt": 45160,
+            "entryUntil": 44510,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 43110
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0,
+            "y": 1
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 55,
+            "index": 1,
+            "facing": 0,
+            "phase": "首领现身",
+            "elapsed": 43462.336666667325,
+            "provisional": false
+          }
+        }
+      },
+      "动画": {
+        "hero": {
+          "action": "idle",
+          "presentationState": "ready",
+          "weapon": {
+            "grip": {
+              "x": 4.41304347826087,
+              "y": -44.44565217391305
+            },
+            "tip": {
+              "x": 26.793478260869566,
+              "y": -73.76086956521739
+            },
+            "visible": false,
+            "progress": 0,
+            "alpha": 0,
+            "provisional": true
+          },
+          "key": "hero/alert/1",
+          "texture": "hero-parry-v2",
+          "frame": 11,
+          "frameIndex": 5,
+          "direction": 1,
+          "phase": "ready",
+          "phaseProgress": 0.2516690476195176,
+          "speed": 0,
+          "flip": false,
+          "root": [
+            1482.8691725217377,
+            -604.9205997863177
+          ],
+          "anchor": [
+            80,
+            154
+          ],
+          "origin": [
+            0.5,
+            0.9625
+          ],
+          "scale": [
+            0.90625,
+            0.90625
+          ],
+          "alpha": 1,
+          "provisional": true
+        },
+        "reaction": {
+          "visible": true,
+          "text": "旅人：地面在震……准备迎敌！",
+          "root": [
+            1482.8691725217377,
+            -716.9205997863177
+          ]
+        },
+        "camera": {
+          "view": {
+            "x": 842.8691725217373,
+            "y": -1156.840599786319
+          },
+          "zoom": 0.78125
+        }
+      }
+    },
+    {
+      "名称": "入场时方向输入正常生效",
+      "模拟毫秒": 43678.966666667315,
+      "世界分钟": 545.5184500000828,
+      "玩家": {
+        "x": 1495.482792527644,
+        "y": -604.9205997863177,
+        "hp": 88,
+        "stamina": 100
+      },
+      "据点": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 0,
+              "move": -1,
+              "part": 0,
+              "nextAt": 1481.0333333326853,
+              "entryUntil": 831.0333333326853,
+              "exposedUntil": -43678.966666667315,
+              "transformUntil": -43678.966666667315,
+              "controlImmuneUntil": -43678.966666667315,
+              "startedAt": -568.9666666673147
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1480.8739970658844,
+            "y": -720.1305667367075,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1527.8853068475028,
+            "y": -600.1362918228014,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.2948827986171759,
+              "y": -0.955533429598202
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 2500,
+            "x": 1480,
+            "y": -730,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-crag-tusk",
+        "x": 1480,
+        "y": -730,
+        "hp": 2500,
+        "type": "boar",
+        "behavior": {
+          "boss": "crag-tusk",
+          "battle": {
+            "phase": 1,
+            "next": 0,
+            "move": -1,
+            "part": 0,
+            "nextAt": 45160,
+            "entryUntil": 44510,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 43110
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0,
+            "y": 1
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 55,
+            "index": 1,
+            "facing": 0,
+            "phase": "首领现身",
+            "elapsed": 43678.966666667315,
+            "provisional": false
+          }
+        }
+      },
+      "动画": {
+        "hero": {
+          "action": "walk",
+          "presentationState": "walk",
+          "weapon": null,
+          "key": "hero/walk/3",
+          "texture": "hero-motion",
+          "frame": 2,
+          "frameIndex": 1,
+          "direction": 3,
+          "phase": "walk",
+          "phaseProgress": 0.1313918750615244,
+          "speed": 150,
+          "flip": false,
+          "root": [
+            1495.482792527644,
+            -604.9205997863177
+          ],
+          "anchor": [
+            64,
+            124
+          ],
+          "origin": [
+            0.5,
+            0.96875
+          ],
+          "scale": [
+            0.671875,
+            0.71875
+          ],
+          "alpha": 1,
+          "provisional": false
+        },
+        "reaction": {
+          "visible": true,
+          "text": "旅人：地面在震……准备迎敌！",
+          "root": [
+            1495.482792527644,
+            -716.9205997863177
+          ]
+        },
+        "camera": {
+          "view": {
+            "x": 848.1115981543057,
+            "y": -1156.8405997863188
+          },
+          "zoom": 0.78125
+        }
+      }
+    },
+    {
+      "名称": "显形结束后留出完整首招预警",
+      "模拟毫秒": 45162.256666667294,
+      "世界分钟": 547.7433850000897,
+      "玩家": {
+        "x": 1495.928506812816,
+        "y": -604.9205997863177,
+        "hp": 88,
+        "stamina": 100
+      },
+      "据点": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 1,
+              "move": 0,
+              "part": 0,
+              "nextAt": -2.256666667293757,
+              "entryUntil": -652.2566666672938,
+              "exposedUntil": -45162.256666667294,
+              "transformUntil": -45162.256666667294,
+              "controlImmuneUntil": -45162.256666667294,
+              "startedAt": -2052.2566666672938
+            },
+            "attack": {
+              "attackId": "boss-crag-tusk:战斗0:1",
+              "attackerId": "boss-crag-tusk",
+              "type": "boar",
+              "startedAt": -2.256666667293757,
+              "lockAt": 647.7433333327062,
+              "contactAt": 947.7433333327062,
+              "activeUntil": 1347.7433333327062,
+              "recoveryUntil": 1567.7433333327062,
+              "direction": {
+                "x": 0.1263269420800102,
+                "y": 0.9919886610766847
+              },
+              "locked": false,
+              "shape": "sweep",
+              "range": 340,
+              "halfAngle": 1.3962634015954636,
+              "parryable": true,
+              "damage": 30,
+              "cancelled": false,
+              "resolved": false,
+              "emitted": false,
+              "motionAt": 0,
+              "scanAt": -2.256666667293757,
+              "boss": "crag-tusk",
+              "bossSkill": 0,
+              "bossPart": 0,
+              "bossAttempt": 0,
+              "step": 300,
+              "bossCocoon": false,
+              "bossGeometry": {
+                "kind": "sector",
+                "point": {
+                  "x": 1480,
+                  "y": -730
+                },
+                "radius": 40,
+                "halfAngle": 0.65,
+                "offset": 0,
+                "rear": false
+              },
+              "chargeSound": true
+            },
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1480.8739970658844,
+            "y": -720.1305667367075,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1527.8853068475028,
+            "y": -600.1362918228014,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.2948827986171759,
+              "y": -0.955533429598202
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 2500,
+            "x": 1480,
+            "y": -730,
+            "serial": 1,
+            "cooldown": 1567.7433333327062,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0.1263269420800102,
+              "y": 0.9919886610766847
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-crag-tusk",
+        "x": 1480,
+        "y": -730,
+        "hp": 2500,
+        "type": "boar",
+        "behavior": {
+          "boss": "crag-tusk",
+          "battle": {
+            "phase": 1,
+            "next": 1,
+            "move": 0,
+            "part": 0,
+            "nextAt": 45160,
+            "entryUntil": 44510,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 43110
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.1263269420800102,
+            "y": 0.9919886610766847
+          },
+          "guardOpen": 0,
+          "attack": {
+            "direction": {
+              "x": 0.1263269420800102,
+              "y": 0.9919886610766847
+            },
+            "startedAt": 45160,
+            "lockAt": 45810,
+            "contactAt": 46110,
+            "activeUntil": 46510,
+            "recoveryUntil": 46730,
+            "cancelled": false,
+            "skill": 0,
+            "part": 0,
+            "geometry": {
+              "kind": "sector",
+              "point": {
+                "x": 1480,
+                "y": -730
+              },
+              "radius": 40,
+              "halfAngle": 0.65,
+              "offset": 0,
+              "rear": false
+            }
+          },
+          "pose": {
+            "action": "attack",
+            "frame": 9,
+            "index": 0,
+            "facing": 0,
+            "phase": "charge",
+            "elapsed": 2.256666667293757,
+            "provisional": false
+          }
+        }
+      },
+      "动画": {
+        "hero": {
+          "action": "idle",
+          "presentationState": "idle",
+          "weapon": null,
+          "key": "hero/idle/1",
+          "texture": "hero-motion",
+          "frame": 18,
+          "frameIndex": 0,
+          "direction": 1,
+          "phase": "idle",
+          "phaseProgress": 0,
+          "speed": 0,
+          "flip": false,
+          "root": [
+            1495.928506812816,
+            -604.9205997863177
+          ],
+          "anchor": [
+            64,
+            124
+          ],
+          "origin": [
+            0.5,
+            0.96875
+          ],
+          "scale": [
+            0.671875,
+            0.71875
+          ],
+          "alpha": 1,
+          "provisional": false
+        },
+        "reaction": {
+          "visible": false,
+          "text": "旅人：地面在震……准备迎敌！",
+          "root": [
+            1495.928506812816,
+            -716.9205997863177
+          ]
+        },
+        "camera": {
+          "view": {
+            "x": 855.9285067568144,
+            "y": -1156.8405997863188
+          },
+          "zoom": 0.78125
+        }
+      }
+    },
+    {
+      "名称": "展开地图时中央战斗区无遮挡",
+      "模拟毫秒": 45528.856666667314,
+      "世界分钟": 548.2932850000913,
+      "玩家": {
+        "x": 1495.928506812816,
+        "y": -604.9205997863177,
+        "hp": 88,
+        "stamina": 100
+      },
+      "据点": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 1,
+              "move": 0,
+              "part": 0,
+              "nextAt": -368.85666666731413,
+              "entryUntil": -1018.8566666673141,
+              "exposedUntil": -45528.856666667314,
+              "transformUntil": -45528.856666667314,
+              "controlImmuneUntil": -45528.856666667314,
+              "startedAt": -2418.856666667314
+            },
+            "attack": {
+              "attackId": "boss-crag-tusk:战斗0:1",
+              "attackerId": "boss-crag-tusk",
+              "type": "boar",
+              "startedAt": -368.85666666731413,
+              "lockAt": 281.14333333268587,
+              "contactAt": 581.1433333326859,
+              "activeUntil": 981.1433333326859,
+              "recoveryUntil": 1201.1433333326859,
+              "direction": {
+                "x": 0.1263269420800102,
+                "y": 0.9919886610766847
+              },
+              "locked": false,
+              "shape": "sweep",
+              "range": 340,
+              "halfAngle": 1.3962634015954636,
+              "parryable": true,
+              "damage": 30,
+              "cancelled": false,
+              "resolved": false,
+              "emitted": false,
+              "motionAt": 0,
+              "scanAt": -368.85666666731413,
+              "boss": "crag-tusk",
+              "bossSkill": 0,
+              "bossPart": 0,
+              "bossAttempt": 0,
+              "step": 300,
+              "bossCocoon": false,
+              "bossGeometry": {
+                "kind": "sector",
+                "point": {
+                  "x": 1480,
+                  "y": -730
+                },
+                "radius": 40,
+                "halfAngle": 0.65,
+                "offset": 0,
+                "rear": false
+              },
+              "chargeSound": true
+            },
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1480.8739970658844,
+            "y": -720.1305667367075,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1527.8853068475028,
+            "y": -600.1362918228014,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.2948827986171759,
+              "y": -0.955533429598202
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 2500,
+            "x": 1480,
+            "y": -730,
+            "serial": 1,
+            "cooldown": 1201.1433333326859,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0.1263269420800102,
+              "y": 0.9919886610766847
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-crag-tusk",
+        "x": 1480,
+        "y": -730,
+        "hp": 2500,
+        "type": "boar",
+        "behavior": {
+          "boss": "crag-tusk",
+          "battle": {
+            "phase": 1,
+            "next": 1,
+            "move": 0,
+            "part": 0,
+            "nextAt": 45160,
+            "entryUntil": 44510,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 43110
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.1263269420800102,
+            "y": 0.9919886610766847
+          },
+          "guardOpen": 0,
+          "attack": {
+            "direction": {
+              "x": 0.1263269420800102,
+              "y": 0.9919886610766847
+            },
+            "startedAt": 45160,
+            "lockAt": 45810,
+            "contactAt": 46110,
+            "activeUntil": 46510,
+            "recoveryUntil": 46730,
+            "cancelled": false,
+            "skill": 0,
+            "part": 0,
+            "geometry": {
+              "kind": "sector",
+              "point": {
+                "x": 1480,
+                "y": -730
+              },
+              "radius": 40,
+              "halfAngle": 0.65,
+              "offset": 0,
+              "rear": false
+            }
+          },
+          "pose": {
+            "action": "attack",
+            "frame": 10,
+            "index": 1,
+            "facing": 0,
+            "phase": "charge",
+            "elapsed": 368.85666666731413,
+            "provisional": false
+          }
+        }
+      },
+      "动画": {
+        "hero": {
+          "action": "idle",
+          "presentationState": "idle",
+          "weapon": null,
+          "key": "hero/idle/1",
+          "texture": "hero-motion",
+          "frame": 18,
+          "frameIndex": 0,
+          "direction": 1,
+          "phase": "idle",
+          "phaseProgress": 0,
+          "speed": 0,
+          "flip": false,
+          "root": [
+            1495.928506812816,
+            -604.9205997863177
+          ],
+          "anchor": [
+            64,
+            124
+          ],
+          "origin": [
+            0.5,
+            0.96875
+          ],
+          "scale": [
+            0.671875,
+            0.71875
+          ],
+          "alpha": 1,
+          "provisional": false
+        },
+        "reaction": {
+          "visible": false,
+          "text": "旅人：地面在震……准备迎敌！",
+          "root": [
+            1495.928506812816,
+            -716.9205997863177
+          ]
+        },
+        "camera": {
+          "view": {
+            "x": 842.6103515077953,
+            "y": -1148.1194245326683
+          },
+          "zoom": 0.78125
+        }
+      }
+    },
+    {
+      "名称": "四百像素窄屏仍保留中央战斗区",
+      "模拟毫秒": 45704.67666666732,
+      "世界分钟": 548.5570150000918,
+      "玩家": {
+        "x": 1495.928506812816,
+        "y": -604.9205997863177,
+        "hp": 88,
+        "stamina": 88
+      },
+      "据点": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 1,
+              "move": 0,
+              "part": 0,
+              "nextAt": -544.6766666673211,
+              "entryUntil": -1194.6766666673211,
+              "exposedUntil": -45704.67666666732,
+              "transformUntil": -45704.67666666732,
+              "controlImmuneUntil": -45704.67666666732,
+              "startedAt": -2594.676666667321
+            },
+            "attack": {
+              "attackId": "boss-crag-tusk:战斗0:1",
+              "attackerId": "boss-crag-tusk",
+              "type": "boar",
+              "startedAt": -544.6766666673211,
+              "lockAt": 105.32333333267889,
+              "contactAt": 405.3233333326789,
+              "activeUntil": 805.3233333326789,
+              "recoveryUntil": 1025.3233333326789,
+              "direction": {
+                "x": 0.1263269420800102,
+                "y": 0.9919886610766847
+              },
+              "locked": false,
+              "shape": "sweep",
+              "range": 340,
+              "halfAngle": 1.3962634015954636,
+              "parryable": true,
+              "damage": 30,
+              "cancelled": false,
+              "resolved": false,
+              "emitted": false,
+              "motionAt": 0,
+              "scanAt": -544.6766666673211,
+              "boss": "crag-tusk",
+              "bossSkill": 0,
+              "bossPart": 0,
+              "bossAttempt": 0,
+              "step": 300,
+              "bossCocoon": false,
+              "bossGeometry": {
+                "kind": "sector",
+                "point": {
+                  "x": 1480,
+                  "y": -730
+                },
+                "radius": 40,
+                "halfAngle": 0.65,
+                "offset": 0,
+                "rear": false
+              },
+              "chargeSound": true
+            },
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1480.8739970658844,
+            "y": -720.1305667367075,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1527.8853068475028,
+            "y": -600.1362918228014,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.2948827986171759,
+              "y": -0.955533429598202
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 2500,
+            "x": 1480,
+            "y": -730,
+            "serial": 1,
+            "cooldown": 1025.3233333326789,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0.1263269420800102,
+              "y": 0.9919886610766847
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-crag-tusk",
+        "x": 1480,
+        "y": -730,
+        "hp": 2500,
+        "type": "boar",
+        "behavior": {
+          "boss": "crag-tusk",
+          "battle": {
+            "phase": 1,
+            "next": 1,
+            "move": 0,
+            "part": 0,
+            "nextAt": 45160,
+            "entryUntil": 44510,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 43110
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.1263269420800102,
+            "y": 0.9919886610766847
+          },
+          "guardOpen": 0,
+          "attack": {
+            "direction": {
+              "x": 0.1263269420800102,
+              "y": 0.9919886610766847
+            },
+            "startedAt": 45160,
+            "lockAt": 45810,
+            "contactAt": 46110,
+            "activeUntil": 46510,
+            "recoveryUntil": 46730,
+            "cancelled": false,
+            "skill": 0,
+            "part": 0,
+            "geometry": {
+              "kind": "sector",
+              "point": {
+                "x": 1480,
+                "y": -730
+              },
+              "radius": 40,
+              "halfAngle": 0.65,
+              "offset": 0,
+              "rear": false
+            }
+          },
+          "pose": {
+            "action": "attack",
+            "frame": 10,
+            "index": 1,
+            "facing": 0,
+            "phase": "charge",
+            "elapsed": 544.6766666673211,
+            "provisional": false
+          }
+        }
+      },
+      "动画": {
+        "hero": {
+          "action": "attack",
+          "presentationState": "guard",
+          "weapon": {
+            "grip": {
+              "x": 7.25,
+              "y": -34.98913043478261
+            },
+            "tip": {
+              "x": 32.78260869565217,
+              "y": -65.8804347826087
+            },
+            "visible": false,
+            "progress": 0,
+            "alpha": 0,
+            "provisional": true
+          },
+          "key": "hero/parry-v2/3",
+          "texture": "hero-parry-v2",
+          "frame": 12,
+          "frameIndex": 0,
+          "direction": 3,
+          "phase": "guard",
+          "phaseProgress": 0.5374179389454866,
+          "speed": 0,
+          "flip": false,
+          "root": [
+            1495.928506812816,
+            -604.9205997863177
+          ],
+          "anchor": [
+            80,
+            154
+          ],
+          "origin": [
+            0.5,
+            0.9625
+          ],
+          "scale": [
+            0.90625,
+            0.90625
+          ],
+          "alpha": 1,
+          "provisional": true
+        },
+        "reaction": {
+          "visible": false,
+          "text": "旅人：地面在震……准备迎敌！",
+          "root": [
+            1495.928506812816,
+            -716.9205997863177
+          ]
+        },
+        "camera": {
+          "view": {
+            "x": 635.4294215158138,
+            "y": -1380
+          },
+          "zoom": 0.3125
+        }
+      }
+    }
+  ],
+  "布局": [
+    {
+      "小地图展开": true,
+      "任务展开": false,
+      "视口": {
+        "width": 400,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 10,
+          "y": 10,
+          "right": 390,
+          "bottom": 74,
+          "width": 380,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 21,
+            "y": 18,
+            "right": 379,
+            "bottom": 38,
+            "width": 358,
+            "height": 20
+          },
+          {
+            "x": 21,
+            "y": 41,
+            "right": 379,
+            "bottom": 47,
+            "width": 358,
+            "height": 6
+          },
+          {
+            "x": 21,
+            "y": 50,
+            "right": 379,
+            "bottom": 66,
+            "width": 358,
+            "height": 16
+          },
+          {
+            "x": 21,
+            "y": 18,
+            "right": 77,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 263.1328125,
+            "y": 19.75,
+            "right": 379,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 196,
+            "bottom": 166.5,
+            "width": 186,
+            "height": 84.5
+          },
+          {
+            "x": 204,
+            "y": 82,
+            "right": 390,
+            "bottom": 353.5,
+            "width": 186,
+            "height": 271.5
+          }
+        ],
+        "scroll": 400,
+        "width": 400
+      }
+    },
+    {
+      "小地图展开": true,
+      "任务展开": false,
+      "视口": {
+        "width": 820,
+        "height": 560
+      },
+      "边界": {
+        "boss": {
+          "x": 190,
+          "y": 10,
+          "right": 630,
+          "bottom": 74,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 201,
+            "y": 18,
+            "right": 619,
+            "bottom": 38,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 201,
+            "y": 41,
+            "right": 619,
+            "bottom": 47,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 201,
+            "y": 50,
+            "right": 619,
+            "bottom": 66,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 201,
+            "y": 18,
+            "right": 257,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 503.1328125,
+            "y": 19.75,
+            "right": 619,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 289,
+            "bottom": 170.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 570,
+            "y": 82,
+            "right": 810,
+            "bottom": 371,
+            "width": 240,
+            "height": 289
+          }
+        ],
+        "scroll": 820,
+        "width": 820
+      }
+    },
+    {
+      "小地图展开": true,
+      "任务展开": false,
+      "视口": {
+        "width": 1000,
+        "height": 628
+      },
+      "边界": {
+        "boss": {
+          "x": 280,
+          "y": 22,
+          "right": 720,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 291,
+            "y": 30,
+            "right": 709,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 291,
+            "y": 53,
+            "right": 709,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 291,
+            "y": 62,
+            "right": 709,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 291,
+            "y": 30,
+            "right": 347,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 593.1328125,
+            "y": 31.75,
+            "right": 709,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 94,
+            "right": 305,
+            "bottom": 182.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 734,
+            "y": 94,
+            "right": 974,
+            "bottom": 383,
+            "width": 240,
+            "height": 289
+          }
+        ],
+        "scroll": 1000,
+        "width": 1000
+      }
+    },
+    {
+      "小地图展开": true,
+      "任务展开": false,
+      "视口": {
+        "width": 1280,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 439.5,
+          "y": 22,
+          "right": 879.5,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 868.5,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 450.5,
+            "y": 53,
+            "right": 868.5,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 450.5,
+            "y": 62,
+            "right": 868.5,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 506.5,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 752.6328125,
+            "y": 31.75,
+            "right": 868.5,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 22,
+            "right": 305,
+            "bottom": 110.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 1014,
+            "y": 22,
+            "right": 1254,
+            "bottom": 311,
+            "width": 240,
+            "height": 289
+          }
+        ],
+        "scroll": 1280,
+        "width": 1280
+      }
+    },
+    {
+      "小地图展开": true,
+      "任务展开": true,
+      "视口": {
+        "width": 400,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 10,
+          "y": 10,
+          "right": 390,
+          "bottom": 74,
+          "width": 380,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 21,
+            "y": 18,
+            "right": 379,
+            "bottom": 38,
+            "width": 358,
+            "height": 20
+          },
+          {
+            "x": 21,
+            "y": 41,
+            "right": 379,
+            "bottom": 47,
+            "width": 358,
+            "height": 6
+          },
+          {
+            "x": 21,
+            "y": 50,
+            "right": 379,
+            "bottom": 66,
+            "width": 358,
+            "height": 16
+          },
+          {
+            "x": 21,
+            "y": 18,
+            "right": 77,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 263.1328125,
+            "y": 19.75,
+            "right": 379,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 196,
+            "bottom": 166.5,
+            "width": 186,
+            "height": 84.5
+          },
+          {
+            "x": 204,
+            "y": 82,
+            "right": 390,
+            "bottom": 474.6875,
+            "width": 186,
+            "height": 392.6875
+          }
+        ],
+        "scroll": 400,
+        "width": 400
+      }
+    },
+    {
+      "小地图展开": true,
+      "任务展开": true,
+      "视口": {
+        "width": 820,
+        "height": 560
+      },
+      "边界": {
+        "boss": {
+          "x": 190,
+          "y": 10,
+          "right": 630,
+          "bottom": 74,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 201,
+            "y": 18,
+            "right": 619,
+            "bottom": 38,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 201,
+            "y": 41,
+            "right": 619,
+            "bottom": 47,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 201,
+            "y": 50,
+            "right": 619,
+            "bottom": 66,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 201,
+            "y": 18,
+            "right": 257,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 503.1328125,
+            "y": 19.75,
+            "right": 619,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 289,
+            "bottom": 170.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 570,
+            "y": 82,
+            "right": 810,
+            "bottom": 492.1875,
+            "width": 240,
+            "height": 410.1875
+          }
+        ],
+        "scroll": 820,
+        "width": 820
+      }
+    },
+    {
+      "小地图展开": true,
+      "任务展开": true,
+      "视口": {
+        "width": 1000,
+        "height": 628
+      },
+      "边界": {
+        "boss": {
+          "x": 280,
+          "y": 22,
+          "right": 720,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 291,
+            "y": 30,
+            "right": 709,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 291,
+            "y": 53,
+            "right": 709,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 291,
+            "y": 62,
+            "right": 709,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 291,
+            "y": 30,
+            "right": 347,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 593.1328125,
+            "y": 31.75,
+            "right": 709,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 94,
+            "right": 305,
+            "bottom": 182.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 734,
+            "y": 94,
+            "right": 974,
+            "bottom": 504.1875,
+            "width": 240,
+            "height": 410.1875
+          }
+        ],
+        "scroll": 1000,
+        "width": 1000
+      }
+    },
+    {
+      "小地图展开": true,
+      "任务展开": true,
+      "视口": {
+        "width": 1280,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 439.5,
+          "y": 22,
+          "right": 879.5,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 868.5,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 450.5,
+            "y": 53,
+            "right": 868.5,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 450.5,
+            "y": 62,
+            "right": 868.5,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 506.5,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 752.6328125,
+            "y": 31.75,
+            "right": 868.5,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 22,
+            "right": 305,
+            "bottom": 110.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 1014,
+            "y": 22,
+            "right": 1254,
+            "bottom": 432.1875,
+            "width": 240,
+            "height": 410.1875
+          }
+        ],
+        "scroll": 1280,
+        "width": 1280
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": true,
+      "视口": {
+        "width": 400,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 10,
+          "y": 10,
+          "right": 390,
+          "bottom": 74,
+          "width": 380,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 21,
+            "y": 18,
+            "right": 379,
+            "bottom": 38,
+            "width": 358,
+            "height": 20
+          },
+          {
+            "x": 21,
+            "y": 41,
+            "right": 379,
+            "bottom": 47,
+            "width": 358,
+            "height": 6
+          },
+          {
+            "x": 21,
+            "y": 50,
+            "right": 379,
+            "bottom": 66,
+            "width": 358,
+            "height": 16
+          },
+          {
+            "x": 21,
+            "y": 18,
+            "right": 77,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 263.1328125,
+            "y": 19.75,
+            "right": 379,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 196,
+            "bottom": 166.5,
+            "width": 186,
+            "height": 84.5
+          },
+          {
+            "x": 204,
+            "y": 82,
+            "right": 390,
+            "bottom": 275.1875,
+            "width": 186,
+            "height": 193.1875
+          }
+        ],
+        "scroll": 400,
+        "width": 400
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": true,
+      "视口": {
+        "width": 820,
+        "height": 560
+      },
+      "边界": {
+        "boss": {
+          "x": 190,
+          "y": 10,
+          "right": 630,
+          "bottom": 74,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 201,
+            "y": 18,
+            "right": 619,
+            "bottom": 38,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 201,
+            "y": 41,
+            "right": 619,
+            "bottom": 47,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 201,
+            "y": 50,
+            "right": 619,
+            "bottom": 66,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 201,
+            "y": 18,
+            "right": 257,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 503.1328125,
+            "y": 19.75,
+            "right": 619,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 289,
+            "bottom": 170.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 570,
+            "y": 82,
+            "right": 810,
+            "bottom": 275.1875,
+            "width": 240,
+            "height": 193.1875
+          }
+        ],
+        "scroll": 820,
+        "width": 820
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": true,
+      "视口": {
+        "width": 1000,
+        "height": 628
+      },
+      "边界": {
+        "boss": {
+          "x": 280,
+          "y": 22,
+          "right": 720,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 291,
+            "y": 30,
+            "right": 709,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 291,
+            "y": 53,
+            "right": 709,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 291,
+            "y": 62,
+            "right": 709,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 291,
+            "y": 30,
+            "right": 347,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 593.1328125,
+            "y": 31.75,
+            "right": 709,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 94,
+            "right": 305,
+            "bottom": 182.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 734,
+            "y": 94,
+            "right": 974,
+            "bottom": 287.1875,
+            "width": 240,
+            "height": 193.1875
+          }
+        ],
+        "scroll": 1000,
+        "width": 1000
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": true,
+      "视口": {
+        "width": 1280,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 439.5,
+          "y": 22,
+          "right": 879.5,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 868.5,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 450.5,
+            "y": 53,
+            "right": 868.5,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 450.5,
+            "y": 62,
+            "right": 868.5,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 506.5,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 752.6328125,
+            "y": 31.75,
+            "right": 868.5,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 22,
+            "right": 305,
+            "bottom": 110.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 1014,
+            "y": 22,
+            "right": 1254,
+            "bottom": 215.1875,
+            "width": 240,
+            "height": 193.1875
+          }
+        ],
+        "scroll": 1280,
+        "width": 1280
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": false,
+      "视口": {
+        "width": 400,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 10,
+          "y": 10,
+          "right": 390,
+          "bottom": 74,
+          "width": 380,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 21,
+            "y": 18,
+            "right": 379,
+            "bottom": 38,
+            "width": 358,
+            "height": 20
+          },
+          {
+            "x": 21,
+            "y": 41,
+            "right": 379,
+            "bottom": 47,
+            "width": 358,
+            "height": 6
+          },
+          {
+            "x": 21,
+            "y": 50,
+            "right": 379,
+            "bottom": 66,
+            "width": 358,
+            "height": 16
+          },
+          {
+            "x": 21,
+            "y": 18,
+            "right": 77,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 263.1328125,
+            "y": 19.75,
+            "right": 379,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 196,
+            "bottom": 166.5,
+            "width": 186,
+            "height": 84.5
+          },
+          {
+            "x": 204,
+            "y": 82,
+            "right": 390,
+            "bottom": 154,
+            "width": 186,
+            "height": 72
+          }
+        ],
+        "scroll": 400,
+        "width": 400
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": false,
+      "视口": {
+        "width": 820,
+        "height": 560
+      },
+      "边界": {
+        "boss": {
+          "x": 190,
+          "y": 10,
+          "right": 630,
+          "bottom": 74,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 201,
+            "y": 18,
+            "right": 619,
+            "bottom": 38,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 201,
+            "y": 41,
+            "right": 619,
+            "bottom": 47,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 201,
+            "y": 50,
+            "right": 619,
+            "bottom": 66,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 201,
+            "y": 18,
+            "right": 257,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 503.1328125,
+            "y": 19.75,
+            "right": 619,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 289,
+            "bottom": 170.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 570,
+            "y": 82,
+            "right": 810,
+            "bottom": 154,
+            "width": 240,
+            "height": 72
+          }
+        ],
+        "scroll": 820,
+        "width": 820
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": false,
+      "视口": {
+        "width": 1000,
+        "height": 628
+      },
+      "边界": {
+        "boss": {
+          "x": 280,
+          "y": 22,
+          "right": 720,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 291,
+            "y": 30,
+            "right": 709,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 291,
+            "y": 53,
+            "right": 709,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 291,
+            "y": 62,
+            "right": 709,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 291,
+            "y": 30,
+            "right": 347,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 593.1328125,
+            "y": 31.75,
+            "right": 709,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 94,
+            "right": 305,
+            "bottom": 182.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 734,
+            "y": 94,
+            "right": 974,
+            "bottom": 166,
+            "width": 240,
+            "height": 72
+          }
+        ],
+        "scroll": 1000,
+        "width": 1000
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": false,
+      "视口": {
+        "width": 1280,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 439.5,
+          "y": 22,
+          "right": 879.5,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 868.5,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 450.5,
+            "y": 53,
+            "right": 868.5,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 450.5,
+            "y": 62,
+            "right": 868.5,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 506.5,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 752.6328125,
+            "y": 31.75,
+            "right": 868.5,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 22,
+            "right": 305,
+            "bottom": 110.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 1014,
+            "y": 22,
+            "right": 1254,
+            "bottom": 94,
+            "width": 240,
+            "height": 72
+          }
+        ],
+        "scroll": 1280,
+        "width": 1280
+      }
+    }
+  ],
+  "错误": [],
+  "结果": "通过"
+}

@@ -1,4 +1,5 @@
-import {initialEncounters,validateEncounters,unitState,settleEncounterDeath,type EncounterState} from "./encounterState";
+import {initialRunes,validateRunes,type RuneState} from './runeState';
+import {initialEncounters,validateEncounters,unitState,settleEncounterDeath,migrateCampBosses,type EncounterState} from "./encounterState";
 import {ENCOUNTERS} from '../../data/maps/windbell/encounters';
 import {initialDemonKing,validateDemonKing,demonMalice,type DemonKingState} from './demonKingState';
 import {initialFieldQuests,validateFieldQuests,type FieldQuestState} from "./fieldQuestState";
@@ -15,6 +16,7 @@ import {
   stackLimit,
   isEquipment,
   equipment,
+  RETURN_WIND_ORB,
   type EquipmentId,
 } from "../../data/economy";
 import { props, enemyDefs, WORLD } from "../../data/world";
@@ -23,8 +25,9 @@ import { initialDefense, migrateEastDefense, validateDefense, type DefenseState 
 import {initialNight,migratedNight,validateNight,type NightState} from "./nightDirector";
 export type Slot = { id: ItemId; count: number } | null;
 export type State = {
+  runes: RuneState;
   skills: SkillState;
-  schema_version: 13;
+  schema_version: 14;
   demonKing:DemonKingState;
   encounters:EncounterState;
   fieldQuests:FieldQuestState;
@@ -55,8 +58,9 @@ export type State = {
   crafted: boolean;
 };
 export const initialState = (): State => ({
+  runes: initialRunes(),
   skills: initialSkills(),
-  schema_version: 13,
+  schema_version: 14,
   demonKing:initialDemonKing(),
   encounters:initialEncounters(),
   fieldQuests:initialFieldQuests(),
@@ -70,7 +74,7 @@ export const initialState = (): State => ({
   shopStock: initialStock(),
   economyRevision: 0,
   map_version: CURRENT_MAP_VERSION,
-  player: { x: 670, y: 720, hp: 100, stamina: 100 },
+  player: { ...RETURN_WIND_ORB.respawn, hp: 100, stamina: 100 },
   bag: Array(24).fill(null),
   hotbar: ["potion", "berry", null, null, null, null, null, null],
   quest: 0,
@@ -191,14 +195,17 @@ export function validate(raw: unknown): State {
     const existing=['south-reed-patrol','south-herb-patrol','south-spore-camp','south-orchard-burrows','west-track-pack','north-stone-watch','west-wolf-den','north-boar-camp','east-thorn-camp'];
     if(!s.encounters?.groups||existing.some(id=>!s.encounters.groups[id]))throw Error('旧据点记录缺失，不能覆盖清剿进度。');
     s.encounters.broken??=[];const fresh=initialEncounters();
+    for(const d of ENCOUNTERS){s.encounters.groups[d.id]??=fresh.groups[d.id];s.encounters.groups[d.id].warning??=null;}
+    migrateCampBosses(s.encounters);
     for(const d of ENCOUNTERS){
-      s.encounters.groups[d.id]??=fresh.groups[d.id];s.encounters.groups[d.id].warning??=null;
       // 旧固定成员的死亡保持死亡；原有掉落留在旧列表，避免生成第二份。
       d.members.forEach(m=>{if(s.killed?.includes(m.id)){s.encounters.groups[d.id].activated=true;settleEncounterDeath(s.encounters,m.id,false);}});
     }
-    s.demonKing=initialDemonKing();s.schema_version=13;
+    for(const d of ENCOUNTERS.filter(d=>d.kind==='camp')){const g=s.encounters.groups[d.id];if(d.members.every((m,i)=>m.boss||g.members[i].defeated))g.cleared=true;}
+    s.demonKing=initialDemonKing();(s as {schema_version:number}).schema_version=13;
   }
-  if(s&&s.schema_version===13)s.skills=validateSkills(s.skills);
+  if(s&&(s as {schema_version:number}).schema_version===13){s.encounters=migrateCampBosses(s.encounters);s.schema_version=14;}
+  if(s&&s.schema_version===14){s.skills=validateSkills(s.skills);s.runes=s.runes===undefined?initialRunes():validateRunes(s.runes);}
   const num = (n: unknown, min: number, max: number) =>
     typeof n === "number" && Number.isFinite(n) && n >= min && n <= max;
   const strarr = (a: unknown) =>
@@ -207,7 +214,7 @@ export function validate(raw: unknown): State {
     a.every((x) => typeof x === "string" && x.length < 80);
   if (
     !s ||
-    s.schema_version !== 13 ||
+    s.schema_version !== 14 ||
     !s.mapProgress || !["unknown","surveyed","open"].includes(s.mapProgress.westRoad) ||
     !Array.isArray(s.mapProgress.shortcuts) || s.mapProgress.shortcuts.length>3 || new Set(s.mapProgress.shortcuts).size!==s.mapProgress.shortcuts.length || !s.mapProgress.shortcuts.every(id=>SHORTCUT_IDS.includes(id)) ||
     (s.map_version !== undefined &&

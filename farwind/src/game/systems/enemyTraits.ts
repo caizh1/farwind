@@ -1,5 +1,6 @@
 import type {Point} from './obstacles';
 import type {EnemyBody} from './enemy';
+import {CAMP_BOSSES,BOSS_RULES} from '../../data/maps/windbell/campBosses';
 // 仅定义战斗差异；不拥有第二套生命、命中去重或世界实例。
 export const GUARDIAN={turnSpeed:1.2,frontDot:.35,reduction:.65,breakMs:1200} as const;
 export function turnToward(facing:Point,target:Point,seconds:number):Point{
@@ -7,9 +8,19 @@ export function turnToward(facing:Point,target:Point,seconds:number):Point{
  const step=Math.min(Math.abs(delta),GUARDIAN.turnSpeed*Math.max(0,seconds))*Math.sign(delta);
  return {x:Math.cos(angle+step),y:Math.sin(angle+step)};
 }
-export function enemyProtection(e:Pick<EnemyBody,'type'|'x'|'y'|'face'|'guardOpenUntil'|'staggerUntil'|'attack'>,origin:Point|undefined,now:number,breaksGuard=false){
+export function enemyProtection(e:Pick<EnemyBody,'type'|'x'|'y'|'face'|'guardOpenUntil'|'staggerUntil'|'attack'|'boss'|'bossBattle'|'hp'>,origin:Point|undefined,now:number,breaksGuard=false){
+ if(e.boss&&e.bossBattle){
+  const b=e.bossBattle,a=e.attack,hpFloor=now<b.entryUntil||now<b.transformUntil?e.hp:b.phase===1?CAMP_BOSSES[e.boss].hp*.5:0;
+  if(now<b.exposedUntil)return {reduction:0,hpFloor};
+  if(a?.bossCocoon&&!a.cancelled&&now>=a.contactAt&&now<a.activeUntil){
+   const d=origin?Math.hypot(origin.x-e.x,origin.y-e.y):0,back=!!origin&&d>0&&((origin.x-e.x)*a.direction.x+(origin.y-e.y)*a.direction.y)/d<-.35;
+   if(breaksGuard||back){b.exposedUntil=now+BOSS_RULES.exposed;a.cancelled=true;e.staggerUntil=now+800;return {reduction:0,hpFloor};}
+   return {reduction:.8,hpFloor};
+  }
+  return {reduction:BOSS_RULES.reduction,hpFloor};
+ }
  if(e.type!=='guardian')return {reduction:0};
- if(breaksGuard){e.guardOpenUntil=Math.max(e.guardOpenUntil??0,now+GUARDIAN.breakMs);return {reduction:0};}
+ if(breaksGuard){if(now>=(e.guardOpenUntil??0))e.guardOpenUntil=now+GUARDIAN.breakMs;return {reduction:0};}
  if(now<(e.guardOpenUntil??0)||now<e.staggerUntil||e.attack&&now>=e.attack.activeUntil&&now<e.attack.recoveryUntil)return {reduction:0};
  if(!origin)return {reduction:0};
  const d=Math.hypot(origin.x-e.x,origin.y-e.y),f=e.face??e.attack?.direction??{x:0,y:1};

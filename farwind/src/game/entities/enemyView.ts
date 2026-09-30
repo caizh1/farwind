@@ -1,25 +1,38 @@
+import {CampBossView} from './campBossView';
 import Phaser from 'phaser';
 import {creatureMaxHP} from '../../data/maps/windbell/elites';
 import {ENEMIES,enemyProfile,enemyKind} from '../../data/enemies';
+import {BOSS_PROJECTILES} from '../../data/maps/windbell/campBosses';
 import {EnemyAnimation,type AnimatedEnemy,type EnemyPose} from '../systems/enemyAnimation';
 import {sampleEnemyAttack,type EnemyAttack,SPORE,ENEMY_ATTACK,sporeDirections} from '../systems/enemyAttack';
 import type {EnemyProjectiles} from '../systems/enemyProjectiles';
 import {Actor} from './actor';
 type Entry={motion:EnemyAnimation;pose?:EnemyPose;hp:number;trail:number;trailStart:number;hitAt:number;eliteLabel?:Phaser.GameObjects.Text};
 export class EnemyView {
+  boss:CampBossView;
   entries=new WeakMap<Phaser.GameObjects.Sprite,Entry>();
   bars:Phaser.GameObjects.Graphics;
+  shotTrails:Phaser.GameObjects.Graphics;
   shots=new Map<string,Phaser.GameObjects.Image>();
   danger=new Map<string,Phaser.GameObjects.Graphics>();
   dangerUsed=new Set<string>();
   eliteLabels=new Set<Phaser.GameObjects.Text>();
   static preload(scene:Phaser.Scene){
+    CampBossView.preload(scene);
     for(const [kind,profile] of Object.entries(ENEMIES))scene.load.spritesheet(`enemy-${kind}`,`/assets/enemies-v1/${profile.art}.png`,{frameWidth:160,frameHeight:160});
     scene.load.image('spore-projectile','/assets/enemies-v1/spore-projectile.png');scene.load.image('spore-burst','/assets/enemies-v1/spore-burst.png');
   }
-  constructor(public scene:Phaser.Scene){this.bars=scene.add.graphics().setDepth(8997);}
-  reset(){this.entries=new WeakMap();this.bars.clear();for(const im of this.shots.values())im.destroy();this.shots.clear();for(const ink of this.danger.values())ink.destroy();this.danger.clear();for(const label of this.eliteLabels)label.destroy();this.eliteLabels.clear();}
-  begin(){this.bars.clear();this.dangerUsed.clear();for(const label of this.eliteLabels)label.setVisible(false);for(const ink of this.danger.values())ink.clear();}
+  constructor(public scene:Phaser.Scene){this.boss=new CampBossView(scene);this.bars=scene.add.graphics().setDepth(8997);this.shotTrails=scene.add.graphics().setDepth(8995);
+    // 纹理每场景只生成一次；拖尾共用画布，不在每帧新建粒子或图形对象。
+    for(const [kind,s] of Object.entries(BOSS_PROJECTILES)){const key='boss-projectile-'+kind;if(scene.textures.exists(key))continue;
+      const ink=scene.add.graphics(),c=s.size/2;ink.fillStyle(s.color,.23).fillCircle(c,c,c);
+      if(kind==='spore-heart')ink.fillStyle(s.outline,1).fillCircle(c,c,SPORE.radius).fillStyle(s.color,1).fillCircle(c,c,11.5).lineStyle(1,s.core,.9).strokeCircle(c,c,10).fillStyle(s.core,1).fillCircle(c+2,c-2,5);
+      else ink.fillStyle(s.outline,1).fillTriangle(c+14,c,c-13,c-9,c-13,c+9).fillStyle(s.color,1).fillTriangle(c+11,c,c-10,c-6,c-10,c+6).lineStyle(2,s.core,1).lineBetween(c-8,c,c+9,c);
+      ink.generateTexture(key,s.size,s.size);ink.destroy();
+    }
+  }
+  reset(){this.boss.reset();this.entries=new WeakMap();this.bars.clear();this.shotTrails.clear();for(const im of this.shots.values())im.destroy();this.shots.clear();for(const ink of this.danger.values())ink.destroy();this.danger.clear();for(const label of this.eliteLabels)label.destroy();this.eliteLabels.clear();}
+  begin(){this.boss.begin();this.bars.clear();this.dangerUsed.clear();for(const label of this.eliteLabels)label.setVisible(false);for(const ink of this.danger.values())ink.clear();}
   warn(root:{x:number;y:number},attack:EnemyAttack,now:number){
     if(attack.emitted||attack.cancelled||now>=attack.contactAt)return;
     const id=attack.attackerId;this.dangerUsed.add(id);let ink=this.danger.get(id);if(!ink){ink=this.scene.add.graphics();this.danger.set(id,ink);}
@@ -38,6 +51,7 @@ export class EnemyView {
   }
   finishWarnings(){for(const [id,ink] of this.danger)if(!this.dangerUsed.has(id)){ink.destroy();this.danger.delete(id);}}
   draw(body:AnimatedEnemy,attack:EnemyAttack|null|undefined,sprite:Phaser.GameObjects.Sprite,now:number,showBar=false){
+    if(body.boss)return this.boss.draw(body,attack,sprite,now,showBar);
     const kind=enemyKind(body.type),profile=enemyProfile(kind),maxHP=body.maxHP??creatureMaxHP(kind,body.elite);
     let entry=this.entries.get(sprite);if(!entry){entry={motion:new EnemyAnimation(),hp:body.hp??maxHP,trail:body.hp??maxHP,trailStart:body.hp??maxHP,hitAt:-Infinity};this.entries.set(sprite,entry);}
     const pose=entry.motion.sample(body,attack,now);entry.pose=pose;
@@ -62,13 +76,18 @@ export class EnemyView {
     return pose;
   }
   projectile(system:EnemyProjectiles,now:number,visible:boolean){
+    this.shotTrails.clear();
     const ids=new Set(system.shots.map(s=>s.id));for(const [id,im] of this.shots)if(!ids.has(id)){im.destroy();this.shots.delete(id);}
     for(const s of system.shots){let im=this.shots.get(s.id);if(!im){im=this.scene.add.image(s.x,s.y-28,'spore-projectile');this.shots.set(s.id,im);}
       const burst=s.state==='burst',u=burst?Math.min(1,(now-(s.burstAt??now))/SPORE.burst):0;
-      im.setTexture(burst?'spore-burst':'spore-projectile').setPosition(s.x,s.y-28).setDepth(s.y+1).setDisplaySize(burst?28+u*30:20,burst?28+u*30:20)
+      const style=BOSS_PROJECTILES[s.attack.boss as keyof typeof BOSS_PROJECTILES],size=style?style.size+u*30:burst?28+u*30:20;
+      im.setTexture(style?'boss-projectile-'+s.attack.boss:burst?'spore-burst':'spore-projectile').setPosition(s.x,s.y-28).setDepth(style?8995:s.y+1).setDisplaySize(size,size)
         .setRotation(burst?0:Math.atan2(s.attack.direction.y,s.attack.direction.x)).setAlpha(1-u).setVisible(visible);
       if(s.deflected)im.setTint(0xc8fff2);else im.clearTint();
+      if(style&&visible&&!burst){const d=s.attack.direction,p={x:s.x-d.x*27,y:s.y-28-d.y*27},color=s.deflected?0xc8fff2:style.color;
+        this.shotTrails.lineStyle(8,style.outline,.7).lineBetween(p.x,p.y,s.x,s.y-28).lineStyle(4,color,.9).lineBetween(p.x,p.y,s.x,s.y-28).lineStyle(1.5,style.core,.9).lineBetween(p.x,p.y,s.x,s.y-28);
+      }
     }
   }
-  debug(sprite:Phaser.GameObjects.Sprite){const e=this.entries.get(sprite);return e?{pose:e.pose,root:[e.motion.motion.last?.x,e.motion.motion.last?.y],frame:sprite.frame.name,origin:[sprite.originX,sprite.originY],scale:[sprite.scaleX,sprite.scaleY],flip:sprite.flipX,provisional:true}:null;}
+  debug(sprite:Phaser.GameObjects.Sprite){const boss=this.boss.debug(sprite);if(boss)return {pose:boss,parryReaction:this.boss.debugReaction(sprite),root:[sprite.x,sprite.y],rotation:sprite.rotation,frame:sprite.frame.name,origin:[sprite.originX,sprite.originY],scale:[sprite.scaleX,sprite.scaleY],flip:sprite.flipX,provisional:boss.provisional};const e=this.entries.get(sprite);return e?{pose:e.pose,root:[e.motion.motion.last?.x,e.motion.motion.last?.y],frame:sprite.frame.name,origin:[sprite.originX,sprite.originY],scale:[sprite.scaleX,sprite.scaleY],flip:sprite.flipX,provisional:true}:null;}
 }

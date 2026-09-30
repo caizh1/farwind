@@ -1,0 +1,30 @@
+<!doctype html><html lang="zh-CN"><meta charset="UTF-8"><title>首领弹反动作预览</title>
+<style>body{margin:20px;background:#eee9d9;color:#294134;font:16px system-ui}header,.controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap}h1{font-size:22px}label{display:inline-flex;align-items:center;gap:8px}button,select{font:inherit;padding:7px 12px}#game{max-width:1000px}canvas{max-width:100%;height:auto}p{max-width:960px;line-height:1.6}input{width:210px}</style>
+<header><h1>四种首领 · 弹反踉跄</h1><button id="play">播放一轮</button></header>
+<p>左侧为原有八百毫秒均匀取帧，右侧使用游戏当前的正式表现代码。预览仅采样固定姿态，实战验收另行记录。</p>
+<div class="controls"><label>品质<select id="quality"><option value="normal">普通弹反</option><option value="perfect">精准弹反</option></select></label><label>朝向<select id="facing"><option value="3">向右</option><option value="2">向左</option><option value="0">向下</option><option value="1">向上</option></select></label><label>时间<input id="time" type="range" min="0" max="599" value="240"><output id="status">二百四十毫秒</output></label></div>
+<div id="game"></div>
+<script type="module">
+import Phaser from 'phaser';
+import {CAMP_BOSSES} from '/src/data/maps/windbell/campBosses.ts';
+import {CAMP_BOSS_ART} from '/src/data/campBossArt.ts';
+import {CampBossView} from '/src/game/entities/campBossView.ts';
+import {Actor} from '/src/game/entities/actor.ts';
+const quality=document.querySelector('#quality'),facing=document.querySelector('#facing'),time=document.querySelector('#time'),status=document.querySelector('#status');
+let elapsed=240,start=null;const kinds=Object.keys(CAMP_BOSSES),entries=[];
+class Preview extends Phaser.Scene{
+ preload(){CampBossView.preload(this);}
+ create(){this.view=new CampBossView(this);const w=this.scale.width;kinds.forEach((kind,i)=>{const y=140+i*145,d=CAMP_BOSSES[kind],left=w*.3,right=w*.76;this.add.text(6,y-136,d.name,{fontSize:'16px',color:'#294134'});if(!i){this.add.text(left,y-110,'原节奏',{fontSize:'14px',color:'#526456'}).setOrigin(.5,0);this.add.text(right,y-110,'强化后',{fontSize:'14px',color:'#526456'}).setOrigin(.5,0);}for(const x of [left,right])this.add.ellipse(x,y-3,48,16,0x294134,.16);entries.push({kind,y,left,right,before:this.add.sprite(left,y,'camp-boss-'+kind),after:this.add.sprite(right,y,'camp-boss-'+kind)});});}
+ update(now){
+  const duration=quality.value==='perfect'?800:600;if(start!==null){elapsed=Math.min(duration-1,now-start);time.value=String(elapsed);if(elapsed>=duration-1)start=null;}
+  this.view.begin();const dir=Number(facing.value),direction=dir===3?{x:1,y:0}:dir===2?{x:-1,y:0}:dir===0?{x:0,y:1}:{x:0,y:-1};
+  for(const e of entries){const d=CAMP_BOSSES[e.kind],art=CAMP_BOSS_ART[e.kind],di=dir===0?0:dir===1?1:2,n=art.rows[di][5],first=Math.min(4,n-3),index=first+Math.min(n-first-1,Math.floor(elapsed/800*(n-first))),frame=di*63+45+index,size=160*d.height/art.nativeHeight;
+   e.before.setTexture('camp-boss-'+e.kind,frame).setOrigin(...art.anchors[frame]).setPosition(e.left,e.y).setDisplaySize(size,size).setRotation(0);Actor.mirror(e.before,dir===2);
+   this.view.draw({id:'预览-'+e.kind,boss:e.kind,x:e.right,y:e.y,hp:d.hp,face:direction,parried:{at:0,until:duration,direction,perfect:quality.value==='perfect'},staggerUntil:duration},null,e.after,elapsed,false);
+  }
+  const pose=this.view.debugReaction?.(entries[0]?.after),labels={impact:'接触定格',recoil:'失衡后仰',brace:'踉跄撑地',recover:'收势站稳'};status.textContent=`${Math.round(elapsed)} 毫秒 · ${labels[pose?.phase]??'原表现'}`;
+ }
+}
+const game=new Phaser.Game({type:Phaser.WEBGL,parent:'game',width:document.querySelector('#game').clientWidth,height:620,backgroundColor:'#eee9d9',scene:[Preview],audio:{noAudio:true},render:{antialias:true}});
+document.querySelector('#play').onclick=()=>{start=game.loop.time;elapsed=0;};time.oninput=()=>{start=null;elapsed=Number(time.value);};quality.onchange=()=>{start=null;time.max=quality.value==='perfect'?'799':'599';elapsed=Math.min(elapsed,Number(time.max));time.value=String(elapsed);};
+</script></html>

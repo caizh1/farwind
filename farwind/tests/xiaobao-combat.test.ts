@@ -116,6 +116,131 @@ const front = (
   enemies: [],
   injured: false,
 });
+describe("随行护卫的距离与危险优先级", () => {
+  it("安全距离内原地巡护，过近时主动让出主角身边的空间", () => {
+    for (const offset of [150, 10]) {
+      const f = fixture();
+      f.c.data.task = "follow";
+      f.env.player = { ...f.env.player, x: 1000, y: 725 };
+      f.c.x = 1000 + offset;
+      f.c.y = 725;
+      const start = { x: f.c.x, y: f.c.y };
+      f.step(3000);
+      const gap = Math.hypot(f.c.x - 1000, f.c.y - 725);
+      expect(gap).toBeGreaterThanOrEqual(120);
+      expect(gap).toBeLessThanOrEqual(220);
+      if (offset === 150) expect({ x: f.c.x, y: f.c.y }).toEqual(start);
+      const settled = { x: f.c.x, y: f.c.y };
+      f.step(1500);
+      expect({ x: f.c.x, y: f.c.y }).toEqual(settled);
+    }
+  });
+  it("落后主角超过旧牵引距离时仍先攻击主角身边的危险", () => {
+    const e = enemy("主角攻击者", 1110), f = fixture([e]);
+    f.c.data.task = "follow";
+    f.c.data.autoSupport = false;
+    f.env.player = { ...f.env.player, x: 1160, y: 725 };
+    e.targetId = "player";
+    f.step(1000);
+    expect(f.hits.some(h => h.id === e.id)).toBe(true);
+  });
+  it("默认战术优先主角攻击者，不先打自己身边的敌人", () => {
+    const near = enemy("自身攻击者", 850, 785), threat = enemy("主角攻击者", 1150), f = fixture([near, threat]);
+    f.c.data.task = "follow";
+    f.c.data.autoSupport = false;
+    f.env.player = { ...f.env.player, x: 990, y: 725 };
+    near.targetId = "xiaobao";
+    threat.targetId = "player";
+    f.step(5);
+    expect(f.c.targetId).toBe(threat.id);
+    f.step(900);
+    expect(f.hits[0]?.id).toBe(threat.id);
+  });
+  it("主角满血遇险也优先护卫，不启动远处村庄飞援", () => {
+    const e = enemy("主角攻击者", 1140), f = fixture([e]);
+    f.c.data.task = "follow";
+    f.env.player = { ...f.env.player, x: 1040, y: 725 };
+    e.targetId = "player";
+    f.setFronts([front()]);
+    f.step(5);
+    expect(f.c.data.flight).toBeNull();
+    expect(f.c.targetId).toBe(e.id);
+  });
+  it("识别正式追击但尚未出手的敌人，不主动攻击附近的家园怪", () => {
+    const chasing = enemy("正在追击", 1120), passive = enemy("家园旁观", 850), f = fixture([chasing, passive]);
+    f.c.data.task = "follow";
+    f.c.data.autoSupport = false;
+    f.env.player = { ...f.env.player, x: 1080, y: 725 };
+    f.env.playerThreats = [chasing.id];
+    f.step(5);
+    expect(chasing.targetId).toBeUndefined();
+    expect(f.c.targetId).toBe(chasing.id);
+    const idle = fixture([passive]);
+    idle.c.data.task = "follow";
+    idle.c.data.autoSupport = false;
+    idle.step(3000);
+    expect(idle.hits).toHaveLength(0);
+    expect(idle.c.targetId).toBeNull();
+  });
+  it("正在支援村庄时主角遇险，暂时转为护卫且不把援护伤害记到村庄战报", () => {
+    const e = enemy("主角攻击者", 1140), f = fixture([e]);
+    f.c.data.task = "follow";
+    f.env.player = { ...f.env.player, x: 1040, y: 725 };
+    e.targetId = "player";
+    f.c.data.support = { key: "村庄支援", gate: "east-gate", age: 0, hits: 0, kills: 0, injured: false };
+    f.setFronts([front()]);
+    f.step(1000);
+    expect(f.c.anchor(f.env)).toEqual({ x: 1040, y: 725, hp: 100, outside: true, region: "village" });
+    expect(f.hits.some(h => h.id === e.id)).toBe(true);
+    expect(f.c.data.support?.hits).toBe(0);
+    expect(f.c.data.flight).toBeNull();
+  });
+  it("未释放的次要攻击让位给主角攻击者，取消不消耗真气和冷却", () => {
+    const secondary = enemy("次要目标", 870, 800), threat = enemy("主角攻击者", 1120), f = fixture([secondary, threat]);
+    f.c.data.task = "follow";
+    f.c.data.autoSupport = false;
+    f.env.player = { ...f.env.player, x: 1040, y: 725 };
+    secondary.targetId = "xiaobao";
+    threat.targetId = "player";
+    f.c.start("rock", secondary);
+    f.step(5);
+    expect(f.c.data.cast?.target).toBe(threat.id);
+    expect(f.c.data.cooldowns.rock).toBe(0);
+    expect(f.c.data.qi).toBe(100);
+  });
+  it("技能全在冷却时仍能从护卫圈外赶来拦截，不被移动边界锁在原地", () => {
+    const e = enemy("主角攻击者", 1210), f = fixture([e]);
+    f.c.data.task = "follow";
+    f.c.data.autoSupport = false;
+    f.env.player = { ...f.env.player, x: 1260, y: 725 };
+    e.targetId = "player";
+    for (const skill of Object.keys(XIAOBAO_SKILLS) as (keyof typeof XIAOBAO_SKILLS)[]) f.c.data.cooldowns[skill] = 10000;
+    f.step(1000);
+    expect(f.c.targetId).toBe(e.id);
+    expect(f.c.x).toBeGreaterThan(1000);
+    expect(f.hits).toHaveLength(0);
+  });
+  it("主角撤出战圈后停止追敌并归队，等候指令保持原点", () => {
+    const e = enemy("已远离的攻击者", 870), f = fixture([e]);
+    f.c.data.task = "follow";
+    f.c.data.autoSupport = false;
+    f.c.targetId = e.id;
+    e.targetId = "player";
+    f.env.player = { ...f.env.player, x: 1500, y: 725 };
+    f.step(5000);
+    expect(f.c.targetId).toBeNull();
+    expect(f.hits).toHaveLength(0);
+    expect(Math.hypot(f.c.x - 1500, f.c.y - 725)).toBeLessThanOrEqual(220);
+    f.c.command("wait", f.env);
+    const waiting = { x: f.c.x, y: f.c.y };
+    f.env.player.x = 1800;
+    f.step(3000);
+    expect({ x: f.c.x, y: f.c.y }).toEqual(waiting);
+    f.c.command("return", f.env);
+    f.step(5000);
+    expect(Math.hypot(f.c.x - 1800, f.c.y - 725)).toBeLessThanOrEqual(220);
+  });
+});
 describe("小宗师正式技能结算", () => {
   it("门外静止野怪仅被卫队看见，不锁住全村巡护；进入保护区才成为真实前线", () => {
     const s = initialState(),
@@ -657,7 +782,7 @@ describe("飞援、委托与结构8保存", () => {
     old.schema_version = 7;
     delete old.xiaobao;
     const current = validate(old);
-    expect(current.schema_version).toBe(13);
+    expect(current.schema_version).toBe(14);
     expect(current.xiaobao).toEqual(initialXiaobao());
     const f = fixture([enemy(enemyDefs[0].id)]);
     f.c.start("fire", f.env.enemies[0]);

@@ -1869,6 +1869,7 @@ export class NpcLife {
         targetId: id,
         attackId: attack.attackId,
         amount: attack.damage,
+        sourceScale: this.defense.runeEnemyScale(source.id),
         sourceType: "enemy-melee",
         eventId: source.eventId ?? null,
       },

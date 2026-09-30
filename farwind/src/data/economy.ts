@@ -7,6 +7,18 @@ export const equipment = {
 } as const;
 export type EquipmentId = keyof typeof equipment;
 export type EquipmentSlot = "weapon" | "armor";
+// 归风珠是永久绑定的系统装备，所有有效存档都拥有，不进入行囊或交易表。
+export const RETURN_WIND_ORB = {
+  id: "returnWindOrb",
+  name: "归风珠",
+  icon: "/assets/equipment/return-wind-orb.webp",
+  description: "阵亡后自动在风铃村广场重生。",
+  recovery: "恢复全部生命与体力，保留行囊与旅途进度。",
+  rules: "不消耗 · 不占行囊格",
+  quote: "风会记得回家的路。",
+  message: "归风珠将你带回风铃村。行囊与旅途进度都还在。",
+  respawn: { x: 670, y: 720 },
+} as const;
 export type ShopId = "general" | "healer" | "smith" | "inn";
 export const shops = {
   general: {

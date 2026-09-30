@@ -5,6 +5,7 @@ import {
   COMBAT,
   STRIKES,
   enemyTint,
+  clearBodyMotion,
   sweepMove,
 } from "../src/game/systems/combat";
 import { add, count, initialState, parseSave } from "../src/game/systems/state";
@@ -209,6 +210,58 @@ it("动作样本用攻击时间选出有效帧、方向与阶段，并匹配真�
   );
 });
 describe("风步、碰撞和保护", () => {
+  it("四向贴身连击停在敌人身体前，下一轮第一刀仍能命中", () => {
+    for (const [facing, vx, vy] of [[0, 0, 1], [1, 0, -1], [2, -1, 0], [3, 1, 0]] as const) {
+      const c = new CombatController(), p = {x: 0, y: 0};
+      const target = {id: 'body', x: vx * (COMBAT.bodySpacing + 3), y: vy * (COMBAT.bodySpacing + 3), hp: 1000};
+      const hits: number[] = [];
+      let now = 0;
+      const tick = (from: number, to: number) => c.update(from, to, facing, p, [target],
+        () => false, () => true, (_e, stage) => hits.push(stage), () => {});
+      for (const stage of [1, 2, 3, 1]) {
+        c.requestAttack(now); tick(now, now);
+        const end = now + c.total(stage);
+        tick(now, end); now = end;
+      }
+      expect(p.x * vx + p.y * vy).toBeLessThanOrEqual(3 + 1e-7);
+      expect(hits).toEqual([1, 2, 3, 1]);
+    }
+  });
+  it("身体连续扫掠阻止穿越，贴边可绕行，已有重叠可退出，死亡和禁用目标不阻挡", () => {
+    const e = {id: 'body', x: 0, y: 0, hp: 100};
+    const r = COMBAT.bodySpacing;
+    expect(clearBodyMotion({x: -80, y: 0}, {x: 80, y: 0}, [e])).toBe(false);
+    expect(clearBodyMotion({x: -80, y: r}, {x: 80, y: r}, [e])).toBe(true);
+    expect(clearBodyMotion({x: -r, y: 0}, {x: -r, y: 10}, [e])).toBe(true);
+    expect(clearBodyMotion({x: -10, y: 0}, {x: -16, y: 0}, [e])).toBe(true);
+    expect(clearBodyMotion({x: -10, y: 0}, {x: 50, y: 0}, [e])).toBe(false);
+    expect(clearBodyMotion(e, {x: 6, y: 0}, [e])).toBe(true);
+    expect(clearBodyMotion({x: -80, y: 0}, {x: 80, y: 0}, [{...e, hp: 0}])).toBe(true);
+    expect(clearBodyMotion({x: -80, y: 0}, {x: 80, y: 0}, [{...e, disabled: true}])).toBe(true);
+    expect(clearBodyMotion({x: -r - 4, y: 0}, {x: -r - 3, y: 0}, [e])).toBe(true);
+    expect(clearBodyMotion({x: -r - 4, y: 0}, {x: -r - 3, y: 0}, [{...e, boss: 'crag-tusk'}])).toBe(false);
+    const p = {x: -80, y: -80};
+    sweepMove(p, 160, 160, () => false, () => true, [e]);
+    expect(Math.hypot(p.x, p.y)).toBeGreaterThanOrEqual(COMBAT.bodySpacing - 1e-7);
+    expect(p.x).toBeLessThan(0); expect(p.y).toBeLessThan(0);
+  });
+  it("其他敌人也能挡住自动反斩的前冲；死亡目标立即释放占地，风步仍可穿敌", () => {
+    const c = new CombatController(), p = {x: 0, y: 0};
+    const target = {id: 'counter', x: 80, y: 0, hp: 100};
+    const blocker = {id: 'body', x: COMBAT.bodySpacing + 3, y: 0, hp: 100};
+    c.attack = {id: 1, stage: 1, facing: 3, start: 0, hit: new Set(), counter: 'perfect', primaryTarget: target.id};
+    const hits: string[] = [];
+    c.update(0, 175, 3, p, [target, blocker], () => false, () => true, e => hits.push(e.id), () => {});
+    expect(p.x).toBeLessThanOrEqual(3 + 1e-7); expect(hits).toEqual([target.id]);
+    c.reset(); p.x = 0;
+    c.requestAttack(0); c.update(0, 0, 3, p, [blocker], () => false, () => true, () => {}, () => {});
+    c.update(0, 190, 3, p, [blocker], () => false, () => true, e => {e.hp = 0;}, () => {});
+    expect(p.x).toBeCloseTo(STRIKES[0].step);
+    c.reset(); p.x = 0; blocker.hp = 100;
+    expect(c.requestDash(0, 100, {x: 1, y: 0}, 3)).toBe(true);
+    c.update(0, 200, 3, p, [blocker], () => false, () => true, () => {}, () => {});
+    expect(p.x).toBeCloseTo(COMBAT.dash.distance);
+  });
   it("成本由成功启动决定，冷却、无敌边界与独立保护不混淆", () => {
     const c = new CombatController();
     expect(c.requestDash(0, 19, { x: 0, y: 0 }, 0)).toBe(false);

@@ -1,14 +1,16 @@
 import type {CounterKind} from './combat';
 import type {Point} from './obstacles';
 export type FeedbackMode='A'|'B'|'C'|'D';
-export type FeedbackKind='guard-start'|'enemy-charge'|'enemy-strike'|'parry-contact'|'parry-perfect-contact'|'deflect-release'|'counter-start'|'counter-swing'|'counter-hit'|'afterguard';
-export type FeedbackMaterial='slime'|'leaf'|'straw';
-export type FeedbackEvent=Readonly<{id:string;kind:FeedbackKind;at:number;targetId:string;attackId:string;sourceContactId?:string;point:Readonly<Point>;incoming:Readonly<Point>;blade:Readonly<Point>;deflect:Readonly<Point>;quality:CounterKind;material:FeedbackMaterial;until?:number;alive?:boolean;depth?:number;legacyHit?:'hit'|'straw'}>;
+export type FeedbackKind='guard-start'|'enemy-charge'|'enemy-strike'|'parry-contact'|'parry-perfect-contact'|'deflect-release'|'counter-start'|'counter-swing'|'counter-hit'|'afterguard'|'hit'|'protected-hit'|'interrupt'|'guard-break'|'kill';
+export type FeedbackMaterial='slime'|'leaf'|'straw'|'armor';
+export type FeedbackEvent=Readonly<{id:string;kind:FeedbackKind;at:number;targetId:string;attackId:string;sourceContactId?:string;point:Readonly<Point>;incoming:Readonly<Point>;blade:Readonly<Point>;deflect:Readonly<Point>;quality:CounterKind;material:FeedbackMaterial;until?:number;alive?:boolean;depth?:number;legacyHit?:'hit'|'straw';stage?:number;damage?:number;guarded?:boolean;interrupted?:boolean;killed?:boolean;sourceId?:string}>;
 export const FEEDBACK={history:96,effects:32,reactions:24,contactLife:150,hitLife:115,afterguardLife:65,peak:60,recover:160,secondaryLife:95,release:20,counterMotion:20} as const;
 // 仅影响成功反馈；红刃在拨开后建立，沿正式反斩的收势衰减，不表示额外伤害。
 export const BLADE_GLOW={start:20,rise:40,fade:145,maxLife:450,width:6,edgeWidth:2.6} as const;
 export const feedbackVisual=(mode:FeedbackMode)=>mode==='C'||mode==='D';
 export const feedbackAudio=(mode:FeedbackMode)=>mode==='B'||mode==='D';
+export const isHitFeedback=(kind:FeedbackKind)=>['hit','protected-hit','interrupt','guard-break','kill'].includes(kind);
+export const hitFeedbackKind=(result:{killed:boolean;guarded:boolean;interrupted:boolean;guardBroken:boolean}):FeedbackKind=>result.killed?'kill':result.guardBroken?'guard-break':result.interrupted?'interrupt':result.guarded?'protected-hit':'hit';
 // 来招已被截住：保留出手事实，声音提交时只移除同一攻击的冲撞；其他威胁仍完整发声。
 export function audibleFeedback(events:readonly FeedbackEvent[]) {
  const intercepted=new Set(events.filter(e=>['parry-contact','parry-perfect-contact','afterguard'].includes(e.kind)).map(e=>e.attackId));
@@ -37,7 +39,7 @@ export class CombatFeedback {
   const event=Object.freeze({...value,id,point:Object.freeze({...value.point}),incoming:Object.freeze({...value.incoming}),blade:Object.freeze({...value.blade}),deflect:Object.freeze({...value.deflect})});
   this.seen.add(id);this.queue.push(event);if(this.queue.length>FEEDBACK.history)this.queue.shift();this.history.push(event);
   if(this.history.length>FEEDBACK.history){const old=this.history.shift()!;this.seen.delete(old.id);}
-  if(['parry-contact','parry-perfect-contact','counter-hit','afterguard'].includes(event.kind)) {this.effects.push(event);if(this.effects.length>FEEDBACK.effects)this.effects.shift();}
+  if(isHitFeedback(event.kind)||['parry-contact','parry-perfect-contact','counter-hit','afterguard'].includes(event.kind)) {this.effects.push(event);if(this.effects.length>FEEDBACK.effects)this.effects.shift();}
   if(event.kind==='parry-contact'||event.kind==='parry-perfect-contact') {
    this.glow={event,until:event.at+BLADE_GLOW.maxLife};
    this.reactions.set(event.targetId,{parry:event});if(this.reactions.size>FEEDBACK.reactions)this.reactions.delete(this.reactions.keys().next().value!);
@@ -58,7 +60,7 @@ export class CombatFeedback {
   this.swings=this.swings.filter(e=>now<e.at+FEEDBACK.counterMotion&&(activeCounterId===undefined||activeCounterId===e.attackId));
   for(const event of this.release.filter(e=>now>=e.at+FEEDBACK.release))this.emit({...event,id:`release:${event.attackId}`,kind:'deflect-release',at:event.at+FEEDBACK.release});
   this.release=this.release.filter(e=>now<e.at+FEEDBACK.release);
-  this.effects=this.effects.filter(e=>now-e.at<(e.kind==='counter-hit'?FEEDBACK.hitLife:e.kind==='afterguard'?FEEDBACK.afterguardLife:FEEDBACK.contactLife));
+  this.effects=this.effects.filter(e=>now-e.at<(isHitFeedback(e.kind)?e.kind==='kill'?190:e.kind==='guard-break'?180:FEEDBACK.hitLife:e.kind==='counter-hit'?FEEDBACK.hitLife:e.kind==='afterguard'?FEEDBACK.afterguardLife:FEEDBACK.contactLife));
   for(const [id,r] of this.reactions)if(now>=(r.parry.until??r.parry.at)||r.parry.alive===false)this.reactions.delete(id);
  }
  drain(){const events=this.queue;this.queue=[];return events;}
@@ -79,6 +81,11 @@ export class CombatFeedback {
   const secondary=r.hit?Math.max(0,1-(now-r.hit.at)/FEEDBACK.secondaryLife):0;
   const side=unit(e.deflect),incoming=unit(e.incoming),leaf=type==='leaf';
   return {x:(-incoming.x*7+side.x*(leaf?9:6))*strength-incoming.x*secondary*3,y:(-incoming.y*4+side.y*3)*strength-incoming.y*secondary*2,rotation:(side.x<0?-1:1)*(leaf?.28:.18)*strength+Math.sin(age/38)*.025*strength,frame:remaining<FEEDBACK.recover/2?0:3,strength,secondary,phase:age<FEEDBACK.peak?'impact':remaining<FEEDBACK.recover?'recover':'unbalanced'};
+ }
+ impact(id:string,now:number){
+  let e:FeedbackEvent|undefined;for(let i=this.effects.length-1;i>=0;i--)if(this.effects[i].targetId===id&&isHitFeedback(this.effects[i].kind)){e=this.effects[i];break;}if(!e||e.killed||!feedbackVisual(this.mode))return null;
+  const age=Math.max(0,now-e.at),life=e.kind==='guard-break'?180:FEEDBACK.hitLife,u=Math.min(1,age/life),amount=(e.guarded?1.5:e.stage===3?5:3)*Math.sin(Math.PI*u);
+  return {x:e.incoming.x*amount,y:e.incoming.y*amount*.5,rotation:(e.incoming.x||1)*amount*.008};
  }
  attackAudible(startedAt:number,root:Point|undefined,player:Point){return startedAt>=this.resetAt&&(!root||Math.hypot(root.x-player.x,root.y-player.y)<600);}
  reset(now=0){this.generation++;this.resetAt=now;this.history=[];this.queue=[];this.effects=[];this.release=[];this.swings=[];this.glow=null;this.seen.clear();this.reactions.clear();}

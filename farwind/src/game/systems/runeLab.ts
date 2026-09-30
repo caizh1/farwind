@@ -1,0 +1,35 @@
+import type {World} from '../scenes/World';
+import {initialState,validate,add} from './state';
+import {initialBossBattle} from './campBossState';
+import {settleEncounterDeath,advanceEncounters} from './encounterState';
+import {RUNES,DUOS,RUNE_LOADOUTS,resolveDuos,type Ability} from '../../data/runes';
+import {ENCOUNTERS,encounterUnit} from '../../data/maps/windbell/encounters';
+import {motionBlocked} from './obstacles';
+import {enemyLeashRadius} from '../../data/enemyPursuit';
+import {initialSkills} from './skills';
+const provider:Record<Ability,string>={thunder:'r01',tide:'r02',chill:'r03',doom:'r04',poison:'r05',hunter:'r06',weakness:'r07',mirror:'r08',mist:'r16',vortex:'r22',seeking_projectile:'r15',jolt:'r11',phoenix:'r30'};
+export function installRuneLab(w:World){if(!import.meta.env.DEV||!new URLSearchParams(location.search).has('runeLab'))return;
+ const panel=document.createElement('details');panel.className='rune-lab';panel.id='rune-lab';panel.open=true;panel.innerHTML=`<summary>符文试验场 · 隔离存档</summary><label>预览配装<select id="rune-lab-build"><option value="slice">雷潮纵向切片 · 三枚</option>${RUNE_LOADOUTS.map((l,i)=>`<option value="build-${i}">${l.name}</option>`).join('')}${RUNES.map(r=>`<option value="${r.id}">单枚 · ${r.name}</option>`).join('')}${DUOS.map(d=>`<option value="${d.id}">双重 · ${d.name}</option>`).join('')}</select></label><label>正式目标<select id="rune-lab-target"><option value="group">四只普通敌人</option><option value="boss">据点首领</option><option value="crowd">十六敌压力场</option><option value="dummy">村内木桩</option></select></label><label><input id="rune-lab-wind" type="checkbox" checked> 预设已有正式剑风一阶</label><button id="rune-lab-reset">重置试验场</button><button id="rune-lab-equip">打开装备页</button><button id="rune-lab-close">收起面板并操作游戏</button><output id="rune-lab-output">仅在本开发入口赠予收藏；伤害、输入、AI、特效、保存均使用正式模块。J 三连；K 格挡；L 镜步。</output>`;document.body.append(panel);
+ let resetting=false;const frames:number[]=[];const field=<T extends HTMLElement>(id:string)=>panel.querySelector<T>('#'+id)!;
+ const standing=(p:{x:number;y:number})=>{if(!motionBlocked(p.x,p.y))return p;for(let r=12;r<160;r+=12)for(let i=0;i<16;i++){const q={x:p.x+Math.cos(i*Math.PI/8)*r,y:p.y+Math.sin(i*Math.PI/8)*r};if(!motionBlocked(q.x,q.y))return q;}throw Error('试验场站位不可达。');};
+ async function reset(choice=field<HTMLSelectElement>('rune-lab-build').value,kind=field<HTMLSelectElement>('rune-lab-target').value,wind=field<HTMLInputElement>('rune-lab-wind').checked){if(resetting||w.economy.busy||w.defenseSaving)return;resetting=true;try{
+ const s=initialState();s.runes.owned=RUNES.map(r=>r.id);if(kind==='boss'||kind==='crowd')add(s,'potion',10);let slots:string[]=choice==='slice'?['r01','r02','r11']:choice.startsWith('build-')?RUNE_LOADOUTS[Number(choice.slice(6))].slots:choice.startsWith('d')?[...new Set(DUOS.find(d=>d.id===choice)!.requires.map(a=>provider[a]))]:[choice];s.runes.slots=[...slots,...Array(5-slots.length).fill(null)];s.skills=initialSkills();if(wind){s.skills.swordWindStage=1;s.skills.legacySwordWind=true;}s.xiaobao.task='free';Object.assign(s.player,standing(kind==='dummy'?{x:850,y:835}:{x:3200,y:1280}));
+ if(kind==='boss')Object.assign(s.player,standing({x:-1780,y:1490}));
+ if(kind==='dummy')Object.assign(s.player,standing({x:850,y:715}));
+ w.loaded=s;await w.start(true);w.runes?.reset();if(w.runes){w.runes.engine.events=[];for(const key of Object.keys(w.runes.engine.metrics) as (keyof typeof w.runes.engine.metrics)[])w.runes.engine.metrics[key]=0;}frames.length=0;
+ // 只设置公开的隔离初始条件；后续攻击、死亡和奖励交给正常游戏入口。
+ for(const e of w.enemies){e.sprite.destroy();e.shadow.destroy();}w.enemies=[];
+ if(w.wilderness)w.wilderness.update=(delta,now)=>{advanceEncounters(w.state.encounters,delta);w.wilderness?.capture(now);};
+ const ordinary=[['slime-2','slime',55,-10],['leaf-1','leaf',120,35],['wild-thorn-spore','spore',195,80],['wild-thorn-guardian','guardian',200,-55]] as const;
+ const defs:({id:string;type:string;x:number;y:number;boss?:'thorn-crown'})[]=kind==='boss'?[{id:'boss-thorn-crown',type:'wolf',boss:'thorn-crown',x:-1700,y:1490}]:kind==='dummy'?[]:ordinary.map(([id,type,dx,dy])=>({id,type,x:s.player.x+dx,y:s.player.y+dy}));
+ if(kind==='crowd'){const candidates=ENCOUNTERS.flatMap(g=>g.members.filter(m=>!m.boss).map(m=>({...m,group:g}))).sort((a,b)=>Math.hypot(a.x-s.player.x,a.y-s.player.y)-Math.hypot(b.x-s.player.x,b.y-s.player.y));defs.length=0;for(const m of candidates.slice(0,16))defs.push({id:m.id,type:m.type,x:m.x,y:m.y});}
+ // 隔离站位也遵守正式存档活动范围，家园锚点仍取实际遭遇定义。
+ for(const d of defs){const member=encounterUnit(d.id);if(member){const g=w.state.encounters.groups[member.group];g.activated=true;if(d.boss){for(const m of ENCOUNTERS.find(d=>d.id===member.group)!.members)if(!m.id.startsWith('boss-'))settleEncounterDeath(w.state.encounters,m.id,false);g.boss!.stage='battle';g.boss!.warning=0;g.boss!.attempt=1;}}
+ const original=encounterUnit(d.id),definition=original&&ENCOUNTERS.find(g=>g.id===original.group),home=original??d;let point={x:d.x,y:d.y};if(!d.boss&&original){const desired={x:s.player.x+Math.cos(defs.indexOf(d))*150,y:s.player.y+Math.sin(defs.indexOf(d))*120},dx=desired.x-home.x,dy=desired.y-home.y,len=Math.hypot(dx,dy)||1,z=Math.min(len,enemyLeashRadius({...original,leashRadius:definition!.radius})*.5);point={x:home.x+dx/len*z,y:home.y+dy/len*z};}const e=w.makeEnemy({...d,x:home.x,y:home.y});Object.assign(e,standing(point));if(definition)e.leashRadius=definition.radius;e.playerAggroUntil=w.sim+600000;e.cool=w.sim+900;e.face={x:-1,y:0};if(d.boss){e.bossAttempt=1;e.bossBattle=initialBossBattle(w.sim);}w.enemies.push(e);
+ }
+ w.wilderness?.capture(w.sim);validate(w.state);w.combat.setIntent(kind==='dummy'?{x:0,y:-1}:{x:1,y:0});w.ui.close(true);w.refresh();field<HTMLOutputElement>('rune-lab-output').textContent=`${slots.map(id=>RUNES.find(r=>r.id===id)!.name).join(' · ')}\n共鸣：${resolveDuos(w.state.runes.slots,wind).filter(d=>d.active).map(d=>d.name).join('、')||'无'}\n目标：${kind==='boss'?'荆冠猎王（正式生命与招式）':kind==='crowd'?'十六敌':kind==='dummy'?'村内木桩':'四敌'}`;
+ }finally{resetting=false;}}
+ const observe=()=>{if(w.active&&!w.ui.paused){frames.push(w.game.loop.rawDelta);if(frames.length>3600)frames.shift();}};w.events.on('postupdate',observe);
+ const snapshot=()=>({说明:'隔离初始状态，正式键鼠、敌人、战斗结算与视觉。帧间隔包含慢帧；不据此推断其他设备帧率。',环境:{浏览器:navigator.userAgent,视口:[innerWidth,innerHeight],像素比:devicePixelRatio,渲染器:w.game.renderer.type},帧间隔:frames,对象数:w.children.length,符文:w.runes?.snapshot(),敌人:w.enemies.map(e=>({id:e.id,hp:e.hp,x:e.x,y:e.y,boss:e.boss,attack:e.attack?.attackId})),世界:(window as any).__farwind()});
+ (window as any).__runeLab={reset,snapshot};field<HTMLButtonElement>('rune-lab-reset').onclick=()=>void reset().catch(e=>field<HTMLOutputElement>('rune-lab-output').textContent=e.message);field<HTMLButtonElement>('rune-lab-equip').onclick=()=>w.ui.open('runes');field<HTMLButtonElement>('rune-lab-close').onclick=()=>{panel.open=false;w.ui.focusGame();};w.events.once('shutdown',()=>{w.events.off('postupdate',observe);panel.remove();delete (window as any).__runeLab;});
+}

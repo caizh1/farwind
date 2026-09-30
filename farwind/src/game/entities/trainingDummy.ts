@@ -25,9 +25,9 @@ export class TrainingDummyView {
       .setOrigin(0.5)
       .setDepth(target.y + 1);
   }
-  hit(now: number, damage: number) {
+  hit(now: number, damage: number,numbers=true) {
     const text = this.scene.add
-      .text(this.target.x, this.target.y - 70, String(damage), {
+      .text(this.target.x, this.target.y - 70, String(Math.round(damage*10)/10), {
         fontFamily: "serif",
         fontSize: "22px",
         color: "#fff2b8",
@@ -35,7 +35,7 @@ export class TrainingDummyView {
         strokeThickness: 3,
       })
       .setOrigin(0.5)
-      .setDepth(this.target.y + 5);
+      .setDepth(this.target.y + 5).setVisible(numbers);
     this.numbers.push({ at: now, text });
     if (this.numbers.length > 6) this.numbers.shift()!.text.destroy();
   }

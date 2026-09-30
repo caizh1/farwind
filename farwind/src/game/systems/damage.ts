@@ -1,10 +1,11 @@
 export type Faction = "village" | "hostile";
 export type UnitRef = { id: string; faction: Faction; hp: number; armor: number;
-  reduction?: number; shield?: { amount: number; remaining: number } };
+  reduction?: number; hpFloor?:number; shield?: { amount: number; remaining: number } };
 export type DamageEvent = {
   sourceId: string; targetId: string; attackId: string; amount: number;
-  sourceType: "player-melee" | "player-wind" | "guard-melee" | "tower-arrow" | "enemy-melee" | "enemy-shot" | "companion-melee" | "companion-shot" | "companion-element";
+  sourceType: "player-replay" | "player-rune" | "player-phantom" | "player-melee" | "player-wind" | "guard-melee" | "tower-arrow" | "enemy-melee" | "enemy-shot" | "companion-melee" | "companion-shot" | "companion-element";
   eventId: string | null;
+  sourceScale?:number;
   origin?:{x:number;y:number};
   breaksGuard?:boolean;
 };
@@ -25,11 +26,12 @@ function damage(event:DamageEvent,source:Pick<UnitRef,'id'|'faction'>,target:Uni
     source.id === target.id || source.faction === target.faction || target.hp <= 0 ||
     !event.attackId || !Number.isFinite(event.amount) || event.amount <= 0 || event.amount > 10000)
     return { applied: false, damage: 0, hp: target.hp, killed: false };
-  let damage = Math.max(1, event.amount - target.armor) * (1 - Math.max(0, Math.min(.8, target.reduction ?? 0)));
+  let damage = Math.max(event.sourceType==='player-rune'||event.sourceType==='player-phantom'||event.sourceType==='player-replay'?0:1, event.amount*(Math.max(0,Math.min(1,event.sourceScale??1))) - target.armor) * (1 - Math.max(0, Math.min(.8, target.reduction ?? 0)));
   if (target.shield && target.shield.remaining > 0) {
     const absorbed = Math.min(target.shield.amount, damage);
     target.shield.amount -= absorbed; damage -= absorbed;
   }
-  const hp = Math.max(0, target.hp - damage);
+  const hp = Math.max(Math.min(target.hp,target.hpFloor??0), target.hp - damage);
+  if(target.hpFloor!==undefined)damage=target.hp-hp;
   return { applied: true, damage, hp, killed: hp === 0 };
 }

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run tests/demon-king.test.ts tests/wilderness-enemies.test.ts tests/commissions.test.ts tests/encounters.test.ts tests/wilderness-map.test.ts tests/first-map.test.ts tests/xiaobao-combat.test.ts tests/xiaobao-navigation.test.ts tests/xiaobao.test.ts tests/skill-location.test.ts tests/skill-growth.test.ts tests/enemy-combat-v1.test.ts tests/slime-animation.test.ts tests/logic.test.ts tests/motion.test.ts tests/guard-facing.test.ts tests/player-hurt.test.ts tests/combat.test.ts tests/training.test.ts tests/map-expansion.test.ts tests/obstacles.test.ts tests/level-rework.test.ts tests/village-defense.test.ts tests/parry.test.ts tests/parry-v2.test.ts tests/parry-feedback-v3.test.ts tests/parry-ranged.test.ts tests/dialogue-portraits.test.ts tests/economy.test.ts tests/sword-wind-assets.test.ts tests/sword-wind.test.ts tests/east-defense.test.ts tests/village-raids.test.ts tests/village-integration.test.ts tests/day-night.test.ts tests/npc-life.test.ts tests/npc-life-combat.test.ts tests/npc-life-facility.test.ts tests/npc-navigation.test.ts tests/npc-speech.test.ts tests/npc-social.test.ts tests/npc-art.test.ts tests/sword-wind-audio.test.ts tests/water-motion.test.ts tests/safety-defense.test.ts",
+    "test": "vitest run tests/boss-parry.test.ts tests/enemy-pursuit.test.ts tests/camp-bosses.test.ts tests/camp-boss-accuracy.test.ts tests/camp-boss-effects.test.ts tests/combat-feel.test.ts tests/recovery-cancel.test.ts tests/demon-king.test.ts tests/wilderness-enemies.test.ts tests/commissions.test.ts tests/encounters.test.ts tests/wilderness-map.test.ts tests/first-map.test.ts tests/xiaobao-combat.test.ts tests/xiaobao-navigation.test.ts tests/xiaobao.test.ts tests/skill-location.test.ts tests/skill-growth.test.ts tests/enemy-combat-v1.test.ts tests/slime-animation.test.ts tests/logic.test.ts tests/motion.test.ts tests/guard-facing.test.ts tests/player-hurt.test.ts tests/combat.test.ts tests/training.test.ts tests/map-expansion.test.ts tests/obstacles.test.ts tests/level-rework.test.ts tests/village-defense.test.ts tests/parry.test.ts tests/parry-v2.test.ts tests/parry-feedback-v3.test.ts tests/parry-ranged.test.ts tests/dialogue-portraits.test.ts tests/economy.test.ts tests/sword-wind-assets.test.ts tests/sword-wind.test.ts tests/east-defense.test.ts tests/village-raids.test.ts tests/village-integration.test.ts tests/day-night.test.ts tests/npc-life.test.ts tests/npc-life-combat.test.ts tests/npc-life-facility.test.ts tests/npc-navigation.test.ts tests/npc-speech.test.ts tests/npc-social.test.ts tests/npc-art.test.ts tests/sword-wind-audio.test.ts tests/water-motion.test.ts tests/safety-defense.test.ts tests/runes.test.ts",
     "test:skill-growth": "npm run build -- --outDir .skill-growth-local/production && playwright test --config tools/playwright-skill-growth.config.ts",
     "test:e2e": "playwright test",
     "assets:sword-wind": "node tools/pack-sword-wind.mjs",
@@ -31,7 +31,9 @@
     "test:xiaobao": "vitest run tests/xiaobao-combat.test.ts tests/xiaobao-navigation.test.ts tests/xiaobao.test.ts && playwright test --config tools/playwright-xiaobao.config.ts",
     "test:xiaobao:integration": "vitest run tests/xiaobao-integration.test.ts",
     "assets:xiaobao:combat": "node tools/pack-xiaobao-combat.mjs",
-    "assets:wilderness-enemies": "node tools/pack-wilderness-enemies.mjs"
+    "assets:wilderness-enemies": "node tools/pack-wilderness-enemies.mjs",
+    "test:runes": "vitest run tests/runes.test.ts",
+    "test:runes:browser": "playwright test --config tools/playwright-runes.config.ts"
   },
   "dependencies": {
     "phaser": "4.2.1"

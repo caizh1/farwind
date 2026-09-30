@@ -14,7 +14,7 @@ import type { NpcLife } from "../systems/npcLife";
 import { TOWERS, GUARD_DEFS } from "../../data/defense";
 import { distance, spaceClear } from "../systems/npcNavigation";
 import { Actor } from "./actor";
-import { LIFE_ART, residentPose } from "../systems/npcAnimation";
+import { LIFE_ART, NPC_WALK, NpcMotion, residentPose } from "../systems/npcAnimation";
 export class NpcLifeView {
   residents = new Map<
     string,
@@ -23,7 +23,7 @@ export class NpcLifeView {
       label: Phaser.GameObjects.Text;
       tool: Phaser.GameObjects.Graphics;
       shadow: Phaser.GameObjects.Ellipse;
-      last: { x: number; y: number };
+      motion: NpcMotion;
       facing: number;
     }
   >();
@@ -75,8 +75,8 @@ export class NpcLifeView {
         label,
         tool,
         shadow,
-        last: { x: 0, y: 0 },
-        facing: 3,
+        motion: new NpcMotion(),
+        facing: 0,
       });
     }
     this.ink = scene.add.graphics();
@@ -308,6 +308,9 @@ export class NpcLifeView {
         cropped: v.sprite.isCropped,
         x: v.sprite.x,
         y: v.sprite.y,
+        motion: { action: v.motion.action, speed: v.motion.speed, distance: v.motion.distance, direction: v.motion.direction },
+        origin: [v.sprite.originX, v.sprite.originY],
+        flip: v.sprite.flipX,
       })),
       furniture: this.furniture
         .filter((f) => f.sprite.visible)
@@ -415,20 +418,16 @@ export class NpcLifeView {
     for (const [id, v] of this.residents) {
       const n = life.data.people.find((n) => n.id === id)!,
         p = n.body!,
-        visible = p.space === space,
-        dx = p.x - v.last.x,
-        dy = p.y - v.last.y,
-        moved = Math.hypot(dx, dy) > 0.01;
-      if (moved)
-        v.facing =
-          Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 2 : 3) : dy < 0 ? 1 : 0;
-      v.last = { x: p.x, y: p.y };
+        visible = p.space === space;
+      v.motion.sample(p, now, p.health !== "down");
+      v.facing = v.motion.direction;
       const working =
           n.action?.phase === "perform" &&
           ["work", "repair", "treat", "habit"].includes(n.action.kind),
         sleeping = n.action?.kind === "sleep" && n.action.phase === "perform",
         depth = (indoor ? 7500 : 0) + p.y,
-        pose = residentPose(n, moved, now),
+        pose = residentPose(n, v.motion),
+        walkingArt = pose.texture.startsWith("npc-motion-"),
         bed =
           sleeping &&
           FACILITIES.find(
@@ -440,6 +439,9 @@ export class NpcLifeView {
       // 职业四帧按真实进度推进；睡眠仅露出原角色头部，身体由被褥遮挡。
       v.sprite
         .setTexture(pose.texture, bed ? 1 : pose.frame)
+        .setOrigin(0.5, walkingArt ? NPC_WALK.footY / NPC_WALK.frameSize : 1)
+        .setDisplaySize(walkingArt ? NPC_WALK.frameSize * 78 / NPC_WALK.bodyHeight : 76,
+          walkingArt ? NPC_WALK.frameSize * 78 / NPC_WALK.bodyHeight : 92)
         .setCrop()
         .setPosition(p.x, p.y - (bed ? 29 : 0))
         .setDepth(depth)

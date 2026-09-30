@@ -344,7 +344,7 @@ export function validateXiaobao(
         point(e) &&
         n(
           e.hp,
-          creatureMaxHP((enemyDefs.find((d) => d.id === e.id)??encounterUnit(e.id))!.type,encounterUnit(e.id)?.elite),
+          creatureMaxHP((enemyDefs.find((d) => d.id === e.id)??encounterUnit(e.id))!.type,encounterUnit(e.id)?.elite,encounterUnit(e.id)?.boss),
           0.001,
         ) &&
         n(e.control, 800) &&

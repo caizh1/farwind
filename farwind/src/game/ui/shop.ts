@@ -1,3 +1,5 @@
+import {RUNES} from '../../data/runes';
+import {runeIcon} from './runeIcons';
 import { items, itemIcon, type ItemId } from "../../data/content";
 import { shops, salePrices, type ShopId } from "../../data/economy";
 import { count } from "../systems/state";
@@ -47,6 +49,10 @@ export function showShop(ui: Interface, id: ShopId) {
       shop.name,
       `<div class="shop-summary"><b>铜币 ${s.coins}</b><span>行囊 ${s.bag.filter(Boolean).length}/24格</span></div><p>${shop.greeting}</p><div class="shop-tabs">${id === "inn" ? '<button data-flow="rest">休息补给</button><button data-flow="sleep">住一晚 · 睡到清晨06:00 · 12铜币</button>' : ""}${id !== "inn" ? '<button data-flow="buy">购买</button>' : ""}${id === "general" ? '<button data-flow="sell">出售材料</button>' : ""}${id === "healer" ? '<button data-flow="exchange">调制药剂</button>' : ""}</div>${review ? `<div class="trade-review"><h2>确认${name}</h2><p>${detail}</p><p class="muted">保存成功才完成交易。确认后请等待结果。</p></div>` : list.length ? `<div class="shop-form"><label>物品<select id="shop-item" aria-label="物品">${list.map((item) => `<option value="${item}" ${item === selected ? "selected" : ""}>${items[item].name} · ${flow === "buy" ? `单价${(shop.goods as Partial<Record<ItemId, number>>)[item]} / 库存${s.shopStock[`${id}:${item}`]}` : `单价${salePrices[item]} / 持有${count(s, item)}`}</option>`).join("")}</select></label><label>数量<input id="shop-quantity" type="number" min="1" max="99" step="1" value="${amount}" inputmode="numeric"></label></div><p id="shop-description">${items[selected!].description}</p><p id="shop-total">${detail}</p>` : `<p>${detail}</p>${flow === "exchange" ? `<p>持有药草${count(s, "herb")}、浆果${count(s, "berry")}</p>` : ""}`}<p id="shop-feedback" role="status" aria-live="polite">${feedback}</p><div class="row">${review ? `<button id="shop-confirm">确认${flow === "buy" ? "购买" : flow === "sell" ? "出售" : flow === "exchange" ? "兑换" : flow === "sleep" ? "住宿" : "休息"}</button><button id="shop-back">重新选择</button>` : '<button id="shop-review">核对交易</button>'}<button id="close">离开商店</button></div>`,
     );
+    if(id==='general'){
+      const row=document.createElement('section');row.className='rune-shop';row.setAttribute('aria-label','低阶符文商店');row.innerHTML=RUNES.filter(r=>r.acquisition.kind==='shop').map(r=>`<button data-rune-buy="${r.id}" ${s.runes.owned.includes(r.id)||s.coins<(r.acquisition.price??0)?'disabled':''}>${runeIcon(r.id,28)}<span>${r.name} · ${s.runes.owned.includes(r.id)?'已收藏':r.acquisition.price+'铜币'}</span></button>`).join('');ui.modal.querySelector('.shop-summary')!.after(row);
+      row.querySelectorAll<HTMLButtonElement>('[data-rune-buy]').forEach(b=>b.onclick=async()=>{if(ui.economyBusy)return;ui.economyBusy=true;try{await ui.actions.runeChange({kind:'claim',id:b.dataset.runeBuy!,shop:'general'});render('符文已购入收藏并保存，不占行囊。');}catch(e){render((e as Error).message);}finally{ui.economyBusy=false;}});
+    }
     ui.modal.querySelectorAll<HTMLButtonElement>("[data-flow]").forEach((b) => {
       b.setAttribute("aria-pressed", String(b.dataset.flow === flow));
       b.onclick = () => {

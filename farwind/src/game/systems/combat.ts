@@ -40,7 +40,12 @@ export const STRIKES = [
   },
 ] as const;
 export const COMBAT = {
+  // 主角与普通敌人的脚底阴影半宽合计约40像素，首领保留更大占地。
+  bodySpacing: 40,
+  bossBodySpacing: 56,
   buffer: 150,
+  dashAttackTail: 140,
+  heavyDashTail: 110,
   grace: 200,
   chainWindow: 100,
   restartWindow: 150,
@@ -97,7 +102,7 @@ export type ParryAction = {
 export type ActionKind = "attack" | "parry" | "dash";
 export const actionPriority = { attack: 1, parry: 2, dash: 3 } as const;
 export type ActionRequest = { kind: ActionKind; at: number; sequence: number; axis: {x:number;y:number} };
-export type Target = { id: string; x: number; y: number; hp: number };
+export type Target = { id: string; x: number; y: number; hp: number; disabled?: boolean; boss?: string };
 export type Attack = {
   delivery?: "blade" | "wind";
   sourceContactId?: string;
@@ -126,6 +131,35 @@ export const facingVector = (d: Facing): [number, number] =>
       [1, 0],
     ] as const
   )[d] as [number, number];
+// 截到第一次身体接触，保证不同帧率停在同一边界；已有重叠允许向外退开。
+function bodyMotionFraction(
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+  targets: readonly Target[],
+) {
+  const dx = b.x - a.x, dy = b.y - a.y, length = dx * dx + dy * dy;
+  if (length === 0) return 1;
+  let fraction = 1;
+  for (const e of targets) {
+    if (e.hp <= 0 || e.disabled) continue;
+    const x = a.x - e.x, y = a.y - e.y, start = x * x + y * y;
+    const spacing = e.boss ? COMBAT.bossBodySpacing : COMBAT.bodySpacing;
+    const dot = x * dx + y * dy;
+    if (start < spacing * spacing - 1e-7) {
+      if (dot < 0) return 0;
+      continue;
+    }
+    if (dot >= 0) continue;
+    const discriminant = dot * dot - length * (start - spacing * spacing);
+    if (discriminant <= 0) continue;
+    const contact = (-dot - Math.sqrt(discriminant)) / length;
+    fraction = Math.min(fraction, Math.max(0, contact));
+  }
+  return fraction;
+}
+export function clearBodyMotion(a: {x: number; y: number}, b: {x: number; y: number}, targets: readonly Target[]) {
+  return bodyMotionFraction(a, b, targets) >= 1 - 1e-7;
+}
 export function sweepMove(
   p: { x: number; y: number },
   dx: number,
@@ -135,13 +169,16 @@ export function sweepMove(
     a: { x: number; y: number },
     b: { x: number; y: number },
   ) => boolean = () => true,
+  bodies: readonly Target[] = [],
 ) {
   const n = Math.max(1, Math.ceil(Math.hypot(dx, dy) / 6));
   for (let i = 0; i < n; i++) {
     const horizontal = { x: p.x + dx / n, y: p.y };
+    horizontal.x = p.x + (horizontal.x - p.x) * bodyMotionFraction(p, horizontal, bodies);
     if (!blocked(horizontal.x, horizontal.y) && clear(p, horizontal))
       p.x = horizontal.x;
     const vertical = { x: p.x, y: p.y + dy / n };
+    vertical.y = p.y + (vertical.y - p.y) * bodyMotionFraction(p, vertical, bodies);
     if (!blocked(vertical.x, vertical.y) && clear(p, vertical))
       p.y = vertical.y;
   }
@@ -177,6 +214,8 @@ export function enemyTint(now: number, flashUntil: number, windup: number) {
   return now < flashUntil ? 0xff8585 : windup > 0 ? 0xffce84 : null;
 }
 export class CombatController {
+  dashCostMultiplier=1;
+  recoveryCancelEnabled=false;
   swordWindEnabled=false;
   swordWindConfig:SwordWindConfig|null=null;
   chainOwner:number|null=null;
@@ -208,6 +247,7 @@ export class CombatController {
   reservationOwner: number | null = null;
   hitStopRemaining = 0;
   lastHitStopRequested = 0;
+  stoppedAttacks=new Set<number>();
   readyUntil = 0;
   settleUntil = 0;
   carryUntil = 0;
@@ -223,7 +263,19 @@ export class CombatController {
   dashCooldown = 0;
   dashX = 0;
   dashY = 0;
-  clearInputs() {
+  // 诊断使用同一模拟时钟；跨动作请求有独立的有限寿命，不改变连段预约。
+  actionHistory: {kind:ActionKind;at:number;legal:number;executed?:number;cleared?:number;expires:number;reason:string}[]=[];
+  private recordAction(kind:ActionKind,at:number,legal:number,expires:number,reason:string,executed?:number,cleared?:number) {
+    if(executed!==undefined||cleared!==undefined)for(let i=this.actionHistory.length-1;i>=0;i--){const r=this.actionHistory[i];if(r.kind===kind&&r.at===at&&r.reason==='已接收'){legal=r.legal;break;}}
+    this.actionHistory.push({kind,at,legal,expires,reason,executed,cleared});
+    if(this.actionHistory.length>96)this.actionHistory.shift();
+  }
+  clearInputs(reason?:string,now=0) {
+    if(reason){
+      if(this.pending)this.recordAction('attack',this.requestedAt,now,this.bufferUntil,`已清理：${reason}`,undefined,now);
+      if(this.parryPending)this.recordAction('parry',this.parryPending.at,now,this.parryPending.until,`已清理：${reason}`,undefined,now);
+      if(this.dashPending)this.recordAction('dash',this.dashPending.at,now,this.dashPending.until,`已清理：${reason}`,undefined,now);
+    }
     this.pending = false;
     this.bufferUntil = 0;
     this.reservationOwner = null;
@@ -256,6 +308,7 @@ export class CombatController {
   }
   // 仅在真实伤害应用后调用；练习切换等动作清理仍使用 hurt()。
   takeHit(now:number,facing:Facing,direction:{x:number;y:number},root:{x:number;y:number}) {
+    this.clearInputs('受击',now);
     this.hurt();
     const length=Math.hypot(direction.x,direction.y),[x,y]=facingVector(facing);
     this.hurtReaction={start:now,until:now+PLAYER_HURT.duration,facing,
@@ -269,28 +322,38 @@ export class CombatController {
     if (a) {
       const m = attackConfig(a), elapsed = now-a.start;
       if(a.stage===4) {
-        if(elapsed>=m.windup)legal=Math.max(legal,a.start+strikeDuration(m)-SWORD_WIND.cancelTail);
+        if(elapsed>=m.windup)legal=Math.max(legal,a.start+(this.recoveryCancelEnabled?m.windup+m.active:strikeDuration(m)-SWORD_WIND.cancelTail));
       }
-      else if (a.stage === 3) legal = Math.max(legal,a.start+strikeDuration(m)-120);
+      else if (a.stage === 3) legal = Math.max(legal,a.start+(this.recoveryCancelEnabled?m.windup+m.active:strikeDuration(m)-120));
       else if (elapsed >= m.windup && elapsed < m.windup+m.active)
         legal = Math.max(legal,a.start+m.windup+m.active);
     }
     return legal;
   }
+  dashLegalAt(now:number) {
+    const a=this.attack;
+    let legal=Math.max(now,this.dashCooldown,this.dashUntil,this.actionLockUntil);
+    if(a){const m=attackConfig(a);legal=Math.max(legal,a.start+(this.recoveryCancelEnabled?m.windup+m.active:strikeDuration(m)-(a.stage===4?SWORD_WIND.cancelTail:a.stage===3?COMBAT.heavyDashTail:COMBAT.chainWindow)));}
+    return legal;
+  }
   requestParry(now: number, facing: Facing) {
-    if(this.hurting(now)){this.lastRejection="受击恢复中";return false;}
+    if(this.hurting(now)){this.lastRejection="受击恢复中";this.recordAction('parry',now,this.actionLockUntil,now+PARRY.buffer,this.lastRejection);return false;}
     if (this.parryPending && now > this.parryPending.until) this.parryPending = null;
-    if (this.parryPending || (this.parry && this.parry.successAt === undefined && now < this.parry.actionUntil)) return false;
+    if (this.parryPending || (this.parry && this.parry.successAt === undefined && now < this.parry.actionUntil)) {this.lastRejection=this.parryPending?'已有弹反预约':'架剑动作进行中';this.recordAction('parry',now,this.parryLegalAt(now),now+PARRY.buffer,this.lastRejection);return false;}
     this.lastParryRequestAt=now;
+    this.dashPending=null;
     this.parryPending = {at:now,until:now+PARRY.buffer,facing};
     this.lastRejection = "";
+    this.recordAction('parry',now,this.parryLegalAt(now),now+PARRY.buffer,'已接收');
     return true;
   }
   // 同时输入在共同入口只取最高优先级；拒绝不会转为下一种动作。
   requestActions(requests: ActionRequest[], now: number, p: {stamina:number}, fallback: Facing) {
-    if(this.hurting(now)){if(requests.length)this.lastRejection="受击恢复中";return;}
+    if(this.hurting(now)){if(requests.length)this.lastRejection="受击恢复中";for(const r of requests)this.recordAction(r.kind,now,this.actionLockUntil,now+COMBAT.buffer,this.lastRejection);return;}
     const top = [...requests].sort((a,b)=>actionPriority[b.kind]-actionPriority[a.kind] || a.sequence-b.sequence)[0];
     if (!top) return;
+    this.lastRejection='';
+    for(const lower of requests)if(lower!==top)this.recordAction(lower.kind,now,now,now,'同帧优先级拒绝');
     const {axis} = top, facing: Facing = Math.hypot(axis.x,axis.y)
       ? Math.abs(axis.x)>Math.abs(axis.y) ? axis.x<0?2:3 : axis.y<0?1:0
       : this.intentFacing;
@@ -301,6 +364,7 @@ export class CombatController {
       this.parryPending = null;
       this.pending = false;
       this.dashPending = {at:now,until:now+COMBAT.buffer,axis:{...axis},facing};
+      this.recordAction('dash',now,this.dashLegalAt(now),now+COMBAT.buffer,'已接收');
     }
   }
   flushActions(now: number, p: {stamina:number}) {
@@ -311,19 +375,17 @@ export class CombatController {
     if (this.parry && now >= this.parry.actionUntil) this.parry = null;
     const dash = this.dashPending;
     if (dash) {
-      if (now > dash.until) this.dashPending = null;
+      if (now > dash.until) {this.recordAction('dash',dash.at,this.dashLegalAt(now),dash.until,'缓冲到期');this.dashPending = null;}
       else if (this.requestDash(now,p.stamina,dash.axis,dash.facing)) {
-        p.stamina -= COMBAT.dash.cost;
+        p.stamina -= (COMBAT.dash.cost*this.dashCostMultiplier);
         this.dashPending = null;
+        this.recordAction('dash',dash.at,now,dash.until,'已执行',now);
         started.push("dash");
-      } else if (!(this.parry && now < this.parry.actionUntil) && this.hitStopRemaining <= 0 && !(this.attack?.stage===4 && now<this.attack.start+this.total(4)-SWORD_WIND.cancelTail && dash.until>=this.attack.start+this.total(4)-SWORD_WIND.cancelTail)) {
-        this.lastRejection = p.stamina < COMBAT.dash.cost ? "体力不足" : "风步尚不可用";
-        this.dashPending = null;
-      }
+      } else this.lastRejection = p.stamina < (COMBAT.dash.cost*this.dashCostMultiplier) ? "体力不足" : "等待风步取消点";
     }
     const request = this.parryPending;
     if (request && !this.dashPending) {
-      if (now > request.until) this.parryPending = null;
+      if (now > request.until) {this.recordAction('parry',request.at,this.parryLegalAt(now),request.until,'缓冲到期');this.parryPending = null;}
       else if (now >= this.parryLegalAt(now) && p.stamina >= PARRY.cost) {
         this.cancelAttack();
         this.parry = {id:++this.parrySerial,start:now,facing:request.facing,actionUntil:now+PARRY.recovery};
@@ -334,6 +396,7 @@ export class CombatController {
         this.afterguard = null;
         this.lastFacing = request.facing;
         p.stamina -= PARRY.cost;
+        this.recordAction('parry',request.at,now,request.until,'已执行',now);
         started.push("parry");
       } else this.lastRejection = p.stamina < PARRY.cost ? "体力不足" : "动作不可取消";
     }
@@ -377,7 +440,7 @@ export class CombatController {
     if(this.autoCounter)boundaries.push(this.autoCounter.at);
     if(this.parryPending) boundaries.push(this.parryLegalAt(now),this.parryPending.until);
     if(this.pending) boundaries.push(this.requestedAt,this.bufferUntil);
-    if(this.dashPending) boundaries.push(this.parry?.actionUntil??0,this.dashPending.until);
+    if(this.dashPending) boundaries.push(this.dashLegalAt(now),this.dashPending.until);
     if(this.parry)boundaries.push(this.parry.actionUntil,this.parry.start+PARRY.precise,this.parry.start+PARRY.active);
     boundaries.push(this.dashUntil,this.dashStart+COMBAT.dash.invulnStart,this.dashStart+COMBAT.dash.invulnEnd,this.regenUntil,
       this.hurtReaction?.until??0,this.hurtReaction?this.hurtReaction.start+PLAYER_HURT.knockDuration:0);
@@ -404,6 +467,7 @@ export class CombatController {
     this.reservationOwner = null;
     this.hitStopRemaining = 0;
     this.lastHitStopRequested = 0;
+    this.stoppedAttacks.clear();
     this.readyUntil = 0;
     this.settleUntil = 0;
     this.carryUntil = 0;
@@ -414,17 +478,21 @@ export class CombatController {
     this.dashArmed = false;
     this.dashUntil = 0;
     this.dashCooldown = cooldown;
+    this.actionHistory=[];
   }
   requestAttack(now: number) {
-    if(this.hurting(now)){this.lastRejection="受击恢复中";return;}
-    if (this.pending && now > this.bufferUntil) this.pending = false;
-    if (this.dashUntil > now || this.pending) return;
+    if(this.hurting(now)){this.lastRejection="受击恢复中";this.recordAction('attack',now,this.actionLockUntil,now+COMBAT.buffer,this.lastRejection);return;}
+    if (this.pending && now > this.bufferUntil) this.clearAttackReservation('缓冲到期',now);
+    if(this.pending){this.lastRejection='已有同实例预约';this.recordAction('attack',now,now,now,this.lastRejection);return;}
+    if(this.dashUntil>now&&this.dashUntil-now>COMBAT.dashAttackTail){
+      this.lastRejection='风步输入过早';this.recordAction('attack',now,this.dashUntil,now+COMBAT.dashAttackTail,this.lastRejection);return;
+    }
     if (
       this.attack && this.attack.stage>=3 &&
       now < this.attack.start + this.total(this.attack.stage) - COMBAT.restartWindow
-    )
-      return;
+    ) {this.lastRejection='重击承诺阶段';this.recordAction('attack',now,this.attack.start+this.total(this.attack.stage),now+COMBAT.buffer,this.lastRejection);return;}
     this.pending = true;
+    this.lastRejection='';
     this.requestedAt = now;
     const a = this.attack;
     this.reservationOwner = a?.id ?? (now<=this.chainUntil ? this.chainOwner : null);
@@ -435,16 +503,19 @@ export class CombatController {
         : a && a.stage < this.maxStage
         ? Math.max(now, a.start + this.total(a.stage) - COMBAT.chainWindow) +
           COMBAT.buffer
-        : now + COMBAT.buffer;
+        : now + (this.dashUntil>now?COMBAT.dashAttackTail:COMBAT.buffer);
+    this.recordAction('attack',now,this.dashUntil>now?this.dashUntil:a?a.start+this.total(a.stage)-(a.stage<this.maxStage?COMBAT.chainWindow:0):now,this.bufferUntil,'已接收');
   }
   // 表现停顿冻结整个世界模拟；使用未冻结的帧delta扣减，不累计多目标时长。
-  stopOnHit(stage: number) {
-    if(stage===4){this.lastHitStopRequested=SWORD_WIND.hitStop;this.hitStopRemaining=Math.max(this.hitStopRemaining,SWORD_WIND.hitStop);return;}
+  stopOnHit(stage: number,attackId?:number) {
+    if(attackId!==undefined){if(this.stoppedAttacks.has(attackId))return false;this.stoppedAttacks.add(attackId);if(this.stoppedAttacks.size>32)this.stoppedAttacks.delete(this.stoppedAttacks.values().next().value!);}
+    if(stage===4){this.lastHitStopRequested=SWORD_WIND.hitStop;this.hitStopRemaining=Math.max(this.hitStopRemaining,SWORD_WIND.hitStop);return true;}
     this.lastHitStopRequested=COMBAT.hitStop[stage-1];
     this.hitStopRemaining = Math.max(
       this.hitStopRemaining,
       COMBAT.hitStop[stage - 1],
     );
+    return true;
   }
   advanceFrame(delta: number) {
     const spent = Math.min(Math.max(0, delta), this.hitStopRemaining);
@@ -460,16 +531,9 @@ export class CombatController {
     const a = this.attack;
     facing = this.effectiveFacing(now, facing);
     if (
-      now < this.dashCooldown ||
-      now < this.dashUntil ||
-      stamina < COMBAT.dash.cost
+      now < this.dashLegalAt(now) ||
+      stamina < (COMBAT.dash.cost*this.dashCostMultiplier)
       || now < this.actionLockUntil
-    )
-      return false;
-    if (
-      a &&
-      (a.stage === 4 ? now-a.start < this.total(4)-SWORD_WIND.cancelTail : a.stage === 3 ||
-        now - a.start < this.total(a.stage) - COMBAT.chainWindow)
     )
       return false;
     this.dashArmed = !!a || now < this.settleUntil || now < this.carryUntil;
@@ -570,8 +634,8 @@ export class CombatController {
     let cursor = prev;
     for (let guard = 0; guard < 8; guard++) {
       const a = this.attack;
-      if(this.pending && this.reservationOwner!==null && this.reservationOwner!==(a?.id??this.chainOwner))this.clearAttackReservation();
-      if(this.pending && !a && this.reservationOwner!==null && cursor>this.chainUntil)this.clearAttackReservation();
+      if(this.pending && this.reservationOwner!==null && this.reservationOwner!==(a?.id??this.chainOwner))this.clearAttackReservation('所属攻击已失效',cursor);
+      if(this.pending && !a && this.reservationOwner!==null && cursor>this.chainUntil)this.clearAttackReservation('连段窗口到期',cursor);
       const end = a ? a.start + this.total(a.stage) : Infinity;
       const legal = a ? end - (a.stage < this.maxStage ? COMBAT.chainWindow : 0) : cursor;
       const auto = this.autoCounter;
@@ -615,6 +679,7 @@ export class CombatController {
               (vy * m.step * overlap) / m.active / steps,
               blocked,
               motionClear,
+              targets,
             );
             resolve();
           }
@@ -640,6 +705,7 @@ export class CombatController {
             ? this.nextStage
             : 1;
         if(!auto)this.pending = false;
+        if(!auto)this.recordAction('attack',this.requestedAt,consumeAt,this.bufferUntil,'已执行',consumeAt);
         this.attack = {
           id: ++this.serial,
           comboId: stage === 1 ? ++this.comboSerial : this.comboSerial,
@@ -673,7 +739,7 @@ export class CombatController {
       cursor = stop;
       if (stop >= now) break;
     }
-    if (this.pending && now > this.bufferUntil) this.pending = false;
+    if (this.pending && now > this.bufferUntil) this.clearAttackReservation('缓冲到期',now);
     if (this.dashUntil > prev) {
       const fraction =
         (Math.min(now, this.dashUntil) - Math.max(prev, this.dashStart)) /
@@ -695,7 +761,7 @@ export class CombatController {
       if(distance>0)sweepMove(p,hurt.direction.x*distance,hurt.direction.y*distance,blocked,motionClear);
     }
   }
-  clearAttackReservation(){this.pending=false;this.bufferUntil=0;this.reservationOwner=null;}
+  clearAttackReservation(reason?:string,now=0){if(this.pending&&reason)this.recordAction('attack',this.requestedAt,now,this.bufferUntil,reason,undefined,now);this.pending=false;this.bufferUntil=0;this.reservationOwner=null;}
   diagnostic(now: number) {
     const m = this.attack ? attackConfig(this.attack) : null;
     return {
@@ -717,6 +783,10 @@ export class CombatController {
       attackConfig: m,
       counterAttack: this.attack?.counter ?? null,
       lastRejection: this.lastRejection,
+      actions: this.actionHistory,
+      recoveryCancelEnabled:this.recoveryCancelEnabled,
+      parryLegalAt:this.parryLegalAt(now),
+      dashLegalAt: this.dashLegalAt(now),
       phase: this.phase(now),
       effectiveFacing: this.effectiveFacing(now, this.lastFacing),
       ready: !this.attack && now >= this.dashUntil && now < this.readyUntil,

@@ -25,6 +25,7 @@ import {
   enemyNavigation,
   nearestStanding,
   localPath,
+  enemyLeashRadius,
   NAV,
   type EnemyBody,
 } from "../src/game/systems/enemy";
@@ -467,9 +468,11 @@ it("桥面边界与站立口径一致；训练只忽略自身底座，邻物仍�
 });
 it("回家半径边界不在追击与返回间抖动", () => {
   const e = enemy(3000, 1100);
-  e.x = 3421;
-  const p = { x: 3560, y: 1100 };
-  const trace = tickFor(e, p, 600);
+  const radius=enemyLeashRadius(e)+1;
+  const start=Array.from({length:24},(_,n)=>({x:e.homeX+Math.cos(n*Math.PI/12)*radius,y:e.homeY+Math.sin(n*Math.PI/12)*radius})).find(q=>!motionBlocked(q.x,q.y)&&clearMotionLine(q,e));
+  expect(start).toBeDefined();Object.assign(e,start);
+  const p = { x: e.x+(e.x-e.homeX)/radius*139, y:e.y+(e.y-e.homeY)/radius*139 };
+  const trace = tickFor(e, p, 2000);
   expect(trace.every((q) => q.ai !== "追击" && q.ai !== "绕障")).toBe(true);
   expect(Math.hypot(e.x - e.homeX, e.y - e.homeY)).toBeLessThanOrEqual(8);
 });

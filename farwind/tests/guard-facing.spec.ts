@@ -108,7 +108,8 @@ test("GUARD-FACING-01", async ({ page }) => {
       expect(b.朝向).toBe(a.朝向 >= 2 ? 3 : 0);
     }
   }
-  expect(forwardSteps).toBeGreaterThan(10);
+  // 读档后可能只剩几像素斜向路段；按实际转向逐样本验证，不能用渲染帧数门槛判定朝向错误。
+  expect(forwardSteps).toBeGreaterThan(0);
   expect(resumed.at(-1).朝向).toBe(0);
   await page.screenshot({
     path: `docs/npc-life/evidence/${evidence}-turn.png`,

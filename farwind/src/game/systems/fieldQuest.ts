@@ -8,7 +8,10 @@ import type {World} from "../scenes/World";
 export function southQuestObjective(s:State){
  if(s.fieldQuests["south-supply"]==="available")return "到公共委托簿或药师处领取南路补给委托";
  if(s.fieldQuests["south-supply"]==="complete")return "南路采集恢复，孢根巢地的来袭已停止";
- return !campCleared(s.encounters,"south-spore-camp")?"沿南门采集道，清理药草洼地南方的孢根巢地":count(s,"herb")<2?"采集药草×2，返回药师或公共委托簿":"带药草×2回村，向药师或公共委托簿交付";
+ const boss=s.encounters.groups["south-spore-camp"].boss;
+ if(boss?.stage==="warning")return "驻守杂兵已灭，等待孢心巢母入场";
+ if(boss?.stage==="battle")return "击败孢心巢母，完成孢根巢地清除";
+ return !campCleared(s.encounters,"south-spore-camp")?"沿南门采集道，清理孢根巢地驻守，再击败孢心巢母":count(s,"herb")<2?"采集药草×2，返回药师或公共委托簿":"带药草×2回村，向药师或公共委托簿交付";
 }
 export function southQuestSnapshot(state:State,action:"accept"|"complete"){
  const s=validate(state),p=s.player,healer=s.life.people.find(p=>p.id==="healer")?.body;

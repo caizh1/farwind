@@ -1,5 +1,5 @@
 import { validate, type State } from "./state";
-// 所有世界写入共用一把锁。保存期间冻结有效模拟时间，避免副本发布丢失战斗变化。
+// 会发布副本的原子事务使用此锁；普通战斗快照只进保存队列，不持有该锁。
 export class StateCommit {
   busy = false;
   constructor(

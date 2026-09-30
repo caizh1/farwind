@@ -1,0 +1,483 @@
+{
+  "说明": "固定无障碍逻辑样本；玩家位置始终不变，读取正式起手、移动、弹丸和接触结果。修复前后使用同一断言，不以命中弹道上的人工目标替代瞄准目标。",
+  "样本": [
+    {
+      "首领": "孢心巢母",
+      "技能": "菌冠横扫",
+      "目标距离": 130,
+      "是否提前出招": true,
+      "应先接近": false,
+      "身体接触": null,
+      "攻击": {
+        "attackId": "boss-spore-heart:战斗0:1",
+        "attackerId": "boss-spore-heart",
+        "type": "spore",
+        "startedAt": 1000,
+        "lockAt": 1350,
+        "contactAt": 1650,
+        "activeUntil": 1850,
+        "recoveryUntil": 2070,
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "locked": true,
+        "shape": "sweep",
+        "range": 140,
+        "halfAngle": 1.3962634015954636,
+        "parryable": true,
+        "damage": 22,
+        "cancelled": false,
+        "resolved": true,
+        "emitted": false,
+        "motionAt": 12,
+        "scanAt": 1850,
+        "boss": "spore-heart",
+        "bossSkill": 2,
+        "bossPart": 0,
+        "bossAttempt": 0,
+        "step": 12,
+        "bossCocoon": false,
+        "bossGeometry": {
+          "kind": "sector",
+          "point": {
+            "x": 0,
+            "y": 0
+          },
+          "radius": 115,
+          "halfAngle": 1.2566370614359172,
+          "offset": 0,
+          "rear": false
+        },
+        "previousGeometry": {
+          "kind": "sector",
+          "a": {
+            "x": 11.7,
+            "y": 0
+          },
+          "b": {
+            "x": 11.7,
+            "y": 0
+          },
+          "radius": 115,
+          "halfAngle": 1.2566370614359172,
+          "direction": {
+            "x": 1,
+            "y": 0
+          }
+        },
+        "geometry": {
+          "kind": "sector",
+          "a": {
+            "x": 12,
+            "y": 0
+          },
+          "b": {
+            "x": 12,
+            "y": 0
+          },
+          "radius": 115,
+          "halfAngle": 1.2566370614359172,
+          "direction": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      }
+    },
+    {
+      "首领": "孢心巢母",
+      "技能": "孢囊爆裂",
+      "目标距离": 300,
+      "是否提前出招": true,
+      "应先接近": false,
+      "身体接触": null,
+      "攻击": {
+        "attackId": "boss-spore-heart:战斗0:1",
+        "attackerId": "boss-spore-heart",
+        "type": "spore",
+        "startedAt": 1000,
+        "lockAt": 1550,
+        "contactAt": 2100,
+        "activeUntil": 3700,
+        "recoveryUntil": 3920,
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "locked": true,
+        "shape": "sweep",
+        "range": 300,
+        "halfAngle": 1.3962634015954636,
+        "parryable": false,
+        "damage": 30,
+        "cancelled": false,
+        "resolved": false,
+        "emitted": false,
+        "motionAt": 0,
+        "scanAt": 3700,
+        "boss": "spore-heart",
+        "bossSkill": 3,
+        "bossPart": 0,
+        "bossAttempt": 0,
+        "step": 0,
+        "bossArea": "ring",
+        "bossCocoon": false,
+        "bossGeometry": {
+          "kind": "ring",
+          "point": {
+            "x": 0,
+            "y": 0
+          },
+          "radius": 240,
+          "halfAngle": 1.2566370614359172,
+          "offset": 0,
+          "rear": false
+        }
+      }
+    },
+    {
+      "首领": "荆冠猎王",
+      "技能": "双段扑猎",
+      "目标距离": 300,
+      "是否提前出招": true,
+      "应先接近": false,
+      "身体接触": null,
+      "攻击": {
+        "attackId": "boss-thorn-crown:战斗0:1",
+        "attackerId": "boss-thorn-crown",
+        "type": "wolf",
+        "startedAt": 1000,
+        "lockAt": 1400,
+        "contactAt": 1700,
+        "activeUntil": 1960,
+        "recoveryUntil": 2180,
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "locked": true,
+        "shape": "sweep",
+        "range": 300,
+        "halfAngle": 1.3962634015954636,
+        "parryable": true,
+        "damage": 22,
+        "cancelled": false,
+        "resolved": true,
+        "emitted": false,
+        "motionAt": 170,
+        "scanAt": 1960,
+        "boss": "thorn-crown",
+        "bossSkill": 0,
+        "bossPart": 0,
+        "bossAttempt": 0,
+        "step": 170,
+        "bossCocoon": false,
+        "bossGeometry": {
+          "kind": "sector",
+          "point": {
+            "x": 0,
+            "y": 0
+          },
+          "radius": 36,
+          "halfAngle": 0.8,
+          "offset": 0,
+          "rear": false
+        },
+        "previousGeometry": {
+          "kind": "sector",
+          "a": {
+            "x": 166.73076923076923,
+            "y": 0
+          },
+          "b": {
+            "x": 166.73076923076923,
+            "y": 0
+          },
+          "radius": 36,
+          "halfAngle": 0.8,
+          "direction": {
+            "x": 1,
+            "y": 0
+          }
+        },
+        "geometry": {
+          "kind": "sector",
+          "a": {
+            "x": 170,
+            "y": 0
+          },
+          "b": {
+            "x": 170,
+            "y": 0
+          },
+          "radius": 36,
+          "halfAngle": 0.8,
+          "direction": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      }
+    },
+    {
+      "首领": "荆冠猎王",
+      "技能": "交叉爪击",
+      "目标距离": 130,
+      "是否提前出招": true,
+      "应先接近": false,
+      "身体接触": null,
+      "攻击": {
+        "attackId": "boss-thorn-crown:战斗0:1",
+        "attackerId": "boss-thorn-crown",
+        "type": "wolf",
+        "startedAt": 1000,
+        "lockAt": 1350,
+        "contactAt": 1650,
+        "activeUntil": 1850,
+        "recoveryUntil": 2070,
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "locked": true,
+        "shape": "sweep",
+        "range": 140,
+        "halfAngle": 1.3962634015954636,
+        "parryable": true,
+        "damage": 22,
+        "cancelled": false,
+        "resolved": true,
+        "emitted": false,
+        "motionAt": 0,
+        "scanAt": 1850,
+        "boss": "thorn-crown",
+        "bossSkill": 1,
+        "bossPart": 0,
+        "bossAttempt": 0,
+        "step": 0,
+        "bossCocoon": false,
+        "bossGeometry": {
+          "kind": "sector",
+          "point": {
+            "x": 0,
+            "y": 0
+          },
+          "radius": 115,
+          "halfAngle": 0.7,
+          "offset": -0.55,
+          "rear": false
+        },
+        "previousGeometry": {
+          "kind": "sector",
+          "a": {
+            "x": 0,
+            "y": 0
+          },
+          "b": {
+            "x": 0,
+            "y": 0
+          },
+          "radius": 115,
+          "halfAngle": 0.7,
+          "direction": {
+            "x": 0.8525245220595057,
+            "y": -0.5226872289306592
+          }
+        },
+        "geometry": {
+          "kind": "sector",
+          "a": {
+            "x": 0,
+            "y": 0
+          },
+          "b": {
+            "x": 0,
+            "y": 0
+          },
+          "radius": 115,
+          "halfAngle": 0.7,
+          "direction": {
+            "x": 0.8525245220595057,
+            "y": -0.5226872289306592
+          }
+        }
+      }
+    },
+    {
+      "首领": "荆冠猎王",
+      "技能": "侧跃反扑",
+      "目标距离": 300,
+      "是否提前出招": true,
+      "应先接近": false,
+      "身体接触": null,
+      "攻击": {
+        "attackId": "boss-thorn-crown:战斗0:1",
+        "attackerId": "boss-thorn-crown",
+        "type": "wolf",
+        "startedAt": 1000,
+        "lockAt": 1650,
+        "contactAt": 1950,
+        "activeUntil": 2230,
+        "recoveryUntil": 2450,
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "locked": true,
+        "shape": "sweep",
+        "range": 300,
+        "halfAngle": 1.3962634015954636,
+        "parryable": true,
+        "damage": 30,
+        "cancelled": false,
+        "resolved": true,
+        "emitted": false,
+        "motionAt": 180,
+        "scanAt": 2230,
+        "boss": "thorn-crown",
+        "bossSkill": 3,
+        "bossPart": 0,
+        "bossAttempt": 0,
+        "step": 180,
+        "bossCocoon": false,
+        "bossGeometry": {
+          "kind": "sector",
+          "point": {
+            "x": 0,
+            "y": 0
+          },
+          "radius": 38,
+          "halfAngle": 1.2566370614359172,
+          "offset": 0,
+          "rear": false
+        },
+        "bossSideStep": 64,
+        "bossSideMotion": 0,
+        "previousGeometry": {
+          "kind": "sector",
+          "a": {
+            "x": 176.78571428571428,
+            "y": 0
+          },
+          "b": {
+            "x": 176.78571428571428,
+            "y": 0
+          },
+          "radius": 38,
+          "halfAngle": 1.2566370614359172,
+          "direction": {
+            "x": 1,
+            "y": 0
+          }
+        },
+        "geometry": {
+          "kind": "sector",
+          "a": {
+            "x": 180,
+            "y": 0
+          },
+          "b": {
+            "x": 180,
+            "y": 0
+          },
+          "radius": 38,
+          "halfAngle": 1.2566370614359172,
+          "direction": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      }
+    },
+    {
+      "首领": "崩岩獠王",
+      "技能": "环形震地",
+      "目标距离": 300,
+      "是否提前出招": true,
+      "应先接近": false,
+      "身体接触": null,
+      "攻击": {
+        "attackId": "boss-crag-tusk:战斗0:1",
+        "attackerId": "boss-crag-tusk",
+        "type": "boar",
+        "startedAt": 1000,
+        "lockAt": 1550,
+        "contactAt": 2100,
+        "activeUntil": 3800,
+        "recoveryUntil": 4020,
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "locked": true,
+        "shape": "sweep",
+        "range": 300,
+        "halfAngle": 1.3962634015954636,
+        "parryable": false,
+        "damage": 30,
+        "cancelled": false,
+        "resolved": false,
+        "emitted": false,
+        "motionAt": 0,
+        "scanAt": 3800,
+        "boss": "crag-tusk",
+        "bossSkill": 3,
+        "bossPart": 0,
+        "bossAttempt": 0,
+        "step": 0,
+        "bossArea": "ring",
+        "bossCocoon": false,
+        "bossGeometry": {
+          "kind": "ring",
+          "point": {
+            "x": 0,
+            "y": 0
+          },
+          "radius": 250,
+          "halfAngle": 1.2566370614359172,
+          "offset": 0,
+          "rear": false
+        }
+      }
+    },
+    {
+      "首领": "孢心巢母",
+      "技能": "扇形孢雨",
+      "目标距离": 280,
+      "弹道": [
+        -0.65,
+        0,
+        0.65
+      ],
+      "真实接触": [
+        {
+          "身份": "boss-spore-heart:战斗0:1:spore:1",
+          "时刻": 2868
+        }
+      ]
+    },
+    {
+      "首领": "缚枝祭主",
+      "技能": "棘针齐射",
+      "目标距离": 280,
+      "弹道": [
+        -0.75,
+        -0.35,
+        0.35,
+        0.75
+      ],
+      "真实接触": []
+    },
+    {
+      "首领": "孢心巢母",
+      "目标距离": 8,
+      "近身真实接触": 0
+    },
+    {
+      "首领": "缚枝祭主",
+      "目标距离": 8,
+      "近身真实接触": 0
+    }
+  ]
+}

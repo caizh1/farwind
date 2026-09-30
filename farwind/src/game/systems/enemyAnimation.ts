@@ -2,8 +2,10 @@ import type {EliteKind} from '../../data/maps/windbell/elites';
 import { enemyProfile, enemyKind } from '../../data/enemies';
 import { SlimeAnimation, timedPose, slimeFacing, SLIME_TIMES, type SlimeBody, type SlimePose } from './slimeAnimation';
 import type { EnemyAttack } from './enemyAttack';
-export type EnemyPose = Omit<SlimePose,'action'> & {action:SlimePose['action']|'wall'};
-export type AnimatedEnemy = SlimeBody & {type:string;maxHP?:number;eliteLevel?:number;elite?:EliteKind;face?:{x:number;y:number};wallHit?:{at:number;until:number}};
+import type {CampBossKind} from '../../data/maps/windbell/campBosses';
+import type {BossBattle} from './campBossState';
+export type EnemyPose = Omit<SlimePose,'action'|'provisional'> & {action:SlimePose['action']|'wall';provisional:boolean};
+export type AnimatedEnemy = SlimeBody & {type:string;boss?:CampBossKind;bossBattle?:BossBattle;maxHP?:number;eliteLevel?:number;elite?:EliteKind;face?:{x:number;y:number};wallHit?:{at:number;until:number}};
 export class EnemyAnimation {
   motion=new SlimeAnimation();
   sample(body:AnimatedEnemy,attack:EnemyAttack|null|undefined,now:number):EnemyPose {

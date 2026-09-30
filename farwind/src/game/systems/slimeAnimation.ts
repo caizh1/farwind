@@ -48,7 +48,7 @@ export function slimePose(action: SlimeAction, facing: Facing, elapsed: number, 
   }
   return { action, frame: offset + frame, index, facing, phase, elapsed, provisional: true };
 }
-export type SlimeBody = { x: number; y: number; hp?: number; staggerUntil?:number; parried?: { at: number; until: number; direction: { x: number; y: number }; perfect: boolean } };
+export type SlimeBody = { x: number; y: number; hp?: number; staggerUntil?:number; recoil?:{at:number}; parried?: { at: number; until: number; direction: { x: number; y: number }; perfect: boolean } };
 export class SlimeAnimation {
   facing: Facing = 0;
   distance = 0;
@@ -81,7 +81,8 @@ export class SlimeAnimation {
       return slimePose('death', this.facing, now - this.deathAt);
     }
     if (parried) return slimePose(parried.perfect ? 'perfect' : 'parry', this.facing, now - parried.at);
-    if (hurt) return slimePose('hurt', this.facing, (now - this.hurtAt)*320/hurtDuration);
+    // 小受创仍保留未被取消的出手姿态；后坐交给独立表现偏移，不能暗示攻击已中断。
+    if (hurt && (!attacking||!body.recoil)) return slimePose('hurt', this.facing, (now - this.hurtAt)*320/hurtDuration);
     if (attacking) return slimePose('attack', this.facing, now - attacking.startedAt, 0, attacking);
     return slimePose(moving ? 'walk' : 'idle', this.facing, now, this.distance);
   }

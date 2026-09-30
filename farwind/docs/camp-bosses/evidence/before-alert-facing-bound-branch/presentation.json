@@ -1,0 +1,2647 @@
+{
+  "说明": "关闭测试授予的正式构建；真实键鼠新游戏、领取补给、购买铁剑、装备、步行及清杂兵。诊断只读。检查展开小地图、顶部血条、四种显形、主角反应、输入及保存重开。",
+  "首领": "缚枝祭主",
+  "节点": [
+    {
+      "名称": "地面先出现异动，驻守死亡仍不能清除",
+      "模拟毫秒": 46452.51999999997,
+      "世界分钟": 549.678780000087,
+      "玩家": {
+        "x": 3827.5150227041445,
+        "y": 1043.4052588770357,
+        "hp": 90,
+        "stamina": 100
+      },
+      "据点": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "warning",
+          "warning": 2457.4800000000323,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 3894.8646541724197,
+            "y": 986.5550342977186,
+            "serial": 7,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 3691.6421488213364,
+            "y": 1155.6419149212375,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 3762.53764623381,
+            "y": 1170.1428281238445,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.6022213325843905,
+              "y": 0.7983291718209231
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 2500,
+            "x": 3710,
+            "y": 1100,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "动画": {
+        "hero": {
+          "action": "attack",
+          "presentationState": "active",
+          "weapon": {
+            "grip": {
+              "x": 28.311940808103564,
+              "y": -33.89335691207769
+            },
+            "tip": {
+              "x": 59.68550288608416,
+              "y": -35.1615540550421
+            },
+            "visible": true,
+            "progress": 0.5750958614679605,
+            "alpha": 0.42490413853203945,
+            "provisional": true
+          },
+          "key": "hero/combat/3/1",
+          "texture": "hero-combat-side",
+          "frame": 3,
+          "frameIndex": 3,
+          "direction": 3,
+          "phase": "active",
+          "phaseProgress": 0.5750958614679605,
+          "speed": 113.04347826089051,
+          "flip": false,
+          "root": [
+            3827.5150227041445,
+            1043.4052588770357
+          ],
+          "anchor": [
+            80,
+            154
+          ],
+          "origin": [
+            0.5,
+            0.9625
+          ],
+          "scale": [
+            0.90625,
+            0.90625
+          ],
+          "alpha": 1,
+          "provisional": true
+        },
+        "reaction": {
+          "visible": false,
+          "text": "",
+          "root": [
+            0,
+            0
+          ]
+        },
+        "camera": {
+          "view": {
+            "x": 3010,
+            "y": 491.5006774485825
+          },
+          "zoom": 0.78125
+        }
+      }
+    },
+    {
+      "名称": "显形姿态、专属粒子与旅人提剑反应",
+      "模拟毫秒": 49260.98999999999,
+      "世界分钟": 553.8914850000976,
+      "玩家": {
+        "x": 3833.038776505062,
+        "y": 1043.4052588770357,
+        "hp": 90,
+        "stamina": 100
+      },
+      "据点": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 0,
+              "move": -1,
+              "part": 0,
+              "nextAt": 1699.0100000000093,
+              "entryUntil": 1049.0100000000093,
+              "exposedUntil": -49260.98999999999,
+              "transformUntil": -49260.98999999999,
+              "controlImmuneUntil": -49260.98999999999,
+              "startedAt": -350.9899999999907
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 3894.8646541724197,
+            "y": 986.5550342977186,
+            "serial": 7,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 3691.6421488213364,
+            "y": 1155.6419149212375,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 3762.53764623381,
+            "y": 1170.1428281238445,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.6022213325843905,
+              "y": 0.7983291718209231
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 2500,
+            "x": 3710,
+            "y": 1100,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-bound-branch",
+        "x": 3710,
+        "y": 1100,
+        "hp": 2500,
+        "type": "leaf",
+        "behavior": {
+          "boss": "bound-branch",
+          "battle": {
+            "phase": 1,
+            "next": 0,
+            "move": -1,
+            "part": 0,
+            "nextAt": 50960,
+            "entryUntil": 50310,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 48910
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0,
+            "y": 1
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 55,
+            "index": 1,
+            "facing": 0,
+            "phase": "首领现身",
+            "elapsed": 49260.98999999999,
+            "provisional": false
+          }
+        }
+      },
+      "动画": {
+        "hero": {
+          "action": "idle",
+          "presentationState": "ready",
+          "weapon": {
+            "grip": {
+              "x": -9.456521739130435,
+              "y": -34.358695652173914
+            },
+            "tip": {
+              "x": -23.956521739130437,
+              "y": -69.03260869565217
+            },
+            "visible": false,
+            "progress": 0,
+            "alpha": 0,
+            "provisional": true
+          },
+          "key": "hero/alert/2",
+          "texture": "hero-parry-v2",
+          "frame": 17,
+          "frameIndex": 5,
+          "direction": 2,
+          "phase": "ready",
+          "phaseProgress": 0.25070714285713624,
+          "speed": 0,
+          "flip": true,
+          "root": [
+            3833.038776505062,
+            1043.4052588770357
+          ],
+          "anchor": [
+            80,
+            154
+          ],
+          "origin": [
+            0.5,
+            0.9625
+          ],
+          "scale": [
+            0.90625,
+            0.90625
+          ],
+          "alpha": 1,
+          "provisional": true
+        },
+        "reaction": {
+          "visible": true,
+          "text": "旅人：风被缠住了……小心！",
+          "root": [
+            3833.038776505062,
+            931.4052588770357
+          ]
+        },
+        "camera": {
+          "view": {
+            "x": 3010,
+            "y": 491.4852588770362
+          },
+          "zoom": 0.78125
+        }
+      }
+    },
+    {
+      "名称": "入场时方向输入正常生效",
+      "模拟毫秒": 49497.73000000001,
+      "世界分钟": 554.2465950000991,
+      "玩家": {
+        "x": 3844.8222900161436,
+        "y": 1043.4052588770357,
+        "hp": 90,
+        "stamina": 100
+      },
+      "据点": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 0,
+              "move": -1,
+              "part": 0,
+              "nextAt": 1462.2699999999895,
+              "entryUntil": 812.2699999999895,
+              "exposedUntil": -49497.73000000001,
+              "transformUntil": -49497.73000000001,
+              "controlImmuneUntil": -49497.73000000001,
+              "startedAt": -587.7300000000105
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 3894.8646541724197,
+            "y": 986.5550342977186,
+            "serial": 7,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 3691.6421488213364,
+            "y": 1155.6419149212375,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 3762.53764623381,
+            "y": 1170.1428281238445,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.6022213325843905,
+              "y": 0.7983291718209231
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 2500,
+            "x": 3710,
+            "y": 1100,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-bound-branch",
+        "x": 3710,
+        "y": 1100,
+        "hp": 2500,
+        "type": "leaf",
+        "behavior": {
+          "boss": "bound-branch",
+          "battle": {
+            "phase": 1,
+            "next": 0,
+            "move": -1,
+            "part": 0,
+            "nextAt": 50960,
+            "entryUntil": 50310,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 48910
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0,
+            "y": 1
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 55,
+            "index": 1,
+            "facing": 0,
+            "phase": "首领现身",
+            "elapsed": 49497.73000000001,
+            "provisional": false
+          }
+        }
+      },
+      "动画": {
+        "hero": {
+          "action": "walk",
+          "presentationState": "walk",
+          "weapon": null,
+          "key": "hero/walk/3",
+          "texture": "hero-motion",
+          "frame": 1,
+          "frameIndex": 0,
+          "direction": 3,
+          "phase": "walk",
+          "phaseProgress": 0.12274493240710171,
+          "speed": 150.0000000000109,
+          "flip": false,
+          "root": [
+            3844.8222900161436,
+            1043.4052588770357
+          ],
+          "anchor": [
+            64,
+            124
+          ],
+          "origin": [
+            0.5,
+            0.96875
+          ],
+          "scale": [
+            0.671875,
+            0.71875
+          ],
+          "alpha": 1,
+          "provisional": false
+        },
+        "reaction": {
+          "visible": true,
+          "text": "旅人：风被缠住了……小心！",
+          "root": [
+            3844.8222900161436,
+            931.4052588770357
+          ]
+        },
+        "camera": {
+          "view": {
+            "x": 3010,
+            "y": 491.4852588770362
+          },
+          "zoom": 0.78125
+        }
+      }
+    },
+    {
+      "名称": "显形结束后留出完整首招预警",
+      "模拟毫秒": 51206.08000000001,
+      "世界分钟": 556.8091200001054,
+      "玩家": {
+        "x": 3845.3095892291994,
+        "y": 1043.4052588770357,
+        "hp": 90,
+        "stamina": 100
+      },
+      "据点": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 1,
+              "move": 0,
+              "part": 0,
+              "nextAt": -246.08000000000902,
+              "entryUntil": -896.080000000009,
+              "exposedUntil": -51206.08000000001,
+              "transformUntil": -51206.08000000001,
+              "controlImmuneUntil": -51206.08000000001,
+              "startedAt": -2296.080000000009
+            },
+            "attack": {
+              "attackId": "boss-bound-branch:战斗0:1",
+              "attackerId": "boss-bound-branch",
+              "type": "leaf",
+              "startedAt": -1.0800000000090222,
+              "lockAt": 348.919999999991,
+              "contactAt": 648.919999999991,
+              "activeUntil": 848.919999999991,
+              "recoveryUntil": 1068.919999999991,
+              "direction": {
+                "x": 0.9225538327188928,
+                "y": -0.3858684046869884
+              },
+              "locked": false,
+              "shape": "sweep",
+              "range": 140,
+              "halfAngle": 1.3962634015954636,
+              "parryable": true,
+              "damage": 22,
+              "cancelled": false,
+              "resolved": false,
+              "emitted": false,
+              "motionAt": 0,
+              "scanAt": -1.0800000000090222,
+              "boss": "bound-branch",
+              "bossSkill": 0,
+              "bossPart": 0,
+              "bossAttempt": 0,
+              "step": 0,
+              "bossCocoon": false,
+              "bossGeometry": {
+                "kind": "sector",
+                "point": {
+                  "x": 3725.6275821982617,
+                  "y": 1093.4635898761728
+                },
+                "radius": 135,
+                "halfAngle": 0.72,
+                "offset": -0.65,
+                "rear": false
+              },
+              "chargeSound": true
+            },
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 3894.8646541724197,
+            "y": 986.5550342977186,
+            "serial": 7,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 3691.6421488213364,
+            "y": 1155.6419149212375,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 3762.53764623381,
+            "y": 1170.1428281238445,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.6022213325843905,
+              "y": 0.7983291718209231
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 2500,
+            "x": 3725.6275821982617,
+            "y": 1093.4635898761728,
+            "serial": 1,
+            "cooldown": 1068.919999999991,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0.9225538327188928,
+              "y": -0.3858684046869884
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-bound-branch",
+        "x": 3725.6275821982617,
+        "y": 1093.4635898761728,
+        "hp": 2500,
+        "type": "leaf",
+        "behavior": {
+          "boss": "bound-branch",
+          "battle": {
+            "phase": 1,
+            "next": 1,
+            "move": 0,
+            "part": 0,
+            "nextAt": 50960,
+            "entryUntil": 50310,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 48910
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.9225538327188928,
+            "y": -0.3858684046869884
+          },
+          "guardOpen": 0,
+          "attack": {
+            "direction": {
+              "x": 0.9225538327188928,
+              "y": -0.3858684046869884
+            },
+            "startedAt": 51205,
+            "lockAt": 51555,
+            "contactAt": 51855,
+            "activeUntil": 52055,
+            "recoveryUntil": 52275,
+            "cancelled": false,
+            "skill": 0,
+            "part": 0,
+            "geometry": {
+              "kind": "sector",
+              "point": {
+                "x": 3725.6275821982617,
+                "y": 1093.4635898761728
+              },
+              "radius": 135,
+              "halfAngle": 0.72,
+              "offset": -0.65,
+              "rear": false
+            }
+          },
+          "pose": {
+            "action": "attack",
+            "frame": 135,
+            "index": 0,
+            "facing": 3,
+            "phase": "charge",
+            "elapsed": 1.0800000000090222,
+            "provisional": false
+          }
+        }
+      },
+      "动画": {
+        "hero": {
+          "action": "idle",
+          "presentationState": "idle",
+          "weapon": null,
+          "key": "hero/idle/2",
+          "texture": "hero-motion",
+          "frame": 0,
+          "frameIndex": 0,
+          "direction": 2,
+          "phase": "idle",
+          "phaseProgress": 0,
+          "speed": 0,
+          "flip": true,
+          "root": [
+            3845.3095892291994,
+            1043.4052588770357
+          ],
+          "anchor": [
+            64,
+            124
+          ],
+          "origin": [
+            0.5,
+            0.96875
+          ],
+          "scale": [
+            0.671875,
+            0.71875
+          ],
+          "alpha": 1,
+          "provisional": false
+        },
+        "reaction": {
+          "visible": false,
+          "text": "旅人：风被缠住了……小心！",
+          "root": [
+            3845.3095892291994,
+            931.4052588770357
+          ]
+        },
+        "camera": {
+          "view": {
+            "x": 3010,
+            "y": 491.4852588770362
+          },
+          "zoom": 0.78125
+        }
+      }
+    },
+    {
+      "名称": "展开地图时中央战斗区无遮挡",
+      "模拟毫秒": 51561.700000000026,
+      "世界分钟": 557.342550000107,
+      "玩家": {
+        "x": 3845.3095892291994,
+        "y": 1043.4052588770357,
+        "hp": 90,
+        "stamina": 100
+      },
+      "据点": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 1,
+              "move": 0,
+              "part": 0,
+              "nextAt": -601.7000000000262,
+              "entryUntil": -1251.7000000000262,
+              "exposedUntil": -51561.700000000026,
+              "transformUntil": -51561.700000000026,
+              "controlImmuneUntil": -51561.700000000026,
+              "startedAt": -2651.700000000026
+            },
+            "attack": {
+              "attackId": "boss-bound-branch:战斗0:1",
+              "attackerId": "boss-bound-branch",
+              "type": "leaf",
+              "startedAt": -356.7000000000262,
+              "lockAt": -6.7000000000261934,
+              "contactAt": 293.2999999999738,
+              "activeUntil": 493.2999999999738,
+              "recoveryUntil": 713.2999999999738,
+              "direction": {
+                "x": 0.9225538327188928,
+                "y": -0.3858684046869884
+              },
+              "locked": true,
+              "shape": "sweep",
+              "range": 140,
+              "halfAngle": 1.3962634015954636,
+              "parryable": true,
+              "damage": 22,
+              "cancelled": false,
+              "resolved": false,
+              "emitted": false,
+              "motionAt": 0,
+              "scanAt": -356.7000000000262,
+              "boss": "bound-branch",
+              "bossSkill": 0,
+              "bossPart": 0,
+              "bossAttempt": 0,
+              "step": 0,
+              "bossCocoon": false,
+              "bossGeometry": {
+                "kind": "sector",
+                "point": {
+                  "x": 3725.6275821982617,
+                  "y": 1093.4635898761728
+                },
+                "radius": 135,
+                "halfAngle": 0.72,
+                "offset": -0.65,
+                "rear": false
+              },
+              "chargeSound": true
+            },
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 3894.8646541724197,
+            "y": 986.5550342977186,
+            "serial": 7,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 3691.6421488213364,
+            "y": 1155.6419149212375,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 3762.53764623381,
+            "y": 1170.1428281238445,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.6022213325843905,
+              "y": 0.7983291718209231
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 2500,
+            "x": 3725.6275821982617,
+            "y": 1093.4635898761728,
+            "serial": 1,
+            "cooldown": 713.2999999999738,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0.9225538327188928,
+              "y": -0.3858684046869884
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-bound-branch",
+        "x": 3725.6275821982617,
+        "y": 1093.4635898761728,
+        "hp": 2500,
+        "type": "leaf",
+        "behavior": {
+          "boss": "bound-branch",
+          "battle": {
+            "phase": 1,
+            "next": 1,
+            "move": 0,
+            "part": 0,
+            "nextAt": 50960,
+            "entryUntil": 50310,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 48910
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.9225538327188928,
+            "y": -0.3858684046869884
+          },
+          "guardOpen": 0,
+          "attack": {
+            "direction": {
+              "x": 0.9225538327188928,
+              "y": -0.3858684046869884
+            },
+            "startedAt": 51205,
+            "lockAt": 51555,
+            "contactAt": 51855,
+            "activeUntil": 52055,
+            "recoveryUntil": 52275,
+            "cancelled": false,
+            "skill": 0,
+            "part": 0,
+            "geometry": {
+              "kind": "sector",
+              "point": {
+                "x": 3725.6275821982617,
+                "y": 1093.4635898761728
+              },
+              "radius": 135,
+              "halfAngle": 0.72,
+              "offset": -0.65,
+              "rear": false
+            }
+          },
+          "pose": {
+            "action": "attack",
+            "frame": 137,
+            "index": 2,
+            "facing": 3,
+            "phase": "commit",
+            "elapsed": 356.7000000000262,
+            "provisional": false
+          }
+        }
+      },
+      "动画": {
+        "hero": {
+          "action": "idle",
+          "presentationState": "idle",
+          "weapon": null,
+          "key": "hero/idle/2",
+          "texture": "hero-motion",
+          "frame": 0,
+          "frameIndex": 0,
+          "direction": 2,
+          "phase": "idle",
+          "phaseProgress": 0,
+          "speed": 0,
+          "flip": true,
+          "root": [
+            3845.3095892291994,
+            1043.4052588770357
+          ],
+          "anchor": [
+            64,
+            124
+          ],
+          "origin": [
+            0.5,
+            0.96875
+          ],
+          "scale": [
+            0.671875,
+            0.71875
+          ],
+          "alpha": 1,
+          "provisional": false
+        },
+        "reaction": {
+          "visible": false,
+          "text": "旅人：风被缠住了……小心！",
+          "root": [
+            3845.3095892291994,
+            931.4052588770357
+          ]
+        },
+        "camera": {
+          "view": {
+            "x": 3010,
+            "y": 483.61607699528935
+          },
+          "zoom": 0.78125
+        }
+      }
+    },
+    {
+      "名称": "四百像素窄屏仍保留中央战斗区",
+      "模拟毫秒": 51701.760000000024,
+      "世界分钟": 557.5526400001075,
+      "玩家": {
+        "x": 3845.3095892291994,
+        "y": 1043.4052588770357,
+        "hp": 90,
+        "stamina": 88
+      },
+      "据点": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 1,
+              "move": 0,
+              "part": 0,
+              "nextAt": -741.7600000000239,
+              "entryUntil": -1391.7600000000239,
+              "exposedUntil": -51701.760000000024,
+              "transformUntil": -51701.760000000024,
+              "controlImmuneUntil": -51701.760000000024,
+              "startedAt": -2791.760000000024
+            },
+            "attack": {
+              "attackId": "boss-bound-branch:战斗0:1",
+              "attackerId": "boss-bound-branch",
+              "type": "leaf",
+              "startedAt": -496.76000000002387,
+              "lockAt": -146.76000000002387,
+              "contactAt": 153.23999999997613,
+              "activeUntil": 353.23999999997613,
+              "recoveryUntil": 573.2399999999761,
+              "direction": {
+                "x": 0.9225538327188928,
+                "y": -0.3858684046869884
+              },
+              "locked": true,
+              "shape": "sweep",
+              "range": 140,
+              "halfAngle": 1.3962634015954636,
+              "parryable": true,
+              "damage": 22,
+              "cancelled": false,
+              "resolved": false,
+              "emitted": false,
+              "motionAt": 0,
+              "scanAt": -496.76000000002387,
+              "boss": "bound-branch",
+              "bossSkill": 0,
+              "bossPart": 0,
+              "bossAttempt": 0,
+              "step": 0,
+              "bossCocoon": false,
+              "bossGeometry": {
+                "kind": "sector",
+                "point": {
+                  "x": 3725.6275821982617,
+                  "y": 1093.4635898761728
+                },
+                "radius": 135,
+                "halfAngle": 0.72,
+                "offset": -0.65,
+                "rear": false
+              },
+              "chargeSound": true
+            },
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 3894.8646541724197,
+            "y": 986.5550342977186,
+            "serial": 7,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 3691.6421488213364,
+            "y": 1155.6419149212375,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 3762.53764623381,
+            "y": 1170.1428281238445,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.6022213325843905,
+              "y": 0.7983291718209231
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 2500,
+            "x": 3725.6275821982617,
+            "y": 1093.4635898761728,
+            "serial": 1,
+            "cooldown": 573.2399999999761,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0.9225538327188928,
+              "y": -0.3858684046869884
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-bound-branch",
+        "x": 3725.6275821982617,
+        "y": 1093.4635898761728,
+        "hp": 2500,
+        "type": "leaf",
+        "behavior": {
+          "boss": "bound-branch",
+          "battle": {
+            "phase": 1,
+            "next": 1,
+            "move": 0,
+            "part": 0,
+            "nextAt": 50960,
+            "entryUntil": 50310,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 48910
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.9225538327188928,
+            "y": -0.3858684046869884
+          },
+          "guardOpen": 0,
+          "attack": {
+            "direction": {
+              "x": 0.9225538327188928,
+              "y": -0.3858684046869884
+            },
+            "startedAt": 51205,
+            "lockAt": 51555,
+            "contactAt": 51855,
+            "activeUntil": 52055,
+            "recoveryUntil": 52275,
+            "cancelled": false,
+            "skill": 0,
+            "part": 0,
+            "geometry": {
+              "kind": "sector",
+              "point": {
+                "x": 3725.6275821982617,
+                "y": 1093.4635898761728
+              },
+              "radius": 135,
+              "halfAngle": 0.72,
+              "offset": -0.65,
+              "rear": false
+            }
+          },
+          "pose": {
+            "action": "attack",
+            "frame": 137,
+            "index": 2,
+            "facing": 3,
+            "phase": "commit",
+            "elapsed": 496.76000000002387,
+            "provisional": false
+          }
+        }
+      },
+      "动画": {
+        "hero": {
+          "action": "attack",
+          "presentationState": "guard",
+          "weapon": {
+            "grip": {
+              "x": 7.25,
+              "y": -34.98913043478261
+            },
+            "tip": {
+              "x": 32.78260869565217,
+              "y": -65.8804347826087
+            },
+            "visible": false,
+            "progress": 0,
+            "alpha": 0,
+            "provisional": true
+          },
+          "key": "hero/parry-v2/3",
+          "texture": "hero-parry-v2",
+          "frame": 12,
+          "frameIndex": 0,
+          "direction": 3,
+          "phase": "guard",
+          "phaseProgress": 0.43073567707181154,
+          "speed": 0,
+          "flip": false,
+          "root": [
+            3845.3095892291994,
+            1043.4052588770357
+          ],
+          "anchor": [
+            80,
+            154
+          ],
+          "origin": [
+            0.5,
+            0.9625
+          ],
+          "scale": [
+            0.90625,
+            0.90625
+          ],
+          "alpha": 1,
+          "provisional": true
+        },
+        "reaction": {
+          "visible": false,
+          "text": "旅人：风被缠住了……小心！",
+          "root": [
+            3845.3095892291994,
+            931.4052588770357
+          ]
+        },
+        "camera": {
+          "view": {
+            "x": 2844.228898681113,
+            "y": -226.6809358892557
+          },
+          "zoom": 0.3125
+        }
+      }
+    }
+  ],
+  "布局": [
+    {
+      "小地图展开": true,
+      "任务展开": false,
+      "视口": {
+        "width": 400,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 10,
+          "y": 10,
+          "right": 390,
+          "bottom": 74,
+          "width": 380,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 21,
+            "y": 18,
+            "right": 379,
+            "bottom": 38,
+            "width": 358,
+            "height": 20
+          },
+          {
+            "x": 21,
+            "y": 41,
+            "right": 379,
+            "bottom": 47,
+            "width": 358,
+            "height": 6
+          },
+          {
+            "x": 21,
+            "y": 50,
+            "right": 379,
+            "bottom": 66,
+            "width": 358,
+            "height": 16
+          },
+          {
+            "x": 21,
+            "y": 18,
+            "right": 77,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 263.1328125,
+            "y": 19.75,
+            "right": 379,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 196,
+            "bottom": 166.5,
+            "width": 186,
+            "height": 84.5
+          },
+          {
+            "x": 204,
+            "y": 82,
+            "right": 390,
+            "bottom": 353.5,
+            "width": 186,
+            "height": 271.5
+          }
+        ],
+        "scroll": 400,
+        "width": 400
+      }
+    },
+    {
+      "小地图展开": true,
+      "任务展开": false,
+      "视口": {
+        "width": 820,
+        "height": 560
+      },
+      "边界": {
+        "boss": {
+          "x": 190,
+          "y": 10,
+          "right": 630,
+          "bottom": 74,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 201,
+            "y": 18,
+            "right": 619,
+            "bottom": 38,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 201,
+            "y": 41,
+            "right": 619,
+            "bottom": 47,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 201,
+            "y": 50,
+            "right": 619,
+            "bottom": 66,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 201,
+            "y": 18,
+            "right": 257,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 503.1328125,
+            "y": 19.75,
+            "right": 619,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 289,
+            "bottom": 170.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 570,
+            "y": 82,
+            "right": 810,
+            "bottom": 371,
+            "width": 240,
+            "height": 289
+          }
+        ],
+        "scroll": 820,
+        "width": 820
+      }
+    },
+    {
+      "小地图展开": true,
+      "任务展开": false,
+      "视口": {
+        "width": 1000,
+        "height": 628
+      },
+      "边界": {
+        "boss": {
+          "x": 280,
+          "y": 22,
+          "right": 720,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 291,
+            "y": 30,
+            "right": 709,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 291,
+            "y": 53,
+            "right": 709,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 291,
+            "y": 62,
+            "right": 709,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 291,
+            "y": 30,
+            "right": 347,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 593.1328125,
+            "y": 31.75,
+            "right": 709,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 94,
+            "right": 305,
+            "bottom": 182.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 734,
+            "y": 94,
+            "right": 974,
+            "bottom": 383,
+            "width": 240,
+            "height": 289
+          }
+        ],
+        "scroll": 1000,
+        "width": 1000
+      }
+    },
+    {
+      "小地图展开": true,
+      "任务展开": false,
+      "视口": {
+        "width": 1280,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 439.5,
+          "y": 22,
+          "right": 879.5,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 868.5,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 450.5,
+            "y": 53,
+            "right": 868.5,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 450.5,
+            "y": 62,
+            "right": 868.5,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 506.5,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 752.6328125,
+            "y": 31.75,
+            "right": 868.5,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 22,
+            "right": 305,
+            "bottom": 110.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 1014,
+            "y": 22,
+            "right": 1254,
+            "bottom": 311,
+            "width": 240,
+            "height": 289
+          }
+        ],
+        "scroll": 1280,
+        "width": 1280
+      }
+    },
+    {
+      "小地图展开": true,
+      "任务展开": true,
+      "视口": {
+        "width": 400,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 10,
+          "y": 10,
+          "right": 390,
+          "bottom": 74,
+          "width": 380,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 21,
+            "y": 18,
+            "right": 379,
+            "bottom": 38,
+            "width": 358,
+            "height": 20
+          },
+          {
+            "x": 21,
+            "y": 41,
+            "right": 379,
+            "bottom": 47,
+            "width": 358,
+            "height": 6
+          },
+          {
+            "x": 21,
+            "y": 50,
+            "right": 379,
+            "bottom": 66,
+            "width": 358,
+            "height": 16
+          },
+          {
+            "x": 21,
+            "y": 18,
+            "right": 77,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 263.1328125,
+            "y": 19.75,
+            "right": 379,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 196,
+            "bottom": 166.5,
+            "width": 186,
+            "height": 84.5
+          },
+          {
+            "x": 204,
+            "y": 82,
+            "right": 390,
+            "bottom": 474.6875,
+            "width": 186,
+            "height": 392.6875
+          }
+        ],
+        "scroll": 400,
+        "width": 400
+      }
+    },
+    {
+      "小地图展开": true,
+      "任务展开": true,
+      "视口": {
+        "width": 820,
+        "height": 560
+      },
+      "边界": {
+        "boss": {
+          "x": 190,
+          "y": 10,
+          "right": 630,
+          "bottom": 74,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 201,
+            "y": 18,
+            "right": 619,
+            "bottom": 38,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 201,
+            "y": 41,
+            "right": 619,
+            "bottom": 47,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 201,
+            "y": 50,
+            "right": 619,
+            "bottom": 66,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 201,
+            "y": 18,
+            "right": 257,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 503.1328125,
+            "y": 19.75,
+            "right": 619,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 289,
+            "bottom": 170.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 570,
+            "y": 82,
+            "right": 810,
+            "bottom": 492.1875,
+            "width": 240,
+            "height": 410.1875
+          }
+        ],
+        "scroll": 820,
+        "width": 820
+      }
+    },
+    {
+      "小地图展开": true,
+      "任务展开": true,
+      "视口": {
+        "width": 1000,
+        "height": 628
+      },
+      "边界": {
+        "boss": {
+          "x": 280,
+          "y": 22,
+          "right": 720,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 291,
+            "y": 30,
+            "right": 709,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 291,
+            "y": 53,
+            "right": 709,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 291,
+            "y": 62,
+            "right": 709,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 291,
+            "y": 30,
+            "right": 347,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 593.1328125,
+            "y": 31.75,
+            "right": 709,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 94,
+            "right": 305,
+            "bottom": 182.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 734,
+            "y": 94,
+            "right": 974,
+            "bottom": 504.1875,
+            "width": 240,
+            "height": 410.1875
+          }
+        ],
+        "scroll": 1000,
+        "width": 1000
+      }
+    },
+    {
+      "小地图展开": true,
+      "任务展开": true,
+      "视口": {
+        "width": 1280,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 439.5,
+          "y": 22,
+          "right": 879.5,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 868.5,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 450.5,
+            "y": 53,
+            "right": 868.5,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 450.5,
+            "y": 62,
+            "right": 868.5,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 506.5,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 752.6328125,
+            "y": 31.75,
+            "right": 868.5,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 22,
+            "right": 305,
+            "bottom": 110.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 1014,
+            "y": 22,
+            "right": 1254,
+            "bottom": 432.1875,
+            "width": 240,
+            "height": 410.1875
+          }
+        ],
+        "scroll": 1280,
+        "width": 1280
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": true,
+      "视口": {
+        "width": 400,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 10,
+          "y": 10,
+          "right": 390,
+          "bottom": 74,
+          "width": 380,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 21,
+            "y": 18,
+            "right": 379,
+            "bottom": 38,
+            "width": 358,
+            "height": 20
+          },
+          {
+            "x": 21,
+            "y": 41,
+            "right": 379,
+            "bottom": 47,
+            "width": 358,
+            "height": 6
+          },
+          {
+            "x": 21,
+            "y": 50,
+            "right": 379,
+            "bottom": 66,
+            "width": 358,
+            "height": 16
+          },
+          {
+            "x": 21,
+            "y": 18,
+            "right": 77,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 263.1328125,
+            "y": 19.75,
+            "right": 379,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 196,
+            "bottom": 166.5,
+            "width": 186,
+            "height": 84.5
+          },
+          {
+            "x": 204,
+            "y": 82,
+            "right": 390,
+            "bottom": 275.1875,
+            "width": 186,
+            "height": 193.1875
+          }
+        ],
+        "scroll": 400,
+        "width": 400
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": true,
+      "视口": {
+        "width": 820,
+        "height": 560
+      },
+      "边界": {
+        "boss": {
+          "x": 190,
+          "y": 10,
+          "right": 630,
+          "bottom": 74,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 201,
+            "y": 18,
+            "right": 619,
+            "bottom": 38,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 201,
+            "y": 41,
+            "right": 619,
+            "bottom": 47,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 201,
+            "y": 50,
+            "right": 619,
+            "bottom": 66,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 201,
+            "y": 18,
+            "right": 257,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 503.1328125,
+            "y": 19.75,
+            "right": 619,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 289,
+            "bottom": 170.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 570,
+            "y": 82,
+            "right": 810,
+            "bottom": 275.1875,
+            "width": 240,
+            "height": 193.1875
+          }
+        ],
+        "scroll": 820,
+        "width": 820
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": true,
+      "视口": {
+        "width": 1000,
+        "height": 628
+      },
+      "边界": {
+        "boss": {
+          "x": 280,
+          "y": 22,
+          "right": 720,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 291,
+            "y": 30,
+            "right": 709,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 291,
+            "y": 53,
+            "right": 709,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 291,
+            "y": 62,
+            "right": 709,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 291,
+            "y": 30,
+            "right": 347,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 593.1328125,
+            "y": 31.75,
+            "right": 709,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 94,
+            "right": 305,
+            "bottom": 182.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 734,
+            "y": 94,
+            "right": 974,
+            "bottom": 287.1875,
+            "width": 240,
+            "height": 193.1875
+          }
+        ],
+        "scroll": 1000,
+        "width": 1000
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": true,
+      "视口": {
+        "width": 1280,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 439.5,
+          "y": 22,
+          "right": 879.5,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 868.5,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 450.5,
+            "y": 53,
+            "right": 868.5,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 450.5,
+            "y": 62,
+            "right": 868.5,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 506.5,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 752.6328125,
+            "y": 31.75,
+            "right": 868.5,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 22,
+            "right": 305,
+            "bottom": 110.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 1014,
+            "y": 22,
+            "right": 1254,
+            "bottom": 215.1875,
+            "width": 240,
+            "height": 193.1875
+          }
+        ],
+        "scroll": 1280,
+        "width": 1280
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": false,
+      "视口": {
+        "width": 400,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 10,
+          "y": 10,
+          "right": 390,
+          "bottom": 74,
+          "width": 380,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 21,
+            "y": 18,
+            "right": 379,
+            "bottom": 38,
+            "width": 358,
+            "height": 20
+          },
+          {
+            "x": 21,
+            "y": 41,
+            "right": 379,
+            "bottom": 47,
+            "width": 358,
+            "height": 6
+          },
+          {
+            "x": 21,
+            "y": 50,
+            "right": 379,
+            "bottom": 66,
+            "width": 358,
+            "height": 16
+          },
+          {
+            "x": 21,
+            "y": 18,
+            "right": 77,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 263.1328125,
+            "y": 19.75,
+            "right": 379,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 196,
+            "bottom": 166.5,
+            "width": 186,
+            "height": 84.5
+          },
+          {
+            "x": 204,
+            "y": 82,
+            "right": 390,
+            "bottom": 154,
+            "width": 186,
+            "height": 72
+          }
+        ],
+        "scroll": 400,
+        "width": 400
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": false,
+      "视口": {
+        "width": 820,
+        "height": 560
+      },
+      "边界": {
+        "boss": {
+          "x": 190,
+          "y": 10,
+          "right": 630,
+          "bottom": 74,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 201,
+            "y": 18,
+            "right": 619,
+            "bottom": 38,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 201,
+            "y": 41,
+            "right": 619,
+            "bottom": 47,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 201,
+            "y": 50,
+            "right": 619,
+            "bottom": 66,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 201,
+            "y": 18,
+            "right": 257,
+            "bottom": 38,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 503.1328125,
+            "y": 19.75,
+            "right": 619,
+            "bottom": 36.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 10,
+            "y": 82,
+            "right": 289,
+            "bottom": 170.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 570,
+            "y": 82,
+            "right": 810,
+            "bottom": 154,
+            "width": 240,
+            "height": 72
+          }
+        ],
+        "scroll": 820,
+        "width": 820
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": false,
+      "视口": {
+        "width": 1000,
+        "height": 628
+      },
+      "边界": {
+        "boss": {
+          "x": 280,
+          "y": 22,
+          "right": 720,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 291,
+            "y": 30,
+            "right": 709,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 291,
+            "y": 53,
+            "right": 709,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 291,
+            "y": 62,
+            "right": 709,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 291,
+            "y": 30,
+            "right": 347,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 593.1328125,
+            "y": 31.75,
+            "right": 709,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 94,
+            "right": 305,
+            "bottom": 182.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 734,
+            "y": 94,
+            "right": 974,
+            "bottom": 166,
+            "width": 240,
+            "height": 72
+          }
+        ],
+        "scroll": 1000,
+        "width": 1000
+      }
+    },
+    {
+      "小地图展开": false,
+      "任务展开": false,
+      "视口": {
+        "width": 1280,
+        "height": 720
+      },
+      "边界": {
+        "boss": {
+          "x": 439.5,
+          "y": 22,
+          "right": 879.5,
+          "bottom": 86,
+          "width": 440,
+          "height": 64
+        },
+        "children": [
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 868.5,
+            "bottom": 50,
+            "width": 418,
+            "height": 20
+          },
+          {
+            "x": 450.5,
+            "y": 53,
+            "right": 868.5,
+            "bottom": 59,
+            "width": 418,
+            "height": 6
+          },
+          {
+            "x": 450.5,
+            "y": 62,
+            "right": 868.5,
+            "bottom": 78,
+            "width": 418,
+            "height": 16
+          },
+          {
+            "x": 450.5,
+            "y": 30,
+            "right": 506.5,
+            "bottom": 50,
+            "width": 56,
+            "height": 20
+          },
+          {
+            "x": 752.6328125,
+            "y": 31.75,
+            "right": 868.5,
+            "bottom": 48.25,
+            "width": 115.8671875,
+            "height": 16.5
+          }
+        ],
+        "panels": [
+          {
+            "x": 26,
+            "y": 22,
+            "right": 305,
+            "bottom": 110.5,
+            "width": 279,
+            "height": 88.5
+          },
+          {
+            "x": 1014,
+            "y": 22,
+            "right": 1254,
+            "bottom": 94,
+            "width": 240,
+            "height": 72
+          }
+        ],
+        "scroll": 1280,
+        "width": 1280
+      }
+    }
+  ],
+  "错误": [],
+  "结果": "通过"
+}

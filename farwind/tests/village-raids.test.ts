@@ -60,7 +60,7 @@ describe('四门常态防御',()=>{
   Object.assign(old.defense.guards[0],{hp:0,dead:true,mode:'dead'});old.defense.guards[1].hp=57;
   for(const k of ['protectionMs','cooldownMs','retryMs','seed'])delete old.defense[k];
   delete old.defense.raid.gateId;delete old.defense.raid.spawns;
-  const migrated=validate(old);expect(migrated.schema_version).toBe(13);expect(migrated.map_version).toBe(8);
+  const migrated=validate(old);expect(migrated.schema_version).toBe(14);expect(migrated.map_version).toBe(8);
   expect(migrated.defense.guards).toHaveLength(12);expect(migrated.defense.guards[0].dead).toBe(true);expect(migrated.defense.guards[1].hp).toBe(57);
   expect(migrated.defense.raid?.members).toEqual(old.defense.raid.members);expect(validate(migrated)).toEqual(migrated);
   migrated.defense.guards.pop();expect(()=>validate(migrated)).toThrow();

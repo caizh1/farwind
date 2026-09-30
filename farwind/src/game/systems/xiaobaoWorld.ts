@@ -102,6 +102,10 @@ export function xiaobaoEnvironment(w: World): XiaobaoEnvironment {
     enemies,
     allies,
     recent: w.xiaobaoRecent,
+    // 野怪追击时尚未创建攻击；从正式索敌结果识别主角的危险，不提前拉家园怪。
+    playerThreats: c.data.task === "follow" && outside && p.hp > 0 ? enemies.filter(e =>
+      e.hp > 0 && !e.disabled && e.nav.mode === "chase" && !e.nav.returning &&
+      w.enemyVictim(e).id === "player").map(e => e.id) : [],
     fronts: () => xiaobaoFronts(w, allies),
     move: (...args) => w.defense.move(...args),
     hit: (...args) => w.xiaobaoHit(...args),

@@ -3,31 +3,36 @@ import sharp from "sharp";
 import { initialState } from "../src/game/systems/state";
 import { EastDefense } from "../src/game/systems/defense";
 import { NpcLife } from "../src/game/systems/npcLife";
-import { residentPose } from "../src/game/systems/npcAnimation";
+import { NpcMotion, residentPose } from "../src/game/systems/npcAnimation";
 
 describe("职业素材与实际行动", () => {
   it("工作帧跟随进度，暂停不推进，移动或取消立即回到原角色图集", () => {
     const s = initialState();
     s.time = 540;
     const l = new NpcLife(s, new EastDefense(s.defense, 0)),
-      n = s.life.people[1];
+      n = s.life.people[1], motion = new NpcMotion();
     l.begin(
       n,
       l.candidates(n).find((c) => c.facility === "pharmacy")!,
     );
     n.action!.phase = "perform";
     n.action!.progress = 610;
-    expect(residentPose(n, false, 0)).toEqual({
+    expect(residentPose(n, motion)).toEqual({
       texture: "healer-work",
       frame: 2,
     });
-    expect(residentPose(n, false, 10000)).toEqual(residentPose(n, false, 0));
-    expect(residentPose(n, true, 10000).texture).toBe("healer");
+    const still = residentPose(n, motion);
+    motion.sample({ x: 0, y: 0 }, 10000);
+    expect(residentPose(n, motion)).toEqual(still);
+    motion.update({ dx: 5, dy: 0, dt: 0.05 });
+    expect(residentPose(n, motion).texture).toBe("npc-motion-healer");
+    motion.reset();
     n.action!.kind = "treat";
-    expect(residentPose(n, false, 10000).texture).toBe("healer");
+    expect(residentPose(n, motion).texture).toBe("npc-motion-healer");
     l.cancel(n, "验收中断");
-    expect(residentPose(n, false, 10000)).toEqual({
-      texture: "healer",
+    motion.direction = 0;
+    expect(residentPose(n, motion)).toEqual({
+      texture: "npc-motion-healer",
       frame: 0,
     });
   });

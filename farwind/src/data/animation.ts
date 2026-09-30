@@ -52,6 +52,10 @@ export function parryVisual(a:ParryAction,now:number,ready=false):CombatVisual {
  const pose=ready?5:success!==null?success<20?1:2:elapsed<PARRY.active?0:5;
  return defensivePose(a.facing,pose,pose===0?"guard":pose===1?"brace":pose===2?"deflect":"ready",success!==null?Math.min(1,success/PARRY.resume):Math.min(1,elapsed/PARRY.recovery));
 }
+// 只复用提剑警觉的姿态；不创建架剑动作、无敌帧或反击授权。
+export function alertVisual(facing:Facing,progress:number):CombatVisual {
+ return {...defensivePose(facing,progress<.2?0:5,'ready',progress),clip:`hero/alert/${facing}`};
+}
 export function counterVisual(a:import("../game/systems/combat").Attack,now:number,improved=true):CombatVisual {
  const m=a.config??resolveStrike(1,a.counter),elapsed=now-a.start,pose=elapsed<20?2:elapsed<m.windup?3:elapsed<m.windup+m.active?4:5;
  const phase=elapsed<m.windup?"windup":elapsed<m.windup+m.active?"active":"recovery";

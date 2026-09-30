@@ -14,7 +14,7 @@ export function rangedCounterDirection(player:Point,facing:0|1|2|3,incoming:Poin
 export function adjudicateContact(contact:EnemyContact,c:CombatController,p:Point&{stamina:number},rules:{valid:boolean;immune:boolean;clear:(a:Point,b:Point,id:string)=>boolean;attacker?:Point}):ContactResult {
   const a=contact.attack,now=contact.at;
   if(a.cancelled||a.resolved)return "invalid";
-  if(!rules.valid||!attackTouches(contact,p)||!rules.clear(contact.origin,p,a.attackerId))return "invalid";
+  if(!rules.valid||!attackTouches(contact,p)||!rules.clear(contact.origin,contact.sampledPoint??p,a.attackerId))return "invalid";
   // 只有首次真实接触才消费实例；无接触候选仍可继续扫描有效段。
   a.resolved=true;
   if(rules.immune||c.invulnerable(now))return "immune";

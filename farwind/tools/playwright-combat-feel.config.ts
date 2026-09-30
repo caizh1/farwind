@@ -1,0 +1,5 @@
+import {defineConfig} from '@playwright/test';
+import {resolve} from 'node:path';
+const production=process.env.COMBAT_PRODUCTION==='1',run=Date.now();
+// 保存/刷新包含两次冷装载；首因trace确认总45秒在第二次标题装载耗尽。只调整完整流程墙钟门槛，动作、队列和模拟边界断言保留。
+export default defineConfig({testDir:'../tests',testMatch:'combat-feel-world.spec.ts',grep:production?/complete-world/:undefined,workers:1,retries:0,timeout:90000,outputDir:resolve(`.enemy-local/combat-feel/${production?'production':'development'}-${run}-tests`),reporter:[['list'],['json',{outputFile:resolve(`.enemy-local/combat-feel/${production?'production':'development'}-${run}-results.json`)}]],use:{baseURL:`http://127.0.0.1:${production?5214:5212}`,viewport:{width:1280,height:720},trace:'retain-on-failure',launchOptions:{args:['--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']}},webServer:production?{command:'npm run preview -- --port 5214 --strictPort --outDir .enemy-local/combat-feel/production',url:'http://127.0.0.1:5214',reuseExistingServer:true}:{command:'node tools/serve-combat-feel.mjs',url:'http://127.0.0.1:5212',reuseExistingServer:true}});

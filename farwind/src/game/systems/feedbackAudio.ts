@@ -1,4 +1,4 @@
-import type {FeedbackKind,FeedbackMaterial} from './combatFeedback';
+import {isHitFeedback,type FeedbackKind,type FeedbackMaterial} from './combatFeedback';
 export const FEEDBACK_AUDIO={variants:3,voices:16,duckDb:4,duckRestore:.15,peak:.32,rate:48000} as const;
 export const soundDuration=(kind:FeedbackKind)=>kind==='parry-contact'||kind==='parry-perfect-contact'?.21:kind==='guard-start'?.065:kind==='afterguard'?.055:kind==='enemy-charge'?.23:kind==='counter-start'?0:kind==='deflect-release'?.075:kind==='counter-swing'?.125:kind==='counter-hit'?.1:.12;
 const clamp=(n:number)=>Math.max(0,Math.min(1,n));
@@ -26,6 +26,12 @@ export function synthFeedback(kind:FeedbackKind,material:FeedbackMaterial='slime
    const cut=bright*.28*Math.exp(-t/.004)+metal([1763,3089],.017)*.1;
    v=cut+(material==='slime'?low*.6*Math.exp(-t/.031)+Math.sin(2*Math.PI*177*t)*.17*Math.exp(-t/.022):noise*.22*Math.exp(-t/.027)+Math.sin(2*Math.PI*397*t)*.09*Math.exp(-t/.018));
    if(material==='straw')v=cut+noise*.14*Math.exp(-t/.02);
+  } else if(isHitFeedback(kind)) {
+   const hard=kind==='protected-hit'||material==='armor',strong=['guard-break','interrupt','kill'].includes(kind);
+   v=hard?bright*.22*Math.exp(-t/.003)+metal([1543,2797,4139],.025)*.15:
+    bright*.19*Math.exp(-t/.003)+low*(strong?.72:.5)*Math.exp(-t/(strong?.045:.026))+Math.sin(2*Math.PI*(kind==='kill'?113:181)*t)*.12*Math.exp(-t/.025);
+   if(material==='straw')v=noise*.17*Math.exp(-t/.02)+bright*.08*Math.exp(-t/.004);
+   if(kind==='guard-break')v+=metal([947,1913],.038)*.1;
   }
   data[i]=v*attack*tail;peak=Math.max(peak,Math.abs(data[i]));
  }

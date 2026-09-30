@@ -1,0 +1,115 @@
+/* 旅人装备手册：独立位图承载美术，图标、状态和按钮都留在正常文档流中。 */
+#modal.equipment-modal {
+  padding: 24px;
+  background: #142b2870;
+  backdrop-filter: none;
+}
+.panel.equipment-panel {
+  width: min(1080px, 100%);
+  min-width: 0;
+  max-width: none;
+  max-height: calc(100dvh - 48px);
+  padding: 5px 12px 10px;
+  border: 26px solid transparent;
+  border-radius: 0;
+  border-image: url("/assets/equipment/equipment-paper-frame.webp") 64 fill / 26px / 0 stretch;
+  background: none;
+  color: #243e33;
+  text-align: left;
+  overflow: auto;
+  scrollbar-color: #a28a57 #ecdfbb;
+  overscroll-behavior: contain;
+}
+.equipment-panel > header {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 20px;
+  padding-bottom: 14px;
+}
+.equipment-heading { grid-column: 2; text-align: center; min-width: 0; }
+.equipment-panel h1, .equipment-panel h2, .equipment-slot strong, .equipment-tabs button, .equipment-return {
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+}
+.equipment-panel h1 { margin: 0 0 6px; font-size: 36px; line-height: 1.25; letter-spacing: 5px; }
+.equipment-panel .equipment-heading p { margin: 0; color: #8a764e; font-size: 12px; line-height: 1.5; white-space: nowrap; }
+.equipment-tabs { display: flex; flex-wrap: wrap; justify-content: end; gap: 8px; min-width: 0; }
+.equipment-panel button { display: inline-flex; align-items: center; gap: 10px; min-width: 0; box-shadow: none; }
+.equipment-tabs button { justify-content: center; min-height: 46px; min-width: 112px; padding: 8px 16px; font-size: 18px; letter-spacing: 2px; background: #ddcfaa70; color: #30483a; border-radius: 3px; }
+.equipment-tabs button img { width: 24px; height: 24px; object-fit: contain; }
+.equipment-tabs button[aria-current], .equipment-return { background: none; color: #f6edce; border: 10px solid transparent; border-image: url("/assets/commission/ink-button.webp") 28 fill / 10px / 0 stretch; }
+.equipment-layout { display: grid; grid-template-columns: minmax(150px, .75fr) minmax(270px, 1.15fr) minmax(285px, 1.1fr); align-items: stretch; gap: 20px; min-width: 0; }
+.equipment-traveler { display: flex; flex-direction: column; justify-content: center; min-width: 0; margin: 0; border-right: 1px solid #b19a6345; padding-right: 12px; }
+.equipment-traveler img { display: block; width: 100%; height: 360px; object-fit: cover; object-position: center top; }
+.equipment-traveler figcaption { padding: 10px 10px 0; font-family: "Songti SC", "STSong", serif; color: #8b7147; font-size: 17px; line-height: 1.7; letter-spacing: 2px; }
+.equipment-slots { display: flex; flex-direction: column; justify-content: start; gap: 12px; min-width: 0; border-right: 1px solid #b19a6345; padding-right: 16px; }
+.equipment-panel .equipment-slot { width: 100%; justify-content: start; text-align: left; gap: 16px; min-height: 116px; padding: 12px 8px; background: transparent; color: inherit; border: 1px solid transparent; border-bottom-color: #b19a6360; border-radius: 5px; }
+.equipment-slot:hover { background: #ddcfaa45; }
+.equipment-panel .equipment-slot[aria-pressed="true"] { border: 2px solid #7d9e7c; background: #b7d3b345; padding: 11px 7px; }
+.equipment-icon { display: flex; justify-content: center; align-items: center; flex: 0 0 76px; width: 76px; height: 84px; border: 1px solid #ad986780; border-radius: 6px; background: #c9b78535; }
+.equipment-icon img { display: block; width: 68px; height: 74px; object-fit: contain; }
+.equipment-slot[data-equipment-slot="orb"] .equipment-icon img { object-fit: cover; }
+.equipment-slot-copy { display: flex; flex-direction: column; gap: 5px; min-width: 0; flex: 1; }
+.equipment-label { font-size: 15px; }
+.equipment-name-line { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-width: 0; }
+.equipment-slot strong { font-size: 22px; line-height: 1.3; }
+.equipment-badge { display: inline-flex; align-items: center; justify-content: center; padding: 4px 12px; border-radius: 16px; background: #527967; color: #f6edce; font-size: 12px; line-height: 1.3; white-space: nowrap; }
+.equipment-summary { color: #65715d; font-size: 13px; line-height: 1.55; }
+.equipment-detail { display: flex; flex-direction: column; min-width: 0; padding-left: 4px; }
+.equipment-art { display: block; width: 100%; height: 166px; object-fit: contain; margin: 0 0 8px; }
+.equipment-panel h2 { margin: 0; font-size: 32px; letter-spacing: 3px; line-height: 1.3; }
+.equipment-panel .equipment-effect { margin: 12px 0 0; font-size: 16px; font-weight: 600; line-height: 1.65; }
+.equipment-panel .equipment-recovery { margin: 3px 0 0; font-size: 14px; line-height: 1.7; color: #66705b; }
+.equipment-panel .equipment-rules { margin: 10px 0 0; padding: 7px; border-top: 1px solid #b19a6370; border-bottom: 1px solid #b19a6370; color: #7d754d; font-size: 14px; line-height: 1.5; text-align: center; }
+.equipment-panel .equipment-quote { margin: 10px 0; color: #8b7147; font-family: "Songti SC", "STSong", serif; font-size: 18px; letter-spacing: 1px; line-height: 1.7; text-align: center; }
+.equipment-panel .equipment-return { justify-content: center; gap: 18px; width: 100%; min-height: 52px; padding: 3px 12px; margin-top: auto; font-size: 23px; letter-spacing: 3px; }
+.equipment-return kbd { padding: 2px 6px; border-radius: 3px; background: #f6edce; color: #30483a; font-family: inherit; font-size: 16px; letter-spacing: 0; }
+.equipment-controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; font-size: 14px; }
+.equipment-change { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.equipment-change select { min-width: 0; max-width: 100%; flex: 1; padding: 8px; color: #30483a; background: #f6edce; }
+.equipment-panel .equipment-empty { margin: 0; color: #66705b; font-size: 13px; }
+.bag-equipment-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 14px; }
+@media (min-width: 1100px) and (min-height: 800px) {
+  .panel.equipment-panel { width: min(1200px, 100%); padding: 12px 20px 20px; }
+  .equipment-traveler img { height: 410px; }
+  .equipment-art { height: 208px; }
+  .equipment-panel .equipment-slot { min-height: 135px; }
+}
+@media (max-width: 1050px) {
+  .equipment-panel > header { grid-template-columns: minmax(0, 1fr) auto; }
+  .equipment-heading { grid-column: 1; text-align: left; }
+  .equipment-panel .equipment-heading p { white-space: normal; }
+  .equipment-layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .equipment-traveler { display: none; }
+}
+@media (max-width: 650px) {
+  #modal.equipment-modal { padding: 10px; }
+  .panel.equipment-panel { border-width: 18px; border-image-width: 18px; padding: 3px 2px 8px; max-height: calc(100dvh - 20px); }
+  .equipment-panel > header { grid-template-columns: minmax(0, 1fr); gap: 12px; padding-bottom: 12px; }
+  .equipment-heading { text-align: center; }
+  .equipment-panel h1 { font-size: 29px; letter-spacing: 3px; }
+  .equipment-tabs { justify-content: center; }
+  .equipment-tabs button { min-height: 42px; min-width: 108px; font-size: 16px; }
+  .equipment-layout { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .equipment-slots { padding-right: 0; border-right: 0; gap: 6px; }
+  .equipment-panel .equipment-slot { min-height: 84px; padding: 8px; gap: 12px; }
+  .equipment-panel .equipment-slot[aria-pressed="true"] { padding: 7px; }
+  .equipment-icon { flex-basis: 58px; width: 58px; height: 62px; }
+  .equipment-icon img { width: 50px; height: 56px; }
+  .equipment-slot strong { font-size: 20px; }
+  .equipment-name-line { gap: 8px; }
+  .equipment-detail { padding: 0; }
+  .equipment-art { height: 150px; }
+  .equipment-panel h2 { font-size: 28px; }
+  .equipment-panel .equipment-return { margin-top: 8px; }
+}
+@media (max-height: 500px) and (min-width: 651px) {
+  #modal.equipment-modal { padding: 10px; }
+  .panel.equipment-panel { max-height: calc(100dvh - 20px); }
+  .equipment-panel > header { gap: 12px; padding-bottom: 10px; }
+  .equipment-panel h1 { font-size: 28px; }
+  .equipment-layout { grid-template-columns: minmax(245px, 1fr) minmax(260px, 1fr); }
+  .equipment-traveler { display: none; }
+  .equipment-panel .equipment-slot { min-height: 92px; }
+  .equipment-art { height: 110px; }
+}
