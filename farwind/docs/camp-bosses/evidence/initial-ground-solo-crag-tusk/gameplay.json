@@ -1,0 +1,582 @@
+{
+  "说明": "关闭测试授予的正式构建；从新游戏出发，键鼠领取、购买、穿戴、步行、识招、弹反、风步与战斗。诊断只读，不修改坐标、生命、时钟或清剿。",
+  "路径": "独战",
+  "首领": "崩岩獠王",
+  "节点": [
+    {
+      "名称": "驻守杂兵全灭，清除尚未完成",
+      "模拟毫秒": 41752.96666666709,
+      "玩家": {
+        "x": 1481.6713417380167,
+        "y": -631.9031584292297,
+        "hp": 88,
+        "stamina": 100
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "warning",
+          "warning": 2435.7563749999536,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1480.1559065097301,
+            "y": -718.101072470279,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1524.6351976420099,
+            "y": -595.620242785141,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.2772234536240299,
+              "y": -0.9608054729032123
+            },
+            "guardOpen": 445.75637499995355
+          },
+          {
+            "hp": 1100,
+            "x": 1480,
+            "y": -730,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "危险区": []
+    },
+    {
+      "名称": "首领第一阶段正式入场",
+      "模拟毫秒": 44194.49666666707,
+      "玩家": {
+        "x": 1481.6713417380167,
+        "y": -603.4689750959029,
+        "hp": 88,
+        "stamina": 100
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 0,
+              "move": -1,
+              "part": 0,
+              "nextAt": 645.5033333329266,
+              "exposedUntil": -44194.49666666707,
+              "transformUntil": -44194.49666666707,
+              "controlImmuneUntil": -44194.49666666707,
+              "startedAt": -4.496666667073441
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1480.1559065097301,
+            "y": -718.101072470279,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1524.6351976420099,
+            "y": -595.620242785141,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.2772234536240299,
+              "y": -0.9608054729032123
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 1100,
+            "x": 1480,
+            "y": -730,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-crag-tusk",
+        "x": 1480,
+        "y": -730,
+        "hp": 1100,
+        "type": "boar",
+        "behavior": {
+          "boss": "crag-tusk",
+          "battle": {
+            "phase": 1,
+            "next": 0,
+            "move": -1,
+            "part": 0,
+            "nextAt": 44840,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 44190
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0,
+            "y": 1
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 1,
+            "index": 1,
+            "facing": 0,
+            "phase": "idle",
+            "elapsed": 44194.49666666707,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": []
+    },
+    {
+      "名称": "暂停保存重开保持首领战",
+      "模拟毫秒": 143.56000000000003,
+      "玩家": {
+        "x": 1481.6713417380167,
+        "y": -733.3822568622551,
+        "hp": 88,
+        "stamina": 100
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 2,
+              "move": 1,
+              "part": 0,
+              "nextAt": -908.5600000000001,
+              "exposedUntil": 341.43999999999994,
+              "transformUntil": -47948.56,
+              "controlImmuneUntil": -47948.56,
+              "startedAt": -3758.56
+            },
+            "attack": {
+              "attackId": "boss-crag-tusk:战斗0:2",
+              "attackerId": "boss-crag-tusk",
+              "type": "boar",
+              "startedAt": -908.5600000000001,
+              "lockAt": -558.5600000000001,
+              "contactAt": -258.56000000000006,
+              "activeUntil": -38.56000000000003,
+              "recoveryUntil": 181.43999999999997,
+              "direction": {
+                "x": 0.40497770160945556,
+                "y": 0.914326561573666
+              },
+              "locked": true,
+              "shape": "sweep",
+              "range": 140,
+              "halfAngle": 1.3962634015954636,
+              "parryable": true,
+              "damage": 22,
+              "cancelled": true,
+              "resolved": true,
+              "emitted": true,
+              "motionAt": 0,
+              "scanAt": -258.56000000000006,
+              "boss": "crag-tusk",
+              "bossSkill": 1,
+              "bossPart": 0,
+              "bossAttempt": 0,
+              "step": 0,
+              "bossCocoon": false,
+              "bossGeometry": {
+                "kind": "sector",
+                "point": {
+                  "x": 1479.5737781469202,
+                  "y": -735.9848420974957
+                },
+                "radius": 140,
+                "halfAngle": 1.413716694115407,
+                "offset": 0,
+                "rear": false
+              },
+              "chargeSound": true,
+              "previousGeometry": {
+                "kind": "sector",
+                "a": {
+                  "x": 1479.5737781469202,
+                  "y": -735.9848420974957
+                },
+                "b": {
+                  "x": 1479.5737781469202,
+                  "y": -735.9848420974957
+                },
+                "radius": 140,
+                "halfAngle": 1.413716694115407,
+                "direction": {
+                  "x": 0.4049777016094557,
+                  "y": 0.9143265615736659
+                }
+              },
+              "geometry": {
+                "kind": "sector",
+                "a": {
+                  "x": 1479.5737781469202,
+                  "y": -735.9848420974957
+                },
+                "b": {
+                  "x": 1479.5737781469202,
+                  "y": -735.9848420974957
+                },
+                "radius": 140,
+                "halfAngle": 1.413716694115407,
+                "direction": {
+                  "x": 0.4049777016094557,
+                  "y": 0.9143265615736659
+                }
+              },
+              "actualContactAt": -258.56000000000006,
+              "strikeSound": true
+            },
+            "hazards": [],
+            "shots": [],
+            "stagger": 341.43999999999994,
+            "parried": {
+              "at": -258.56000000000006,
+              "until": 341.43999999999994,
+              "direction": {
+                "x": 0.40497770160945556,
+                "y": 0.914326561573666
+              },
+              "perfect": false
+            }
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1480.1559065097301,
+            "y": -718.101072470279,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1524.6351976420099,
+            "y": -595.620242785141,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.2772234536240299,
+              "y": -0.9608054729032123
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 983.2000000000002,
+            "x": 1477.1439119372635,
+            "y": -741.4708014669378,
+            "serial": 2,
+            "cooldown": 341.43999999999994,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.40497770160945556,
+              "y": 0.914326561573666
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-crag-tusk",
+        "x": 1477.1439119372635,
+        "y": -741.4708014669378,
+        "hp": 983.2000000000002,
+        "type": "boar",
+        "behavior": {
+          "boss": "crag-tusk",
+          "battle": {
+            "phase": 1,
+            "next": 2,
+            "move": 1,
+            "part": 0,
+            "nextAt": -765,
+            "exposedUntil": 485,
+            "transformUntil": -47805,
+            "controlImmuneUntil": -47805,
+            "startedAt": -3615
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.40497770160945556,
+            "y": 0.914326561573666
+          },
+          "guardOpen": 0,
+          "attack": {
+            "direction": {
+              "x": 0.40497770160945556,
+              "y": 0.914326561573666
+            },
+            "startedAt": -765,
+            "lockAt": -415,
+            "contactAt": -115,
+            "activeUntil": 105,
+            "recoveryUntil": 325,
+            "cancelled": true,
+            "skill": 1,
+            "part": 0,
+            "geometry": {
+              "kind": "sector",
+              "point": {
+                "x": 1479.5737781469202,
+                "y": -735.9848420974957
+              },
+              "radius": 140,
+              "halfAngle": 1.413716694115407,
+              "offset": 0,
+              "rear": false
+            }
+          },
+          "pose": {
+            "action": "parry",
+            "frame": 50,
+            "index": 5,
+            "facing": 0,
+            "phase": "stagger",
+            "elapsed": 258.56000000000006,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": []
+    },
+    {
+      "名称": "当前招式结束后进入第二阶段",
+      "模拟毫秒": 22618.85666666682,
+      "玩家": {
+        "x": 1476.5281734480495,
+        "y": -740.9145496783053,
+        "hp": 58,
+        "stamina": 100
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 2,
+              "next": 7,
+              "move": -1,
+              "part": 0,
+              "nextAt": 1181.1433333331806,
+              "exposedUntil": -18.856666666819365,
+              "transformUntil": 1181.1433333331806,
+              "controlImmuneUntil": -70423.85666666682,
+              "startedAt": -26233.85666666682
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1480.1559065097301,
+            "y": -718.101072470279,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1524.6351976420099,
+            "y": -595.620242785141,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.2772234536240299,
+              "y": -0.9608054729032123
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 550,
+            "x": 1475.9328264562173,
+            "y": -739.8712522988213,
+            "serial": 11,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.9996530445802899,
+              "y": -0.026339902455336267
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-crag-tusk",
+        "x": 1475.9328264562173,
+        "y": -739.8712522988213,
+        "hp": 550,
+        "type": "boar",
+        "behavior": {
+          "boss": "crag-tusk",
+          "battle": {
+            "phase": 2,
+            "next": 7,
+            "move": -1,
+            "part": 0,
+            "nextAt": 23800,
+            "exposedUntil": 22600,
+            "transformUntil": 23800,
+            "controlImmuneUntil": -47805,
+            "startedAt": -3615
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.9996530445802899,
+            "y": -0.026339902455336267
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 180,
+            "index": 0,
+            "facing": 3,
+            "phase": "阶段转换",
+            "elapsed": 22618.85666666682,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": []
+    }
+  ],
+  "错误": [],
+  "结果": "未通过",
+  "原因": "首领挑战已重置，需要重新进行真实挑战。"
+}

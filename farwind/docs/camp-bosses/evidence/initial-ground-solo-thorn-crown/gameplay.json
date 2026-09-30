@@ -1,0 +1,907 @@
+{
+  "说明": "关闭测试授予的正式构建；从新游戏出发，键鼠领取、购买、穿戴、步行、识招、弹反、风步与战斗。诊断只读，不修改坐标、生命、时钟或清剿。",
+  "路径": "独战",
+  "首领": "荆冠猎王",
+  "节点": [
+    {
+      "名称": "驻守杂兵全灭，清除尚未完成",
+      "模拟毫秒": 52158.106666652595,
+      "玩家": {
+        "x": -1678.068564873439,
+        "y": 1464.137902342877,
+        "hp": 67,
+        "stamina": 100
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "warning",
+          "warning": 2427.1758441424536,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": -1689.8736225640641,
+            "y": 1439.5796948767259,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": -1685.6747515878424,
+            "y": 1463.564795932174,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": -1647.1644592018017,
+            "y": 1419.9627336426827,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 1000,
+            "x": -1700,
+            "y": 1490,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "危险区": []
+    },
+    {
+      "名称": "首领第一阶段正式入场",
+      "模拟毫秒": 54599.79666665268,
+      "玩家": {
+        "x": -1678.068564873439,
+        "y": 1459.3701982224259,
+        "hp": 67,
+        "stamina": 100
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 0,
+              "move": -1,
+              "part": 0,
+              "nextAt": 640.2033333473228,
+              "exposedUntil": -54599.79666665268,
+              "transformUntil": -54599.79666665268,
+              "controlImmuneUntil": -54599.79666665268,
+              "startedAt": -9.796666652677231
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": -1689.8736225640641,
+            "y": 1439.5796948767259,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": -1685.6747515878424,
+            "y": 1463.564795932174,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": -1647.1644592018017,
+            "y": 1419.9627336426827,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 1000,
+            "x": -1584.0889008453119,
+            "y": 1521.0582854123024,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-thorn-crown",
+        "x": -1584.0889008453119,
+        "y": 1521.0582854123024,
+        "hp": 1000,
+        "type": "wolf",
+        "behavior": {
+          "boss": "thorn-crown",
+          "battle": {
+            "phase": 1,
+            "next": 0,
+            "move": -1,
+            "part": 0,
+            "nextAt": 55240,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 54590
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0,
+            "y": 1
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 2,
+            "index": 2,
+            "facing": 0,
+            "phase": "idle",
+            "elapsed": 54599.79666665268,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": []
+    },
+    {
+      "名称": "暂停保存重开保持首领战",
+      "模拟毫秒": 110.6633333333333,
+      "玩家": {
+        "x": -1576.418310644439,
+        "y": 1557.8575211446343,
+        "hp": 67,
+        "stamina": 100
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 2,
+              "move": 1,
+              "part": 0,
+              "nextAt": -904.7799999861412,
+              "exposedUntil": 345.2200000138588,
+              "transformUntil": -60459.77999998614,
+              "controlImmuneUntil": -60459.77999998614,
+              "startedAt": -5869.779999986141
+            },
+            "attack": {
+              "attackId": "boss-thorn-crown:战斗0:3",
+              "attackerId": "boss-thorn-crown",
+              "type": "wolf",
+              "startedAt": -904.7799999861412,
+              "lockAt": -554.7799999861412,
+              "contactAt": -254.7799999861412,
+              "activeUntil": -54.779999986141206,
+              "recoveryUntil": 165.2200000138588,
+              "direction": {
+                "x": 0.4493908641906798,
+                "y": 0.8933352400873673
+              },
+              "locked": true,
+              "shape": "sweep",
+              "range": 140,
+              "halfAngle": 1.3962634015954636,
+              "parryable": true,
+              "damage": 22,
+              "cancelled": true,
+              "resolved": true,
+              "emitted": true,
+              "motionAt": 0,
+              "scanAt": -254.7799999861412,
+              "boss": "thorn-crown",
+              "bossSkill": 1,
+              "bossPart": 0,
+              "bossAttempt": 0,
+              "step": 0,
+              "bossCocoon": false,
+              "bossGeometry": {
+                "kind": "sector",
+                "point": {
+                  "x": -1601.2918009301254,
+                  "y": 1515.8211755718228
+                },
+                "radius": 115,
+                "halfAngle": 0.7,
+                "offset": -0.55,
+                "rear": false
+              },
+              "chargeSound": true,
+              "previousGeometry": {
+                "kind": "sector",
+                "a": {
+                  "x": -1601.2918009301254,
+                  "y": 1515.8211755718228
+                },
+                "b": {
+                  "x": -1601.2918009301254,
+                  "y": 1515.8211755718228
+                },
+                "radius": 115,
+                "halfAngle": 0.7,
+                "direction": {
+                  "x": 0.8500516528594386,
+                  "y": 0.526699333083816
+                }
+              },
+              "geometry": {
+                "kind": "sector",
+                "a": {
+                  "x": -1601.2918009301254,
+                  "y": 1515.8211755718228
+                },
+                "b": {
+                  "x": -1601.2918009301254,
+                  "y": 1515.8211755718228
+                },
+                "radius": 115,
+                "halfAngle": 0.7,
+                "direction": {
+                  "x": 0.8500516528594386,
+                  "y": 0.526699333083816
+                }
+              },
+              "actualContactAt": -254.7799999861412,
+              "strikeSound": true
+            },
+            "hazards": [],
+            "shots": [],
+            "stagger": 345.2200000138588,
+            "parried": {
+              "at": -254.7799999861412,
+              "until": 345.2200000138588,
+              "direction": {
+                "x": 0.4493908641906798,
+                "y": 0.8933352400873673
+              },
+              "perfect": false
+            }
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": -1689.8736225640641,
+            "y": 1439.5796948767259,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": -1685.6747515878424,
+            "y": 1463.564795932174,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": -1647.1644592018017,
+            "y": 1419.9627336426827,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 892,
+            "x": -1603.9881461152695,
+            "y": 1510.4611641312986,
+            "serial": 3,
+            "cooldown": 345.2200000138588,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.4493908641906798,
+              "y": 0.8933352400873673
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-thorn-crown",
+        "x": -1603.9881461152695,
+        "y": 1510.4611641312986,
+        "hp": 892,
+        "type": "wolf",
+        "behavior": {
+          "boss": "thorn-crown",
+          "battle": {
+            "phase": 1,
+            "next": 2,
+            "move": 1,
+            "part": 0,
+            "nextAt": -794.1166666528079,
+            "exposedUntil": 455.8833333471921,
+            "transformUntil": -60349.11666665281,
+            "controlImmuneUntil": -60349.11666665281,
+            "startedAt": -5759.116666652808
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.4493908641906798,
+            "y": 0.8933352400873673
+          },
+          "guardOpen": 0,
+          "attack": {
+            "direction": {
+              "x": 0.4493908641906798,
+              "y": 0.8933352400873673
+            },
+            "startedAt": -794.1166666528079,
+            "lockAt": -444.1166666528079,
+            "contactAt": -144.1166666528079,
+            "activeUntil": 55.88333334719209,
+            "recoveryUntil": 275.8833333471921,
+            "cancelled": true,
+            "skill": 1,
+            "part": 0,
+            "geometry": {
+              "kind": "sector",
+              "point": {
+                "x": -1601.2918009301254,
+                "y": 1515.8211755718228
+              },
+              "radius": 115,
+              "halfAngle": 0.7,
+              "offset": -0.55,
+              "rear": false
+            }
+          },
+          "pose": {
+            "action": "parry",
+            "frame": 50,
+            "index": 5,
+            "facing": 0,
+            "phase": "stagger",
+            "elapsed": 254.7799999861412,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": []
+    },
+    {
+      "名称": "当前招式结束后进入第二阶段",
+      "模拟毫秒": 20601.139999958374,
+      "玩家": {
+        "x": -1667.2977433440838,
+        "y": 1561.3460585514556,
+        "hp": 87,
+        "stamina": 100
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 2,
+              "next": 8,
+              "move": -1,
+              "part": 0,
+              "nextAt": 1178.8600000416263,
+              "exposedUntil": -21.139999958373664,
+              "transformUntil": 1178.8600000416263,
+              "controlImmuneUntil": -80950.25666661118,
+              "startedAt": -26360.25666661118
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": -1689.8736225640641,
+            "y": 1439.5796948767259,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": -1685.6747515878424,
+            "y": 1463.564795932174,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": -1647.1644592018017,
+            "y": 1419.9627336426827,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 500,
+            "x": -1603.5631547489704,
+            "y": 1559.6850726635648,
+            "serial": 12,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.9992092285249485,
+              "y": 0.039760754904519996
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-thorn-crown",
+        "x": -1603.5631547489704,
+        "y": 1559.6850726635648,
+        "hp": 500,
+        "type": "wolf",
+        "behavior": {
+          "boss": "thorn-crown",
+          "battle": {
+            "phase": 2,
+            "next": 8,
+            "move": -1,
+            "part": 0,
+            "nextAt": 21780,
+            "exposedUntil": 20580,
+            "transformUntil": 21780,
+            "controlImmuneUntil": -60349.11666665281,
+            "startedAt": -5759.116666652808
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.9992092285249485,
+            "y": 0.039760754904519996
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 180,
+            "index": 0,
+            "facing": 3,
+            "phase": "阶段转换",
+            "elapsed": 20601.139999958374,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": []
+    },
+    {
+      "名称": "首领死亡后正式清除，恶意只结算一次",
+      "模拟毫秒": 39411.99999992995,
+      "玩家": {
+        "x": -1598.3709070562518,
+        "y": 1615.4074197948198,
+        "hp": 87,
+        "stamina": 100
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": true,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "defeated",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": -1689.8736225640641,
+            "y": 1439.5796948767259,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": -1685.6747515878424,
+            "y": 1463.564795932174,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": -1647.1644592018017,
+            "y": 1419.9627336426827,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": -1609.17967400158,
+            "y": 1629.0070537314882,
+            "serial": 21,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.6977455623198294,
+              "y": -0.7163456779118481
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-thorn-crown",
+        "x": -1609.17967400158,
+        "y": 1629.0070537314882,
+        "hp": 0,
+        "type": "wolf",
+        "behavior": {
+          "boss": "thorn-crown",
+          "battle": {
+            "phase": 2,
+            "next": 13,
+            "move": 0,
+            "part": 0,
+            "nextAt": 38575,
+            "exposedUntil": 39875,
+            "transformUntil": 21780,
+            "controlImmuneUntil": -60349.11666665281,
+            "startedAt": -5759.116666652808
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.6977455623198294,
+            "y": -0.7163456779118481
+          },
+          "guardOpen": 0,
+          "attack": {
+            "direction": {
+              "x": 0.6977455623198294,
+              "y": -0.7163456779118481
+            },
+            "startedAt": 38575,
+            "lockAt": 38975,
+            "contactAt": 39275,
+            "activeUntil": 39535,
+            "recoveryUntil": 39755,
+            "cancelled": true,
+            "skill": 0,
+            "part": 0,
+            "geometry": {
+              "kind": "sector",
+              "point": {
+                "x": -1604.993200627661,
+                "y": 1624.708979664017
+              },
+              "radius": 36,
+              "halfAngle": 0.8,
+              "offset": 0,
+              "rear": false
+            }
+          },
+          "pose": {
+            "action": "death",
+            "frame": 121,
+            "index": 4,
+            "facing": 1,
+            "phase": "death",
+            "elapsed": 21.99999992994708,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": []
+    },
+    {
+      "名称": "保存重开保留正式清除结果",
+      "模拟毫秒": 119.06,
+      "玩家": {
+        "x": -1612.9274288063475,
+        "y": 1615.4074197948198,
+        "hp": 87,
+        "stamina": 100
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": true,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "defeated",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": -1689.8736225640641,
+            "y": 1439.5796948767259,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": -1685.6747515878424,
+            "y": 1463.564795932174,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": -1647.1644592018017,
+            "y": 1419.9627336426827,
+            "serial": 2,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": -1609.17967400158,
+            "y": 1629.0070537314882,
+            "serial": 21,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.6977455623198294,
+              "y": -0.7163456779118481
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "危险区": []
+    }
+  ],
+  "错误": [],
+  "结果": "通过",
+  "帧间隔": {
+    "样本数": 4966,
+    "中位毫秒": 8.300000000001091,
+    "百分之九十五毫秒": 10.099999999998545,
+    "最大毫秒": 158.30000000000007
+  },
+  "耗时秒": 44.948300000000124,
+  "墙钟秒": 49.952,
+  "药剂消耗": 1,
+  "受到伤害": 30,
+  "弹反输入": 21,
+  "弹反成功": 17,
+  "风步输入": 0,
+  "观察到的技能": [
+    0,
+    1,
+    2,
+    3
+  ]
+}

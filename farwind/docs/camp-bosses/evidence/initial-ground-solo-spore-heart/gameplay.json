@@ -1,0 +1,741 @@
+{
+  "说明": "关闭测试授予的正式构建；从新游戏出发，键鼠领取、购买、穿戴、步行、识招、弹反、风步与战斗。诊断只读，不修改坐标、生命、时钟或清剿。",
+  "路径": "独战",
+  "首领": "孢心巢母",
+  "节点": [
+    {
+      "名称": "驻守杂兵全灭，清除尚未完成",
+      "模拟毫秒": 27742.291463409798,
+      "玩家": {
+        "x": 1364.7345098225287,
+        "y": 2896.8341582598086,
+        "hp": 76,
+        "stamina": 100
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "warning",
+          "warning": 2500,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1436.6332744476606,
+            "y": 2839.7789766620767,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1238.1361439262423,
+            "y": 2910.1404665981286,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1340.4003602455086,
+            "y": 2898.6164302130805,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 1000,
+            "x": 1250,
+            "y": 2820,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "危险区": []
+    },
+    {
+      "名称": "首领第一阶段正式入场",
+      "模拟毫秒": 30306.37,
+      "玩家": {
+        "x": 1385.7345098225305,
+        "y": 2896.8341582598086,
+        "hp": 76,
+        "stamina": 100
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 0,
+              "move": -1,
+              "part": 0,
+              "nextAt": 588.630000000001,
+              "exposedUntil": -30306.37,
+              "transformUntil": -30306.37,
+              "controlImmuneUntil": -30306.37,
+              "startedAt": -61.36999999999898
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1436.6332744476606,
+            "y": 2839.7789766620767,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1238.1361439262423,
+            "y": 2910.1404665981286,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1340.4003602455086,
+            "y": 2898.6164302130805,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 1000,
+            "x": 1250,
+            "y": 2820,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-spore-heart",
+        "x": 1250,
+        "y": 2820,
+        "hp": 1000,
+        "type": "spore",
+        "behavior": {
+          "boss": "spore-heart",
+          "battle": {
+            "phase": 1,
+            "next": 0,
+            "move": -1,
+            "part": 0,
+            "nextAt": 30895,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 30245
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0,
+            "y": 1
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 0,
+            "index": 0,
+            "facing": 0,
+            "phase": "idle",
+            "elapsed": 30306.37,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": []
+    },
+    {
+      "名称": "暂停保存重开保持首领战",
+      "模拟毫秒": 257.41666666666674,
+      "玩家": {
+        "x": 1244.103440527728,
+        "y": 2781.353805434104,
+        "hp": 66,
+        "stamina": 100
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 3,
+              "move": 2,
+              "part": 0,
+              "nextAt": -1090.2466666116404,
+              "exposedUntil": 359.7533333883596,
+              "transformUntil": -39855.24666661164,
+              "controlImmuneUntil": -39855.24666661164,
+              "startedAt": -9610.24666661164
+            },
+            "attack": {
+              "attackId": "boss-spore-heart:战斗0:5",
+              "attackerId": "boss-spore-heart",
+              "type": "spore",
+              "startedAt": -1090.2466666116404,
+              "lockAt": -740.2466666116404,
+              "contactAt": -440.2466666116404,
+              "activeUntil": -240.24666661164042,
+              "recoveryUntil": -20.24666661164042,
+              "direction": {
+                "x": -0.02256558458705307,
+                "y": -0.9997453647765736
+              },
+              "locked": true,
+              "shape": "sweep",
+              "range": 140,
+              "halfAngle": 1.3962634015954636,
+              "parryable": true,
+              "damage": 22,
+              "cancelled": true,
+              "resolved": true,
+              "emitted": true,
+              "motionAt": 0,
+              "scanAt": -440.2466666116404,
+              "boss": "spore-heart",
+              "bossSkill": 2,
+              "bossPart": 0,
+              "bossAttempt": 0,
+              "step": 12,
+              "bossCocoon": false,
+              "bossGeometry": {
+                "kind": "sector",
+                "point": {
+                  "x": 1245.1123322442527,
+                  "y": 2813.6666988142497
+                },
+                "radius": 115,
+                "halfAngle": 1.2566370614359172,
+                "offset": 0,
+                "rear": false
+              },
+              "chargeSound": true,
+              "previousGeometry": {
+                "kind": "sector",
+                "a": {
+                  "x": 1245.1123322442527,
+                  "y": 2813.6666988142497
+                },
+                "b": {
+                  "x": 1245.1123322442527,
+                  "y": 2813.6666988142497
+                },
+                "radius": 115,
+                "halfAngle": 1.2566370614359172,
+                "direction": {
+                  "x": -0.022565584587052982,
+                  "y": -0.9997453647765737
+                }
+              },
+              "geometry": {
+                "kind": "sector",
+                "a": {
+                  "x": 1245.1123322442527,
+                  "y": 2813.6666988142497
+                },
+                "b": {
+                  "x": 1245.1123322442527,
+                  "y": 2813.6666988142497
+                },
+                "radius": 115,
+                "halfAngle": 1.2566370614359172,
+                "direction": {
+                  "x": -0.022565584587052982,
+                  "y": -0.9997453647765737
+                }
+              },
+              "actualContactAt": -440.2466666116404,
+              "strikeSound": true
+            },
+            "hazards": [],
+            "shots": [],
+            "stagger": 359.7533333883596,
+            "parried": {
+              "at": -440.2466666116404,
+              "until": 359.7533333883596,
+              "direction": {
+                "x": -0.02256558458705307,
+                "y": -0.9997453647765736
+              },
+              "perfect": true
+            }
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1436.6332744476606,
+            "y": 2839.7789766620767,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1238.1361439262423,
+            "y": 2910.1404665981286,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1340.4003602455086,
+            "y": 2898.6164302130805,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 872.0000000000001,
+            "x": 1245.292856920949,
+            "y": 2821.6646617324623,
+            "serial": 5,
+            "cooldown": 359.7533333883596,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.02256558458705307,
+              "y": -0.9997453647765736
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-spore-heart",
+        "x": 1245.292856920949,
+        "y": 2821.6646617324623,
+        "hp": 872.0000000000001,
+        "type": "spore",
+        "behavior": {
+          "boss": "spore-heart",
+          "battle": {
+            "phase": 1,
+            "next": 3,
+            "move": 2,
+            "part": 0,
+            "nextAt": -832.8299999449737,
+            "exposedUntil": 617.1700000550263,
+            "transformUntil": -39597.829999944974,
+            "controlImmuneUntil": -39597.829999944974,
+            "startedAt": -9352.829999944974
+          },
+          "attempt": 0,
+          "face": {
+            "x": -0.02256558458705307,
+            "y": -0.9997453647765736
+          },
+          "guardOpen": 0,
+          "attack": {
+            "direction": {
+              "x": -0.02256558458705307,
+              "y": -0.9997453647765736
+            },
+            "startedAt": -832.8299999449737,
+            "lockAt": -482.8299999449737,
+            "contactAt": -182.82999994497368,
+            "activeUntil": 17.17000005502632,
+            "recoveryUntil": 237.17000005502632,
+            "cancelled": true,
+            "skill": 2,
+            "part": 0,
+            "geometry": {
+              "kind": "sector",
+              "point": {
+                "x": 1245.1123322442527,
+                "y": 2813.6666988142497
+              },
+              "radius": 115,
+              "halfAngle": 1.2566370614359172,
+              "offset": 0,
+              "rear": false
+            }
+          },
+          "pose": {
+            "action": "perfect",
+            "frame": 114,
+            "index": 6,
+            "facing": 1,
+            "phase": "stagger",
+            "elapsed": 440.2466666116404,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": []
+    },
+    {
+      "名称": "当前招式结束后进入第二阶段",
+      "模拟毫秒": 21918.366666666727,
+      "玩家": {
+        "x": 1244.4884954855245,
+        "y": 2802.530631397915,
+        "hp": 74,
+        "stamina": 100
+      },
+      "遭遇": {
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 2,
+              "next": 9,
+              "move": -1,
+              "part": 0,
+              "nextAt": 1131.6333333332732,
+              "exposedUntil": -718.7282435299894,
+              "transformUntil": 1131.6333333332732,
+              "controlImmuneUntil": -61516.1966666117,
+              "startedAt": -31271.1966666117
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [
+              {
+                "x": 1496.810044423085,
+                "y": 3168.146560917705,
+                "id": "boss-spore-heart:战斗0:13:spore:0",
+                "attack": {
+                  "attackId": "boss-spore-heart:战斗0:13:spore:0",
+                  "attackerId": "boss-spore-heart",
+                  "type": "spore",
+                  "startedAt": -1638.3666666667268,
+                  "lockAt": -1638.3666666667268,
+                  "contactAt": -1638.3666666667268,
+                  "activeUntil": -38.366666666726815,
+                  "recoveryUntil": -38.366666666726815,
+                  "direction": {
+                    "x": 0.5938990439736779,
+                    "y": 0.8045395736488985
+                  },
+                  "locked": true,
+                  "shape": "sweep",
+                  "range": 100,
+                  "halfAngle": 1.3962634015954636,
+                  "parryable": true,
+                  "damage": 22,
+                  "cancelled": false,
+                  "resolved": true,
+                  "emitted": false,
+                  "motionAt": 0,
+                  "scanAt": -1638.3666666667268,
+                  "boss": "spore-heart",
+                  "bossAttempt": 0,
+                  "bossSkill": 0,
+                  "chargeSound": true,
+                  "strikeSound": true
+                },
+                "born": -1638.3666666667268,
+                "now": -38.366666666726815,
+                "state": "burst",
+                "released": {
+                  "sourceId": "boss-spore-heart",
+                  "faction": "hostile",
+                  "attackId": "boss-spore-heart:战斗0:13:spore:0",
+                  "amount": 22,
+                  "sourceType": "enemy-shot",
+                  "eventId": null
+                },
+                "burstAt": -38.366666666726815
+              },
+              {
+                "x": 984.6261703361591,
+                "y": 3160.9225102361647,
+                "id": "boss-spore-heart:战斗0:13:spore:2",
+                "attack": {
+                  "attackId": "boss-spore-heart:战斗0:13:spore:2",
+                  "attackerId": "boss-spore-heart",
+                  "type": "spore",
+                  "startedAt": -1638.3666666667268,
+                  "lockAt": -1638.3666666667268,
+                  "contactAt": -1638.3666666667268,
+                  "activeUntil": -38.366666666726815,
+                  "recoveryUntil": -38.366666666726815,
+                  "direction": {
+                    "x": -0.6163533930972337,
+                    "y": 0.787469678665488
+                  },
+                  "locked": true,
+                  "shape": "sweep",
+                  "range": 100,
+                  "halfAngle": 1.3962634015954636,
+                  "parryable": true,
+                  "damage": 22,
+                  "cancelled": false,
+                  "resolved": true,
+                  "emitted": false,
+                  "motionAt": 0,
+                  "scanAt": -1638.3666666667268,
+                  "boss": "spore-heart",
+                  "bossAttempt": 0,
+                  "bossSkill": 0,
+                  "chargeSound": true,
+                  "strikeSound": true
+                },
+                "born": -1638.3666666667268,
+                "now": -38.366666666726815,
+                "state": "burst",
+                "released": {
+                  "sourceId": "boss-spore-heart",
+                  "faction": "hostile",
+                  "attackId": "boss-spore-heart:战斗0:13:spore:2",
+                  "amount": 22,
+                  "sourceType": "enemy-shot",
+                  "eventId": null
+                },
+                "burstAt": -38.366666666726815
+              }
+            ],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "hp": 0,
+            "x": 1436.6332744476606,
+            "y": 2839.7789766620767,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1238.1361439262423,
+            "y": 2910.1404665981286,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 0,
+            "x": 1340.4003602455086,
+            "y": 2898.6164302130805,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "hp": 500,
+            "x": 1245.5823184817975,
+            "y": 2819.662856719942,
+            "serial": 13,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": -0.014103005967764471,
+              "y": 0.9999005476659533
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-spore-heart",
+        "x": 1245.5823184817975,
+        "y": 2819.662856719942,
+        "hp": 500,
+        "type": "spore",
+        "behavior": {
+          "boss": "spore-heart",
+          "battle": {
+            "phase": 2,
+            "next": 9,
+            "move": -1,
+            "part": 0,
+            "nextAt": 23050,
+            "exposedUntil": 21199.638423136737,
+            "transformUntil": 23050,
+            "controlImmuneUntil": -39597.829999944974,
+            "startedAt": -9352.829999944974
+          },
+          "attempt": 0,
+          "face": {
+            "x": -0.014103005967764471,
+            "y": 0.9999005476659533
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 54,
+            "index": 0,
+            "facing": 0,
+            "phase": "阶段转换",
+            "elapsed": 21918.366666666727,
+            "provisional": true
+          }
+        }
+      },
+      "危险区": []
+    }
+  ],
+  "错误": [],
+  "结果": "未通过",
+  "原因": "首领挑战已重置，需要重新进行真实挑战。"
+}
