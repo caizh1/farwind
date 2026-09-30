@@ -1,0 +1,1414 @@
+{
+  "说明": "构建前冻结输入摘要，后续比对当前工作树与固定构建；包含本轮之外已有改动。",
+  "时间": "2026-09-29T14:26:51.541Z",
+  "文件": [
+    {
+      "文件": "package-lock.json",
+      "摘要": "2609c89f1f9d5e3e5c770eee20eac5f6eced41d47f6b57cd5592ecd3002bd9be"
+    },
+    {
+      "文件": "package.json",
+      "摘要": "4e392936f54df7bc76e25aaf8e6d6be0b789353a94ec400be685b4a8ac3709e9"
+    },
+    {
+      "文件": "public/assets/animation/cat-motion.png",
+      "摘要": "904fa4144c27b386c08c2eae8bffd8f548844a93b52164fa2591e7c1ee47e5bb"
+    },
+    {
+      "文件": "public/assets/animation/cat-side-source.png",
+      "摘要": "7d4b295f449af0dc168be181f00bd60aa655376e53da70ca132079919aa3936c"
+    },
+    {
+      "文件": "public/assets/animation/hero-carry-sword.png",
+      "摘要": "74c473c5b2ff7f5f2bc2fa2a90a916f014b410ccf9d5ba9a22e5d21a51622990"
+    },
+    {
+      "文件": "public/assets/animation/hero-combat-action.png",
+      "摘要": "d29789879c44668523cb150035409b8d14b59acdf4da810f57823c104aa6d2b1"
+    },
+    {
+      "文件": "public/assets/animation/hero-combat-back.png",
+      "摘要": "262ca5d7da1c8ea7a9c81431963787c1b23af34346c24c12c5e04f92416260bf"
+    },
+    {
+      "文件": "public/assets/animation/hero-combat-side.png",
+      "摘要": "e506f46f6548388a8ffea32a55acfedecf95c70179cc899d45ed50a1b8310916"
+    },
+    {
+      "文件": "public/assets/animation/hero-combat.png",
+      "摘要": "2395e77d5fedd208362df00f8ed2acd8cc9abca1351982113fb726b896324edb"
+    },
+    {
+      "文件": "public/assets/animation/hero-counter-v3.png",
+      "摘要": "717991955e714533417e8f5c16c336428fc51da59b07fcf15e0364045f8f56dc"
+    },
+    {
+      "文件": "public/assets/animation/hero-hurt.png",
+      "摘要": "8d31e0e404d4b64659199784fbe61627d30c2c4dc051f72bf9c1b460ab8c0a04"
+    },
+    {
+      "文件": "public/assets/animation/hero-motion.png",
+      "摘要": "f7fb378863e5f9ec87e65cb55ce554b586c915ee0a60f5d63d636d7eb9a9a7c1"
+    },
+    {
+      "文件": "public/assets/animation/hero-parry-v2.png",
+      "摘要": "53a93e50ad5cefe534da2f7d902342f52479ed31dcd1a04ef66a6cee8f91e2fc"
+    },
+    {
+      "文件": "public/assets/animation/hero-parry.png",
+      "摘要": "ca1eaf215ee938cf21a8b07b8c9e2eeb9713f5dd38671bc26d797eeb4c09d164"
+    },
+    {
+      "文件": "public/assets/animation/hero-side-source.png",
+      "摘要": "22fd35b1ff5b4820169198bac399bb57922c588ce47adba9d708a12ae5c83b89"
+    },
+    {
+      "文件": "public/assets/animation/manifest.json",
+      "摘要": "069bc9a3936a7346974522b6c64ff3cf4405257c37ddca314f7ad4a3683d3af3"
+    },
+    {
+      "文件": "public/assets/animation/round-three/cat-down-run-source.png",
+      "摘要": "e4b6d14b4f083025efbb56815881eeae7d1062b1b793b198054d523954ecb708"
+    },
+    {
+      "文件": "public/assets/animation/round-three/cat-motion.png",
+      "摘要": "f4336eda1122da68c63c6bf951092ab37fac9e8074d79eb85876fccddd1a533b"
+    },
+    {
+      "文件": "public/assets/animation/round-three/cat-up-run-source.png",
+      "摘要": "4dc491fc583d503908040e078f83171acb965f7038693b32552e3f0db0dff35b"
+    },
+    {
+      "文件": "public/assets/animation/round-three/hero-down-run-source.png",
+      "摘要": "71bac141f516c558748c1e15364fb2c0c8375fc145af7abbaa60d899eeecae8b"
+    },
+    {
+      "文件": "public/assets/animation/round-three/hero-motion.png",
+      "摘要": "cf7bbe438ecfe2b43b1375aa985e8df5f7c480db2c51dc615d578df2ffc46acc"
+    },
+    {
+      "文件": "public/assets/animation/round-three/hero-up-run-source.png",
+      "摘要": "9dd0ee14d7f544da9238128063274c357f7efca847795657129b036438423db5"
+    },
+    {
+      "文件": "public/assets/animation/round-three/manifest.json",
+      "摘要": "3914b2aa87c3cc4587ca90e669cbb37f0715b651a66eb72b35e265f98e8553c5"
+    },
+    {
+      "文件": "public/assets/animation/round-three/prompts.json",
+      "摘要": "b5aefdd75ea869217822a82e1f960ad64a6bf296043e2fdc9faaf282627c4194"
+    },
+    {
+      "文件": "public/assets/animation/round-two/cat-motion.png",
+      "摘要": "c56666190d4f090f9a4a5a9e45921cd8b1939d529243d0064f4da0e830472545"
+    },
+    {
+      "文件": "public/assets/animation/round-two/cat-run-source.png",
+      "摘要": "86fa8c03cbbe788fda0350a8d7cfc422e877e0d5fb7c6c6a3af119ae78f86753"
+    },
+    {
+      "文件": "public/assets/animation/round-two/cat-vertical-source.png",
+      "摘要": "1dfae754099c5e169952b501fdb911c261214f55ae58786e6bde2546c57232cd"
+    },
+    {
+      "文件": "public/assets/animation/round-two/cat-walk-source.png",
+      "摘要": "36657f55348ec86193c7d3c81af07cd9b85f1989e94298cb05506ccc0c93fc74"
+    },
+    {
+      "文件": "public/assets/animation/round-two/hero-down-source.png",
+      "摘要": "596eadb30628eafb9d398ec03d26b2bf137406f75c7d9dc840d2c6905bc45f1b"
+    },
+    {
+      "文件": "public/assets/animation/round-two/hero-motion.png",
+      "摘要": "a3ea5593a50f3491ed7e2399831c40093c14a65c33a0d0a8ac15cd924f7b5952"
+    },
+    {
+      "文件": "public/assets/animation/round-two/hero-run-source.png",
+      "摘要": "ac166f0dd0eb9e157d5c7264583a0d8eeacc6a899564c35f13c8a164532ffd9e"
+    },
+    {
+      "文件": "public/assets/animation/round-two/hero-up-source.png",
+      "摘要": "d192703f4ef4cb10b3c0ec07fefe46cc66828ae5dd65cefac5031baae76af99e"
+    },
+    {
+      "文件": "public/assets/animation/round-two/hero-walk-source.png",
+      "摘要": "068b5b4c866c5e03c064eaaeac26cb4d12de447f48825acc909275ce2aab06fd"
+    },
+    {
+      "文件": "public/assets/animation/round-two/manifest.json",
+      "摘要": "c944c765c1177db042f9c94138413b297db6be30f5b61fc54318f345ee8fde65"
+    },
+    {
+      "文件": "public/assets/animation/round-two/prompts.json",
+      "摘要": "30cc785f817be4599faecf1794f6f5bb8a2c8983e5a174dd207e92cd1b13a2f6"
+    },
+    {
+      "文件": "public/assets/animation/round-two/refinement-prompts.json",
+      "摘要": "8d161ffcf3ef1d90521e75627e479d3fb3663f48fb2ce2aa027fd971eb5d7c3a"
+    },
+    {
+      "文件": "public/assets/animation/sword-wind/hero-sword-wind.png",
+      "摘要": "2088d238d450f5e9cb5991c78fd5f300f8f401098df1fb7da4c6557a1350ddc5"
+    },
+    {
+      "文件": "public/assets/animation/sword-wind/sword-wind-dissolve.png",
+      "摘要": "e872e526ac2c464d96aa4da075761a52238173f9a2445e7c5dc0f10ff5518999"
+    },
+    {
+      "文件": "public/assets/animation/sword-wind/sword-wind-flight.png",
+      "摘要": "dd9af0ba6372f2ef9420c16c13da737202a50ce3d4db7b550cec6be2f790b350"
+    },
+    {
+      "文件": "public/assets/animation/sword-wind/sword-wind-ground.png",
+      "摘要": "4a15ccc755b0fcfdfe258bea4477b4556b080fb3aa487f6d6018a44b89138e3d"
+    },
+    {
+      "文件": "public/assets/animation/sword-wind/sword-wind-hit.png",
+      "摘要": "9b090f9d6347187b02c5450f0b4c9add5d7b3f93dbc1201154dd662f61ea0f27"
+    },
+    {
+      "文件": "public/assets/animation/sword-wind/sword-wind-release.png",
+      "摘要": "5300ae1045ae24573ef847386581483b5f3185f12714aa62163a5f53abb7e404"
+    },
+    {
+      "文件": "public/assets/arch-source.png",
+      "摘要": "d730a60334e7e7d09cc52379f8b4d9f01591c383e6e279aae833dd9d1b9eab72"
+    },
+    {
+      "文件": "public/assets/arch.png",
+      "摘要": "35ec734da8383189df31367a86d663863aab3ab0104cf1a7377a1d4f789c128a"
+    },
+    {
+      "文件": "public/assets/berry.png",
+      "摘要": "f275d921f7139ae2b4028dfe50dbe2107042138370d7bddecff41eadf622e671"
+    },
+    {
+      "文件": "public/assets/branding/favicon-source.png",
+      "摘要": "c5ae18f387fd641e9842413712b68ad27511c6c25b3e4e7472c7dce5c9edd5d7"
+    },
+    {
+      "文件": "public/assets/branding/manifest.json",
+      "摘要": "c0f943b54cbe2af4ed44e2228d63e23a60331851c4aa24349fc98706c4c1d827"
+    },
+    {
+      "文件": "public/assets/bush.png",
+      "摘要": "d27d126660b361429339826d29a972d7b0d8240eb98297678aba85f4bfc6ab8d"
+    },
+    {
+      "文件": "public/assets/camp-bosses/bound-branch.png",
+      "摘要": "688b0af789446398b4406ad596bad0e824fada5969879e073d26c229b73ef975"
+    },
+    {
+      "文件": "public/assets/camp-bosses/crag-tusk.png",
+      "摘要": "3d27169fc02540ac63c0b811a9d5c8840043b3307bca50302e3044c6c2ed7283"
+    },
+    {
+      "文件": "public/assets/camp-bosses/spore-heart.png",
+      "摘要": "29b6bc248652f4060994002488181960249dbf389f7309c564f450b7c055cb2a"
+    },
+    {
+      "文件": "public/assets/camp-bosses/thorn-crown.png",
+      "摘要": "d244d6e9bba30f604bc86fc37ee7a86f0f1550340fa3ad0c3ce687fc8d654cb1"
+    },
+    {
+      "文件": "public/assets/carpenter.png",
+      "摘要": "77098adee26a33ca92c2792861e275fb6ee6108499408cd6d9c7ef5d7cbc2921"
+    },
+    {
+      "文件": "public/assets/cat.png",
+      "摘要": "7f9841eb94286e1d48d9cfadf3f304e4e874ecaa29bb57593453f63923211f19"
+    },
+    {
+      "文件": "public/assets/characters-source.png",
+      "摘要": "6201292418b3f99320560dd8f209bd10da3bae690848eace1e023d3bfb582cf7"
+    },
+    {
+      "文件": "public/assets/chest-open.png",
+      "摘要": "0c63a2ea202ab43466e25baf9bba147f41abb13bf8d2f6e77b289e46b3e6a328"
+    },
+    {
+      "文件": "public/assets/chest.png",
+      "摘要": "d5877fa5e1ad1ab01048127bdd1e1d01d76f85c0b1b9bc34d16b2875b9f981db"
+    },
+    {
+      "文件": "public/assets/commission/coin.webp",
+      "摘要": "c1df33142842987727aabeadd8e5cd89cd8298b6309c00ee7a285413691f2e55"
+    },
+    {
+      "文件": "public/assets/commission/ink-button.webp",
+      "摘要": "f1267850ec4e4d6d9b5ccfa1eccd44716984123bd7d77877f9ecb363efd8500e"
+    },
+    {
+      "文件": "public/assets/commission/ledger-frame.webp",
+      "摘要": "f62c7a75c7f5a78db8c63c76c3d2bd3cfcb33fb29f0834658b81d4c4d171a37c"
+    },
+    {
+      "文件": "public/assets/commission/ledger-prop.webp",
+      "摘要": "2528bdfed1ebb406042c19aac3dd1fc46b480e82997a92c37e8d5c8a1db05cea"
+    },
+    {
+      "文件": "public/assets/commission/south-route.webp",
+      "摘要": "1175a888a48ee58ec0450fde82a02c2e88ce7a1e3da499a8f666baca9735799e"
+    },
+    {
+      "文件": "public/assets/elder.png",
+      "摘要": "dfb05b012f699dbdee89c24db54a517aab47d3ed54aceef89c4592a651b902cb"
+    },
+    {
+      "文件": "public/assets/enemies-source.png",
+      "摘要": "bb81730e31d322b0c79c9952b4026a2d79966d909f23b12c8f313fc915ab2689"
+    },
+    {
+      "文件": "public/assets/enemies-v1/armored-boar.png",
+      "摘要": "d2017b590df6ae57ffd928dfc6b177ca7b05672a4b79e9d440a6784f1a8d4feb"
+    },
+    {
+      "文件": "public/assets/enemies-v1/ashen-spore.png",
+      "摘要": "930a540dc9667ec37cf86bdcd59f79f6f29b2013d0ac568e2e9942df3985b6ee"
+    },
+    {
+      "文件": "public/assets/enemies-v1/branch-reaper.png",
+      "摘要": "a90f23052c3f505aada03d28c5350becd75d12f91727acea6b1578596e73099d"
+    },
+    {
+      "文件": "public/assets/enemies-v1/burrow-worm.png",
+      "摘要": "225a1158402a618e4623c4039670728eb5444b3598474654fc13994b7add1a73"
+    },
+    {
+      "文件": "public/assets/enemies-v1/dusk-raven.png",
+      "摘要": "15cdf2db9dec0bf21123bed79ecdcb495f26deafef166d6396b856c81b84bcf2"
+    },
+    {
+      "文件": "public/assets/enemies-v1/moss-guardian.png",
+      "摘要": "ee787ce238f31c3dcfa07ed9f5e0e873b5ddf6f1b226d684dc3aeb82b853ad0f"
+    },
+    {
+      "文件": "public/assets/enemies-v1/moss-slime.png",
+      "摘要": "3591992d43bce4b3bd6ec782ffbdc6b8234f5a391ceb26401088c308414fca4d"
+    },
+    {
+      "文件": "public/assets/enemies-v1/spore-burst.png",
+      "摘要": "48a531df9109d49b17931b3e1df517d9330f0eba15f0866d14d10e141519780b"
+    },
+    {
+      "文件": "public/assets/enemies-v1/spore-projectile.png",
+      "摘要": "ea0984a19adfdf4751c1c0baa9b83ff62e85f6f679f2c274fb1cafeb0bdf0640"
+    },
+    {
+      "文件": "public/assets/enemies-v1/thorn-wolf.png",
+      "摘要": "5ddc50c798604c43f4056471f517d53a79db7a4fbad4dfdc2dd1f16c2db91800"
+    },
+    {
+      "文件": "public/assets/environment-source.png",
+      "摘要": "a422b158522270464cf489a066e1993a7cba41144a5f20994664e96b0a77da62"
+    },
+    {
+      "文件": "public/assets/equipment/equipment-paper-frame.webp",
+      "摘要": "224641d155a5a3b7f35b30097bbc67fb27e85ead77da13a106e10478a9323387"
+    },
+    {
+      "文件": "public/assets/equipment/return-wind-orb.webp",
+      "摘要": "f2126c09483911b5c79f9d3e14fbbabaadaf0e59600bbed3e484f06a92e659d6"
+    },
+    {
+      "文件": "public/assets/equipment/traveler-bust.webp",
+      "摘要": "d5780a038dbd252cdb32c4e69c3d3759e12a2c2b897f7c87966755e789f1af5a"
+    },
+    {
+      "文件": "public/assets/equipment/traveler-coat.webp",
+      "摘要": "9a44aa683d4c871449a065981ef1fbe1edc1263edefdadfd739c5c6a97bed17d"
+    },
+    {
+      "文件": "public/assets/fence.png",
+      "摘要": "ac84624d529bd01e78772261fecf577686d4ce8eb4e505ab6e6745efe04bfe2a"
+    },
+    {
+      "文件": "public/assets/forest.png",
+      "摘要": "acca7c18b0f361518bd9e6b313e86e2d8dc31b30a59ee9b5a09a1ec3c4ed9b69"
+    },
+    {
+      "文件": "public/assets/grass.png",
+      "摘要": "e1b5e57876dd2e6217541630bab86489eb40e2b4b1b35230bb3453de314a9e7c"
+    },
+    {
+      "文件": "public/assets/ground-source.png",
+      "摘要": "b8fefb75e82b5d822f358cf4bd77b3898509333ac8058966a65e098de5a6a4b6"
+    },
+    {
+      "文件": "public/assets/healer.png",
+      "摘要": "1f127613b13a02650e85d21eff1f1bfb9d41f7520a79e32b066230f9396c8bb2"
+    },
+    {
+      "文件": "public/assets/herb.png",
+      "摘要": "b1c01945e0465c52239266134bf3b0b385617467cb706733bae5301a036f7d70"
+    },
+    {
+      "文件": "public/assets/hero.png",
+      "摘要": "d37147d65f12144e1966957fdc22fa1b16e6576eaadc0e0cb2388aaca4faa358"
+    },
+    {
+      "文件": "public/assets/house.png",
+      "摘要": "2259da2e1678987996ab99799d0f51b9a041968ae261ba1fd19239f66f440149"
+    },
+    {
+      "文件": "public/assets/icon-berry.png",
+      "摘要": "0a28315d9997a04b9fa413f40dc315a9c88f6ec637e91498be4147fe1b457bd2"
+    },
+    {
+      "文件": "public/assets/icon-charm.png",
+      "摘要": "d13fb2888fb57a2ef5bde7fe5588ea52e1d97266841c807ec7536a92ef32a782"
+    },
+    {
+      "文件": "public/assets/icon-crystal.png",
+      "摘要": "5546e7b1b3ea0da2fdaf0ffa3d0681d0fcb863afc1b76139e124477125da0c1a"
+    },
+    {
+      "文件": "public/assets/icon-herb.png",
+      "摘要": "1e4e8892d44ceec8c9bbb0e195f74501f607fbdf2f45d0774bd0abd9eeb33a89"
+    },
+    {
+      "文件": "public/assets/icon-potion.png",
+      "摘要": "133ddda3a970d13b90ef10c95cfc16134cfc8b0e3386487dfb090044eaaab20f"
+    },
+    {
+      "文件": "public/assets/icon-stone.png",
+      "摘要": "75deaf8686b9bf9ccb7862d44c095a1ad037763d72467ff95f0964d1a41eb8aa"
+    },
+    {
+      "文件": "public/assets/icon-sword.png",
+      "摘要": "95a68b6f48826cdc66533dd838d5b3787faefed8216b9031749d1fcd01e73d57"
+    },
+    {
+      "文件": "public/assets/icon-wood.png",
+      "摘要": "8f26a6f9f340d14783e56d25c15e7da83f304864cc63ff882733a800337f7194"
+    },
+    {
+      "文件": "public/assets/items-source.png",
+      "摘要": "6727a25f2777b4c759a691f4b2ea14567725b7f5f56311d074ae1ad3c9818445"
+    },
+    {
+      "文件": "public/assets/leaf.png",
+      "摘要": "0a7cdd9cd6ac2231e88d4264b6b33c7960ff7ced17869e55686559f9a499d15c"
+    },
+    {
+      "文件": "public/assets/level-rework/bridge-candidate.png",
+      "摘要": "adb3c328d0a2c06d1132a7fa734ba75efe0ead39be5e927d6e3ad7c559247248"
+    },
+    {
+      "文件": "public/assets/level-rework/herb-bed-candidate.png",
+      "摘要": "f65bfb01d973a2d2fff8c96ac93208c41014992485779853768eea09484269e6"
+    },
+    {
+      "文件": "public/assets/level-rework/packed-earth-candidate.png",
+      "摘要": "9477cf0f2e0fb0f0bc0d464906a718af141803a2d10831df1fe462f0d3c4b9ba"
+    },
+    {
+      "文件": "public/assets/level-rework/village-gate-candidate.png",
+      "摘要": "8012a36f18a01a64ac9458c6bcba0b8cb453793f39ba79fc4b869302a92d132d"
+    },
+    {
+      "文件": "public/assets/manifest.json",
+      "摘要": "11a51c2fdc5f040175987fa8aef108c502d1cca4d41ebcfaffd7cce88529c8f9"
+    },
+    {
+      "文件": "public/assets/npc-life/bed.png",
+      "摘要": "62dc48f4152af35866994d9272353c1925745f03b4b2e50e9a63aa3dadf5f026"
+    },
+    {
+      "文件": "public/assets/npc-life/carpenter-work.png",
+      "摘要": "624f2bc72f79098eb9c42c4629d93dae3612f42d53a5ea9c65eef1710f8a9af1"
+    },
+    {
+      "文件": "public/assets/npc-life/elder-work.png",
+      "摘要": "3f817947cb3b262a434ffda989ce0682b1e777e9f2300a7f38e7553f3fc03c73"
+    },
+    {
+      "文件": "public/assets/npc-life/healer-work.png",
+      "摘要": "bbe2c5b382dbb72a7816022ef8a0ab8d4eb9216e03a820a5ddd8c55cf525dfd5"
+    },
+    {
+      "文件": "public/assets/npc-life/motion/archer-walk.png",
+      "摘要": "8d24f8e640b96190014ef47041b7b44081a464779b00120efda1e5fa0a13cc30"
+    },
+    {
+      "文件": "public/assets/npc-life/motion/carpenter-walk.png",
+      "摘要": "bfe09467bb830ad17f21a14f711a71e541eb11be91cf893f62bcf6f052e03745"
+    },
+    {
+      "文件": "public/assets/npc-life/motion/elder-walk.png",
+      "摘要": "4c7e38b25891733410be3903950bfc51980af767d820e01d5013b4ed283e5a6a"
+    },
+    {
+      "文件": "public/assets/npc-life/motion/healer-walk.png",
+      "摘要": "36ca213a18a193197badb13e9fe8bf8f07b5d8cd103d6ccb505fa7432bf07863"
+    },
+    {
+      "文件": "public/assets/npc-life/table.png",
+      "摘要": "c32a692ea09adc625fc2294523e1f9845f8b6af53034b44308dc771d75f9c151"
+    },
+    {
+      "文件": "public/assets/pink.png",
+      "摘要": "bb470ff35e8b446340c1d23bf9c3d7b3b0841fc621c54c857b4d88fa1272422a"
+    },
+    {
+      "文件": "public/assets/portrait.png",
+      "摘要": "2d1da770defb7b38d72f99d70cff7f489c2f0689e3fc08bb021bba3c5224e7ed"
+    },
+    {
+      "文件": "public/assets/portraits/carpenter-neutral.webp",
+      "摘要": "90a2f03e8afa9d97503ab62b49ee41bbad36950f111d6c44c3135fa02174055b"
+    },
+    {
+      "文件": "public/assets/portraits/elder-neutral.webp",
+      "摘要": "7cfec4b0547242f84380f3c0073deb6f147d4a711153f66bdf4b9f48c20628e3"
+    },
+    {
+      "文件": "public/assets/portraits/healer-neutral.webp",
+      "摘要": "8d2eeff314e366610e5deb93b74dd9f87692fdd1913cba6c917d46175ba83462"
+    },
+    {
+      "文件": "public/assets/road.png",
+      "摘要": "c0cf828fe256a6e224f674b91175170577491120216072a7aff66ab317e402f2"
+    },
+    {
+      "文件": "public/assets/rock.png",
+      "摘要": "4cd9e0fd54747e5fbaf56f1ac12279ecccdef65fd5a9cd2e4bab97b2e7ba7d1f"
+    },
+    {
+      "文件": "public/assets/rune.png",
+      "摘要": "8e9afd11c8f51d2e1235a087413b28eda6449bfa2d42f2806122f9809aa39a86"
+    },
+    {
+      "文件": "public/assets/runes/painted/r01.webp",
+      "摘要": "8ca186f7ab2dca1a506952b4950dd9cd15c9eabf8ff5fd8e0dd855c213bc6927"
+    },
+    {
+      "文件": "public/assets/runes/painted/r02.webp",
+      "摘要": "5243e38928772c59d0dea0d8b62f797dbbd98529483a0989e7450d2502b704f2"
+    },
+    {
+      "文件": "public/assets/runes/painted/r03.webp",
+      "摘要": "ddc602e03cef7c29456c0b1bee524c80a4822f97a7a675b5bd3b1ef0f1c4d259"
+    },
+    {
+      "文件": "public/assets/runes/painted/r04.webp",
+      "摘要": "562fd9a57fcccd8d1df4e8414ff31ca7ef272e6531d3302bcb0356bdf7ec5a18"
+    },
+    {
+      "文件": "public/assets/runes/painted/r05.webp",
+      "摘要": "f9d259a56343e6960a29cae697c6fe4ac85c919c735c3ef757952f17bcd410eb"
+    },
+    {
+      "文件": "public/assets/runes/painted/r06.webp",
+      "摘要": "fc7b2ae701bb7acdfc17af31cd72eb82107793c66eefcab36053914bdcbad004"
+    },
+    {
+      "文件": "public/assets/runes/painted/r07.webp",
+      "摘要": "93019c86d107c7aafabce6b0caec002537d703c7ae0cb7c7440df196f3ce1b29"
+    },
+    {
+      "文件": "public/assets/runes/painted/r08.webp",
+      "摘要": "5b9223f2bf95337e4ceb95e185698f9ca6b5d224ff043c1dc070bd35c7f2cbc2"
+    },
+    {
+      "文件": "public/assets/runes/painted/r09.webp",
+      "摘要": "c47a855d74264ab8243ba72d06afa7dcb8c1f48857678ebb2a9e78b600ce240a"
+    },
+    {
+      "文件": "public/assets/runes/painted/r10.webp",
+      "摘要": "2858b581106ad351b49fd421d5d92a4193cfb4c8aceaf50c5e6a405e8d38108a"
+    },
+    {
+      "文件": "public/assets/runes/painted/r11.webp",
+      "摘要": "9bca6fab74003b0711d2abdc498c0388cd9d2da9900323f11e42f317284f03c8"
+    },
+    {
+      "文件": "public/assets/runes/painted/r12.webp",
+      "摘要": "99461e4bccaff7ee07e6ca42083480054c19ef2c2662d68f280dda778bf85fbc"
+    },
+    {
+      "文件": "public/assets/runes/painted/r13.webp",
+      "摘要": "ba3f514f3719527b507d3393611a1e3e09b1950c5b73668e6ea7c1a66b569537"
+    },
+    {
+      "文件": "public/assets/runes/painted/r14.webp",
+      "摘要": "6ee84e7dc876deb42d66aa8179d79b89a4876d1c532b6bbaddf31eaab2480198"
+    },
+    {
+      "文件": "public/assets/runes/painted/r15.webp",
+      "摘要": "109689ab1eb4eaae532a0c1c7df7f2a3f2c3ef447a414e31d7c33360e685a3ed"
+    },
+    {
+      "文件": "public/assets/runes/painted/r16.webp",
+      "摘要": "9f913b891ab1f0814f1c93eba469af49eee5f779c0329f1007074a3fa241e083"
+    },
+    {
+      "文件": "public/assets/runes/painted/r17.webp",
+      "摘要": "99b204ebb59b6a3d72f28fffcbee7ff8a282ed25d58dd076f91583fe6381c96e"
+    },
+    {
+      "文件": "public/assets/runes/painted/r18.webp",
+      "摘要": "39da1f7edca6507fb60cca09b9e5334dc10b0d4f8fd31d882fbf55364cd49a23"
+    },
+    {
+      "文件": "public/assets/runes/painted/r19.webp",
+      "摘要": "41731b0e4ba13c0187a4e700f74d2a4dcbf771aa32e430830df6ebcf46be85e1"
+    },
+    {
+      "文件": "public/assets/runes/painted/r20.webp",
+      "摘要": "02b14535d8bc95534be0aa0d062a6fb062e21e90c65da792f419b8b481d0fd59"
+    },
+    {
+      "文件": "public/assets/runes/painted/r21.webp",
+      "摘要": "654097e1123d847d8b6216ee2bb2dce10802906f4fb431fae17bfdf1cfb41ae8"
+    },
+    {
+      "文件": "public/assets/runes/painted/r22.webp",
+      "摘要": "b637a96826246ac2166690606f060644e78e8b436022815df417df903937f17e"
+    },
+    {
+      "文件": "public/assets/runes/painted/r23.webp",
+      "摘要": "8ac314624b3c096a26e2dfe677e1c209ee83e477293748f7c77e4b837bf8a901"
+    },
+    {
+      "文件": "public/assets/runes/painted/r24.webp",
+      "摘要": "dc6827e246209f28c5cb661e221969f4ed2d6498e90f8f9fc750290173183dcf"
+    },
+    {
+      "文件": "public/assets/runes/painted/r25.webp",
+      "摘要": "37d1acd9fdab823d1c308c8c6cbcf813b38d22dde336651a9658d2c649691ebd"
+    },
+    {
+      "文件": "public/assets/runes/painted/r26.webp",
+      "摘要": "d8fcfe5e1e86c88036208860990cd7dd02207a065e709da8a5d598cbde99b390"
+    },
+    {
+      "文件": "public/assets/runes/painted/r27.webp",
+      "摘要": "b1ba75b7e4a517f7967e09e7a766267ea60ee3a3914f28b44166dc2028bcd4d9"
+    },
+    {
+      "文件": "public/assets/runes/painted/r28.webp",
+      "摘要": "fdce8263fc8526ade6dfa78120d50057f778ae857cb30b7359d5b4607b3e5ae4"
+    },
+    {
+      "文件": "public/assets/runes/painted/r29.webp",
+      "摘要": "244d13495c193db3fd396d6f3db7c5f2f81d5e722fe990bc2f2dea4de0ee7ae0"
+    },
+    {
+      "文件": "public/assets/runes/painted/r30.webp",
+      "摘要": "0d33b2b01fa600d04f18c1d7c458de69ed01a9901fee7264a3e650869a67e4a8"
+    },
+    {
+      "文件": "public/assets/runes/painted/return-wind.webp",
+      "摘要": "f39da7bae5609e258311dc30946f72fb7b688c1072ce7c39e3b0f78b21f75d2c"
+    },
+    {
+      "文件": "public/assets/shop.png",
+      "摘要": "04493777c90a89a66df40fc1c3626d0f456d76656841eef73ca4fa3cd277090a"
+    },
+    {
+      "文件": "public/assets/sign.png",
+      "摘要": "94683f927f29ab7fb5eec032da1cfdd34323bdfbc3bdc3a384ddf30f0ddf246a"
+    },
+    {
+      "文件": "public/assets/slime.png",
+      "摘要": "aa6477dafbce50764f6b24f50f2e8fa96e743df38f4c665362c7d82ba6df8a2c"
+    },
+    {
+      "文件": "public/assets/tower.png",
+      "摘要": "e10df65d35ea289bb8c8164b51cd31436e5d5a8823c8789b9c2b5ee2fc6f9b85"
+    },
+    {
+      "文件": "public/assets/training-base.png",
+      "摘要": "f9488ae9a16feff89df96ed4a9cee6cc0af2684ef77970522301768d74637fb2"
+    },
+    {
+      "文件": "public/assets/training-body.png",
+      "摘要": "4373c314439978efcc35e7be7682b72a71d549658edb334a0502daff68d8770d"
+    },
+    {
+      "文件": "public/assets/tree.png",
+      "摘要": "86edfade258f876a7d02a5291169c3eb54f486e1dd54c6f868ef8a077bffdb2a"
+    },
+    {
+      "文件": "public/assets/ui/dialog-button.png",
+      "摘要": "5b546d8a3f74ff470dd592abe4ba53cb7dbe5116ba81b8fbf4fa625d3ea4a7e3"
+    },
+    {
+      "文件": "public/assets/ui/dialog-frame.png",
+      "摘要": "a3bff904bedf4a19633ab5fb2e90fd26e5e6dac2d10ef5ea8dc4b16f4842bcf6"
+    },
+    {
+      "文件": "public/assets/ui/dialog-sign.png",
+      "摘要": "306d1553cbccb8b65c819b4b60c90f05c8338002375ec560adc810172cc71537"
+    },
+    {
+      "文件": "public/assets/ui/manifest.json",
+      "摘要": "406318c11333c7ff8fc9dda7b215e88b1f8e58c9d8306e5b1b33e674df8b07c0"
+    },
+    {
+      "文件": "public/assets/village-defense/m3/archer-source.png",
+      "摘要": "4b72f503f734cfdda668a0c5397a542b6315a6555cdd571197ab16aae2ad49df"
+    },
+    {
+      "文件": "public/assets/village-defense/m3/guard-source.png",
+      "摘要": "ded658714ec1ff8410571f0d5983eeab1aee4d8305407a01ce3925d3c6d706d5"
+    },
+    {
+      "文件": "public/assets/village-defense/m3/watchtower-candidate.png",
+      "摘要": "2d959fc3711a108394cdf89cba55fd66bd66ff58dda515869a97cc77f7d9a29a"
+    },
+    {
+      "文件": "public/assets/village-defense/m4/archer-vertical-candidate.png",
+      "摘要": "1409cf9dc204dfd8c0c8a9b91ddc9d9a5e58a24c7b845f56207e392d76fab448"
+    },
+    {
+      "文件": "public/assets/village-defense/vertical-fence-candidate.png",
+      "摘要": "de09018a827630f65265000d28ed3927b55940bd35eabc449282f48c5dd3ffec"
+    },
+    {
+      "文件": "public/assets/village-economy/inn-candidate.png",
+      "摘要": "32ea86dba9c3b9145c66729b4b69b39fc5904f396d010896ed9f9d2e09e0175b"
+    },
+    {
+      "文件": "public/assets/village-economy/smith-candidate.png",
+      "摘要": "e906eac54d77a373809bfd56a87015c8dfab9ca36e1e38a077227a8dbf4119d5"
+    },
+    {
+      "文件": "public/assets/village-polish/carpenter-workbench-source.png",
+      "摘要": "40c232bb342e3b905acddb03ecc7a2d213282c68e595839f9263f4ec53e0aa8e"
+    },
+    {
+      "文件": "public/assets/village-polish/carpenter-workbench.png",
+      "摘要": "ed6fd68551ccfbb42f61edf1e6cce2ce566ce1bdfab1c7ac5f100a6a2525686d"
+    },
+    {
+      "文件": "public/assets/village-polish/orchard-flower-bed-source.png",
+      "摘要": "102609e8a3a33786c73ad5e23d0d0719b478f5438d176312bd05beba68165094"
+    },
+    {
+      "文件": "public/assets/village-polish/orchard-flower-bed.png",
+      "摘要": "458e4d100f98492b5565e5e4791e245b505597c005d767312b0db23d54a28c9c"
+    },
+    {
+      "文件": "public/assets/village-polish/plaza-fountain-source.png",
+      "摘要": "6734b86e49c6fa83b00fa68f439fb9e46c2b220b83893492b2df7d47f028efd2"
+    },
+    {
+      "文件": "public/assets/village-polish/plaza-fountain.png",
+      "摘要": "3d33705b078cf5cdca681bcb99208606a1ab21f1c25ff563f1c04661f251ad62"
+    },
+    {
+      "文件": "public/assets/village-polish/pond-water-source.png",
+      "摘要": "96251031890105d46ab470e42ad4384dfcf4a33aed6683a4ff0ea9b1968540d9"
+    },
+    {
+      "文件": "public/assets/village-polish/pond-water.png",
+      "摘要": "3a9790d6e4fe69ef35d72f7a2ceeee9380d29687bde3387f851e06d3cef5c38e"
+    },
+    {
+      "文件": "public/assets/village-polish/village-bench-source.png",
+      "摘要": "b74cb2798f280d1b020ece12613cc1f819329a016f2abb3edb28ec6074bcf10f"
+    },
+    {
+      "文件": "public/assets/village-polish/village-bench.png",
+      "摘要": "8759b121192e8fdceaf4254e92ef2cba07720b1cd24af3df0e76c4fdbf820742"
+    },
+    {
+      "文件": "public/assets/water-effects/water-basin-mask.png",
+      "摘要": "16475260e973a5802e97649ffe86ea1eb997813b6fb7b012048a9ca03f34b08e"
+    },
+    {
+      "文件": "public/assets/water-effects/water-drop.png",
+      "摘要": "a89bcf0573e5d3089cf24cfa1f207648cc89ebaa64965063082de26851b6b00c"
+    },
+    {
+      "文件": "public/assets/water-effects/water-flow-mask.png",
+      "摘要": "55cb20d3e57866d68aff811e205ea23dc57dd3447fe6a09511d8b123fca80072"
+    },
+    {
+      "文件": "public/assets/water-effects/water-flow.png",
+      "摘要": "0343979a0739f39d6cdac11de5d2a20859dd396418e088c872e518e0a551869e"
+    },
+    {
+      "文件": "public/assets/water-effects/water-flower-source.png",
+      "摘要": "cd85607a679293c42624bf6cec907c70e8db095d07b5448adbf11e33aa753a53"
+    },
+    {
+      "文件": "public/assets/water-effects/water-flower.png",
+      "摘要": "ab1c6765adf769a7b320986119542de12eb09dec32dbd0a9dc428709f3129169"
+    },
+    {
+      "文件": "public/assets/water-effects/water-lily-source.png",
+      "摘要": "5637c0d7db774ee34893b316d0ca7858466e41fe4c6782a878cfa66be3a9fcd4"
+    },
+    {
+      "文件": "public/assets/water-effects/water-lily.png",
+      "摘要": "547dd0995e7149d20da51878b569e42f54f59857926ccccaec5b7e23202581f9"
+    },
+    {
+      "文件": "public/assets/water-effects/water-ripple.png",
+      "摘要": "da2edef7b085eeb992251a29e603563baca322dd41193781a2df62817011f949"
+    },
+    {
+      "文件": "public/assets/water-effects/water-splash.png",
+      "摘要": "e3d7f41783007be2c8184d928a60783f6a1d88b66bf06f79146216d4fee8d113"
+    },
+    {
+      "文件": "public/assets/water-effects/water-waves.png",
+      "摘要": "b35e0408f14c3d0b9ee13f4b520814168131a26d9f412251e8b143239a905fc5"
+    },
+    {
+      "文件": "public/assets/water.png",
+      "摘要": "9d1203ad665921bed5800d7614136f3bd7b0893b15f38b7034c7a024bb695059"
+    },
+    {
+      "文件": "public/assets/well.png",
+      "摘要": "71f1e3bfd09b3a1dc613e15f888130e0f8675eadd1334e3e4da68252453e7787"
+    },
+    {
+      "文件": "public/assets/wood.png",
+      "摘要": "f3a8d46779a53b773942d2be9ae463000827aa003f29ff9492f4187dce502438"
+    },
+    {
+      "文件": "public/assets/xiaobao/battle-back.png",
+      "摘要": "0897860d609ac43ddae05923e5f62504ff6c7a3ba5b3913b0ed4a1fb60d07e94"
+    },
+    {
+      "文件": "public/assets/xiaobao/battle-front.png",
+      "摘要": "962ca8ee7ae0b8d7abb2c256b0ea119f47fabdaf41b7ce8fa81616c43a11a4a1"
+    },
+    {
+      "文件": "public/assets/xiaobao/battle-side.png",
+      "摘要": "da5bbba8ec4396a696f78792981db1fcbe1634b8d347242d038dfda1c6799c20"
+    },
+    {
+      "文件": "public/assets/xiaobao/combat-manifest.json",
+      "摘要": "b2a0ff502aaee0e4d3eef3fc8d1f83833bbd673da7bd6814fe649e26418ae707"
+    },
+    {
+      "文件": "public/assets/xiaobao/manifest.json",
+      "摘要": "a268c0657254c741fea81126cfb64078e86ade5296bb2652d728e9101122ac1c"
+    },
+    {
+      "文件": "public/assets/xiaobao/mastery.png",
+      "摘要": "e13cb223ca3e801bdad2b30dbf30c733636bb3791e1d5e2a0bab69e0757035c0"
+    },
+    {
+      "文件": "public/assets/xiaobao/motion.png",
+      "摘要": "18b9dbf8525360b86f567f41d886343b84a5b83277731857119ed51039e8772e"
+    },
+    {
+      "文件": "public/assets/xiaobao/portrait.webp",
+      "摘要": "54c27576c3d9ed71539cb89bac42d2ce8ec0330507ed0e117b873c4b01c1cee2"
+    },
+    {
+      "文件": "public/assets/xiaobao/social.png",
+      "摘要": "025c1159e07c8e6e42eb616e296776aed4c691b70f0c76a74db7abce00e47752"
+    },
+    {
+      "文件": "public/favicon-16.png",
+      "摘要": "eca98f40aa4e64d2cec8011b50de9c7d7c772d4a48f715d15c66ee84e6bb5742"
+    },
+    {
+      "文件": "public/favicon-180.png",
+      "摘要": "afa0c601b8788fd4bdfdc90235aaa169893e419a1b8ca4ed8187b45412814291"
+    },
+    {
+      "文件": "public/favicon-192.png",
+      "摘要": "18a7bf754f82af44cdea62b4f1f5d8ed00aae8195e9964839d526c3c1e31c9d0"
+    },
+    {
+      "文件": "public/favicon-32.png",
+      "摘要": "f5da6efc43b3314bd9324500bf0d5e94e54821f0a6d18c6684b4dd8808d8bca7"
+    },
+    {
+      "文件": "public/favicon-48.png",
+      "摘要": "00182d7d7afbb21c6be32d473a1002be22c86ae53fc6f595af7205f1c06365e6"
+    },
+    {
+      "文件": "public/favicon.ico",
+      "摘要": "52c8872221ac2ec70433f42a2646bf58632ec3ac9d0fd3e20acba13740b44f59"
+    },
+    {
+      "文件": "public/feedback-preview.html",
+      "摘要": "d0bc36841d74bc1460876c4a443b81ef3146a289a50786c6633d65be4e18b4ca"
+    },
+    {
+      "文件": "src/animation-preview.ts",
+      "摘要": "bff96bf93330785f23d029445efe7ad73ac6d001897e237edf4187035ff2355f"
+    },
+    {
+      "文件": "src/commission.css",
+      "摘要": "06a7900202e2e0c8b5a7f2e34960f27623deb8d023d7e8f1eac8d1cde35566a9"
+    },
+    {
+      "文件": "src/data/animation.ts",
+      "摘要": "bbabf70e0fb606c740e2708581ce06cde1cfc2f04e5695cd66bdf7df52f176d2"
+    },
+    {
+      "文件": "src/data/campBossArt.ts",
+      "摘要": "ea09f77bb91b54f8030aa0c27c404d76d9c694e60808e72f422d98f0bce35522"
+    },
+    {
+      "文件": "src/data/content.ts",
+      "摘要": "83a36f5e6d62feff7fdda9bb67f3946607739ba8ae5d69fe360bc76421062db7"
+    },
+    {
+      "文件": "src/data/counterArt.ts",
+      "摘要": "603052f34e0492932f1d9607ee7949d380f673d2ef8d4737763a336e20ef1fcd"
+    },
+    {
+      "文件": "src/data/dayNight.ts",
+      "摘要": "803ad3a017997e82c15c9d398702073a96bf61d752634a9766d3b01da5916d55"
+    },
+    {
+      "文件": "src/data/defense-art.json",
+      "摘要": "09f23452f4cb75e6e352927ec3d5689e0e0eaf234cdb93881ba8747277c64dd2"
+    },
+    {
+      "文件": "src/data/defense.ts",
+      "摘要": "3ba4e701bd48c14b8fffde726fb5b0f32a3ff1a498403c807d59c9e80c78ae7d"
+    },
+    {
+      "文件": "src/data/defenseZones.ts",
+      "摘要": "9ed644f763c8b06a6fa5c386bea48489c40af04e4d858c1c91be3279c29c8353"
+    },
+    {
+      "文件": "src/data/demonKing.ts",
+      "摘要": "04f4709bc7a32716dfd31fb73c7b81c80fd9640b68ac7875876a66c1d852e41c"
+    },
+    {
+      "文件": "src/data/dialoguePortraits.ts",
+      "摘要": "d0b27f3cb2e987bc78f2709a2732ebf86ea01cd764ce84a997108a7b5a7223aa"
+    },
+    {
+      "文件": "src/data/economy.ts",
+      "摘要": "75459bb29e9cb0651f05eace8782671641a734a9a42373ad6f3dba67782c811a"
+    },
+    {
+      "文件": "src/data/enemies.ts",
+      "摘要": "d28bf885a3c319cefc52429e3091f55037446ba8795488938a7ca25d150b1e65"
+    },
+    {
+      "文件": "src/data/enemyPursuit.ts",
+      "摘要": "298bbcd4ff25fb790de37e48ba078668a742fd8256ae64d47c78635a4f603cc6"
+    },
+    {
+      "文件": "src/data/maps/windbell/bounds.ts",
+      "摘要": "b68d54da060947e78c8470561cde722de4aa3d3346eb0ceb0f06b85bcf02e688"
+    },
+    {
+      "文件": "src/data/maps/windbell/campBosses.ts",
+      "摘要": "9255d56255438d773b0ee54cc58c469977ec6e8d967afb2d02f54ca2095f5ce6"
+    },
+    {
+      "文件": "src/data/maps/windbell/elites.ts",
+      "摘要": "cd54a1bbbcb623502aba91cbf6aa2934a54bb458ac688ce3ae05bf08c8e5e03d"
+    },
+    {
+      "文件": "src/data/maps/windbell/encounters.ts",
+      "摘要": "ee7459d273779b33bccc11053fa46752335c70a1436ff91b330c1d49ca68d14a"
+    },
+    {
+      "文件": "src/data/maps/windbell/layout.ts",
+      "摘要": "ceff4c00a864e5940fbe07dd808809d0e99ad496ab3b0364ca076ea82372af14"
+    },
+    {
+      "文件": "src/data/maps/windbell/roads.ts",
+      "摘要": "bf9c8fb8873bea8e2eb2a6f5c88323e5cd9195e271a4bbd8782fcebff1760cff"
+    },
+    {
+      "文件": "src/data/maps/windbell/shortcuts.ts",
+      "摘要": "2491f6973885aa38b6b591cb07b4986ff85d8c1b06b1c5971d93a3cdc09ac972"
+    },
+    {
+      "文件": "src/data/maps/windbell/wilderness.ts",
+      "摘要": "1bc93f37110f1df20467cace4188857cb8d87ed830e55a9408fca52ad7856d63"
+    },
+    {
+      "文件": "src/data/npcLife.ts",
+      "摘要": "5bd2d568ac6943184278c380816461dd5ec830c2230a14d0d8f032ff29929073"
+    },
+    {
+      "文件": "src/data/runes.ts",
+      "摘要": "44ed4ac95d6d11d2270779b60f0877db8a5c784025cf36f7203ba808c0abe9d7"
+    },
+    {
+      "文件": "src/data/swordWind.ts",
+      "摘要": "ac01380faca1c599d61f4a8e6a4ee0b1405c37f0fd3314a2aa9967f8a8968a0e"
+    },
+    {
+      "文件": "src/data/swordWindArt.ts",
+      "摘要": "f488b2de6a918624fd40936cd60d9c553bc0b83dad8967fe993899ded911ab8a"
+    },
+    {
+      "文件": "src/data/village-economy.ts",
+      "摘要": "0043643a6f1f10eed5c930d53381256e19dfe1bd4056e825281f52385c138b23"
+    },
+    {
+      "文件": "src/data/village.ts",
+      "摘要": "823b15d3d9ce9fde799507c516e2000adb2d4b80e215ef2a9f68ddeb92e76f4d"
+    },
+    {
+      "文件": "src/data/windLessons.ts",
+      "摘要": "c4f817063849b919f0453b1a55141246bea1675dc7dd64d18fa9f1ee61039d11"
+    },
+    {
+      "文件": "src/data/world.ts",
+      "摘要": "71a724dee5564a57949b20500e5d569a3e283498fe90c7292af5cf38e19057cf"
+    },
+    {
+      "文件": "src/data/xiaobao.ts",
+      "摘要": "03a36b38f2cc9a5c3675a29ae0bdf60add6cc6fcf077cf3922d7caf6dbc682ee"
+    },
+    {
+      "文件": "src/data/xiaobaoCombat.ts",
+      "摘要": "a7877caff02ca1b6f23395eada2f9f87c6915dd32c05eeadcb34afcb600d2a00"
+    },
+    {
+      "文件": "src/enemy-preview.ts",
+      "摘要": "e6ff68ac64cebcd17a779485896e1160255f1c70b0f4f11a39dfa1b181bc407e"
+    },
+    {
+      "文件": "src/equipment.css",
+      "摘要": "ff0e21d7adcd3b85c3c1ebee184821ad3d7dbdde30619cb9ec77e7eeb5d06aaa"
+    },
+    {
+      "文件": "src/game/entities/actor.ts",
+      "摘要": "e0186be9db3bada0bc2ab1da2112a3be9e228df2aacf107e695658239ca26e4d"
+    },
+    {
+      "文件": "src/game/entities/campBossEffects.ts",
+      "摘要": "e4868cc6e21ee5a5689f1037d01f0ff9710f3414f6f23f6b986f88f19040ffc8"
+    },
+    {
+      "文件": "src/game/entities/campBossView.ts",
+      "摘要": "a0390a6df191a6a0b80b0145ed37533abcdcef4813b47359f76bfb99539e90a9"
+    },
+    {
+      "文件": "src/game/entities/combatFeedbackView.ts",
+      "摘要": "ec592d91d3ffb8e7a23774dc4ffa8d852a4f6599ca35f6e192cc68670ac0d80e"
+    },
+    {
+      "文件": "src/game/entities/defenders.ts",
+      "摘要": "ceb7ba3643727dbb0b5f1bd3abf02a1d0d7df89157e4c96a73f8e8d74f97a916"
+    },
+    {
+      "文件": "src/game/entities/enemyView.ts",
+      "摘要": "ebb6f3582208e2c23a3fe6c913953c2ed3583314a20f23c892ac64984e207111"
+    },
+    {
+      "文件": "src/game/entities/npcLifeView.ts",
+      "摘要": "b858f9243a49d1e0125ffc15458942b42dfe06f276c9a5bc0f792f79b8882106"
+    },
+    {
+      "文件": "src/game/entities/runeView.ts",
+      "摘要": "07141e6267dd8c12f00999be23cbf57dd432c1a5afa9c65d52c9ee984df55479"
+    },
+    {
+      "文件": "src/game/entities/slimeSample.ts",
+      "摘要": "5e5d481f3bb6ac14ed44b82616a95d5f75ddd0e17dea40645389c9c40340aa89"
+    },
+    {
+      "文件": "src/game/entities/swordWindView.ts",
+      "摘要": "53b65277124e1620db63405a5c050033a6551cb262187fa187094319bd5b935e"
+    },
+    {
+      "文件": "src/game/entities/swordWindWaterView.ts",
+      "摘要": "52b9997835d4d8c5e3e433a5e42a08ef8677ed62431b758d83196f416b9069c1"
+    },
+    {
+      "文件": "src/game/entities/trainingDummy.ts",
+      "摘要": "22e1d3037a8b60d5f13daf0f67c5789a78125e435c0cd530b1aa353b887c908c"
+    },
+    {
+      "文件": "src/game/entities/xiaobaoView.ts",
+      "摘要": "9597658829f2d2a81b90eb29f9b0a3f194eb0a92e4b2d68fc15d82a2a56a8868"
+    },
+    {
+      "文件": "src/game/rendering/dayNightView.ts",
+      "摘要": "5c4ffabcc16348a56d00b6fb836f5599dd1486752a1cf0f1644061191e00a317"
+    },
+    {
+      "文件": "src/game/scenes/World.ts",
+      "摘要": "6518fec6128309c8159c3861c0ed7dcc38ce292f2feb64adb7970fa8cf1b9665"
+    },
+    {
+      "文件": "src/game/systems/audio.ts",
+      "摘要": "caa29afb57dfaba8ef77844cbfdc09eea39210ae2e7eb9f81b7506fda51ff9c3"
+    },
+    {
+      "文件": "src/game/systems/campBossCombat.ts",
+      "摘要": "509c08681bdb314dfc68d961b739551558cb93d16e5a141f7f86832a42a88e24"
+    },
+    {
+      "文件": "src/game/systems/campBossState.ts",
+      "摘要": "720681061448980198c44e4696c03c052ca7ad73dd40321016af580ead1fdf33"
+    },
+    {
+      "文件": "src/game/systems/combat.ts",
+      "摘要": "e4065218eb38174f8831dfa76d1cd6b099669925a5614f8a19841cc61557f6b0"
+    },
+    {
+      "文件": "src/game/systems/combatFeedback.ts",
+      "摘要": "e6cdeb30d3dcc7d5506f0972cfdbba5715285c1beab423cd2582e16d4cea3e62"
+    },
+    {
+      "文件": "src/game/systems/combatFeelDebug.ts",
+      "摘要": "b6b1fa751f5ddc9d10de773373e5431efe109a113fd6f1960efba8105fd6bf1c"
+    },
+    {
+      "文件": "src/game/systems/contact.ts",
+      "摘要": "45df717db81b9a7dd16e8d6bdd9004e511516da2ba3fbfe2fff210286882225d"
+    },
+    {
+      "文件": "src/game/systems/creatureAudio.ts",
+      "摘要": "1b0bfc78fb15ed51221bfa729a1ff396d678a93b5164ea6e173e32273fdcce17"
+    },
+    {
+      "文件": "src/game/systems/damage.ts",
+      "摘要": "0a097aacc51b241091054ab08c8fcd19b538c5da7d01a913dce91fef8feae4c2"
+    },
+    {
+      "文件": "src/game/systems/dayNightDebug.ts",
+      "摘要": "8d9ed4e3079dfe1e24ca1db9c02f99543ea54f61c909ad1966bdfb43107e4fc9"
+    },
+    {
+      "文件": "src/game/systems/defense.ts",
+      "摘要": "57a72a2a4897bece077ca03b3cad4f577759b5b306753c964f71c93e9a8e1b02"
+    },
+    {
+      "文件": "src/game/systems/defenseState.ts",
+      "摘要": "8b0ec173e299b0a9c81c7622baff0504feab08e6d65487bc5a38a62515ac8cf8"
+    },
+    {
+      "文件": "src/game/systems/demonKingState.ts",
+      "摘要": "3fc1c61b1de7471e7c86c417029671b5e27ca4d2d5f6a595b428b2382b47cff1"
+    },
+    {
+      "文件": "src/game/systems/economy.ts",
+      "摘要": "e119085c4e6717019f31eee7c8ffb5fd1d7fc8a0a4d1d45589e6dc93b4c00b64"
+    },
+    {
+      "文件": "src/game/systems/eliteArena.ts",
+      "摘要": "290aa19cf36ad63557371ca2967abb404a51cc6584edfdd55cfffc3ed52864df"
+    },
+    {
+      "文件": "src/game/systems/encounterRuntime.ts",
+      "摘要": "cc44de159eadbccd64cb55564917878b26683af25088222ca428c53fdae5fa6f"
+    },
+    {
+      "文件": "src/game/systems/encounterState.ts",
+      "摘要": "2c7d9a545fa7fc68bdaa02b1743870be5aa11448ffb265d8b6e5b08033043fea"
+    },
+    {
+      "文件": "src/game/systems/encounterTempo.ts",
+      "摘要": "2cabc5f4b724b32916bb4b1575e1f78f224a37ff8706086e1ec3f95aa64f643b"
+    },
+    {
+      "文件": "src/game/systems/enemy.ts",
+      "摘要": "90e4f643f319d3d1f2f1f59cc0a8e47b05f6b257f4b9ea27914c8222f5566783"
+    },
+    {
+      "文件": "src/game/systems/enemyAnimation.ts",
+      "摘要": "70dce79d550189f4d72d4e03b7f3956bbbc1203c0cdc0fad6eae96c97822b785"
+    },
+    {
+      "文件": "src/game/systems/enemyAttack.ts",
+      "摘要": "fb4903e88a0b8a3462ac604ae1e3fdb45a1d563fccf9d26e790113ab25635669"
+    },
+    {
+      "文件": "src/game/systems/enemyProjectiles.ts",
+      "摘要": "e5d968f85e5f2267e2e38e1b9a1e19fc88ffd7eafd232b47de4556a5e032dd8b"
+    },
+    {
+      "文件": "src/game/systems/enemyReaction.ts",
+      "摘要": "ace64f810865f8338d774f9a6e0067f09c0fbc278e7088d7ca4d4e17e5ebef88"
+    },
+    {
+      "文件": "src/game/systems/enemyTraits.ts",
+      "摘要": "270cb43ce4aa790f3322a9e60b0d02d0f2a8038a7da8d172303011c042de7105"
+    },
+    {
+      "文件": "src/game/systems/feedbackAudio.ts",
+      "摘要": "5b59262f2ff862aa8ee459a1ebf90100eee3fb26abcb1908572f460630103166"
+    },
+    {
+      "文件": "src/game/systems/fieldQuest.ts",
+      "摘要": "5720b5bd4ad96b7e19cedb04e50e9737900531cb2d007c17590540faa2207bf7"
+    },
+    {
+      "文件": "src/game/systems/fieldQuestState.ts",
+      "摘要": "72792c79eebd52208ae6b9cb253650679b3267339a3879e4f3421705c98b3be5"
+    },
+    {
+      "文件": "src/game/systems/follower.ts",
+      "摘要": "e49e5a233692725321f04e1f8a43f9cef57bc410eda9f75690b6e495ca7eba5a"
+    },
+    {
+      "文件": "src/game/systems/input.ts",
+      "摘要": "d98ece078bea7edee14ac61ccee0a18725a6901c129d869a9ea022bbb9711add"
+    },
+    {
+      "文件": "src/game/systems/interactions.ts",
+      "摘要": "3b911155acd4e269a2e0b41a13c7666a2d55e5c2e388cf48fed01a3555e4c739"
+    },
+    {
+      "文件": "src/game/systems/locomotion.ts",
+      "摘要": "d0625edbc462e31a72ef4373c40b276474db15dfa3f720128768f430f6bb18e1"
+    },
+    {
+      "文件": "src/game/systems/mapTravel.ts",
+      "摘要": "e9e4ceb21af0ac76a2765653e4eae3a43fe151f9fb6c909a17773091a5106137"
+    },
+    {
+      "文件": "src/game/systems/nightDirector.ts",
+      "摘要": "41b79c769253d79696d520d7fd8137bee7f6de9488b09be74d4faefd189ae08f"
+    },
+    {
+      "文件": "src/game/systems/nightDiscovery.ts",
+      "摘要": "59383eb1348aba0a1f384b4c5e1bc39e0a7ba34f5741dbb43fe24544a2041f93"
+    },
+    {
+      "文件": "src/game/systems/npcAnimation.ts",
+      "摘要": "72831341110eb4cbbb40dc7eb9d74576b1a675977a41b1e2e2d3e0789431e8f5"
+    },
+    {
+      "文件": "src/game/systems/npcLife.ts",
+      "摘要": "a010339bb21573555ffe94f1eae74743d5f691171aba3247b19ec7ef305b3902"
+    },
+    {
+      "文件": "src/game/systems/npcLifeState.ts",
+      "摘要": "42cf865f524cc559ea70bb61b7c3f9dd457795bdfbd4b4119fbc8a9b02d8c300"
+    },
+    {
+      "文件": "src/game/systems/npcNavigation.ts",
+      "摘要": "2ccdb869f76b2380570c5a3ad7453ebb5564699b02bf49ea8b3c0b1c00dfae2a"
+    },
+    {
+      "文件": "src/game/systems/npcSocial.ts",
+      "摘要": "9de691f736656801101e055beb1a9d06eac2f941363b628d37d49d2b64e67d11"
+    },
+    {
+      "文件": "src/game/systems/npcSpeech.ts",
+      "摘要": "27f6adcb31fbf2f2de2987eb9661411fb9d2a5c08017433582e79906fbf51e86"
+    },
+    {
+      "文件": "src/game/systems/obstacles.ts",
+      "摘要": "91c00d58fbc2c51aef82ddf4b203091f766fbf5eb2f70260a2c188e2530fc447"
+    },
+    {
+      "文件": "src/game/systems/parryTraining.ts",
+      "摘要": "ca3bdb7604adfe2fb8f66719103d49ba780bc476aafe81bfe669ba04c2347d95"
+    },
+    {
+      "文件": "src/game/systems/pondSurface.ts",
+      "摘要": "ccb4b7553de1f45490fda85b60bdeb111bf43c731ef907771e480face05bd336"
+    },
+    {
+      "文件": "src/game/systems/runeCombat.ts",
+      "摘要": "90818cee3286edf34652297a64d78559a88f4cc73ab4502caac472733f391354"
+    },
+    {
+      "文件": "src/game/systems/runeLab.ts",
+      "摘要": "768ffe407f0bd65105a766917f238fa003d5f337c285210a5f3b62b046b8dfe6"
+    },
+    {
+      "文件": "src/game/systems/runeState.ts",
+      "摘要": "930219dc1149a3b8511f9ef8a77e2ecd908a254ce4526fe8e470c3fed33ee95a"
+    },
+    {
+      "文件": "src/game/systems/runeWorld.ts",
+      "摘要": "6c6be0322270771ff1db90c3b7446c398dc064567bea61b1a3a023657771415e"
+    },
+    {
+      "文件": "src/game/systems/save.ts",
+      "摘要": "055baad751f6c7e75342ad0bfc092da3857b8d56db8b0c3791e774f1ba12e784"
+    },
+    {
+      "文件": "src/game/systems/saveQueue.ts",
+      "摘要": "b128b880c362b7b44afaf82644f5c18a706bef8fc7b7a1fda9d2a80255783815"
+    },
+    {
+      "文件": "src/game/systems/session.ts",
+      "摘要": "b5b3fec49f3168ddf45d700c25154efcdc92a9b38ff3fef2226187f83561fa9a"
+    },
+    {
+      "文件": "src/game/systems/skills.ts",
+      "摘要": "ae16ff77adb52f3fc1971b90763d4d9221dfbab0ee61a235e1a068c3c6b99f12"
+    },
+    {
+      "文件": "src/game/systems/sleep.ts",
+      "摘要": "585526a22c4f3514e772a172676805ec15ebf0d10e0d3f3d60cd8ced4f19e508"
+    },
+    {
+      "文件": "src/game/systems/slimeAnimation.ts",
+      "摘要": "287334e1713671f304e834b7ebd6b3b2424c2ac72a63232d6769e09a71289e40"
+    },
+    {
+      "文件": "src/game/systems/sprint.ts",
+      "摘要": "3aacf45e404221f6bc28938cb2dd37529f3b4b57b9a509b30c6def2701ca3dbb"
+    },
+    {
+      "文件": "src/game/systems/state.ts",
+      "摘要": "710cd416ce209e9eb83cca8017273d14bb916e250935b5726469a7900c451194"
+    },
+    {
+      "文件": "src/game/systems/stateCommit.ts",
+      "摘要": "c6755992aea4179e36edb19b44a6c0df98b67402ae7cf71df6735609b358d60d"
+    },
+    {
+      "文件": "src/game/systems/swordWind.ts",
+      "摘要": "e0c6824079bb79e11873612c5f95e40c668f819ab48e7affecce3c098409da4d"
+    },
+    {
+      "文件": "src/game/systems/swordWindAudio.ts",
+      "摘要": "2ba6bfbbf7f5e4e2e8d0a3087b1cfcf2830d460d633bce19794632c06c6b00c4"
+    },
+    {
+      "文件": "src/game/systems/swordWindGeometry.ts",
+      "摘要": "6277e7cd84214a45274eb2bf849cce2366a13bf61a64788d9cf1a3205b8b1de7"
+    },
+    {
+      "文件": "src/game/systems/swordWindWater.ts",
+      "摘要": "9df893e65bcb3cd62203706a2b8306f5dd20ac9ccaea458f97cb6042fd90b790"
+    },
+    {
+      "文件": "src/game/systems/terrain.ts",
+      "摘要": "8ec615b703e3a972d374eb30cd9223f4001aed9b9be02b94640521ad224315c8"
+    },
+    {
+      "文件": "src/game/systems/terrainChunks.ts",
+      "摘要": "76b736fe0da0ab75ad69e7aed0545ef00b7a332fe30000c59bde6df0b58f791d"
+    },
+    {
+      "文件": "src/game/systems/timeline.ts",
+      "摘要": "3210afbff36a3d9dfba319f65945e62032b262c56126cc678dc46091c6a467e2"
+    },
+    {
+      "文件": "src/game/systems/training.ts",
+      "摘要": "6352cb56eaae849d5027ed4925af2e47f4a5fff267ae2805ce1eca1a6539e027"
+    },
+    {
+      "文件": "src/game/systems/waterEffects.ts",
+      "摘要": "7c1539167f5457d17a17b8e4c43f053b08a0a913ba54e9cabc937d588239f192"
+    },
+    {
+      "文件": "src/game/systems/waterMotion.ts",
+      "摘要": "362fb20405cb8acc92f5f8cf39746b54261d41221ecbe285bf35e29b47a66a52"
+    },
+    {
+      "文件": "src/game/systems/weaponTrail.ts",
+      "摘要": "3f209bdfa4205654200a2305bdc7a89a31290c92e30ce5c5590b0b0d05d386e9"
+    },
+    {
+      "文件": "src/game/systems/wildThreat.ts",
+      "摘要": "56902e5a9d9fac3f0c5b0cfaa917a17d39bad79a98a87f6b3a13368e4bebe887"
+    },
+    {
+      "文件": "src/game/systems/windLessons.ts",
+      "摘要": "796ccba9c08e6e9fd5cfee85560c08311d85420165abb0e1c8826a405e9a367d"
+    },
+    {
+      "文件": "src/game/systems/worldClock.ts",
+      "摘要": "95800900fb96bb09d0512bfe2182130601f9196307c6ffafb97ee7408cc416e2"
+    },
+    {
+      "文件": "src/game/systems/xiaobao.ts",
+      "摘要": "d23838eb3df9e9f4ff5b036b51b7b5878e7c061e0150184748060bc88ad482b7"
+    },
+    {
+      "文件": "src/game/systems/xiaobaoCombat.ts",
+      "摘要": "5ffc45e5cec3974176b81650bf06565c2c57e4d33f81bac99b880f6c0623a55c"
+    },
+    {
+      "文件": "src/game/systems/xiaobaoState.ts",
+      "摘要": "31b855b3b51c3dedfb90fbf8b1303c524d62c12aa0a235093e5e1ba2758b6606"
+    },
+    {
+      "文件": "src/game/systems/xiaobaoWorld.ts",
+      "摘要": "628eae84f6129f1a8aa8f9b363dc9dd06c248e8cf127dc0165488da624b30d4a"
+    },
+    {
+      "文件": "src/game/ui/campBossHud.ts",
+      "摘要": "8d4dd1296ba28242e37c9e9cf7841bbbe0f16cfee0c2930d5c6eadae8e1a7dd4"
+    },
+    {
+      "文件": "src/game/ui/commissions.ts",
+      "摘要": "6a8135c0e5f1f3eda87174439fc5ac4dc3fb5b371ce40ea5601c823c368d84f9"
+    },
+    {
+      "文件": "src/game/ui/equipment.ts",
+      "摘要": "b8cfa1662c29c7dded23e9b41ee15857332ed023f9b3bcd1b995c7f1a5b259a3"
+    },
+    {
+      "文件": "src/game/ui/interface.ts",
+      "摘要": "fcdc9ddfe97a4cc7ef3861582a025860e1ba1019d87a9026c955b1641154a4f8"
+    },
+    {
+      "文件": "src/game/ui/npcLife.ts",
+      "摘要": "abbe427cf3f109809ea5b02cdb6e61f31c7da033f3428236fb8386387f819947"
+    },
+    {
+      "文件": "src/game/ui/runeIcons.ts",
+      "摘要": "ac6a0d6a159093e01bdf9272fd86d7e2a63897e923e1acceec2775b1b153cbd5"
+    },
+    {
+      "文件": "src/game/ui/runePreview.ts",
+      "摘要": "01ff4f5ef1945a25c5edc78096ce955a0358e4f26d637f7af836bcee4eb1521e"
+    },
+    {
+      "文件": "src/game/ui/runes.ts",
+      "摘要": "0fd6e08ef274806d9ea669fa977f9d8a72ceb3d883e3e94a9ecd205f5718f7ef"
+    },
+    {
+      "文件": "src/game/ui/shop.ts",
+      "摘要": "8516c2ac4c6fdc55c06436f3fc57d8b4bc7855456aec34dfc89052a4928ecad4"
+    },
+    {
+      "文件": "src/main.ts",
+      "摘要": "d3e981c43ff2cbf05759da514807b89e968242fc0b13c7032932f34147e11a67"
+    },
+    {
+      "文件": "src/player-hurt-preview.ts",
+      "摘要": "93f4fcf2dc1b67008f11edc9a100b12b14a91443eb51c50233ab2955d7b3a3da"
+    },
+    {
+      "文件": "src/runes.css",
+      "摘要": "6b7b33407349436b70f94fc1f13f3231103c9a60199c2a400e3d155859cf1612"
+    },
+    {
+      "文件": "src/slime-preview.css",
+      "摘要": "70a445389e8806d46988ccc6b4c0fc02631d7d4b84dc76ad71b63c8f1d547197"
+    },
+    {
+      "文件": "src/slime-preview.ts",
+      "摘要": "c64fa5165975273d5a49fa01221b055f1d738e0f82dcb139d82903eb8d39ccb0"
+    },
+    {
+      "文件": "src/style.css",
+      "摘要": "fd3df9e18d1b46c725e5bd7ae2f9b5388a21a3209e9408b9b082d0613b9b01d0"
+    },
+    {
+      "文件": "src/xiaobao-combat-preview.ts",
+      "摘要": "33bfec6ff2b932985bfa6dd559830db8ca495348a334b0bd471334c359a7303f"
+    },
+    {
+      "文件": "src/xiaobao-preview.css",
+      "摘要": "b41f9a49b561dc2025dfab2888e095a13240421ce146dde97a6994c6cfbb67de"
+    },
+    {
+      "文件": "src/xiaobao-preview.ts",
+      "摘要": "5d5d867b91a54ee0f735a340d3f5ebad60af39851b36ad9ae4b40de5e667e37d"
+    },
+    {
+      "文件": "tsconfig.json",
+      "摘要": "e82496b14d36121b3ce6a2ecc9c9880873bdd15165a457726d97ac3a82a7f4c0"
+    },
+    {
+      "文件": "vite.config.ts",
+      "摘要": "bd0fb738e12737a33d4bc83cbfb0cbbda618a2000aa8a29c204512f115fe9ca9"
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "说明": "本轮修正参考原画与矢量图标的差距，正式运行直接加载三十一枚透明手绘图片。源码、生产图片与运行截图分别核验。",
+  "时间": "2026/9/29 22:22:58",
+  "执行结果": {
+    "类型检查": "通过",
+    "符文专项": "五十九项通过",
+    "生产构建": "通过",
+    "浏览器": "两个场景通过，二十五点六秒",
+    "图片解码": "三十一枚通过",
+    "生产图片": "三十一份哈希逐一一致",
+    "空白检查": "通过"
+  },
+  "图片数量": 31,
+  "图片总字节": 3118626,
+  "来源提示": "sources.json",
+  "正式资产清单": "manifest.json",
+  "运行记录": "runtime-validation.json",
+  "首次失败": "first-browser-attempt/result.json",
+  "源码与构建": [
+    {
+      "路径": "src/data/runes.ts",
+      "哈希": "44ed4ac95d6d11d2270779b60f0877db8a5c784025cf36f7203ba808c0abe9d7"
+    },
+    {
+      "路径": "src/game/ui/runeIcons.ts",
+      "哈希": "ac6a0d6a159093e01bdf9272fd86d7e2a63897e923e1acceec2775b1b153cbd5"
+    },
+    {
+      "路径": "src/game/ui/runes.ts",
+      "哈希": "0fd6e08ef274806d9ea669fa977f9d8a72ceb3d883e3e94a9ecd205f5718f7ef"
+    },
+    {
+      "路径": "src/runes.css",
+      "哈希": "6b7b33407349436b70f94fc1f13f3231103c9a60199c2a400e3d155859cf1612"
+    },
+    {
+      "路径": "tests/runes.spec.ts",
+      "哈希": "93b6b852345dccf5eeb86f57a2d7f02f29539ae360979fec4d45283bcc82c270"
+    },
+    {
+      "路径": "tools/pack-rune-icons.mjs",
+      "哈希": "7b87463c1a8237e46c710cfb93cd4e52f3ed8c4f478875c797c92dff34343190"
+    },
+    {
+      "路径": "dist/index.html",
+      "哈希": "0c2c8fe32b4472655d07a0809c6ca6b4bb13c18866aab4c3859898b2eda0f776"
+    },
+    {
+      "路径": "dist/assets/game-CbO8lLVS.css",
+      "哈希": "ed5a610699e8bf842a68991097bf4f4b72661ab2a4fb4ff2de4238114f9ae2e3"
+    },
+    {
+      "路径": "dist/assets/game-bOI9wp8W.js",
+      "哈希": "e0e21ec593e277d37aa6e9a57d7ac3cf999be8db9e9bd3054985b92b28ce03ce"
+    }
+  ],
+  "实际生产服务": [
+    {
+      "路径": "dist/index.html",
+      "响应哈希": "0c2c8fe32b4472655d07a0809c6ca6b4bb13c18866aab4c3859898b2eda0f776",
+      "一致": true
+    },
+    {
+      "路径": "dist/assets/game-CbO8lLVS.css",
+      "响应哈希": "ed5a610699e8bf842a68991097bf4f4b72661ab2a4fb4ff2de4238114f9ae2e3",
+      "一致": true
+    },
+    {
+      "路径": "dist/assets/game-bOI9wp8W.js",
+      "响应哈希": "e0e21ec593e277d37aa6e9a57d7ac3cf999be8db9e9bd3054985b92b28ce03ce",
+      "一致": true
+    }
+  ],
+  "范围边界": [
+    "本轮未重新执行历史九百八十一项完整战斗测试",
+    "最终审美由用户实际游戏验收",
+    "本轮未测长时性能与物理设备帧率"
+  ],
+  "审查": "VERDICT: PASS，无成立的P0或P1阻塞项"
+}

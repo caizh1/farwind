@@ -65,7 +65,7 @@
     "workers": 1,
     "webServer": {
       "cwd": "/Users/archer/Documents/ChatGPT/Game/farwind",
-      "command": "VITE_DEV_GRANT_SWORD_WIND=0 FARWIND_RUNTIME_ROOT=.enemy-local/spore-hit-fix/runtime-before FARWIND_RUNTIME_PORT=5228 FARWIND_RUNTIME_EVIDENCE=docs/enemy-combat-v1/spore-hit-fix/before/runtime-snapshot.json node tools/serve-parry-runtime.mjs",
+      "command": "VITE_DEV_GRANT_SWORD_WIND=0 npx vite .enemy-local/spore-hit-fix/runtime-before --host 127.0.0.1 --port 5228 --strictPort",
       "url": "http://127.0.0.1:5228",
       "reuseExistingServer": false
     }
@@ -79,7 +79,7 @@
       "specs": [
         {
           "title": "stationary-player-brood-projectile",
-          "ok": false,
+          "ok": true,
           "tags": [],
           "tests": [
             {
@@ -92,58 +92,24 @@
                 {
                   "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 73301,
-                  "error": {
-                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 42\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"at\": 34947.14268622298,\u001b[39m\n\u001b[31m+     \"direction\": Object {\u001b[39m\n\u001b[31m+       \"attack\": Object {\u001b[39m\n\u001b[31m+         \"x\": 0.8181215878871685,\u001b[39m\n\u001b[31m+         \"y\": 0.5750452742462788,\u001b[39m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+       \"guard\": undefined,\u001b[39m\n\u001b[31m+     },\u001b[39m\n\u001b[31m+     \"hp\": 62,\u001b[39m\n\u001b[31m+     \"id\": \"elite-ashen-brood:3:spore:1\",\u001b[39m\n\u001b[31m+     \"inputAt\": null,\u001b[39m\n\u001b[31m+     \"parryAge\": null,\u001b[39m\n\u001b[31m+     \"phase\": \"active\",\u001b[39m\n\u001b[31m+     \"predicted\": 34947.14268622298,\u001b[39m\n\u001b[31m+     \"rejection\": \"\",\u001b[39m\n\u001b[31m+     \"result\": \"hurt\",\u001b[39m\n\u001b[31m+     \"stamina\": 100,\u001b[39m\n\u001b[31m+     \"startAt\": null,\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"at\": 37790.37050992168,\u001b[39m\n\u001b[31m+     \"direction\": Object {\u001b[39m\n\u001b[31m+       \"attack\": Object {\u001b[39m\n\u001b[31m+         \"x\": 0.8232805190526428,\u001b[39m\n\u001b[31m+         \"y\": 0.5676347302168984,\u001b[39m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+       \"guard\": undefined,\u001b[39m\n\u001b[31m+     },\u001b[39m\n\u001b[31m+     \"hp\": 48,\u001b[39m\n\u001b[31m+     \"id\": \"elite-ashen-brood:4:spore:1\",\u001b[39m\n\u001b[31m+     \"inputAt\": null,\u001b[39m\n\u001b[31m+     \"parryAge\": null,\u001b[39m\n\u001b[31m+     \"phase\": \"active\",\u001b[39m\n\u001b[31m+     \"predicted\": 37790.370509921675,\u001b[39m\n\u001b[31m+     \"rejection\": \"\",\u001b[39m\n\u001b[31m+     \"result\": \"hurt\",\u001b[39m\n\u001b[31m+     \"stamina\": 100,\u001b[39m\n\u001b[31m+     \"startAt\": null,\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m",
-                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 42\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"at\": 34947.14268622298,\u001b[39m\n\u001b[31m+     \"direction\": Object {\u001b[39m\n\u001b[31m+       \"attack\": Object {\u001b[39m\n\u001b[31m+         \"x\": 0.8181215878871685,\u001b[39m\n\u001b[31m+         \"y\": 0.5750452742462788,\u001b[39m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+       \"guard\": undefined,\u001b[39m\n\u001b[31m+     },\u001b[39m\n\u001b[31m+     \"hp\": 62,\u001b[39m\n\u001b[31m+     \"id\": \"elite-ashen-brood:3:spore:1\",\u001b[39m\n\u001b[31m+     \"inputAt\": null,\u001b[39m\n\u001b[31m+     \"parryAge\": null,\u001b[39m\n\u001b[31m+     \"phase\": \"active\",\u001b[39m\n\u001b[31m+     \"predicted\": 34947.14268622298,\u001b[39m\n\u001b[31m+     \"rejection\": \"\",\u001b[39m\n\u001b[31m+     \"result\": \"hurt\",\u001b[39m\n\u001b[31m+     \"stamina\": 100,\u001b[39m\n\u001b[31m+     \"startAt\": null,\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"at\": 37790.37050992168,\u001b[39m\n\u001b[31m+     \"direction\": Object {\u001b[39m\n\u001b[31m+       \"attack\": Object {\u001b[39m\n\u001b[31m+         \"x\": 0.8232805190526428,\u001b[39m\n\u001b[31m+         \"y\": 0.5676347302168984,\u001b[39m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+       \"guard\": undefined,\u001b[39m\n\u001b[31m+     },\u001b[39m\n\u001b[31m+     \"hp\": 48,\u001b[39m\n\u001b[31m+     \"id\": \"elite-ashen-brood:4:spore:1\",\u001b[39m\n\u001b[31m+     \"inputAt\": null,\u001b[39m\n\u001b[31m+     \"parryAge\": null,\u001b[39m\n\u001b[31m+     \"phase\": \"active\",\u001b[39m\n\u001b[31m+     \"predicted\": 37790.370509921675,\u001b[39m\n\u001b[31m+     \"rejection\": \"\",\u001b[39m\n\u001b[31m+     \"result\": \"hurt\",\u001b[39m\n\u001b[31m+     \"stamina\": 100,\u001b[39m\n\u001b[31m+     \"startAt\": null,\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/spore-hit.spec.ts:22:40",
-                    "location": {
-                      "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/spore-hit.spec.ts",
-                      "column": 40,
-                      "line": 22
-                    },
-                    "snippet": "  20 |  await writeFile(`${dir}/stationary-validation.json`,JSON.stringify({说明:'正常新游戏，以键盘步行到灰冠母孢；随后不移动、不攻击、不架剑。诊断只读，不注入角色或生命。',阶段:stage==='before'?'修复前缺陷复现':'修复后验证',之前:before,之后:after,母孢实际伤害接触:contacts,错误:errors},null,2));\n  21 |  expect(errors).toEqual([]);\n> 22 |  if(stage==='before'){expect(contacts).toEqual([]);expect(after.state.player.hp).toBe(before.state.player.hp);}\n     |                                        ^\n  23 |  else {expect(contacts.length).toBeGreaterThanOrEqual(1);expect(after.state.player.hp).toBeLessThan(before.state.player.hp);}\n  24 | });\n  25 |"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/spore-hit.spec.ts",
-                        "column": 40,
-                        "line": 22
-                      },
-                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 42\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"at\": 34947.14268622298,\u001b[39m\n\u001b[31m+     \"direction\": Object {\u001b[39m\n\u001b[31m+       \"attack\": Object {\u001b[39m\n\u001b[31m+         \"x\": 0.8181215878871685,\u001b[39m\n\u001b[31m+         \"y\": 0.5750452742462788,\u001b[39m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+       \"guard\": undefined,\u001b[39m\n\u001b[31m+     },\u001b[39m\n\u001b[31m+     \"hp\": 62,\u001b[39m\n\u001b[31m+     \"id\": \"elite-ashen-brood:3:spore:1\",\u001b[39m\n\u001b[31m+     \"inputAt\": null,\u001b[39m\n\u001b[31m+     \"parryAge\": null,\u001b[39m\n\u001b[31m+     \"phase\": \"active\",\u001b[39m\n\u001b[31m+     \"predicted\": 34947.14268622298,\u001b[39m\n\u001b[31m+     \"rejection\": \"\",\u001b[39m\n\u001b[31m+     \"result\": \"hurt\",\u001b[39m\n\u001b[31m+     \"stamina\": 100,\u001b[39m\n\u001b[31m+     \"startAt\": null,\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"at\": 37790.37050992168,\u001b[39m\n\u001b[31m+     \"direction\": Object {\u001b[39m\n\u001b[31m+       \"attack\": Object {\u001b[39m\n\u001b[31m+         \"x\": 0.8232805190526428,\u001b[39m\n\u001b[31m+         \"y\": 0.5676347302168984,\u001b[39m\n\u001b[31m+       },\u001b[39m\n\u001b[31m+       \"guard\": undefined,\u001b[39m\n\u001b[31m+     },\u001b[39m\n\u001b[31m+     \"hp\": 48,\u001b[39m\n\u001b[31m+     \"id\": \"elite-ashen-brood:4:spore:1\",\u001b[39m\n\u001b[31m+     \"inputAt\": null,\u001b[39m\n\u001b[31m+     \"parryAge\": null,\u001b[39m\n\u001b[31m+     \"phase\": \"active\",\u001b[39m\n\u001b[31m+     \"predicted\": 37790.370509921675,\u001b[39m\n\u001b[31m+     \"rejection\": \"\",\u001b[39m\n\u001b[31m+     \"result\": \"hurt\",\u001b[39m\n\u001b[31m+     \"stamina\": 100,\u001b[39m\n\u001b[31m+     \"startAt\": null,\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  20 |  await writeFile(`${dir}/stationary-validation.json`,JSON.stringify({说明:'正常新游戏，以键盘步行到灰冠母孢；随后不移动、不攻击、不架剑。诊断只读，不注入角色或生命。',阶段:stage==='before'?'修复前缺陷复现':'修复后验证',之前:before,之后:after,母孢实际伤害接触:contacts,错误:errors},null,2));\n  21 |  expect(errors).toEqual([]);\n> 22 |  if(stage==='before'){expect(contacts).toEqual([]);expect(after.state.player.hp).toBe(before.state.player.hp);}\n     |                                        ^\n  23 |  else {expect(contacts.length).toBeGreaterThanOrEqual(1);expect(after.state.player.hp).toBeLessThan(before.state.player.hp);}\n  24 | });\n  25 |\n    at /Users/archer/Documents/ChatGPT/Game/farwind/tests/spore-hit.spec.ts:22:40"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 41858,
+                  "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-28T13:54:54.426Z",
+                  "startTime": "2026-09-28T13:57:45.810Z",
                   "annotations": [],
                   "attachments": [
                     {
                       "name": "video",
                       "contentType": "video/webm",
                       "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/spore-hit-fix/before-results/spore-hit-stationary-player-brood-projectile/video.webm"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/spore-hit-fix/before-results/spore-hit-stationary-player-brood-projectile/error-context.md"
-                    },
-                    {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/spore-hit-fix/before-results/spore-hit-stationary-player-brood-projectile/trace.zip"
                     }
-                  ],
-                  "errorLocation": {
-                    "file": "/Users/archer/Documents/ChatGPT/Game/farwind/tests/spore-hit.spec.ts",
-                    "column": 40,
-                    "line": 22
-                  }
+                  ]
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "b1324db4df0852c9c420-72efd2952702be2ce320",
@@ -156,11 +122,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-28T13:54:52.934Z",
-    "duration": 88921.529,
-    "expected": 0,
+    "startTime": "2026-09-28T13:57:45.058Z",
+    "duration": 42906.914000000004,
+    "expected": 1,
     "skipped": 0,
-    "unexpected": 1,
+    "unexpected": 0,
     "flaky": 0
   }
 }

@@ -1,0 +1,979 @@
+{
+  "说明": "最终全量测试和十二浏览器场景结束后复核；之后只整理中文文档与真实录像，未继续修改实现。",
+  "时间": "2026-09-29T21:04:29+08:00",
+  "分支": "codex/initial-game",
+  "比较文件数": 153,
+  "源码依赖与符文测试文件数": 145,
+  "生产文件数": 8,
+  "全部一致": true,
+  "文件": [
+    {
+      "路径": "package-lock.json",
+      "验收前SHA256": "2609c89f1f9d5e3e5c770eee20eac5f6eced41d47f6b57cd5592ecd3002bd9be",
+      "验收后SHA256": "2609c89f1f9d5e3e5c770eee20eac5f6eced41d47f6b57cd5592ecd3002bd9be",
+      "一致": true
+    },
+    {
+      "路径": "package.json",
+      "验收前SHA256": "353f07ce297ef50e727579836405e3de8d761bb6bc618627315771019287504a",
+      "验收后SHA256": "353f07ce297ef50e727579836405e3de8d761bb6bc618627315771019287504a",
+      "一致": true
+    },
+    {
+      "路径": "src/animation-preview.ts",
+      "验收前SHA256": "bff96bf93330785f23d029445efe7ad73ac6d001897e237edf4187035ff2355f",
+      "验收后SHA256": "bff96bf93330785f23d029445efe7ad73ac6d001897e237edf4187035ff2355f",
+      "一致": true
+    },
+    {
+      "路径": "src/commission.css",
+      "验收前SHA256": "06a7900202e2e0c8b5a7f2e34960f27623deb8d023d7e8f1eac8d1cde35566a9",
+      "验收后SHA256": "06a7900202e2e0c8b5a7f2e34960f27623deb8d023d7e8f1eac8d1cde35566a9",
+      "一致": true
+    },
+    {
+      "路径": "src/data/animation.ts",
+      "验收前SHA256": "bbabf70e0fb606c740e2708581ce06cde1cfc2f04e5695cd66bdf7df52f176d2",
+      "验收后SHA256": "bbabf70e0fb606c740e2708581ce06cde1cfc2f04e5695cd66bdf7df52f176d2",
+      "一致": true
+    },
+    {
+      "路径": "src/data/campBossArt.ts",
+      "验收前SHA256": "ea09f77bb91b54f8030aa0c27c404d76d9c694e60808e72f422d98f0bce35522",
+      "验收后SHA256": "ea09f77bb91b54f8030aa0c27c404d76d9c694e60808e72f422d98f0bce35522",
+      "一致": true
+    },
+    {
+      "路径": "src/data/content.ts",
+      "验收前SHA256": "83a36f5e6d62feff7fdda9bb67f3946607739ba8ae5d69fe360bc76421062db7",
+      "验收后SHA256": "83a36f5e6d62feff7fdda9bb67f3946607739ba8ae5d69fe360bc76421062db7",
+      "一致": true
+    },
+    {
+      "路径": "src/data/counterArt.ts",
+      "验收前SHA256": "603052f34e0492932f1d9607ee7949d380f673d2ef8d4737763a336e20ef1fcd",
+      "验收后SHA256": "603052f34e0492932f1d9607ee7949d380f673d2ef8d4737763a336e20ef1fcd",
+      "一致": true
+    },
+    {
+      "路径": "src/data/dayNight.ts",
+      "验收前SHA256": "803ad3a017997e82c15c9d398702073a96bf61d752634a9766d3b01da5916d55",
+      "验收后SHA256": "803ad3a017997e82c15c9d398702073a96bf61d752634a9766d3b01da5916d55",
+      "一致": true
+    },
+    {
+      "路径": "src/data/defense.ts",
+      "验收前SHA256": "3ba4e701bd48c14b8fffde726fb5b0f32a3ff1a498403c807d59c9e80c78ae7d",
+      "验收后SHA256": "3ba4e701bd48c14b8fffde726fb5b0f32a3ff1a498403c807d59c9e80c78ae7d",
+      "一致": true
+    },
+    {
+      "路径": "src/data/defenseZones.ts",
+      "验收前SHA256": "9ed644f763c8b06a6fa5c386bea48489c40af04e4d858c1c91be3279c29c8353",
+      "验收后SHA256": "9ed644f763c8b06a6fa5c386bea48489c40af04e4d858c1c91be3279c29c8353",
+      "一致": true
+    },
+    {
+      "路径": "src/data/demonKing.ts",
+      "验收前SHA256": "04f4709bc7a32716dfd31fb73c7b81c80fd9640b68ac7875876a66c1d852e41c",
+      "验收后SHA256": "04f4709bc7a32716dfd31fb73c7b81c80fd9640b68ac7875876a66c1d852e41c",
+      "一致": true
+    },
+    {
+      "路径": "src/data/dialoguePortraits.ts",
+      "验收前SHA256": "d0b27f3cb2e987bc78f2709a2732ebf86ea01cd764ce84a997108a7b5a7223aa",
+      "验收后SHA256": "d0b27f3cb2e987bc78f2709a2732ebf86ea01cd764ce84a997108a7b5a7223aa",
+      "一致": true
+    },
+    {
+      "路径": "src/data/economy.ts",
+      "验收前SHA256": "75459bb29e9cb0651f05eace8782671641a734a9a42373ad6f3dba67782c811a",
+      "验收后SHA256": "75459bb29e9cb0651f05eace8782671641a734a9a42373ad6f3dba67782c811a",
+      "一致": true
+    },
+    {
+      "路径": "src/data/enemies.ts",
+      "验收前SHA256": "d28bf885a3c319cefc52429e3091f55037446ba8795488938a7ca25d150b1e65",
+      "验收后SHA256": "d28bf885a3c319cefc52429e3091f55037446ba8795488938a7ca25d150b1e65",
+      "一致": true
+    },
+    {
+      "路径": "src/data/enemyPursuit.ts",
+      "验收前SHA256": "298bbcd4ff25fb790de37e48ba078668a742fd8256ae64d47c78635a4f603cc6",
+      "验收后SHA256": "298bbcd4ff25fb790de37e48ba078668a742fd8256ae64d47c78635a4f603cc6",
+      "一致": true
+    },
+    {
+      "路径": "src/data/maps/windbell/bounds.ts",
+      "验收前SHA256": "b68d54da060947e78c8470561cde722de4aa3d3346eb0ceb0f06b85bcf02e688",
+      "验收后SHA256": "b68d54da060947e78c8470561cde722de4aa3d3346eb0ceb0f06b85bcf02e688",
+      "一致": true
+    },
+    {
+      "路径": "src/data/maps/windbell/campBosses.ts",
+      "验收前SHA256": "9255d56255438d773b0ee54cc58c469977ec6e8d967afb2d02f54ca2095f5ce6",
+      "验收后SHA256": "9255d56255438d773b0ee54cc58c469977ec6e8d967afb2d02f54ca2095f5ce6",
+      "一致": true
+    },
+    {
+      "路径": "src/data/maps/windbell/elites.ts",
+      "验收前SHA256": "cd54a1bbbcb623502aba91cbf6aa2934a54bb458ac688ce3ae05bf08c8e5e03d",
+      "验收后SHA256": "cd54a1bbbcb623502aba91cbf6aa2934a54bb458ac688ce3ae05bf08c8e5e03d",
+      "一致": true
+    },
+    {
+      "路径": "src/data/maps/windbell/encounters.ts",
+      "验收前SHA256": "ee7459d273779b33bccc11053fa46752335c70a1436ff91b330c1d49ca68d14a",
+      "验收后SHA256": "ee7459d273779b33bccc11053fa46752335c70a1436ff91b330c1d49ca68d14a",
+      "一致": true
+    },
+    {
+      "路径": "src/data/maps/windbell/layout.ts",
+      "验收前SHA256": "ceff4c00a864e5940fbe07dd808809d0e99ad496ab3b0364ca076ea82372af14",
+      "验收后SHA256": "ceff4c00a864e5940fbe07dd808809d0e99ad496ab3b0364ca076ea82372af14",
+      "一致": true
+    },
+    {
+      "路径": "src/data/maps/windbell/roads.ts",
+      "验收前SHA256": "bf9c8fb8873bea8e2eb2a6f5c88323e5cd9195e271a4bbd8782fcebff1760cff",
+      "验收后SHA256": "bf9c8fb8873bea8e2eb2a6f5c88323e5cd9195e271a4bbd8782fcebff1760cff",
+      "一致": true
+    },
+    {
+      "路径": "src/data/maps/windbell/shortcuts.ts",
+      "验收前SHA256": "2491f6973885aa38b6b591cb07b4986ff85d8c1b06b1c5971d93a3cdc09ac972",
+      "验收后SHA256": "2491f6973885aa38b6b591cb07b4986ff85d8c1b06b1c5971d93a3cdc09ac972",
+      "一致": true
+    },
+    {
+      "路径": "src/data/maps/windbell/wilderness.ts",
+      "验收前SHA256": "1bc93f37110f1df20467cace4188857cb8d87ed830e55a9408fca52ad7856d63",
+      "验收后SHA256": "1bc93f37110f1df20467cace4188857cb8d87ed830e55a9408fca52ad7856d63",
+      "一致": true
+    },
+    {
+      "路径": "src/data/npcLife.ts",
+      "验收前SHA256": "5bd2d568ac6943184278c380816461dd5ec830c2230a14d0d8f032ff29929073",
+      "验收后SHA256": "5bd2d568ac6943184278c380816461dd5ec830c2230a14d0d8f032ff29929073",
+      "一致": true
+    },
+    {
+      "路径": "src/data/runes.ts",
+      "验收前SHA256": "c6453411b0c394521f82fc3c6c1bf13fd3513bf8f4d0e2c77b917625a4fd0e96",
+      "验收后SHA256": "c6453411b0c394521f82fc3c6c1bf13fd3513bf8f4d0e2c77b917625a4fd0e96",
+      "一致": true
+    },
+    {
+      "路径": "src/data/swordWind.ts",
+      "验收前SHA256": "ac01380faca1c599d61f4a8e6a4ee0b1405c37f0fd3314a2aa9967f8a8968a0e",
+      "验收后SHA256": "ac01380faca1c599d61f4a8e6a4ee0b1405c37f0fd3314a2aa9967f8a8968a0e",
+      "一致": true
+    },
+    {
+      "路径": "src/data/swordWindArt.ts",
+      "验收前SHA256": "f488b2de6a918624fd40936cd60d9c553bc0b83dad8967fe993899ded911ab8a",
+      "验收后SHA256": "f488b2de6a918624fd40936cd60d9c553bc0b83dad8967fe993899ded911ab8a",
+      "一致": true
+    },
+    {
+      "路径": "src/data/village-economy.ts",
+      "验收前SHA256": "0043643a6f1f10eed5c930d53381256e19dfe1bd4056e825281f52385c138b23",
+      "验收后SHA256": "0043643a6f1f10eed5c930d53381256e19dfe1bd4056e825281f52385c138b23",
+      "一致": true
+    },
+    {
+      "路径": "src/data/village.ts",
+      "验收前SHA256": "823b15d3d9ce9fde799507c516e2000adb2d4b80e215ef2a9f68ddeb92e76f4d",
+      "验收后SHA256": "823b15d3d9ce9fde799507c516e2000adb2d4b80e215ef2a9f68ddeb92e76f4d",
+      "一致": true
+    },
+    {
+      "路径": "src/data/windLessons.ts",
+      "验收前SHA256": "c4f817063849b919f0453b1a55141246bea1675dc7dd64d18fa9f1ee61039d11",
+      "验收后SHA256": "c4f817063849b919f0453b1a55141246bea1675dc7dd64d18fa9f1ee61039d11",
+      "一致": true
+    },
+    {
+      "路径": "src/data/world.ts",
+      "验收前SHA256": "71a724dee5564a57949b20500e5d569a3e283498fe90c7292af5cf38e19057cf",
+      "验收后SHA256": "71a724dee5564a57949b20500e5d569a3e283498fe90c7292af5cf38e19057cf",
+      "一致": true
+    },
+    {
+      "路径": "src/data/xiaobao.ts",
+      "验收前SHA256": "03a36b38f2cc9a5c3675a29ae0bdf60add6cc6fcf077cf3922d7caf6dbc682ee",
+      "验收后SHA256": "03a36b38f2cc9a5c3675a29ae0bdf60add6cc6fcf077cf3922d7caf6dbc682ee",
+      "一致": true
+    },
+    {
+      "路径": "src/data/xiaobaoCombat.ts",
+      "验收前SHA256": "a7877caff02ca1b6f23395eada2f9f87c6915dd32c05eeadcb34afcb600d2a00",
+      "验收后SHA256": "a7877caff02ca1b6f23395eada2f9f87c6915dd32c05eeadcb34afcb600d2a00",
+      "一致": true
+    },
+    {
+      "路径": "src/enemy-preview.ts",
+      "验收前SHA256": "e6ff68ac64cebcd17a779485896e1160255f1c70b0f4f11a39dfa1b181bc407e",
+      "验收后SHA256": "e6ff68ac64cebcd17a779485896e1160255f1c70b0f4f11a39dfa1b181bc407e",
+      "一致": true
+    },
+    {
+      "路径": "src/equipment.css",
+      "验收前SHA256": "ff0e21d7adcd3b85c3c1ebee184821ad3d7dbdde30619cb9ec77e7eeb5d06aaa",
+      "验收后SHA256": "ff0e21d7adcd3b85c3c1ebee184821ad3d7dbdde30619cb9ec77e7eeb5d06aaa",
+      "一致": true
+    },
+    {
+      "路径": "src/game/entities/actor.ts",
+      "验收前SHA256": "e0186be9db3bada0bc2ab1da2112a3be9e228df2aacf107e695658239ca26e4d",
+      "验收后SHA256": "e0186be9db3bada0bc2ab1da2112a3be9e228df2aacf107e695658239ca26e4d",
+      "一致": true
+    },
+    {
+      "路径": "src/game/entities/campBossEffects.ts",
+      "验收前SHA256": "e4868cc6e21ee5a5689f1037d01f0ff9710f3414f6f23f6b986f88f19040ffc8",
+      "验收后SHA256": "e4868cc6e21ee5a5689f1037d01f0ff9710f3414f6f23f6b986f88f19040ffc8",
+      "一致": true
+    },
+    {
+      "路径": "src/game/entities/campBossView.ts",
+      "验收前SHA256": "a0390a6df191a6a0b80b0145ed37533abcdcef4813b47359f76bfb99539e90a9",
+      "验收后SHA256": "a0390a6df191a6a0b80b0145ed37533abcdcef4813b47359f76bfb99539e90a9",
+      "一致": true
+    },
+    {
+      "路径": "src/game/entities/combatFeedbackView.ts",
+      "验收前SHA256": "ec592d91d3ffb8e7a23774dc4ffa8d852a4f6599ca35f6e192cc68670ac0d80e",
+      "验收后SHA256": "ec592d91d3ffb8e7a23774dc4ffa8d852a4f6599ca35f6e192cc68670ac0d80e",
+      "一致": true
+    },
+    {
+      "路径": "src/game/entities/defenders.ts",
+      "验收前SHA256": "98a193b30094418e74ba5086b07542564c15833461cadc411d32155e12597e30",
+      "验收后SHA256": "98a193b30094418e74ba5086b07542564c15833461cadc411d32155e12597e30",
+      "一致": true
+    },
+    {
+      "路径": "src/game/entities/enemyView.ts",
+      "验收前SHA256": "ebb6f3582208e2c23a3fe6c913953c2ed3583314a20f23c892ac64984e207111",
+      "验收后SHA256": "ebb6f3582208e2c23a3fe6c913953c2ed3583314a20f23c892ac64984e207111",
+      "一致": true
+    },
+    {
+      "路径": "src/game/entities/npcLifeView.ts",
+      "验收前SHA256": "add4fa600565543c10156322b136a6f778fa5397369c97a31c6b853ddd28ad0d",
+      "验收后SHA256": "add4fa600565543c10156322b136a6f778fa5397369c97a31c6b853ddd28ad0d",
+      "一致": true
+    },
+    {
+      "路径": "src/game/entities/runeView.ts",
+      "验收前SHA256": "07141e6267dd8c12f00999be23cbf57dd432c1a5afa9c65d52c9ee984df55479",
+      "验收后SHA256": "07141e6267dd8c12f00999be23cbf57dd432c1a5afa9c65d52c9ee984df55479",
+      "一致": true
+    },
+    {
+      "路径": "src/game/entities/slimeSample.ts",
+      "验收前SHA256": "5e5d481f3bb6ac14ed44b82616a95d5f75ddd0e17dea40645389c9c40340aa89",
+      "验收后SHA256": "5e5d481f3bb6ac14ed44b82616a95d5f75ddd0e17dea40645389c9c40340aa89",
+      "一致": true
+    },
+    {
+      "路径": "src/game/entities/swordWindView.ts",
+      "验收前SHA256": "53b65277124e1620db63405a5c050033a6551cb262187fa187094319bd5b935e",
+      "验收后SHA256": "53b65277124e1620db63405a5c050033a6551cb262187fa187094319bd5b935e",
+      "一致": true
+    },
+    {
+      "路径": "src/game/entities/swordWindWaterView.ts",
+      "验收前SHA256": "52b9997835d4d8c5e3e433a5e42a08ef8677ed62431b758d83196f416b9069c1",
+      "验收后SHA256": "52b9997835d4d8c5e3e433a5e42a08ef8677ed62431b758d83196f416b9069c1",
+      "一致": true
+    },
+    {
+      "路径": "src/game/entities/trainingDummy.ts",
+      "验收前SHA256": "22e1d3037a8b60d5f13daf0f67c5789a78125e435c0cd530b1aa353b887c908c",
+      "验收后SHA256": "22e1d3037a8b60d5f13daf0f67c5789a78125e435c0cd530b1aa353b887c908c",
+      "一致": true
+    },
+    {
+      "路径": "src/game/entities/xiaobaoView.ts",
+      "验收前SHA256": "9597658829f2d2a81b90eb29f9b0a3f194eb0a92e4b2d68fc15d82a2a56a8868",
+      "验收后SHA256": "9597658829f2d2a81b90eb29f9b0a3f194eb0a92e4b2d68fc15d82a2a56a8868",
+      "一致": true
+    },
+    {
+      "路径": "src/game/rendering/dayNightView.ts",
+      "验收前SHA256": "5c4ffabcc16348a56d00b6fb836f5599dd1486752a1cf0f1644061191e00a317",
+      "验收后SHA256": "5c4ffabcc16348a56d00b6fb836f5599dd1486752a1cf0f1644061191e00a317",
+      "一致": true
+    },
+    {
+      "路径": "src/game/scenes/World.ts",
+      "验收前SHA256": "09e1cab40d4a7ce8a6f0b78c0c9952a603f8e1def404f36a9adc451d4d99f145",
+      "验收后SHA256": "09e1cab40d4a7ce8a6f0b78c0c9952a603f8e1def404f36a9adc451d4d99f145",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/audio.ts",
+      "验收前SHA256": "caa29afb57dfaba8ef77844cbfdc09eea39210ae2e7eb9f81b7506fda51ff9c3",
+      "验收后SHA256": "caa29afb57dfaba8ef77844cbfdc09eea39210ae2e7eb9f81b7506fda51ff9c3",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/campBossCombat.ts",
+      "验收前SHA256": "509c08681bdb314dfc68d961b739551558cb93d16e5a141f7f86832a42a88e24",
+      "验收后SHA256": "509c08681bdb314dfc68d961b739551558cb93d16e5a141f7f86832a42a88e24",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/campBossState.ts",
+      "验收前SHA256": "720681061448980198c44e4696c03c052ca7ad73dd40321016af580ead1fdf33",
+      "验收后SHA256": "720681061448980198c44e4696c03c052ca7ad73dd40321016af580ead1fdf33",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/combat.ts",
+      "验收前SHA256": "3e21a73335f09fd4861d7099b9c883d9313ccd1a1f44d253e75a81f20a22a9d4",
+      "验收后SHA256": "3e21a73335f09fd4861d7099b9c883d9313ccd1a1f44d253e75a81f20a22a9d4",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/combatFeedback.ts",
+      "验收前SHA256": "e6cdeb30d3dcc7d5506f0972cfdbba5715285c1beab423cd2582e16d4cea3e62",
+      "验收后SHA256": "e6cdeb30d3dcc7d5506f0972cfdbba5715285c1beab423cd2582e16d4cea3e62",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/combatFeelDebug.ts",
+      "验收前SHA256": "b6b1fa751f5ddc9d10de773373e5431efe109a113fd6f1960efba8105fd6bf1c",
+      "验收后SHA256": "b6b1fa751f5ddc9d10de773373e5431efe109a113fd6f1960efba8105fd6bf1c",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/contact.ts",
+      "验收前SHA256": "45df717db81b9a7dd16e8d6bdd9004e511516da2ba3fbfe2fff210286882225d",
+      "验收后SHA256": "45df717db81b9a7dd16e8d6bdd9004e511516da2ba3fbfe2fff210286882225d",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/creatureAudio.ts",
+      "验收前SHA256": "1b0bfc78fb15ed51221bfa729a1ff396d678a93b5164ea6e173e32273fdcce17",
+      "验收后SHA256": "1b0bfc78fb15ed51221bfa729a1ff396d678a93b5164ea6e173e32273fdcce17",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/damage.ts",
+      "验收前SHA256": "0a097aacc51b241091054ab08c8fcd19b538c5da7d01a913dce91fef8feae4c2",
+      "验收后SHA256": "0a097aacc51b241091054ab08c8fcd19b538c5da7d01a913dce91fef8feae4c2",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/dayNightDebug.ts",
+      "验收前SHA256": "8d9ed4e3079dfe1e24ca1db9c02f99543ea54f61c909ad1966bdfb43107e4fc9",
+      "验收后SHA256": "8d9ed4e3079dfe1e24ca1db9c02f99543ea54f61c909ad1966bdfb43107e4fc9",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/defense.ts",
+      "验收前SHA256": "57a72a2a4897bece077ca03b3cad4f577759b5b306753c964f71c93e9a8e1b02",
+      "验收后SHA256": "57a72a2a4897bece077ca03b3cad4f577759b5b306753c964f71c93e9a8e1b02",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/defenseState.ts",
+      "验收前SHA256": "8b0ec173e299b0a9c81c7622baff0504feab08e6d65487bc5a38a62515ac8cf8",
+      "验收后SHA256": "8b0ec173e299b0a9c81c7622baff0504feab08e6d65487bc5a38a62515ac8cf8",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/demonKingState.ts",
+      "验收前SHA256": "3fc1c61b1de7471e7c86c417029671b5e27ca4d2d5f6a595b428b2382b47cff1",
+      "验收后SHA256": "3fc1c61b1de7471e7c86c417029671b5e27ca4d2d5f6a595b428b2382b47cff1",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/economy.ts",
+      "验收前SHA256": "e119085c4e6717019f31eee7c8ffb5fd1d7fc8a0a4d1d45589e6dc93b4c00b64",
+      "验收后SHA256": "e119085c4e6717019f31eee7c8ffb5fd1d7fc8a0a4d1d45589e6dc93b4c00b64",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/eliteArena.ts",
+      "验收前SHA256": "290aa19cf36ad63557371ca2967abb404a51cc6584edfdd55cfffc3ed52864df",
+      "验收后SHA256": "290aa19cf36ad63557371ca2967abb404a51cc6584edfdd55cfffc3ed52864df",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/encounterRuntime.ts",
+      "验收前SHA256": "cc44de159eadbccd64cb55564917878b26683af25088222ca428c53fdae5fa6f",
+      "验收后SHA256": "cc44de159eadbccd64cb55564917878b26683af25088222ca428c53fdae5fa6f",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/encounterState.ts",
+      "验收前SHA256": "2c7d9a545fa7fc68bdaa02b1743870be5aa11448ffb265d8b6e5b08033043fea",
+      "验收后SHA256": "2c7d9a545fa7fc68bdaa02b1743870be5aa11448ffb265d8b6e5b08033043fea",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/encounterTempo.ts",
+      "验收前SHA256": "2cabc5f4b724b32916bb4b1575e1f78f224a37ff8706086e1ec3f95aa64f643b",
+      "验收后SHA256": "2cabc5f4b724b32916bb4b1575e1f78f224a37ff8706086e1ec3f95aa64f643b",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/enemy.ts",
+      "验收前SHA256": "90e4f643f319d3d1f2f1f59cc0a8e47b05f6b257f4b9ea27914c8222f5566783",
+      "验收后SHA256": "90e4f643f319d3d1f2f1f59cc0a8e47b05f6b257f4b9ea27914c8222f5566783",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/enemyAnimation.ts",
+      "验收前SHA256": "70dce79d550189f4d72d4e03b7f3956bbbc1203c0cdc0fad6eae96c97822b785",
+      "验收后SHA256": "70dce79d550189f4d72d4e03b7f3956bbbc1203c0cdc0fad6eae96c97822b785",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/enemyAttack.ts",
+      "验收前SHA256": "fb4903e88a0b8a3462ac604ae1e3fdb45a1d563fccf9d26e790113ab25635669",
+      "验收后SHA256": "fb4903e88a0b8a3462ac604ae1e3fdb45a1d563fccf9d26e790113ab25635669",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/enemyProjectiles.ts",
+      "验收前SHA256": "e5d968f85e5f2267e2e38e1b9a1e19fc88ffd7eafd232b47de4556a5e032dd8b",
+      "验收后SHA256": "e5d968f85e5f2267e2e38e1b9a1e19fc88ffd7eafd232b47de4556a5e032dd8b",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/enemyReaction.ts",
+      "验收前SHA256": "ace64f810865f8338d774f9a6e0067f09c0fbc278e7088d7ca4d4e17e5ebef88",
+      "验收后SHA256": "ace64f810865f8338d774f9a6e0067f09c0fbc278e7088d7ca4d4e17e5ebef88",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/enemyTraits.ts",
+      "验收前SHA256": "270cb43ce4aa790f3322a9e60b0d02d0f2a8038a7da8d172303011c042de7105",
+      "验收后SHA256": "270cb43ce4aa790f3322a9e60b0d02d0f2a8038a7da8d172303011c042de7105",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/feedbackAudio.ts",
+      "验收前SHA256": "5b59262f2ff862aa8ee459a1ebf90100eee3fb26abcb1908572f460630103166",
+      "验收后SHA256": "5b59262f2ff862aa8ee459a1ebf90100eee3fb26abcb1908572f460630103166",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/fieldQuest.ts",
+      "验收前SHA256": "5720b5bd4ad96b7e19cedb04e50e9737900531cb2d007c17590540faa2207bf7",
+      "验收后SHA256": "5720b5bd4ad96b7e19cedb04e50e9737900531cb2d007c17590540faa2207bf7",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/fieldQuestState.ts",
+      "验收前SHA256": "72792c79eebd52208ae6b9cb253650679b3267339a3879e4f3421705c98b3be5",
+      "验收后SHA256": "72792c79eebd52208ae6b9cb253650679b3267339a3879e4f3421705c98b3be5",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/follower.ts",
+      "验收前SHA256": "e49e5a233692725321f04e1f8a43f9cef57bc410eda9f75690b6e495ca7eba5a",
+      "验收后SHA256": "e49e5a233692725321f04e1f8a43f9cef57bc410eda9f75690b6e495ca7eba5a",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/input.ts",
+      "验收前SHA256": "d98ece078bea7edee14ac61ccee0a18725a6901c129d869a9ea022bbb9711add",
+      "验收后SHA256": "d98ece078bea7edee14ac61ccee0a18725a6901c129d869a9ea022bbb9711add",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/interactions.ts",
+      "验收前SHA256": "3b911155acd4e269a2e0b41a13c7666a2d55e5c2e388cf48fed01a3555e4c739",
+      "验收后SHA256": "3b911155acd4e269a2e0b41a13c7666a2d55e5c2e388cf48fed01a3555e4c739",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/locomotion.ts",
+      "验收前SHA256": "d0625edbc462e31a72ef4373c40b276474db15dfa3f720128768f430f6bb18e1",
+      "验收后SHA256": "d0625edbc462e31a72ef4373c40b276474db15dfa3f720128768f430f6bb18e1",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/mapTravel.ts",
+      "验收前SHA256": "e9e4ceb21af0ac76a2765653e4eae3a43fe151f9fb6c909a17773091a5106137",
+      "验收后SHA256": "e9e4ceb21af0ac76a2765653e4eae3a43fe151f9fb6c909a17773091a5106137",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/nightDirector.ts",
+      "验收前SHA256": "41b79c769253d79696d520d7fd8137bee7f6de9488b09be74d4faefd189ae08f",
+      "验收后SHA256": "41b79c769253d79696d520d7fd8137bee7f6de9488b09be74d4faefd189ae08f",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/nightDiscovery.ts",
+      "验收前SHA256": "59383eb1348aba0a1f384b4c5e1bc39e0a7ba34f5741dbb43fe24544a2041f93",
+      "验收后SHA256": "59383eb1348aba0a1f384b4c5e1bc39e0a7ba34f5741dbb43fe24544a2041f93",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/npcAnimation.ts",
+      "验收前SHA256": "837db4ba539971c4cbfee61ae07c809f80f1d28371431aa543565a8053fd5525",
+      "验收后SHA256": "837db4ba539971c4cbfee61ae07c809f80f1d28371431aa543565a8053fd5525",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/npcLife.ts",
+      "验收前SHA256": "a010339bb21573555ffe94f1eae74743d5f691171aba3247b19ec7ef305b3902",
+      "验收后SHA256": "a010339bb21573555ffe94f1eae74743d5f691171aba3247b19ec7ef305b3902",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/npcLifeState.ts",
+      "验收前SHA256": "42cf865f524cc559ea70bb61b7c3f9dd457795bdfbd4b4119fbc8a9b02d8c300",
+      "验收后SHA256": "42cf865f524cc559ea70bb61b7c3f9dd457795bdfbd4b4119fbc8a9b02d8c300",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/npcNavigation.ts",
+      "验收前SHA256": "2ccdb869f76b2380570c5a3ad7453ebb5564699b02bf49ea8b3c0b1c00dfae2a",
+      "验收后SHA256": "2ccdb869f76b2380570c5a3ad7453ebb5564699b02bf49ea8b3c0b1c00dfae2a",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/npcSocial.ts",
+      "验收前SHA256": "9de691f736656801101e055beb1a9d06eac2f941363b628d37d49d2b64e67d11",
+      "验收后SHA256": "9de691f736656801101e055beb1a9d06eac2f941363b628d37d49d2b64e67d11",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/npcSpeech.ts",
+      "验收前SHA256": "27f6adcb31fbf2f2de2987eb9661411fb9d2a5c08017433582e79906fbf51e86",
+      "验收后SHA256": "27f6adcb31fbf2f2de2987eb9661411fb9d2a5c08017433582e79906fbf51e86",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/obstacles.ts",
+      "验收前SHA256": "91c00d58fbc2c51aef82ddf4b203091f766fbf5eb2f70260a2c188e2530fc447",
+      "验收后SHA256": "91c00d58fbc2c51aef82ddf4b203091f766fbf5eb2f70260a2c188e2530fc447",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/parryTraining.ts",
+      "验收前SHA256": "ca3bdb7604adfe2fb8f66719103d49ba780bc476aafe81bfe669ba04c2347d95",
+      "验收后SHA256": "ca3bdb7604adfe2fb8f66719103d49ba780bc476aafe81bfe669ba04c2347d95",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/pondSurface.ts",
+      "验收前SHA256": "ccb4b7553de1f45490fda85b60bdeb111bf43c731ef907771e480face05bd336",
+      "验收后SHA256": "ccb4b7553de1f45490fda85b60bdeb111bf43c731ef907771e480face05bd336",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/runeCombat.ts",
+      "验收前SHA256": "90818cee3286edf34652297a64d78559a88f4cc73ab4502caac472733f391354",
+      "验收后SHA256": "90818cee3286edf34652297a64d78559a88f4cc73ab4502caac472733f391354",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/runeLab.ts",
+      "验收前SHA256": "768ffe407f0bd65105a766917f238fa003d5f337c285210a5f3b62b046b8dfe6",
+      "验收后SHA256": "768ffe407f0bd65105a766917f238fa003d5f337c285210a5f3b62b046b8dfe6",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/runeState.ts",
+      "验收前SHA256": "930219dc1149a3b8511f9ef8a77e2ecd908a254ce4526fe8e470c3fed33ee95a",
+      "验收后SHA256": "930219dc1149a3b8511f9ef8a77e2ecd908a254ce4526fe8e470c3fed33ee95a",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/runeWorld.ts",
+      "验收前SHA256": "6c6be0322270771ff1db90c3b7446c398dc064567bea61b1a3a023657771415e",
+      "验收后SHA256": "6c6be0322270771ff1db90c3b7446c398dc064567bea61b1a3a023657771415e",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/save.ts",
+      "验收前SHA256": "055baad751f6c7e75342ad0bfc092da3857b8d56db8b0c3791e774f1ba12e784",
+      "验收后SHA256": "055baad751f6c7e75342ad0bfc092da3857b8d56db8b0c3791e774f1ba12e784",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/saveQueue.ts",
+      "验收前SHA256": "b128b880c362b7b44afaf82644f5c18a706bef8fc7b7a1fda9d2a80255783815",
+      "验收后SHA256": "b128b880c362b7b44afaf82644f5c18a706bef8fc7b7a1fda9d2a80255783815",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/session.ts",
+      "验收前SHA256": "b5b3fec49f3168ddf45d700c25154efcdc92a9b38ff3fef2226187f83561fa9a",
+      "验收后SHA256": "b5b3fec49f3168ddf45d700c25154efcdc92a9b38ff3fef2226187f83561fa9a",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/skills.ts",
+      "验收前SHA256": "ae16ff77adb52f3fc1971b90763d4d9221dfbab0ee61a235e1a068c3c6b99f12",
+      "验收后SHA256": "ae16ff77adb52f3fc1971b90763d4d9221dfbab0ee61a235e1a068c3c6b99f12",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/sleep.ts",
+      "验收前SHA256": "585526a22c4f3514e772a172676805ec15ebf0d10e0d3f3d60cd8ced4f19e508",
+      "验收后SHA256": "585526a22c4f3514e772a172676805ec15ebf0d10e0d3f3d60cd8ced4f19e508",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/slimeAnimation.ts",
+      "验收前SHA256": "287334e1713671f304e834b7ebd6b3b2424c2ac72a63232d6769e09a71289e40",
+      "验收后SHA256": "287334e1713671f304e834b7ebd6b3b2424c2ac72a63232d6769e09a71289e40",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/sprint.ts",
+      "验收前SHA256": "3aacf45e404221f6bc28938cb2dd37529f3b4b57b9a509b30c6def2701ca3dbb",
+      "验收后SHA256": "3aacf45e404221f6bc28938cb2dd37529f3b4b57b9a509b30c6def2701ca3dbb",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/state.ts",
+      "验收前SHA256": "710cd416ce209e9eb83cca8017273d14bb916e250935b5726469a7900c451194",
+      "验收后SHA256": "710cd416ce209e9eb83cca8017273d14bb916e250935b5726469a7900c451194",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/stateCommit.ts",
+      "验收前SHA256": "c6755992aea4179e36edb19b44a6c0df98b67402ae7cf71df6735609b358d60d",
+      "验收后SHA256": "c6755992aea4179e36edb19b44a6c0df98b67402ae7cf71df6735609b358d60d",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/swordWind.ts",
+      "验收前SHA256": "e0c6824079bb79e11873612c5f95e40c668f819ab48e7affecce3c098409da4d",
+      "验收后SHA256": "e0c6824079bb79e11873612c5f95e40c668f819ab48e7affecce3c098409da4d",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/swordWindAudio.ts",
+      "验收前SHA256": "2ba6bfbbf7f5e4e2e8d0a3087b1cfcf2830d460d633bce19794632c06c6b00c4",
+      "验收后SHA256": "2ba6bfbbf7f5e4e2e8d0a3087b1cfcf2830d460d633bce19794632c06c6b00c4",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/swordWindGeometry.ts",
+      "验收前SHA256": "6277e7cd84214a45274eb2bf849cce2366a13bf61a64788d9cf1a3205b8b1de7",
+      "验收后SHA256": "6277e7cd84214a45274eb2bf849cce2366a13bf61a64788d9cf1a3205b8b1de7",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/swordWindWater.ts",
+      "验收前SHA256": "9df893e65bcb3cd62203706a2b8306f5dd20ac9ccaea458f97cb6042fd90b790",
+      "验收后SHA256": "9df893e65bcb3cd62203706a2b8306f5dd20ac9ccaea458f97cb6042fd90b790",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/terrain.ts",
+      "验收前SHA256": "8ec615b703e3a972d374eb30cd9223f4001aed9b9be02b94640521ad224315c8",
+      "验收后SHA256": "8ec615b703e3a972d374eb30cd9223f4001aed9b9be02b94640521ad224315c8",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/terrainChunks.ts",
+      "验收前SHA256": "76b736fe0da0ab75ad69e7aed0545ef00b7a332fe30000c59bde6df0b58f791d",
+      "验收后SHA256": "76b736fe0da0ab75ad69e7aed0545ef00b7a332fe30000c59bde6df0b58f791d",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/timeline.ts",
+      "验收前SHA256": "3210afbff36a3d9dfba319f65945e62032b262c56126cc678dc46091c6a467e2",
+      "验收后SHA256": "3210afbff36a3d9dfba319f65945e62032b262c56126cc678dc46091c6a467e2",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/training.ts",
+      "验收前SHA256": "6352cb56eaae849d5027ed4925af2e47f4a5fff267ae2805ce1eca1a6539e027",
+      "验收后SHA256": "6352cb56eaae849d5027ed4925af2e47f4a5fff267ae2805ce1eca1a6539e027",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/waterEffects.ts",
+      "验收前SHA256": "7c1539167f5457d17a17b8e4c43f053b08a0a913ba54e9cabc937d588239f192",
+      "验收后SHA256": "7c1539167f5457d17a17b8e4c43f053b08a0a913ba54e9cabc937d588239f192",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/waterMotion.ts",
+      "验收前SHA256": "362fb20405cb8acc92f5f8cf39746b54261d41221ecbe285bf35e29b47a66a52",
+      "验收后SHA256": "362fb20405cb8acc92f5f8cf39746b54261d41221ecbe285bf35e29b47a66a52",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/weaponTrail.ts",
+      "验收前SHA256": "3f209bdfa4205654200a2305bdc7a89a31290c92e30ce5c5590b0b0d05d386e9",
+      "验收后SHA256": "3f209bdfa4205654200a2305bdc7a89a31290c92e30ce5c5590b0b0d05d386e9",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/wildThreat.ts",
+      "验收前SHA256": "56902e5a9d9fac3f0c5b0cfaa917a17d39bad79a98a87f6b3a13368e4bebe887",
+      "验收后SHA256": "56902e5a9d9fac3f0c5b0cfaa917a17d39bad79a98a87f6b3a13368e4bebe887",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/windLessons.ts",
+      "验收前SHA256": "796ccba9c08e6e9fd5cfee85560c08311d85420165abb0e1c8826a405e9a367d",
+      "验收后SHA256": "796ccba9c08e6e9fd5cfee85560c08311d85420165abb0e1c8826a405e9a367d",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/worldClock.ts",
+      "验收前SHA256": "95800900fb96bb09d0512bfe2182130601f9196307c6ffafb97ee7408cc416e2",
+      "验收后SHA256": "95800900fb96bb09d0512bfe2182130601f9196307c6ffafb97ee7408cc416e2",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/xiaobao.ts",
+      "验收前SHA256": "d23838eb3df9e9f4ff5b036b51b7b5878e7c061e0150184748060bc88ad482b7",
+      "验收后SHA256": "d23838eb3df9e9f4ff5b036b51b7b5878e7c061e0150184748060bc88ad482b7",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/xiaobaoCombat.ts",
+      "验收前SHA256": "263263135a28bcc42051f396b9f4fac6159e2d083d3bbcea3b24c6f0aa3c6b4d",
+      "验收后SHA256": "263263135a28bcc42051f396b9f4fac6159e2d083d3bbcea3b24c6f0aa3c6b4d",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/xiaobaoState.ts",
+      "验收前SHA256": "31b855b3b51c3dedfb90fbf8b1303c524d62c12aa0a235093e5e1ba2758b6606",
+      "验收后SHA256": "31b855b3b51c3dedfb90fbf8b1303c524d62c12aa0a235093e5e1ba2758b6606",
+      "一致": true
+    },
+    {
+      "路径": "src/game/systems/xiaobaoWorld.ts",
+      "验收前SHA256": "8ed4c6f8f63a3e76385c76a84140af4f5e8e46e9184a1714ad8d61a1acb53a97",
+      "验收后SHA256": "8ed4c6f8f63a3e76385c76a84140af4f5e8e46e9184a1714ad8d61a1acb53a97",
+      "一致": true
+    },
+    {
+      "路径": "src/game/ui/campBossHud.ts",
+      "验收前SHA256": "8d4dd1296ba28242e37c9e9cf7841bbbe0f16cfee0c2930d5c6eadae8e1a7dd4",
+      "验收后SHA256": "8d4dd1296ba28242e37c9e9cf7841bbbe0f16cfee0c2930d5c6eadae8e1a7dd4",
+      "一致": true
+    },
+    {
+      "路径": "src/game/ui/commissions.ts",
+      "验收前SHA256": "6a8135c0e5f1f3eda87174439fc5ac4dc3fb5b371ce40ea5601c823c368d84f9",
+      "验收后SHA256": "6a8135c0e5f1f3eda87174439fc5ac4dc3fb5b371ce40ea5601c823c368d84f9",
+      "一致": true
+    },
+    {
+      "路径": "src/game/ui/equipment.ts",
+      "验收前SHA256": "b8cfa1662c29c7dded23e9b41ee15857332ed023f9b3bcd1b995c7f1a5b259a3",
+      "验收后SHA256": "b8cfa1662c29c7dded23e9b41ee15857332ed023f9b3bcd1b995c7f1a5b259a3",
+      "一致": true
+    },
+    {
+      "路径": "src/game/ui/interface.ts",
+      "验收前SHA256": "fcdc9ddfe97a4cc7ef3861582a025860e1ba1019d87a9026c955b1641154a4f8",
+      "验收后SHA256": "fcdc9ddfe97a4cc7ef3861582a025860e1ba1019d87a9026c955b1641154a4f8",
+      "一致": true
+    },
+    {
+      "路径": "src/game/ui/npcLife.ts",
+      "验收前SHA256": "abbe427cf3f109809ea5b02cdb6e61f31c7da033f3428236fb8386387f819947",
+      "验收后SHA256": "abbe427cf3f109809ea5b02cdb6e61f31c7da033f3428236fb8386387f819947",
+      "一致": true
+    },
+    {
+      "路径": "src/game/ui/runeIcons.ts",
+      "验收前SHA256": "22e6bca79de1e79d76a4e952160bf0dcc40bf711d5adfc377a64e327619c98b2",
+      "验收后SHA256": "22e6bca79de1e79d76a4e952160bf0dcc40bf711d5adfc377a64e327619c98b2",
+      "一致": true
+    },
+    {
+      "路径": "src/game/ui/runePreview.ts",
+      "验收前SHA256": "01ff4f5ef1945a25c5edc78096ce955a0358e4f26d637f7af836bcee4eb1521e",
+      "验收后SHA256": "01ff4f5ef1945a25c5edc78096ce955a0358e4f26d637f7af836bcee4eb1521e",
+      "一致": true
+    },
+    {
+      "路径": "src/game/ui/runes.ts",
+      "验收前SHA256": "5efbce27d0c1aca0cce27a6f363e8108d4555f1a9a949a17c5e72a5ada893f43",
+      "验收后SHA256": "5efbce27d0c1aca0cce27a6f363e8108d4555f1a9a949a17c5e72a5ada893f43",
+      "一致": true
+    },
+    {
+      "路径": "src/game/ui/shop.ts",
+      "验收前SHA256": "8516c2ac4c6fdc55c06436f3fc57d8b4bc7855456aec34dfc89052a4928ecad4",
+      "验收后SHA256": "8516c2ac4c6fdc55c06436f3fc57d8b4bc7855456aec34dfc89052a4928ecad4",
+      "一致": true
+    },
+    {
+      "路径": "src/main.ts",
+      "验收前SHA256": "d3e981c43ff2cbf05759da514807b89e968242fc0b13c7032932f34147e11a67",
+      "验收后SHA256": "d3e981c43ff2cbf05759da514807b89e968242fc0b13c7032932f34147e11a67",
+      "一致": true
+    },
+    {
+      "路径": "src/player-hurt-preview.ts",
+      "验收前SHA256": "93f4fcf2dc1b67008f11edc9a100b12b14a91443eb51c50233ab2955d7b3a3da",
+      "验收后SHA256": "93f4fcf2dc1b67008f11edc9a100b12b14a91443eb51c50233ab2955d7b3a3da",
+      "一致": true
+    },
+    {
+      "路径": "src/runes.css",
+      "验收前SHA256": "49183c944ebaa8eb316478f433d96682c67758d76867b8c8251d5f6e203d853e",
+      "验收后SHA256": "49183c944ebaa8eb316478f433d96682c67758d76867b8c8251d5f6e203d853e",
+      "一致": true
+    },
+    {
+      "路径": "src/slime-preview.css",
+      "验收前SHA256": "70a445389e8806d46988ccc6b4c0fc02631d7d4b84dc76ad71b63c8f1d547197",
+      "验收后SHA256": "70a445389e8806d46988ccc6b4c0fc02631d7d4b84dc76ad71b63c8f1d547197",
+      "一致": true
+    },
+    {
+      "路径": "src/slime-preview.ts",
+      "验收前SHA256": "c64fa5165975273d5a49fa01221b055f1d738e0f82dcb139d82903eb8d39ccb0",
+      "验收后SHA256": "c64fa5165975273d5a49fa01221b055f1d738e0f82dcb139d82903eb8d39ccb0",
+      "一致": true
+    },
+    {
+      "路径": "src/style.css",
+      "验收前SHA256": "fd3df9e18d1b46c725e5bd7ae2f9b5388a21a3209e9408b9b082d0613b9b01d0",
+      "验收后SHA256": "fd3df9e18d1b46c725e5bd7ae2f9b5388a21a3209e9408b9b082d0613b9b01d0",
+      "一致": true
+    },
+    {
+      "路径": "src/xiaobao-combat-preview.ts",
+      "验收前SHA256": "33bfec6ff2b932985bfa6dd559830db8ca495348a334b0bd471334c359a7303f",
+      "验收后SHA256": "33bfec6ff2b932985bfa6dd559830db8ca495348a334b0bd471334c359a7303f",
+      "一致": true
+    },
+    {
+      "路径": "src/xiaobao-preview.css",
+      "验收前SHA256": "b41f9a49b561dc2025dfab2888e095a13240421ce146dde97a6994c6cfbb67de",
+      "验收后SHA256": "b41f9a49b561dc2025dfab2888e095a13240421ce146dde97a6994c6cfbb67de",
+      "一致": true
+    },
+    {
+      "路径": "src/xiaobao-preview.ts",
+      "验收前SHA256": "5d5d867b91a54ee0f735a340d3f5ebad60af39851b36ad9ae4b40de5e667e37d",
+      "验收后SHA256": "5d5d867b91a54ee0f735a340d3f5ebad60af39851b36ad9ae4b40de5e667e37d",
+      "一致": true
+    },
+    {
+      "路径": "tests/runes.spec.ts",
+      "验收前SHA256": "680d39e63ea464d109dc379e7ac6795c2a542f6a9080a7bd5866ca5fee18cd3c",
+      "验收后SHA256": "680d39e63ea464d109dc379e7ac6795c2a542f6a9080a7bd5866ca5fee18cd3c",
+      "一致": true
+    },
+    {
+      "路径": "tests/runes.test.ts",
+      "验收前SHA256": "72dfd765d3f525efbfed160425b713bf93953b461179410199e0d9bd3e5daa17",
+      "验收后SHA256": "72dfd765d3f525efbfed160425b713bf93953b461179410199e0d9bd3e5daa17",
+      "一致": true
+    },
+    {
+      "路径": "dist/assets/damage-C0hX35a0.js",
+      "验收前SHA256": "34754f342cc529cb7afe061f1fd512527df0ea64412f976c62247020d3fd662c",
+      "验收后SHA256": "34754f342cc529cb7afe061f1fd512527df0ea64412f976c62247020d3fd662c",
+      "一致": true
+    },
+    {
+      "路径": "dist/assets/game-B693tA1w.js",
+      "验收前SHA256": "efef92dbd7f1e3ab097749d205d3a6ca7ed02a6867d42d33cfa5078b062bd5ab",
+      "验收后SHA256": "efef92dbd7f1e3ab097749d205d3a6ca7ed02a6867d42d33cfa5078b062bd5ab",
+      "一致": true
+    },
+    {
+      "路径": "dist/assets/game-BJqLe9Pz.css",
+      "验收前SHA256": "c69ed393548e30caf6e803a5688b7632231ee83092ad0d0463e844964844d262",
+      "验收后SHA256": "c69ed393548e30caf6e803a5688b7632231ee83092ad0d0463e844964844d262",
+      "一致": true
+    },
+    {
+      "路径": "dist/assets/xiaobao-CBaLPEDp.js",
+      "验收前SHA256": "2525fd2181509499e7b5bc2026f49f4d2dd7faaa2f277642bf97286bdc30251b",
+      "验收后SHA256": "2525fd2181509499e7b5bc2026f49f4d2dd7faaa2f277642bf97286bdc30251b",
+      "一致": true
+    },
+    {
+      "路径": "dist/assets/xiaobao-preview-5osY0aZY.css",
+      "验收前SHA256": "94cd4592d8639bbf7a6a3e6329d7d58c35a20c49a381ae7436186552739f2e14",
+      "验收后SHA256": "94cd4592d8639bbf7a6a3e6329d7d58c35a20c49a381ae7436186552739f2e14",
+      "一致": true
+    },
+    {
+      "路径": "dist/assets/xiaobaoCombat-CBmbE5Lz.js",
+      "验收前SHA256": "ad11c413bc7aa834a25395eda2f3276ba3b9a4ff59ade39806ea5c713582e5fd",
+      "验收后SHA256": "ad11c413bc7aa834a25395eda2f3276ba3b9a4ff59ade39806ea5c713582e5fd",
+      "一致": true
+    },
+    {
+      "路径": "dist/assets/xiaobaoView-CD1lzxc2.js",
+      "验收前SHA256": "acafd75d6d587ed1ecb2e0afb087770af331b5d047ad31845ed5b80363be771c",
+      "验收后SHA256": "acafd75d6d587ed1ecb2e0afb087770af331b5d047ad31845ed5b80363be771c",
+      "一致": true
+    },
+    {
+      "路径": "dist/index.html",
+      "验收前SHA256": "4cb92dc7a2f43a31fda5cb7ca8814b5e1608822213626d33ea9fe964e230cf05",
+      "验收后SHA256": "4cb92dc7a2f43a31fda5cb7ca8814b5e1608822213626d33ea9fe964e230cf05",
+      "一致": true
+    }
+  ],
+  "生产服务验证": [
+    {
+      "路径": "dist/assets/damage-C0hX35a0.js",
+      "HTTP状态": 200,
+      "实际服务SHA256": "34754f342cc529cb7afe061f1fd512527df0ea64412f976c62247020d3fd662c",
+      "与构建一致": true
+    },
+    {
+      "路径": "dist/assets/game-B693tA1w.js",
+      "HTTP状态": 200,
+      "实际服务SHA256": "efef92dbd7f1e3ab097749d205d3a6ca7ed02a6867d42d33cfa5078b062bd5ab",
+      "与构建一致": true
+    },
+    {
+      "路径": "dist/assets/game-BJqLe9Pz.css",
+      "HTTP状态": 200,
+      "实际服务SHA256": "c69ed393548e30caf6e803a5688b7632231ee83092ad0d0463e844964844d262",
+      "与构建一致": true
+    },
+    {
+      "路径": "dist/assets/xiaobao-CBaLPEDp.js",
+      "HTTP状态": 200,
+      "实际服务SHA256": "2525fd2181509499e7b5bc2026f49f4d2dd7faaa2f277642bf97286bdc30251b",
+      "与构建一致": true
+    },
+    {
+      "路径": "dist/assets/xiaobao-preview-5osY0aZY.css",
+      "HTTP状态": 200,
+      "实际服务SHA256": "94cd4592d8639bbf7a6a3e6329d7d58c35a20c49a381ae7436186552739f2e14",
+      "与构建一致": true
+    },
+    {
+      "路径": "dist/assets/xiaobaoCombat-CBmbE5Lz.js",
+      "HTTP状态": 200,
+      "实际服务SHA256": "ad11c413bc7aa834a25395eda2f3276ba3b9a4ff59ade39806ea5c713582e5fd",
+      "与构建一致": true
+    },
+    {
+      "路径": "dist/assets/xiaobaoView-CD1lzxc2.js",
+      "HTTP状态": 200,
+      "实际服务SHA256": "acafd75d6d587ed1ecb2e0afb087770af331b5d047ad31845ed5b80363be771c",
+      "与构建一致": true
+    },
+    {
+      "路径": "dist/index.html",
+      "HTTP状态": 200,
+      "实际服务SHA256": "4cb92dc7a2f43a31fda5cb7ca8814b5e1608822213626d33ea9fe964e230cf05",
+      "与构建一致": true
+    }
+  ]
+}

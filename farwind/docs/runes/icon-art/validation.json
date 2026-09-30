@@ -1,0 +1,73 @@
+{
+  "说明": "本轮只重绘图片与调整其正式展示。战斗数据和存档实现未修改。与完整战斗验收分别保留版本和执行范围。",
+  "时间": "2026-09-29T21:34:01+08:00",
+  "图标数量": 31,
+  "执行结果": {
+    "类型检查": "通过",
+    "符文专项": "59项通过",
+    "生产构建": "通过",
+    "现有装备浏览器场景": "1项通过，约7.1秒，无重试",
+    "完整图标与HUD额外运行检查": "通过",
+    "所有SVG解析及缩略图导出": "31份通过",
+    "空白检查": "通过"
+  },
+  "源码与构建": [
+    {
+      "路径": "src/game/ui/runeIcons.ts",
+      "SHA256": "6d1b77542c68e89e9ab95a2fd9054bdbc16466ab334ade1acf866fb996fdbb2d"
+    },
+    {
+      "路径": "src/game/ui/runes.ts",
+      "SHA256": "b1b4abc10719b53f9b88c62133dbfdf8ba33bc1c8cbe3c3e4962de30f2a2b362"
+    },
+    {
+      "路径": "src/runes.css",
+      "SHA256": "e85dfee5e8a88a21c5d68e01cebc36da79036bd8c095f230eab9808a359dfa8e"
+    },
+    {
+      "路径": "dist/index.html",
+      "SHA256": "553a4d5da228e6a5fefc04c3ff827ed73972e1001e843b0371da8bbecb8a667e"
+    },
+    {
+      "路径": "dist/assets/game-BVS-4lsl.css",
+      "SHA256": "727e74e434ee8f53d2cecfdc879776ce2fa6f9461fc01df6b2e98fdcf79bbe0f"
+    },
+    {
+      "路径": "dist/assets/game-DUjcAeNO.js",
+      "SHA256": "b7988c14dcb8b274d893f52b6c55900d49c90734bb2df313918e673f83797320"
+    }
+  ],
+  "实际生产服务": [
+    {
+      "文件": "dist/index.html",
+      "实际响应SHA256": "553a4d5da228e6a5fefc04c3ff827ed73972e1001e843b0371da8bbecb8a667e",
+      "与构建一致": true
+    },
+    {
+      "文件": "dist/assets/game-BVS-4lsl.css",
+      "实际响应SHA256": "727e74e434ee8f53d2cecfdc879776ce2fa6f9461fc01df6b2e98fdcf79bbe0f",
+      "与构建一致": true
+    },
+    {
+      "文件": "dist/assets/game-DUjcAeNO.js",
+      "实际响应SHA256": "b7988c14dcb8b274d893f52b6c55900d49c90734bb2df313918e673f83797320",
+      "与构建一致": true
+    }
+  ],
+  "运行记录": "runtime-validation.json",
+  "原画清单": "art-manifest.json",
+  "绘制来源": "原生SVG绘制；统一材质参考使用内置图像生成工具",
+  "生成提示": "BRIEF.md",
+  "参考图片": "design-reference.png",
+  "审查结论": "VERDICT: PASS，无成立P0或P1阻塞项",
+  "范围边界": [
+    "美术最终主观认可由用户验收",
+    "未执行本轮长时性能测试",
+    "旧完整战斗测试快照保留其当时构建，本轮没有宣称重新执行全量981项"
+  ],
+  "实际窄屏": {
+    "可视宽度": 536,
+    "内容宽度": 536
+  },
+  "首次观察": "initial-observation.json：在模态可见前读取的零宽度已明确标记无效；最终脚本等待可见并要求正宽度。"
+}

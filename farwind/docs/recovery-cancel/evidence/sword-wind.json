@@ -1,0 +1,507 @@
+{
+  "说明": "隔离初始条件来自可见符文试验场，攻击和装卸使用真实键鼠与正式入口；诊断只读。",
+  "记录": {
+    "剑风起手": 1018.0227004095441,
+    "风步": {
+      "kind": "dash",
+      "at": 1166.4232183754652,
+      "legal": 1228.022700409544,
+      "expires": 1316.4232183754652,
+      "reason": "已执行",
+      "executed": 1228.022700409544
+    },
+    "取消时结算": {
+      "时刻": 1235.8799999999974,
+      "结束": 0,
+      "战斗": {
+        "hurt": null,
+        "parry": null,
+        "parrySerial": 0,
+        "parryBuffered": null,
+        "parryCooldownRemaining": 0,
+        "regenPaused": false,
+        "afterguard": null,
+        "autoCounter": null,
+        "intentFacing": 1,
+        "automatic": false,
+        "primaryTarget": null,
+        "delivery": "blade",
+        "sourceContactId": null,
+        "windDirection": null,
+        "status": "当前动作不可取消",
+        "attackConfig": null,
+        "counterAttack": null,
+        "lastRejection": "等待风步取消点",
+        "actions": [
+          {
+            "kind": "attack",
+            "at": 78.21927709172625,
+            "legal": 78.21927709172625,
+            "expires": 228.21927709172627,
+            "reason": "已接收"
+          },
+          {
+            "kind": "attack",
+            "at": 78.21927709172625,
+            "legal": 78.21927709172625,
+            "expires": 228.21927709172627,
+            "reason": "已执行",
+            "executed": 78.21927709172625
+          },
+          {
+            "kind": "attack",
+            "at": 80.62602407622144,
+            "legal": 313.21927709172627,
+            "expires": 463.21927709172627,
+            "reason": "已接收"
+          },
+          {
+            "kind": "attack",
+            "at": 80.62602407622144,
+            "legal": 313.21927709172627,
+            "expires": 463.21927709172627,
+            "reason": "已执行",
+            "executed": 313.21927709172627
+          },
+          {
+            "kind": "attack",
+            "at": 321.6268662496196,
+            "legal": 578.2192770917263,
+            "expires": 728.2192770917263,
+            "reason": "已接收"
+          },
+          {
+            "kind": "attack",
+            "at": 321.6268662496196,
+            "legal": 578.2192770917263,
+            "expires": 728.2192770917263,
+            "reason": "已执行",
+            "executed": 578.2192770917263
+          },
+          {
+            "kind": "attack",
+            "at": 1018.022700409544,
+            "legal": 988.2192770917263,
+            "expires": 1168.022700409544,
+            "reason": "已接收"
+          },
+          {
+            "kind": "attack",
+            "at": 1018.022700409544,
+            "legal": 988.2192770917263,
+            "expires": 1168.022700409544,
+            "reason": "已执行",
+            "executed": 1018.022700409544
+          },
+          {
+            "kind": "dash",
+            "at": 1166.4232183754652,
+            "legal": 1228.022700409544,
+            "expires": 1316.4232183754652,
+            "reason": "已接收"
+          },
+          {
+            "kind": "dash",
+            "at": 1166.4232183754652,
+            "legal": 1228.022700409544,
+            "expires": 1316.4232183754652,
+            "reason": "已执行",
+            "executed": 1228.022700409544
+          }
+        ],
+        "recoveryCancelEnabled": true,
+        "parryLegalAt": 1428.022700409544,
+        "dashLegalAt": 1878.022700409544,
+        "phase": "idle",
+        "effectiveFacing": 1,
+        "ready": false,
+        "reservationOwner": null,
+        "hitStopRemaining": 0,
+        "lastHitStopRequested": 32,
+        "bufferArrivedAt": null,
+        "bufferExpiresAt": null,
+        "stage": 0,
+        "attackInstanceId": null,
+        "comboId": null,
+        "facing": null,
+        "hitRegion": null,
+        "hitTargets": [],
+        "buffered": false,
+        "bufferRemaining": 0,
+        "dashRemaining": 192.1427004095467,
+        "dashCooldownRemaining": 642.1427004095467,
+        "dashInvulnerable": false,
+        "trailSamples": 0,
+        "invulnerableSources": []
+      },
+      "符文": [
+        "r09",
+        null,
+        null,
+        null,
+        null
+      ],
+      "生命": 100,
+      "体力": 84,
+      "剑风事件": [
+        {
+          "id": 1,
+          "attackId": 4,
+          "comboId": 1,
+          "at": 1128.022700409544,
+          "point": {
+            "x": 850,
+            "y": 678
+          },
+          "reason": "target",
+          "target": "training-dummy",
+          "damage": 36
+        }
+      ],
+      "剑风实例": [
+        {
+          "id": 1,
+          "releaseId": 4,
+          "attackId": 4,
+          "comboId": 1,
+          "source": "hero",
+          "config": {
+            "name": "一线斩",
+            "strike": {
+              "windup": 110,
+              "active": 100,
+              "recovery": 190,
+              "range": 0,
+              "angle": 0,
+              "damage": 36,
+              "step": 8,
+              "knock": 12,
+              "flash": 120,
+              "stagger": 120
+            },
+            "speed": 900,
+            "distance": 300,
+            "width": 28,
+            "lifetime": 450,
+            "hitStop": 32,
+            "maxTargets": 1,
+            "spawnForward": 8,
+            "cancelTail": 120,
+            "art": {
+              "release": 64,
+              "flight": 108,
+              "hit": 160,
+              "dissolve": 96,
+              "flightSize": 128,
+              "hitSize": 144,
+              "frontEdge": 41,
+              "bodyHeight": 28,
+              "groundStep": 36,
+              "groundHeight": 52,
+              "groundFrame": 110,
+              "groundLifetime": 850,
+              "groundFade": 200,
+              "attachments": [
+                [
+                  -40,
+                  -23
+                ],
+                [
+                  26,
+                  23
+                ],
+                [
+                  28,
+                  -32
+                ]
+              ]
+            },
+            "stage": 1,
+            "damage": 36,
+            "angles": [
+              0
+            ]
+          },
+          "attack": {
+            "id": 4,
+            "comboId": 1,
+            "stage": 4,
+            "facing": 1,
+            "automatic": false,
+            "windDirection": {
+              "x": 0,
+              "y": -1
+            },
+            "start": 1018.022700409544,
+            "enter": false,
+            "hit": [],
+            "config": {
+              "windup": 110,
+              "active": 100,
+              "recovery": 190,
+              "range": 0,
+              "angle": 0,
+              "damage": 36,
+              "step": 8,
+              "knock": 12,
+              "flash": 120,
+              "stagger": 120
+            },
+            "swordWind": {
+              "name": "一线斩",
+              "strike": {
+                "windup": 110,
+                "active": 100,
+                "recovery": 190,
+                "range": 0,
+                "angle": 0,
+                "damage": 36,
+                "step": 8,
+                "knock": 12,
+                "flash": 120,
+                "stagger": 120
+              },
+              "speed": 900,
+              "distance": 300,
+              "width": 28,
+              "lifetime": 450,
+              "hitStop": 32,
+              "maxTargets": 1,
+              "spawnForward": 8,
+              "cancelTail": 120,
+              "art": {
+                "release": 64,
+                "flight": 108,
+                "hit": 160,
+                "dissolve": 96,
+                "flightSize": 128,
+                "hitSize": 144,
+                "frontEdge": 41,
+                "bodyHeight": 28,
+                "groundStep": 36,
+                "groundHeight": 52,
+                "groundFrame": 110,
+                "groundLifetime": 850,
+                "groundFade": 200,
+                "attachments": [
+                  [
+                    -40,
+                    -23
+                  ],
+                  [
+                    26,
+                    23
+                  ],
+                  [
+                    28,
+                    -32
+                  ]
+                ]
+              },
+              "stage": 1,
+              "damage": 36,
+              "angles": [
+                0
+              ]
+            },
+            "released": true
+          },
+          "born": 1128.022700409544,
+          "previous": {
+            "x": 850,
+            "y": 662.6473076923077
+          },
+          "position": {
+            "x": 850,
+            "y": 678
+          },
+          "origin": {
+            "x": 850,
+            "y": 690,
+            "hp": 100,
+            "stamina": 100
+          },
+          "birthPosition": {
+            "x": 850,
+            "y": 662.6473076923077
+          },
+          "direction": {
+            "x": 0,
+            "y": -1
+          },
+          "facing": 1,
+          "distance": 0,
+          "maxTargets": 1,
+          "targetCount": 1,
+          "hit": [
+            "training-dummy"
+          ],
+          "terminated": true,
+          "visualOffset": {
+            "x": 0.21115384615384514,
+            "y": -1
+          },
+          "initialChecked": true,
+          "reason": "target",
+          "ended": 1128.022700409544,
+          "contact": {
+            "x": 850,
+            "y": 664
+          }
+        }
+      ],
+      "模式": ""
+    },
+    "飞行后结算": {
+      "时刻": 1668.9733333333313,
+      "结束": 0,
+      "战斗": {
+        "hurt": null,
+        "parry": null,
+        "parrySerial": 0,
+        "parryBuffered": null,
+        "parryCooldownRemaining": 0,
+        "regenPaused": false,
+        "afterguard": null,
+        "autoCounter": null,
+        "intentFacing": 1,
+        "automatic": false,
+        "primaryTarget": null,
+        "delivery": "blade",
+        "sourceContactId": null,
+        "windDirection": null,
+        "status": "K 架剑就绪",
+        "attackConfig": null,
+        "counterAttack": null,
+        "lastRejection": "等待风步取消点",
+        "actions": [
+          {
+            "kind": "attack",
+            "at": 78.21927709172625,
+            "legal": 78.21927709172625,
+            "expires": 228.21927709172627,
+            "reason": "已接收"
+          },
+          {
+            "kind": "attack",
+            "at": 78.21927709172625,
+            "legal": 78.21927709172625,
+            "expires": 228.21927709172627,
+            "reason": "已执行",
+            "executed": 78.21927709172625
+          },
+          {
+            "kind": "attack",
+            "at": 80.62602407622144,
+            "legal": 313.21927709172627,
+            "expires": 463.21927709172627,
+            "reason": "已接收"
+          },
+          {
+            "kind": "attack",
+            "at": 80.62602407622144,
+            "legal": 313.21927709172627,
+            "expires": 463.21927709172627,
+            "reason": "已执行",
+            "executed": 313.21927709172627
+          },
+          {
+            "kind": "attack",
+            "at": 321.6268662496196,
+            "legal": 578.2192770917263,
+            "expires": 728.2192770917263,
+            "reason": "已接收"
+          },
+          {
+            "kind": "attack",
+            "at": 321.6268662496196,
+            "legal": 578.2192770917263,
+            "expires": 728.2192770917263,
+            "reason": "已执行",
+            "executed": 578.2192770917263
+          },
+          {
+            "kind": "attack",
+            "at": 1018.022700409544,
+            "legal": 988.2192770917263,
+            "expires": 1168.022700409544,
+            "reason": "已接收"
+          },
+          {
+            "kind": "attack",
+            "at": 1018.022700409544,
+            "legal": 988.2192770917263,
+            "expires": 1168.022700409544,
+            "reason": "已执行",
+            "executed": 1018.022700409544
+          },
+          {
+            "kind": "dash",
+            "at": 1166.4232183754652,
+            "legal": 1228.022700409544,
+            "expires": 1316.4232183754652,
+            "reason": "已接收"
+          },
+          {
+            "kind": "dash",
+            "at": 1166.4232183754652,
+            "legal": 1228.022700409544,
+            "expires": 1316.4232183754652,
+            "reason": "已执行",
+            "executed": 1228.022700409544
+          }
+        ],
+        "recoveryCancelEnabled": true,
+        "parryLegalAt": 1668.9733333333313,
+        "dashLegalAt": 1878.022700409544,
+        "phase": "idle",
+        "effectiveFacing": 1,
+        "ready": false,
+        "reservationOwner": null,
+        "hitStopRemaining": 0,
+        "lastHitStopRequested": 32,
+        "bufferArrivedAt": null,
+        "bufferExpiresAt": null,
+        "stage": 0,
+        "attackInstanceId": null,
+        "comboId": null,
+        "facing": null,
+        "hitRegion": null,
+        "hitTargets": [],
+        "buffered": false,
+        "bufferRemaining": 0,
+        "dashRemaining": 0,
+        "dashCooldownRemaining": 209.04936707621277,
+        "dashInvulnerable": false,
+        "trailSamples": 0,
+        "invulnerableSources": []
+      },
+      "符文": [
+        "r09",
+        null,
+        null,
+        null,
+        null
+      ],
+      "生命": 100,
+      "体力": 87.37330886093275,
+      "剑风事件": [
+        {
+          "id": 1,
+          "attackId": 4,
+          "comboId": 1,
+          "at": 1128.022700409544,
+          "point": {
+            "x": 850,
+            "y": 678
+          },
+          "reason": "target",
+          "target": "training-dummy",
+          "damage": 36
+        }
+      ],
+      "剑风实例": [],
+      "模式": ""
+    }
+  }
+}

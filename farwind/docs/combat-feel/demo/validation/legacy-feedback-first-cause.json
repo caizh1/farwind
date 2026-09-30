@@ -1,0 +1,41 @@
+{
+  "说明": "从当次原始失败文件前部提取，不改变旧测试断言或游戏状态。用例等待normal，练习控制器保存的成功记录却为perfect，木桩反斩伤害30；该等待没有证明输入未执行，时机原因仍需设备对照。",
+  "原始证据": ".parry-local/v3/failures/V3-AB-C-normal-1790619145934.json",
+  "正式弹反接触": [],
+  "木桩": {
+    "kind": "trainingDummy",
+    "id": "training-dummy",
+    "x": 850,
+    "y": 650,
+    "hp": 1,
+    "comboId": 1,
+    "stages": [
+      1
+    ],
+    "damage": 30,
+    "lastStage": 1,
+    "lastDamage": 30,
+    "lastHit": 1631.6666666666665,
+    "complete": false,
+    "swordWind": null,
+    "windDamage": 0,
+    "visible": false,
+    "age": 224976.003333331
+  },
+  "玩家": {
+    "x": 850,
+    "y": 699.2665439665194,
+    "hp": 100,
+    "stamina": 100
+  },
+  "练习记录的成功": {
+    "at": 1516.6666666666665,
+    "until": 2316.6666666666665,
+    "direction": {
+      "x": 0,
+      "y": 1
+    },
+    "perfect": true
+  },
+  "失败位置": "tests/parry-feedback-v3.spec.ts:44，等待最后接触为normal超过240000毫秒"
+}

@@ -1,0 +1,30 @@
+{
+  "说明": "完整回归和首次十二场景验收之后，修正伤害数字显示精度、完善 HUD 冷却扇面与刻度、选择特效释放后的截图时刻，并修正独立室内测试的站位。战斗算法无后续改变；显示部分重做类型检查、构建与对应浏览器场景。",
+  "变化": [
+    {
+      "路径": "src/game/entities/trainingDummy.ts",
+      "原SHA256": "7819d7e54aa1520cc11bcba0e3923bbf79311208f7b24b52e668073a4bf87bce",
+      "新SHA256": "22e1d3037a8b60d5f13daf0f67c5789a78125e435c0cd530b1aa353b887c908c"
+    },
+    {
+      "路径": "src/game/ui/interface.ts",
+      "原SHA256": "1b93554ee408add21f50040bcfe00c1af84521882cb10a3e52a8488317f8762c",
+      "新SHA256": "fcdc9ddfe97a4cc7ef3861582a025860e1ba1019d87a9026c955b1641154a4f8"
+    },
+    {
+      "路径": "src/game/ui/runes.ts",
+      "原SHA256": "5bff9641e996c7a673cbbe17c00380d74809aff9757626361389f08faf7c28a6",
+      "新SHA256": "5efbce27d0c1aca0cce27a6f363e8108d4555f1a9a949a17c5e72a5ada893f43"
+    },
+    {
+      "路径": "tests/runes.spec.ts",
+      "原SHA256": "0fc83f8f83c4b31f51edc029c72103f56ddf958eb0f3088dd064939eab58f96d",
+      "新SHA256": "680d39e63ea464d109dc379e7ac6795c2a542f6a9080a7bd5866ca5fee18cd3c"
+    },
+    {
+      "路径": "tests/runes.test.ts",
+      "原SHA256": "360f55dc6afdb9dd6d44e0cf27fad65c44670790026ae5cc8348b9f710f6bca8",
+      "新SHA256": "fa00ea85e855af417d5874d9353a1d693c5faf1b0ebfc83f700dc1d19dddea72"
+    }
+  ]
+}

@@ -1,0 +1,2227 @@
+{
+  "说明": "独立真实AudioContext接口测试，不强制游戏成功；保留原33声和原发声静音检查，固定96缓存、重复预热不增长、16并发上限及销毁清理；保存原墙钟15ms采样和原150ms音频窗口内观察",
+  "结果": {
+    "timing": {
+      "开始墙钟": 122.5,
+      "开始音频时钟": 0.058666666666666666,
+      "首次墙钟": 138.60000002384186,
+      "首次音频时钟": 0.07466666666666667
+    },
+    "initialOverlap": {
+      "voices": 4,
+      "strikeVoices": 0,
+      "audioProfile": "双剑金属／同来招截停",
+      "windVoices": 0,
+      "windCached": true,
+      "xiaobaoFlightVoices": 0,
+      "xiaobaoCached": 0,
+      "cached": 96,
+      "events": [
+        {
+          "id": "测试0",
+          "kind": "parry-contact",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试1",
+          "kind": "enemy-strike",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试2",
+          "kind": "counter-swing",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试3",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试4",
+          "kind": "parry-perfect-contact",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        }
+      ],
+      "state": "running",
+      "outputLatency": 0.024,
+      "buses": {
+        "threat": 1,
+        "player": 1,
+        "battle": 0.6635414958000183,
+        "noncritical": 0.6635414958000183
+      }
+    },
+    "duckSamples": [
+      {
+        "音频时钟": 0.07466666666666667,
+        "墙钟": 138.60000002384186,
+        "增益": 0.6635414958000183
+      }
+    ],
+    "overlap": {
+      "voices": 4,
+      "strikeVoices": 0,
+      "audioProfile": "双剑金属／同来招截停",
+      "windVoices": 0,
+      "windCached": true,
+      "xiaobaoFlightVoices": 0,
+      "xiaobaoCached": 0,
+      "cached": 96,
+      "events": [
+        {
+          "id": "测试0",
+          "kind": "parry-contact",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试1",
+          "kind": "enemy-strike",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试2",
+          "kind": "counter-swing",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试3",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试4",
+          "kind": "parry-perfect-contact",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        }
+      ],
+      "state": "running",
+      "outputLatency": 0.024,
+      "buses": {
+        "threat": 1,
+        "player": 1,
+        "battle": 0.6635414958000183,
+        "noncritical": 0.6635414958000183
+      }
+    },
+    "released": {
+      "voices": 0,
+      "strikeVoices": 0,
+      "audioProfile": "双剑金属／同来招截停",
+      "windVoices": 0,
+      "windCached": true,
+      "xiaobaoFlightVoices": 0,
+      "xiaobaoCached": 0,
+      "cached": 96,
+      "events": [
+        {
+          "id": "测试0",
+          "kind": "parry-contact",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试1",
+          "kind": "enemy-strike",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试2",
+          "kind": "counter-swing",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试3",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试4",
+          "kind": "parry-perfect-contact",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        }
+      ],
+      "state": "running",
+      "outputLatency": 0.024,
+      "buses": {
+        "threat": 1,
+        "player": 1,
+        "battle": 1,
+        "noncritical": 1
+      }
+    },
+    "muted": {
+      "voices": 0,
+      "strikeVoices": 0,
+      "audioProfile": "双剑金属／同来招截停",
+      "windVoices": 0,
+      "windCached": true,
+      "xiaobaoFlightVoices": 0,
+      "xiaobaoCached": 0,
+      "cached": 96,
+      "events": [
+        {
+          "id": "测试0",
+          "kind": "parry-contact",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试1",
+          "kind": "enemy-strike",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试2",
+          "kind": "counter-swing",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试3",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "测试4",
+          "kind": "parry-perfect-contact",
+          "sim": 1,
+          "submitted": 122.60000002384186,
+          "scheduled": 0.058666666666666666,
+          "latency": 0.024,
+          "variant": 0
+        }
+      ],
+      "state": "running",
+      "outputLatency": 0.024,
+      "buses": {
+        "threat": 1,
+        "player": 1,
+        "battle": 1,
+        "noncritical": 1
+      }
+    },
+    "reset": {
+      "voices": 0,
+      "strikeVoices": 0,
+      "audioProfile": "双剑金属／同来招截停",
+      "windVoices": 0,
+      "windCached": true,
+      "xiaobaoFlightVoices": 0,
+      "xiaobaoCached": 0,
+      "cached": 96,
+      "events": [],
+      "state": "running",
+      "outputLatency": 0.024,
+      "buses": {
+        "threat": 1,
+        "player": 1,
+        "battle": 1,
+        "noncritical": 1
+      }
+    },
+    "cache": {
+      "旧声键": [
+        "guard-start:slime:0",
+        "guard-start:slime:1",
+        "guard-start:slime:2",
+        "enemy-charge:slime:0",
+        "enemy-charge:slime:1",
+        "enemy-charge:slime:2",
+        "enemy-strike:slime:0",
+        "enemy-strike:slime:1",
+        "enemy-strike:slime:2",
+        "parry-contact:slime:0",
+        "parry-contact:slime:1",
+        "parry-contact:slime:2",
+        "parry-perfect-contact:slime:0",
+        "parry-perfect-contact:slime:1",
+        "parry-perfect-contact:slime:2",
+        "deflect-release:slime:0",
+        "deflect-release:slime:1",
+        "deflect-release:slime:2",
+        "counter-swing:slime:0",
+        "counter-swing:slime:1",
+        "counter-swing:slime:2",
+        "counter-hit:slime:0",
+        "counter-hit:slime:1",
+        "counter-hit:slime:2",
+        "counter-hit:leaf:0",
+        "counter-hit:leaf:1",
+        "counter-hit:leaf:2",
+        "counter-hit:straw:0",
+        "counter-hit:straw:1",
+        "counter-hit:straw:2",
+        "afterguard:slime:0",
+        "afterguard:slime:1",
+        "afterguard:slime:2"
+      ],
+      "实际键": [
+        "guard-start:slime:0",
+        "guard-start:slime:1",
+        "guard-start:slime:2",
+        "enemy-charge:slime:0",
+        "enemy-charge:slime:1",
+        "enemy-charge:slime:2",
+        "enemy-strike:slime:0",
+        "enemy-strike:slime:1",
+        "enemy-strike:slime:2",
+        "parry-contact:slime:0",
+        "parry-contact:slime:1",
+        "parry-contact:slime:2",
+        "parry-perfect-contact:slime:0",
+        "parry-perfect-contact:slime:1",
+        "parry-perfect-contact:slime:2",
+        "deflect-release:slime:0",
+        "deflect-release:slime:1",
+        "deflect-release:slime:2",
+        "counter-swing:slime:0",
+        "counter-swing:slime:1",
+        "counter-swing:slime:2",
+        "counter-hit:slime:0",
+        "counter-hit:slime:1",
+        "counter-hit:slime:2",
+        "counter-hit:leaf:0",
+        "counter-hit:leaf:1",
+        "counter-hit:leaf:2",
+        "counter-hit:straw:0",
+        "counter-hit:straw:1",
+        "counter-hit:straw:2",
+        "counter-hit:armor:0",
+        "counter-hit:armor:1",
+        "counter-hit:armor:2",
+        "afterguard:slime:0",
+        "afterguard:slime:1",
+        "afterguard:slime:2",
+        "hit:slime:0",
+        "hit:slime:1",
+        "hit:slime:2",
+        "hit:leaf:0",
+        "hit:leaf:1",
+        "hit:leaf:2",
+        "hit:straw:0",
+        "hit:straw:1",
+        "hit:straw:2",
+        "hit:armor:0",
+        "hit:armor:1",
+        "hit:armor:2",
+        "protected-hit:slime:0",
+        "protected-hit:slime:1",
+        "protected-hit:slime:2",
+        "protected-hit:leaf:0",
+        "protected-hit:leaf:1",
+        "protected-hit:leaf:2",
+        "protected-hit:straw:0",
+        "protected-hit:straw:1",
+        "protected-hit:straw:2",
+        "protected-hit:armor:0",
+        "protected-hit:armor:1",
+        "protected-hit:armor:2",
+        "interrupt:slime:0",
+        "interrupt:slime:1",
+        "interrupt:slime:2",
+        "interrupt:leaf:0",
+        "interrupt:leaf:1",
+        "interrupt:leaf:2",
+        "interrupt:straw:0",
+        "interrupt:straw:1",
+        "interrupt:straw:2",
+        "interrupt:armor:0",
+        "interrupt:armor:1",
+        "interrupt:armor:2",
+        "guard-break:slime:0",
+        "guard-break:slime:1",
+        "guard-break:slime:2",
+        "guard-break:leaf:0",
+        "guard-break:leaf:1",
+        "guard-break:leaf:2",
+        "guard-break:straw:0",
+        "guard-break:straw:1",
+        "guard-break:straw:2",
+        "guard-break:armor:0",
+        "guard-break:armor:1",
+        "guard-break:armor:2",
+        "kill:slime:0",
+        "kill:slime:1",
+        "kill:slime:2",
+        "kill:leaf:0",
+        "kill:leaf:1",
+        "kill:leaf:2",
+        "kill:straw:0",
+        "kill:straw:1",
+        "kill:straw:2",
+        "kill:armor:0",
+        "kill:armor:1",
+        "kill:armor:2"
+      ],
+      "重复预热保持引用": true
+    },
+    "maximumVoices": 16,
+    "bounded": {
+      "voices": 16,
+      "strikeVoices": 3,
+      "audioProfile": "双剑金属／同来招截停",
+      "windVoices": 0,
+      "windCached": true,
+      "xiaobaoFlightVoices": 0,
+      "xiaobaoCached": 0,
+      "cached": 96,
+      "events": [
+        {
+          "id": "声库并发0",
+          "kind": "guard-start",
+          "sim": 1,
+          "submitted": 421.69999998807907,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发1",
+          "kind": "guard-start",
+          "sim": 1,
+          "submitted": 421.80000001192093,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发2",
+          "kind": "guard-start",
+          "sim": 1,
+          "submitted": 421.80000001192093,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发3",
+          "kind": "enemy-charge",
+          "sim": 1,
+          "submitted": 421.80000001192093,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发4",
+          "kind": "enemy-charge",
+          "sim": 1,
+          "submitted": 421.80000001192093,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发5",
+          "kind": "enemy-charge",
+          "sim": 1,
+          "submitted": 421.80000001192093,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发6",
+          "kind": "enemy-strike",
+          "sim": 1,
+          "submitted": 421.89999997615814,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发7",
+          "kind": "enemy-strike",
+          "sim": 1,
+          "submitted": 421.89999997615814,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发8",
+          "kind": "enemy-strike",
+          "sim": 1,
+          "submitted": 421.89999997615814,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发9",
+          "kind": "parry-contact",
+          "sim": 1,
+          "submitted": 421.89999997615814,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发10",
+          "kind": "parry-contact",
+          "sim": 1,
+          "submitted": 421.89999997615814,
+          "scheduled": 0.36,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发11",
+          "kind": "parry-contact",
+          "sim": 1,
+          "submitted": 421.89999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发12",
+          "kind": "parry-perfect-contact",
+          "sim": 1,
+          "submitted": 421.89999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发13",
+          "kind": "parry-perfect-contact",
+          "sim": 1,
+          "submitted": 422,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发14",
+          "kind": "parry-perfect-contact",
+          "sim": 1,
+          "submitted": 422,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发15",
+          "kind": "deflect-release",
+          "sim": 1,
+          "submitted": 422,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发16",
+          "kind": "deflect-release",
+          "sim": 1,
+          "submitted": 422,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发17",
+          "kind": "deflect-release",
+          "sim": 1,
+          "submitted": 422,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发18",
+          "kind": "counter-swing",
+          "sim": 1,
+          "submitted": 422,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发19",
+          "kind": "counter-swing",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发20",
+          "kind": "counter-swing",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发21",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发22",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发23",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发24",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发25",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发26",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发27",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发28",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发29",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发30",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发31",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发32",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发33",
+          "kind": "afterguard",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发34",
+          "kind": "afterguard",
+          "sim": 1,
+          "submitted": 422.19999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发35",
+          "kind": "afterguard",
+          "sim": 1,
+          "submitted": 422.19999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发36",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.19999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发37",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.19999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发38",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.19999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发39",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.19999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发40",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发41",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发42",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发43",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发44",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发45",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发46",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发47",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发48",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发49",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发50",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发51",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发52",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发53",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发54",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发55",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发56",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发57",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发58",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发59",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发60",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发61",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发62",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发63",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发64",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发65",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发66",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发67",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发68",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发69",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发70",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发71",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发72",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发73",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发74",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发75",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发76",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发77",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.60000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发78",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.60000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发79",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.60000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发80",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.60000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发81",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.60000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发82",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.60000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发83",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.60000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发84",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发85",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发86",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发87",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发88",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发89",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发90",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发91",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发92",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发93",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发94",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发95",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        }
+      ],
+      "state": "running",
+      "outputLatency": 0.024,
+      "buses": {
+        "threat": 1,
+        "player": 1,
+        "battle": 0.6367628574371338,
+        "noncritical": 0.6367628574371338
+      }
+    },
+    "bankReleased": {
+      "voices": 0,
+      "strikeVoices": 0,
+      "audioProfile": "双剑金属／同来招截停",
+      "windVoices": 0,
+      "windCached": true,
+      "xiaobaoFlightVoices": 0,
+      "xiaobaoCached": 0,
+      "cached": 96,
+      "events": [
+        {
+          "id": "声库并发0",
+          "kind": "guard-start",
+          "sim": 1,
+          "submitted": 421.69999998807907,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发1",
+          "kind": "guard-start",
+          "sim": 1,
+          "submitted": 421.80000001192093,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发2",
+          "kind": "guard-start",
+          "sim": 1,
+          "submitted": 421.80000001192093,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发3",
+          "kind": "enemy-charge",
+          "sim": 1,
+          "submitted": 421.80000001192093,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发4",
+          "kind": "enemy-charge",
+          "sim": 1,
+          "submitted": 421.80000001192093,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发5",
+          "kind": "enemy-charge",
+          "sim": 1,
+          "submitted": 421.80000001192093,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发6",
+          "kind": "enemy-strike",
+          "sim": 1,
+          "submitted": 421.89999997615814,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发7",
+          "kind": "enemy-strike",
+          "sim": 1,
+          "submitted": 421.89999997615814,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发8",
+          "kind": "enemy-strike",
+          "sim": 1,
+          "submitted": 421.89999997615814,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发9",
+          "kind": "parry-contact",
+          "sim": 1,
+          "submitted": 421.89999997615814,
+          "scheduled": 0.35733333333333334,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发10",
+          "kind": "parry-contact",
+          "sim": 1,
+          "submitted": 421.89999997615814,
+          "scheduled": 0.36,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发11",
+          "kind": "parry-contact",
+          "sim": 1,
+          "submitted": 421.89999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发12",
+          "kind": "parry-perfect-contact",
+          "sim": 1,
+          "submitted": 421.89999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发13",
+          "kind": "parry-perfect-contact",
+          "sim": 1,
+          "submitted": 422,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发14",
+          "kind": "parry-perfect-contact",
+          "sim": 1,
+          "submitted": 422,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发15",
+          "kind": "deflect-release",
+          "sim": 1,
+          "submitted": 422,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发16",
+          "kind": "deflect-release",
+          "sim": 1,
+          "submitted": 422,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发17",
+          "kind": "deflect-release",
+          "sim": 1,
+          "submitted": 422,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发18",
+          "kind": "counter-swing",
+          "sim": 1,
+          "submitted": 422,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发19",
+          "kind": "counter-swing",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发20",
+          "kind": "counter-swing",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发21",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发22",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发23",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发24",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发25",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发26",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发27",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发28",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发29",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发30",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发31",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发32",
+          "kind": "counter-hit",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发33",
+          "kind": "afterguard",
+          "sim": 1,
+          "submitted": 422.10000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发34",
+          "kind": "afterguard",
+          "sim": 1,
+          "submitted": 422.19999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发35",
+          "kind": "afterguard",
+          "sim": 1,
+          "submitted": 422.19999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发36",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.19999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发37",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.19999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发38",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.19999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发39",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.19999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发40",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发41",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发42",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发43",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发44",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发45",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发46",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发47",
+          "kind": "hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发48",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发49",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发50",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发51",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发52",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发53",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.30000001192093,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发54",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发55",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发56",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发57",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发58",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发59",
+          "kind": "protected-hit",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发60",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发61",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发62",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发63",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发64",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发65",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发66",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发67",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发68",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.39999997615814,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发69",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发70",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发71",
+          "kind": "interrupt",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发72",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发73",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发74",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发75",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发76",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.5,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发77",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.60000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发78",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.60000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发79",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.60000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发80",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.60000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发81",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.60000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发82",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.60000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发83",
+          "kind": "guard-break",
+          "sim": 1,
+          "submitted": 422.60000002384186,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发84",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发85",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发86",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发87",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发88",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发89",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发90",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发91",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发92",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        },
+        {
+          "id": "声库并发93",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 0
+        },
+        {
+          "id": "声库并发94",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 1
+        },
+        {
+          "id": "声库并发95",
+          "kind": "kill",
+          "sim": 1,
+          "submitted": 422.69999998807907,
+          "scheduled": 0.3626666666666667,
+          "latency": 0.024,
+          "variant": 2
+        }
+      ],
+      "state": "running",
+      "outputLatency": 0.024,
+      "buses": {
+        "threat": 1,
+        "player": 1,
+        "battle": 1,
+        "noncritical": 1
+      }
+    },
+    "destroyed": {
+      "voices": 0,
+      "strikeVoices": 0,
+      "audioProfile": "双剑金属／同来招截停",
+      "windVoices": 0,
+      "windCached": false,
+      "xiaobaoFlightVoices": 0,
+      "xiaobaoCached": 0,
+      "cached": 0,
+      "events": [],
+      "state": "unstarted",
+      "outputLatency": null,
+      "buses": null
+    }
+  },
+  "原始证据路径": ".enemy-local/combat-feel/e2e-evidence/docs/combat-feel/demo/validation/audio-bank-isolated/audio-context.json",
+  "原始证据摘要": "24ad1cd26a106bd251c1380ac8f1f8c13442469cccc1009cab3c4a5ee44f515f",
+  "命令记录": ".enemy-local/combat-feel/audio-bank-isolated.log",
+  "验收边界": "最后同一测试文件的两项同轮通过12.4秒；真实弹反B在正式游戏内，独立音频接口使用正式Sound与真实AudioContext但不加载世界；不能证明设备听感或战斗主观验收。",
+  "采样首因": {
+    "中间暂停后观察路径": ".enemy-local/combat-feel/e2e-evidence/docs/combat-feel/demo/validation/audio-bank-delivery/audio-context.json",
+    "预定墙钟毫秒": 15,
+    "实际墙钟毫秒": 304.5,
+    "原音频窗口毫秒": 150,
+    "修正": "独立接口不渲染世界，原断言与音频窗口保留；原失败不删除。"
+  }
+}

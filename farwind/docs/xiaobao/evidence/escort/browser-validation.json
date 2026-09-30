@@ -1,0 +1,346 @@
+{
+  "结果": "通过",
+  "说明": "当前源码固定构建，正式新游戏、默认稳健战术、真实按钮与键盘；未导入存档或修改运行状态。",
+  "巡护间距": 148.45435937527577,
+  "巡护": {
+    "id": "xiaobao",
+    "label": "小宝 · 听风小宗师",
+    "art": "xiaobao-motion",
+    "x": 1261.4823378203407,
+    "y": 847.4882200585762,
+    "w": 92,
+    "h": 92,
+    "kind": "npc",
+    "action": "idle",
+    "actionName": "听风待机",
+    "elapsed": 83.2400000000002,
+    "distance": 504.8382333333346,
+    "flip": false,
+    "texture": "xiaobao-motion",
+    "frame": 0,
+    "frameIndex": 0,
+    "lift": 0,
+    "demonstration": false,
+    "night": false,
+    "anchor": [
+      80,
+      148
+    ],
+    "state": {
+      "known": true,
+      "task": "follow",
+      "gate": "all",
+      "tactic": "steady",
+      "autoSupport": true,
+      "x": 1261.4823378203407,
+      "y": 847.4882200585762,
+      "hp": 640,
+      "qi": 100,
+      "clock": 8446.076666666662,
+      "serial": 0,
+      "cooldowns": {
+        "palm": 0,
+        "triple": 0,
+        "star": 0,
+        "blade": 0,
+        "rock": 0,
+        "fire": 0,
+        "thunder": 0,
+        "chain": 0,
+        "unity": 0,
+        "guard": 0,
+        "rescue": 0,
+        "flight": 0
+      },
+      "rest": 0,
+      "recovery": 0,
+      "peace": 6000,
+      "reduction": 0,
+      "shields": [],
+      "cast": null,
+      "effects": [],
+      "flight": null,
+      "support": null,
+      "alarmCycle": 0,
+      "alarmActive": false,
+      "responded": [],
+      "command": null,
+      "wait": null,
+      "affected": [],
+      "reports": []
+    },
+    "status": "留距巡护",
+    "airborne": false,
+    "battleAction": null,
+    "targetId": null,
+    "metrics": {
+      "decisions": 57,
+      "hits": 0,
+      "flights": 0,
+      "cancelled": 0,
+      "landingChecks": 0,
+      "steps": 1941
+    },
+    "events": [],
+    "effects": [],
+    "navigation": {
+      "path": [],
+      "queries": 0,
+      "failed": false
+    },
+    "eta": 0,
+    "visible": true,
+    "spriteRoot": [
+      1261.4823378203407,
+      847.4882200585762
+    ],
+    "objects": 6,
+    "provisional": true
+  },
+  "援护": {
+    "id": "xiaobao",
+    "label": "小宝 · 听风小宗师",
+    "art": "xiaobao-battle-front",
+    "x": 2475.7624025011173,
+    "y": 1091.0536028239424,
+    "w": 92,
+    "h": 92,
+    "kind": "npc",
+    "action": "walkSide",
+    "actionName": "侧面小步",
+    "elapsed": 83.2400000000002,
+    "distance": 1783.0147666666726,
+    "flip": false,
+    "texture": "xiaobao-battle-front",
+    "frame": 104,
+    "frameIndex": 4,
+    "lift": 0,
+    "demonstration": false,
+    "night": false,
+    "anchor": [
+      80,
+      148
+    ],
+    "state": {
+      "known": true,
+      "task": "follow",
+      "gate": "all",
+      "tactic": "steady",
+      "autoSupport": true,
+      "x": 2475.7624025011173,
+      "y": 1091.0536028239424,
+      "hp": 640,
+      "qi": 83.28362000000016,
+      "clock": 21318.936666666687,
+      "serial": 3,
+      "cooldowns": {
+        "palm": 0,
+        "triple": 0,
+        "star": 0,
+        "blade": 0,
+        "rock": 0,
+        "fire": 0,
+        "thunder": 0,
+        "chain": 0,
+        "unity": 0,
+        "guard": 7786.0633333333135,
+        "rescue": 0,
+        "flight": 0
+      },
+      "rest": 0,
+      "recovery": 0,
+      "peace": 0,
+      "reduction": 386.0633333333135,
+      "shields": [
+        {
+          "id": "player",
+          "amount": 120,
+          "remaining": 2286.0633333333135
+        },
+        {
+          "id": "xiaobao",
+          "amount": 120,
+          "remaining": 2286.0633333333135
+        }
+      ],
+      "cast": {
+        "id": "xiaobao:3",
+        "skill": "guard",
+        "age": 313.9366666666865,
+        "stage": 1,
+        "released": true,
+        "fixedCenter": false,
+        "origin": {
+          "x": 2475.7624025011173,
+          "y": 1091.0536028239424
+        },
+        "center": {
+          "x": 2475.7624025011173,
+          "y": 1091.0536028239424
+        },
+        "direction": {
+          "x": 0,
+          "y": 1
+        },
+        "target": null,
+        "task": "follow"
+      },
+      "effects": [],
+      "flight": null,
+      "support": null,
+      "alarmCycle": 0,
+      "alarmActive": false,
+      "responded": [],
+      "command": null,
+      "wait": null,
+      "affected": [],
+      "reports": []
+    },
+    "status": "先护住旅人",
+    "airborne": false,
+    "battleAction": {
+      "clip": "guard",
+      "progress": 0.44848095238098074,
+      "lift": 0
+    },
+    "targetId": "slime-2",
+    "metrics": {
+      "decisions": 143,
+      "hits": 1,
+      "flights": 0,
+      "cancelled": 1,
+      "landingChecks": 0,
+      "steps": 4805
+    },
+    "events": [
+      {
+        "id": "xiaobao:1",
+        "kind": "release",
+        "skill": "star",
+        "point": {
+          "x": 2097.7098458934215,
+          "y": 997.4180044444948
+        },
+        "from": {
+          "x": 2431.305914286376,
+          "y": 1053.5087095420756
+        },
+        "at": 18525
+      },
+      {
+        "id": "xiaobao:1:0:slime-1",
+        "kind": "hit",
+        "skill": "star",
+        "point": {
+          "x": 2420.5378045860034,
+          "y": 1048.110035634749
+        },
+        "from": {
+          "x": 2408.349416124049,
+          "y": 1049.648813426697
+        },
+        "target": "slime-1",
+        "damage": 48,
+        "stage": 0,
+        "at": 18975
+      },
+      {
+        "id": "xiaobao:3",
+        "kind": "release",
+        "skill": "guard",
+        "point": {
+          "x": 2475.7624025011173,
+          "y": 1091.0536028239424
+        },
+        "from": {
+          "x": 2475.7624025011173,
+          "y": 1091.0536028239424
+        },
+        "at": 21105
+      },
+      {
+        "id": "xiaobao:3:player",
+        "kind": "shield",
+        "skill": "guard",
+        "point": {
+          "x": 2542.4275886678092,
+          "y": 1120.7239969484385
+        },
+        "target": "player",
+        "at": 21105
+      },
+      {
+        "id": "xiaobao:3:xiaobao",
+        "kind": "shield",
+        "skill": "guard",
+        "point": {
+          "x": 2475.7624025011173,
+          "y": 1091.0536028239424
+        },
+        "target": "xiaobao",
+        "at": 21105
+      }
+    ],
+    "effects": [],
+    "navigation": {
+      "path": [],
+      "queries": 1,
+      "failed": false
+    },
+    "eta": 0,
+    "visible": true,
+    "spriteRoot": [
+      2475.7624025011173,
+      1091.0536028239424
+    ],
+    "objects": 6,
+    "provisional": true
+  },
+  "撤离间距": 203.64144420622102,
+  "等候位移": 0,
+  "恢复间距": 209.94109881096634,
+  "恢复": {
+    "known": true,
+    "task": "follow",
+    "gate": "all",
+    "tactic": "steady",
+    "autoSupport": true,
+    "x": 1554.8608152103152,
+    "y": 998.6145580711338,
+    "hp": 640,
+    "qi": 100,
+    "clock": 39953.49333333334,
+    "serial": 5,
+    "cooldowns": {
+      "palm": 0,
+      "triple": 0,
+      "star": 0,
+      "blade": 0,
+      "rock": 0,
+      "fire": 0,
+      "thunder": 0,
+      "chain": 0,
+      "unity": 0,
+      "guard": 0,
+      "rescue": 0,
+      "flight": 0
+    },
+    "rest": 0,
+    "recovery": 0,
+    "peace": 6000,
+    "reduction": 0,
+    "shields": [],
+    "cast": null,
+    "effects": [],
+    "flight": null,
+    "support": null,
+    "alarmCycle": 0,
+    "alarmActive": false,
+    "responded": [],
+    "command": null,
+    "wait": null,
+    "affected": [],
+    "reports": []
+  },
+  "异常": []
+}

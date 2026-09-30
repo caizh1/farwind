@@ -1,6 +1,59 @@
 {
   "说明": "固定突破样本，运行一秒的真实攻击与生活状态，用于核对目击视线。",
   "状态": {
+    "runes": {
+      "version": 1,
+      "fixed": "return-wind",
+      "owned": [],
+      "slots": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "presets": [
+        {
+          "name": "旅途配装 1",
+          "slots": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "旅途配装 2",
+          "slots": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "旅途配装 3",
+          "slots": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ],
+      "cooldowns": {},
+      "counts": {},
+      "clock": 0,
+      "peace": 8000,
+      "nodes": [],
+      "settings": {
+        "simple": false,
+        "lowFlash": false
+      }
+    },
     "skills": {
       "swordWindStage": 0,
       "legacySwordWind": false,
@@ -13,7 +66,7 @@
         "splitRight": 0
       }
     },
-    "schema_version": 13,
+    "schema_version": 14,
     "demonKing": {
       "introduced": false
     },
@@ -93,6 +146,13 @@
           "cleared": false,
           "cooldown": 0,
           "warning": null,
+          "boss": {
+            "stage": "guards",
+            "warning": 0,
+            "attempt": 0,
+            "away": 0,
+            "combat": null
+          },
           "members": [
             {
               "hp": 60,
@@ -130,6 +190,22 @@
               "hp": 48,
               "x": 1390,
               "y": 2850,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "hp": 2300,
+              "x": 1250,
+              "y": 2820,
               "serial": 0,
               "cooldown": 0,
               "defeated": false,
@@ -257,6 +333,13 @@
           "cleared": false,
           "cooldown": 0,
           "warning": null,
+          "boss": {
+            "stage": "guards",
+            "warning": 0,
+            "attempt": 0,
+            "away": 0,
+            "combat": null
+          },
           "members": [
             {
               "hp": 58,
@@ -305,6 +388,22 @@
                 "y": 1
               },
               "guardOpen": 0
+            },
+            {
+              "hp": 2800,
+              "x": -1700,
+              "y": 1490,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
             }
           ]
         },
@@ -314,6 +413,13 @@
           "cleared": false,
           "cooldown": 0,
           "warning": null,
+          "boss": {
+            "stage": "guards",
+            "warning": 0,
+            "attempt": 0,
+            "away": 0,
+            "combat": null
+          },
           "members": [
             {
               "hp": 90,
@@ -346,6 +452,22 @@
                 "y": 1
               },
               "guardOpen": 0
+            },
+            {
+              "hp": 2500,
+              "x": 1480,
+              "y": -730,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
             }
           ]
         },
@@ -355,6 +477,13 @@
           "cleared": false,
           "cooldown": 0,
           "warning": null,
+          "boss": {
+            "stage": "guards",
+            "warning": 0,
+            "attempt": 0,
+            "away": 0,
+            "combat": null
+          },
           "members": [
             {
               "hp": 60,
@@ -392,6 +521,22 @@
               "hp": 84,
               "x": 3850,
               "y": 1180,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "hp": 2500,
+              "x": 3710,
+              "y": 1100,
               "serial": 0,
               "cooldown": 0,
               "defeated": false,

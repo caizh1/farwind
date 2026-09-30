@@ -1,0 +1,83 @@
+{
+  "日期": "2026年9月29日",
+  "选择": "方案1：旅人装备手册",
+  "预览": "http://127.0.0.1:4189/",
+  "类型检查": "通过",
+  "正式构建": "通过",
+  "相关测试": {
+    "文件数": 3,
+    "通过数": 33,
+    "说明": "共享结构升级为14后，旧经济测试的结构版本改为比较当前初始版本，位置、货币、进度与重复迁移断言保留；33项重新通过。"
+  },
+  "浏览器控制台错误": [],
+  "运行截图": [
+    {
+      "文件": "equipment-production.png",
+      "宽度": 1195,
+      "高度": 672
+    },
+    {
+      "文件": "equipment-narrow.png",
+      "宽度": 364,
+      "高度": 672
+    },
+    {
+      "文件": "equipment-narrow-scroll.png",
+      "宽度": 364,
+      "高度": 672
+    },
+    {
+      "文件": "equipment-short.png",
+      "宽度": 641,
+      "高度": 312
+    },
+    {
+      "文件": "equipment-short-scroll.png",
+      "宽度": 641,
+      "高度": 312
+    }
+  ],
+  "对照归一尺寸": {
+    "每侧宽度": 1280,
+    "每侧高度": 720
+  },
+  "尚未完成": [
+    "购买穿戴与刷新完整流程",
+    "实际敌人击杀回村流程",
+    "其他浏览器与长期性能"
+  ],
+  "源码摘要": [
+    {
+      "文件": "src/data/economy.ts",
+      "摘要": "75459bb29e9cb0651f05eace8782671641a734a9a42373ad6f3dba67782c811a"
+    },
+    {
+      "文件": "src/game/systems/state.ts",
+      "摘要": "d0405646056b9d514c0287474894d94259955750484841fff372bd847f6a92bc"
+    },
+    {
+      "文件": "src/game/scenes/World.ts",
+      "摘要": "a735f2c662a377a840c4ddb0349ea2af60b647a238aaffaf318bdee3d482fa05"
+    },
+    {
+      "文件": "src/game/ui/interface.ts",
+      "摘要": "5dee2aa4205ead5008f2aee5c458802555d4789b328521c42ccc3f64be6f55ae"
+    },
+    {
+      "文件": "src/game/ui/equipment.ts",
+      "摘要": "d2524b0bc8efe11bafb254dbb8062db27334dbf60e7cd6d716c95c0389fd5cd4"
+    },
+    {
+      "文件": "src/equipment.css",
+      "摘要": "ff0e21d7adcd3b85c3c1ebee184821ad3d7dbdde30619cb9ec77e7eeb5d06aaa"
+    },
+    {
+      "文件": "src/main.ts",
+      "摘要": "691dbc70ba45c07de67f7667aa6411ada7d3b5f91f738d323be3f29344ca5bfe"
+    },
+    {
+      "文件": "tests/equipment.test.ts",
+      "摘要": "52a33f21ac518e45fb70de2402913c68907662ce128076c03e6e449ef46b1bb3"
+    }
+  ]
+}

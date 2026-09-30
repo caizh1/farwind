@@ -1,0 +1,210 @@
+/* 阶段A文字减量修订：原生折叠与下拉筛选；图标始终留在正常文档流。 */
+:root { color-scheme:light; --ink:#263f35; --green:#203e34; --paper:#f3ecd6; --muted:#746f5a; --red:#9d4f3e; }
+* { box-sizing:border-box; }
+body { margin:0; background:#142b24; color:var(--ink); font:16px "PingFang SC","Microsoft YaHei",sans-serif; }
+button,input,select { font:inherit; color:inherit; }
+button,summary,select { cursor:pointer; }
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible { outline:3px solid #a44a39; outline-offset:3px; }
+button:disabled { cursor:default; color:#797565; background:#e3ddca; }
+button:hover:not(:disabled),summary:hover { background-color:#e6dfc4; }
+img { display:block; max-width:100%; }
+h1,h2,h3,p,figure { margin:0; }
+h1,h2,.serif { font-family:"Songti SC","STSong",serif; }
+svg { display:block; flex-shrink:0; }
+.stage { width:100%; height:min(900px,100dvh); padding:32px 38px; display:flex; flex-direction:column; color:var(--ink); font:16px "PingFang SC","Microsoft YaHei",sans-serif; background:linear-gradient(#183227ca,#102d26ee),url('references/game-hud.png') center/cover; }
+.sheet { min-height:0; flex:1; display:grid; grid-template-rows:76px minmax(0,1fr) 40px; background:var(--paper) url('assets/frame-a.png') center/100% 100%; border:8px solid #b79e6a; border-image:url('assets/paper-frame.webp') 90 / 8px stretch; box-shadow:0 18px 72px #061b1b77; overflow:hidden; }
+.topbar { display:flex; align-items:center; gap:20px; padding:12px 26px; background:#f4ecd6fc; border-bottom:1px solid #ad9a6a50; }
+.title-block { flex:1; min-width:0; border-left:3px solid var(--red); padding-left:13px; }
+.topbar h1 { font-size:31px; letter-spacing:4px; font-weight:600; }
+.design-note { font-size:14px; color:#8e6147; }
+.close { display:inline-flex; align-items:center; gap:12px; background:var(--green); color:#f4ecd7; border:1px solid #9c895d; border-radius:4px; padding:10px 14px; }
+.close:hover { background:#3c5a47!important; }
+kbd { font:14px "PingFang SC",sans-serif; padding:2px 5px; border:1px solid currentColor; border-radius:3px; }
+.body { min-height:0; display:grid; grid-template-columns:220px 288px minmax(0,1fr); }
+.profile { display:flex; flex-direction:column; gap:26px; min-width:0; padding:27px 18px; background:#213d32fc; color:#f6eacc; }
+.profile h2 { font-size:31px; font-weight:500; }
+.profile p { font-size:16px; line-height:1.7; color:#ded5b9; margin-top:8px; }
+.portrait { width:184px; height:268px; object-fit:contain; margin:0 auto; }
+.vitals { display:grid; gap:11px; padding-top:13px; border-top:1px solid #bba87850; }
+.vital { display:flex; justify-content:space-between; gap:8px; font-size:16px; }
+.vital strong { font-weight:500; }
+.vital-bar { height:5px; background:#112b22; }
+.vital-bar span { display:block; height:100%; background:#b37059; }
+.vital-bar.stamina span { background:#a3b782; width:100%; }
+.profile-tail { margin-top:auto; }
+.techniques { color:#d4c598; font-size:14px; }
+.techniques summary { padding:8px 0; }
+.techniques summary:hover { background:#34503b; }
+.techniques p { font-size:14px; }
+.technique-slots { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:5px; margin-top:9px; }
+.technique-slots span { padding:6px 1px; border:1px dashed #bfa777; text-align:center; }
+.compact-summary { display:none; }
+.catalog { min-width:0; min-height:0; padding:27px 18px 19px; display:flex; flex-direction:column; gap:19px; background:#efe6cef9; border-right:1px solid #b7a77750; }
+.catalog-head { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.catalog h2 { font-size:23px; font-weight:500; }
+.count { color:var(--muted); font-size:14px; margin-left:4px; }
+.filters { min-width:80px; padding:6px 7px; font-size:14px; background:#f7f1dd; border:1px solid #b8ad89; border-radius:3px; }
+.categories { display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+.categories button { padding:6px 8px; border:0; background:transparent; font-size:15px; border-radius:3px; }
+.categories button[aria-pressed=true] { background:#294a3d; color:#f7edd1; }
+.catalog:has(.categories button:only-child) .categories { display:none; }
+.search { width:100%; padding:9px 11px; border:1px solid #b4a77b; background:#faf5e5; border-radius:3px; }
+.skill-list { flex:1; min-height:0; overflow:auto; overscroll-behavior:contain; scrollbar-color:#b5a680 transparent; padding:3px; }
+.group-label { font-size:14px; color:#82765a; padding:4px 3px 12px; }
+.skill-card { display:flex; align-items:center; gap:11px; width:100%; padding:15px 10px; margin-bottom:8px; border:1px solid transparent; border-bottom-color:#b3a47b55; border-radius:4px; background:transparent; text-align:left; }
+.skill-card.selected { border-color:#6d8765; background:#e0e5ce; box-shadow:inset 3px 0 #405d48; }
+.skill-card .icon { width:38px; height:38px; flex-basis:38px; }
+.icon { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; }
+.icon svg { width:34px; height:34px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.icon img { width:38px; height:38px; object-fit:contain; }
+.card-copy { min-width:0; flex:1; display:grid; gap:5px; }
+.card-title { display:flex; align-items:center; justify-content:space-between; gap:6px; flex-wrap:wrap; }
+.card-title strong { font-size:20px; font-family:"Songti SC",serif; font-weight:500; }
+.card-title small { font-size:14px; color:#586947; }
+.card-current { font-size:15px; color:#53634b; line-height:1.5; }
+.card-brief { font-size:14px; line-height:1.6; color:#7a745d; }
+.planned .card-title small,.planned .card-current { color:#926a49; }
+.catalog-note { font-size:14px; color:#8d7153; }
+.details-wrap { min-width:0; min-height:0; background:#f7f0dcfc; }
+.detail-scroll { height:100%; min-height:0; overflow:auto; overscroll-behavior:contain; scrollbar-color:#b5a680 transparent; padding:22px 29px; }
+.detail-heading { display:flex; align-items:center; gap:14px; margin-bottom:12px; }
+.detail-heading h2 { font-size:32px; letter-spacing:2px; font-weight:500; line-height:1.2; }
+.heading-copy { flex:1; min-width:0; }
+.current-line { font-size:16px; color:#657254; margin-top:5px; line-height:1.5; }
+.tag { color:#5f7451; font-size:14px; line-height:1.5; max-width:174px; }
+.skill-purpose { font-size:20px; line-height:1.6; color:#3b5642; }
+.diagram-panel { display:grid; gap:5px; margin:14px 0; padding:11px 17px; background:#e7e8d7; border-radius:4px; }
+.attack-diagram { width:100%; height:102px; }
+.diagram-caption { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; color:#677252; font-size:14px; line-height:1.5; }
+.compact-measure { display:none; }
+.preview-tools { display:inline-flex; align-items:center; flex-wrap:wrap; gap:12px; }
+.preview-tools button { background:transparent; border:1px solid #a6ad88; border-radius:3px; padding:3px 9px; font-size:14px; }
+.preview-tools label { display:inline-flex; align-items:center; gap:5px; font-size:14px; }
+.preview-tools input { margin:0; accent-color:#4e6c48; }
+.operating { display:flex; align-items:center; flex-wrap:wrap; gap:9px; font-size:16px; line-height:1.7; margin:10px 0; }
+.operation-label { color:#7d765c; }
+.operating kbd { background:#e8dec1; color:#394c3d; font-size:15px; border-color:#b7ac87; padding:3px 8px; }
+.section-label { font-size:16px; font-weight:500; margin:18px 0 9px; color:#7d765c; }
+.route { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; background:linear-gradient(#c8c7ad,#c8c7ad) center 22px / calc(100% - 110px) 1px no-repeat; }
+.node { min-width:0; border:0; background:transparent; color:#7f8067; padding:8px 2px; display:grid; justify-items:center; gap:4px; border-radius:3px; }
+.node-mark { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border:1px solid #b2b69a; border-radius:50%; font-size:15px; background:#f7f0dc; }
+.node strong { font-size:16px; font-weight:500; line-height:1.5; text-align:center; }
+.node small { font-size:14px; }
+.node.earned { color:#4a6245; }
+.node.earned .node-mark { background:#799268; color:#fff6d8; border-color:#799268; }
+.node.current { background:#e3e8d2; color:#2d4935; }
+.node.current .node-mark { background:#2d4c3d; border-color:#2d4c3d; color:#fff1cc; }
+.node.viewing { outline:2px dashed #a5684c; outline-offset:0; }
+.more-details { margin-top:17px; }
+.disclosure { border-bottom:1px solid #b1a57d55; }
+.disclosure summary { padding:11px 4px; font-size:16px; line-height:1.5; color:#4b6249; }
+.disclosure summary small { font-size:14px; color:#8a8062; margin-left:12px; }
+.disclosure-content { font-size:16px; line-height:1.7; padding:7px 18px 17px; color:#5f6751; }
+.disclosure-content p + p { margin-top:9px; }
+.learning { padding:0; margin:0; list-style:none; display:grid; gap:12px; }
+.learning li { display:flex; align-items:baseline; gap:9px; flex-wrap:wrap; font-size:16px; }
+.learning strong { font-weight:500; }
+.record-mark { color:#7c8968; font-size:14px; }
+.learning .source { flex-basis:100%; color:#847a62; }
+.quiet-state { margin:17px 4px 0; font-size:16px; line-height:1.7; color:#7e7f64; }
+.effect-copy { font-size:16px; line-height:1.8; }
+.preview-warning { display:flex; align-items:center; flex-wrap:wrap; gap:12px; background:#f0e0bf; color:#865534; padding:9px 12px; margin:12px 0; font-size:16px; line-height:1.5; }
+.preview-warning button { padding:4px 8px; font-size:14px; border:1px solid #aa9161; background:#f9f0d8; border-radius:3px; }
+.basic-visual { margin:24px 0; min-height:180px; background:#e7e8d7; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:17px; }
+.basic-visual .icon img,.basic-visual .icon svg { width:78px; height:78px; }
+.basic-visual strong { font-size:20px; font-weight:500; }
+.footer { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 25px; border-top:1px solid #b1a27640; color:#8a8066; background:#ece2c7f2; font-size:14px; }
+.empty { padding:24px 8px; font-size:16px; line-height:1.8; color:#75705b; }
+.closed-view { height:100%; display:grid; place-content:center; gap:20px; background:#f5edd8; text-align:center; }
+.closed-view h1 { font-size:32px; }
+.closed-view button { padding:12px; background:#29483b; color:#f2e9cc; border:1px solid #b09a63; }
+/* 双页手册用书脊与左页目录形成区别，细节仍默认折叠。 */
+.scheme-b .sheet { background:#f3e9cf url('assets/frame-b.png') center/100% 100%; border:4px solid #8f7047; }
+.scheme-b .topbar { background:#efe2c4eb; }
+.scheme-b .body { grid-template-columns:480px minmax(0,1fr); }
+.scheme-b .profile { grid-column:1; grid-row:1; align-self:start; height:164px; flex-direction:row; align-items:center; gap:20px; background:#f3e8cefc; color:var(--ink); padding:17px 26px; }
+.scheme-b .profile-info { flex:1; min-width:0; }
+.scheme-b .profile p { color:#7a745d; font-size:15px; }
+.scheme-b .profile h2 { font-size:28px; }
+.scheme-b .portrait { width:99px; height:129px; order:-1; margin:0; }
+.scheme-b .vitals { flex-basis:112px; flex-shrink:0; border:0; padding:0; gap:16px; }
+.scheme-b .vital { font-size:15px; }
+.scheme-b .vital-bar,.scheme-b .profile-tail { display:none; }
+.scheme-b .catalog { grid-column:1; grid-row:1; margin-top:164px; background:#f3e8cefc; border:0; padding:19px 27px; }
+.scheme-b .details-wrap { grid-column:2; grid-row:1; border-left:9px double #bba377; background:#fbf3dffc; }
+.scheme-b .detail-scroll { padding:22px 31px; }
+.scheme-b .skill-card { padding:11px 16px; }
+.scheme-b .group-label { display:none; }
+/* 人物摘要与双列图鉴，卡片仍只包含识别所需的信息。 */
+.scheme-c .sheet { background:#eee5cc url('assets/frame-c.png') center/100% 100%; }
+.scheme-c .body { grid-template-columns:520px minmax(0,1fr); }
+.scheme-c .profile { grid-column:1; grid-row:1; align-self:start; height:144px; flex-direction:row; align-items:center; gap:18px; padding:13px 22px; }
+.scheme-c .profile-info { flex:1; min-width:0; }
+.scheme-c .profile h2 { font-size:28px; }
+.scheme-c .profile p { font-size:15px; }
+.scheme-c .portrait { width:88px; height:117px; order:-1; margin:0; }
+.scheme-c .vitals { flex-basis:113px; flex-shrink:0; border:0; padding:0; gap:16px; }
+.scheme-c .vital { font-size:15px; }
+.scheme-c .vital-bar,.scheme-c .profile-tail { display:none; }
+.scheme-c .catalog { grid-column:1; grid-row:1; margin-top:144px; padding:25px 22px; background:#eee5cefc; }
+.scheme-c .skill-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; align-content:start; }
+.scheme-c .skill-card { min-height:163px; flex-direction:column; align-items:flex-start; gap:12px; padding:16px; margin:0; border:1px solid #b4a07680; background:#f8f0dbed; }
+.scheme-c .skill-card.selected { background:#e0e5ce; border-color:#6d8765; }
+.scheme-c .card-copy { width:100%; }
+.scheme-c .details-wrap { grid-column:2; grid-row:1; }
+.capacity .body { grid-template-columns:200px 338px minmax(0,1fr); }
+.capacity .profile { padding:27px 16px; }
+.capacity .portrait { width:166px; height:246px; }
+.capacity .catalog { padding:26px 18px; gap:15px; }
+.capacity .skill-card { padding:12px 10px; }
+.capacity .skill-list { padding-bottom:28px; }
+.capacity .card-title strong { font-size:19px; }
+/* 800×600保留正文大小，人物变成顶部摘要；正文可独立滚动。 */
+@media(max-width:960px) {
+  .stage { height:min(600px,100dvh); padding:12px; }
+  .sheet { border:1px solid #b79e6a; grid-template-rows:62px 57px minmax(0,1fr) 33px; }
+  .topbar { padding:10px 16px; gap:16px; }
+  .topbar h1 { font-size:26px; letter-spacing:2px; }
+  .design-note { font-size:14px; max-width:145px; }
+  .close { padding:7px 10px; gap:8px; font-size:15px; }
+  .compact-summary { display:flex; align-items:center; gap:14px; padding:7px 17px; color:#f7edcf; background:#2a4939; }
+  .compact-summary img { width:40px; height:40px; border-radius:50%; object-fit:cover; }
+  .summary-text { display:flex; flex:1; align-items:center; gap:25px; flex-wrap:wrap; min-width:0; }
+  .summary-text strong { font:20px "Songti SC",serif; }
+  .summary-text span { font-size:15px; }
+  .body,.capacity .body,.scheme-b .body,.scheme-c .body { grid-template-columns:222px minmax(0,1fr); }
+  .profile,.scheme-b .profile,.scheme-c .profile { display:none; }
+  .catalog,.capacity .catalog,.scheme-b .catalog,.scheme-c .catalog { grid-column:1; grid-row:1; margin:0; padding:17px 11px; gap:15px; }
+  .catalog h2 { font-size:21px; }
+  .filters { min-width:76px; padding:5px; }
+  .skill-card { gap:8px; padding:9px 6px; }
+  .group-label { display:none; }
+  .skill-card .icon { width:31px; height:31px; flex-basis:31px; }
+  .icon svg { width:29px; height:29px; }
+  .icon img { width:31px; height:31px; }
+  .card-title strong { font-size:18px; }
+  .card-brief { display:none; }
+  .scheme-c .skill-list { display:block; }
+  .scheme-c .skill-card { min-height:0; flex-direction:row; padding:12px 6px; margin-bottom:8px; }
+  .details-wrap,.scheme-b .details-wrap,.scheme-c .details-wrap { grid-column:2; grid-row:1; border:0; }
+  .detail-scroll,.scheme-b .detail-scroll,.scheme-c .detail-scroll { padding:17px; }
+  .detail-heading { gap:9px; }
+  .detail-heading h2 { font-size:26px; }
+  .detail-heading .icon { display:none; }
+  .tag { max-width:145px; }
+  .skill-purpose { font-size:18px; }
+  .diagram-panel { padding:7px 9px; margin:10px 0; }
+  .attack-diagram { height:65px; }
+  .attack-diagram text { display:none; }
+  .compact-measure { display:inline; }
+  .diagram-caption { gap:6px; }
+  .preview-tools { gap:9px; }
+  .operating { font-size:16px; gap:7px; }
+  .section-label { margin-top:14px; }
+  .route { gap:4px; }
+  .node strong { font-size:15px; }
+  .node small { font-size:14px; }
+  .disclosure-content { padding:7px 7px 17px; }
+  .footer { padding:6px 16px; font-size:14px; }
+}
+@media(prefers-reduced-motion:reduce) { * { animation:none!important; transition:none!important; } }

@@ -1,0 +1,24 @@
+{
+  "说明": "展示动画修订范围与实际核对；不批准正式游戏发布。",
+  "分支": "codex/initial-game",
+  "提交": "13b8542c62edc789dcf9497dc3a86c980552b20e",
+  "分支保持": true,
+  "提交保持": true,
+  "追踪文件与开始时不同": [
+    "farwind/src/data/animation.ts",
+    "farwind/src/game/scenes/World.ts",
+    "farwind/src/game/systems/encounterRuntime.ts",
+    "farwind/src/game/systems/enemy.ts",
+    "farwind/src/game/systems/enemyTraits.ts",
+    "farwind/src/game/ui/interface.ts",
+    "farwind/src/style.css"
+  ],
+  "正式追踪文件保持": false,
+  "语法检查": "通过：样稿、演示、导出与GIF封装脚本",
+  "动画几何检查": "通过：一击、双穿、贯通、宽幅、三向、独立截断、同次去重",
+  "设计隔离检查": "通过：正式导入、存档访问、图标文档流与已有设计检查",
+  "正式游戏构建与回归": "未执行，阶段B未授权",
+  "提交推送部署": "未执行",
+  "共享工作区说明": "比对期间7个正式追踪文件亦有变化，不能宣称整个正式工作树保持原样。本轮所有写入调用仅针对docs/skill-panel；未覆盖、重置或回滚这些共享变化。剑风正式参数文件与本轮基线一致。",
+  "新增图片与动画尺寸": "通过：三张PNG、两段GIF均按实际元数据核对；摘要记录在交付清单。"
+}
