@@ -1,0 +1,45 @@
+
+> farwind@0.1.0 test
+> vitest run --maxWorkers=1 tests/aiming-scope.test.ts tests/equipment.test.ts tests/combat-build.test.ts tests/combat-slice.test.ts tests/fungal-combat.test.ts tests/melee-hurtbox.test.ts tests/boss-reward-save.test.ts tests/boss-parry.test.ts tests/enemy-pursuit.test.ts tests/camp-bosses.test.ts tests/camp-boss-accuracy.test.ts tests/camp-boss-effects.test.ts tests/combat-feel.test.ts tests/recovery-cancel.test.ts tests/demon-king.test.ts tests/wilderness-enemies.test.ts tests/commissions.test.ts tests/encounters.test.ts tests/wilderness-map.test.ts tests/first-map.test.ts tests/xiaobao-combat.test.ts tests/xiaobao-navigation.test.ts tests/xiaobao.test.ts tests/skill-location.test.ts tests/skill-growth.test.ts tests/enemy-combat-v1.test.ts tests/slime-animation.test.ts tests/logic.test.ts tests/motion.test.ts tests/guard-facing.test.ts tests/player-hurt.test.ts tests/combat.test.ts tests/training.test.ts tests/map-expansion.test.ts tests/obstacles.test.ts tests/level-rework.test.ts tests/village-defense.test.ts tests/parry.test.ts tests/parry-v2.test.ts tests/parry-feedback-v3.test.ts tests/parry-ranged.test.ts tests/dialogue-portraits.test.ts tests/economy.test.ts tests/sword-wind-assets.test.ts tests/sword-wind.test.ts tests/east-defense.test.ts tests/village-raids.test.ts tests/village-integration.test.ts tests/day-night.test.ts tests/npc-life.test.ts tests/npc-life-combat.test.ts tests/npc-life-facility.test.ts tests/npc-navigation.test.ts tests/npc-speech.test.ts tests/npc-social.test.ts tests/npc-art.test.ts tests/sword-wind-audio.test.ts tests/wind-chime-audio.test.ts tests/water-motion.test.ts tests/safety-defense.test.ts tests/runes.test.ts tests/rune-elements.test.ts
+
+
+ RUN  v5.0.1 /Users/archer/Documents/ChatGPT/Game/farwind
+
+ ❯ tests/runes.test.ts (59 tests | 1 failed) 118ms
+   ❯ 符文图鉴、五槽与保存 (12)
+     × 旧档只补固定归风与五个空槽，不改其他进度 4ms
+ ❯ tests/aiming-scope.test.ts (11 tests | 1 failed) 28ms
+   ❯ 寻风瞄准镜与金币 (11)
+     × 同一帧快速按下并松开 I 仍保留本次自动瞄准，中键明确手动；重复键不补发 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/aiming-scope.test.ts > 寻风瞄准镜与金币 > 同一帧快速按下并松开 I 仍保留本次自动瞄准，中键明确手动；重复键不补发
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/aiming-scope.test.ts:64:176
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/runes.test.ts > 符文图鉴、五槽与保存 > 旧档只补固定归风与五个空槽，不改其他进度
+Error: 符文收藏或配装存档无效。
+ ❯ validateRunes src/game/systems/runeState.ts:8:662
+
+ ❯ validate src/game/systems/state.ts:232:74
+ ❯ tests/runes.test.ts:26:135
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 60 passed (62)
+      Tests  2 failed | 1187 passed (1189)
+   Start at  18:47:17
+   Duration  222.47s (tests 99%, import 1%)
+

@@ -16,7 +16,7 @@ export function sleepSnapshot(s:State,sequence:number,safety:SleepSafety){
   if(Math.hypot(s.player.x-entrance.x,s.player.y-entrance.y)>=95||!(indoor?spaceClear("inn",s.player,entrance):clearMotionLine(s.player,entrance,"service-inn")))throw Error("请在旅馆门前办理住宿。");
   if(sequence!==s.economyRevision+1||!Number.isSafeInteger(sequence))throw Error("住宿请求已处理或已过期。");
   const target=nextDawn(s.time);
-  if(s.coins<C.sleepCost)throw Error(`铜币不足，住宿需要${C.sleepCost}枚。`);
+  if(s.coins<C.sleepCost)throw Error(`金币不足，住宿需要${C.sleepCost}枚。`);
   const next=validate(s),night=currentNight(s.time)!;
   next.coins-=C.sleepCost;next.player.hp=next.player.stamina=100;next.time=target;next.economyRevision=sequence;
   if(!next.night.plan&&night>=next.night.takeoverNight&&night>=1)next.night.plan=makeNightPlan(s,night);

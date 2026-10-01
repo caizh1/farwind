@@ -34,9 +34,9 @@ export function southQuestSnapshot(state:State,action:"accept"|"complete"){
 }
 export function openSouthQuest(world:World){
  const phase=world.state.fieldQuests["south-supply"],events=(Object.entries(SOUTH_EVENTS) as [SouthEventId,typeof SOUTH_EVENTS[SouthEventId]][]).map(([id,d])=>`${d.name}：${world.state.southEvents[id]>0?d.hint:world.state.southEvents.claimed.includes(id)?"已领取谢礼":"采集已恢复，谢礼可领取"}`).join("\n"),t=regionalThreat(world.state.encounters,"south");
- world.ui.dialog("南路补给",phase==="complete"?"药草已送回，南侧采集恢复。孢根巢地保持清空，卫队不再收到该据点的集结报告。你仍可在湿地采集与探索。":`小满的药草供应断在了南边。沿南门外的石路过芦苇桥，药草洼地在西南岸，孢根巢地在洼地东南方。\n${southQuestObjective(world.state)}\n${t.cleared?"据点已清理，南向压力下降。":"据点仍活跃，附近巡游会再次聚集。"}\n领取时提供药剂×2；完成后交付药草×2，获得药剂×2与铜币×24。药师不便接待时，可在公共委托簿办理。\n\n${events}`);
+ world.ui.dialog("南路补给",phase==="complete"?"药草已送回，南侧采集恢复。孢根巢地保持清空，卫队不再收到该据点的集结报告。你仍可在湿地采集与探索。":`小满的药草供应断在了南边。沿南门外的石路过芦苇桥，药草洼地在西南岸，孢根巢地在洼地东南方。\n${southQuestObjective(world.state)}\n${t.cleared?"据点已清理，南向压力下降。":"据点仍活跃，附近巡游会再次聚集。"}\n领取时提供药剂×2；完成后交付药草×2，获得药剂×2与金币×24。药师不便接待时，可在公共委托簿办理。\n\n${events}`);
  for(const id of Object.keys(SOUTH_EVENTS) as SouthEventId[]){if(world.state.southEvents[id]>0||world.state.southEvents.claimed.includes(id))continue;
-  const reward=document.createElement('button');reward.textContent=`领取${SOUTH_EVENTS[id].name}谢礼 · 铜币×12、药剂×1`;world.ui.modal.append(reward);
+  const reward=document.createElement('button');reward.textContent=`领取${SOUTH_EVENTS[id].name}谢礼 · 金币×12、药剂×1`;world.ui.modal.append(reward);
   reward.onclick=async()=>{if(world.economy.busy||world.defenseSaving)return;reward.disabled=true;
    try{await world.economy.run(()=>world.state,s=>southEventRewardSnapshot(s,id),save,s=>world.publishState(s));openSouthQuest(world);}catch(e){openSouthQuest(world);world.ui.message((e as Error).message);}};
  }

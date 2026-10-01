@@ -96,7 +96,7 @@ describe("永久学习与迁移", () => {
       s.defense.guards[0].hp = 0;
       s.defense.guards[0].mode = "dead";
       const v = validate(s);
-      expect(v.schema_version).toBe(15);
+      expect(v.schema_version).toBe(16);
       expect(v.skills.swordWindStage).toBe(learned ? 1 : 0);
       expect(v.skills.completedLessons).toEqual([]);
       expect(v.bag).toEqual(s.bag);

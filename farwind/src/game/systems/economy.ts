@@ -57,7 +57,7 @@ export function economySnapshot(state: State, request: EconomyRequest, safety?:S
     if (!craft(next)) fail("行囊没有成品空间，请腾出一格；未扣材料。");
   } else if (request.kind === "equip") {
     const { item, slot } = request;
-    if (slot !== "weapon" && slot !== "armor") fail("装备栏位无效。");
+    if (slot !== "weapon" && slot !== "armor" && slot !== "head") fail("装备栏位无效。");
     if (item !== null && (!isEquipment(item) || equipment[item].slot !== slot))
       fail("装备与栏位不匹配。");
     if (next.equipment[slot] === item) fail("已经穿戴这件装备。");
@@ -82,19 +82,20 @@ export function economySnapshot(state: State, request: EconomyRequest, safety?:S
         fail("旅馆服务无效。");
       if (next.player.hp === 100 && next.player.stamina === 100)
         fail("生命与体力已满，无需花费。");
-      if (next.coins < 12) fail("铜币不足，休息需要12枚。");
+      if (next.coins < 12) fail("金币不足，休息需要12枚。");
       next.coins -= 12;
       next.player.hp = next.player.stamina = 100;
     } else {
       if (!Object.hasOwn(items, request.item)) fail("物品不存在。");
       const key = `${request.shop}:${request.item}`;
       if (request.kind === "buy") {
+        if(request.item==="windScope" && (request.quantity!==1 || count(next,"windScope")>0 || next.equipment.head==="windScope"))fail("瞄准镜只能持有一件，已拥有时无需重复购买。");
         const price = (
           shops[request.shop].goods as Partial<Record<ItemId, number>>
         )[request.item];
         if (price === undefined) fail("本店没有这件商品。");
         if (next.shopStock[key] < request.quantity) fail("商店库存不足。");
-        if (next.coins < price * request.quantity) fail("铜币不足，未扣款。");
+        if (next.coins < price * request.quantity) fail("金币不足，未扣款。");
         if (!add(next, request.item, request.quantity))
           fail("行囊空间不足，未扣款。");
         next.coins -= price * request.quantity;
@@ -158,7 +159,8 @@ export function maxTradeQuantity(state: State, shop: ShopId, item: ItemId, selli
   if (selling) return Math.max(0, Math.min(99, count(state, item), 9999 - stock, Math.floor((MAX_COINS - state.coins) / (salePrices[item] ?? MAX_COINS))));
   const price = (shops[shop].goods as Partial<Record<ItemId, number>>)[item];
   if (!price) return 0;
+  if(item==="windScope" && (count(state,item)>0 || state.equipment.head===item))return 0;
   const limit = stackLimit(item);
   const capacity = state.bag.reduce((sum, slot) => sum + (!slot ? limit : slot.id === item ? limit - slot.count : 0), 0);
-  return Math.max(0, Math.min(99, stock, capacity, Math.floor(state.coins / price)));
+  return Math.max(0, Math.min(99, stock, capacity, Math.floor(state.coins / price),item==="windScope"?1:99));
 }

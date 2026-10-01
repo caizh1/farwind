@@ -4,9 +4,10 @@ export const MAX_COINS = 1_000_000;
 export const equipment = {
   ironSword: { slot: "weapon", bonus: 4 },
   leatherCoat: { slot: "armor", bonus: 3 },
+  windScope: { slot: "head", bonus: 0 },
 } as const;
 export type EquipmentId = keyof typeof equipment;
-export type EquipmentSlot = "weapon" | "armor";
+export type EquipmentSlot = "weapon" | "armor" | "head";
 // 归风珠是永久绑定的系统装备，所有有效存档都拥有，不进入行囊或交易表。
 export const RETURN_WIND_ORB = {
   id: "returnWindOrb",
@@ -34,8 +35,8 @@ export const shops = {
   smith: {
     name: "溪石铁匠铺",
     greeting:
-      "铁剑每次实际命中增加4点伤害，皮甲每次实际受击减少3点伤害。装备可在行囊穿戴。",
-    goods: { ironSword: 60, leatherCoat: 45 },
+      "铁剑每次实际命中增加4点伤害，皮甲每次实际受击减少3点伤害。瞄准镜穿戴后按 I 自动瞄准剑风；装备可在行囊穿戴。",
+    goods: { ironSword: 60, leatherCoat: 45, windScope: 80 },
   },
   inn: {
     name: "归风旅馆",
@@ -59,6 +60,7 @@ export const initialStock = (): Record<string, number> => ({
   "healer:potion": 16,
   "smith:ironSword": 8,
   "smith:leatherCoat": 8,
+  "smith:windScope": 1,
   "general:bread": 12,
   "healer:tea": 12,
   "inn:bread": 12,

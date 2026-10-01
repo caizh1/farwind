@@ -82,6 +82,7 @@ export function prepareEastRaid(s: DefenseState, player: Point) { return prepare
 export class EastDefense {
   runeEnemyScale:(id:string)=>number=()=>1;
   playerAttackPermit?: (enemy:EnemyBody,targetId:string)=>boolean;
+  enemyDeath?: (enemy:DefenseHostile,sourceId:string)=>void;
   enemyDamage?: (enemy:DefenseHostile,event:DamageEvent,result:{damage:number;killed:boolean;guarded:boolean})=>void;
   observerSpace="village";
   peaceOrders=new Map<string,Place>();
@@ -285,7 +286,7 @@ export class EastDefense {
   settleEnemyDeath(e:DefenseHostile,sourceId='environment'){
     if(e.hp>0||e.ai==='死亡')return;
     if(e.attack)e.attack.cancelled=true;e.attack=null;cancelPath(e.nav);e.nav.path=[];e.ai='死亡';this.critical=true;
-    this.note({kind:'death',id:e.id,sourceId,at:this.now,x:e.x,y:e.y});this.sync();
+    this.sync();this.enemyDeath?.(e,sourceId);this.note({kind:'death',id:e.id,sourceId,at:this.now,x:e.x,y:e.y});
   }
   move(body: Point, nav: EnemyBody["nav"], target: Point, speed: number, dt: number,
     budget: NavigationBudget, allowed: (p: Point) => boolean, peers: Point[] = []) {

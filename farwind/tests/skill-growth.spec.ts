@@ -352,7 +352,7 @@ test("固定边界夹具：0—5导入导出，旧档继承与乱序事实", asy
     const exported = JSON.parse(await fs.readFile(path!, "utf8"));
     expect(exported.skills.swordWindStage).toBe(stage);
     // 新预期：本轮版本化迁移后的真实导出为十五版。
-    expect(exported.schema_version).toBe(15);
+    expect(exported.schema_version).toBe(16);
     await page.reload();
     await page.getByRole("button", { name: "继续旅途", exact: true }).click();
     await page.waitForFunction(() => (window as any).__farwind().mode === "");

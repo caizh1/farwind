@@ -113,7 +113,7 @@ describe("商品、补货与旧存档", () => {
     delete old.shopStock["general:wood"];
     expect(() => validate(old)).toThrow("旧商店库存缺失");
   });
-  it("旧存档站在新增柜子的位置时安全迁移，保留生命、铜币与居民行动", () => {
+  it("旧存档站在新增柜子的位置时安全迁移，保留生命、金币与居民行动", () => {
     const old: any = initialState();
     delete old.shopStockDay;
     old.life.playerSpace = "elder-home";
@@ -190,7 +190,7 @@ describe("商品、补货与旧存档", () => {
         quantity: 1,
         sequence: 1,
       }),
-    ).toThrow("铜币不足");
+    ).toThrow("金币不足");
     s.coins = 120;
     s.shopStock["inn:bread"] = 0;
     expect(maxTradeQuantity(s, "inn", "bread")).toBe(0);

@@ -109,7 +109,7 @@ for (const [space, item, hp, stamina] of [
     expect(restored.player.hp).toBe(used.player.hp);
     records.push({
       场景: `${item}购买使用重载`,
-      购买后铜币: bought.coins,
+      购买后金币: bought.coins,
       使用前: { 生命: before.player.hp, 体力: before.player.stamina },
       使用后: { 生命: used.player.hp, 体力: used.player.stamina },
       重载数量: amount(restored, item),
@@ -138,18 +138,18 @@ test("铁剑和皮甲购买后实际穿戴并保存", async ({ page }) => {
   await page.screenshot({ path: `${root}/equipment-purchased.png` });
   await reload(page);
   expect((await read(page)).state.equipment).toEqual(s.equipment);
-  records.push({ 场景: "装备购买穿戴重载", 铜币: s.coins, 装备: s.equipment });
+  records.push({ 场景: "装备购买穿戴重载", 金币: s.coins, 装备: s.equipment });
 });
 test("数量报价、买卖材料与无效数量门禁", async ({ page }) => {
   await setup(page, "general-shop");
   await page.getByLabel("数量", { exact: true }).fill("3");
-  await expect(page.locator("#shop-total")).toContainText("111 铜币");
+  await expect(page.locator("#shop-total")).toContainText("111 金币");
   await page.locator("#shop-review").click();
   await page.locator("#shop-confirm").click();
   await expect(page.locator("#shop-feedback")).toContainText("已完成");
   await page.locator('[data-flow="sell"]').click();
   await page.getByLabel("数量", { exact: true }).fill("2");
-  await expect(page.locator("#shop-total")).toContainText("115 铜币");
+  await expect(page.locator("#shop-total")).toContainText("115 金币");
   await page.locator("#shop-review").click();
   await page.locator("#shop-confirm").click();
   await expect(page.locator("#shop-feedback")).toContainText("已完成");
@@ -163,7 +163,7 @@ test("数量报价、买卖材料与无效数量门禁", async ({ page }) => {
   await page.screenshot({ path: `${root}/invalid-quantity.png` });
   records.push({
     场景: "材料买卖和无效数量",
-    铜币: s.coins,
+    金币: s.coins,
     木材: amount(s, "wood"),
     库存: s.shopStock["general:wood"],
   });
@@ -182,7 +182,7 @@ test("木工坊材料购买和最大可买数量", async ({ page }) => {
   await expect(page.locator("#shop-review")).toBeDisabled();
   records.push({
     场景: "木工坊最大购买",
-    铜币: s.coins,
+    金币: s.coins,
     木材: amount(s, "wood"),
     库存: s.shopStock["carpenter:wood"],
   });
@@ -225,7 +225,7 @@ test("旅馆室内柜台的真实住宿交易", async ({ page }) => {
   expect(restored.time).toBeGreaterThanOrEqual(1800);
   records.push({
     场景: "室内住宿",
-    铜币: s.coins,
+    金币: s.coins,
     时间: s.time,
     生命: s.player.hp,
     体力: s.player.stamina,
@@ -249,7 +249,7 @@ test("杂货铺室内符文购买沿用原收藏与保存机制", async ({ page 
   expect((await read(page)).state.coins).toBe(100);
   records.push({
     场景: "室内符文购买重载",
-    铜币: s.coins,
+    金币: s.coins,
     收藏: s.runes.owned,
     行囊占用: s.bag.filter(Boolean).length,
   });
@@ -271,7 +271,7 @@ test("外部门牌保留购物快捷入口，并可从商店走入室内", async
   expect((await read(page)).mode).toBe("");
   records.push({
     场景: "外部符文购买与店内入口",
-    铜币: 100,
+    金币: 100,
     实际进入: "general-shop",
   });
 });

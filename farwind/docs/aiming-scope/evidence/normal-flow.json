@@ -1,0 +1,6733 @@
+{
+  "说明": "正式生产构建新档，正常铁匠购买、真实装备、正式教本中键教学、I背向怪物自动瞄准并击杀发金币、真实行走、刷新保存。仅读取诊断；未导入或改血量、背包、技能和任务。",
+  "首次锁定": {
+    "target": "slime-1",
+    "enabled": true
+  },
+  "击杀后": {
+    "runes": {
+      "version": 2,
+      "growth": {
+        "r31": {
+          "advanced": false,
+          "branch": null
+        },
+        "r33": {
+          "advanced": false,
+          "branch": null
+        }
+      },
+      "fixed": "return-wind",
+      "owned": [
+        "r31",
+        "r32"
+      ],
+      "slots": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "presets": [
+        {
+          "name": "旅途配装 1",
+          "slots": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "旅途配装 2",
+          "slots": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "旅途配装 3",
+          "slots": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ],
+      "cooldowns": {},
+      "counts": {},
+      "clock": 27632.23999999966,
+      "peace": 1542.2399999996596,
+      "nodes": [],
+      "settings": {
+        "simple": false,
+        "lowFlash": false
+      }
+    },
+    "skills": {
+      "meleeFinisher": false,
+      "buildLessons": [],
+      "swordWindStage": 1,
+      "legacySwordWind": false,
+      "completedLessons": [
+        "windLessonResolved"
+      ],
+      "discoveredLessons": [
+        "windLessonResolved",
+        "serialWindCircuitRestored"
+      ],
+      "devices": {
+        "serialValve": 0,
+        "leakClosed": false,
+        "splitLeft": 0,
+        "splitRight": 0
+      }
+    },
+    "schema_version": 16,
+    "demonKing": {
+      "introduced": false
+    },
+    "encounters": {
+      "elapsed": 27632.23999999966,
+      "broken": [],
+      "groups": {
+        "south-reed-patrol": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-reed-slime",
+              "hp": 26,
+              "x": 1134.7550427106144,
+              "y": 2053.916106365479,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-reed-spore",
+              "hp": 0,
+              "x": 1232.971237206029,
+              "y": 2137.4476403104354,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": true,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "south-herb-patrol": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-herb-spore",
+              "hp": 60,
+              "x": 625.0804003233573,
+              "y": 2466.0041094730536,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-herb-slime",
+              "hp": 48,
+              "x": 827.3028548221596,
+              "y": 2530.4488284261856,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-herb-priest",
+              "hp": 96,
+              "x": 730,
+              "y": 2580,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "south-spore-camp": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "boss": {
+            "stage": "guards",
+            "warning": 0,
+            "attempt": 0,
+            "away": 0,
+            "combat": null
+          },
+          "members": [
+            {
+              "id": "wild-camp-spore",
+              "hp": 60,
+              "x": 1220,
+              "y": 2750,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-camp-slime-a",
+              "hp": 48,
+              "x": 1140,
+              "y": 2870,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-camp-slime-b",
+              "hp": 48,
+              "x": 1390,
+              "y": 2850,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-camp-priest",
+              "hp": 96,
+              "x": 1190,
+              "y": 2820,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "boss-spore-heart",
+              "hp": 2300,
+              "x": 1250,
+              "y": 2820,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "south-orchard-burrows": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-orchard-worm-a",
+              "hp": 62,
+              "x": 1910,
+              "y": 2360,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-orchard-worm-b",
+              "hp": 62,
+              "x": 2030,
+              "y": 2490,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-orchard-bomber",
+              "hp": 112,
+              "x": 1810,
+              "y": 2400,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "west-track-pack": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-track-wolf-a",
+              "hp": 58,
+              "x": -553.5676493457773,
+              "y": 1472.8647013084453,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-track-wolf-b",
+              "hp": 58,
+              "x": -443.5676493457779,
+              "y": 1502.8647013084453,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "north-stone-watch": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-pass-guardian",
+              "hp": 84,
+              "x": 1130,
+              "y": -400,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "west-wolf-den": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "boss": {
+            "stage": "guards",
+            "warning": 0,
+            "attempt": 0,
+            "away": 0,
+            "combat": null
+          },
+          "members": [
+            {
+              "id": "wild-den-wolf-a",
+              "hp": 58,
+              "x": -1760,
+              "y": 1430,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-den-wolf-b",
+              "hp": 58,
+              "x": -1610,
+              "y": 1530,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-den-reaper",
+              "hp": 72,
+              "x": -1680,
+              "y": 1350,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "boss-thorn-crown",
+              "hp": 2800,
+              "x": -1700,
+              "y": 1490,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "north-boar-camp": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "boss": {
+            "stage": "guards",
+            "warning": 0,
+            "attempt": 0,
+            "away": 0,
+            "combat": null
+          },
+          "members": [
+            {
+              "id": "wild-rock-boar",
+              "hp": 90,
+              "x": 1450,
+              "y": -760,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-rock-guardian",
+              "hp": 84,
+              "x": 1570,
+              "y": -690,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "boss-crag-tusk",
+              "hp": 2500,
+              "x": 1480,
+              "y": -730,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-thorn-camp": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "boss": {
+            "stage": "guards",
+            "warning": 0,
+            "attempt": 0,
+            "away": 0,
+            "combat": null
+          },
+          "members": [
+            {
+              "id": "wild-thorn-spore",
+              "hp": 60,
+              "x": 3780,
+              "y": 1000,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-thorn-reaper",
+              "hp": 72,
+              "x": 3670,
+              "y": 1200,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-thorn-guardian",
+              "hp": 84,
+              "x": 3850,
+              "y": 1180,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "boss-bound-branch",
+              "hp": 2500,
+              "x": 3710,
+              "y": 1100,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "south-reed-margin": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-margin-slime",
+              "hp": 48,
+              "x": 572.3607947723472,
+              "y": 2131.9098013069142,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "south-weir-watch": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-weir-guardian",
+              "hp": 84,
+              "x": 2160,
+              "y": 2870,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "west-farm-reaper": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-farm-reaper",
+              "hp": 72,
+              "x": -880,
+              "y": 1250,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "west-cart-ambush": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-cart-wolf",
+              "hp": 58,
+              "x": -1500,
+              "y": 970,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-cart-worm",
+              "hp": 62,
+              "x": -1620,
+              "y": 920,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "west-pack-clearing": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "elite-thorn-alpha",
+              "hp": 150,
+              "x": -1240,
+              "y": 1680,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "west-trade-scouts": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-trade-wolf-a",
+              "hp": 58,
+              "x": -1480,
+              "y": -60,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-trade-wolf-b",
+              "hp": 58,
+              "x": -1580,
+              "y": 40,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "north-pass-charge": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-bent-boar",
+              "hp": 90,
+              "x": 330,
+              "y": -330,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "north-outpost-wings": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-outpost-raven",
+              "hp": 64,
+              "x": 900,
+              "y": -740,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "north-rock-arena": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "elite-rock-ram",
+              "hp": 180,
+              "x": 1080,
+              "y": -990,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "north-lookout-tracks": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-lookout-wolf",
+              "hp": 58,
+              "x": -130,
+              "y": -770,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-lookout-slime",
+              "hp": 48,
+              "x": -40,
+              "y": -720,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-road-slimes": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "slime-1",
+              "hp": 0,
+              "x": 2445.80000873472,
+              "y": 1059.9914342787815,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": true,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": true,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "slime-2",
+              "hp": 48,
+              "x": 2670,
+              "y": 1230,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-brook-reapers": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "leaf-1",
+              "hp": 72,
+              "x": 2920,
+              "y": 1070,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "leaf-2",
+              "hp": 72,
+              "x": 3170,
+              "y": 930,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-mushroom-watch": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "spore-1",
+              "hp": 60,
+              "x": 2730,
+              "y": 1840,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-spring-boar": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "boar-1",
+              "hp": 90,
+              "x": 3150,
+              "y": 340,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-canopy-raven": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "raven-1",
+              "hp": 64,
+              "x": 3250,
+              "y": 1830,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-spore-ring": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "elite-ashen-brood",
+              "hp": 160,
+              "x": 3070,
+              "y": 2100,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-brook-burrows": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-brook-worm",
+              "hp": 62,
+              "x": 2840,
+              "y": 1450,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "ruins-gate-watch": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-ruins-gate",
+              "hp": 84,
+              "x": 2770,
+              "y": -100,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "ruins-court-front": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-court-guardian",
+              "hp": 84,
+              "x": 3220,
+              "y": -350,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-court-reaper",
+              "hp": 72,
+              "x": 3340,
+              "y": -320,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "ruins-court-flank": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-court-raven",
+              "hp": 64,
+              "x": 3500,
+              "y": -530,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-court-slime",
+              "hp": 48,
+              "x": 3600,
+              "y": -470,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "ruins-hall-watch": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-hall-spore",
+              "hp": 60,
+              "x": 3800,
+              "y": -720,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-hall-guardian",
+              "hp": 84,
+              "x": 3910,
+              "y": -640,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "ruins-exit-watch": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-exit-worm",
+              "hp": 62,
+              "x": 4020,
+              "y": -140,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-exit-guardian",
+              "hp": 84,
+              "x": 3900,
+              "y": -240,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        }
+      }
+    },
+    "southEvents": {
+      "herb": 96,
+      "orchard": 64,
+      "claimed": []
+    },
+    "fieldQuests": {
+      "south-supply": "available"
+    },
+    "mapProgress": {
+      "westRoad": "unknown",
+      "shortcuts": []
+    },
+    "xiaobao": {
+      "known": false,
+      "task": "free",
+      "gate": "all",
+      "tactic": "steady",
+      "autoSupport": true,
+      "x": 870,
+      "y": 725,
+      "hp": 640,
+      "qi": 100,
+      "clock": 27632.239999999623,
+      "serial": 0,
+      "cooldowns": {
+        "palm": 0,
+        "triple": 0,
+        "star": 0,
+        "blade": 0,
+        "rock": 0,
+        "fire": 0,
+        "thunder": 0,
+        "chain": 0,
+        "unity": 0,
+        "guard": 0,
+        "rescue": 0,
+        "flight": 0
+      },
+      "rest": 0,
+      "recovery": 0,
+      "peace": 6000,
+      "reduction": 0,
+      "shields": [],
+      "cast": null,
+      "effects": [],
+      "flight": null,
+      "support": null,
+      "alarmCycle": 0,
+      "alarmActive": false,
+      "responded": [],
+      "command": null,
+      "wait": null,
+      "affected": [],
+      "reports": []
+    },
+    "life": {
+      "version": 4,
+      "speechAt": 33963.22999999987,
+      "speechUrgentAt": 33963.22999999987,
+      "speechEventFloor": 2,
+      "unavailable": {
+        "homes": {},
+        "facilities": []
+      },
+      "people": [
+        {
+          "id": "elder",
+          "body": {
+            "space": "village",
+            "x": 664.3021893671258,
+            "y": 621.4244526582191,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "action": {
+            "id": 2,
+            "kind": "work",
+            "target": {
+              "space": "village",
+              "x": 670,
+              "y": 620
+            },
+            "pickup": null,
+            "facility": null,
+            "task": null,
+            "phase": "perform",
+            "progress": 4913.0846987079385,
+            "duration": 8000,
+            "started": 22720,
+            "failures": 0,
+            "label": "检查风铃、记录风向",
+            "social": null
+          },
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 2,
+          "committed": 1,
+          "needs": {
+            "hunger": 15.460537333330375,
+            "fatigue": 10.23026866666519
+          },
+          "emotion": 24.124258666672173,
+          "gear": "carried",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 28120,
+          "reason": "检查风铃、记录风向（评分 90）",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "healer": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "carpenter": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "player": {
+              "space": "village",
+              "x": 739.5797721209545,
+              "y": 829.586684575205,
+              "time": 482.04653999999863
+            },
+            "north-patrol": {
+              "space": "village",
+              "x": 860.024967172694,
+              "y": 391.2625389626958,
+              "time": 514.0799999999872
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "healer",
+          "body": {
+            "space": "village",
+            "x": 1071.4125820567203,
+            "y": 614.3496717731234,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "action": {
+            "id": 2,
+            "kind": "work",
+            "target": {
+              "space": "village",
+              "x": 1070,
+              "y": 620
+            },
+            "pickup": null,
+            "facility": null,
+            "task": null,
+            "phase": "perform",
+            "progress": 4532.23999999966,
+            "duration": 8000,
+            "started": 23105,
+            "failures": 0,
+            "label": "照料药田",
+            "social": null
+          },
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 2,
+          "committed": 1,
+          "needs": {
+            "hunger": 15.460537333330375,
+            "fatigue": 10.23026866666519
+          },
+          "emotion": 24.124258666672173,
+          "gear": "carried",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 28505,
+          "reason": "照料药田（评分 86）",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "west-watch": {
+              "space": "village",
+              "x": 1277.6300000000017,
+              "y": 880,
+              "time": 512.9399999999824
+            }
+          },
+          "lastSupplyDay": 1,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "carpenter",
+          "body": {
+            "space": "village",
+            "x": 415.03495692990793,
+            "y": 1055.0349569299076,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "action": {
+            "id": 1,
+            "kind": "work",
+            "target": {
+              "space": "village",
+              "x": 480,
+              "y": 1425
+            },
+            "pickup": null,
+            "facility": "tools",
+            "task": null,
+            "phase": "travel",
+            "progress": 0,
+            "duration": 8000,
+            "started": 150,
+            "failures": 0,
+            "label": "修工具、做木工",
+            "social": null
+          },
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 1,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.460537333330375,
+            "fatigue": 10.23026866666519
+          },
+          "emotion": 24.124258666672173,
+          "gear": "carried",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 28260,
+          "reason": "修工具、做木工（评分 88）",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "west-watch": {
+              "space": "village",
+              "x": 597.3272799999988,
+              "y": 1260,
+              "time": 498.24749999998903
+            },
+            "west-patrol": {
+              "space": "village",
+              "x": 300.29440474852134,
+              "y": 1506.1315846547502,
+              "time": 495.54749999999143
+            },
+            "player": {
+              "space": "village",
+              "x": 798.1762171049055,
+              "y": 1504.144175469514,
+              "time": 491.645534999994
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "east-watch",
+          "body": null,
+          "action": {
+            "id": 1,
+            "kind": "habit",
+            "target": {
+              "space": "village",
+              "x": 2010,
+              "y": 970
+            },
+            "pickup": null,
+            "facility": null,
+            "task": null,
+            "phase": "perform",
+            "progress": 4612.23999999966,
+            "duration": 8000,
+            "started": 225,
+            "failures": 0,
+            "label": "下岗后检查村门装备",
+            "social": null
+          },
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 1,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.460537333330375,
+            "fatigue": 10.23026866666519
+          },
+          "emotion": 24.124258666672173,
+          "gear": "carried",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 28260,
+          "reason": "下岗后检查村门装备（评分 110）",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "south-watch": {
+              "space": "village",
+              "x": 1918.2433549546129,
+              "y": 821.7566450453869,
+              "time": 512.9399999999824
+            },
+            "north-watch": {
+              "space": "village",
+              "x": 1936.515122212777,
+              "y": 753.3844445684254,
+              "time": 512.9399999999824
+            },
+            "player": {
+              "x": 2201.6736797831054,
+              "y": 1059.4935479869503,
+              "hp": 100,
+              "stamina": 100,
+              "space": "village",
+              "time": 518.2945050000056
+            },
+            "west-watch": {
+              "space": "village",
+              "x": 1698.243354954613,
+              "y": 781.7566450453868,
+              "time": 521.0400000000186
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "east-patrol",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.460537333330375,
+            "fatigue": 10.23026866666519
+          },
+          "emotion": 24.124258666672173,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 28260,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "healer": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "south-watch": {
+              "space": "village",
+              "x": 1878.8049400699547,
+              "y": 886.4695909866917,
+              "time": 511.589999999979
+            },
+            "player": {
+              "x": 2206.05226961211,
+              "y": 1059.5187936465034,
+              "hp": 100,
+              "stamina": 100,
+              "space": "village",
+              "time": 521.4483600000199
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 2,
+            "nextAt": 64963.22999999987,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "east-archer",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.460537333330375,
+            "fatigue": 10.23026866666519
+          },
+          "emotion": 24.124258666672173,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 28260,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {},
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "north-watch",
+          "body": null,
+          "action": {
+            "id": 1,
+            "kind": "habit",
+            "target": {
+              "space": "village",
+              "x": 740,
+              "y": 300
+            },
+            "pickup": {
+              "space": "barracks",
+              "x": 840,
+              "y": 495
+            },
+            "facility": null,
+            "task": null,
+            "phase": "collect",
+            "progress": 0,
+            "duration": 8000,
+            "started": 450,
+            "failures": 0,
+            "label": "下岗后检查村门装备",
+            "social": null
+          },
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 1,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.460537333330375,
+            "fatigue": 10.23026866666519
+          },
+          "emotion": 24.124258666672173,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 28260,
+          "reason": "下岗后检查村门装备（评分 110）",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "north-patrol": {
+              "space": "village",
+              "x": 860.0259679856489,
+              "y": 337.5212581960703,
+              "time": 490.14749999999486
+            },
+            "south-watch": {
+              "space": "barracks",
+              "x": 739.7961942262818,
+              "y": 676.1544982306428,
+              "time": 521.0400000000186
+            },
+            "east-watch": {
+              "space": "village",
+              "x": 1960,
+              "y": 886.8937600000146,
+              "time": 512.9399999999824
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "north-patrol",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.460537333330375,
+            "fatigue": 10.23026866666519
+          },
+          "emotion": 24.124258666672173,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 28260,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "healer": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "north-watch": {
+              "space": "village",
+              "x": 872.6450735081149,
+              "y": 428.28150013706806,
+              "time": 490.14749999999486
+            },
+            "elder": {
+              "space": "village",
+              "x": 664.3021893671258,
+              "y": 621.4244526582191,
+              "hp": 100,
+              "health": "healthy",
+              "episode": 0,
+              "recoverAt": 0,
+              "time": 514.2899999999883
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "north-archer",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.460537333330375,
+            "fatigue": 10.23026866666519
+          },
+          "emotion": 24.124258666672173,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 28260,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {},
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "south-watch",
+          "body": null,
+          "action": {
+            "id": 1,
+            "kind": "habit",
+            "target": {
+              "space": "village",
+              "x": 810,
+              "y": 1720
+            },
+            "pickup": {
+              "space": "barracks",
+              "x": 720,
+              "y": 595
+            },
+            "facility": null,
+            "task": null,
+            "phase": "collect",
+            "progress": 0,
+            "duration": 8000,
+            "started": 675,
+            "failures": 0,
+            "label": "下岗后检查村门装备",
+            "social": null
+          },
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 1,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.460537333330375,
+            "fatigue": 10.23026866666519
+          },
+          "emotion": 24.124258666672173,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 28260,
+          "reason": "下岗后检查村门装备（评分 110）",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "south-patrol": {
+              "space": "village",
+              "x": 1006.3841660424301,
+              "y": 1690.475745806258,
+              "time": 494.19749999999226
+            },
+            "player": {
+              "x": 1931.2393968322242,
+              "y": 1174.0101154577155,
+              "hp": 100,
+              "stamina": 100,
+              "space": "village",
+              "time": 513.0697649999826
+            },
+            "east-patrol": {
+              "space": "village",
+              "x": 1968.6243790221117,
+              "y": 1178.388232691814,
+              "time": 511.589999999979
+            },
+            "east-watch": {
+              "space": "village",
+              "x": 1960,
+              "y": 886.8937600000146,
+              "time": 512.9399999999824
+            },
+            "north-watch": {
+              "space": "barracks",
+              "x": 740,
+              "y": 600.4143599999732,
+              "time": 521.0400000000186
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "south-patrol",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.460537333330375,
+            "fatigue": 10.23026866666519
+          },
+          "emotion": 24.124258666672173,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 28260,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "healer": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "south-watch": {
+              "space": "village",
+              "x": 1158.8514667864279,
+              "y": 1421.1485332135721,
+              "time": 494.19749999999226
+            },
+            "player": {
+              "space": "village",
+              "x": 1274.8488200061881,
+              "y": 1485.4951625775464,
+              "time": 497.24530499998986
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "south-archer",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.460537333330375,
+            "fatigue": 10.23026866666519
+          },
+          "emotion": 24.124258666672173,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 28260,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {},
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "west-watch",
+          "body": null,
+          "action": {
+            "id": 1,
+            "kind": "habit",
+            "target": {
+              "space": "village",
+              "x": 200,
+              "y": 1340
+            },
+            "pickup": {
+              "space": "barracks",
+              "x": 600,
+              "y": 695
+            },
+            "facility": null,
+            "task": null,
+            "phase": "collect",
+            "progress": 0,
+            "duration": 8000,
+            "started": 900,
+            "failures": 0,
+            "label": "下岗后检查村门装备",
+            "social": null
+          },
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 1,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.460537333330375,
+            "fatigue": 10.23026866666519
+          },
+          "emotion": 24.124258666672173,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 28260,
+          "reason": "下岗后检查村门装备（评分 110）",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "carpenter": {
+              "space": "village",
+              "x": 393.4512214458735,
+              "y": 1028.9321674797736,
+              "time": 498.24749999998903
+            },
+            "west-patrol": {
+              "space": "village",
+              "x": 300.29440474852134,
+              "y": 1506.1315846547502,
+              "time": 495.54749999999143
+            },
+            "healer": {
+              "space": "village",
+              "x": 1071.4125820567203,
+              "y": 614.3496717731234,
+              "hp": 100,
+              "health": "healthy",
+              "episode": 0,
+              "recoverAt": 0,
+              "time": 512.9399999999824
+            },
+            "east-watch": {
+              "space": "village",
+              "x": 2006.9984614792843,
+              "y": 965.1401345429554,
+              "time": 521.0400000000186
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "west-patrol",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.460537333330375,
+            "fatigue": 10.23026866666519
+          },
+          "emotion": 24.124258666672173,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 28260,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "healer": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "carpenter": {
+              "space": "village",
+              "x": 430.7937949780701,
+              "y": 1170.793794978071,
+              "time": 495.54749999999143
+            },
+            "west-watch": {
+              "space": "village",
+              "x": 443.87000000000006,
+              "y": 1260,
+              "time": 495.54749999999143
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "west-archer",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.460537333330375,
+            "fatigue": 10.23026866666519
+          },
+          "emotion": 24.124258666672173,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 28260,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {},
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        }
+      ],
+      "elapsed": 27632.23999999966,
+      "sequence": 2,
+      "events": [
+        {
+          "id": "life:1",
+          "sequence": 1,
+          "time": 482.04653999999863,
+          "kind": "alarm",
+          "place": {
+            "space": "village",
+            "x": 720,
+            "y": 650
+          },
+          "source": "bell",
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "debug": false
+        },
+        {
+          "id": "life:2",
+          "sequence": 2,
+          "time": 504.83999999998366,
+          "kind": "clear",
+          "place": {
+            "space": "village",
+            "x": 720,
+            "y": 650
+          },
+          "source": "bell",
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "debug": false
+        }
+      ],
+      "reservations": [
+        {
+          "facility": "tools",
+          "owner": "carpenter",
+          "expires": 39632.239999999656
+        }
+      ],
+      "tasks": [],
+      "alarm": 0,
+      "clearSince": null,
+      "stores": {
+        "medicine": 4,
+        "herbs": 12,
+        "wood": 6,
+        "food": 18,
+        "day": 0
+      },
+      "facilities": {
+        "wind-bell": 100,
+        "workbench": 100
+      },
+      "playerSpace": "village",
+      "outside": {
+        "x": 670,
+        "y": 720
+      },
+      "invitations": {},
+      "observed": {
+        "elder": {
+          "time": 482.04653999999863,
+          "label": "检查风铃、记录风向",
+          "space": "village"
+        },
+        "carpenter": {
+          "time": 491.645534999994,
+          "label": "修工具、做木工",
+          "space": "village"
+        },
+        "south-watch": {
+          "time": 513.0697649999826,
+          "label": "下岗后检查村门装备",
+          "space": "village"
+        },
+        "south-patrol": {
+          "time": 497.24530499998986,
+          "label": "值守或沿路返回岗位",
+          "space": "village"
+        },
+        "east-patrol": {
+          "time": 521.4483600000199,
+          "label": "值守或沿路返回岗位",
+          "space": "village"
+        },
+        "east-watch": {
+          "time": 518.2945050000056,
+          "label": "下岗后检查村门装备",
+          "space": "village"
+        }
+      },
+      "lastDefenseSequence": 0,
+      "defenseReceipts": []
+    },
+    "night": {
+      "takeoverNight": 1,
+      "discovered": false,
+      "plan": null
+    },
+    "defense": {
+      "guards": [
+        {
+          "id": "east-watch",
+          "x": 2006.9984614792843,
+          "y": 965.1401345429554,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-north-post",
+          "mode": "life",
+          "peaceMs": 8000,
+          "cooldownMs": 0,
+          "offDuty": true,
+          "towerTransitMs": 0,
+          "space": "village"
+        },
+        {
+          "id": "east-patrol",
+          "x": 1949.0327947217856,
+          "y": 1169.3144038516425,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-south-post",
+          "mode": "patrol",
+          "peaceMs": 8000,
+          "cooldownMs": 0
+        },
+        {
+          "id": "east-archer",
+          "x": 2030,
+          "y": 900,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "east-gate-tower",
+          "mode": "post",
+          "peaceMs": 8000,
+          "cooldownMs": 0
+        },
+        {
+          "id": "north-watch",
+          "x": 740,
+          "y": 577.1353400000002,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-west-post",
+          "mode": "life",
+          "peaceMs": 8000,
+          "cooldownMs": 0,
+          "offDuty": true,
+          "towerTransitMs": 0,
+          "space": "barracks"
+        },
+        {
+          "id": "north-patrol",
+          "x": 868.7145985335629,
+          "y": 342.56218271023823,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-east-post",
+          "mode": "patrol",
+          "peaceMs": 8000,
+          "cooldownMs": 0
+        },
+        {
+          "id": "north-archer",
+          "x": 680,
+          "y": 350,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "north-gate-tower",
+          "mode": "post",
+          "peaceMs": 8000,
+          "cooldownMs": 0
+        },
+        {
+          "id": "south-watch",
+          "x": 734.2477858425862,
+          "y": 653.4087980616887,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-west-post",
+          "mode": "life",
+          "peaceMs": 8000,
+          "cooldownMs": 0,
+          "offDuty": true,
+          "towerTransitMs": 0,
+          "space": "barracks"
+        },
+        {
+          "id": "south-patrol",
+          "x": 959.8526406422789,
+          "y": 1653.5897648085074,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-east-post",
+          "mode": "patrol",
+          "peaceMs": 2177.2399999996596,
+          "cooldownMs": 0
+        },
+        {
+          "id": "south-archer",
+          "x": 1140,
+          "y": 1750,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "south-gate-tower",
+          "mode": "post",
+          "peaceMs": 2177.2399999996596,
+          "cooldownMs": 0
+        },
+        {
+          "id": "west-watch",
+          "x": 1720.6226399999707,
+          "y": 780,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "west-north-post",
+          "mode": "life",
+          "peaceMs": 8000,
+          "cooldownMs": 0,
+          "offDuty": true,
+          "towerTransitMs": 0,
+          "space": "village"
+        },
+        {
+          "id": "west-patrol",
+          "x": 328.44973338071475,
+          "y": 1473.2645230899207,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "west-south-post",
+          "mode": "patrol",
+          "peaceMs": 8000,
+          "cooldownMs": 0
+        },
+        {
+          "id": "west-archer",
+          "x": 160,
+          "y": 1710,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "west-gate-tower",
+          "mode": "post",
+          "peaceMs": 8000,
+          "cooldownMs": 0
+        }
+      ],
+      "sequence": 0,
+      "completedSequence": 0,
+      "raid": null,
+      "protectionMs": 272367.7600000005,
+      "cooldownMs": 481729,
+      "retryMs": 0,
+      "seed": 1729
+    },
+    "coins": 43,
+    "equipment": {
+      "weapon": null,
+      "armor": null,
+      "head": "windScope"
+    },
+    "shopStock": {
+      "general:wood": 20,
+      "general:stone": 20,
+      "general:herb": 20,
+      "general:berry": 24,
+      "general:potion": 8,
+      "healer:potion": 16,
+      "smith:ironSword": 8,
+      "smith:leatherCoat": 8,
+      "smith:windScope": 0,
+      "general:bread": 12,
+      "healer:tea": 12,
+      "inn:bread": 12,
+      "inn:tea": 12,
+      "inn:soup": 8,
+      "carpenter:wood": 24,
+      "carpenter:stone": 16
+    },
+    "shopStockDay": 0,
+    "economyRevision": 2,
+    "map_version": 8,
+    "player": {
+      "x": 2206.05226961211,
+      "y": 1059.5187936465034,
+      "hp": 100,
+      "stamina": 100
+    },
+    "bag": [
+      {
+        "id": "berry",
+        "count": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "hotbar": [
+      "potion",
+      "berry",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "quest": 0,
+    "side": 0,
+    "collected": {},
+    "chests": [],
+    "killed": [
+      "slime-1"
+    ],
+    "pendingDrops": [],
+    "dashCooldownRemaining": 0,
+    "stones": [],
+    "shortcut": false,
+    "time": 521.4483600000199,
+    "reward": false,
+    "crafted": false
+  },
+  "重载": {
+    "runes": {
+      "version": 2,
+      "growth": {
+        "r31": {
+          "advanced": false,
+          "branch": null
+        },
+        "r33": {
+          "advanced": false,
+          "branch": null
+        }
+      },
+      "fixed": "return-wind",
+      "owned": [
+        "r31",
+        "r32"
+      ],
+      "slots": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "presets": [
+        {
+          "name": "旅途配装 1",
+          "slots": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "旅途配装 2",
+          "slots": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "旅途配装 3",
+          "slots": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ],
+      "cooldowns": {},
+      "counts": {},
+      "clock": 53279.229999999225,
+      "peace": 8000,
+      "nodes": [],
+      "settings": {
+        "simple": false,
+        "lowFlash": false
+      }
+    },
+    "skills": {
+      "meleeFinisher": false,
+      "buildLessons": [],
+      "swordWindStage": 1,
+      "legacySwordWind": false,
+      "completedLessons": [
+        "windLessonResolved"
+      ],
+      "discoveredLessons": [
+        "windLessonResolved",
+        "serialWindCircuitRestored"
+      ],
+      "devices": {
+        "serialValve": 0,
+        "leakClosed": false,
+        "splitLeft": 0,
+        "splitRight": 0
+      }
+    },
+    "schema_version": 16,
+    "demonKing": {
+      "introduced": false
+    },
+    "encounters": {
+      "elapsed": 53279.229999999225,
+      "broken": [],
+      "groups": {
+        "south-reed-patrol": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": true,
+          "cooldown": 476555.2866666668,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-reed-slime",
+              "hp": 0,
+              "x": 1131.9743547979226,
+              "y": 2054.225071689112,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": true,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-reed-spore",
+              "hp": 0,
+              "x": 1232.971237206029,
+              "y": 2137.4476403104354,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": true,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "south-herb-patrol": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-herb-spore",
+              "hp": 60,
+              "x": 625.0804003233573,
+              "y": 2466.0041094730536,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-herb-slime",
+              "hp": 48,
+              "x": 827.3028548221596,
+              "y": 2530.4488284261856,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-herb-priest",
+              "hp": 96,
+              "x": 730,
+              "y": 2580,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "south-spore-camp": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "boss": {
+            "stage": "guards",
+            "warning": 0,
+            "attempt": 0,
+            "away": 0,
+            "combat": null
+          },
+          "members": [
+            {
+              "id": "wild-camp-spore",
+              "hp": 60,
+              "x": 1220,
+              "y": 2750,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-camp-slime-a",
+              "hp": 48,
+              "x": 1140,
+              "y": 2870,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-camp-slime-b",
+              "hp": 48,
+              "x": 1390,
+              "y": 2850,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-camp-priest",
+              "hp": 96,
+              "x": 1190,
+              "y": 2820,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "boss-spore-heart",
+              "hp": 2300,
+              "x": 1250,
+              "y": 2820,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "south-orchard-burrows": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-orchard-worm-a",
+              "hp": 62,
+              "x": 1910,
+              "y": 2360,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-orchard-worm-b",
+              "hp": 62,
+              "x": 2030,
+              "y": 2490,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-orchard-bomber",
+              "hp": 112,
+              "x": 1810,
+              "y": 2400,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "west-track-pack": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-track-wolf-a",
+              "hp": 58,
+              "x": -553.5676493457773,
+              "y": 1472.8647013084453,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-track-wolf-b",
+              "hp": 58,
+              "x": -443.5676493457779,
+              "y": 1502.8647013084453,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "north-stone-watch": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-pass-guardian",
+              "hp": 84,
+              "x": 1136.8758182558004,
+              "y": -404.0108939825497,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "west-wolf-den": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "boss": {
+            "stage": "guards",
+            "warning": 0,
+            "attempt": 0,
+            "away": 0,
+            "combat": null
+          },
+          "members": [
+            {
+              "id": "wild-den-wolf-a",
+              "hp": 58,
+              "x": -1760,
+              "y": 1430,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-den-wolf-b",
+              "hp": 58,
+              "x": -1610,
+              "y": 1530,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-den-reaper",
+              "hp": 72,
+              "x": -1680,
+              "y": 1350,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "boss-thorn-crown",
+              "hp": 2800,
+              "x": -1700,
+              "y": 1490,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "north-boar-camp": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "boss": {
+            "stage": "guards",
+            "warning": 0,
+            "attempt": 0,
+            "away": 0,
+            "combat": null
+          },
+          "members": [
+            {
+              "id": "wild-rock-boar",
+              "hp": 90,
+              "x": 1450,
+              "y": -760,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-rock-guardian",
+              "hp": 84,
+              "x": 1570,
+              "y": -690,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "boss-crag-tusk",
+              "hp": 2500,
+              "x": 1480,
+              "y": -730,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-thorn-camp": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "boss": {
+            "stage": "guards",
+            "warning": 0,
+            "attempt": 0,
+            "away": 0,
+            "combat": null
+          },
+          "members": [
+            {
+              "id": "wild-thorn-spore",
+              "hp": 60,
+              "x": 3780,
+              "y": 1000,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-thorn-reaper",
+              "hp": 72,
+              "x": 3670,
+              "y": 1200,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-thorn-guardian",
+              "hp": 84,
+              "x": 3850,
+              "y": 1180,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "boss-bound-branch",
+              "hp": 2500,
+              "x": 3710,
+              "y": 1100,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "south-reed-margin": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-margin-slime",
+              "hp": 48,
+              "x": 572.3607947723472,
+              "y": 2131.9098013069142,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "south-weir-watch": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-weir-guardian",
+              "hp": 84,
+              "x": 2160,
+              "y": 2870,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "west-farm-reaper": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-farm-reaper",
+              "hp": 72,
+              "x": -880,
+              "y": 1250,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "west-cart-ambush": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-cart-wolf",
+              "hp": 58,
+              "x": -1500,
+              "y": 970,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-cart-worm",
+              "hp": 62,
+              "x": -1620,
+              "y": 920,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "west-pack-clearing": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "elite-thorn-alpha",
+              "hp": 150,
+              "x": -1240,
+              "y": 1680,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "west-trade-scouts": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-trade-wolf-a",
+              "hp": 58,
+              "x": -1480,
+              "y": -60,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-trade-wolf-b",
+              "hp": 58,
+              "x": -1580,
+              "y": 40,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "north-pass-charge": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-bent-boar",
+              "hp": 90,
+              "x": 335.0704854805879,
+              "y": -335.79484054924404,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "north-outpost-wings": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-outpost-raven",
+              "hp": 64,
+              "x": 900,
+              "y": -740,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "north-rock-arena": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "elite-rock-ram",
+              "hp": 180,
+              "x": 1080,
+              "y": -990,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "north-lookout-tracks": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-lookout-wolf",
+              "hp": 58,
+              "x": -130,
+              "y": -770,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-lookout-slime",
+              "hp": 48,
+              "x": -40,
+              "y": -720,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-road-slimes": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "slime-1",
+              "hp": 0,
+              "x": 2445.80000873472,
+              "y": 1059.9914342787815,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": true,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": true,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "slime-2",
+              "hp": 48,
+              "x": 2670,
+              "y": 1230,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-brook-reapers": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "leaf-1",
+              "hp": 72,
+              "x": 2920,
+              "y": 1070,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "leaf-2",
+              "hp": 72,
+              "x": 3170,
+              "y": 930,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-mushroom-watch": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "spore-1",
+              "hp": 60,
+              "x": 2730,
+              "y": 1840,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-spring-boar": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "boar-1",
+              "hp": 90,
+              "x": 3150,
+              "y": 340,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-canopy-raven": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "raven-1",
+              "hp": 64,
+              "x": 3250,
+              "y": 1830,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-spore-ring": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "elite-ashen-brood",
+              "hp": 160,
+              "x": 3070,
+              "y": 2100,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "east-brook-burrows": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": true,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-brook-worm",
+              "hp": 62,
+              "x": 2840,
+              "y": 1450,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "ruins-gate-watch": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-ruins-gate",
+              "hp": 84,
+              "x": 2770,
+              "y": -100,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "ruins-court-front": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-court-guardian",
+              "hp": 84,
+              "x": 3220,
+              "y": -350,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-court-reaper",
+              "hp": 72,
+              "x": 3340,
+              "y": -320,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "ruins-court-flank": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-court-raven",
+              "hp": 64,
+              "x": 3500,
+              "y": -530,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-court-slime",
+              "hp": 48,
+              "x": 3600,
+              "y": -470,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "ruins-hall-watch": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-hall-spore",
+              "hp": 60,
+              "x": 3800,
+              "y": -720,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-hall-guardian",
+              "hp": 84,
+              "x": 3910,
+              "y": -640,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        },
+        "ruins-exit-watch": {
+          "composition": 2,
+          "cycle": 0,
+          "activated": false,
+          "cleared": false,
+          "cooldown": 0,
+          "warning": null,
+          "members": [
+            {
+              "id": "wild-exit-worm",
+              "hp": 62,
+              "x": 4020,
+              "y": -140,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-exit-guardian",
+              "hp": 84,
+              "x": 3900,
+              "y": -240,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            }
+          ]
+        }
+      }
+    },
+    "southEvents": {
+      "herb": 96,
+      "orchard": 64,
+      "claimed": []
+    },
+    "fieldQuests": {
+      "south-supply": "available"
+    },
+    "mapProgress": {
+      "westRoad": "unknown",
+      "shortcuts": []
+    },
+    "xiaobao": {
+      "known": false,
+      "task": "free",
+      "gate": "all",
+      "tactic": "steady",
+      "autoSupport": true,
+      "x": 870,
+      "y": 685,
+      "hp": 640,
+      "qi": 100,
+      "clock": 53279.22999999919,
+      "serial": 0,
+      "cooldowns": {
+        "palm": 0,
+        "triple": 0,
+        "star": 0,
+        "blade": 0,
+        "rock": 0,
+        "fire": 0,
+        "thunder": 0,
+        "chain": 0,
+        "unity": 0,
+        "guard": 0,
+        "rescue": 0,
+        "flight": 0
+      },
+      "rest": 0,
+      "recovery": 0,
+      "peace": 6000,
+      "reduction": 0,
+      "shields": [],
+      "cast": null,
+      "effects": [],
+      "flight": null,
+      "support": null,
+      "alarmCycle": 0,
+      "alarmActive": false,
+      "responded": [],
+      "command": null,
+      "wait": null,
+      "affected": [],
+      "reports": []
+    },
+    "life": {
+      "version": 4,
+      "speechAt": 53583.80333333276,
+      "speechUrgentAt": 33963.22999999987,
+      "speechEventFloor": 2,
+      "unavailable": {
+        "homes": {},
+        "facilities": []
+      },
+      "people": [
+        {
+          "id": "elder",
+          "body": {
+            "space": "village",
+            "x": 727.831266768739,
+            "y": 774.7653041117721,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 6,
+          "committed": 6,
+          "needs": {
+            "hunger": 15.887987166660892,
+            "fatigue": 10.443993583330418
+          },
+          "emotion": 23.26935900001114,
+          "gear": "carried",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 54139.30333333256,
+          "reason": "广场讲旧事（评分 90）",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "healer": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "carpenter": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "player": {
+              "x": 671.8352612213756,
+              "y": 721.7907012346961,
+              "hp": 100,
+              "stamina": 100,
+              "space": "village",
+              "time": 559.9188450001916
+            },
+            "north-patrol": {
+              "space": "village",
+              "x": 860.0251664808192,
+              "y": 434.2353801619972,
+              "time": 538.2300000000967
+            },
+            "north-watch": {
+              "space": "village",
+              "x": 1033.3914733332656,
+              "y": 660,
+              "time": 559.4100000001905
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "healer",
+          "body": {
+            "space": "healer-home",
+            "x": 825.551613001379,
+            "y": 803.764019768064,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 4,
+          "committed": 4,
+          "needs": {
+            "hunger": 15.887987166660892,
+            "fatigue": 10.443993583330418
+          },
+          "emotion": 23.26935900001114,
+          "gear": "carried",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 53495,
+          "reason": "配药与接待（评分 73）",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "west-watch": {
+              "space": "village",
+              "x": 1277.6300000000017,
+              "y": 880,
+              "time": 512.9399999999824
+            },
+            "player": {
+              "space": "village",
+              "x": 1049.0150964711222,
+              "y": 861.6129982299364,
+              "time": 540.399205000106
+            }
+          },
+          "lastSupplyDay": 1,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 84583.80333333276,
+            "day": 0,
+            "routines": [
+              "work"
+            ]
+          }
+        },
+        {
+          "id": "carpenter",
+          "body": {
+            "space": "village",
+            "x": 477.1411126694224,
+            "y": 1420.0005207806537,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "action": {
+            "id": 3,
+            "kind": "work",
+            "target": {
+              "space": "village",
+              "x": 480,
+              "y": 1425
+            },
+            "pickup": null,
+            "facility": "tools",
+            "task": null,
+            "phase": "perform",
+            "progress": 3361.546666666604,
+            "duration": 8000,
+            "started": 49920,
+            "failures": 0,
+            "label": "修工具、做木工",
+            "social": null
+          },
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 3,
+          "committed": 2,
+          "needs": {
+            "hunger": 15.887987166660892,
+            "fatigue": 10.443993583330418
+          },
+          "emotion": 23.26935900001114,
+          "gear": "carried",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 53520,
+          "reason": "修工具、做木工（评分 88）",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "west-watch": {
+              "space": "village",
+              "x": 597.3272799999988,
+              "y": 1260,
+              "time": 498.24749999998903
+            },
+            "west-patrol": {
+              "space": "village",
+              "x": 317.0467011963961,
+              "y": 1497.289891207295,
+              "time": 558.9300000001881
+            },
+            "player": {
+              "space": "village",
+              "x": 798.1762171049055,
+              "y": 1504.144175469514,
+              "time": 491.645534999994
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "east-watch",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 2,
+          "committed": 2,
+          "needs": {
+            "hunger": 15.887987166660892,
+            "fatigue": 10.443993583330418
+          },
+          "emotion": 23.26935900001114,
+          "gear": "carried",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0.4,
+          "nextDecision": 53415,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "south-watch": {
+              "space": "village",
+              "x": 1820,
+              "y": 918.9199999999987,
+              "time": 538.6800000000986
+            },
+            "north-watch": {
+              "space": "village",
+              "x": 1713.7876466666094,
+              "y": 780,
+              "time": 546.622500000133
+            },
+            "player": {
+              "space": "village",
+              "x": 2128.230006140293,
+              "y": 1059.5187936465034,
+              "time": 527.6695450000489
+            },
+            "west-watch": {
+              "space": "village",
+              "x": 1733.2051399999389,
+              "y": 800,
+              "time": 553.3725000001637
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "east-patrol",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.887987166660892,
+            "fatigue": 10.443993583330418
+          },
+          "emotion": 23.26935900001114,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 53460,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "healer": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "south-watch": {
+              "space": "village",
+              "x": 1604.652404792622,
+              "y": 1207.044765697299,
+              "time": 549.3900000001455
+            },
+            "player": {
+              "space": "village",
+              "x": 1648.9740061402993,
+              "y": 1059.5187936465034,
+              "time": 532.4621050000716
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 2,
+            "nextAt": 64963.22999999987,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "east-archer",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.887987166660892,
+            "fatigue": 10.443993583330418
+          },
+          "emotion": 23.26935900001114,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 53460,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {},
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "north-watch",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 1,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.887987166660892,
+            "fatigue": 10.443993583330418
+          },
+          "emotion": 23.26935900001114,
+          "gear": "carried",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 53460,
+          "reason": "沿原路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "north-patrol": {
+              "space": "village",
+              "x": 860.0259679856489,
+              "y": 337.5212581960703,
+              "time": 490.14749999999486
+            },
+            "south-watch": {
+              "space": "village",
+              "x": 1820,
+              "y": 990.8878866667158,
+              "time": 539.9400000001043
+            },
+            "east-watch": {
+              "space": "village",
+              "x": 2008.535475117779,
+              "y": 967.6287514429793,
+              "time": 546.6900000001332
+            },
+            "west-watch": {
+              "space": "village",
+              "x": 1995,
+              "y": 650,
+              "time": 539.9400000001043
+            },
+            "elder": {
+              "space": "village",
+              "x": 727.831266768739,
+              "y": 774.7653041117721,
+              "time": 558.8400000001877
+            },
+            "player": {
+              "x": 671.8352612213756,
+              "y": 721.7907012346961,
+              "hp": 100,
+              "stamina": 100,
+              "space": "village",
+              "time": 559.9188450001916
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "north-patrol",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.887987166660892,
+            "fatigue": 10.443993583330418
+          },
+          "emotion": 23.26935900001114,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 53460,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "healer": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "north-watch": {
+              "space": "village",
+              "x": 872.6450735081149,
+              "y": 428.28150013706806,
+              "time": 490.14749999999486
+            },
+            "elder": {
+              "space": "village",
+              "x": 727.831266768739,
+              "y": 774.7653041117721,
+              "time": 550.7400000001513
+            },
+            "player": {
+              "space": "village",
+              "x": 671.8352612213756,
+              "y": 721.7907012346961,
+              "time": 551.6815500001545
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "north-archer",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.887987166660892,
+            "fatigue": 10.443993583330418
+          },
+          "emotion": 23.26935900001114,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 53460,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {},
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "south-watch",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 1,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.887987166660892,
+            "fatigue": 10.443993583330418
+          },
+          "emotion": 23.26935900001114,
+          "gear": "carried",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 53460,
+          "reason": "沿原路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "south-patrol": {
+              "space": "village",
+              "x": 960.8149810345759,
+              "y": 1654.4319158137455,
+              "time": 558.8400000001877
+            },
+            "player": {
+              "space": "village",
+              "x": 1931.2393968322242,
+              "y": 1174.0101154577155,
+              "time": 513.0697649999826
+            },
+            "east-patrol": {
+              "space": "village",
+              "x": 1961.2844222623703,
+              "y": 1205.312012705417,
+              "time": 549.3900000001455
+            },
+            "east-watch": {
+              "space": "village",
+              "x": 2008.535475117779,
+              "y": 967.6287514429793,
+              "time": 538.5900000000983
+            },
+            "north-watch": {
+              "space": "village",
+              "x": 1942.0607009612975,
+              "y": 777.9392990387028,
+              "time": 539.9400000001043
+            },
+            "west-watch": {
+              "space": "barracks",
+              "x": 626.9747368830097,
+              "y": 752.9956842984591,
+              "time": 530.490000000063
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "south-patrol",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.887987166660892,
+            "fatigue": 10.443993583330418
+          },
+          "emotion": 23.26935900001114,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 53460,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "healer": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "south-watch": {
+              "space": "village",
+              "x": 1174.715784329146,
+              "y": 1503.6295908195557,
+              "time": 558.8400000001877
+            },
+            "player": {
+              "space": "village",
+              "x": 1274.8488200061881,
+              "y": 1485.4951625775464,
+              "time": 497.24530499998986
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "south-archer",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.887987166660892,
+            "fatigue": 10.443993583330418
+          },
+          "emotion": 23.26935900001114,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 53460,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {},
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "west-watch",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 1,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.887987166660892,
+            "fatigue": 10.443993583330418
+          },
+          "emotion": 23.26935900001114,
+          "gear": "carried",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 53460,
+          "reason": "沿原路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "carpenter": {
+              "space": "village",
+              "x": 393.4512214458735,
+              "y": 1028.9321674797736,
+              "time": 498.24749999998903
+            },
+            "west-patrol": {
+              "space": "village",
+              "x": 300.29440474852134,
+              "y": 1506.1315846547502,
+              "time": 495.54749999999143
+            },
+            "healer": {
+              "space": "village",
+              "x": 1071.4125820567203,
+              "y": 614.3496717731234,
+              "time": 512.9399999999824
+            },
+            "east-watch": {
+              "space": "village",
+              "x": 2008.535475117779,
+              "y": 967.6287514429793,
+              "time": 553.4400000001639
+            },
+            "south-watch": {
+              "space": "barracks",
+              "x": 701.2804841321448,
+              "y": 900.0813372574485,
+              "time": 530.490000000063
+            },
+            "north-watch": {
+              "space": "village",
+              "x": 1942.0607009612975,
+              "y": 777.9392990387028,
+              "time": 539.9400000001043
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "west-patrol",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.887987166660892,
+            "fatigue": 10.443993583330418
+          },
+          "emotion": 23.26935900001114,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 53460,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "healer": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "carpenter": {
+              "space": "village",
+              "x": 477.1411126694224,
+              "y": 1420.0005207806537,
+              "time": 558.8400000001877
+            },
+            "west-watch": {
+              "space": "village",
+              "x": 443.87000000000006,
+              "y": 1260,
+              "time": 495.54749999999143
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        },
+        {
+          "id": "west-archer",
+          "body": null,
+          "action": null,
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 0,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.887987166660892,
+            "fatigue": 10.443993583330418
+          },
+          "emotion": 23.26935900001114,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 53460,
+          "reason": "值守或沿路返回岗位",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 482.04653999999863,
+              "subjects": [],
+              "result": "村门袭扰，保持局部警戒",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4802.0465399999985
+            },
+            {
+              "eventId": "life:2",
+              "sequence": 2,
+              "kind": "clear",
+              "time": 504.83999999998366,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4824.839999999984
+            }
+          ],
+          "receipt": 2,
+          "receipts": [
+            1,
+            2
+          ],
+          "receiptFloor": 0,
+          "known": {},
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
+        }
+      ],
+      "elapsed": 53279.229999999225,
+      "sequence": 2,
+      "events": [
+        {
+          "id": "life:1",
+          "sequence": 1,
+          "time": 482.04653999999863,
+          "kind": "alarm",
+          "place": {
+            "space": "village",
+            "x": 720,
+            "y": 650
+          },
+          "source": "bell",
+          "subjects": [],
+          "result": "村门袭扰，保持局部警戒",
+          "debug": false
+        },
+        {
+          "id": "life:2",
+          "sequence": 2,
+          "time": 504.83999999998366,
+          "kind": "clear",
+          "place": {
+            "space": "village",
+            "x": 720,
+            "y": 650
+          },
+          "source": "bell",
+          "subjects": [],
+          "result": "持续确认安全，先救护和检修再恢复日常",
+          "debug": false
+        }
+      ],
+      "reservations": [
+        {
+          "facility": "tools",
+          "owner": "carpenter",
+          "expires": 65279.229999999225
+        }
+      ],
+      "tasks": [],
+      "alarm": 0,
+      "clearSince": null,
+      "stores": {
+        "medicine": 5,
+        "herbs": 10,
+        "wood": 6,
+        "food": 18,
+        "day": 0
+      },
+      "facilities": {
+        "wind-bell": 100,
+        "workbench": 100
+      },
+      "playerSpace": "village",
+      "outside": {
+        "x": 670,
+        "y": 720
+      },
+      "invitations": {},
+      "observed": {
+        "elder": {
+          "time": 559.9188450001916,
+          "label": "广场讲旧事（评分 90）",
+          "space": "village"
+        },
+        "carpenter": {
+          "time": 491.645534999994,
+          "label": "修工具、做木工",
+          "space": "village"
+        },
+        "south-watch": {
+          "time": 513.0697649999826,
+          "label": "下岗后检查村门装备",
+          "space": "village"
+        },
+        "south-patrol": {
+          "time": 497.24530499998986,
+          "label": "值守或沿路返回岗位",
+          "space": "village"
+        },
+        "east-patrol": {
+          "time": 532.4621050000716,
+          "label": "值守或沿路返回岗位",
+          "space": "village"
+        },
+        "east-watch": {
+          "time": 527.6695450000489,
+          "label": "下岗后检查村门装备（评分 110）",
+          "space": "village"
+        },
+        "healer": {
+          "time": 540.399205000106,
+          "label": "照料药田（评分 86）",
+          "space": "village"
+        },
+        "north-patrol": {
+          "time": 551.6815500001545,
+          "label": "值守或沿路返回岗位",
+          "space": "village"
+        },
+        "north-watch": {
+          "time": 559.9188450001916,
+          "label": "沿原路返回岗位",
+          "space": "village"
+        }
+      },
+      "lastDefenseSequence": 0,
+      "defenseReceipts": []
+    },
+    "night": {
+      "takeoverNight": 1,
+      "discovered": false,
+      "plan": null
+    },
+    "defense": {
+      "guards": [
+        {
+          "id": "east-watch",
+          "x": 2008.535475117779,
+          "y": 967.6287514429793,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-north-post",
+          "mode": "post",
+          "peaceMs": 8000,
+          "cooldownMs": 0,
+          "offDuty": false,
+          "towerTransitMs": 0,
+          "space": "village"
+        },
+        {
+          "id": "east-patrol",
+          "x": 1967.0533027613762,
+          "y": 1149.3519558525218,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "east-south-post",
+          "mode": "patrol",
+          "peaceMs": 8000,
+          "cooldownMs": 0
+        },
+        {
+          "id": "east-archer",
+          "x": 2030,
+          "y": 900,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "east-gate-tower",
+          "mode": "post",
+          "peaceMs": 8000,
+          "cooldownMs": 0
+        },
+        {
+          "id": "north-watch",
+          "x": 1008.5505333333343,
+          "y": 660,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-west-post",
+          "mode": "return",
+          "peaceMs": 8000,
+          "cooldownMs": 0,
+          "offDuty": true,
+          "towerTransitMs": 0,
+          "space": "village"
+        },
+        {
+          "id": "north-patrol",
+          "x": 868.6502080719952,
+          "y": 343.0659149809373,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "north-east-post",
+          "mode": "patrol",
+          "peaceMs": 8000,
+          "cooldownMs": 0
+        },
+        {
+          "id": "north-archer",
+          "x": 680,
+          "y": 350,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "north-gate-tower",
+          "mode": "post",
+          "peaceMs": 8000,
+          "cooldownMs": 0
+        },
+        {
+          "id": "south-watch",
+          "x": 1121.5190226683294,
+          "y": 1535.188973720407,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-west-post",
+          "mode": "return",
+          "peaceMs": 8000,
+          "cooldownMs": 0,
+          "offDuty": true,
+          "towerTransitMs": 0,
+          "space": "village"
+        },
+        {
+          "id": "south-patrol",
+          "x": 973.9762293923716,
+          "y": 1684.0004366134817,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "south-east-post",
+          "mode": "patrol",
+          "peaceMs": 3824.229999999225,
+          "cooldownMs": 0
+        },
+        {
+          "id": "south-archer",
+          "x": 1140,
+          "y": 1750,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "south-gate-tower",
+          "mode": "post",
+          "peaceMs": 3824.229999999225,
+          "cooldownMs": 0
+        },
+        {
+          "id": "west-watch",
+          "x": 1361.4389412498522,
+          "y": 813.6399567043843,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "west-north-post",
+          "mode": "return",
+          "peaceMs": 8000,
+          "cooldownMs": 0,
+          "offDuty": true,
+          "towerTransitMs": 0,
+          "space": "village"
+        },
+        {
+          "id": "west-patrol",
+          "x": 327.2655894268754,
+          "y": 1474.4065584330656,
+          "hp": 180,
+          "dead": false,
+          "weaponId": "watch-blade",
+          "armorId": "watch-mail",
+          "postId": "west-south-post",
+          "mode": "patrol",
+          "peaceMs": 8000,
+          "cooldownMs": 0
+        },
+        {
+          "id": "west-archer",
+          "x": 160,
+          "y": 1710,
+          "hp": 100,
+          "dead": false,
+          "weaponId": "watch-bow",
+          "armorId": "watch-leather",
+          "postId": "west-gate-tower",
+          "mode": "post",
+          "peaceMs": 8000,
+          "cooldownMs": 0
+        }
+      ],
+      "sequence": 0,
+      "completedSequence": 0,
+      "raid": null,
+      "protectionMs": 246720.77000000095,
+      "cooldownMs": 481729,
+      "retryMs": 0,
+      "seed": 1729
+    },
+    "coins": 43,
+    "equipment": {
+      "weapon": null,
+      "armor": null,
+      "head": "windScope"
+    },
+    "shopStock": {
+      "general:wood": 20,
+      "general:stone": 20,
+      "general:herb": 20,
+      "general:berry": 24,
+      "general:potion": 8,
+      "healer:potion": 16,
+      "smith:ironSword": 8,
+      "smith:leatherCoat": 8,
+      "smith:windScope": 0,
+      "general:bread": 12,
+      "healer:tea": 12,
+      "inn:bread": 12,
+      "inn:tea": 12,
+      "inn:soup": 8,
+      "carpenter:wood": 24,
+      "carpenter:stone": 16
+    },
+    "shopStockDay": 0,
+    "economyRevision": 2,
+    "map_version": 8,
+    "player": {
+      "x": 671.8352612213756,
+      "y": 721.7907012346961,
+      "hp": 100,
+      "stamina": 100
+    },
+    "bag": [
+      {
+        "id": "berry",
+        "count": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "hotbar": [
+      "potion",
+      "berry",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "quest": 0,
+    "side": 0,
+    "collected": {},
+    "chests": [],
+    "killed": [
+      "slime-1"
+    ],
+    "pendingDrops": [],
+    "dashCooldownRemaining": 0,
+    "stones": [],
+    "shortcut": false,
+    "time": 559.9188450001916,
+    "reward": false,
+    "crafted": false
+  },
+  "窄屏": {
+    "可视": 334,
+    "内容": 334
+  },
+  "页面异常": []
+}

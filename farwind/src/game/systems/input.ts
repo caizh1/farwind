@@ -6,6 +6,7 @@ export type InputEvent = {
   axis: { x: number; y: number };
   running?: boolean;
   windHeld?: boolean;
+  windAuto?: boolean;
 };
 export class Input {
   held = new Set<string>();
@@ -64,10 +65,10 @@ export class Input {
     this.held.delete(key.toLowerCase());
     if (this.enabled()) this.record("axis");
   }
-  request(kind: ActionKind) {
-    if (this.enabled()) this.record(kind);
+  request(kind: ActionKind,windAuto?:boolean) {
+    if (this.enabled()) this.record(kind,windAuto);
   }
-  private record(kind: InputEvent["kind"]) {
+  private record(kind: InputEvent["kind"],windAuto?:boolean) {
     // 统一单调墙钟，不使用浏览器事件时间戳与模拟时间直接相减。
     this.events.push({
       kind,
@@ -76,6 +77,7 @@ export class Input {
       axis: this.axis(),
       running: this.held.has(" "),
       windHeld:this.windHeld(),
+      windAuto:windAuto??this.held.has("i"),
     });
   }
   bindCanvas(canvas: HTMLCanvasElement) {
@@ -83,7 +85,7 @@ export class Input {
       this.focusCanvas();
       if (e.button === 0) this.request("attack");
       if (e.button === 2) this.request("parry");
-      if(e.button===1&&this.enabled()){e.preventDefault();this.held.add('mouse-wind');this.request('wind');}
+      if(e.button===1&&this.enabled()){e.preventDefault();this.held.add('mouse-wind');this.request('wind',false);}
     };
     const menu = (e: MouseEvent) => e.preventDefault();
     const release=(e:PointerEvent)=>{if(e.button===1){this.held.delete('mouse-wind');this.record('axis');}};

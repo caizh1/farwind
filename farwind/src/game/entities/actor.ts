@@ -17,6 +17,8 @@ export class Actor {
   shadow: Phaser.GameObjects.Ellipse;
   carrySword: Phaser.GameObjects.Image;
   motion: Locomotion;
+  scopeEquipped=false;
+  scopeImage?:Phaser.GameObjects.Image;
   weapon: ReturnType<typeof weaponSample> | null = null;
   presentation = {
     key: "",
@@ -49,6 +51,7 @@ export class Actor {
     this.carrySword = scene.add
       .image(x, y, "hero-carry-sword")
       .setVisible(false);
+    if(!cat&&scene.textures.exists("wind-scope"))this.scopeImage=scene.add.image(x,y,"wind-scope").setVisible(false);
     this.place(x, y);
   }
   get direction() {
@@ -161,6 +164,11 @@ export class Actor {
       facing: combat?.facing ?? dashFacing ?? this.motion.direction,
       anchor: art ? [art.frameSize / 2, art.footY] : [64, 124],
     };
+    // 临时头部挂件：脚底仍由角色维护；不旋转角色图，不改变武器或碰撞。
+    if(this.scopeImage){const facing=this.presentation.facing,bob=combat?0:Math.sin(this.motion.phase*Math.PI*2)*1.2;
+      this.scopeImage.setVisible(this.scopeEquipped&&facing!==1).setDisplaySize(22,15).setPosition(x+(facing===2?-5:facing===3?5:-4),y-61+bob).setDepth(y+.1);
+      Actor.mirror(this.scopeImage,facing===2);
+    }
     this.shadow.setPosition(x, y - 3).setDepth(y - 0.5);
   }
   debug() {

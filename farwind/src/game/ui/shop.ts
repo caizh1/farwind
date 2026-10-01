@@ -73,9 +73,9 @@ export async function showShop(ui: Interface, id: ShopId) {
       flow === "exchange"
         ? "扣除药草×2、浆果×1，获得恢复药剂×1。成品空间不足时不扣材料。"
         : flow === "sleep"
-          ? `${DAY_NIGHT.sleepCost}铜币，恢复生命与体力，睡到清晨06:00；跳过尚未开始的当夜来袭，不获得战斗奖励。${phaseAt(s.time) === "night" ? "" : "仅19:00—06:00前开放。"}`
+          ? `${DAY_NIGHT.sleepCost}金币，恢复生命与体力，睡到清晨06:00；跳过尚未开始的当夜来袭，不获得战斗奖励。${phaseAt(s.time) === "night" ? "" : "仅19:00—06:00前开放。"}`
           : flow === "rest"
-            ? "12铜币，生命与体力恢复至100，不推进时间。"
+            ? "12金币，生命与体力恢复至100，不推进时间。"
             : selected
               ? items[selected].description
               : "此分类暂无商品。";
@@ -138,19 +138,19 @@ export async function showShop(ui: Interface, id: ShopId) {
     )
       .map(
         (r) =>
-          `<button data-rune-buy="${r.id}" ${s.runes.owned.includes(r.id) || s.coins < (r.acquisition.price ?? 0) ? "disabled" : ""}>${runeIcon(r.id, 40)}<span><b>${r.name}</b><small>${s.runes.owned.includes(r.id) ? "已收藏" : r.acquisition.price + "铜币"}</small></span></button>`,
+          `<button data-rune-buy="${r.id}" ${s.runes.owned.includes(r.id) || s.coins < (r.acquisition.price ?? 0) ? "disabled" : ""}>${runeIcon(r.id, 40)}<span><b>${r.name}</b><small>${s.runes.owned.includes(r.id) ? "已收藏" : r.acquisition.price + "金币"}</small></span></button>`,
       )
       .join(
         "",
       )}</section><p class="muted">符文收藏后在符文页装备，不占行囊格。</p>`;
-    const cards = `<section class="shop-goods" aria-label="商品列表">${visible.map((item) => `<button class="shop-card ${selected === item ? "selected" : ""}" data-item="${item}" aria-pressed="${selected === item}">${icon(item)}<span><b>${items[item].name}</b><small>${escape(items[item].description)}</small><span class="shop-card-price">${selling ? "持有 " + count(s, item) : "库存 " + s.shopStock[`${id}:${item}`]} <strong>${selling ? salePrices[item] : (shop.goods as Partial<Record<ItemId, number>>)[item]} 铜币</strong></span></span></button>`).join("") || "<p>此分类暂无商品。</p>"}</section>`;
+    const cards = `<section class="shop-goods" aria-label="商品列表">${visible.map((item) => `<button class="shop-card ${selected === item ? "selected" : ""}" data-item="${item}" aria-pressed="${selected === item}">${icon(item)}<span><b>${items[item].name}</b><small>${escape(items[item].description)}</small><span class="shop-card-price">${item==="windScope"&&(count(s,item)>0||s.equipment.head===item)?"已拥有":selling ? "持有 " + count(s, item) : "库存 " + s.shopStock[`${id}:${item}`]} <strong>${selling ? salePrices[item] : (shop.goods as Partial<Record<ItemId, number>>)[item]} 金币</strong></span></span></button>`).join("") || "<p>此分类暂无商品。</p>"}</section>`;
     const controls =
       trading && selected
         ? `<p class="shop-ownership">持有 ${count(s, selected)} · 最多可${selling ? "售" : "买"} ${max}</p><div class="shop-quantity"><button data-quantity="-1" aria-label="减少数量">−</button><label><span class="sr-only">数量</span><input id="shop-quantity" aria-label="数量" type="number" min="1" max="99" step="1" value="${amount}" inputmode="numeric"></label><button data-quantity="1" aria-label="增加数量">＋</button><button id="shop-max" ${max === 0 ? "disabled" : ""}>${selling ? "售出最多" : "买满"}</button></div>`
         : "";
     ui.shell(
       shop.name,
-      `<div class="shop-summary"><p>${shop.greeting}</p><span><b>铜币 ${s.coins}</b><b>行囊 ${s.bag.filter(Boolean).length} / 24</b></span></div><nav class="shop-tabs" aria-label="商店服务">${tabs.map(([key, label]) => `<button data-flow="${key}" aria-pressed="${key === flow}">${label}</button>`).join("")}</nav>${flow === "runes" ? runeBody : review ? `<section class="trade-review"><h2>确认${name}</h2><p>${detail}</p><p>${selling ? "收到" : "支付"} ${quantityValid ? total : "—"} 铜币 · 交易后余额 ${quantityValid ? s.coins + (selling ? total : -total) : "—"}</p><p class="muted">保存成功才完成交易。确认后请等待结果。</p></section>` : `${trading ? `<nav class="shop-filters" aria-label="商品分类">${["全部", "补给", "材料", "装备"].map((value) => `<button data-filter="${value}" aria-pressed="${filter === value}">${value}</button>`).join("")}</nav>` : ""}<div class="shop-layout">${trading ? cards : '<section class="shop-service"><h2>' + name + "</h2><p>" + detail + "</p>" + (flow === "exchange" ? `<p>持有药草 ${count(s, "herb")}、浆果 ${count(s, "berry")}</p>` : "") + "</section>"}<section class="shop-detail">${trading && selected ? `${icon(selected, 140)}<h2>${items[selected].name}</h2><p>${escape(detail)}</p>${controls}<label class="shop-select">物品<select id="shop-item" aria-label="物品">${visible.map((item) => `<option value="${item}" ${selected === item ? "selected" : ""}>${items[item].name}</option>`).join("")}</select></label>` : ""}<div id="shop-total" class="shop-quote"><p>${selling ? "收到" : "支付"} <b>${quantityValid ? total : "—"} 铜币</b></p><p>交易后余额 <b>${quantityValid ? s.coins + (selling ? total : -total) : "—"} 铜币</b></p></div></section></div>`}<p id="shop-feedback" role="status" aria-live="polite">${escape(feedback || blocked)}</p><footer class="shop-footer"><small>次日补回基础库存 · 保存成功才完成交易</small><div class="row">${flow === "runes" ? "" : review ? `<button id="shop-confirm">确认${selling ? "出售" : flow === "buy" ? "购买" : flow === "exchange" ? "兑换" : flow === "sleep" ? "住宿" : "休息"}</button><button id="shop-back">重新选择</button>` : `<button id="shop-review" ${blocked ? "disabled" : ""}>核对交易</button>`}${s.life.playerSpace === "village" && (id === "general" || id === "smith") && ui.actions.enterShop ? '<button id="shop-enter">进入店内</button>' : ""}<button id="close">离开商店</button></div></footer>`,
+      `<div class="shop-summary"><p>${shop.greeting}</p><span><b>金币 ${s.coins}</b><b>行囊 ${s.bag.filter(Boolean).length} / 24</b></span></div><nav class="shop-tabs" aria-label="商店服务">${tabs.map(([key, label]) => `<button data-flow="${key}" aria-pressed="${key === flow}">${label}</button>`).join("")}</nav>${flow === "runes" ? runeBody : review ? `<section class="trade-review"><h2>确认${name}</h2><p>${detail}</p><p>${selling ? "收到" : "支付"} ${quantityValid ? total : "—"} 金币 · 交易后余额 ${quantityValid ? s.coins + (selling ? total : -total) : "—"}</p><p class="muted">保存成功才完成交易。确认后请等待结果。</p></section>` : `${trading ? `<nav class="shop-filters" aria-label="商品分类">${["全部", "补给", "材料", "装备"].map((value) => `<button data-filter="${value}" aria-pressed="${filter === value}">${value}</button>`).join("")}</nav>` : ""}<div class="shop-layout">${trading ? cards : '<section class="shop-service"><h2>' + name + "</h2><p>" + detail + "</p>" + (flow === "exchange" ? `<p>持有药草 ${count(s, "herb")}、浆果 ${count(s, "berry")}</p>` : "") + "</section>"}<section class="shop-detail">${trading && selected ? `${icon(selected, 140)}<h2>${items[selected].name}</h2><p>${escape(detail)}</p>${controls}<label class="shop-select">物品<select id="shop-item" aria-label="物品">${visible.map((item) => `<option value="${item}" ${selected === item ? "selected" : ""}>${items[item].name}</option>`).join("")}</select></label>` : ""}<div id="shop-total" class="shop-quote"><p>${selling ? "收到" : "支付"} <b>${quantityValid ? total : "—"} 金币</b></p><p>交易后余额 <b>${quantityValid ? s.coins + (selling ? total : -total) : "—"} 金币</b></p></div></section></div>`}<p id="shop-feedback" role="status" aria-live="polite">${escape(feedback || blocked)}</p><footer class="shop-footer"><small>次日补回基础库存 · 保存成功才完成交易</small><div class="row">${flow === "runes" ? "" : review ? `<button id="shop-confirm">确认${selling ? "出售" : flow === "buy" ? "购买" : flow === "exchange" ? "兑换" : flow === "sleep" ? "住宿" : "休息"}</button><button id="shop-back">重新选择</button>` : `<button id="shop-review" ${blocked ? "disabled" : ""}>核对交易</button>`}${s.life.playerSpace === "village" && (id === "general" || id === "smith") && ui.actions.enterShop ? '<button id="shop-enter">进入店内</button>' : ""}<button id="close">离开商店</button></div></footer>`,
     );
     ui.modal.querySelector(".panel")!.classList.add("shop-panel");
     const bind = (selector: string, callback: (b: HTMLButtonElement) => void) =>
@@ -221,9 +221,9 @@ export async function showShop(ui: Interface, id: ShopId) {
           }
         const paragraphs = ui.modal.querySelectorAll("#shop-total p b");
         if (paragraphs[0])
-          paragraphs[0].textContent = `${valid ? price * amount : "—"} 铜币`;
+          paragraphs[0].textContent = `${valid ? price * amount : "—"} 金币`;
         if (paragraphs[1])
-          paragraphs[1].textContent = `${valid ? s.coins + (selling ? price * amount : -price * amount) : "—"} 铜币`;
+          paragraphs[1].textContent = `${valid ? s.coins + (selling ? price * amount : -price * amount) : "—"} 金币`;
         ui.modal.querySelector("#shop-feedback")!.textContent = blocked;
         ui.modal.querySelector<HTMLButtonElement>("#shop-review")!.disabled =
           !!blocked;

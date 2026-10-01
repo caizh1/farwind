@@ -1,0 +1,46 @@
+{
+  "说明": "当前生成素材与正式验收证据清单。美术主观验收未完成，游戏内头部挂件保持临时标记。",
+  "素材": [
+    {
+      "用途": "装备图标",
+      "原图": "sources/scope.png",
+      "正式文件": "public/assets/equipment/wind-scope.webp"
+    },
+    {
+      "用途": "佩戴肖像",
+      "原图": "sources/portrait.png",
+      "正式文件": "public/assets/equipment/traveler-scope.webp"
+    }
+  ],
+  "环境": {
+    "架构": "arm64",
+    "系统": "27.0",
+    "运行时": "Node 26.0.0",
+    "渲染": "Playwright Chromium Metal"
+  },
+  "测试": {
+    "全量单元": "62文件1189项通过，227.55秒",
+    "浏览器": "正常新档和十五版备份迁移2条通过，约1.5分钟",
+    "类型检查": "通过",
+    "构建": "通过，原分包警告保留"
+  },
+  "限制": "20秒局部现场样本不能代表长时间、全部战斗、全主线平衡或跨设备性能。",
+  "文件校验": [
+    {
+      "文件": "public/assets/equipment/wind-scope.webp",
+      "字节": 46938,
+      "校验": "e36be19f3a2a4922938e9ce335991d182492d1349cfac7adcea90cc18091ff8c"
+    },
+    {
+      "文件": "public/assets/equipment/traveler-scope.webp",
+      "字节": 231494,
+      "校验": "16f6549bff022248a15b24946c20e65aa0917b294613c0ef795f783fcbbac442"
+    },
+    {
+      "文件": "dist/assets/game-taRDc3RR.js",
+      "字节": 538670,
+      "校验": "c31cfad53f87b7668976253193702be8129a20be586af096caccdfa43f4761b7"
+    }
+  ],
+  "临时表现": "游戏内小型头部挂件未制作完整逐帧翻折动画；装备页独立生成肖像已核对运行截图。"
+}

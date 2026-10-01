@@ -199,7 +199,7 @@ test("商店实际负向检查、双击只成交一次以及窄屏可操作", as
   expect((await read(page)).state.coins).toBe(0);
   if (await page.locator("#shop-back").count())
     await page.getByRole("button", { name: "重新选择" }).click();
-  await confirmFailure(page, "铜币不足");
+  await confirmFailure(page, "金币不足");
   for (const [width, height] of [
     [560, 720],
     [844, 390],

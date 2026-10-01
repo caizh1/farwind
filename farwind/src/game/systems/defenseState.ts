@@ -10,7 +10,7 @@ export type GuardState = {
   space?: SpaceId; offDuty?: boolean; towerTransitMs?: number;
   postId: string; mode: GuardMode; peaceMs: number; cooldownMs: number;
 };
-export type RaidMember = { id: string; type: "slime" | "leaf"; x: number; y: number;
+export type RaidMember = { participated?:boolean; id: string; type: "slime" | "leaf"; x: number; y: number;
   hp: number; cooldownMs: number; targetId: string | null; eliteLevel?:number };
 export type RaidState = { id: string; sequence: number; gateId: GateId; spawns: { x: number; y: number }[]; phase: "warning" | "approach" | "fighting" | "retreat";
   ageMs: number; members: RaidMember[]; order?:RaidOrder };
@@ -45,7 +45,7 @@ export function validateDefense(raw: unknown): DefenseState {
     !num(r.ageMs, 120000) || !Array.isArray(r.members) || r.members.length < 1 || r.members.length > (r.order?.source==='demon-king'?DEMON_KING.maxUnits:4) ||
     !Array.isArray(r.spawns) || r.spawns.length !== r.members.length || !r.spawns.every(point) ||
     new Set(r.members.map(m => m?.id)).size !== r.members.length || !r.members.every((m, i) =>
-      m && m.id === `${r.id}:${i + 1}` && ["slime", "leaf"].includes(m.type) && point(m) &&
+      m && (m.participated===undefined||typeof m.participated==="boolean") && m.id === `${r.id}:${i + 1}` && ["slime", "leaf"].includes(m.type) && point(m) &&
       Number.isSafeInteger(m.eliteLevel??0) && num(m.eliteLevel??0, r.order?.source==='demon-king'?Math.floor(r.order.malice/10):0) &&
       num(m.hp, raidUnitProfile(m.type,m.eliteLevel??0).maxHP) && num(m.cooldownMs, 5000) &&
       (m.targetId === null || m.targetId === "player" || m.targetId === "xiaobao" || GUARD_DEFS.some(g => g.id === m.targetId) || CIVILIAN_IDS.some(id => id === m.targetId) || MAINTENANCE.some(f=>f.id===m.targetId)))))

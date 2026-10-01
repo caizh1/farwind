@@ -29,7 +29,7 @@ export type Slot = { id: ItemId; count: number } | null;
 export type State = {
   runes: RuneState;
   skills: SkillState;
-  schema_version: 15;
+  schema_version: 16;
   demonKing:DemonKingState;
   encounters:EncounterState;
   southEvents:SouthEventState;
@@ -40,7 +40,7 @@ export type State = {
   night: NightState;
   defense: DefenseState;
   coins: number;
-  equipment: { weapon: EquipmentId | null; armor: EquipmentId | null };
+  equipment: { weapon: EquipmentId | null; armor: EquipmentId | null; head: EquipmentId | null };
   shopStock: Record<string, number>;
   shopStockDay: number;
   economyRevision: number;
@@ -64,7 +64,7 @@ export type State = {
 export const initialState = (): State => ({
   runes: initialRunes(),
   skills: initialSkills(),
-  schema_version: 15,
+  schema_version: 16,
   demonKing:initialDemonKing(),
   encounters:initialEncounters(),
   southEvents:initialSouthEvents(),
@@ -75,7 +75,7 @@ export const initialState = (): State => ({
   night: initialNight(),
   defense: initialDefense(),
   coins: STARTER_COINS,
-  equipment: { weapon: null, armor: null },
+  equipment: { weapon: null, armor: null, head: null },
   shopStock: initialStock(),
   shopStockDay: 0,
   economyRevision: 0,
@@ -165,7 +165,7 @@ export function validate(raw: unknown): State {
     s.dashCooldownRemaining ??= 0;
     (s as {schema_version:number}).schema_version = 2;
     s.coins = STARTER_COINS;
-    s.equipment = { weapon: null, armor: null };
+    s.equipment = { weapon: null, armor: null, head: null };
     s.shopStock = initialStock();
     s.economyRevision = 0;
   }
@@ -213,11 +213,11 @@ export function validate(raw: unknown): State {
   if(s&&(s as {schema_version:number}).schema_version===13){s.encounters=migrateCampBosses(s.encounters);(s as {schema_version:number}).schema_version=14;}
   if(s&&(s as {schema_version:number}).schema_version===14){
     if(s.skills){s.skills.meleeFinisher??=false;s.skills.buildLessons??=[];}
-    s.runes=migrateBuildRunes(s.runes);s.schema_version=15;
+    s.runes=migrateBuildRunes(s.runes);(s as {schema_version:number}).schema_version=15;
   }
-  if(s&&s.schema_version===15){s.skills=validateSkills(s.skills);s.runes=s.runes===undefined?initialRunes():validateRunes(s.runes);}
+  if(s&&(s as {schema_version:number}).schema_version===15){s.skills=validateSkills(s.skills);s.runes=s.runes===undefined?initialRunes():validateRunes(s.runes);}
   // 商店子版本迁移：只补新增商品，旧库存与余额不重置。
-  if (s && s.schema_version === 15 && s.shopStockDay === undefined) {
+  if (s && (s as {schema_version:number}).schema_version === 15 && s.shopStockDay === undefined) {
     const legacy = ["general:wood", "general:stone", "general:herb", "general:berry", "general:potion", "healer:potion", "smith:ironSword", "smith:leatherCoat"];
     if (!s.shopStock || legacy.some(key => !Object.hasOwn(s.shopStock, key))) throw Error("旧商店库存缺失，不能重置交易记录。");
     for (const [key, stock] of Object.entries(initialStock())) s.shopStock[key] ??= stock;
@@ -225,6 +225,11 @@ export function validate(raw: unknown): State {
     if(s.life&&s.player)migrateInteriorPosition(s.life.playerSpace,s.player);
     if(Array.isArray(s.life?.people))for(const n of s.life.people)if(n.body)migrateInteriorPosition(n.body.space,n.body);
   }
+  if(s && (s as {schema_version:number}).schema_version===15){
+    if(!s.equipment || !s.shopStock)throw Error("旧装备或商店记录缺失，请使用备份。");
+    s.equipment.head=null;s.shopStock["smith:windScope"]=1;s.schema_version=16;
+  }
+  if(s&&s.schema_version===16){s.skills=validateSkills(s.skills);s.runes=validateRunes(s.runes);}
   const num = (n: unknown, min: number, max: number) =>
     typeof n === "number" && Number.isFinite(n) && n >= min && n <= max;
   const strarr = (a: unknown) =>
@@ -233,7 +238,7 @@ export function validate(raw: unknown): State {
     a.every((x) => typeof x === "string" && x.length < 80);
   if (
     !s ||
-    s.schema_version !== 15 ||
+    s.schema_version !== 16 ||
     !s.mapProgress || !["unknown","surveyed","open"].includes(s.mapProgress.westRoad) ||
     !Array.isArray(s.mapProgress.shortcuts) || s.mapProgress.shortcuts.length>3 || new Set(s.mapProgress.shortcuts).size!==s.mapProgress.shortcuts.length || !s.mapProgress.shortcuts.every(id=>SHORTCUT_IDS.includes(id)) ||
     (s.map_version !== undefined &&
@@ -304,10 +309,11 @@ export function validate(raw: unknown): State {
     !Number.isSafeInteger(s.shopStockDay) ||
     !num(s.shopStockDay, 0, Math.floor(s.time / 1440)) ||
     !s.equipment ||
-    !["weapon", "armor"].every((slot) => {
-      const id = s.equipment[slot as "weapon" | "armor"];
+    !["weapon", "armor", "head"].every((slot) => {
+      const id = s.equipment[slot as "weapon" | "armor" | "head"];
       return id === null || (isEquipment(id) && equipment[id].slot === slot);
     }) ||
+    (count(s,"windScope")+(s.equipment.head==="windScope"?1:0)>1) ||
     !s.shopStock ||
     typeof s.shopStock !== "object" ||
     Object.keys(s.shopStock).length !== Object.keys(initialStock()).length ||

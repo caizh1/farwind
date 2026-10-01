@@ -89,7 +89,7 @@ export class Interface {
     this.root.addEventListener("click",e=>{if(this.actions&&!this.actions.canMutate()){e.preventDefault();e.stopImmediatePropagation();}},true);
     this.root.innerHTML = `<div id="hud" hidden>
       <div class="top"><div class="vitals-stack"><section class="vitals"><img class="portrait" src="/assets/portrait.png" alt="旅行者"><div><b>旅人 <small>与小黑同行</small></b><div class="meter health"><i></i><span></span></div><div class="meter stamina"><i></i><span></span></div></div></section>
-      <span id="combat-status">L 风步 · 就绪</span><span id="parry-status" role="status">K 架剑就绪</span><small id="sword-wind-status" hidden></small><button id="demon-king-summary" class="text-button" data-panel="quest" hidden></button>
+      <span id="coin-status" aria-label="金币余额">金币 120</span><span id="combat-status">L 风步 · 就绪</span><span id="parry-status" role="status">K 架剑就绪</span><small id="sword-wind-status" hidden></small><small id="wind-aim-status" hidden></small><button id="demon-king-summary" class="text-button" data-panel="quest" hidden></button>
       <section id="training-panel" hidden><b>木桩练习</b><small>J / 左键：攻击；连按接三／四连；I／中键：剑风；L：风步</small><span id="training-stats"></span><button data-practice-menu="true">迎风架剑练习</button><button data-build-training="true">本领与构筑训练</button><span id="parry-feedback" hidden></span></section></div>
       <div class="hud-info"><section class="location"><button id="minimap-toggle" class="hud-summary" aria-expanded="false" aria-controls="minimap-details" aria-label="展开小地图"><b id="region">风铃村</b><span>·</span><span id="clock"></span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2Zm6-2v16m6-14v16"/></svg><span class="chevron" aria-hidden="true">▾</span></button><div id="minimap-details" class="hud-details map-details" hidden><small id="day"></small><canvas id="minimap" width="192" height="101" aria-label="位置小地图"></canvas><button class="text-button" data-panel="map">M 完整地图</button></div></section>
       <section class="quest-tracker"><button id="quest-toggle" class="hud-summary" aria-expanded="false" aria-controls="quest-details"><span id="objective-summary" class="ellipsis"></span><span class="chevron" aria-hidden="true">▾</span></button><div id="quest-details" class="hud-details quest-details" hidden><small>主线 · 失落的风</small><p id="objective"></p><button class="text-button" data-panel="quest">Q 旅途手记</button></div></section></div></div>
@@ -427,7 +427,7 @@ export class Interface {
   shop(id: ShopId) {
     showShop(this, id);
   }
-  async changeEquipment(slot: "weapon" | "armor", item: ItemId | null, page = "bag") {
+  async changeEquipment(slot: "weapon" | "armor" | "head", item: ItemId | null, page = "bag") {
     if (this.economyBusy || !this.state) return;
     this.economyBusy = true;
     this.modal.querySelectorAll<HTMLButtonElement | HTMLSelectElement>("button,select").forEach(button => { button.disabled = true; });
@@ -505,7 +505,7 @@ export class Interface {
     if (mode === "bag" && s) {
       this.shell(
         "旅人的行囊",
-        `<nav class="bag-equipment-nav" aria-label="旅人物品页"><button id="bag-equipment">装备</button><button data-panel="runes">符文</button><button aria-current="page" disabled>行囊</button></nav><p class="muted">铜币 ${s.coins} · 24 格 · 材料20件/格，装备1件/格 · 选择物品后使用或穿戴</p><div class="bag">${s.bag.map((a, i) => `<button class="slot" data-slot="${i}">${a ? `${itemIcon(a.id) ? `<img class="item-icon" src="${itemIcon(a.id)}" alt="">` : ""}${items[a.id].name}<strong>×${a.count}</strong>` : "·"}</button>`).join("")}</div><p id="item-info">恢复药剂：药草 ×2 + 浆果 ×1，恢复 50 生命。</p><p>持有药草 ${count(s, "herb")}/2 · 浆果 ${count(s, "berry")}/1</p><p id="craft-feedback" role="status" aria-live="polite"></p><div class="row"><button id="craft">制作恢复药剂</button><button id="consume">使用选中物品</button><button id="equip">穿戴选中装备</button><button id="discard">丢弃一件</button><select id="bind" aria-label="快捷栏位置">${Array.from({ length: 8 }, (_, i) => `<option value="${i}">快捷栏 ${i + 1}</option>`).join("")}</select><button id="bind-button">绑定</button></div><p>武器：${s.equipment.weapon ? items[s.equipment.weapon].name : "原有佩剑"} · 护甲：${s.equipment.armor ? items[s.equipment.armor].name : "原有衣物"} · 宝珠：${RETURN_WIND_ORB.name}（默认装备）</p><div class="row"><button id="unequip-weapon" ${!s.equipment.weapon ? "disabled" : ""}>卸下武器</button><button id="unequip-armor" ${!s.equipment.armor ? "disabled" : ""}>卸下护甲</button></div><button id="close">收好行囊</button>`,
+        `<nav class="bag-equipment-nav" aria-label="旅人物品页"><button id="bag-equipment">装备</button><button data-panel="runes">符文</button><button aria-current="page" disabled>行囊</button></nav><p class="muted">金币 ${s.coins} · 24 格 · 材料20件/格，装备1件/格 · 选择物品后使用或穿戴</p><div class="bag">${s.bag.map((a, i) => `<button class="slot" data-slot="${i}">${a ? `${itemIcon(a.id) ? `<img class="item-icon" src="${itemIcon(a.id)}" alt="">` : ""}${items[a.id].name}<strong>×${a.count}</strong>` : "·"}</button>`).join("")}</div><p id="item-info">恢复药剂：药草 ×2 + 浆果 ×1，恢复 50 生命。</p><p>持有药草 ${count(s, "herb")}/2 · 浆果 ${count(s, "berry")}/1</p><p id="craft-feedback" role="status" aria-live="polite"></p><div class="row"><button id="craft">制作恢复药剂</button><button id="consume">使用选中物品</button><button id="equip">穿戴选中装备</button><button id="discard">丢弃一件</button><select id="bind" aria-label="快捷栏位置">${Array.from({ length: 8 }, (_, i) => `<option value="${i}">快捷栏 ${i + 1}</option>`).join("")}</select><button id="bind-button">绑定</button></div><p>武器：${s.equipment.weapon ? items[s.equipment.weapon].name : "原有佩剑"} · 头部：${s.equipment.head ? items[s.equipment.head].name : "未佩戴"} · 护甲：${s.equipment.armor ? items[s.equipment.armor].name : "原有衣物"} · 宝珠：${RETURN_WIND_ORB.name}（默认装备）</p><div class="row"><button id="unequip-weapon" ${!s.equipment.weapon ? "disabled" : ""}>卸下武器</button><button id="unequip-head" ${!s.equipment.head ? "disabled" : ""}>卸下头部装备</button><button id="unequip-armor" ${!s.equipment.armor ? "disabled" : ""}>卸下护甲</button></div><button id="close">收好行囊</button>`,
       );
       this.modal.querySelectorAll<HTMLButtonElement>("[data-slot]").forEach(
         (b) =>
@@ -529,6 +529,7 @@ export class Interface {
         void this.changeEquipment(equipment[this.selected].slot, this.selected);
       });
       this.button("unequip-weapon", () => void this.changeEquipment("weapon", null));
+      this.button("unequip-head", () => void this.changeEquipment("head", null));
       this.button("unequip-armor", () => void this.changeEquipment("armor", null));
       this.modal.querySelector("#craft-feedback")!.textContent = bagFeedback;
       this.button("craft", () => void this.makePotion());
@@ -714,6 +715,7 @@ export class Interface {
     input.click();
   }
   update(s: State, prompt: string) {
+    this.root.querySelector("#coin-status")!.textContent=`金币 ${s.coins}`;
     this.state = s;
     updateRuneHud(this);
     updateCampBossHud(this.root.querySelector<HTMLElement>("#camp-boss-status")!,s);

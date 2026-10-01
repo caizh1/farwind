@@ -21,7 +21,13 @@ export class EnemyView {
   eliteLabels=new Set<Phaser.GameObjects.Text>();
   static preload(scene:Phaser.Scene){
     CampBossView.preload(scene);
-    for(const kind of Object.keys(ENEMIES)){const art=enemyArt(kind);scene.load.spritesheet(`enemy-${kind}`,art.path,{frameWidth:art.frameWidth,frameHeight:art.frameHeight});}
+    for(const kind of Object.keys(ENEMIES)){
+      const art=enemyArt(kind),loadType=scene.load.imageLoadType;
+      // 大图直接交给浏览器解码，避免内置浏览器的 XHR→blob 路径加载失败；素材和帧尺寸保持原值。
+      if(art.frameWidth>160)scene.load.imageLoadType='HTMLImageElement';
+      scene.load.spritesheet(`enemy-${kind}`,art.path,{frameWidth:art.frameWidth,frameHeight:art.frameHeight});
+      scene.load.imageLoadType=loadType;
+    }
     scene.load.image('fungal-root','/assets/enemies-v1/fungal-root.png');
     scene.load.image('spore-projectile','/assets/enemies-v1/spore-projectile.png');scene.load.image('spore-burst','/assets/enemies-v1/spore-burst.png');
   }

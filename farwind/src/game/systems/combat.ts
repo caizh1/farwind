@@ -107,7 +107,7 @@ export type ParryAction = {
 };
 export type ActionKind = "attack" | "wind" | "parry" | "dash";
 export const actionPriority = { attack: 1, wind: 1, parry: 2, dash: 3 } as const;
-export type ActionRequest = { kind: ActionKind; at: number; sequence: number; axis: {x:number;y:number} };
+export type ActionRequest = { windAuto?:boolean; kind: ActionKind; at: number; sequence: number; axis: {x:number;y:number} };
 export type Target = MeleeBodyTarget & { id: string; hp: number; disabled?: boolean };
 export type Attack = {
   kind?: "melee" | "swordWind" | "counter";
@@ -242,6 +242,9 @@ export class CombatController {
   chainOwner:number|null=null;
   meleeFinisherEnabled=false;
   windHeld=false;
+  windAuto=false;
+  pendingWindAuto=false;
+  resolveWindAim?: (p:{x:number;y:number},config:SwordWindConfig)=>{direction:{x:number;y:number};facing:Facing;target:string}|null;
   pendingKind: "attack" | "wind" = "attack";
   momentumWindow=0;
   momentumChase=0;
@@ -302,7 +305,7 @@ export class CombatController {
     if(this.actionHistory.length>96)this.actionHistory.shift();
   }
   clearInputs(reason?:string,now=0) {
-    this.windHeld=false;
+    this.windHeld=false;this.windAuto=false;
     if(reason){
       if(this.pending)this.recordAction('attack',this.requestedAt,now,this.bufferUntil,`已清理：${reason}`,undefined,now);
       if(this.parryPending)this.recordAction('parry',this.parryPending.at,now,this.parryPending.until,`已清理：${reason}`,undefined,now);
@@ -370,7 +373,7 @@ export class CombatController {
     return legal;
   }
   requestParry(now: number, facing: Facing) {
-    this.windHeld=false;
+    this.windHeld=false;this.windAuto=false;
     if(this.hurting(now)){this.lastRejection="受击恢复中";this.recordAction('parry',now,this.actionLockUntil,now+PARRY.buffer,this.lastRejection);return false;}
     if (this.parryPending && now > this.parryPending.until) this.parryPending = null;
     if (this.parryPending || (this.parry && this.parry.successAt === undefined && now < this.parry.actionUntil)) {this.lastRejection=this.parryPending?'已有弹反预约':'架剑动作进行中';this.recordAction('parry',now,this.parryLegalAt(now),now+PARRY.buffer,this.lastRejection);return false;}
@@ -392,10 +395,10 @@ export class CombatController {
       ? Math.abs(axis.x)>Math.abs(axis.y) ? axis.x<0?2:3 : axis.y<0?1:0
       : this.intentFacing;
     if (top.kind === "parry") this.requestParry(now,facing);
-    else if (top.kind === "wind") {this.setIntent(axis);this.requestSwordWind(now);}
+    else if (top.kind === "wind") {this.setIntent(axis);this.requestSwordWind(now,top.windAuto??this.windAuto);}
     else if (top.kind === "attack") {this.setIntent(axis);this.requestAttack(now);}
     else {
-      this.windHeld=false;
+      this.windHeld=false;this.windAuto=false;
       if (this.dashPending && now <= this.dashPending.until) return;
       this.parryPending = null;
       this.pending = false;
@@ -484,7 +487,7 @@ export class CombatController {
   }
   reset(cooldown = 0) {
     this.chainOwner=null;
-    this.windHeld=false;this.momentum=null;this.momentumUsedCombo=-1;
+    this.windHeld=false;this.windAuto=false;this.momentum=null;this.momentumUsedCombo=-1;
     this.parry = null;
     this.lastParry = null;
     this.intentFacing=0;
@@ -518,12 +521,12 @@ export class CombatController {
     this.dashCooldown = cooldown;
     this.actionHistory=[];
   }
-  requestSwordWind(now:number) {
+  requestSwordWind(now:number,automatic=this.windAuto) {
     if(!this.swordWindEnabled||this.hurting(now)||this.pending)return false;
     if(this.dashUntil-now>COMBAT.dashAttackTail)return false;
     const legal=this.attack?this.attack.start+strikeDuration(attackConfig(this.attack)):now;
     // 单个预约在当前动作结束时消费，按住只生成下一次，不累计补发。
-    this.pending=true;this.pendingKind='wind';this.requestedAt=now;
+    this.pending=true;this.pendingKind='wind';this.pendingWindAuto=automatic;this.requestedAt=now;
     this.reservationOwner=null;this.bufferUntil=Math.max(now,legal,this.actionLockUntil,this.dashUntil)+COMBAT.buffer;
     return true;
   }
@@ -594,7 +597,7 @@ export class CombatController {
     }
     // 第二次风步直接清掉保留，不能刷新窗口。
     if(retained)this.momentum=null;
-    this.windHeld=false;
+    this.windHeld=false;this.windAuto=false;
     this.dashArmed = !!a || now < this.settleUntil || now < this.carryUntil;
     this.afterguard = null;
     this.autoCounter = null;
@@ -764,9 +767,10 @@ export class CombatController {
             : 1;
         if(!auto)this.pending = false;
         if(!auto)this.recordAction('attack',this.requestedAt,consumeAt,this.bufferUntil,'已执行',consumeAt);
-        const attackFacing=auto?.facing??(this.intentAim?this.intentFacing:facing);
+        const windAim=wind&&this.pendingWindAuto?this.resolveWindAim?.(p,this.swordWindConfig??resolveSwordWindConfig()):null;
+        const attackFacing=windAim?.facing??auto?.facing??(this.intentAim?this.intentFacing:facing);
         const [ax,ay]=facingVector(attackFacing);
-        const aim=auto?.direction??(auto?{x:ax,y:ay}:this.intentAim??{x:ax,y:ay});
+        const aim=windAim?.direction??auto?.direction??(auto?{x:ax,y:ay}:this.intentAim??{x:ax,y:ay});
         this.attack = {
           id: ++this.serial,
           kind: counter?'counter':wind?'swordWind':'melee',
@@ -777,11 +781,11 @@ export class CombatController {
           stage,
           facing: attackFacing,
           aim: Object.freeze({...aim}),
-          primaryTarget: auto?.target || undefined,
+          primaryTarget: windAim?.target??(auto?.target || undefined),
           automatic: !!auto,
           delivery: auto?.delivery??(wind?"wind":"blade"),
           sourceContactId: auto?.sourceContactId,
-          windDirection: auto?.direction ? {...auto.direction} : undefined,
+          windDirection: windAim?{...windAim.direction}:auto?.direction ? {...auto.direction} : undefined,
           start: consumeAt,
           enter: !a && consumeAt >= this.settleUntil,
           hit: new Set(),

@@ -60,7 +60,7 @@ describe("居民生活 M1 基础与事务", () => {
     old.coins = 17;
     old.bag[0] = { id: "wood", count: 4 };
     const next = validate(old);
-    expect(next.schema_version).toBe(15);
+    expect(next.schema_version).toBe(16);
     expect(next.defense.guards[0].dead).toBe(true);
     expect(next.defense.guards[1].hp).toBe(73);
     expect(next.coins).toBe(17);

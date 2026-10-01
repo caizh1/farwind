@@ -1,3 +1,4 @@
+import {unitState} from './encounterState';
 import type {World} from '../scenes/World';
 import {RuneCombat,type RuneEvent,type RuneTarget} from './runeCombat';
 import {RuneView} from '../entities/runeView';
@@ -32,7 +33,7 @@ export class RuneWorld {
  const target=e as typeof w.enemies[number];const event:DamageEvent={sourceId:'player',targetId:e.id,attackId:ev.eventId,amount:ev.amount,sourceType:ev.tags.includes('replay_hit')?'player-replay':ev.sourceKind==='phantom'?'player-phantom':'player-rune',eventId:'eventId' in target?target.eventId as string:null,origin:{...ev.point}};
  if(e.kind==='defense-enemy'){let result={applied:false,damage:0,killed:false};w.defense.damageEnemy(e as typeof w.defense.enemies[number],event,w.state.player.hp,hit=>result={applied:true,...hit});return result;}
  const hit=resolveDamage(event,{id:'player',faction:'village',hp:w.state.player.hp,armor:0},{id:e.id,hp:e.hp,faction:'hostile',armor:0,...enemyProtection(target,ev.point,w.sim),...(ev.tags.includes('replay_hit')?{reduction:0}: {})});
- if(!hit.applied)return hit;e.hp=hit.hp;target.flashUntil=w.sim+110;target.playerAggroUntil=w.sim+2500;w.float(e.x,e.y,`${ev.critical?'✧ ':''}${Math.round(hit.damage)}`);
+ if(!hit.applied)return hit;if(hit.damage>0){const member=unitState(w.state.encounters,e.id);if(member)member.participated=true;}e.hp=hit.hp;target.flashUntil=w.sim+110;target.playerAggroUntil=w.sim+2500;w.float(e.x,e.y,`${ev.critical?'✧ ':''}${Math.round(hit.damage)}`);
  if(hit.killed){w.recordEnemyDefeat(target,'player');void w.persist().catch(()=>{});}return hit;
  }
  advance(delta:number){const w=this.world;if(this.space!==w.state.life.playerSpace){this.clear();this.space=w.state.life.playerSpace;}this.engine.advance(delta);

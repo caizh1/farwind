@@ -1,3 +1,5 @@
+import {WindAim} from '../systems/windAim';
+import {creditCombatCoins,settleEncounterCoins} from '../systems/combatCoins';
 import {BuildTraining} from '../systems/buildTraining';
 import {momentumConfig,returnMode} from '../systems/runeState';
 import {isWindAttack,isMeleeFinisher} from '../systems/combat';
@@ -171,6 +173,8 @@ export class World extends Phaser.Scene {
   defenseCheckpointPending = false;
   defenseRetryAt=0;
   hero!: Actor;
+  windAim=new WindAim();
+  scopeMarker?:Phaser.GameObjects.Graphics;
   cat!: Actor;
   propImages = new Map<string, Phaser.GameObjects.Image>();
   waterEffects?: WaterEffects;
@@ -230,6 +234,7 @@ export class World extends Phaser.Scene {
     super(key);
   }
   preload() {
+    this.load.image("wind-scope", "/assets/equipment/wind-scope.webp");
     WindLessons.preload(this);
     for(const id of INTERIOR_ASSETS) this.load.image(`interior-${id}`, `/assets/village-interiors/${id}.webp`);
     for (const [id, texture] of Object.entries(VILLAGE_HOUSE_ART))
@@ -421,7 +426,7 @@ export class World extends Phaser.Scene {
         this.waterEffects?.pause();
         this.soundFx.ambience(0,false);
         this.keys.clear();
-        this.combat.clearInputs('暂停或失焦',this.sim);
+        this.combat.clearInputs('暂停或失焦',this.sim);this.windAim.clear();
         for(const enemy of [...this.enemies,...this.defense.enemies])enemy.recoil=undefined;
         this.battleAxis={x:0,y:0};
         this.runIntent=false;
@@ -464,6 +469,7 @@ export class World extends Phaser.Scene {
       configurable: true,
       value: () =>
         structuredClone({
+          windAim:{target:this.windAim.target,enabled:this.state.equipment.head==='windScope'},
           state: this.state,
           runes: this.runes?.snapshot(),
           ground: this.data.get('groundSnapshot')?.(),
@@ -665,6 +671,7 @@ export class World extends Phaser.Scene {
     this.cat.place(this.state.player.x - 78, this.state.player.y + 18);
     if (this.blocked(this.cat.sprite.x, this.cat.sprite.y))
       this.cat.place(this.state.player.x, this.state.player.y);
+    this.windAim.clear();
     this.hero.place(this.state.player.x, this.state.player.y);
     this.cameras.main.centerOn(this.state.player.x, this.state.player.y - 150);
     this.refresh();
@@ -691,6 +698,7 @@ export class World extends Phaser.Scene {
     }finally{this.sessionStarting=false;}
   }
   async trade(request: EconomyRequest) {
+    if(request.kind==="equip" && request.slot==="head" && (this.state.life.playerSpace!=="village" || regionAt(this.state.player).id!=="village" || this.runes?.lock()))throw Error("请在安全村庄脱战8秒且攻击结束后更换头部装备。");
     await this.economy.run(() => this.state,s=>economySnapshot(request.kind==="sleep"?{...s,dashCooldownRemaining:Math.max(0,this.combat.dashCooldown-this.sim)}:s,request,this.sleepSafety()),save,next => {
       this.state = next;
       this.loaded = structuredClone(next);
@@ -714,6 +722,7 @@ export class World extends Phaser.Scene {
     this.keys.clear();this.combat.reset(this.sim+this.state.dashCooldownRemaining);this.battleAxis={x:0,y:0};this.runIntent=false;this.pointerAttack=false;this.attackUntil=this.gatherUntil=0;
     this.clearSwordWind();this.slash?.clear();this.slashBack?.clear();this.parryInk?.clear();this.warningInk?.clear();this.parryEffects=[];this.sprint.reset(100);
     this.follower.reset(this.state.player);this.cat.place(this.state.player.x-78,this.state.player.y+18);if(this.blocked(this.cat.sprite.x,this.cat.sprite.y))this.cat.place(this.state.player.x,this.state.player.y);
+    this.windAim.clear();
     this.hero.place(this.state.player.x,this.state.player.y);this.cameras.main.centerOn(this.state.player.x,this.state.player.y-150);this.timeline.reset(performance.now());this.ui.update(this.state,"");this.dayNight.render(true);this.soundFx.ambience(lightAt(this.state.time).lamps,false);
   }
   async persist(notify = false) {
@@ -751,7 +760,16 @@ export class World extends Phaser.Scene {
   wireXiaobao(){
     this.defense.runeEnemyScale=id=>this.runes?.engine.enemyScale(id)??1;
     this.defense.playerAttackPermit=(enemy,target)=>this.attackPermit(enemy,target);
+    this.defense.enemyDeath=(enemy,sourceId)=>{
+      const member=this.state.defense.raid?.members.find(m=>m.id===enemy.id);if(!member)return;
+      const eligible=!!member.participated||sourceId==='player'||sourceId==='xiaobao'&&this.state.xiaobao.task==='follow';
+      const earned=creditCombatCoins(this.state,{elite:member.eliteLevel},eligible);if(earned)this.float(enemy.x,enemy.y-25,`金币 +${earned}`);
+    };
     this.defense.enemyDamage=(enemy,event,result)=>{
+      if(result.damage>0&&(event.sourceId==='player'||event.sourceId==='xiaobao'&&this.state.xiaobao.task==='follow')){
+        const member=unitState(this.state.encounters,enemy.id);if(member)member.participated=true;
+        const raid=this.state.defense.raid?.members.find(m=>m.id===enemy.id);if(raid)raid.participated=true;
+      }
       if(event.sourceId==='player')return;
       const origin=event.origin??this.defense.victim(event.sourceId)??this.state.player,direction=unit({x:enemy.x-origin.x,y:enemy.y-origin.y});
       this.emitFeedback(hitFeedbackKind({...result,interrupted:false,guardBroken:false}),`contact:${event.attackId}:${enemy.id}`,this.sim,enemy,undefined,{attackId:event.attackId,sourceId:event.sourceId,point:{x:enemy.x-direction.x*10,y:enemy.y-28-direction.y*6},incoming:direction,blade:{x:-direction.y,y:direction.x},depth:enemy.y+.15,damage:result.damage,guarded:result.guarded,killed:result.killed});
@@ -801,7 +819,7 @@ export class World extends Phaser.Scene {
   xiaobaoHit(e:EnemyBody,event:DamageEvent,released:ReleasedAttack,control:number,knock:number,task:XiaobaoTask,at:number){
     const before=e.hp,applied=this.defense.damageEnemy(e as typeof this.enemies[number],event,released),killed=applied&&e.hp===0;
     if(!applied)return {applied:false,killed:false,damage:0};
-    const member=unitState(this.state.encounters,e.id);if(member&&task==="follow")member.participated=true;
+    const member=unitState(this.state.encounters,e.id);if(member&&task==="follow"&&e.hp<before)member.participated=true;
     e.companionAggroUntil=at+2500;
     if(control>0)companionControl(e,at,control);
     if(knock>0&&!e.boss){const c=this.xiaobao!.controller,n=Math.max(.001,Math.hypot(e.x-c.x,e.y-c.y));sweepMove(e,(e.x-c.x)/n*knock,(e.y-c.y)/n*knock,motionBlocked,clearMotionLine);e.nav.path=[];}
@@ -1024,7 +1042,8 @@ export class World extends Phaser.Scene {
     const legacy=enemyDefs.some(d=>d.id===e.id);
     if(definition){
       const group=this.state.encounters.groups[definition.group],wasCleared=group.cleared;
-      if(!settleEncounterDeath(this.state.encounters,e.id,direct&&!legacy))return;
+      const earned=settleEncounterCoins(this.state,e.id,direct,direct&&!legacy);if(earned===null)return;
+      if(earned)this.float(e.x,e.y-25,`金币 +${earned}`);
       const u=unitState(this.state.encounters,e.id)!;u.x=e.x;u.y=e.y;
       if(!legacy&&direct&&add(this.state,item,1)){u.drop=false;u.dropRemaining=0;this.soundFx.play("pick");}
       if(!wasCleared&&group.cleared&&ENCOUNTERS.find(d=>d.id===definition.group)!.kind==="camp"){
@@ -1033,6 +1052,7 @@ export class World extends Phaser.Scene {
     }
     if(legacy||!definition){
       if(this.state.killed.includes(e.id))return;this.state.killed.push(e.id);
+      if(!definition&&!e.id.startsWith("practice-")&&!e.id.includes("dummy")){const earned=creditCombatCoins(this.state,e,direct);if(earned)this.float(e.x,e.y-25,`金币 +${earned}`);}
       if(direct&&add(this.state,item,1)){if(item==="crystal"&&this.state.quest===3)this.state.quest=4;this.soundFx.play("pick");}
       else if(direct||item==="crystal")this.state.pendingDrops.push({enemyId:e.id,item,x:e.homeX,y:e.homeY});
     }
@@ -1236,7 +1256,7 @@ export class World extends Phaser.Scene {
       amount:damage,sourceType:isWindAttack(attack)?"player-wind":"player-melee",eventId:null},
       {id:"player",faction:"village",hp:this.state.player.hp,armor:0},{id:e.id,faction:"hostile",hp:e.hp,armor:0,...protection});
     if(!hit.applied)return;
-    const member=unitState(this.state.encounters,e.id);if(member)member.participated=true;
+    const member=unitState(this.state.encounters,e.id);if(member&&hit.damage>0)member.participated=true;
     e.hp = hit.hp; e.playerAggroUntil=this.sim+2500;
     if(e.hp>0)this.soundFx.creature(e.type,"hurt",Math.hypot(e.x-this.state.player.x,e.y-this.state.player.y),this.sim);
     const direction=attack.windDirection??unit({x:e.x-this.state.player.x,y:e.y-this.state.player.y});
@@ -1671,6 +1691,8 @@ export class World extends Phaser.Scene {
     const p=this.state.player,oldX=p.x,oldY=p.y,prevSim=this.sim;
     const contacts:EnemyContact[]=[];
     const navigationFrame=navigationBudget();
+    if(!this.combat.windAuto||this.state.life.playerSpace!=="village"||this.state.equipment.head!=="windScope")this.windAim.clear();
+    this.combat.resolveWindAim=(point,config)=>this.state.equipment.head==='windScope'&&this.state.life.playerSpace==='village'?this.windAim.select(point,config,[...this.enemies,...this.defense.enemies].filter(e=>!('passiveRoot' in e&&e.passiveRoot))):null;
     this.combat.dashCostMultiplier=this.runes?.engine.dashCost()??1;
     this.combat.recoveryCancelEnabled=this.runes?.engine.has('r09')??false;
     this.sim=this.timeline.frame(this.sim,performance.now(),delta,this.keys.drain(),this.combat,{
@@ -1680,7 +1702,7 @@ export class World extends Phaser.Scene {
       advance:(prev,now)=>this.advanceBattle(prev,now,contacts,navigationFrame),
       input:(events,now)=>{
         this.sim=now;
-        for(const event of events){this.battleAxis=event.axis;this.runIntent=!!event.running;this.combat.setIntent(event.axis);this.combat.windHeld=!!event.windHeld;this.inputHistory.push({at:now,wall:event.at,sequence:event.sequence,kind:event.kind,facing:this.combat.intentFacing,rejection:''});}if(this.inputHistory.length>160)this.inputHistory.splice(0,this.inputHistory.length-160);
+        for(const event of events){this.battleAxis=event.axis;this.runIntent=!!event.running;this.combat.setIntent(event.axis);this.combat.windHeld=!!event.windHeld;this.combat.windAuto=!!event.windAuto;this.inputHistory.push({at:now,wall:event.at,sequence:event.sequence,kind:event.kind,facing:this.combat.intentFacing,rejection:''});}if(this.inputHistory.length>160)this.inputHistory.splice(0,this.inputHistory.length-160);
         const actions=events.filter((e):e is typeof e & {kind:"attack"|"wind"|"parry"|"dash"}=>e.kind!=="axis"&&this.state.life.playerSpace==="village");
         this.combat.requestActions(actions,now,p,this.combat.intentFacing);
         for(const row of this.inputHistory.slice(-events.length))if(row.kind!=='axis')row.rejection=this.combat.lastRejection;
@@ -1697,6 +1719,13 @@ export class World extends Phaser.Scene {
     const feedbackEvents=this.feedback.drain();
     this.soundFx.feedbackBatch(feedbackEvents,this.feedback.mode);
     this.swordWindView?.draw(this.sim);this.lessons?.draw(this.sim);
+    const aimStatus=this.ui.root.querySelector<HTMLElement>('#wind-aim-status')!;
+    aimStatus.hidden=this.state.equipment.head!=='windScope';
+    const aimed=[...this.enemies,...this.defense.enemies].find(e=>e.id===this.windAim.target&&e.hp>0&&!e.disabled);
+    aimStatus.textContent=this.state.skills.swordWindStage===0?'瞄准镜 · 尚未学会剑风':aimed?'I 自动瞄准 · 已锁定目标 / 中键手动':this.combat.windAuto?'无可锁定目标 · 手动剑风':'瞄准镜 · 按住 I 自动瞄准 / 中键手动';
+    if(!this.scopeMarker)this.scopeMarker=this.add.graphics();this.scopeMarker.clear();
+    if(aimed&&this.state.equipment.head==='windScope'&&this.combat.windAuto&&feedbackVisual(this.feedback.mode))this.scopeMarker.lineStyle(2,0xc1ffe6,.9).strokeCircle(aimed.x,aimed.y,20).setDepth(aimed.y+.2);
+
     const hurting=this.combat.hurting(this.sim);
     if (!hurting && !this.combat.attack && !this.combat.parry && this.sim>=this.combat.dashUntil && length)
       this.hero.motion.direction=nextFacing;
@@ -1710,6 +1739,7 @@ export class World extends Phaser.Scene {
     this.attackUntil = striking
       ? striking.start + this.combat.total(striking.stage)
       : 0;
+    this.hero.scopeEquipped=this.state.equipment.head==='windScope';
     this.hero.move(
       p.x,
       p.y,
@@ -1934,6 +1964,7 @@ export class World extends Phaser.Scene {
       this.xiaobao?.controller.transitioned(p);
       this.follower.reset(this.state.player);
       this.cat.place(592, 738);
+      this.windAim.clear();
       this.hero.place(p.x, p.y);
       this.respawnInvulnerable = this.sim + 2000;
       // 回村反馈由归风珠统一说明，避免随后的一般抵达提示将其覆盖。
