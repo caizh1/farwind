@@ -2,6 +2,7 @@ import {RUNES,RUNE_BALANCE as B,runeById,duoById,resolveDuos,type RuneDefinition
 import type {State} from './state';
 import type {Point} from './obstacles';
 import type {SwordWindConfig} from '../../data/swordWind';
+import type {SwordWind} from './swordWind';
 import {sweptTargetContact} from './swordWindGeometry';
 export type RuneTarget=Point&{id:string;hp:number;boss?:unknown;disabled?:boolean;kind?:string;radius?:number};
 export type RuneEvent={eventId:string;rootEventId:string;parentEventId:string|null;attackInstanceId:string;sourceKind:'native'|'rune'|'duo'|'status'|'phantom'|'reflection';sourceRuneId?:string;sourceDuoId?:string;targetId:string;tags:string[];procDepth:number;amount:number;actual?:number;critical?:boolean;A:number;point:Point};
@@ -13,6 +14,7 @@ export type RuneContext={state:()=>State;targets:()=>RuneTarget[];A:()=>number;c
 const dist=(a:Point,b:Point)=>Math.hypot(a.x-b.x,a.y-b.y);
 const direction=(a:Point,b:Point)=>{const d=dist(a,b)||1;return {x:(b.x-a.x)/d,y:(b.y-a.y)/d};};
 export class RuneCombat {
+ traces:{id:number;point:Point;until:number;root:string;parent:RuneEvent}[]=[];
  statuses=new Map<string,RuneStatus>();projectiles:RuneProjectile[]=[];fields:RuneField[]=[];effects:RuneFx[]=[];events:RuneEvent[]=[];
  jobs:{at:number;serial:number;run:()=>void}[]=[];serial=0;seen=new Map<string,number>();intervals=new Map<string,number>();
  domainUntil=0;time?:{until:number;point:Point;A:number;records:{target:string;damage:number;point:Point}[];parent:RuneEvent};
@@ -21,9 +23,9 @@ export class RuneCombat {
  constructor(public ctx:RuneContext){this.rebind();}
  get state(){return this.ctx.state();}get now(){return this.state.runes.clock;}get player(){return this.state.player;}
  has(id:string){return this.state.runes.slots.includes(id);}cfg(id:string){return runeById(id)!.config;}duo(id:string){return this.activeDuos.has(id);}
- rebind(){const key=this.state.runes.slots.join('|')+':'+this.state.skills.swordWindStage;if(key!==this.equipped){this.clear();this.equipped=key;this.activeDuos=new Set(resolveDuos(this.state.runes.slots,this.state.skills.swordWindStage>0).filter(d=>d.active).map(d=>d.id));}}
+ rebind(){const key=this.state.runes.slots.join('|')+':'+this.state.skills.swordWindStage+':'+JSON.stringify(this.state.runes.growth);if(key!==this.equipped){this.clear();this.equipped=key;this.activeDuos=new Set(resolveDuos(this.state.runes.slots,this.state.skills.swordWindStage>0).filter(d=>d.active).map(d=>d.id));}}
  // 临时效果无存档恢复入口；冷却、蓄积与收藏属于符文本身，清理绝不返还冷却。
- clear(){this.statuses.clear();this.projectiles=[];this.fields=[];this.jobs=[];this.effects=[];this.seen.clear();this.intervals.clear();this.domainUntil=this.phoenixUntil=this.bossGuardUntil=this.speedUntil=this.featherGrace=0;this.feathers=0;this.time=undefined;this.dash=undefined;}
+ clear(){this.traces=[];this.statuses.clear();this.projectiles=[];this.fields=[];this.jobs=[];this.effects=[];this.seen.clear();this.intervals.clear();this.domainUntil=this.phoenixUntil=this.bossGuardUntil=this.speedUntil=this.featherGrace=0;this.feathers=0;this.time=undefined;this.dash=undefined;}
  cooldown(id:string){return this.state.runes.cooldowns[id]??0;}
  startCooldown(id:string,duration:number){this.state.runes.cooldowns[id]=duration;this.state.runes.counts[id]=0;this.ctx.checkpoint();}
  gate(key:string,ms:number){if((this.intervals.get(key)??-Infinity)>this.now)return false;this.intervals.set(key,this.now+ms);return true;}
@@ -38,9 +40,9 @@ export class RuneCombat {
  speedBonus(){return (this.has('r18')?this.cfg('r18').speed:0)+(this.has('r09')&&this.now<this.speedUntil?this.cfg('r09').speed:0);}
  dashCost(){return this.has('r09')?this.cfg('r09').cost:1;}
  nativeBonus(e:RuneTarget){return (this.has('r18')?Math.min(this.cfg('r18').cap,this.speedBonus()*this.cfg('r18').convert):0)+(this.now<this.domainUntil?this.cfg('r26').bonus:0)+(this.has('r23')&&this.weak(e.id)?this.cfg('r23').bonus:0);}
- native(instance:string,e:RuneTarget,base:number,stage:number,wind=false):RuneEvent {
- const eventId=`native:${instance}:${e.id}`,critical=this.random()<this.critRate(e),amount=base*(1+this.nativeBonus(e))*(critical?this.critMultiplier(e):1);
- return {eventId,rootEventId:eventId,parentEventId:null,attackInstanceId:instance,sourceKind:'native',targetId:e.id,tags:['native',wind?'wind_hit':'melee_hit',stage===3?'finisher':'strike'],procDepth:0,amount,critical,A:this.ctx.A(),point:{x:e.x,y:e.y}};
+ native(instance:string,e:RuneTarget,base:number,stage:number,wind=false,finisher=!wind&&stage===3,leg='out'):RuneEvent {
+ const eventId=`native:${instance}:${e.id}:${wind?leg:'blade'}`,critical=this.random()<this.critRate(e),amount=base*(1+this.nativeBonus(e))*(critical?this.critMultiplier(e):1);
+ return {eventId,rootEventId:`action:${instance}`,parentEventId:null,attackInstanceId:instance,sourceKind:'native',targetId:e.id,tags:['native',wind?'wind_hit':'melee_hit',finisher?'finisher':'strike',wind?`wind_${leg}`:'blade'],procDepth:0,amount,critical,A:this.ctx.A(),point:{x:e.x,y:e.y}};
  }
  parent(rune:string,tag:string,point:Point):RuneEvent{const id=`action:${++this.serial}`;return {eventId:id,rootEventId:id,parentEventId:null,attackInstanceId:id,sourceKind:'rune',sourceRuneId:rune,targetId:'',tags:[tag],procDepth:0,amount:0,A:this.ctx.A(),point:{x:point.x,y:point.y}};}
  child(parent:RuneEvent,e:RuneTarget,amount:number,tags:string[],rune?:string,duo?:string,kind:RuneEvent['sourceKind']=duo?'duo':'rune'):RuneEvent {
@@ -54,7 +56,7 @@ export class RuneCombat {
  if(canCrit&&this.random()<this.critRate(e)){ev.critical=true;ev.amount*=this.critMultiplier(e);}
  if(ev.sourceKind!=='native'&&!ev.tags.includes('replay_hit')&&this.has('r23')&&this.weak(e.id))ev.amount*=1+this.cfg('r23').bonus;
  const hit=this.ctx.damage(e,ev);if(!hit.applied)return false;ev.actual=hit.damage;this.log(ev);
- if(visual)this.fx(visual,e,30,ev.sourceRuneId??'r01',420,{duo:ev.sourceDuoId,critical:ev.critical});
+ if(visual)this.fx(visual,e,30,ev.sourceRuneId??'r01',420,{duo:ev.sourceDuoId,critical:ev.critical,lead:ev.tags.includes('tide_hit')?undefined:0,direction:ev.tags.includes('tide_hit')?direction(this.player,e):undefined});
  if(ev.critical)this.fx(this.duo('d09')&&this.weak(e.id)?'heart-star':this.duo('d10')?'brew-stars':'hunter-star',e,32,'r06');
  this.ctx.sound(ev.sourceDuoId?duoById(ev.sourceDuoId).visual:runeById(ev.sourceRuneId??'r01')?.sound??'wind','hit',this.now);
  if(hit.killed){this.statuses.delete(e.id);return true;}
@@ -72,7 +74,7 @@ export class RuneCombat {
  }
  }
  lightning(e:RuneTarget,parent:RuneEvent,ratio:number,rune?:string,duo?:string,visual='fork',lead=B.lightningLead){
- if(!this.legal(e))return;const point={x:e.x,y:e.y};this.fx(visual,point,duo==='d01'?46:32,rune??'r11',Math.max(480,lead+320),{duo,lead});this.ctx.sound('thunder','release',this.now);
+ if(!this.legal(e))return;const point={x:e.x,y:e.y};this.fx(visual,point,duo==='d01'?46:32,rune??'r11',Math.max(480,lead+430),{duo,lead});this.ctx.sound('thunder','release',this.now);
  this.schedule(lead,()=>{if(this.legal(e)&&dist(e,point)<=40&&this.ctx.clear(point,e))this.apply(e,this.child(parent,e,parent.A*ratio,['lightning_hit'],rune,duo));});
  }
  damageArea(point:Point,radius:number,parent:RuneEvent,ratio:number,tags:string[],rune?:string,duo?:string,visual?:string){for(const e of this.targets(point,radius))this.apply(e,this.child(parent,e,parent.A*ratio,tags,rune,duo),visual);}
@@ -87,6 +89,10 @@ export class RuneCombat {
   if(this.has('r26'))this.count('r26',ev,()=>this.swordDomain(e,ev));
   if(this.has('r27'))this.count('r27',ev,()=>this.thunderEdict(e,ev));
   if(ev.tags.includes('finisher'))this.finisher(e,ev);
+ }
+ if(this.has('r32')&&ev.tags.includes('wind_out')){
+  const c=this.cfg('r32');this.traces.push({id:++this.serial,point:{x:e.x,y:e.y},until:this.now+c.duration,root:ev.attackInstanceId,parent:ev});
+  if(this.traces.length>c.max)this.traces.shift();
  }
  if(!this.legal(e))return;
  if(this.has('r07')||this.has('r23')){this.status(e).weak={until:this.now+B.weakDuration};this.fx(this.has('r23')?'rose':'ribbon',e,32,this.has('r23')?'r23':'r07');}
@@ -127,7 +133,7 @@ export class RuneCombat {
  wave(point:Point,d:Point,parent:RuneEvent,rune:string,ratio:number,distance:number,width:number,duo?:string,returning=false){const c=this.cfg(rune),p:RuneProjectile={id:`wave:${++this.serial}`,kind:'wave',rune,duo,parent,point:{x:point.x,y:point.y},previous:{x:point.x,y:point.y},direction:{...d},born:this.now,until:this.now+distance/(c.speed??500)*1000+300,radius:width/2,speed:c.speed??500,damage:parent.A*ratio,hit:new Map(),distance:0,maxDistance:distance,canCrit:false,maxTargets:Infinity,returning,returnOrigin:{x:point.x,y:point.y}};this.projectiles.push(p);this.ctx.sound('tide','release',this.now);}
  vortex(parent:RuneEvent,d:Point){const c=this.cfg('r22');this.projectiles.push({id:`vortex:${++this.serial}`,kind:'vortex',rune:'r22',parent,point:{...this.player},previous:{...this.player},direction:{...d},born:this.now,until:this.now+c.duration,radius:c.radius*(this.duo('d12')?duoById('d12').config.radius:1),speed:c.speed,damage:parent.A*c.damage,hit:new Map(),distance:0,maxDistance:c.speed*c.duration/1000,canCrit:this.duo('d03'),maxTargets:Infinity});}
  seeking(e:RuneTarget,parent:RuneEvent,rune:string,n:number,offset=0,finish=false,origin?:Point){const c=this.cfg(rune);for(let i=0;i<n;i++){const side=n===1?0:i%2?1:-1,point=origin?{...origin}:{x:this.player.x+side*(40+offset),y:this.player.y-32-offset};this.projectiles.push({id:`seeking:${++this.serial}`,kind:'seeking',rune,parent,point,previous:{x:point.x,y:point.y},direction:direction(point,e),born:this.now,until:this.now+2500,radius:12,speed:c.speed,damage:parent.A*c.damage,hit:new Map(),target:e.id,distance:0,maxDistance:1000,canCrit:rune==='r26',maxTargets:1,finish});}this.ctx.sound(runeById(rune)!.sound,'release',this.now);}
- windRelease(instance:string,root:Point,d:Point,config:SwordWindConfig){if(!this.state.skills.swordWindStage||config.trialLesson)return;const ev=this.parent('r20','wind_release',root);ev.attackInstanceId=instance;
+ windRelease(instance:string,root:Point,d:Point,config:SwordWindConfig){if(!this.state.skills.swordWindStage||config.trialLesson)return;const ev=this.parent('r20','wind_release',root);ev.attackInstanceId=instance;ev.rootEventId=`action:${instance}`;
  if(this.has('r20'))this.wave(root,d,ev,'r20',this.cfg('r20').damage,config.distance,this.cfg('r20').width,undefined,true);
  if(this.has('r21')&&!this.cooldown('r21')){this.startCooldown('r21',this.cfg('r21').cooldown);this.field('crystal',root,ev,'r21');}
  if(this.duo('d11')){const copy=structuredClone(config);this.schedule(duoById('d11').config.delay,()=>{const hits=new Map<string,number>();for(const angle of copy.angles){const v={x:d.x*Math.cos(angle)-d.y*Math.sin(angle),y:d.x*Math.sin(angle)+d.y*Math.cos(angle)},p:RuneProjectile={id:`phantom:${++this.serial}`,kind:'phantom',rune:'r20',duo:'d11',parent:ev,point:{...root},previous:{...root},direction:v,born:this.now,until:this.now+copy.lifetime,radius:copy.width/2,speed:copy.speed,damage:copy.damage*duoById('d11').config.damage,hit:hits,distance:0,maxDistance:copy.distance,canCrit:false,maxTargets:copy.maxTargets==='all'?Infinity:copy.maxTargets};this.projectiles.push(p);}});}}
@@ -148,12 +154,12 @@ export class RuneCombat {
  incomingScale(sourceId:string,boss=false){return (this.weak(sourceId)?.8:1)*(this.has('r10')?1-this.cfg('r10').reduction:1)*(boss&&this.now<this.bossGuardUntil?1-duoById('d13').config.reduction:1);}
  enemyScale(sourceId:string){return this.weak(sourceId)?.8:1;}
  immune(){return this.now<this.phoenixUntil||this.now<this.featherGrace;}
- protectHit(source:RuneTarget|undefined,hitId:string){if(this.immune())return true;if(!this.feathers)return false;this.feathers--;this.featherGrace=this.now+duoById('d15').config.grace;this.metrics.prevented++;const ev=this.parent('r30','feather_block',this.player);this.fx('mirror-phoenix',this.player,75,'r30',650,{duo:'d15',stacks:this.feathers});if(source&&this.legal(source)){const point={...this.player};this.projectiles.push({id:`feather:${++this.serial}`,kind:'seeking',rune:'r30',duo:'d15',parent:ev,point,previous:{x:point.x,y:point.y},direction:direction(point,source),born:this.now,until:this.now+2000,radius:12,speed:540,damage:ev.A*duoById('d15').config.damage,hit:new Map(),target:source.id,distance:0,maxDistance:900,canCrit:false,maxTargets:1,reflection:true});}return true;}
+ protectHit(source:RuneTarget|undefined,hitId:string){if(this.immune())return true;if(!this.feathers)return false;this.feathers--;this.featherGrace=this.now+duoById('d15').config.grace;this.metrics.prevented++;const ev=this.parent('r30','feather_block',this.player);this.fx('mirror-phoenix',this.player,75,'r30',650,{duo:'d15',stacks:this.feathers,lead:0});if(source&&this.legal(source)){const point={...this.player};this.projectiles.push({id:`feather:${++this.serial}`,kind:'seeking',rune:'r30',duo:'d15',parent:ev,point,previous:{x:point.x,y:point.y},direction:direction(point,source),born:this.now,until:this.now+2000,radius:12,speed:540,damage:ev.A*duoById('d15').config.damage,hit:new Map(),target:source.id,distance:0,maxDistance:900,canCrit:false,maxTargets:1,reflection:true});}return true;}
  damaged(source:RuneTarget|undefined,hpAfter:number,actual:number){if(actual<=0)return hpAfter;if(this.has('r10'))this.fx('armor',this.player,38,'r10',350);this.state.runes.peace=0;
  if(hpAfter<=0&&this.has('r30')&&!this.cooldown('r30')){const c=this.cfg('r30'),ev=this.parent('r30','rebirth',this.player);this.startCooldown('r30',c.cooldown);this.player.hp=100*c.heal;this.phoenixUntil=this.now+c.immune;this.feathers=this.duo('d15')?duoById('d15').config.feathers:0;this.metrics.phoenix++;
  this.fx(this.duo('d15')?'mirror-phoenix':'phoenix',this.player,c.radius,'r30',2000,{lead:360,duo:this.duo('d15')?'d15':undefined});const point={...this.player};this.schedule(360,()=>this.damageArea(point,c.radius,ev,c.damage,['phoenix_hit'],'r30'));for(let i=1;i<=6;i++)this.schedule(i*1000,()=>{if(this.player.hp>0)this.player.hp=Math.min(100,this.player.hp+100*c.regen);});this.ctx.sound('phoenix','finish',this.now);this.ctx.checkpoint();return 100*c.heal;
  }
- if(hpAfter>0&&this.has('r30')&&this.gate('phoenix-passive',this.cfg('r30').interval)){const ev=this.parent('r30','hurt',this.player);this.fx('phoenix-counter',this.player,95,'r30',600);const point={...this.player};this.schedule(180,()=>this.damageArea(point,95,ev,this.cfg('r30').passive,['phoenix_hit'],'r30',undefined,'phoenix-counter'));}
+ if(hpAfter>0&&this.has('r30')&&this.gate('phoenix-passive',this.cfg('r30').interval)){const ev=this.parent('r30','hurt',this.player);this.fx('phoenix-counter',this.player,95,'r30',600,{lead:180});const point={...this.player};this.schedule(180,()=>this.damageArea(point,95,ev,this.cfg('r30').passive,['phoenix_hit'],'r30',undefined,'phoenix-counter'));}
  return hpAfter;
  }
  movementSlow(e:RuneTarget){const chill=this.statuses.get(e.id)?.chill,ice=chill&&chill.until>this.now?chill.stacks*B.chillSlow:0;return Math.min(e.boss?.2:.6,Math.max(ice,this.timeSlow(e)));}
@@ -171,6 +177,7 @@ export class RuneCombat {
  if(this.dash){const dash=this.dash;for(const e of this.ctx.targets())if(this.legal(e)&&!dash.hit.has(e.id)&&sweptTargetContact(dash.previous,this.player,e,e,36+(e.radius??14))!==null&&this.ctx.clear(this.player,e)){dash.hit.add(e.id);this.apply(e,this.child(dash.parent,e,dash.parent.A*this.cfg('r08').damage,['mirror_hit'],'r08'),'mirror-step');}dash.previous={...this.player};if(this.now>=dash.until)this.dash=undefined;}
  const ready=this.jobs.filter(j=>j.at<=this.now).sort((a,b)=>a.at-b.at||a.serial-b.serial);this.jobs=this.jobs.filter(j=>j.at>this.now);for(const job of ready)job.run();
  if(this.time&&this.now>=this.time.until){const t=this.time;this.time=undefined;const sum=t.records.reduce((n,r)=>n+r.damage,0),scale=sum?Math.min(t.A*this.cfg('r29').cap,sum*this.cfg('r29').replay)/sum:0;for(const rec of t.records){const e=this.ctx.targets().find(e=>e.id===rec.target);this.fx('time-replay',rec.point,32,'r29',550,{end:t.point});if(e&&this.legal(e))this.apply(e,this.child(t.parent,e,rec.damage*scale,['replay_hit'],'r29'),'time-replay');}this.ctx.sound('time','finish',this.now);}
+ this.traces=this.traces.filter(t=>this.now<t.until);
  this.effects=this.effects.filter(f=>this.now<f.born+f.life);for(const [key,at] of this.seen)if(this.now-at>15000)this.seen.delete(key);for(const [key,until] of this.intervals)if(this.now-until>10000)this.intervals.delete(key);
  }
  advanceField(f:RuneField){const c=this.cfg(f.rune),until=Math.min(this.now,f.until);while(f.next<=until){f.next+=c.interval;f.round++;
@@ -198,5 +205,23 @@ export class RuneCombat {
  }
  this.projectiles=live;
  }
- snapshot(){return {clock:this.now,duos:[...this.activeDuos],cooldowns:{...this.state.runes.cooldowns},counts:{...this.state.runes.counts},statuses:Object.fromEntries(this.statuses),fields:this.fields,projectiles:this.projectiles.map(p=>({...p,hit:[...p.hit]})),effects:this.effects,events:this.events,metrics:{...this.metrics},temporary:{feathers:this.feathers,immune:this.immune(),domain:this.domainUntil,time:this.time,bossGuard:this.bossGuardUntil},pending:this.jobs.length};}
+ tracePass(w:SwordWind){
+  if(!this.has('r32')||w.attack.kind!=='swordWind'||w.config.trialLesson)return;
+  const root=`attack:${w.rootActionId}`;
+  for(const trace of [...this.traces]){
+   if(this.now>=trace.until||trace.root===root&&w.leg==='out')continue;
+   const t=sweptTargetContact(w.previous,w.position,trace.point,trace.point,w.config.width/2+18);
+   if(t===null)continue;
+   const contact={x:w.previous.x+(w.position.x-w.previous.x)*t,y:w.previous.y+(w.position.y-w.previous.y)*t};
+   if(!this.ctx.clear(contact,trace.point))continue;
+   this.traces=this.traces.filter(x=>x!==trace);
+   this.fx('wind-turbulence',trace.point,this.cfg('r32').radius,'r32',500);
+   const ev={...trace.parent,attackInstanceId:root,rootEventId:`action:${root}`};
+   for(const e of this.targets(trace.point,this.cfg('r32').radius)){
+    this.apply(e,this.child(ev,e,ev.A*this.cfg('r32').damage,['trace_hit'],'r32'));
+    if(e.hp>0)this.ctx.push(e,direction(trace.point,e),12);
+   }
+  }
+ }
+ snapshot(){return {traces:this.traces,clock:this.now,duos:[...this.activeDuos],cooldowns:{...this.state.runes.cooldowns},counts:{...this.state.runes.counts},statuses:Object.fromEntries(this.statuses),fields:this.fields,projectiles:this.projectiles.map(p=>({...p,hit:[...p.hit]})),effects:this.effects,events:this.events,metrics:{...this.metrics},temporary:{feathers:this.feathers,immune:this.immune(),domain:this.domainUntil,time:this.time,bossGuard:this.bossGuardUntil},pending:this.jobs.length};}
 }

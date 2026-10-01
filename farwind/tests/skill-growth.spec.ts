@@ -1,6 +1,8 @@
 import { test, expect, type Page } from "@playwright/test";
 import { writeFileSync } from "node:fs";
 import { move } from "./skill-navigation";
+import {clearMotionLine} from '../src/game/systems/obstacles';
+import {props} from '../src/data/world';
 const read = (p: Page) => p.evaluate(() => (window as any).__farwind());
 const root = "docs/traveler-skills/evidence/";
 async function close(page: Page) {
@@ -8,43 +10,35 @@ async function close(page: Page) {
     await page.getByRole("button", { name: "继续 · E", exact: true }).click();
 }
 async function face(page: Page, key: string) {
-  await page.keyboard.press(key);
+  // 移动方向由帧采样，跨重载时不能用一帧内的 down/up 假设完成朝向更新。
+  await page.keyboard.down(key);
+  await page.waitForTimeout(65);
+  await page.keyboard.up(key);
   await page.waitForTimeout(80);
 }
+// 新规则：教学及机关由独立剑风动作完成，不再以三刀作为前置。
 async function chain(page: Page, shot = async () => {}) {
-  await page.keyboard.press("j");
-  await page.waitForFunction(
-    () => (window as any).__farwind().skillGrowth.combatStage === 1,
-  );
-  await page.keyboard.press("j");
-  await page.waitForFunction(
-    () => (window as any).__farwind().skillGrowth.combatStage === 2,
-  );
-  await page.keyboard.press("j");
-  await page.waitForFunction(
-    () => (window as any).__farwind().skillGrowth.combatStage === 3,
-  );
-  await page.waitForFunction(() =>
-    document
-      .querySelector("#parry-status")
-      ?.textContent?.includes("J 接第四击"),
-  );
-  await page.keyboard.press("j");
-  await page.waitForFunction(
-    () => (window as any).__farwind().skillGrowth.combatStage === 4,
-  );
+  await page.keyboard.press("i");
+  await page.waitForFunction(() => (window as any).__farwind().skillGrowth.combatStage === 1);
   await page.waitForTimeout(250);
   await shot();
   await page.waitForTimeout(850);
 }
+async function healForTravel(page:Page){
+ const s=(await read(page)).state;
+ if(s.player.hp<=70&&s.bag.some((x:any)=>x?.id==='potion'&&x.count>0)){
+  await page.keyboard.press('1');await expect.poll(async()=>(await read(page)).state.player.hp).toBeGreaterThan(s.player.hp);
+ }
+}
 async function clearThreat(page: Page) {
   for (let n = 0; n < 28; n++) {
+    await healForTravel(page);
     const state = await read(page),
       p = state.state.player;
     const enemy = state.skillGrowth.enemies
       .filter(
         (e: any) =>
-          e.hp > 0 && !e.disabled && Math.hypot(e.x - p.x, e.y - p.y) < 270,
+          e.hp > 0 && !e.disabled && Math.hypot(e.x - p.x, e.y - p.y) < 270 && clearMotionLine(p,e),
       )
       .sort(
         (a: any, b: any) =>
@@ -61,6 +55,11 @@ async function clearThreat(page: Page) {
     await page.keyboard.up(key);
     await page.keyboard.press("k");
     await page.waitForTimeout(160);
+    if(state.state.skills.swordWindStage){
+      // 已学永久剑风后实际使用远程清路，避免自动脚本持续贴脸扛伤。
+      await page.keyboard.down("i");await page.waitForTimeout(850);await page.keyboard.up("i");
+      await page.waitForTimeout(150);continue;
+    }
     await page.keyboard.press("j");
     await page.waitForTimeout(240);
     await page.keyboard.press("j");
@@ -71,7 +70,8 @@ async function clearThreat(page: Page) {
   throw Error("附近威胁未在限定键鼠战斗内解除");
 }
 async function lesson(page: Page, x: number, y: number) {
-  await move(page, x, y);
+  await move(page, x, y, ()=>clearThreat(page));
+  await healForTravel(page);await clearThreat(page);await move(page,x,y,()=>clearThreat(page));
   await page.keyboard.press("e");
   await expect(page.locator(".lesson-actions")).toBeVisible();
   await page.waitForTimeout(120);
@@ -83,8 +83,13 @@ async function restored(page: Page, stage: number) {
   await page.getByRole("button", { name: "继续旅途", exact: true }).click();
   await page.waitForFunction(() => (window as any).__farwind().mode === "");
   expect((await read(page)).state.skills.swordWindStage).toBe(stage);
+  // 在游戏恢复后使用实际采集制作的药剂，不修改运行状态。
+  const p=(await read(page)).state.player;
+  if(p.hp<=60){await page.keyboard.press('1');await expect.poll(async()=>(await read(page)).state.player.hp).toBeGreaterThan(p.hp);}
 }
-test("真实新游戏：五次独特学习、投影应用、逐阶重开和手记", async ({ page }) => {
+// 正式新游戏自然探索五处传承、实际风铃命中与逐阶重开。
+test("wind-natural-journey", async ({ page }) => {
+  test.setTimeout(420000);
   const errors: string[] = [],
     records: any[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
@@ -94,6 +99,18 @@ test("真实新游戏：五次独特学习、投影应用、逐阶重开和手�
     await page.waitForFunction(() => (window as any).__farwind().mode === "");
     expect((await read(page)).state.skills.swordWindStage).toBe(0);
     await expect(page.locator("#sword-wind-status")).toBeHidden();
+    // 先在村庄采集补给并真实制作三瓶药剂，供跨区域探索使用。
+    for(const id of ['herb-v1','herb-garden-1','herb-garden-2','berry-v1','orchard-berry-1']){
+      const p=props.find(p=>p.id===id)!;await move(page,p.x,p.y+30);await page.keyboard.press('e');
+      await expect.poll(async()=>(await read(page)).state.collected[id]).not.toBeUndefined();
+      await page.waitForTimeout(300);
+    }
+    await page.keyboard.press('Tab');
+    for(let i=1;i<=3;i++){
+      await page.getByRole('button',{name:'制作恢复药剂',exact:true}).click();
+      await expect.poll(async()=>(await read(page)).state.bag.filter((a:any)=>a?.id==='potion').reduce((n:number,a:any)=>n+a.count,0)).toBe(i);
+    }
+    await page.getByRole('button',{name:'收好行囊',exact:true}).click();
     await lesson(page, 1380, 1525);
     await page
       .getByRole("button", { name: "开始限定试用", exact: true })
@@ -117,9 +134,9 @@ test("真实新游戏：五次独特学习、投影应用、逐阶重开和手�
         (t: any) => t.id === "lesson-water-followup",
       ).hits,
     ).toBeGreaterThan(0);
-    await lesson(page, 2460, 920);
+    await lesson(page, WIND_LESSONS[1].stand.x, WIND_LESSONS[1].stand.y);
     await page
-      .getByRole("button", { name: "沿两铃之间导流", exact: true })
+      .getByRole("button", { name: "解开缠住铃绳的藤蔓", exact: true })
       .click();
     await expect
       .poll(async () => (await read(page)).state.skills.swordWindStage)
@@ -127,26 +144,26 @@ test("真实新游戏：五次独特学习、投影应用、逐阶重开和手�
     records.push({ 阶段: 2, 状态: await read(page) });
     await restored(page, 2);
     await clearThreat(page);
-    await move(page, 2460, 980);
+    await move(page, WIND_LESSONS[1].stand.x, WIND_LESSONS[1].stand.y);
     await face(page, "d");
     await chain(page);
     expect(
       (await read(page)).skillGrowth.targets
-        .filter((t: any) => t.id.startsWith("lesson-double-"))
+        .filter((t: any) => t.id.startsWith("lesson-serial-bell-"))
         .every((t: any) => t.hits === 1),
     ).toBe(true);
     await page.screenshot({ path: root + "natural-double.png" });
-    await lesson(page, 2890, 830);
-    await page.getByRole("button", { name: "沿风痕封闭裂开的泄口" }).click();
+    await lesson(page, WIND_LESSONS[2].stand.x, WIND_LESSONS[2].stand.y);
+    await page.getByRole("button", { name: "清走挡风的落枝" }).click();
     await expect
       .poll(async () => (await read(page)).state.skills.swordWindStage)
       .toBe(3);
     records.push({ 阶段: 3, 状态: await read(page) });
     await restored(page, 3);
     await clearThreat(page);
-    await move(page, 2890, 1180);
+    await move(page, WIND_LESSONS[2].stand.x, WIND_LESSONS[2].stand.y);
     await clearThreat(page);
-    await move(page, 2890, 1180);
+    await move(page, WIND_LESSONS[2].stand.x, WIND_LESSONS[2].stand.y);
     await face(page, "d");
     await chain(page);
     const through = (await read(page)).skillGrowth.targets.filter((t: any) =>
@@ -154,11 +171,14 @@ test("真实新游戏：五次独特学习、投影应用、逐阶重开和手�
     );
     expect(through.map((t: any) => t.hits)).toEqual([1, 1, 1, 0]);
     await page.screenshot({ path: root + "natural-through-wall.png" });
-    await lesson(page, 3610, 1200);
+    // 沿村庄补给路线前往南部教本，避免把自动直线穿越多处遭遇当作正常探索。
+    await move(page,670,720,()=>clearThreat(page));
+    await move(page,1450,1520,()=>clearThreat(page));
+    await lesson(page, WIND_LESSONS[3].x, WIND_LESSONS[3].y+25);
     await page
       .getByRole("button", { name: "开始限定试用", exact: true })
       .click();
-    await move(page, 3610, 1110);
+    await move(page, WIND_LESSONS[3].stand.x, WIND_LESSONS[3].stand.y);
     await face(page, "w");
     await chain(page);
     await expect
@@ -166,26 +186,15 @@ test("真实新游戏：五次独特学习、投影应用、逐阶重开和手�
       .toBe(4);
     records.push({ 阶段: 4, 状态: await read(page) });
     await restored(page, 4);
-    await move(page, 3700, 1150);
-    await face(page, "w");
-    await chain(page, async () =>
-      page.screenshot({ path: root + "natural-wide-channel.png" }),
-    );
-    expect(
-      (await read(page)).skillGrowth.targets.find(
-        (t: any) => t.id === "lesson-wide-channel-bell",
-      ).hits,
-    ).toBe(0);
-    await lesson(page, 3910, 1050);
-    await page.getByRole("button", { name: "左闸 · 导向左前" }).click();
+    await lesson(page, WIND_LESSONS[4].x, WIND_LESSONS[4].y+25);
+    await page.getByRole("button", { name: "扶正左侧风帆" }).click();
     await page.waitForFunction(() => (window as any).__farwind().mode === "");
     await page.keyboard.press("e");
-    await page.getByRole("button", { name: "右闸 · 导向右前" }).click();
-    await expect
-      .poll(async () => (await read(page)).state.skills.swordWindStage)
-      .toBe(5);
+    await page.getByRole("button", { name: "扶正右侧风帆" }).click();
+    await expect.poll(async () => (await read(page)).state.skills.swordWindStage).toBe(5);
     records.push({ 阶段: 5, 状态: await read(page) });
     await restored(page, 5);
+    await move(page,WIND_LESSONS[4].stand.x,WIND_LESSONS[4].stand.y);
     await face(page, "w");
     await chain(page, async () =>
       page.screenshot({ path: root + "natural-three.png" }),
@@ -193,7 +202,7 @@ test("真实新游戏：五次独特学习、投影应用、逐阶重开和手�
     const targets = (await read(page)).skillGrowth.targets.filter((t: any) =>
       t.id.startsWith("lesson-three-"),
     );
-    expect(targets.map((t: any) => t.hits)).toEqual([1, 1, 1, 0, 1]);
+    expect(targets.map((t: any) => t.hits)).toEqual([1, 1, 1]);
     await page.keyboard.press("q");
     await expect(page.locator(".skill-journal")).toContainText("三向疾风斩");
     await expect(page.locator(".skill-journal")).toContainText("临水送风");
@@ -236,7 +245,7 @@ test("真实新游戏：五次独特学习、投影应用、逐阶重开和手�
 import { initialState } from "../src/game/systems/state";
 import { completeWindLesson } from "../src/game/systems/skills";
 import { waterSurfaceAt } from "../src/game/systems/swordWindWater";
-import { LESSON_IDS } from "../src/data/windLessons";
+import { LESSON_IDS,WIND_LESSONS } from "../src/data/windLessons";
 async function importFixture(page: Page, state: any) {
   await page.waitForFunction(
     () => typeof (window as any).__farwind === "function",
@@ -274,6 +283,60 @@ function fixture(stage: number, point = { x: 1310, y: 1400 }) {
   }
   return s;
 }
+// 乱序一风三向：明确前置、重开保留，补齐后实际释放三道剑风。
+test("wind-prerequisite-progression", async ({ page }) => {
+  page.on("dialog", dialog => dialog.accept());
+  await page.goto("/");
+  await importFixture(page, fixture(1, WIND_LESSONS[4].stand));
+  await page.keyboard.press("e");
+  await page.getByRole("button", { name: "扶正左侧风帆", exact: true }).click();
+  await page.waitForFunction(() => (window as any).__farwind().mode === "");
+  await page.keyboard.press("e");
+  await page.getByRole("button", { name: "扶正右侧风帆", exact: true }).click();
+  await expect(page.locator(".dialog-copy")).toContainText("尚未掌握 三向疾风斩");
+  await expect(page.locator(".dialog-copy")).toContainText("当前本领：一线斩（1/5）");
+  await expect(page.locator(".dialog-copy")).toContainText("还需完成：两铃相继、长风不息、展风于野");
+  await restored(page, 1);
+  await page.keyboard.press("e");
+  await expect(page.locator(".dialog-copy")).toContainText("下一步：西部旧农庄的串联风铃");
+  await expect(page.locator(".dialog-copy")).toContainText("补齐后会自动结算，无需重做一风三向");
+  await page.screenshot({ path: ".skill-growth-local/wind-prerequisite-dialog.png", animations: "disabled" });
+  await close(page);
+  await page.keyboard.press("q");
+  await expect(page.locator(".skill-journal")).toContainText("当前本领：一线斩（1/5）");
+  await expect(page.locator(".skill-journal")).toContainText("下一步：西部旧农庄的串联风铃");
+  await expect(page.locator(".skill-journal")).not.toContainText("已发现的线索：一风三向");
+  await page.locator(".skill-journal").scrollIntoViewIfNeeded();
+  await page.screenshot({ path: ".skill-growth-local/wind-prerequisite-journal.png" });
+  await page.keyboard.press("Escape");
+
+  // 固定边界样本模拟农庄与山口经历已补齐；最后一处教学仍由真实键鼠完成。
+  let ahead = fixture(3, { x: WIND_LESSONS[3].x, y: WIND_LESSONS[3].y+25 });
+  ahead.skills.devices.splitLeft = 1;
+  ahead.skills.devices.splitRight = 2;
+  ahead = completeWindLesson(ahead, LESSON_IDS[4]);
+  await importFixture(page, ahead);
+  await page.keyboard.press("e");
+  await page.getByRole("button", { name: "开始限定试用", exact: true }).click();
+  await move(page, WIND_LESSONS[3].stand.x, WIND_LESSONS[3].stand.y);
+  await face(page, "w");
+  await chain(page);
+  await expect.poll(async () => (await read(page)).state.skills.swordWindStage).toBe(5);
+  await expect(page.locator(".dialog-copy")).toContainText("学会 三向疾风斩");
+  await restored(page, 5);
+  expect((await read(page)).skillGrowth.trial).toBeNull();
+  expect((await read(page)).skillGrowth.ability).toBe("三向疾风斩");
+  await face(page, "w");
+  await chain(page, async () => {
+    const winds = (await read(page)).skillGrowth.winds;
+    expect(winds).toHaveLength(3);
+    expect(new Set(winds.map((w: any) => w.releaseId)).size).toBe(1);
+    await page.screenshot({ path: ".skill-growth-local/wind-prerequisite-three.png" });
+  });
+  await page.keyboard.press("q");
+  await expect(page.locator(".skill-journal")).toContainText("五段传承已掌握");
+  await expect(page.locator(".skill-journal")).not.toContainText("尚未掌握");
+});
 test("固定边界夹具：0—5导入导出，旧档继承与乱序事实", async ({ page }) => {
   page.on("dialog", (d) => d.accept());
   await page.goto("/");
@@ -288,7 +351,8 @@ test("固定边界夹具：0—5导入导出，旧档继承与乱序事实", asy
     const fs = await import("node:fs/promises");
     const exported = JSON.parse(await fs.readFile(path!, "utf8"));
     expect(exported.skills.swordWindStage).toBe(stage);
-    expect(exported.schema_version).toBe(8);
+    // 新预期：本轮版本化迁移后的真实导出为十五版。
+    expect(exported.schema_version).toBe(15);
     await page.reload();
     await page.getByRole("button", { name: "继续旅途", exact: true }).click();
     await page.waitForFunction(() => (window as any).__farwind().mode === "");
@@ -563,24 +627,35 @@ test("固定水域边界夹具：小溪、桥口与池岸三向扫过", async ({
   );
 });
 
-test("固定边界夹具：真实敌伤死亡清除教学并保留正式贯通", async ({ page }) => {
+// 南部双铃教学迁移后，使用当地果园潜土兽验证真实死亡边界。
+test("wind-death-clears-trial", async ({ page }) => {
   page.on("dialog", (d) => d.accept());
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
-  const s = fixture(3, { x: 3610, y: 1110 });
+  const l = WIND_LESSONS[3];
+  const s = fixture(3, { x: l.x, y: l.y + 25 });
+  // 合法已发现果园遭遇存档；未激活的敌人不会在玩家视野内突然出生。
+  s.encounters.groups['south-orchard-burrows'].activated=true;
   s.player.hp = 1;
   await importFixture(page, s);
   await page.keyboard.press("e");
   await page.getByRole("button", { name: "开始限定试用", exact: true }).click();
   expect((await read(page)).skillGrowth.trial).toBe(LESSON_IDS[3]);
-  // 初始教本站位在冲锋接触之外；走近到教学区内的真实敌方接触范围。
-  await page.keyboard.down("a");
+  // 朝北走入附近果园潜土兽的攻击范围；不改敌人或运行状态。
+  // 教本脚底有实体碰撞，先从右侧绕开。
+  await page.keyboard.down("d");await page.waitForTimeout(500);await page.keyboard.up("d");
+  await page.keyboard.down("w");
   await page.waitForFunction(() => {
     const s = (window as any).__farwind();
-    return s.state.player.x < 3460 || s.state.player.hp === 100;
+    return s.state.player.y < 2380 || s.state.player.hp === 100;
   });
-  await page.keyboard.up("a");
+  await page.keyboard.up("w");
+  // 潜地虫需要真实近战激怒才追击；单次命中避免击杀后失去死亡样本。
+  await face(page,"a");await page.keyboard.press("j");
+  await expect.poll(async()=>{
+    const e=(await read(page)).skillGrowth.enemies.find((e:any)=>e.id==='wild-orchard-worm-a');return e?.hp;
+  }).toBeLessThan(62);
   await page.waitForFunction(
     () => {
       const s = (window as any).__farwind();
@@ -602,7 +677,7 @@ test("固定边界夹具：真实敌伤死亡清除教学并保留正式贯通",
     root + "death-boundary.json",
     JSON.stringify(
       {
-        说明: "低生命固定夹具，由林豕实际攻击触发正式死亡／村庄恢复路径，不直接赋零血或调用死亡函数。",
+        说明: "低生命固定夹具，由南部果园潜土兽实际攻击触发正式死亡／村庄恢复路径，不直接赋零血或调用死亡函数。",
         死亡后: after.state.player,
         正式本领: after.state.skills,
         教学与弹体: after.skillGrowth,
@@ -618,7 +693,7 @@ test("固定生命周期夹具：真实场景销毁回收水迹对象和遮罩",
   page.on("dialog", (d) => d.accept());
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.route(/\/assets\/index-.*\.js$/, async (route) => {
+  await page.route(/\/assets\/(?:index|game)-.*\.js$/, async (route) => {
     const response = await route.fetch(),
       body = await response.text();
     expect(body).toContain('Object.defineProperty(window,"__farwind",');
@@ -661,7 +736,7 @@ test("固定生命周期夹具：真实场景销毁回收水迹对象和遮罩",
 test("生产回归：未学三连、架剑自动反斩与风步仍可使用", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.route(/\/assets\/index-.*\.js$/, async (route) => {
+  await page.route(/\/assets\/(?:index|game)-.*\.js$/, async (route) => {
     const response = await route.fetch(),
       body = await response.text();
     expect(body).toContain('Object.defineProperty(window,"__farwind",');

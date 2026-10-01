@@ -1,4 +1,4 @@
-import { weaponSample, counterVisual } from "../../data/animation";
+import { weaponSample, counterVisual, swordWindVisual } from "../../data/animation";
 import { COMBAT, PARRY, attackConfig, type Attack } from "./combat";
 type Point = { x: number; y: number };
 type Sample = {
@@ -50,7 +50,7 @@ export class WeaponTrail {
           at <= to;
           at += 8
         ) {
-          const w = attack.counter ? counterVisual(attack,at,improved).weapon! : weaponSample(
+          const w = attack.counter ? counterVisual(attack,at,improved).weapon! : attack.kind==='swordWind'?swordWindVisual(attack.facing,at-attack.start,m).weapon! : weaponSample(
             attack.stage,
             attack.facing,
             at - attack.start,

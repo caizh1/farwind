@@ -1,0 +1,6597 @@
+{
+  "说明": "关闭测试授予的正式构建；从新游戏出发，键鼠领取、购买、穿戴、步行、识招、弹反、风步与战斗。诊断只读，不修改坐标、生命、时钟或清剿。",
+  "路径": "带小宝",
+  "首领": "孢心巢母",
+  "节点": [
+    {
+      "名称": "洼地组合与可攻击菌根的正式场景",
+      "模拟毫秒": 62507.41999980938,
+      "玩家": {
+        "x": 683.6707154357929,
+        "y": 2434.7750030949046,
+        "hp": 100,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 702.7780028613241,
+        "y": 2232.9297228921264,
+        "hp": 640,
+        "qi": 100,
+        "clock": 62507.41999955792,
+        "serial": 4,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 4132.419999809383,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "遭遇": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "guards",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "id": "wild-camp-spore",
+            "hp": 60,
+            "x": 1242.6231564130298,
+            "y": 2777.1477876956437,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-a",
+            "hp": 48,
+            "x": 1145.097916411404,
+            "y": 2876.117499693689,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-b",
+            "hp": 48,
+            "x": 1395.097916411404,
+            "y": 2856.117499693689,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-priest",
+            "hp": 96,
+            "x": 1190,
+            "y": 2820,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-spore-heart",
+            "hp": 2300,
+            "x": 1250,
+            "y": 2820,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "危险区": [],
+      "世界时间": 573.7611299998715,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 8,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 5
+        }
+      },
+      "采集事件": {
+        "herb": 96,
+        "orchard": 64,
+        "claimed": []
+      },
+      "现场敌人": [
+        {
+          "id": "wild-reed-slime",
+          "x": 1132.727519899897,
+          "y": 2054.1413866777852,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 131,
+              "index": 7,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 36673.969999943496,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-reed-spore",
+          "x": 1233.4467348722733,
+          "y": 2137.3948072364083,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 95,
+              "index": 3,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 30457.499999943484,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-margin-slime",
+          "x": 687.9580094300562,
+          "y": 2083.798366840185,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 83,
+              "index": 7,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 6383.189999999995,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-spore",
+          "x": 666.6274093570765,
+          "y": 2427.6851674421328,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 59,
+              "index": 3,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 6848.419999999998,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-slime",
+          "x": 728.4446243364137,
+          "y": 2286.1635866981865,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 83,
+              "index": 7,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 4158.0799999999945,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-priest",
+          "x": 730,
+          "y": 2580,
+          "hp": 96,
+          "type": "priest",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 2,
+              "index": 2,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 62507.41999980938,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "south-event-herb",
+          "x": 740,
+          "y": 2460,
+          "hp": 96,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "event:herb",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 2,
+              "index": 2,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 62507.41999980938,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-spore",
+          "x": 1242.6231564130298,
+          "y": 2777.1477876956437,
+          "hp": 60,
+          "type": "spore",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "walk",
+              "frame": 41,
+              "index": 1,
+              "facing": 1,
+              "phase": "walk",
+              "elapsed": 62507.41999980938,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-slime-a",
+          "x": 1145.097916411404,
+          "y": 2876.117499693689,
+          "hp": 48,
+          "type": "slime",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 50,
+              "index": 2,
+              "facing": 1,
+              "phase": "idle",
+              "elapsed": 62507.41999980938,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-slime-b",
+          "x": 1395.097916411404,
+          "y": 2856.117499693689,
+          "hp": 48,
+          "type": "slime",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 50,
+              "index": 2,
+              "facing": 1,
+              "phase": "idle",
+              "elapsed": 62507.41999980938,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-priest",
+          "x": 1190,
+          "y": 2820,
+          "hp": 96,
+          "type": "priest",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 2,
+              "index": 2,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 62507.41999980938,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "south-event-orchard",
+          "x": 1840,
+          "y": 2450,
+          "hp": 64,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "event:orchard",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 2,
+              "index": 2,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 62507.41999980938,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-worm-a",
+          "x": 1910,
+          "y": 2360,
+          "hp": 62,
+          "type": "burrow",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 2,
+              "index": 2,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 62507.41999980938,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-worm-b",
+          "x": 2030,
+          "y": 2490,
+          "hp": 62,
+          "type": "burrow",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 2,
+              "index": 2,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 62507.41999980938,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-bomber",
+          "x": 1810,
+          "y": 2400,
+          "hp": 112,
+          "type": "bomber",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 2,
+              "index": 2,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 62507.41999980938,
+              "provisional": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "名称": "普通攻击拆除菌根，洼地采集恢复",
+      "模拟毫秒": 65783.79999980927,
+      "玩家": {
+        "x": 683.6707154357929,
+        "y": 2494.2769148769053,
+        "hp": 100,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 749.5335741386768,
+        "y": 2373.7029568803578,
+        "hp": 640,
+        "qi": 100,
+        "clock": 65783.79999955781,
+        "serial": 5,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 266.20000019072904,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 1258.799999809271,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "遭遇": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "guards",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "id": "wild-camp-spore",
+            "hp": 60,
+            "x": 1225.119810717873,
+            "y": 2756.143772861451,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-a",
+            "hp": 48,
+            "x": 1145.097916411404,
+            "y": 2876.117499693689,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-b",
+            "hp": 48,
+            "x": 1395.097916411404,
+            "y": 2856.117499693689,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-priest",
+            "hp": 96,
+            "x": 1190,
+            "y": 2820,
+            "serial": 1,
+            "cooldown": 3166.0400000000664,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": -0.6247636291376427,
+              "y": 0.7808139392369747
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-spore-heart",
+            "hp": 2300,
+            "x": 1250,
+            "y": 2820,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "危险区": [],
+      "世界时间": 578.675699999884,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 7,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 4
+        }
+      },
+      "采集事件": {
+        "herb": 0,
+        "orchard": 64,
+        "claimed": []
+      },
+      "现场敌人": [
+        {
+          "id": "wild-reed-slime",
+          "x": 1132.727519899897,
+          "y": 2054.1413866777852,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 131,
+              "index": 7,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 39950.349999943384,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-reed-spore",
+          "x": 1233.4467348722733,
+          "y": 2137.3948072364083,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 95,
+              "index": 3,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 33733.87999994337,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-margin-slime",
+          "x": 687.9580094300562,
+          "y": 2083.798366840185,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 83,
+              "index": 7,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 9659.569999999883,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-spore",
+          "x": 666.6274093570765,
+          "y": 2427.6851674421328,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 59,
+              "index": 3,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 10124.799999999886,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-slime",
+          "x": 728.4446243364137,
+          "y": 2286.1635866981865,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 83,
+              "index": 7,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 7434.459999999883,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-priest",
+          "x": 749.6048068346751,
+          "y": 2613.541708039686,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 1346.5461110889373,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "south-event-herb",
+          "x": 740,
+          "y": 2460,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "event:herb",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 20,
+              "index": 0,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 109.91465120187786,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-spore",
+          "x": 1225.119810717873,
+          "y": 2756.143772861451,
+          "hp": 60,
+          "type": "spore",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 39,
+              "index": 3,
+              "facing": 1,
+              "phase": "idle",
+              "elapsed": 65783.79999980927,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-slime-a",
+          "x": 1145.097916411404,
+          "y": 2876.117499693689,
+          "hp": 48,
+          "type": "slime",
+          "behavior": {
+            "shieldSource": "wild-camp-priest",
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 51,
+              "index": 3,
+              "facing": 1,
+              "phase": "idle",
+              "elapsed": 65783.79999980927,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-slime-b",
+          "x": 1395.097916411404,
+          "y": 2856.117499693689,
+          "hp": 48,
+          "type": "slime",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 51,
+              "index": 3,
+              "facing": 1,
+              "phase": "idle",
+              "elapsed": 65783.79999980927,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-priest",
+          "x": 1190,
+          "y": 2820,
+          "hp": 96,
+          "type": "priest",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": -0.6247636291376427,
+              "y": 0.7808139392369747
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": -0.6247636291376427,
+                "y": 0.7808139392369747
+              },
+              "startedAt": 64149.83999980933,
+              "lockAt": 64849.83999980933,
+              "contactAt": 65049.83999980933,
+              "activeUntil": 67449.83999980934,
+              "recoveryUntil": 67949.83999980934,
+              "cancelled": false,
+              "supportTarget": "wild-camp-slime-a"
+            },
+            "pose": {
+              "action": "attack",
+              "frame": 12,
+              "index": 4,
+              "facing": 0,
+              "phase": "active",
+              "elapsed": 1633.959999999941,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "south-event-orchard",
+          "x": 1840,
+          "y": 2450,
+          "hp": 64,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "event:orchard",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 3,
+              "index": 3,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 65783.79999980927,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-worm-a",
+          "x": 1910,
+          "y": 2360,
+          "hp": 62,
+          "type": "burrow",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 3,
+              "index": 3,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 65783.79999980927,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-worm-b",
+          "x": 2030,
+          "y": 2490,
+          "hp": 62,
+          "type": "burrow",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 3,
+              "index": 3,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 65783.79999980927,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-bomber",
+          "x": 1810,
+          "y": 2400,
+          "hp": 112,
+          "type": "bomber",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 3,
+              "index": 3,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 65783.79999980927,
+              "provisional": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "名称": "沿果园路径诱导滚兽，观察实际清障与膨胀提示",
+      "模拟毫秒": 93702.39999980936,
+      "玩家": {
+        "x": 1797.699209793822,
+        "y": 2342.763607531012,
+        "hp": 60,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 807.6668979822999,
+        "y": 2371.7475507690906,
+        "hp": 640,
+        "qi": 100,
+        "clock": 93702.3999995579,
+        "serial": 5,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 6000,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": {
+          "x": 807.6668979822999,
+          "y": 2371.7475507690906,
+          "region": "south"
+        },
+        "affected": [],
+        "reports": []
+      },
+      "遭遇": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "guards",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "id": "wild-camp-spore",
+            "hp": 60,
+            "x": 1459.2664987342469,
+            "y": 2471.9048088441177,
+            "serial": 6,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-a",
+            "hp": 48,
+            "x": 1235.0483092314334,
+            "y": 2984.057971077716,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-b",
+            "hp": 0,
+            "x": 1772.1896304150625,
+            "y": 2356.709847786817,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-priest",
+            "hp": 96,
+            "x": 1190,
+            "y": 2820,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0.20127183049371275,
+              "y": 0.9795354257247207
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-spore-heart",
+            "hp": 2300,
+            "x": 1250,
+            "y": 2820,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "危险区": [],
+      "世界时间": 620.5535999999909,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 8,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 4
+        }
+      },
+      "采集事件": {
+        "herb": 0,
+        "orchard": 64,
+        "claimed": []
+      },
+      "现场敌人": [
+        {
+          "id": "wild-reed-slime",
+          "x": 1132.727519899897,
+          "y": 2054.1413866777852,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 131,
+              "index": 7,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 67868.94999994348,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-reed-spore",
+          "x": 1233.4467348722733,
+          "y": 2137.3948072364083,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 95,
+              "index": 3,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 61652.47999994346,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-margin-slime",
+          "x": 687.9580094300562,
+          "y": 2083.798366840185,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 83,
+              "index": 7,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 37578.16999999998,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-spore",
+          "x": 666.6274093570765,
+          "y": 2427.6851674421328,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 59,
+              "index": 3,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 38043.39999999998,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-slime",
+          "x": 728.4446243364137,
+          "y": 2286.1635866981865,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 83,
+              "index": 7,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 35353.059999999976,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-priest",
+          "x": 749.6048068346751,
+          "y": 2613.541708039686,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 29265.14611108903,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "south-event-herb",
+          "x": 740,
+          "y": 2460,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "event:herb",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 28028.51465120197,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-spore",
+          "x": 1459.2664987342469,
+          "y": 2471.9048088441177,
+          "hp": 60,
+          "type": "spore",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "walk",
+              "frame": 77,
+              "index": 1,
+              "facing": 3,
+              "phase": "walk",
+              "elapsed": 93702.39999980936,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-slime-a",
+          "x": 1235.0483092314334,
+          "y": 2984.057971077716,
+          "hp": 48,
+          "type": "slime",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 2,
+              "index": 2,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 93702.39999980936,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-slime-b",
+          "x": 1772.1896304150625,
+          "y": 2356.709847786817,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": 0.9549935130133329,
+                "y": -0.2966266847443989
+              },
+              "startedAt": 93315,
+              "lockAt": 93645,
+              "contactAt": 93765,
+              "activeUntil": 93865,
+              "recoveryUntil": 94125,
+              "cancelled": true
+            },
+            "pose": {
+              "action": "death",
+              "frame": 127,
+              "index": 3,
+              "facing": 3,
+              "phase": "death",
+              "elapsed": 385.1399999999994,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-priest",
+          "x": 1190,
+          "y": 2820,
+          "hp": 96,
+          "type": "priest",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0.20127183049371275,
+              "y": 0.9795354257247207
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 2,
+              "index": 2,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 93702.39999980936,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "south-event-orchard",
+          "x": 1840,
+          "y": 2450,
+          "hp": 64,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "event:orchard",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 2,
+              "index": 2,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 93702.39999980936,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-worm-a",
+          "x": 1910,
+          "y": 2360,
+          "hp": 62,
+          "type": "burrow",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": -0.9884254098226254,
+                "y": -0.15170764389764604
+              },
+              "startedAt": 93315,
+              "lockAt": 93715,
+              "contactAt": 94365,
+              "activeUntil": 94605,
+              "recoveryUntil": 95455,
+              "cancelled": false
+            },
+            "pose": {
+              "action": "attack",
+              "frame": 57,
+              "index": 1,
+              "facing": 2,
+              "phase": "charge",
+              "elapsed": 387.3999998093641,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-worm-b",
+          "x": 2030,
+          "y": 2490,
+          "hp": 62,
+          "type": "burrow",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 2,
+              "index": 2,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 93702.39999980936,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-bomber",
+          "x": 1693.680094561732,
+          "y": 2367.37639643115,
+          "hp": 112,
+          "type": "bomber",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": 0.8403228582645123,
+                "y": -0.5420862421037453
+              },
+              "startedAt": 91305,
+              "lockAt": 91705,
+              "contactAt": 91955,
+              "activeUntil": 92315,
+              "recoveryUntil": 93765,
+              "cancelled": false,
+              "bombAt": 93315
+            },
+            "pose": {
+              "action": "attack",
+              "frame": 63,
+              "index": 7,
+              "facing": 3,
+              "phase": "recovery",
+              "elapsed": 2397.399999809364,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-weir-guardian",
+          "x": 2206.1431581180964,
+          "y": 2953.057684612569,
+          "hp": 84,
+          "type": "guardian",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 2,
+              "index": 2,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 93702.39999980936,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "spore-1",
+          "x": 2730,
+          "y": 1840,
+          "hp": 60,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 2,
+              "index": 2,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 93702.39999980936,
+              "provisional": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "名称": "诱爆拆障，玩家仍存活",
+      "模拟毫秒": 101942.10999980937,
+      "玩家": {
+        "x": 1807.0485061661202,
+        "y": 2421.9797161327565,
+        "hp": 96,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 807.6668979822999,
+        "y": 2371.7475507690906,
+        "hp": 640,
+        "qi": 100,
+        "clock": 101942.10999955791,
+        "serial": 5,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 6000,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": {
+          "x": 807.6668979822999,
+          "y": 2371.7475507690906,
+          "region": "south"
+        },
+        "affected": [],
+        "reports": []
+      },
+      "遭遇": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "guards",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "id": "wild-camp-spore",
+            "hp": 60,
+            "x": 1625.4044290008078,
+            "y": 2377.2348999042197,
+            "serial": 8,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-a",
+            "hp": 48,
+            "x": 1144.974364198654,
+            "y": 2875.9692370383887,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-b",
+            "hp": 0,
+            "x": 1772.1896304150625,
+            "y": 2356.709847786817,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-priest",
+            "hp": 96,
+            "x": 1190,
+            "y": 2820,
+            "serial": 1,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0.20127183049371275,
+              "y": 0.9795354257247207
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-spore-heart",
+            "hp": 2300,
+            "x": 1250,
+            "y": 2820,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "危险区": [],
+      "世界时间": 632.9131650000246,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 8,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 4
+        }
+      },
+      "采集事件": {
+        "herb": 0,
+        "orchard": 0,
+        "claimed": []
+      },
+      "现场敌人": [
+        {
+          "id": "wild-reed-slime",
+          "x": 1132.727519899897,
+          "y": 2054.1413866777852,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 131,
+              "index": 7,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 76108.65999994348,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-reed-spore",
+          "x": 1233.4467348722733,
+          "y": 2137.3948072364083,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 95,
+              "index": 3,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 69892.18999994347,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-margin-slime",
+          "x": 687.9580094300562,
+          "y": 2083.798366840185,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 83,
+              "index": 7,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 45817.87999999998,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-spore",
+          "x": 666.6274093570765,
+          "y": 2427.6851674421328,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 59,
+              "index": 3,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 46283.109999999986,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-slime",
+          "x": 728.4446243364137,
+          "y": 2286.1635866981865,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 83,
+              "index": 7,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 43592.76999999998,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-priest",
+          "x": 749.6048068346751,
+          "y": 2613.541708039686,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 37504.85611108904,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "south-event-herb",
+          "x": 740,
+          "y": 2460,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "event:herb",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 36268.22465120198,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-spore",
+          "x": 1625.4044290008078,
+          "y": 2377.2348999042197,
+          "hp": 60,
+          "type": "spore",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "walk",
+              "frame": 79,
+              "index": 3,
+              "facing": 3,
+              "phase": "walk",
+              "elapsed": 101942.10999980937,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-slime-a",
+          "x": 1144.974364198654,
+          "y": 2875.9692370383887,
+          "hp": 48,
+          "type": "slime",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 51,
+              "index": 3,
+              "facing": 1,
+              "phase": "idle",
+              "elapsed": 101942.10999980937,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-slime-b",
+          "x": 1772.1896304150625,
+          "y": 2356.709847786817,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": 0.9549935130133329,
+                "y": -0.2966266847443989
+              },
+              "startedAt": 93315,
+              "lockAt": 93645,
+              "contactAt": 93765,
+              "activeUntil": 93865,
+              "recoveryUntil": 94125,
+              "cancelled": true
+            },
+            "pose": {
+              "action": "death",
+              "frame": 131,
+              "index": 7,
+              "facing": 3,
+              "phase": "death",
+              "elapsed": 8624.850000000006,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-priest",
+          "x": 1190,
+          "y": 2820,
+          "hp": 96,
+          "type": "priest",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0.20127183049371275,
+              "y": 0.9795354257247207
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 3,
+              "index": 3,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 101942.10999980937,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "south-event-orchard",
+          "x": 1840,
+          "y": 2450,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "event:orchard",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 20,
+              "index": 0,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 116.28999999997905,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-worm-a",
+          "x": 1819.4776409149065,
+          "y": 2390.1749171340775,
+          "hp": 62,
+          "type": "burrow",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": -0.3639873491210569,
+                "y": 0.9314038918105432
+              },
+              "startedAt": 101820,
+              "lockAt": 102220,
+              "contactAt": 102870,
+              "activeUntil": 103110,
+              "recoveryUntil": 103960,
+              "cancelled": false
+            },
+            "pose": {
+              "action": "attack",
+              "frame": 8,
+              "index": 0,
+              "facing": 0,
+              "phase": "charge",
+              "elapsed": 122.10999980937049,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-worm-b",
+          "x": 2030,
+          "y": 2490,
+          "hp": 62,
+          "type": "burrow",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 3,
+              "index": 3,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 101942.10999980937,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-bomber",
+          "x": 1774.3715438904114,
+          "y": 2468.73249593388,
+          "hp": 112,
+          "type": "bomber",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": -0.8709110713782217,
+                "y": 0.4914406431613464
+              },
+              "startedAt": 99810,
+              "lockAt": 100210,
+              "contactAt": 100460,
+              "activeUntil": 100820,
+              "recoveryUntil": 102270,
+              "cancelled": false,
+              "bombAt": 101820
+            },
+            "pose": {
+              "action": "attack",
+              "frame": 63,
+              "index": 7,
+              "facing": 2,
+              "phase": "recovery",
+              "elapsed": 2132.1099998093705,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-weir-guardian",
+          "x": 2163.84365881244,
+          "y": 2876.9185858623982,
+          "hp": 84,
+          "type": "guardian",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 3,
+              "index": 3,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 101942.10999980937,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "spore-1",
+          "x": 2730,
+          "y": 1840,
+          "hp": 60,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 3,
+              "index": 3,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 101942.10999980937,
+              "provisional": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "名称": "驻守杂兵全灭，清除尚未完成",
+      "模拟毫秒": 130780.6699997493,
+      "玩家": {
+        "x": 1499.0275020854617,
+        "y": 2824.8010178699396,
+        "hp": 68,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1584.1097056314732,
+        "y": 2849.364814316876,
+        "hp": 640,
+        "qi": 83.68401999849577,
+        "clock": 130780.66999949784,
+        "serial": 13,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 5719.330000250702,
+          "chain": 0,
+          "unity": 0,
+          "guard": 1699.3300002507021,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 0,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "遭遇": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "warning",
+          "warning": 2219.330000250702,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "id": "wild-camp-spore",
+            "hp": 0,
+            "x": 1771.8884377893073,
+            "y": 2792.9137049059764,
+            "serial": 14,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-a",
+            "hp": 0,
+            "x": 1557.1224651507277,
+            "y": 2804.295043858282,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-b",
+            "hp": 0,
+            "x": 1772.1896304150625,
+            "y": 2356.709847786817,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-priest",
+            "hp": 0,
+            "x": 1190,
+            "y": 2820,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.9991476896384832,
+              "y": -0.041278254445663215
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-spore-heart",
+            "hp": 2300,
+            "x": 1250,
+            "y": 2820,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "危险区": [],
+      "世界时间": 676.1710050000462,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 0,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 0
+        }
+      },
+      "采集事件": {
+        "herb": 0,
+        "orchard": 0,
+        "claimed": []
+      },
+      "现场敌人": [
+        {
+          "id": "wild-reed-slime",
+          "x": 1132.727519899897,
+          "y": 2054.1413866777852,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 131,
+              "index": 7,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 104947.21999988341,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-reed-spore",
+          "x": 1233.4467348722733,
+          "y": 2137.3948072364083,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 95,
+              "index": 3,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 98730.7499998834,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-margin-slime",
+          "x": 687.9580094300562,
+          "y": 2083.798366840185,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 83,
+              "index": 7,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 74656.4399999399,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-spore",
+          "x": 666.6274093570765,
+          "y": 2427.6851674421328,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 59,
+              "index": 3,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 75121.66999993991,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-slime",
+          "x": 728.4446243364137,
+          "y": 2286.1635866981865,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 83,
+              "index": 7,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 72431.32999993992,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-priest",
+          "x": 749.6048068346751,
+          "y": 2613.541708039686,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 66343.41611102896,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "south-event-herb",
+          "x": 740,
+          "y": 2460,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "event:herb",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 65106.784651141905,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-spore",
+          "x": 1771.8884377893073,
+          "y": 2792.9137049059764,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 93,
+              "index": 1,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 275.0600000000122,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-slime-a",
+          "x": 1557.1224651507277,
+          "y": 2804.295043858282,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 131,
+              "index": 7,
+              "facing": 3,
+              "phase": "death",
+              "elapsed": 5508.709999999934,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-slime-b",
+          "x": 1772.1896304150625,
+          "y": 2356.709847786817,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": 0.9549935130133329,
+                "y": -0.2966266847443989
+              },
+              "startedAt": 93315,
+              "lockAt": 93645,
+              "contactAt": 93765,
+              "activeUntil": 93865,
+              "recoveryUntil": 94125,
+              "cancelled": true
+            },
+            "pose": {
+              "action": "death",
+              "frame": 131,
+              "index": 7,
+              "facing": 3,
+              "phase": "death",
+              "elapsed": 37463.40999993993,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-priest",
+          "x": 1190,
+          "y": 2820,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0.9991476896384832,
+              "y": -0.041278254445663215
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 71,
+              "index": 3,
+              "facing": 3,
+              "phase": "death",
+              "elapsed": 6408.310000000027,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "south-event-orchard",
+          "x": 1840,
+          "y": 2450,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "event:orchard",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 28954.849999939906,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-worm-a",
+          "x": 1823.845489104359,
+          "y": 2378.9980704323507,
+          "hp": 0,
+          "type": "burrow",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": -0.3639873491210569,
+                "y": 0.9314038918105432
+              },
+              "startedAt": 101970,
+              "lockAt": 102370,
+              "contactAt": 103020,
+              "activeUntil": 103260,
+              "recoveryUntil": 104110,
+              "cancelled": true
+            },
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 27900.212941092977,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-worm-b",
+          "x": 2041.9856278966115,
+          "y": 2490.5867121461815,
+          "hp": 0,
+          "type": "burrow",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": -0.9987263719830457,
+                "y": -0.050454275394489094
+              },
+              "startedAt": 109985,
+              "lockAt": 110385,
+              "contactAt": 111035,
+              "activeUntil": 111275,
+              "recoveryUntil": 112125,
+              "cancelled": true
+            },
+            "pose": {
+              "action": "death",
+              "frame": 71,
+              "index": 3,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 19830.753035773305,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-bomber",
+          "x": 1807.790146037795,
+          "y": 2489.0660184420635,
+          "hp": 0,
+          "type": "bomber",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": -0.018540996791870115,
+                "y": -0.9998281009443394
+              },
+              "startedAt": 104135.45705865632,
+              "lockAt": 104535.45705865632,
+              "contactAt": 104785.45705865632,
+              "activeUntil": 105145.45705865632,
+              "recoveryUntil": 106595.45705865632,
+              "cancelled": true,
+              "bombAt": 106145.45705865632
+            },
+            "pose": {
+              "action": "death",
+              "frame": 47,
+              "index": 3,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 26200.212941092977,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-weir-guardian",
+          "x": 1801.6665434100405,
+          "y": 2820.647116880222,
+          "hp": 0,
+          "type": "guardian",
+          "behavior": {
+            "face": {
+              "x": -0.9999970583094423,
+              "y": -0.0024255664208449623
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 71,
+              "index": 3,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 8058.550000000003,
+              "provisional": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "名称": "首领第一阶段正式入场",
+      "模拟毫秒": 133014.00999974916,
+      "玩家": {
+        "x": 1512.2583489852127,
+        "y": 2824.8010178699396,
+        "hp": 68,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1656.5779510651446,
+        "y": 2873.5021094399344,
+        "hp": 640,
+        "qi": 100,
+        "clock": 133014.0099994977,
+        "serial": 13,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 3485.9900002508366,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 2189.0099997491634,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "遭遇": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 1,
+              "next": 0,
+              "move": -1,
+              "part": 0,
+              "nextAt": 2035.9900002508366,
+              "entryUntil": 1385.9900002508366,
+              "exposedUntil": -133014.00999974916,
+              "transformUntil": -133014.00999974916,
+              "controlImmuneUntil": -133014.00999974916,
+              "startedAt": -14.009999749163399
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "id": "wild-camp-spore",
+            "hp": 0,
+            "x": 1771.8884377893073,
+            "y": 2792.9137049059764,
+            "serial": 14,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-a",
+            "hp": 0,
+            "x": 1557.1224651507277,
+            "y": 2804.295043858282,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-b",
+            "hp": 0,
+            "x": 1772.1896304150625,
+            "y": 2356.709847786817,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-priest",
+            "hp": 0,
+            "x": 1190,
+            "y": 2820,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.9991476896384832,
+              "y": -0.041278254445663215
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-spore-heart",
+            "hp": 2300,
+            "x": 1250,
+            "y": 2820,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-spore-heart",
+        "x": 1250,
+        "y": 2820,
+        "hp": 2300,
+        "type": "spore",
+        "behavior": {
+          "boss": "spore-heart",
+          "battle": {
+            "phase": 1,
+            "next": 0,
+            "move": -1,
+            "part": 0,
+            "nextAt": 135050,
+            "entryUntil": 134400,
+            "exposedUntil": 0,
+            "transformUntil": 0,
+            "controlImmuneUntil": 0,
+            "startedAt": 133000
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0,
+            "y": 1
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 54,
+            "index": 0,
+            "facing": 0,
+            "phase": "首领现身",
+            "elapsed": 133014.00999974916,
+            "provisional": false
+          }
+        }
+      },
+      "危险区": [],
+      "世界时间": 679.521015000056,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 1,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 0
+        }
+      },
+      "采集事件": {
+        "herb": 0,
+        "orchard": 0,
+        "claimed": []
+      },
+      "现场敌人": [
+        {
+          "id": "wild-reed-slime",
+          "x": 1132.727519899897,
+          "y": 2054.1413866777852,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 131,
+              "index": 7,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 107180.55999988328,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-reed-spore",
+          "x": 1233.4467348722733,
+          "y": 2137.3948072364083,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 95,
+              "index": 3,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 100964.08999988326,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-margin-slime",
+          "x": 687.9580094300562,
+          "y": 2083.798366840185,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 83,
+              "index": 7,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 76889.77999993978,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-spore",
+          "x": 666.6274093570765,
+          "y": 2427.6851674421328,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 59,
+              "index": 3,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 77355.00999993978,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-slime",
+          "x": 728.4446243364137,
+          "y": 2286.1635866981865,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 83,
+              "index": 7,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 74664.66999993977,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-priest",
+          "x": 749.6048068346751,
+          "y": 2613.541708039686,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 68576.75611102884,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "south-event-herb",
+          "x": 740,
+          "y": 2460,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "event:herb",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 67340.12465114177,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-spore",
+          "x": 1771.8884377893073,
+          "y": 2792.9137049059764,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 95,
+              "index": 3,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 2508.3999999998778,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-slime-a",
+          "x": 1557.1224651507277,
+          "y": 2804.295043858282,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 131,
+              "index": 7,
+              "facing": 3,
+              "phase": "death",
+              "elapsed": 7742.049999999799,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-slime-b",
+          "x": 1772.1896304150625,
+          "y": 2356.709847786817,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": 0.9549935130133329,
+                "y": -0.2966266847443989
+              },
+              "startedAt": 93315,
+              "lockAt": 93645,
+              "contactAt": 93765,
+              "activeUntil": 93865,
+              "recoveryUntil": 94125,
+              "cancelled": true
+            },
+            "pose": {
+              "action": "death",
+              "frame": 131,
+              "index": 7,
+              "facing": 3,
+              "phase": "death",
+              "elapsed": 39696.7499999398,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-priest",
+          "x": 1190,
+          "y": 2820,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0.9991476896384832,
+              "y": -0.041278254445663215
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 71,
+              "index": 3,
+              "facing": 3,
+              "phase": "death",
+              "elapsed": 8641.649999999892,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "south-event-orchard",
+          "x": 1840,
+          "y": 2450,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "event:orchard",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 31188.189999939772,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-worm-a",
+          "x": 1823.845489104359,
+          "y": 2378.9980704323507,
+          "hp": 0,
+          "type": "burrow",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": -0.3639873491210569,
+                "y": 0.9314038918105432
+              },
+              "startedAt": 101970,
+              "lockAt": 102370,
+              "contactAt": 103020,
+              "activeUntil": 103260,
+              "recoveryUntil": 104110,
+              "cancelled": true
+            },
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 30133.552941092843,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-worm-b",
+          "x": 2041.9856278966115,
+          "y": 2490.5867121461815,
+          "hp": 0,
+          "type": "burrow",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": -0.9987263719830457,
+                "y": -0.050454275394489094
+              },
+              "startedAt": 109985,
+              "lockAt": 110385,
+              "contactAt": 111035,
+              "activeUntil": 111275,
+              "recoveryUntil": 112125,
+              "cancelled": true
+            },
+            "pose": {
+              "action": "death",
+              "frame": 71,
+              "index": 3,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 22064.09303577317,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-bomber",
+          "x": 1807.790146037795,
+          "y": 2489.0660184420635,
+          "hp": 0,
+          "type": "bomber",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": -0.018540996791870115,
+                "y": -0.9998281009443394
+              },
+              "startedAt": 104135.45705865632,
+              "lockAt": 104535.45705865632,
+              "contactAt": 104785.45705865632,
+              "activeUntil": 105145.45705865632,
+              "recoveryUntil": 106595.45705865632,
+              "cancelled": true,
+              "bombAt": 106145.45705865632
+            },
+            "pose": {
+              "action": "death",
+              "frame": 47,
+              "index": 3,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 28433.552941092843,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-weir-guardian",
+          "x": 1801.6665434100405,
+          "y": 2820.647116880222,
+          "hp": 0,
+          "type": "guardian",
+          "behavior": {
+            "face": {
+              "x": -0.9999970583094423,
+              "y": -0.0024255664208449623
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 71,
+              "index": 3,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 10291.889999999868,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "boss-spore-heart",
+          "x": 1250,
+          "y": 2820,
+          "hp": 2300,
+          "type": "spore",
+          "behavior": {
+            "boss": "spore-heart",
+            "battle": {
+              "phase": 1,
+              "next": 0,
+              "move": -1,
+              "part": 0,
+              "nextAt": 135050,
+              "entryUntil": 134400,
+              "exposedUntil": 0,
+              "transformUntil": 0,
+              "controlImmuneUntil": 0,
+              "startedAt": 133000
+            },
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 54,
+              "index": 0,
+              "facing": 0,
+              "phase": "首领现身",
+              "elapsed": 133014.00999974916,
+              "provisional": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "名称": "当前招式结束后进入第二阶段",
+      "模拟毫秒": 142938.50999974768,
+      "玩家": {
+        "x": 1282.999781236432,
+        "y": 2837.7861391530105,
+        "hp": 78,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1251.5153814589792,
+        "y": 2820.5848977752453,
+        "hp": 586,
+        "qi": 64.83105999848677,
+        "clock": 142938.50999949622,
+        "serial": 23,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 2871.490000252321,
+          "star": 2461.490000252321,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 11.490000252320897,
+          "chain": 0,
+          "unity": 0,
+          "guard": 791.4900002523209,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 0,
+        "reduction": 0,
+        "shields": [],
+        "cast": {
+          "id": "xiaobao:23",
+          "skill": "star",
+          "age": 258.5099997476791,
+          "stage": 1,
+          "released": true,
+          "fixedCenter": false,
+          "origin": {
+            "x": 1251.5153814589792,
+            "y": 2820.5848977752453
+          },
+          "center": {
+            "x": 1244.0087082227208,
+            "y": 2819.6768547702545
+          },
+          "direction": {
+            "x": -0.9927630864827905,
+            "y": -0.12008935888397096
+          },
+          "target": "boss-spore-heart",
+          "task": "follow"
+        },
+        "effects": [
+          {
+            "id": "xiaobao:23",
+            "skill": "star",
+            "age": 258.5099997476791,
+            "stage": 0,
+            "released": true,
+            "fixedCenter": false,
+            "origin": {
+              "x": 1251.5153814589792,
+              "y": 2820.5848977752453
+            },
+            "center": {
+              "x": 1244.0087082227208,
+              "y": 2819.6768547702545
+            },
+            "direction": {
+              "x": -0.9927630864827905,
+              "y": -0.12008935888397096
+            },
+            "target": "boss-spore-heart",
+            "task": "follow",
+            "hit": [
+              "0:boss-spore-heart"
+            ],
+            "last": {
+              "x": 1222.7034111630808,
+              "y": 2817.0996644017146
+            },
+            "returnAt": 480,
+            "travelled": 29.021999999994296
+          }
+        ],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [
+          {
+            "id": "boss-spore-heart",
+            "hp": 1150,
+            "x": 1244.0087082227208,
+            "y": 2819.6768547702545,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          }
+        ],
+        "reports": []
+      },
+      "遭遇": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 2,
+              "next": 2,
+              "move": -1,
+              "part": 0,
+              "nextAt": 1161.490000252321,
+              "entryUntil": -8538.50999974768,
+              "exposedUntil": -6159.898952404794,
+              "transformUntil": 1161.490000252321,
+              "controlImmuneUntil": 1411.490000252321,
+              "startedAt": -9938.50999974768,
+              "roots": [
+                {
+                  "x": 1404.0087082227208,
+                  "y": 2819.6768547702545,
+                  "hp": 96
+                },
+                {
+                  "x": 1305.2380574011352,
+                  "y": 2967.4975799720605,
+                  "hp": 96
+                }
+              ]
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "id": "wild-camp-spore",
+            "hp": 0,
+            "x": 1771.8884377893073,
+            "y": 2792.9137049059764,
+            "serial": 14,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-a",
+            "hp": 0,
+            "x": 1557.1224651507277,
+            "y": 2804.295043858282,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-b",
+            "hp": 0,
+            "x": 1772.1896304150625,
+            "y": 2356.709847786817,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-priest",
+            "hp": 0,
+            "x": 1190,
+            "y": 2820,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.9991476896384832,
+              "y": -0.041278254445663215
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-spore-heart",
+            "hp": 1150,
+            "x": 1244.0087082227208,
+            "y": 2819.6768547702545,
+            "serial": 4,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.9604905557298932,
+              "y": 0.2783125803007853
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-spore-heart",
+        "x": 1244.0087082227208,
+        "y": 2819.6768547702545,
+        "hp": 1150,
+        "type": "spore",
+        "behavior": {
+          "boss": "spore-heart",
+          "battle": {
+            "phase": 2,
+            "next": 2,
+            "move": -1,
+            "part": 0,
+            "nextAt": 144100,
+            "entryUntil": 134400,
+            "exposedUntil": 136778.61104734289,
+            "transformUntil": 144100,
+            "controlImmuneUntil": 144350,
+            "startedAt": 133000,
+            "roots": [
+              {
+                "x": 1404.0087082227208,
+                "y": 2819.6768547702545,
+                "hp": 96
+              },
+              {
+                "x": 1305.2380574011352,
+                "y": 2967.4975799720605,
+                "hp": 96
+              }
+            ]
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.9604905557298932,
+            "y": 0.2783125803007853
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 180,
+            "index": 0,
+            "facing": 3,
+            "phase": "阶段转换",
+            "elapsed": 142938.50999974768,
+            "provisional": false
+          }
+        }
+      },
+      "危险区": [],
+      "世界时间": 694.4077650000922,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 1,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 0
+        }
+      },
+      "采集事件": {
+        "herb": 0,
+        "orchard": 0,
+        "claimed": []
+      },
+      "现场敌人": [
+        {
+          "id": "wild-reed-slime",
+          "x": 1132.727519899897,
+          "y": 2054.1413866777852,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 131,
+              "index": 7,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 117105.05999988179,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-reed-spore",
+          "x": 1233.4467348722733,
+          "y": 2137.3948072364083,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 95,
+              "index": 3,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 110888.58999988178,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-margin-slime",
+          "x": 687.9580094300562,
+          "y": 2083.798366840185,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 83,
+              "index": 7,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 86814.2799999383,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-spore",
+          "x": 666.6274093570765,
+          "y": 2427.6851674421328,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 59,
+              "index": 3,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 87279.5099999383,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-slime",
+          "x": 728.4446243364137,
+          "y": 2286.1635866981865,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 83,
+              "index": 7,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 84589.16999993828,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-herb-priest",
+          "x": 749.6048068346751,
+          "y": 2613.541708039686,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 78501.25611102735,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "south-event-herb",
+          "x": 740,
+          "y": 2460,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "event:herb",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 77264.62465114029,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-spore",
+          "x": 1771.8884377893073,
+          "y": 2792.9137049059764,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 95,
+              "index": 3,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 12432.899999998393,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-slime-a",
+          "x": 1557.1224651507277,
+          "y": 2804.295043858282,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 131,
+              "index": 7,
+              "facing": 3,
+              "phase": "death",
+              "elapsed": 17666.549999998315,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-slime-b",
+          "x": 1772.1896304150625,
+          "y": 2356.709847786817,
+          "hp": 0,
+          "type": "slime",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": 0.9549935130133329,
+                "y": -0.2966266847443989
+              },
+              "startedAt": 93315,
+              "lockAt": 93645,
+              "contactAt": 93765,
+              "activeUntil": 93865,
+              "recoveryUntil": 94125,
+              "cancelled": true
+            },
+            "pose": {
+              "action": "death",
+              "frame": 131,
+              "index": 7,
+              "facing": 3,
+              "phase": "death",
+              "elapsed": 49621.249999938314,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-camp-priest",
+          "x": 1190,
+          "y": 2820,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "attempt": 0,
+            "face": {
+              "x": 0.9991476896384832,
+              "y": -0.041278254445663215
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 71,
+              "index": 3,
+              "facing": 3,
+              "phase": "death",
+              "elapsed": 18566.149999998408,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "south-event-orchard",
+          "x": 1840,
+          "y": 2450,
+          "hp": 0,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "event:orchard",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 41112.68999993829,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-worm-a",
+          "x": 1823.845489104359,
+          "y": 2378.9980704323507,
+          "hp": 0,
+          "type": "burrow",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": -0.3639873491210569,
+                "y": 0.9314038918105432
+              },
+              "startedAt": 101970,
+              "lockAt": 102370,
+              "contactAt": 103020,
+              "activeUntil": 103260,
+              "recoveryUntil": 104110,
+              "cancelled": true
+            },
+            "pose": {
+              "action": "death",
+              "frame": 23,
+              "index": 3,
+              "facing": 0,
+              "phase": "death",
+              "elapsed": 40058.05294109136,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-worm-b",
+          "x": 2041.9856278966115,
+          "y": 2490.5867121461815,
+          "hp": 0,
+          "type": "burrow",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": -0.9987263719830457,
+                "y": -0.050454275394489094
+              },
+              "startedAt": 109985,
+              "lockAt": 110385,
+              "contactAt": 111035,
+              "activeUntil": 111275,
+              "recoveryUntil": 112125,
+              "cancelled": true
+            },
+            "pose": {
+              "action": "death",
+              "frame": 71,
+              "index": 3,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 31988.593035771686,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-orchard-bomber",
+          "x": 1807.790146037795,
+          "y": 2489.0660184420635,
+          "hp": 0,
+          "type": "bomber",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": {
+              "direction": {
+                "x": -0.018540996791870115,
+                "y": -0.9998281009443394
+              },
+              "startedAt": 104135.45705865632,
+              "lockAt": 104535.45705865632,
+              "contactAt": 104785.45705865632,
+              "activeUntil": 105145.45705865632,
+              "recoveryUntil": 106595.45705865632,
+              "cancelled": true,
+              "bombAt": 106145.45705865632
+            },
+            "pose": {
+              "action": "death",
+              "frame": 47,
+              "index": 3,
+              "facing": 1,
+              "phase": "death",
+              "elapsed": 38358.05294109136,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-weir-guardian",
+          "x": 1801.6665434100405,
+          "y": 2820.647116880222,
+          "hp": 0,
+          "type": "guardian",
+          "behavior": {
+            "face": {
+              "x": -0.9999970583094423,
+              "y": -0.0024255664208449623
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 71,
+              "index": 3,
+              "facing": 2,
+              "phase": "death",
+              "elapsed": 20216.389999998384,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "boss-spore-heart",
+          "x": 1244.0087082227208,
+          "y": 2819.6768547702545,
+          "hp": 1150,
+          "type": "spore",
+          "behavior": {
+            "boss": "spore-heart",
+            "battle": {
+              "phase": 2,
+              "next": 2,
+              "move": -1,
+              "part": 0,
+              "nextAt": 144100,
+              "entryUntil": 134400,
+              "exposedUntil": 136778.61104734289,
+              "transformUntil": 144100,
+              "controlImmuneUntil": 144350,
+              "startedAt": 133000,
+              "roots": [
+                {
+                  "x": 1404.0087082227208,
+                  "y": 2819.6768547702545,
+                  "hp": 96
+                },
+                {
+                  "x": 1305.2380574011352,
+                  "y": 2967.4975799720605,
+                  "hp": 96
+                }
+              ]
+            },
+            "attempt": 0,
+            "face": {
+              "x": 0.9604905557298932,
+              "y": 0.2783125803007853
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 180,
+              "index": 0,
+              "facing": 3,
+              "phase": "阶段转换",
+              "elapsed": 142938.50999974768,
+              "provisional": false
+            }
+          }
+        },
+        {
+          "id": "boss-spore-heart:祭根:0:0",
+          "x": 1404.0087082227208,
+          "y": 2819.6768547702545,
+          "hp": 96,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "boss-spore-heart",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 3,
+              "index": 3,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 142938.50999974768,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "boss-spore-heart:祭根:0:1",
+          "x": 1305.2380574011352,
+          "y": 2967.4975799720605,
+          "hp": 96,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "boss-spore-heart",
+              "index": 1,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 3,
+              "index": 3,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 142938.50999974768,
+              "provisional": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "名称": "二阶段祭根受伤后，暂停保存重开保持首领与祭根伤势",
+      "模拟毫秒": 149.8566666666666,
+      "玩家": {
+        "x": 1346.2977658522614,
+        "y": 2837.7861391530105,
+        "hp": 78,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1234.8125775181186,
+        "y": 2817.553649256742,
+        "hp": 586,
+        "qi": 54.164866665153816,
+        "clock": 144060.90666616295,
+        "serial": 24,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 1749.093333585588,
+          "star": 1339.093333585588,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 5639.093333585588,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 149.8566666666666,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [
+          {
+            "id": "boss-spore-heart",
+            "hp": 1150,
+            "x": 1244.0087082227208,
+            "y": 2819.6768547702545,
+            "control": 0,
+            "controlGrace": 0,
+            "controlLimit": 0,
+            "space": "village"
+          }
+        ],
+        "reports": []
+      },
+      "遭遇": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "battle",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": {
+            "battle": {
+              "phase": 2,
+              "next": 2,
+              "move": -1,
+              "part": 0,
+              "nextAt": 39.09333358558794,
+              "entryUntil": -9660.906666414412,
+              "exposedUntil": -7282.295619071527,
+              "transformUntil": 39.09333358558794,
+              "controlImmuneUntil": 289.09333358558797,
+              "startedAt": -11060.906666414412,
+              "roots": [
+                {
+                  "x": 1404.0087082227208,
+                  "y": 2819.6768547702545,
+                  "hp": 74
+                },
+                {
+                  "x": 1305.2380574011352,
+                  "y": 2967.4975799720605,
+                  "hp": 96
+                }
+              ]
+            },
+            "attack": null,
+            "hazards": [],
+            "shots": [],
+            "stagger": 0,
+            "parried": null
+          }
+        },
+        "members": [
+          {
+            "id": "wild-camp-spore",
+            "hp": 0,
+            "x": 1771.8884377893073,
+            "y": 2792.9137049059764,
+            "serial": 14,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-a",
+            "hp": 0,
+            "x": 1557.1224651507277,
+            "y": 2804.295043858282,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-b",
+            "hp": 0,
+            "x": 1772.1896304150625,
+            "y": 2356.709847786817,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-priest",
+            "hp": 0,
+            "x": 1190,
+            "y": 2820,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.9991476896384832,
+              "y": -0.041278254445663215
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-spore-heart",
+            "hp": 1150,
+            "x": 1244.0087082227208,
+            "y": 2819.6768547702545,
+            "serial": 4,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.9604905557298932,
+              "y": 0.2783125803007853
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-spore-heart",
+        "x": 1244.0087082227208,
+        "y": 2819.6768547702545,
+        "hp": 1150,
+        "type": "spore",
+        "behavior": {
+          "boss": "spore-heart",
+          "battle": {
+            "phase": 2,
+            "next": 2,
+            "move": -1,
+            "part": 0,
+            "nextAt": 188.95000025225454,
+            "entryUntil": -9511.049999747745,
+            "exposedUntil": -7132.43895240486,
+            "transformUntil": 188.95000025225454,
+            "controlImmuneUntil": 438.95000025225454,
+            "startedAt": -10911.049999747745,
+            "roots": [
+              {
+                "x": 1404.0087082227208,
+                "y": 2819.6768547702545,
+                "hp": 74
+              },
+              {
+                "x": 1305.2380574011352,
+                "y": 2967.4975799720605,
+                "hp": 96
+              }
+            ]
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.9604905557298932,
+            "y": 0.2783125803007853
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "idle",
+            "frame": 183,
+            "index": 3,
+            "facing": 3,
+            "phase": "阶段转换",
+            "elapsed": 149.8566666666666,
+            "provisional": false
+          }
+        }
+      },
+      "危险区": [],
+      "世界时间": 696.0913600000965,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 1,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": false,
+          "pressure": 50,
+          "raidBudget": 3,
+          "renewablePatrols": 5,
+          "remaining": 0
+        }
+      },
+      "采集事件": {
+        "herb": 0,
+        "orchard": 0,
+        "claimed": []
+      },
+      "现场敌人": [
+        {
+          "id": "boss-spore-heart",
+          "x": 1244.0087082227208,
+          "y": 2819.6768547702545,
+          "hp": 1150,
+          "type": "spore",
+          "behavior": {
+            "boss": "spore-heart",
+            "battle": {
+              "phase": 2,
+              "next": 2,
+              "move": -1,
+              "part": 0,
+              "nextAt": 188.95000025225454,
+              "entryUntil": -9511.049999747745,
+              "exposedUntil": -7132.43895240486,
+              "transformUntil": 188.95000025225454,
+              "controlImmuneUntil": 438.95000025225454,
+              "startedAt": -10911.049999747745,
+              "roots": [
+                {
+                  "x": 1404.0087082227208,
+                  "y": 2819.6768547702545,
+                  "hp": 74
+                },
+                {
+                  "x": 1305.2380574011352,
+                  "y": 2967.4975799720605,
+                  "hp": 96
+                }
+              ]
+            },
+            "attempt": 0,
+            "face": {
+              "x": 0.9604905557298932,
+              "y": 0.2783125803007853
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 183,
+              "index": 3,
+              "facing": 3,
+              "phase": "阶段转换",
+              "elapsed": 149.8566666666666,
+              "provisional": false
+            }
+          }
+        },
+        {
+          "id": "boss-spore-heart:祭根:0:0",
+          "x": 1404.0087082227208,
+          "y": 2819.6768547702545,
+          "hp": 74,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "boss-spore-heart",
+              "index": 0,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 0,
+              "index": 0,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 149.8566666666666,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "boss-spore-heart:祭根:0:1",
+          "x": 1305.2380574011352,
+          "y": 2967.4975799720605,
+          "hp": 96,
+          "type": "priest",
+          "behavior": {
+            "passiveRoot": {
+              "owner": "boss-spore-heart",
+              "index": 1,
+              "attempt": 0
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 0,
+              "index": 0,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 149.8566666666666,
+              "provisional": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "名称": "首领死亡后正式清除，恶意只结算一次",
+      "模拟毫秒": 10555.193333333327,
+      "玩家": {
+        "x": 1543.8447369079875,
+        "y": 2851.3717852991585,
+        "hp": 98,
+        "stamina": 71.6652364278305
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1280.5674330986674,
+        "y": 2825.8918370570227,
+        "hp": 568,
+        "qi": 50.937459998487775,
+        "clock": 154466.2433328294,
+        "serial": 37,
+        "cooldowns": {
+          "palm": 899.8066666666728,
+          "triple": 729.8066666666728,
+          "star": 929.8066666666728,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 2209.8066666666728,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 0,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "遭遇": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": true,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "defeated",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "id": "wild-camp-spore",
+            "hp": 0,
+            "x": 1771.8884377893073,
+            "y": 2792.9137049059764,
+            "serial": 14,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-a",
+            "hp": 0,
+            "x": 1557.1224651507277,
+            "y": 2804.295043858282,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-b",
+            "hp": 0,
+            "x": 1772.1896304150625,
+            "y": 2356.709847786817,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-priest",
+            "hp": 0,
+            "x": 1190,
+            "y": 2820,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.9991476896384832,
+              "y": -0.041278254445663215
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-spore-heart",
+            "hp": 0,
+            "x": 1255.88341443915,
+            "y": 2821.406407392621,
+            "serial": 9,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.8175962636319141,
+              "y": 0.575791932641587
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-spore-heart",
+        "x": 1255.88341443915,
+        "y": 2821.406407392621,
+        "hp": 0,
+        "type": "spore",
+        "behavior": {
+          "boss": "spore-heart",
+          "battle": {
+            "phase": 2,
+            "next": 4,
+            "move": 3,
+            "part": 0,
+            "nextAt": 8705,
+            "entryUntil": -9511.049999747745,
+            "exposedUntil": 6852.613333313098,
+            "transformUntil": 188.95000025225454,
+            "controlImmuneUntil": 11480,
+            "startedAt": -10911.049999747745,
+            "roots": [
+              {
+                "x": 1404.0087082227208,
+                "y": 2819.6768547702545,
+                "hp": 0
+              },
+              {
+                "x": 1305.2380574011352,
+                "y": 2967.4975799720605,
+                "hp": 0
+              }
+            ]
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.8175962636319141,
+            "y": 0.575791932641587
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "death",
+            "frame": 184,
+            "index": 4,
+            "facing": 3,
+            "phase": "death",
+            "elapsed": 0,
+            "provisional": false
+          }
+        }
+      },
+      "危险区": [],
+      "世界时间": 711.6993650001399,
+      "委托": {
+        "south-supply": "active"
+      },
+      "魔王": {
+        "introduced": false
+      },
+      "威胁": {
+        "active": 0,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": true,
+          "pressure": 10,
+          "raidBudget": 0,
+          "renewablePatrols": 0,
+          "remaining": 0
+        }
+      },
+      "采集事件": {
+        "herb": 0,
+        "orchard": 0,
+        "claimed": []
+      },
+      "现场敌人": [
+        {
+          "id": "boss-spore-heart",
+          "x": 1255.88341443915,
+          "y": 2821.406407392621,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "boss": "spore-heart",
+            "battle": {
+              "phase": 2,
+              "next": 4,
+              "move": 3,
+              "part": 0,
+              "nextAt": 8705,
+              "entryUntil": -9511.049999747745,
+              "exposedUntil": 6852.613333313098,
+              "transformUntil": 188.95000025225454,
+              "controlImmuneUntil": 11480,
+              "startedAt": -10911.049999747745,
+              "roots": [
+                {
+                  "x": 1404.0087082227208,
+                  "y": 2819.6768547702545,
+                  "hp": 0
+                },
+                {
+                  "x": 1305.2380574011352,
+                  "y": 2967.4975799720605,
+                  "hp": 0
+                }
+              ]
+            },
+            "attempt": 0,
+            "face": {
+              "x": 0.8175962636319141,
+              "y": 0.575791932641587
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 184,
+              "index": 4,
+              "facing": 3,
+              "phase": "death",
+              "elapsed": 0,
+              "provisional": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "名称": "回村通过公共委托簿领取两处谢礼并交付药草",
+      "模拟毫秒": 46153.043333333466,
+      "玩家": {
+        "x": 563.4233293934376,
+        "y": 816.1557950708755,
+        "hp": 98,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 633.0413547077708,
+        "y": 1019.2180495088567,
+        "hp": 640,
+        "qi": 100,
+        "clock": 190064.09333282948,
+        "serial": 37,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 6000,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "遭遇": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": true,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "defeated",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "id": "wild-camp-spore",
+            "hp": 0,
+            "x": 1771.8884377893073,
+            "y": 2792.9137049059764,
+            "serial": 14,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-a",
+            "hp": 0,
+            "x": 1557.1224651507277,
+            "y": 2804.295043858282,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-b",
+            "hp": 0,
+            "x": 1772.1896304150625,
+            "y": 2356.709847786817,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-priest",
+            "hp": 0,
+            "x": 1190,
+            "y": 2820,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.9991476896384832,
+              "y": -0.041278254445663215
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-spore-heart",
+            "hp": 0,
+            "x": 1255.88341443915,
+            "y": 2821.406407392621,
+            "serial": 9,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.8175962636319141,
+              "y": 0.575791932641587
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-spore-heart",
+        "x": 1255.88341443915,
+        "y": 2821.406407392621,
+        "hp": 0,
+        "type": "spore",
+        "behavior": {
+          "boss": "spore-heart",
+          "battle": {
+            "phase": 2,
+            "next": 4,
+            "move": 3,
+            "part": 0,
+            "nextAt": 8705,
+            "entryUntil": -9511.049999747745,
+            "exposedUntil": 6852.613333313098,
+            "transformUntil": 188.95000025225454,
+            "controlImmuneUntil": 11480,
+            "startedAt": -10911.049999747745,
+            "roots": [
+              {
+                "x": 1404.0087082227208,
+                "y": 2819.6768547702545,
+                "hp": 0
+              },
+              {
+                "x": 1305.2380574011352,
+                "y": 2967.4975799720605,
+                "hp": 0
+              }
+            ]
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.8175962636319141,
+            "y": 0.575791932641587
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "death",
+            "frame": 187,
+            "index": 7,
+            "facing": 3,
+            "phase": "death",
+            "elapsed": 35597.85000000014,
+            "provisional": false
+          }
+        }
+      },
+      "危险区": [],
+      "世界时间": 765.0961400002737,
+      "委托": {
+        "south-supply": "complete"
+      },
+      "魔王": {
+        "introduced": true
+      },
+      "威胁": {
+        "active": 3,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": true,
+          "pressure": 10,
+          "raidBudget": 0,
+          "renewablePatrols": 0,
+          "remaining": 0
+        }
+      },
+      "采集事件": {
+        "herb": 0,
+        "orchard": 0,
+        "claimed": [
+          "herb",
+          "orchard"
+        ]
+      },
+      "现场敌人": [
+        {
+          "id": "boss-spore-heart",
+          "x": 1255.88341443915,
+          "y": 2821.406407392621,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "boss": "spore-heart",
+            "battle": {
+              "phase": 2,
+              "next": 4,
+              "move": 3,
+              "part": 0,
+              "nextAt": 8705,
+              "entryUntil": -9511.049999747745,
+              "exposedUntil": 6852.613333313098,
+              "transformUntil": 188.95000025225454,
+              "controlImmuneUntil": 11480,
+              "startedAt": -10911.049999747745,
+              "roots": [
+                {
+                  "x": 1404.0087082227208,
+                  "y": 2819.6768547702545,
+                  "hp": 0
+                },
+                {
+                  "x": 1305.2380574011352,
+                  "y": 2967.4975799720605,
+                  "hp": 0
+                }
+              ]
+            },
+            "attempt": 0,
+            "face": {
+              "x": 0.8175962636319141,
+              "y": 0.575791932641587
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 187,
+              "index": 7,
+              "facing": 3,
+              "phase": "death",
+              "elapsed": 35597.85000000014,
+              "provisional": false
+            }
+          }
+        },
+        {
+          "id": "wild-track-wolf-a",
+          "x": -553.341096505211,
+          "y": 1473.317806989578,
+          "hp": 58,
+          "type": "wolf",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 0,
+              "index": 0,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 46153.043333333466,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-track-wolf-b",
+          "x": -443.34109650521134,
+          "y": 1503.317806989578,
+          "hp": 58,
+          "type": "wolf",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 0,
+              "index": 0,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 46153.043333333466,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-bent-boar",
+          "x": 394.9575285385817,
+          "y": -404.2371754726641,
+          "hp": 90,
+          "type": "boar",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 0,
+              "index": 0,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 46153.043333333466,
+              "provisional": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "名称": "完整地图与据点清除状态同步",
+      "模拟毫秒": 46188.183333333465,
+      "玩家": {
+        "x": 563.4233293934376,
+        "y": 816.1557950708755,
+        "hp": 98,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 633.0413547077708,
+        "y": 1019.2180495088567,
+        "hp": 640,
+        "qi": 100,
+        "clock": 190099.2333328295,
+        "serial": 37,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 6000,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "遭遇": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": true,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "defeated",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "id": "wild-camp-spore",
+            "hp": 0,
+            "x": 1771.8884377893073,
+            "y": 2792.9137049059764,
+            "serial": 14,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-a",
+            "hp": 0,
+            "x": 1557.1224651507277,
+            "y": 2804.295043858282,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-b",
+            "hp": 0,
+            "x": 1772.1896304150625,
+            "y": 2356.709847786817,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-priest",
+            "hp": 0,
+            "x": 1190,
+            "y": 2820,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.9991476896384832,
+              "y": -0.041278254445663215
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-spore-heart",
+            "hp": 0,
+            "x": 1255.88341443915,
+            "y": 2821.406407392621,
+            "serial": 9,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.8175962636319141,
+              "y": 0.575791932641587
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-spore-heart",
+        "x": 1255.88341443915,
+        "y": 2821.406407392621,
+        "hp": 0,
+        "type": "spore",
+        "behavior": {
+          "boss": "spore-heart",
+          "battle": {
+            "phase": 2,
+            "next": 4,
+            "move": 3,
+            "part": 0,
+            "nextAt": 8705,
+            "entryUntil": -9511.049999747745,
+            "exposedUntil": 6852.613333313098,
+            "transformUntil": 188.95000025225454,
+            "controlImmuneUntil": 11480,
+            "startedAt": -10911.049999747745,
+            "roots": [
+              {
+                "x": 1404.0087082227208,
+                "y": 2819.6768547702545,
+                "hp": 0
+              },
+              {
+                "x": 1305.2380574011352,
+                "y": 2967.4975799720605,
+                "hp": 0
+              }
+            ]
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.8175962636319141,
+            "y": 0.575791932641587
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "death",
+            "frame": 187,
+            "index": 7,
+            "facing": 3,
+            "phase": "death",
+            "elapsed": 35632.990000000136,
+            "provisional": false
+          }
+        }
+      },
+      "危险区": [],
+      "世界时间": 765.148850000274,
+      "委托": {
+        "south-supply": "complete"
+      },
+      "魔王": {
+        "introduced": true
+      },
+      "威胁": {
+        "active": 3,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": true,
+          "pressure": 10,
+          "raidBudget": 0,
+          "renewablePatrols": 0,
+          "remaining": 0
+        }
+      },
+      "采集事件": {
+        "herb": 0,
+        "orchard": 0,
+        "claimed": [
+          "herb",
+          "orchard"
+        ]
+      },
+      "现场敌人": [
+        {
+          "id": "boss-spore-heart",
+          "x": 1255.88341443915,
+          "y": 2821.406407392621,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "boss": "spore-heart",
+            "battle": {
+              "phase": 2,
+              "next": 4,
+              "move": 3,
+              "part": 0,
+              "nextAt": 8705,
+              "entryUntil": -9511.049999747745,
+              "exposedUntil": 6852.613333313098,
+              "transformUntil": 188.95000025225454,
+              "controlImmuneUntil": 11480,
+              "startedAt": -10911.049999747745,
+              "roots": [
+                {
+                  "x": 1404.0087082227208,
+                  "y": 2819.6768547702545,
+                  "hp": 0
+                },
+                {
+                  "x": 1305.2380574011352,
+                  "y": 2967.4975799720605,
+                  "hp": 0
+                }
+              ]
+            },
+            "attempt": 0,
+            "face": {
+              "x": 0.8175962636319141,
+              "y": 0.575791932641587
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 187,
+              "index": 7,
+              "facing": 3,
+              "phase": "death",
+              "elapsed": 35632.990000000136,
+              "provisional": false
+            }
+          }
+        },
+        {
+          "id": "wild-track-wolf-a",
+          "x": -553.341096505211,
+          "y": 1473.317806989578,
+          "hp": 58,
+          "type": "wolf",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 0,
+              "index": 0,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 46188.183333333465,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-track-wolf-b",
+          "x": -443.34109650521134,
+          "y": 1503.317806989578,
+          "hp": 58,
+          "type": "wolf",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 0,
+              "index": 0,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 46188.183333333465,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-bent-boar",
+          "x": 394.9575285385817,
+          "y": -404.2371754726641,
+          "hp": 90,
+          "type": "boar",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 0,
+              "index": 0,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 46188.183333333465,
+              "provisional": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "名称": "手记中的恶意与南路委托条件同步",
+      "模拟毫秒": 46188.183333333465,
+      "玩家": {
+        "x": 563.4233293934376,
+        "y": 816.1557950708755,
+        "hp": 98,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 633.0413547077708,
+        "y": 1019.2180495088567,
+        "hp": 640,
+        "qi": 100,
+        "clock": 190099.2333328295,
+        "serial": 37,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 6000,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "遭遇": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": true,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "defeated",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "id": "wild-camp-spore",
+            "hp": 0,
+            "x": 1771.8884377893073,
+            "y": 2792.9137049059764,
+            "serial": 14,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-a",
+            "hp": 0,
+            "x": 1557.1224651507277,
+            "y": 2804.295043858282,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-b",
+            "hp": 0,
+            "x": 1772.1896304150625,
+            "y": 2356.709847786817,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-priest",
+            "hp": 0,
+            "x": 1190,
+            "y": 2820,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.9991476896384832,
+              "y": -0.041278254445663215
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-spore-heart",
+            "hp": 0,
+            "x": 1255.88341443915,
+            "y": 2821.406407392621,
+            "serial": 9,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.8175962636319141,
+              "y": 0.575791932641587
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "首领": {
+        "id": "boss-spore-heart",
+        "x": 1255.88341443915,
+        "y": 2821.406407392621,
+        "hp": 0,
+        "type": "spore",
+        "behavior": {
+          "boss": "spore-heart",
+          "battle": {
+            "phase": 2,
+            "next": 4,
+            "move": 3,
+            "part": 0,
+            "nextAt": 8705,
+            "entryUntil": -9511.049999747745,
+            "exposedUntil": 6852.613333313098,
+            "transformUntil": 188.95000025225454,
+            "controlImmuneUntil": 11480,
+            "startedAt": -10911.049999747745,
+            "roots": [
+              {
+                "x": 1404.0087082227208,
+                "y": 2819.6768547702545,
+                "hp": 0
+              },
+              {
+                "x": 1305.2380574011352,
+                "y": 2967.4975799720605,
+                "hp": 0
+              }
+            ]
+          },
+          "attempt": 0,
+          "face": {
+            "x": 0.8175962636319141,
+            "y": 0.575791932641587
+          },
+          "guardOpen": 0,
+          "attack": null,
+          "pose": {
+            "action": "death",
+            "frame": 187,
+            "index": 7,
+            "facing": 3,
+            "phase": "death",
+            "elapsed": 35632.990000000136,
+            "provisional": false
+          }
+        }
+      },
+      "危险区": [],
+      "世界时间": 765.148850000274,
+      "委托": {
+        "south-supply": "complete"
+      },
+      "魔王": {
+        "introduced": true
+      },
+      "威胁": {
+        "active": 3,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": true,
+          "pressure": 10,
+          "raidBudget": 0,
+          "renewablePatrols": 0,
+          "remaining": 0
+        }
+      },
+      "采集事件": {
+        "herb": 0,
+        "orchard": 0,
+        "claimed": [
+          "herb",
+          "orchard"
+        ]
+      },
+      "现场敌人": [
+        {
+          "id": "boss-spore-heart",
+          "x": 1255.88341443915,
+          "y": 2821.406407392621,
+          "hp": 0,
+          "type": "spore",
+          "behavior": {
+            "boss": "spore-heart",
+            "battle": {
+              "phase": 2,
+              "next": 4,
+              "move": 3,
+              "part": 0,
+              "nextAt": 8705,
+              "entryUntil": -9511.049999747745,
+              "exposedUntil": 6852.613333313098,
+              "transformUntil": 188.95000025225454,
+              "controlImmuneUntil": 11480,
+              "startedAt": -10911.049999747745,
+              "roots": [
+                {
+                  "x": 1404.0087082227208,
+                  "y": 2819.6768547702545,
+                  "hp": 0
+                },
+                {
+                  "x": 1305.2380574011352,
+                  "y": 2967.4975799720605,
+                  "hp": 0
+                }
+              ]
+            },
+            "attempt": 0,
+            "face": {
+              "x": 0.8175962636319141,
+              "y": 0.575791932641587
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "death",
+              "frame": 187,
+              "index": 7,
+              "facing": 3,
+              "phase": "death",
+              "elapsed": 35632.990000000136,
+              "provisional": false
+            }
+          }
+        },
+        {
+          "id": "wild-track-wolf-a",
+          "x": -553.341096505211,
+          "y": 1473.317806989578,
+          "hp": 58,
+          "type": "wolf",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 0,
+              "index": 0,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 46188.183333333465,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-track-wolf-b",
+          "x": -443.34109650521134,
+          "y": 1503.317806989578,
+          "hp": 58,
+          "type": "wolf",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 0,
+              "index": 0,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 46188.183333333465,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-bent-boar",
+          "x": 394.9575285385817,
+          "y": -404.2371754726641,
+          "hp": 90,
+          "type": "boar",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 0,
+              "index": 0,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 46188.183333333465,
+              "provisional": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "名称": "保存重开保留正式清除与奖励状态，谢礼无法重复领取",
+      "模拟毫秒": 167.79666666666682,
+      "玩家": {
+        "x": 563.4233293934376,
+        "y": 816.1557950708755,
+        "hp": 98,
+        "stamina": 100
+      },
+      "小宝": {
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 633.0413547077708,
+        "y": 1019.2180495088567,
+        "hp": 640,
+        "qi": 100,
+        "clock": 190267.02999949615,
+        "serial": 37,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 6000,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "遭遇": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": true,
+        "cooldown": 0,
+        "warning": null,
+        "boss": {
+          "stage": "defeated",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        },
+        "members": [
+          {
+            "id": "wild-camp-spore",
+            "hp": 0,
+            "x": 1771.8884377893073,
+            "y": 2792.9137049059764,
+            "serial": 14,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-a",
+            "hp": 0,
+            "x": 1557.1224651507277,
+            "y": 2804.295043858282,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-b",
+            "hp": 0,
+            "x": 1772.1896304150625,
+            "y": 2356.709847786817,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-priest",
+            "hp": 0,
+            "x": 1190,
+            "y": 2820,
+            "serial": 3,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.9991476896384832,
+              "y": -0.041278254445663215
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-spore-heart",
+            "hp": 0,
+            "x": 1255.88341443915,
+            "y": 2821.406407392621,
+            "serial": 9,
+            "cooldown": 0,
+            "defeated": true,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0.8175962636319141,
+              "y": 0.575791932641587
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "危险区": [],
+      "世界时间": 765.4005450002744,
+      "委托": {
+        "south-supply": "complete"
+      },
+      "魔王": {
+        "introduced": true
+      },
+      "威胁": {
+        "active": 3,
+        "south": {
+          "source": "south-spore-camp",
+          "cleared": true,
+          "pressure": 10,
+          "raidBudget": 0,
+          "renewablePatrols": 0,
+          "remaining": 0
+        }
+      },
+      "采集事件": {
+        "herb": 0,
+        "orchard": 0,
+        "claimed": [
+          "herb",
+          "orchard"
+        ]
+      },
+      "现场敌人": [
+        {
+          "id": "wild-bent-boar",
+          "x": 387.22288706563324,
+          "y": -395.3975852178661,
+          "hp": 90,
+          "type": "boar",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "walk",
+              "frame": 4,
+              "index": 0,
+              "facing": 0,
+              "phase": "walk",
+              "elapsed": 167.79666666666682,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-track-wolf-b",
+          "x": -451.74568297385673,
+          "y": 1486.508634052285,
+          "hp": 58,
+          "type": "wolf",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "walk",
+              "frame": 29,
+              "index": 1,
+              "facing": 1,
+              "phase": "walk",
+              "elapsed": 167.79666666666682,
+              "provisional": true
+            }
+          }
+        },
+        {
+          "id": "wild-track-wolf-a",
+          "x": -553.341096505211,
+          "y": 1473.317806989578,
+          "hp": 58,
+          "type": "wolf",
+          "behavior": {
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 0,
+              "index": 0,
+              "facing": 0,
+              "phase": "idle",
+              "elapsed": 167.79666666666682,
+              "provisional": true
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "错误": [],
+  "结果": "通过",
+  "战斗进度": {
+    "模拟秒": 16.48924666666526,
+    "首领生命": 671.8000000000001,
+    "阶段": 2,
+    "玩家生命": 78,
+    "剩余药剂": 2,
+    "同行距离": 64.61357672058928
+  },
+  "二阶段特效": {
+    "模拟毫秒": 1022.0733333333336,
+    "效果": {
+      "objects": 2,
+      "effects": [
+        {
+          "boss": "spore-heart",
+          "id": "boss-spore-heart:战斗0:5",
+          "kind": "菌冠扫弧",
+          "phase": "出手",
+          "point": {
+            "x": 1244.131809343831,
+            "y": 2819.694784465773
+          },
+          "radius": 115,
+          "elapsed": 2.0733333333336077,
+          "skill": 2,
+          "direction": {
+            "x": 0.9895588513689356,
+            "y": 0.14412938519744267
+          }
+        }
+      ]
+    }
+  },
+  "帧间隔": {
+    "样本数": 1379,
+    "中位毫秒": 8.300000000000182,
+    "百分之九十五毫秒": 10.300000000000182,
+    "最大毫秒": 158.4000000000001
+  },
+  "耗时秒": 21.20442666666526,
+  "墙钟秒": 25.11,
+  "药剂消耗": 3,
+  "受到伤害": 120,
+  "弹反输入": 2,
+  "弹反成功": 1,
+  "风步输入": 1,
+  "观察到的技能": [
+    0,
+    1,
+    2,
+    3
+  ]
+}

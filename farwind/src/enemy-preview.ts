@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import {enemyProfile,type EnemyKind} from './data/enemies';
+import {enemyProfile,enemyArt,type EnemyKind} from './data/enemies';
 import {EnemyAnimation,type EnemyPose} from './game/systems/enemyAnimation';
 import {EnemyView} from './game/entities/enemyView';
 import {Actor} from './game/entities/actor';
@@ -29,13 +29,14 @@ class Preview extends Phaser.Scene{
     if(this.action==='wall'&&this.kind!=='boar'){this.action='idle';select('action').value='idle';}
     const p=enemyProfile(this.kind),d=this.facing===0?{x:0,y:1}:this.facing===1?{x:0,y:-1}:{x:this.facing===2?-1:1,y:0},anim=new EnemyAnimation(),now=Math.min(this.elapsed,this.duration()-1),body={x:0,y:0,hp:p.hp as number,type:this.kind,parried:undefined as any,wallHit:undefined as any};
     anim.motion.facing=this.facing;
-    if(this.action==='walk')anim.motion.last={x:-d.x*now/1000*p.speed,y:-d.y*now/1000*p.speed,hp:p.hp,now:0};
+    if(this.action==='walk'){const step=Math.max(1,now);anim.motion.last={x:-d.x*step/1000*p.speed,y:-d.y*step/1000*p.speed,hp:p.hp,now:now-step};}
     if(this.action==='hurt'){body.hp--;anim.motion.hurtAt=0;}
     if(this.action==='death'){body.hp=0;anim.motion.deathAt=0;}
     if(this.action==='parry'||this.action==='perfect')body.parried={at:0,until:this.duration(),direction:d,perfect:this.action==='perfect'};
     if(this.action==='wall')body.wallHit={at:0,until:850};
     const attack=this.action==='attack'?createEnemyAttack('preview',1,this.kind,0,body,d):null;this.pose=anim.sample(body,attack,now);
-    for(const [sprite,scale] of [[this.actual,1],[this.large,3]] as const){sprite.setTexture(`enemy-${this.kind}`,this.pose.frame).setOrigin(.5,110/128).setDisplaySize(160*p.height/60*scale,160*p.height/60*scale);Actor.mirror(sprite,this.pose.facing===2);}
+    const art=enemyArt(this.kind),ratio=p.height/art.nativeHeight;
+    for(const [sprite,scale] of [[this.actual,1],[this.large,3]] as const){sprite.setTexture(`enemy-${this.kind}`,this.pose.frame).setOrigin(.5,art.originY).setDisplaySize(art.frameWidth*ratio*scale,art.frameHeight*ratio*scale);Actor.mirror(sprite,this.pose.facing===2);}
     document.querySelector('#info')!.textContent=`${p.name} · 第${this.pose.index+1}姿态 · ${this.pose.phase==='charge'?'蓄力':this.pose.phase==='commit'?'锁向（前摇内）':this.pose.phase==='active'?'有效出手':this.pose.phase==='recovery'?'收招':this.pose.phase==='stagger'?'失衡':select('action').selectedOptions[0].textContent} · ${Math.round(now)}／${Math.round(this.duration())}毫秒`;
     const range=document.querySelector<HTMLInputElement>('#scrub')!;range.max=String(this.duration()-1);range.value=String(now);document.querySelector('#pause')!.textContent=this.paused?'继续播放':'暂停';
   }

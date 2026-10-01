@@ -384,6 +384,18 @@ button:focus-visible {
 #toast.show {
   opacity: 1;
 }
+/* 保存错误独立于短提示和模态面板，直到成功保存才消失。 */
+.save-warning { position:fixed;left:16px;bottom:16px;z-index:12001;max-width:min(420px,calc(100vw - 32px));padding:14px 18px;background:#fff0dc;color:#633e2c;border:2px solid #a75c3b;border-radius:8px;box-shadow:0 8px 30px #17261f55;pointer-events:auto; }
+.save-warning[hidden] { display:none; }
+.save-warning p { margin:6px 0;overflow-wrap:anywhere; }
+.save-warning small { display:block; }
+.save-warning div,.victory-actions { display:flex;gap:8px;flex-wrap:wrap;margin-top:12px; }
+.victory-panel { width:min(760px,94vw);text-align:left; }
+.victory-rewards { display:grid;gap:12px; }
+.victory-rewards article { padding:14px 18px;border:1px solid #b5a478;border-radius:8px;background:#faf1d7; }
+.victory-rewards h3 { margin:6px 0;font-size:23px; }
+.victory-rewards p { line-height:1.7; }
+#boss-save-status,#rune-feedback { padding:10px 12px;background:#e3ead6;border:1px solid #a6b598;border-radius:5px;line-height:1.6; }
 #modal {
   position: fixed;
   inset: 0;

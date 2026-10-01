@@ -1,9 +1,11 @@
 import './runes.css';
 import Phaser from "phaser";
+import { CombatSlice } from "./game/scenes/CombatSlice";
 import { World } from "./game/scenes/World";
 import "./style.css";
 import "./commission.css";
 import "./equipment.css";
+import "./shop.css";
 const root = document.querySelector("#game")!;
 try {
   const probe = document.createElement("canvas");
@@ -27,7 +29,7 @@ try {
       roundPixels: false,
     },
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [World],
+    scene: [import.meta.env.DEV && new URLSearchParams(location.search).has("combatSlice") ? CombatSlice : World],
     audio: { noAudio: true },
   });
   window.addEventListener("resize", () => {

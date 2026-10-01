@@ -115,3 +115,36 @@ describe("NPC 图集真实透明、独立姿态与固定地面根", () => {
     expect(Math.max(...bottoms) - Math.min(...bottoms)).toBeLessThanOrEqual(1);
   });
 });
+
+describe("近战卫兵双脚交替", () => {
+  it("三个朝向的着地靴位置在相邻步相中确实变化", async () => {
+    const file = "public/assets/village-defense/m3/guard-walk.png";
+    const meta = await sharp(file).metadata();
+    expect([meta.width, meta.height, meta.hasAlpha]).toEqual([320, 480, true]);
+    for (let row = 0; row < 3; row++) {
+      const centers: number[] = [];
+      for (let col = 0; col < 2; col++) {
+        const pixels = await sharp(file).extract({
+          left: col * 160, top: row * 160, width: 160, height: 160,
+        }).ensureAlpha().raw().toBuffer();
+        let weightedX = 0, weight = 0, bottom = -1;
+        for (let y = 0; y < 160; y++)
+          for (let x = 0; x < 160; x++) {
+            const alpha = pixels[(y * 160 + x) * 4 + 3];
+            if (alpha > 8) bottom = Math.max(bottom, y);
+            if (y >= 136 && y < 150 && alpha > 8) {
+              weightedX += x * alpha;
+              weight += alpha;
+            }
+            if (x < 2 || x > 157 || y < 2 || y > 157) expect(alpha).toBe(0);
+          }
+        expect(bottom).toBeGreaterThanOrEqual(147);
+        expect(bottom).toBeLessThanOrEqual(148);
+        expect(weight).toBeGreaterThan(0);
+        centers.push(weightedX / weight);
+      }
+      // 直接检查靴子下缘的像素重心，避免两个文件虽不同却仍由同一只脚领步。
+      expect(centers[1] - centers[0]).toBeGreaterThan([20, 12, 7][row]);
+    }
+  });
+});

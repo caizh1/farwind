@@ -56,7 +56,7 @@ describe('轻羽攻击后摇取消',()=>{
   request(a.c,a.p,'parry',200);a.c.update(200,275,3,a.p,[target],()=>false,()=>true,()=>hits++,()=>{});
   expect(a.c.flushActions(275,a.p)).toEqual(['parry']);
   a.c.update(275,300,3,a.p,[target],()=>false,()=>true,()=>hits++,()=>{});expect(hits).toBe(1);
-  const b=arena(4),releases:number[]=[];
+  const b=arena(4),releases:number[]=[];b.c.attack={...b.c.attack!,kind:'swordWind',delivery:'wind',stage:1,config:{windup:110,active:100,recovery:190,range:0,angle:0,damage:36,step:8,knock:12,flash:120,stagger:120}};
   b.c.update(0,110,3,b.p,[],()=>false,()=>true,()=>{},()=>{},()=>{},()=>true,x=>releases.push(x.id));
   b.c.requestAttack(200);request(b.c,b.p,'dash',200);
   b.c.update(110,210,3,b.p,[],()=>false,()=>true,()=>{},()=>{},()=>{},()=>true,x=>releases.push(x.id));

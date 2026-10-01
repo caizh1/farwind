@@ -6,7 +6,8 @@ import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
-import {combatVisual} from '../src/data/animation';
+import {swordWindVisual} from '../src/data/animation';
+import {SWORD_WIND} from '../src/data/swordWind';
 const directory='public/assets/animation/sword-wind';
 it('剑风24角色帧和28独立效果帧可加载、透明且无边缘裁切',async()=>{
  const sets=[['hero-sword-wind',160,8,3],['sword-wind-release',128,4,1],['sword-wind-flight',128,6,1],['sword-wind-hit',128,8,1],['sword-wind-dissolve',128,4,1],['sword-wind-ground',128,6,1]] as const;
@@ -24,7 +25,7 @@ it('用户认可只覆盖当前上撩和地面图集，不扩大到其余效果�
  expect(meta.角色.临时).toBe(false);expect(meta.角色.用户美术认可).toBe(true);
  for(const e of meta.效果){expect(e.临时).toBe(e.名称!=='ground');expect(e.用户美术认可).toBe(e.名称==='ground');}
  for(const e of manifest.资源.filter((r:any)=>r.文件.startsWith('animation/sword-wind/')))expect(e.是否临时).toBe(!acceptance.资源.some((r:any)=>r.ID===e.ID));
- for(const direction of [0,1,2,3] as const){const visual=combatVisual(4,direction,110);expect(visual.provisional).toBe(false);expect(visual.weapon?.provisional).toBe(false);}
+ for(const direction of [0,1,2,3] as const){const visual=swordWindVisual(direction,110,{...SWORD_WIND.strike});expect(visual.provisional).toBe(false);expect(visual.weapon?.provisional).toBe(false);}
  expect(meta.临时).toBe(true);expect(meta.用户美术认可).toBe(false);
 });
 it('重新打包时摘要不匹配或缺少认可记录会恢复临时标记',async()=>{

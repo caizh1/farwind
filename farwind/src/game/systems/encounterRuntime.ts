@@ -13,7 +13,7 @@ export type EncounterPort={read:()=>EncounterState;bodies:()=>EnemyBody[];spawn:
 export class WildernessEncounters{
   constructor(private port:EncounterPort){}
   restore(player:Point){
-    const state=this.port.read(),existing=new Set(this.port.bodies().map(e=>e.id));let count=this.port.bodies().filter(e=>e.hp>0&&encounterUnit(e.id)).length;
+    const state=this.port.read(),existing=new Set(this.port.bodies().map(e=>e.id));let count=this.port.bodies().filter(e=>e.hp>0&&(encounterUnit(e.id)||e.passiveRoot)).length;
     // 存档中的进行中首领优先恢复，防止邻近历史巡游占满预算后丢失战斗实例。
     for(const d of ENCOUNTERS){const g=state.groups[d.id];if(g.boss?.stage!=='battle')continue;const i=d.members.findIndex(m=>m.boss),m=d.members[i];if(!existing.has(m.id)&&!g.members[i].defeated&&count<ENCOUNTER_LIMITS.active){this.port.spawn(m,g.members[i]);existing.add(m.id);count++;}}
     for(const d of [...ENCOUNTERS].sort((a,b)=>distance(a,player)-distance(b,player))){const g=state.groups[d.id];if(!g.activated)continue;
@@ -44,14 +44,14 @@ export class WildernessEncounters{
     if(!near){if(b.away>=BOSS_RULES.retreat&&(b.stage==='battle'||b.warning<BOSS_RULES.entry))this.resetBoss(d);return;}
     if(b.stage==='battle'){
       const i=d.members.findIndex(m=>m.boss),m=d.members[i];
-      if(!this.port.bodies().some(e=>e.id===m.id)&&this.port.bodies().filter(e=>encounterUnit(e.id)&&e.hp>0).length<ENCOUNTER_LIMITS.active)this.port.spawn(m,g.members[i]);
+      if(!this.port.bodies().some(e=>e.id===m.id)&&this.port.bodies().filter(e=>(encounterUnit(e.id)||e.passiveRoot)&&e.hp>0).length<ENCOUNTER_LIMITS.active)this.port.spawn(m,g.members[i]);
       return;
     }
     if(b.warning===BOSS_RULES.entry)this.port.signal?.(d);
     b.warning=Math.max(0,b.warning-delta);if(b.warning>0)return;
     const i=d.members.findIndex(m=>m.boss),m=d.members[i];
     if(this.port.bodies().some(e=>e.id===m.id))return;
-    if(this.port.bodies().filter(e=>encounterUnit(e.id)&&e.hp>0).length>=ENCOUNTER_LIMITS.active)return;
+    if(this.port.bodies().filter(e=>(encounterUnit(e.id)||e.passiveRoot)&&e.hp>0).length>=ENCOUNTER_LIMITS.active)return;
     const candidates=[{x:d.x,y:d.y},...Array.from({length:24},(_,n)=>({x:d.x+Math.cos(n*Math.PI/12)*120,y:d.y+Math.sin(n*Math.PI/12)*120})),...Array.from({length:24},(_,n)=>({x:d.x+Math.cos(n*Math.PI/12)*220,y:d.y+Math.sin(n*Math.PI/12)*220}))];
     const occupied=this.port.occupied?.()??[];
     const p=candidates.find(p=>distance(p,player)>=110&&!motionBlocked(p.x,p.y)&&clearMotionLine(p,d)&&!this.port.bodies().some(e=>e.hp>0&&distance(e,p)<60)&&!occupied.some(e=>distance(e,p)<60));if(!p)return;
@@ -87,7 +87,7 @@ export class WildernessEncounters{
       const missing=d.members.filter((m,i)=>!m.boss&&!g.members[i].defeated&&!existing.has(m.id));
       if(!missing.length)continue;
       if(!g.activated&&missing.some(m=>(!d.after&&inView(m,view))||distance(m,player)<(d.after?150:350)||motionBlocked(m.x,m.y)))continue;
-      let live=this.port.bodies().filter(e=>encounterUnit(e.id)&&e.hp>0).length;
+      let live=this.port.bodies().filter(e=>(encounterUnit(e.id)||e.passiveRoot)&&e.hp>0).length;
       if(live+missing.length>ENCOUNTER_LIMITS.active){
         // 给近处新场地让出显示预算。休眠前已经捕获伤势，不卸载交战、返家或在途事件。
         const candidates=this.port.bodies().filter(e=>encounterUnit(e.id)&&!e.boss&&e.hp>0&&!e.attack&&!e.nav.returning&&e.nav.mode!=="chase"&&!this.port.busy(e.id)&&!inView(e,view)&&distance(e,player)>Math.max(650,distance(d,player)+250)).sort((a,b)=>distance(b,player)-distance(a,player));

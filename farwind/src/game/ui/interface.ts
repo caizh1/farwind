@@ -1,4 +1,7 @@
+import {migrationBackup} from '../systems/save';
 import {showRunes,updateRuneHud} from './runes';
+import {CAMP_BOSSES,type CampBossKind} from '../../data/maps/windbell/campBosses';
+import {RUNES,type RuneDefinition} from '../../data/runes';
 import type {RuneRequest} from '../systems/runeState';
 import type {RuneTier,Ability} from '../../data/runes';
 import {updateCampBossHud} from './campBossHud';
@@ -8,7 +11,7 @@ import {DEMON_KING,demonFormation} from '../../data/demonKing';
 import {demonMalice,demonKingSummary} from '../systems/demonKingState';
 import {SHORTCUTS} from "../../data/maps/windbell/shortcuts";
 import {WIND_NAMES,WIND_EFFECTS,WIND_LESSONS} from '../../data/windLessons';
-import {windLearningSource} from '../systems/skills';
+import {windLearningSource,windLessonStatus} from '../systems/skills';
 import { showShop } from "./shop";
 import { showEquipment, type EquipmentViewSlot } from "./equipment";
 import { clockLabel } from "../systems/worldClock";
@@ -32,12 +35,13 @@ import {
   VILLAGE_PORTALS,
   RESERVED_PARCELS,
 } from "../../data/village";
-import { count, craft, discard, parseSave, type State } from "../systems/state";
+import { count, discard, parseSave, type State } from "../systems/state";
 import { region } from "../../data/world";
 import type { PracticeMode } from "../systems/parryTraining";
 import { dialoguePortraitFor } from "../../data/dialoguePortraits";
 const campMapStatus=(s:State,id:string)=>{const g=s.encounters.groups[id];return g.cleared?'已清除':g.boss?.stage==='battle'?'首领交战':g.boss?.stage==='warning'?'首领待挑战':'驻守未清';};
 export type Actions = {
+  enterShop?:(id:ShopId)=>void;
   runeChange:(request:RuneRequest)=>Promise<void>;
   runeLock:()=>string;
   runeA:()=>number;
@@ -48,16 +52,19 @@ export type Actions = {
   start: (continued: boolean) => void;
   save: () => Promise<void>;
   import: (s: State) => Promise<void>;
-  use: (id: ItemId) => void;
+  use: (id: ItemId) => void | Promise<void>;
   pause: () => void;
   volume: (v: number) => void;
   getVolume: () => number;
   title: () => void;
   practice: (mode: PracticeMode) => void;
+  trainBuild?:()=>void;
   indicators: (value:boolean)=>void;
   getIndicators: ()=>boolean;
 };
 export class Interface {
+  runeFeedback='';
+  victory: {boss:CampBossKind;rewards:string[]}|null=null;
   selectedRune='return-wind';selectedRuneSlot=0;runeTier:RuneTier|''='';runeAbility:Ability|''='';runeOwned='all';previewCleanup?:()=>void;runeHudKey='';
   root = document.querySelector<HTMLDivElement>("#ui")!;
   mode = "title";
@@ -83,7 +90,7 @@ export class Interface {
     this.root.innerHTML = `<div id="hud" hidden>
       <div class="top"><div class="vitals-stack"><section class="vitals"><img class="portrait" src="/assets/portrait.png" alt="旅行者"><div><b>旅人 <small>与小黑同行</small></b><div class="meter health"><i></i><span></span></div><div class="meter stamina"><i></i><span></span></div></div></section>
       <span id="combat-status">L 风步 · 就绪</span><span id="parry-status" role="status">K 架剑就绪</span><small id="sword-wind-status" hidden></small><button id="demon-king-summary" class="text-button" data-panel="quest" hidden></button>
-      <section id="training-panel" hidden><b>木桩练习</b><small>J / 左键：攻击；连按接三连；L：风步</small><span id="training-stats"></span><button data-practice-menu="true">迎风架剑练习</button><span id="parry-feedback" hidden></span></section></div>
+      <section id="training-panel" hidden><b>木桩练习</b><small>J / 左键：攻击；连按接三／四连；I／中键：剑风；L：风步</small><span id="training-stats"></span><button data-practice-menu="true">迎风架剑练习</button><button data-build-training="true">本领与构筑训练</button><span id="parry-feedback" hidden></span></section></div>
       <div class="hud-info"><section class="location"><button id="minimap-toggle" class="hud-summary" aria-expanded="false" aria-controls="minimap-details" aria-label="展开小地图"><b id="region">风铃村</b><span>·</span><span id="clock"></span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2Zm6-2v16m6-14v16"/></svg><span class="chevron" aria-hidden="true">▾</span></button><div id="minimap-details" class="hud-details map-details" hidden><small id="day"></small><canvas id="minimap" width="192" height="101" aria-label="位置小地图"></canvas><button class="text-button" data-panel="map">M 完整地图</button></div></section>
       <section class="quest-tracker"><button id="quest-toggle" class="hud-summary" aria-expanded="false" aria-controls="quest-details"><span id="objective-summary" class="ellipsis"></span><span class="chevron" aria-hidden="true">▾</span></button><div id="quest-details" class="hud-details quest-details" hidden><small>主线 · 失落的风</small><p id="objective"></p><button class="text-button" data-panel="quest">Q 旅途手记</button></div></section></div></div>
       <div id="prompt"></div><div id="menu-hint" role="status" hidden>Esc 打开菜单 / 查看操作</div><div class="bottom"><span id="hotbar-info" role="tooltip" hidden></span><div id="hotbar" role="group" aria-label="快捷道具栏，1 至 8"></div></div></div><div id="toast" role="status"></div><div id="modal"></div>`;
@@ -93,9 +100,12 @@ export class Interface {
     this.root.addEventListener("click", (e) => {
       const b = (e.target as HTMLElement).closest<HTMLButtonElement>("button");
       if (b?.dataset.panel) this.open(b.dataset.panel);
+      if(b?.dataset.buildTraining)this.actions.trainBuild?.();
       if (b?.dataset.practiceMenu) this.open("practice");
       if (b?.dataset.use) this.useSlot(Number(b.dataset.hotbarSlot));
       if(b?.dataset.xiaobao)this.actions.xiaobao?.();
+      // 鼠标操作完成后交还游戏焦点；键盘激活仍保留按钮焦点供导航。
+      if (e.detail > 0 && b && this.hud.contains(b)) this.focusGame();
     });
     for (const name of ["minimap", "quest"] as const) {
       this.root
@@ -287,10 +297,10 @@ export class Interface {
   }
   training(s: ReturnType<TrainingDummy["snapshot"]>, near: boolean) {
     const panel = this.root.querySelector<HTMLElement>("#training-panel")!;
-    panel.hidden = !near && !s.visible;
+    panel.hidden = this.state?.life.playerSpace !== "village" || (!near && !s.visible);
     const stats = this.root.querySelector<HTMLElement>("#training-stats")!;
     stats.textContent = s.visible
-      ? `${s.lastStage?`第${s.lastStage}段 · ${Math.round(s.lastDamage*10)/10}伤害；本组命中${s.stages.length}/3；累计${Math.round(s.damage*10)/10}${s.complete ? " · 三连完成" : ""}`:''}${s.swordWind?` · 剑风 ${Math.round(s.swordWind.damage*10)/10}伤害 · 首靶 ${s.swordWind.firstTarget}`:''}`
+      ? `${s.lastStage?`第${s.lastStage}段 · ${Math.round(s.lastDamage*10)/10}伤害；本组命中${s.stages.length}/${this.state?.skills.meleeFinisher?4:3}；累计${Math.round(s.damage*10)/10}${[1,2,3,4].every(n=>s.stages.includes(n))?" · 四连完成":s.complete&&!this.state?.skills.meleeFinisher ? " · 三连完成" : ""}`:''}${s.swordWind?` · 剑风 ${Math.round(s.swordWind.damage*10)/10}伤害 · 首靶 ${s.swordWind.firstTarget}`:''}`
       : "";
     stats.style.opacity = String(
       Math.max(0, Math.min(1, (TRAINING.linger - s.age) / TRAINING.fade)),
@@ -306,6 +316,37 @@ export class Interface {
     setTimeout(() => {
       if (this.toastEl.textContent === s) this.toastEl.classList.remove("show");
     }, 3500);
+  }
+  saveFailed(error: unknown) {
+    let warning=this.root.querySelector<HTMLElement>('#save-warning');
+    if(!warning){
+      warning=document.createElement('aside');warning.id='save-warning';warning.className='save-warning';
+      warning.setAttribute('role','alert');
+      warning.innerHTML='<strong>本次进度未保存</strong><p></p><small>上一份有效存档仍保留；刷新或退出可能丢失本次进度。</small><div><button type="button" id="save-retry">重试保存</button><button type="button" id="save-backup">导出当前进度</button></div>';
+      this.root.append(warning);
+      warning.querySelector<HTMLButtonElement>('#save-retry')!.onclick=()=>void this.actions.save().catch(()=>{});
+      warning.querySelector<HTMLButtonElement>('#save-backup')!.onclick=()=>this.export();
+    }
+    warning.querySelector('p')!.textContent=error instanceof Error?error.message:String(error);
+    warning.hidden=false;
+    const status=this.modal.querySelector<HTMLElement>('#boss-save-status');
+    if(status)status.textContent='本次击杀与奖励尚未保存。请重试保存，或先导出当前进度。';
+  }
+  saved(snapshot: State) {
+    const warning=this.root.querySelector<HTMLElement>('#save-warning');if(warning)warning.hidden=true;
+    const receipt=this.victory,status=this.modal.querySelector<HTMLElement>('#boss-save-status');
+    if(receipt&&status&&snapshot.encounters.groups[CAMP_BOSSES[receipt.boss].camp]?.boss?.stage==='defeated'&&receipt.rewards.every(id=>snapshot.runes.owned.includes(id)))status.textContent='击杀与符文收藏已保存。';
+  }
+  bossVictory(boss: CampBossKind, earned: RuneDefinition[]) {
+    const definition=CAMP_BOSSES[boss];
+    const rewards=earned.length?earned:RUNES.filter(r=>r.acquisition.kind==='boss'&&r.acquisition.key===definition.camp&&this.state?.runes.owned.includes(r.id));
+    this.victory={boss,rewards:rewards.map(r=>r.id)};
+    this.mode='victory';this.returnTo='';
+    this.shell('首领已击败',`<div class="boss-victory"><h2>${definition.name}</h2><p>据点已清理，当地巡游与当地来源来袭停止。</p><div class="victory-rewards">${rewards.map(r=>`<article><small>传说符文 · ${earned.some(e=>e.id===r.id)?'新获得':'已收藏'}</small><h3>${r.name}</h3><p>${r.description}</p><strong>${this.state?.runes.slots.includes(r.id)?'已装备':'已收藏 · 未装备'}</strong></article>`).join('')}</div><p class="muted">收藏不会自动装备。继续旅途，脱战八秒后按 R，在自由槽中装备；交战、守村、试炼或剧情锁定期间不能更换。</p><p id="boss-save-status" role="status">正在保存击杀与奖励……</p><div class="victory-actions"><button type="button" id="victory-runes">查看符文与装备条件</button><button type="button" id="victory-continue">确认 · 继续旅途</button></div></div>`);
+    this.modal.querySelector('.panel')!.classList.add('victory-panel');
+    this.button('victory-continue',()=>this.close(true));
+    this.button('victory-runes',()=>{this.selectedRune=rewards.find(r=>r.acquisition.kind==='boss')?.id??rewards[0]?.id??'return-wind';this.runeOwned='owned';this.runeTier='';this.runeAbility='';this.close(true);this.open('runes');});
+    this.modal.querySelector<HTMLButtonElement>('#victory-continue')!.focus({preventScroll:true});
   }
   shell(title: string, body: string) {
     this.previewCleanup?.();this.previewCleanup=undefined;
@@ -325,7 +366,7 @@ export class Interface {
     this.hud.hidden = true;
     this.shell(
       "远风之地",
-      `<p class="subtitle">沿着风，遇见属于你的故事。</p><p class="eyebrow">第一章 · 风铃村的来信</p><div class="menu"><button id="new">启程 · 新游戏</button><button id="continue" ${!this.available ? "disabled" : ""}>继续旅途</button><button id="settings">设置</button></div><p class="muted">${error || "本地存档可能随站点数据清理而丢失，请定期导出备份。"}</p><button id="import">导入存档</button>`,
+      `<p class="subtitle">沿着风，遇见属于你的故事。</p><p class="eyebrow">第一章 · 风铃村的来信</p><div class="menu"><button id="new">启程 · 新游戏</button><button id="continue" ${!this.available ? "disabled" : ""}>继续旅途</button><button id="settings">设置</button></div><p class="muted">${error || "本地存档可能随站点数据清理而丢失，请定期导出备份。"}</p><button id="import">导入存档</button><button id="migration-backup">导出迁移前备份</button>`,
     );
     this.button("new", () => {
       if (this.available) {
@@ -341,6 +382,7 @@ export class Interface {
     this.button("continue", () => this.actions.start(true));
     this.button("settings", () => this.open("settings"));
     this.button("import", () => this.import());
+    this.button('migration-backup',()=>void migrationBackup().then(raw=>{if(raw)this.download(raw,'farwind-before-combat-build.json');else this.message('没有迁移前备份。');}));
     this.focusPanel();
   }
   focusPanel(id = "") {
@@ -352,6 +394,8 @@ export class Interface {
   }
   close(toGame = false) {
     if (this.economyBusy) return;
+    if(this.mode==='victory'&&!toGame)return;
+    if(toGame)this.victory=null;
     this.previewCleanup?.();this.previewCleanup=undefined;
     const dialogClosed=this.mode==='dialog'?this.dialogClosed:undefined;
     this.dialogClosed=undefined;
@@ -398,10 +442,35 @@ export class Interface {
     this.open(page);
     if (page === "equipment") this.modal.querySelector<HTMLButtonElement>(`[data-equipment-slot="${this.selectedEquipment}"]`)?.focus({ preventScroll: true });
   }
-  open(mode: string) {
+  async makePotion() {
+    if (this.economyBusy || !this.state || !this.actions.canMutate()) return;
+    const feedback = this.modal.querySelector("#craft-feedback")!;
+    const herbs = count(this.state, "herb"), berries = count(this.state, "berry");
+    if (herbs < 2 || berries < 1) {
+      feedback.textContent = `材料不足：${[herbs < 2 ? `还缺药草 ×${2 - herbs}` : "", berries < 1 ? `还缺浆果 ×${1 - berries}` : ""].filter(Boolean).join("、")}；未扣材料。`;
+      return;
+    }
+    this.economyBusy = true;
+    this.modal.querySelectorAll<HTMLButtonElement | HTMLSelectElement>("button,select").forEach(button => { button.disabled = true; });
+    feedback.textContent = "正在制作并保存……";
+    let result: string;
+    try {
+      await this.actions.trade({ sequence: this.state.economyRevision + 1, kind: "craft" });
+      result = "制作成功：恢复药剂 ×1，已保存。";
+    } catch (error) {
+      result = `制作未完成：${(error as Error).message}`;
+    } finally {
+      this.economyBusy = false;
+    }
+    this.open("bag", result);
+    this.focusPanel("craft");
+  }
+  open(mode: string, bagFeedback = "") {
     if (this.economyBusy) return;
+    if(this.mode==='victory')return;
     if (!this.state && mode !== "settings") return;
     if (this.mode !== mode) {
+      if(mode==='runes')this.runeFeedback='';
       if (mode === "equipment") this.selectedEquipment = "orb";
       if (this.mode === "pause" && mode !== "pause") {
         this.returnTo = "pause";
@@ -436,7 +505,7 @@ export class Interface {
     if (mode === "bag" && s) {
       this.shell(
         "旅人的行囊",
-        `<nav class="bag-equipment-nav" aria-label="旅人物品页"><button id="bag-equipment">装备</button><button data-panel="runes">符文</button><button aria-current="page" disabled>行囊</button></nav><p class="muted">铜币 ${s.coins} · 24 格 · 材料20件/格，装备1件/格 · 选择物品后使用或穿戴</p><div class="bag">${s.bag.map((a, i) => `<button class="slot" data-slot="${i}">${a ? `${itemIcon(a.id) ? `<img class="item-icon" src="${itemIcon(a.id)}" alt="">` : ""}${items[a.id].name}<strong>×${a.count}</strong>` : "·"}</button>`).join("")}</div><p id="item-info">恢复药剂：药草 ×2 + 浆果 ×1，恢复 50 生命。</p><div class="row"><button id="craft">制作恢复药剂</button><button id="consume">使用选中物品</button><button id="equip">穿戴选中装备</button><button id="discard">丢弃一件</button><select id="bind" aria-label="快捷栏位置">${Array.from({ length: 8 }, (_, i) => `<option value="${i}">快捷栏 ${i + 1}</option>`).join("")}</select><button id="bind-button">绑定</button></div><p>武器：${s.equipment.weapon ? items[s.equipment.weapon].name : "原有佩剑"} · 护甲：${s.equipment.armor ? items[s.equipment.armor].name : "原有衣物"} · 宝珠：${RETURN_WIND_ORB.name}（默认装备）</p><div class="row"><button id="unequip-weapon" ${!s.equipment.weapon ? "disabled" : ""}>卸下武器</button><button id="unequip-armor" ${!s.equipment.armor ? "disabled" : ""}>卸下护甲</button></div><button id="close">收好行囊</button>`,
+        `<nav class="bag-equipment-nav" aria-label="旅人物品页"><button id="bag-equipment">装备</button><button data-panel="runes">符文</button><button aria-current="page" disabled>行囊</button></nav><p class="muted">铜币 ${s.coins} · 24 格 · 材料20件/格，装备1件/格 · 选择物品后使用或穿戴</p><div class="bag">${s.bag.map((a, i) => `<button class="slot" data-slot="${i}">${a ? `${itemIcon(a.id) ? `<img class="item-icon" src="${itemIcon(a.id)}" alt="">` : ""}${items[a.id].name}<strong>×${a.count}</strong>` : "·"}</button>`).join("")}</div><p id="item-info">恢复药剂：药草 ×2 + 浆果 ×1，恢复 50 生命。</p><p>持有药草 ${count(s, "herb")}/2 · 浆果 ${count(s, "berry")}/1</p><p id="craft-feedback" role="status" aria-live="polite"></p><div class="row"><button id="craft">制作恢复药剂</button><button id="consume">使用选中物品</button><button id="equip">穿戴选中装备</button><button id="discard">丢弃一件</button><select id="bind" aria-label="快捷栏位置">${Array.from({ length: 8 }, (_, i) => `<option value="${i}">快捷栏 ${i + 1}</option>`).join("")}</select><button id="bind-button">绑定</button></div><p>武器：${s.equipment.weapon ? items[s.equipment.weapon].name : "原有佩剑"} · 护甲：${s.equipment.armor ? items[s.equipment.armor].name : "原有衣物"} · 宝珠：${RETURN_WIND_ORB.name}（默认装备）</p><div class="row"><button id="unequip-weapon" ${!s.equipment.weapon ? "disabled" : ""}>卸下武器</button><button id="unequip-armor" ${!s.equipment.armor ? "disabled" : ""}>卸下护甲</button></div><button id="close">收好行囊</button>`,
       );
       this.modal.querySelectorAll<HTMLButtonElement>("[data-slot]").forEach(
         (b) =>
@@ -461,20 +530,15 @@ export class Interface {
       });
       this.button("unequip-weapon", () => void this.changeEquipment("weapon", null));
       this.button("unequip-armor", () => void this.changeEquipment("armor", null));
-      this.button("craft", () => {
-        if (craft(s)) {
-          this.message("制作成功：恢复药剂 ×1");
-          this.open("bag");
-        } else
-          this.message(
-            "制作失败：需要药草 ×2、浆果 ×1，并有成品空间；未扣材料。",
-          );
-      });
+      this.modal.querySelector("#craft-feedback")!.textContent = bagFeedback;
+      this.button("craft", () => void this.makePotion());
       this.button("consume", () => {
-        if (this.selected) {
-          this.actions.use(this.selected);
-          this.open("bag");
-        }
+        if(!this.selected||this.economyBusy)return;
+        this.economyBusy=true;
+        void Promise.resolve(this.actions.use(this.selected)).finally(()=>{
+          this.economyBusy=false;
+          if(this.mode==="bag")this.open("bag");
+        });
       });
       this.button("discard", () => {
         if (
@@ -520,10 +584,11 @@ export class Interface {
     if (mode === "pause") {
       this.shell(
         "在风中歇一会儿",
-        `<p class="pause-note">世界与时间已暂停。</p><button id="close" class="resume" aria-label="继续旅途" aria-keyshortcuts="Escape">继续旅途 <kbd>Esc</kbd></button><div class="pause-grid"><button id="pause-bag" data-panel="bag">行囊 <kbd>Tab</kbd></button><button id="pause-map" data-panel="map">完整地图 <kbd>M</kbd></button><button id="pause-quest" data-panel="quest">旅途手记 <kbd>Q</kbd></button><button id="pause-runes" data-panel="runes">符文与共鸣 <kbd>R</kbd></button><button id="pause-help" data-panel="help">操作说明 <span>查看操作</span></button></div><h2>存档与设置</h2><div class="pause-grid"><button id="save">保存旅途</button><button id="export">导出备份</button><button id="import">导入存档</button><button id="settings">设置</button><button id="title" class="wide">保存并返回标题</button></div><p class="backup-note">备份需下载到站点之外；清理站点数据会删除本地存档。</p>`,
+        `<p class="pause-note">世界与时间已暂停。</p><button id="close" class="resume" aria-label="继续旅途" aria-keyshortcuts="Escape">继续旅途 <kbd>Esc</kbd></button><div class="pause-grid"><button id="pause-bag" data-panel="bag">行囊 <kbd>Tab</kbd></button><button id="pause-map" data-panel="map">完整地图 <kbd>M</kbd></button><button id="pause-quest" data-panel="quest">旅途手记 <kbd>Q</kbd></button><button id="pause-runes" data-panel="runes">符文与共鸣 <kbd>R</kbd></button><button id="pause-help" data-panel="help">操作说明 <span>查看操作</span></button></div><h2>存档与设置</h2><div class="pause-grid"><button id="save">保存旅途</button><button id="export">导出备份</button><button id="import">导入存档</button><button id="migration-backup">导出迁移前备份</button><button id="settings">设置</button><button id="title" class="wide">保存并返回标题</button></div><p class="backup-note">备份需下载到站点之外；清理站点数据会删除本地存档。</p>`,
       );
       this.button("save", () => void this.actions.save().catch(() => {}));
       this.button("export", () => this.export());
+      this.button('migration-backup',()=>void migrationBackup().then(raw=>{if(!raw){this.message('没有迁移前备份；当前新档可以使用导出备份。');return;}this.download(raw,'farwind-before-combat-build.json');}));
       this.button("import", () => this.import());
       this.button("settings", () => this.open("settings"));
       this.button("title", () => this.actions.title());
@@ -531,7 +596,7 @@ export class Interface {
     if (mode === "help")
       this.shell(
         "操作说明",
-        `<dl class="controls-guide"><dt>移动</dt><dd>WASD / 方向键</dd><dt>奔跑</dt><dd>按住空格并移动，消耗体力</dd><dt>交互 / 继续对话</dt><dd>E</dd><dt>攻击 / 连斩</dt><dd>J / 游戏画布左键；连按衔接，正式学习剑风后接第四击；可越水，不能穿实体障碍</dd><dt>迎风架剑 / 弹反</dt><dd>K / 游戏画布右键；成功自动反斩；远程弹反发出剑气，J 接第二、第三刀</dd><dt>风步</dt><dd>L</dd><dt>符文 / 归风</dt><dd>R 查看符文；脱战后长按 G 引导归风</dd><dt>使用快捷道具</dt><dd>1–8 / 点击对应格子</dd><dt>行囊 / 完整地图 / 手记</dt><dd>Tab / M / Q（游戏中）</dd><dt>暂停 / 返回</dt><dd>Esc；子页面先返回菜单</dd><dt>菜单焦点与操作</dt><dd>Tab / Shift + Tab 切换；Enter / 空格确认</dd></dl><button id="close">返回暂停菜单</button>`,
+        `<dl class="controls-guide"><dt>移动</dt><dd>WASD / 方向键</dd><dt>奔跑</dt><dd>按住空格并移动，消耗体力</dd><dt>交互 / 继续对话</dt><dd>E</dd><dt>攻击 / 连斩</dt><dd>J / 游戏画布左键；连按衔接，教本训练后接近战第四刀；I／中键独立剑风，按住连续施放；可越水，不能穿实体障碍</dd><dt>迎风架剑 / 弹反</dt><dd>K / 游戏画布右键；成功自动反斩；远程弹反发出剑气，J 接第二、第三刀</dd><dt>风步</dt><dd>L</dd><dt>符文 / 归风</dt><dd>R 查看符文；脱战后长按 G 引导归风</dd><dt>使用快捷道具</dt><dd>1–8 / 点击对应格子</dd><dt>行囊 / 完整地图 / 手记</dt><dd>Tab / M / Q（游戏中）</dd><dt>暂停 / 返回</dt><dd>Esc；子页面先返回菜单</dd><dt>菜单焦点与操作</dt><dd>Tab / Shift + Tab 切换；Enter / 空格确认</dd></dl><button id="close">返回暂停菜单</button>`,
       );
     if (mode === "settings") {
       this.shell(
@@ -553,14 +618,15 @@ export class Interface {
       });
       this.button("back", () => this.close());
     }
-    this.button("close", () => this.close());
+    if(mode!=="runes")this.button("close", () => this.close());
     this.focusPanel();
   }
   skillJournal(s:State){
     const skills=s.skills,stage=skills.swordWindStage;
-    const next=WIND_LESSONS.find(l=>skills.discoveredLessons.includes(l.id)&&l.stage>stage);
+    const pending=WIND_LESSONS.find(l=>skills.completedLessons.includes(l.id)&&l.stage>stage);
+    const next=WIND_LESSONS.find(l=>l.stage>stage&&!skills.completedLessons.includes(l.id)&&skills.discoveredLessons.includes(l.id));
     const records=WIND_LESSONS.filter(l=>skills.completedLessons.includes(l.id)).map(l=>`<li>${l.name} · ${l.source}${l.stage>stage?'（经历已保存，等待前置）':''}</li>`).join('');
-    return `<section class="skill-journal"><h2>旅人技艺</h2><h3>${WIND_NAMES[stage]}</h3><p>${WIND_EFFECTS[stage]}</p><p>学习来源：${windLearningSource(skills)}</p><p>${stage?'':'学会剑风后，'}J／左键连按三连斩后接第四击；剑风可越过水面，实体障碍会截断。</p>${records?`<ul>${records}</ul>`:''}<p>${next?`已发现的线索：${next.name} · ${next.hint}`:stage===5?'五段传承已掌握。能力永久保留，不占技法位置。':'尚未发现新的传承线索，可观察旅途中的教本与风敏装置。'}</p></section>`;
+    return `<section class="skill-journal"><h2>旅人技艺</h2><h3>${WIND_NAMES[stage]}</h3><p>${WIND_EFFECTS[stage]}</p><p>学习来源：${windLearningSource(skills)}</p><p>永久近战：${skills.meleeFinisher?'四连终结':'三连（练习场教本可学四连）'}。J／左键即时连斩；I／中键独立剑风，按住连续施放；剑风可越过水面，实体障碍会截断。</p>${records?`<ul>${records}</ul>`:''}<p>${pending?windLessonStatus(skills,pending.id).replaceAll('\n','<br>'):next?`已发现的线索：${next.name} · ${next.hint}`:stage===5?'五段传承已掌握。能力永久保留，不占技法位置。':'尚未发现新的传承线索，可观察旅途中的教本与风敏装置。'}</p></section>`;
   }
   offerShop(id: ShopId) {
     const button = document.createElement("button");
@@ -616,13 +682,16 @@ export class Interface {
   }
   export() {
     if (!this.state) return;
+    this.download(this.state,'farwind-save.json');
+  }
+  download(value:unknown,name:string){
     const a = document.createElement("a");
     a.href = URL.createObjectURL(
-      new Blob([JSON.stringify(this.state, null, 2)], {
+      new Blob([JSON.stringify(value, null, 2)], {
         type: "application/json",
       }),
     );
-    a.download = "farwind-save.json";
+    a.download = name;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }

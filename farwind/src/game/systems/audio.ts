@@ -18,8 +18,18 @@ export class Sound {
   private windBuffer?:AudioBuffer;
   private xiaobaoBuffers=new Map<string,AudioBuffer>();
   private creatureBuffers=new Map<string,AudioBuffer>();
+  // 铜铃使用短促敲击与衰减的非整数泛音；远处降音量，静音与暂停沿用共享声部清理。
+  chime(note:number,distance:number,sim:number){
+    const c=this.context;if(!c||c.state!=='running'||!this.volume||distance>650)return;
+    const key=`chime:${note}`,at=c.currentTime;if(at-(this.lastPlayed.get(key)??-Infinity)<.09)return;this.lastPlayed.set(key,at);
+    let buffer=this.creatureBuffers.get(key);
+    if(!buffer){buffer=c.createBuffer(1,Math.ceil(c.sampleRate*.8),c.sampleRate);const samples=buffer.getChannelData(0),frequency=[740,920,1100][note%3];for(let i=0;i<samples.length;i++){const t=i/c.sampleRate; samples[i]=Math.min(1,t/.003)*Math.exp(-t*6)*(Math.sin(t*frequency*Math.PI*2)+.3*Math.sin(t*frequency*2.76*Math.PI*2)+.12*Math.sin(t*frequency*5.4*Math.PI*2))*.25;}this.creatureBuffers.set(key,buffer);}
+    const source=c.createBufferSource(),gain=c.createGain();source.buffer=buffer;gain.gain.value=this.volume*.6*Math.max(0,1-distance/650);source.connect(gain);gain.connect(this.route('chime'));
+    if(this.voices.size>=12){const old=this.voices.values().next().value!;old.stop();this.voices.delete(old);}this.voices.add(source);source.start();source.onended=()=>{this.voices.delete(source);source.disconnect();gain.disconnect();};
+    this.audioEvents.push({id:`${key}:${sim}`,kind:'chime',sim,submitted:performance.now(),scheduled:at,latency:c.outputLatency??null,variant:note});if(this.audioEvents.length>96)this.audioEvents.shift();
+  }
   creature(type:string,phase:CreatureVoice,distance:number,sim:number){
-    const c=this.context;if(!['wolf','burrow','guardian'].includes(type)||!c||c.state!=='running'||!this.volume||distance>1000)return;
+    const c=this.context;if(!['wolf','burrow','guardian','priest','bomber'].includes(type)||!c||c.state!=='running'||!this.volume||distance>1000)return;
     const key=`${type}:${phase}`,at=c.currentTime;if(at-(this.lastPlayed.get(key)??-Infinity)<.07)return;this.lastPlayed.set(key,at);
     let buffer=this.creatureBuffers.get(key);if(!buffer){const samples=synthCreature(type,phase,c.sampleRate);buffer=c.createBuffer(1,samples.length,c.sampleRate);buffer.copyToChannel(samples,0);this.creatureBuffers.set(key,buffer);}
     const source=c.createBufferSource(),gain=c.createGain();source.buffer=buffer;gain.gain.value=this.volume*.8*Math.max(0,1-distance/1000);source.connect(gain);gain.connect(this.buses?.threat??this.output??c.destination);
@@ -41,7 +51,7 @@ export class Sound {
     const ordered=[...(feedbackAudio(mode)?audibleFeedback(events):events)].sort((a,b)=>Number(b.sourceId==='player')-Number(a.sourceId==='player')||Number(b.kind==='kill')-Number(a.kind==='kill'));
     for(const event of ordered){
       if(isHitFeedback(event.kind)&&++contacts>4)continue;
-      this.feedback(event,mode,isHitFeedback(event.kind)?(event.sourceId&&event.sourceId!=='player'?.3:contacts>1?.45:event.stage===3?1:.75):1);
+      this.feedback(event,mode,isHitFeedback(event.kind)?(event.sourceId&&event.sourceId!=='player'?.3:contacts>1?.45:(event.isFinisher??event.stage===3)?1:.75):1);
     }
   }
   feedback(event:FeedbackEvent,mode:FeedbackMode,scale=1) {

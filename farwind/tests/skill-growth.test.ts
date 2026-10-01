@@ -1,10 +1,10 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { initialState, validate } from "../src/game/systems/state";
 import {
   completeWindLesson,
   effectiveWindStage,
 } from "../src/game/systems/skills";
-import { LESSON_IDS } from "../src/data/windLessons";
+import { LESSON_IDS,WIND_LESSONS } from "../src/data/windLessons";
 import {
   resolveSwordWindConfig,
   type SwordWindStage,
@@ -22,6 +22,7 @@ import {
 } from "../src/game/systems/swordWindWater";
 import { terrainBlocked, type Prop } from "../src/data/world";
 import { StateCommit } from "../src/game/systems/stateCommit";
+import { WindLessons } from "../src/game/systems/windLessons";
 const noWall = () => null;
 const target = (id: string, x: number, y = 500, extra = {}) => {
   const t = { id, x, y, hp: 100, ...extra };
@@ -32,7 +33,7 @@ function shot(stage: Exclude<SwordWindStage, 0>, root = { x: 500, y: 500 }) {
     config = resolveSwordWindConfig(stage);
   const attack: Attack = {
     id: 1,
-    stage: 4,
+    stage: 1,kind:"swordWind",delivery:"wind",config:{...config.strike},
     start: 0,
     hit: new Set(),
     facing: 3,
@@ -55,6 +56,27 @@ function complete(stage: number) {
   return s;
 }
 describe("永久学习与迁移", () => {
+  it("先记录一风三向再重读，应明确当前初阶与缺失前置", () => {
+    let s = initialState();
+    s.skills.legacySwordWind = true;
+    s.skills.devices.splitLeft = 1;
+    s.skills.devices.splitRight = 2;
+    s = completeWindLesson(s, LESSON_IDS[4]);
+    Object.assign(s.player, WIND_LESSONS[4].stand);
+    const dialog = vi.fn();
+    const lessons = Object.assign(Object.create(WindLessons.prototype), {
+      world: { state: validate(s), ui: { dialog } },
+    });
+    lessons.open(LESSON_IDS[4]);
+    const text = dialog.mock.calls[0][1];
+    expect(text).toContain("尚未掌握 三向疾风斩");
+    expect(text).toContain("当前本领：一线斩（1/5）");
+    expect(text).toContain("还需完成：两铃相继、长风不息、展风于野");
+    expect(text).toContain("下一步：西部旧农庄的串联风铃");
+    expect(text).toContain("补齐后会自动结算，无需重做一风三向");
+    expect(text).not.toContain("重复练习不再提升阶段");
+    expect(s.skills.swordWindStage).toBe(1);
+  });
   it.each([0, 1, 2, 3, 4, 5])("阶段%s可保存导入，重复事件不升级", (stage) => {
     const s = complete(stage),
       v = validate(JSON.parse(JSON.stringify(s)));
@@ -74,7 +96,7 @@ describe("永久学习与迁移", () => {
       s.defense.guards[0].hp = 0;
       s.defense.guards[0].mode = "dead";
       const v = validate(s);
-      expect(v.schema_version).toBe(14);
+      expect(v.schema_version).toBe(15);
       expect(v.skills.swordWindStage).toBe(learned ? 1 : 0);
       expect(v.skills.completedLessons).toEqual([]);
       expect(v.bag).toEqual(s.bag);

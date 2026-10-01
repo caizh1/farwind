@@ -1,5 +1,5 @@
 import {describe,it,expect,vi} from 'vitest';
-import {CombatController,COMBAT,STRIKES,resolveStrike,strikeDuration,type Attack} from '../src/game/systems/combat';
+import {CombatController,attackConfig,COMBAT,STRIKES,resolveStrike,strikeDuration,type Attack} from '../src/game/systems/combat';
 import {CombatTimeline} from '../src/game/systems/timeline';
 import {SaveQueue} from '../src/game/systems/saveQueue';
 import {initialState} from '../src/game/systems/state';
@@ -68,9 +68,9 @@ describe('输入衔接的有限预约与承诺',()=>{
   a.c.requestActions([{kind:'dash',at:250,sequence:1,axis:{x:1,y:0}}],250,a.p,3);a.tick(250,260);a.tick(260,700);
   expect(a.starts).toEqual([]);expect(a.p.stamina).toBe(80);
  });
- it('第四击合法发射后取消，已释放实例只发送一次且旧预约清理',()=>{
-  const a=arena();a.c.swordWindEnabled=true;a.c.attack=attack(4);const releases:number[]=[];
-  const m=resolveStrike(4);a.c.update(0,m.windup,3,a.p,[],()=>false,()=>true,()=>{},()=>{},()=>{},()=>true,x=>releases.push(x.id));
+ it('独立剑风合法发射后取消，已释放实例只发送一次且旧预约清理',()=>{
+  const a=arena();a.c.swordWindEnabled=true;a.c.attack={...attack(4),kind:'swordWind',delivery:'wind',stage:1,config:{...resolveStrike(1),windup:110,active:100,recovery:190}};const releases:number[]=[];
+  const m=attackConfig(a.c.attack);a.c.update(0,m.windup,3,a.p,[],()=>false,()=>true,()=>{},()=>{},()=>{},()=>true,x=>releases.push(x.id));
   expect(a.c.requestDash(a.c.dashLegalAt(m.windup),100,{x:1,y:0},3)).toBe(true);
   a.c.update(m.windup,strikeDuration(m)+200,3,a.p,[],()=>false,()=>true,()=>{},()=>{},()=>{},()=>true,x=>releases.push(x.id));
   expect(releases).toEqual([4]);expect(a.c.pending).toBe(false);

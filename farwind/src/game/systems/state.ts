@@ -1,4 +1,6 @@
-import {initialRunes,validateRunes,type RuneState} from './runeState';
+import {migrateInteriorPosition} from '../../data/villageInteriors';
+import {initialRunes,migrateBuildRunes,validateRunes,type RuneState} from './runeState';
+import {initialSouthEvents,validateSouthEvents,type SouthEventState} from './southEvents';
 import {initialEncounters,validateEncounters,unitState,settleEncounterDeath,migrateCampBosses,type EncounterState} from "./encounterState";
 import {ENCOUNTERS} from '../../data/maps/windbell/encounters';
 import {initialDemonKing,validateDemonKing,demonMalice,type DemonKingState} from './demonKingState';
@@ -27,9 +29,10 @@ export type Slot = { id: ItemId; count: number } | null;
 export type State = {
   runes: RuneState;
   skills: SkillState;
-  schema_version: 14;
+  schema_version: 15;
   demonKing:DemonKingState;
   encounters:EncounterState;
+  southEvents:SouthEventState;
   fieldQuests:FieldQuestState;
   mapProgress: {westRoad:"unknown"|"surveyed"|"open";shortcuts:ShortcutId[]};
   xiaobao: XiaobaoState;
@@ -39,6 +42,7 @@ export type State = {
   coins: number;
   equipment: { weapon: EquipmentId | null; armor: EquipmentId | null };
   shopStock: Record<string, number>;
+  shopStockDay: number;
   economyRevision: number;
   map_version?: 2 | 3 | 4 | 5 | 6 | 7 | 8;
   player: { x: number; y: number; hp: number; stamina: number };
@@ -60,9 +64,10 @@ export type State = {
 export const initialState = (): State => ({
   runes: initialRunes(),
   skills: initialSkills(),
-  schema_version: 14,
+  schema_version: 15,
   demonKing:initialDemonKing(),
   encounters:initialEncounters(),
+  southEvents:initialSouthEvents(),
   fieldQuests:initialFieldQuests(),
   mapProgress: {westRoad:"unknown",shortcuts:[]},
   xiaobao: initialXiaobao(),
@@ -72,6 +77,7 @@ export const initialState = (): State => ({
   coins: STARTER_COINS,
   equipment: { weapon: null, armor: null },
   shopStock: initialStock(),
+  shopStockDay: 0,
   economyRevision: 0,
   map_version: CURRENT_MAP_VERSION,
   player: { ...RETURN_WIND_ORB.respawn, hp: 100, stamina: 100 },
@@ -204,8 +210,21 @@ export function validate(raw: unknown): State {
     for(const d of ENCOUNTERS.filter(d=>d.kind==='camp')){const g=s.encounters.groups[d.id];if(d.members.every((m,i)=>m.boss||g.members[i].defeated))g.cleared=true;}
     s.demonKing=initialDemonKing();(s as {schema_version:number}).schema_version=13;
   }
-  if(s&&(s as {schema_version:number}).schema_version===13){s.encounters=migrateCampBosses(s.encounters);s.schema_version=14;}
-  if(s&&s.schema_version===14){s.skills=validateSkills(s.skills);s.runes=s.runes===undefined?initialRunes():validateRunes(s.runes);}
+  if(s&&(s as {schema_version:number}).schema_version===13){s.encounters=migrateCampBosses(s.encounters);(s as {schema_version:number}).schema_version=14;}
+  if(s&&(s as {schema_version:number}).schema_version===14){
+    if(s.skills){s.skills.meleeFinisher??=false;s.skills.buildLessons??=[];}
+    s.runes=migrateBuildRunes(s.runes);s.schema_version=15;
+  }
+  if(s&&s.schema_version===15){s.skills=validateSkills(s.skills);s.runes=s.runes===undefined?initialRunes():validateRunes(s.runes);}
+  // 商店子版本迁移：只补新增商品，旧库存与余额不重置。
+  if (s && s.schema_version === 15 && s.shopStockDay === undefined) {
+    const legacy = ["general:wood", "general:stone", "general:herb", "general:berry", "general:potion", "healer:potion", "smith:ironSword", "smith:leatherCoat"];
+    if (!s.shopStock || legacy.some(key => !Object.hasOwn(s.shopStock, key))) throw Error("旧商店库存缺失，不能重置交易记录。");
+    for (const [key, stock] of Object.entries(initialStock())) s.shopStock[key] ??= stock;
+    s.shopStockDay = Math.floor(s.time / 1440);
+    if(s.life&&s.player)migrateInteriorPosition(s.life.playerSpace,s.player);
+    if(Array.isArray(s.life?.people))for(const n of s.life.people)if(n.body)migrateInteriorPosition(n.body.space,n.body);
+  }
   const num = (n: unknown, min: number, max: number) =>
     typeof n === "number" && Number.isFinite(n) && n >= min && n <= max;
   const strarr = (a: unknown) =>
@@ -214,7 +233,7 @@ export function validate(raw: unknown): State {
     a.every((x) => typeof x === "string" && x.length < 80);
   if (
     !s ||
-    s.schema_version !== 14 ||
+    s.schema_version !== 15 ||
     !s.mapProgress || !["unknown","surveyed","open"].includes(s.mapProgress.westRoad) ||
     !Array.isArray(s.mapProgress.shortcuts) || s.mapProgress.shortcuts.length>3 || new Set(s.mapProgress.shortcuts).size!==s.mapProgress.shortcuts.length || !s.mapProgress.shortcuts.every(id=>SHORTCUT_IDS.includes(id)) ||
     (s.map_version !== undefined &&
@@ -282,6 +301,8 @@ export function validate(raw: unknown): State {
     !num(s.coins, 0, MAX_COINS) ||
     !Number.isSafeInteger(s.economyRevision) ||
     !num(s.economyRevision, 0, 1e9) ||
+    !Number.isSafeInteger(s.shopStockDay) ||
+    !num(s.shopStockDay, 0, Math.floor(s.time / 1440)) ||
     !s.equipment ||
     !["weapon", "armor"].every((slot) => {
       const id = s.equipment[slot as "weapon" | "armor"];
@@ -297,7 +318,7 @@ export function validate(raw: unknown): State {
     )
   )
     throw Error("存档交易或装备状态无效，请使用有效备份。");
-  s.encounters=validateEncounters(s.encounters);s.fieldQuests=validateFieldQuests(s.fieldQuests);
+  s.encounters=validateEncounters(s.encounters);s.southEvents=validateSouthEvents(s.southEvents,s.encounters);s.fieldQuests=validateFieldQuests(s.fieldQuests);
   s.demonKing=validateDemonKing(s);
   if(s.fieldQuests["south-supply"]==="complete"&&!s.encounters.groups["south-spore-camp"].cleared)throw Error("南部委托与据点进度不一致。");
   s.defense = validateDefense(s.defense);

@@ -33,6 +33,7 @@ import {
 } from "./npcNavigation";
 import { resolveDamage } from "./damage";
 import { attackTouches, type EnemyContact } from "./enemyAttack";
+import {validFungalBlastContact} from './fungalCombat';
 import { clearMeleeLine } from "./obstacles";
 import { chooseSpeech, type LifeSpeech } from "./npcSpeech";
 import {
@@ -1853,8 +1854,7 @@ export class NpcLife {
       source.hp <= 0 ||
       source.disabled ||
       !this.defense.allHostiles().includes(source) ||
-      source.targetId !== id ||
-      source.attack !== attack ||
+      (!validFungalBlastContact(contact,source,id)&&(source.targetId !== id || source.attack !== attack)) ||
       attack.attackerId !== source.id ||
       attack.cancelled ||
       attack.resolved ||
@@ -1870,7 +1870,7 @@ export class NpcLife {
         attackId: attack.attackId,
         amount: attack.damage,
         sourceScale: this.defense.runeEnemyScale(source.id),
-        sourceType: "enemy-melee",
+        sourceType: contact.blastId ? "enemy-blast" : "enemy-melee",
         eventId: source.eventId ?? null,
       },
       { id: source.id, faction: "hostile", hp: source.hp, armor: 0 },
@@ -2096,7 +2096,7 @@ export class NpcLife {
     const h = HOMES.find((h) => h.id === space);
     if (!h) return false;
     if (this.data.unavailable.homes[space]) return false;
-    if (space === "inn") return true;
+    if (space === "inn" || h.owners.length === 0) return true;
     const owner = this.data.people.find((n) => n.id === h.owners[0])!,
       r = this.relation(owner, "player");
     const open =

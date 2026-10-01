@@ -1,0 +1,34 @@
+{
+  "说明": "最终专项单工、零自动重试；未运行全部浏览器套件。",
+  "专项": {
+    "命令": "npx playwright test --config tools/playwright-combat-build.config.ts --trace off --output docs/combat-build/evidence/final-browser",
+    "结果": "四项通过，三分钟"
+  },
+  "最终界面": {
+    "命令": "npx playwright test --config tools/playwright-combat-build.config.ts --grep normal-unlock-flow --trace off --output docs/combat-build/evidence/final-ui-browser",
+    "结果": "一项通过，一点四分钟"
+  },
+  "五阶首因": [
+    "生产调试不提供 session，改用正式只读字段。",
+    "脚本贴脸扛伤死亡后继续旧转折，改为实际补给、远程清路及受伤停步重规划。",
+    "正常学会五阶后靶场失败，确定性几何排查证实出生点与教本实体重叠；早先朝向解释不成立。已修正推荐站位并新增回归。"
+  ],
+  "验收边界": "不修改血量、背包、任务、能力或障碍来让正常获得通过。五阶最终结果以交付报告的最新补充为准。",
+  "五阶最终": {
+    "命令": "npx playwright test --config tools/playwright-skill-growth.config.ts --grep wind-natural-journey --trace off --output docs/combat-build/evidence/final-natural-browser",
+    "结果": "一项通过，三点二分钟",
+    "进度": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "三向实际命中": [
+      1,
+      1,
+      1
+    ],
+    "异常": []
+  }
+}

@@ -4,7 +4,7 @@ import type { EnemyKind } from "../../enemies";
 export type WildernessDirection="south"|"west"|"north"|"east";
 export type EncounterDefinition={id:string;name:string;direction:WildernessDirection;kind:"patrol"|"camp"|"elite"|"challenge";after?:string;source:string;x:number;y:number;radius:number;cooldownMs:number;members:readonly {id:string;type:EnemyKind;elite?:EliteKind;boss?:CampBossKind;x:number;y:number}[];patrol:readonly {x:number;y:number}[]};
 // 手工遭遇预算：南6、西6、北6、东8、遗迹5；首领在M6接通。
-export const ENCOUNTERS:readonly EncounterDefinition[]=[
+const BASE_ENCOUNTERS:readonly EncounterDefinition[]=[
  {id:"south-reed-patrol",name:"渡口试探",direction:"south",kind:"patrol",source:"south-spore-camp",x:1050,y:2040,radius:260,cooldownMs:480000,members:[{id:"wild-reed-slime",type:"slime",x:1080,y:2060}],patrol:[{x:1080,y:2060},{x:1170,y:2050}]},
  {id:"south-herb-patrol",name:"洼地孢卫",direction:"south",kind:"patrol",source:"south-spore-camp",x:730,y:2450,radius:300,cooldownMs:540000,members:[{id:"wild-herb-spore",type:"spore",x:620,y:2460},{id:"wild-herb-slime",type:"slime",x:810,y:2510}],patrol:[{x:620,y:2460},{x:730,y:2590}]},
  {id:"south-spore-camp",name:"孢根巢地",direction:"south",kind:"camp",source:"south-spore-camp",x:1250,y:2820,radius:360,cooldownMs:0,members:[{id:"wild-camp-spore",type:"spore",x:1220,y:2750},{id:"wild-camp-slime-a",type:"slime",x:1140,y:2870},{id:"wild-camp-slime-b",type:"slime",x:1390,y:2850},{id:"boss-spore-heart",type:"spore",boss:"spore-heart",x:1250,y:2820}],patrol:[{x:1220,y:2750},{x:1320,y:2870}]},
@@ -43,6 +43,16 @@ export const ENCOUNTERS:readonly EncounterDefinition[]=[
  {id:"ruins-exit-watch",name:"回廊伏击",direction:"east",kind:"challenge",source:"east-thorn-camp",x:4000,y:-170,radius:230,cooldownMs:0,members:[{id:"wild-exit-worm",type:"burrow",x:4020,y:-140},{id:"wild-exit-guardian",type:"guardian",x:3900,y:-240}],patrol:[{x:4000,y:-170}]},
 
 ];
+// 旧批次的身份顺序永久保留，用于第十四版位置存档的无损迁移。
+export const LEGACY_ENCOUNTER_IDS=Object.fromEntries(BASE_ENCOUNTERS.map(d=>[d.id,d.members.map(m=>m.id)]));
+export const ENCOUNTER_COMPOSITION_VERSION=2;
+const SOUTH_ADDITIONS:Record<string,EncounterDefinition['members']>={
+ 'south-reed-patrol':[{id:'wild-reed-spore',type:'spore',x:1210,y:2140}],
+ 'south-herb-patrol':[{id:'wild-herb-priest',type:'priest',x:730,y:2580}],
+ 'south-spore-camp':[{id:'wild-camp-priest',type:'priest',x:1190,y:2820}],
+ 'south-orchard-burrows':[{id:'wild-orchard-bomber',type:'bomber',x:1810,y:2400}],
+};
+export const ENCOUNTERS:readonly EncounterDefinition[]=BASE_ENCOUNTERS.map(d=>({...d,members:[...d.members.filter(m=>!m.boss),...SOUTH_ADDITIONS[d.id]??[],...d.members.filter(m=>m.boss)]}));
 export const ENCOUNTER_UNITS=ENCOUNTERS.flatMap(group=>group.members.map(member=>({...member,group:group.id})));
 export const encounterUnit=(id:string)=>ENCOUNTER_UNITS.find(s=>s.id===id);
 export const ENCOUNTER_LIMITS={active:12,activateDistance:1250,respawnDistance:1350,dropLifetimeMs:600000} as const;

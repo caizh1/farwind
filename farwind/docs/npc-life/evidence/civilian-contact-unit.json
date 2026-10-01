@@ -2,7 +2,17 @@
   "说明": "固定突破样本，运行一秒的真实攻击与生活状态，用于核对目击视线。",
   "状态": {
     "runes": {
-      "version": 1,
+      "version": 2,
+      "growth": {
+        "r31": {
+          "advanced": false,
+          "branch": null
+        },
+        "r33": {
+          "advanced": false,
+          "branch": null
+        }
+      },
       "fixed": "return-wind",
       "owned": [],
       "slots": [
@@ -55,6 +65,8 @@
       }
     },
     "skills": {
+      "meleeFinisher": false,
+      "buildLessons": [],
       "swordWindStage": 0,
       "legacySwordWind": false,
       "completedLessons": [],
@@ -66,7 +78,7 @@
         "splitRight": 0
       }
     },
-    "schema_version": 14,
+    "schema_version": 15,
     "demonKing": {
       "introduced": false
     },
@@ -75,6 +87,7 @@
       "broken": [],
       "groups": {
         "south-reed-patrol": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -82,9 +95,27 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-reed-slime",
               "hp": 48,
               "x": 1080,
               "y": 2060,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-reed-spore",
+              "hp": 60,
+              "x": 1210,
+              "y": 2140,
               "serial": 0,
               "cooldown": 0,
               "defeated": false,
@@ -100,6 +131,7 @@
           ]
         },
         "south-herb-patrol": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -107,6 +139,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-herb-spore",
               "hp": 60,
               "x": 620,
               "y": 2460,
@@ -123,9 +156,27 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-herb-slime",
               "hp": 48,
               "x": 810,
               "y": 2510,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-herb-priest",
+              "hp": 96,
+              "x": 730,
+              "y": 2580,
               "serial": 0,
               "cooldown": 0,
               "defeated": false,
@@ -141,6 +192,7 @@
           ]
         },
         "south-spore-camp": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -155,6 +207,7 @@
           },
           "members": [
             {
+              "id": "wild-camp-spore",
               "hp": 60,
               "x": 1220,
               "y": 2750,
@@ -171,6 +224,7 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-camp-slime-a",
               "hp": 48,
               "x": 1140,
               "y": 2870,
@@ -187,6 +241,7 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-camp-slime-b",
               "hp": 48,
               "x": 1390,
               "y": 2850,
@@ -203,6 +258,24 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-camp-priest",
+              "hp": 96,
+              "x": 1190,
+              "y": 2820,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "boss-spore-heart",
               "hp": 2300,
               "x": 1250,
               "y": 2820,
@@ -221,6 +294,7 @@
           ]
         },
         "south-orchard-burrows": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -228,6 +302,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-orchard-worm-a",
               "hp": 62,
               "x": 1910,
               "y": 2360,
@@ -244,9 +319,27 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-orchard-worm-b",
               "hp": 62,
               "x": 2030,
               "y": 2490,
+              "serial": 0,
+              "cooldown": 0,
+              "defeated": false,
+              "drop": false,
+              "dropRemaining": 0,
+              "participated": false,
+              "face": {
+                "x": 0,
+                "y": 1
+              },
+              "guardOpen": 0
+            },
+            {
+              "id": "wild-orchard-bomber",
+              "hp": 112,
+              "x": 1810,
+              "y": 2400,
               "serial": 0,
               "cooldown": 0,
               "defeated": false,
@@ -262,6 +355,7 @@
           ]
         },
         "west-track-pack": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -269,6 +363,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-track-wolf-a",
               "hp": 58,
               "x": -600,
               "y": 1380,
@@ -285,6 +380,7 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-track-wolf-b",
               "hp": 58,
               "x": -490,
               "y": 1410,
@@ -303,6 +399,7 @@
           ]
         },
         "north-stone-watch": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -310,6 +407,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-pass-guardian",
               "hp": 84,
               "x": 1130,
               "y": -400,
@@ -328,6 +426,7 @@
           ]
         },
         "west-wolf-den": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -342,6 +441,7 @@
           },
           "members": [
             {
+              "id": "wild-den-wolf-a",
               "hp": 58,
               "x": -1760,
               "y": 1430,
@@ -358,6 +458,7 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-den-wolf-b",
               "hp": 58,
               "x": -1610,
               "y": 1530,
@@ -374,6 +475,7 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-den-reaper",
               "hp": 72,
               "x": -1680,
               "y": 1350,
@@ -390,6 +492,7 @@
               "guardOpen": 0
             },
             {
+              "id": "boss-thorn-crown",
               "hp": 2800,
               "x": -1700,
               "y": 1490,
@@ -408,6 +511,7 @@
           ]
         },
         "north-boar-camp": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -422,6 +526,7 @@
           },
           "members": [
             {
+              "id": "wild-rock-boar",
               "hp": 90,
               "x": 1450,
               "y": -760,
@@ -438,6 +543,7 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-rock-guardian",
               "hp": 84,
               "x": 1570,
               "y": -690,
@@ -454,6 +560,7 @@
               "guardOpen": 0
             },
             {
+              "id": "boss-crag-tusk",
               "hp": 2500,
               "x": 1480,
               "y": -730,
@@ -472,6 +579,7 @@
           ]
         },
         "east-thorn-camp": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -486,6 +594,7 @@
           },
           "members": [
             {
+              "id": "wild-thorn-spore",
               "hp": 60,
               "x": 3780,
               "y": 1000,
@@ -502,6 +611,7 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-thorn-reaper",
               "hp": 72,
               "x": 3670,
               "y": 1200,
@@ -518,6 +628,7 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-thorn-guardian",
               "hp": 84,
               "x": 3850,
               "y": 1180,
@@ -534,6 +645,7 @@
               "guardOpen": 0
             },
             {
+              "id": "boss-bound-branch",
               "hp": 2500,
               "x": 3710,
               "y": 1100,
@@ -552,6 +664,7 @@
           ]
         },
         "south-reed-margin": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -559,6 +672,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-margin-slime",
               "hp": 48,
               "x": 500,
               "y": 2150,
@@ -577,6 +691,7 @@
           ]
         },
         "south-weir-watch": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -584,6 +699,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-weir-guardian",
               "hp": 84,
               "x": 2160,
               "y": 2870,
@@ -602,6 +718,7 @@
           ]
         },
         "west-farm-reaper": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -609,6 +726,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-farm-reaper",
               "hp": 72,
               "x": -880,
               "y": 1250,
@@ -627,6 +745,7 @@
           ]
         },
         "west-cart-ambush": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -634,6 +753,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-cart-wolf",
               "hp": 58,
               "x": -1500,
               "y": 970,
@@ -650,6 +770,7 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-cart-worm",
               "hp": 62,
               "x": -1620,
               "y": 920,
@@ -668,6 +789,7 @@
           ]
         },
         "west-pack-clearing": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -675,6 +797,7 @@
           "warning": null,
           "members": [
             {
+              "id": "elite-thorn-alpha",
               "hp": 150,
               "x": -1240,
               "y": 1680,
@@ -693,6 +816,7 @@
           ]
         },
         "west-trade-scouts": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -700,6 +824,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-trade-wolf-a",
               "hp": 58,
               "x": -1480,
               "y": -60,
@@ -716,6 +841,7 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-trade-wolf-b",
               "hp": 58,
               "x": -1580,
               "y": 40,
@@ -734,6 +860,7 @@
           ]
         },
         "north-pass-charge": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -741,6 +868,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-bent-boar",
               "hp": 90,
               "x": 330,
               "y": -330,
@@ -759,6 +887,7 @@
           ]
         },
         "north-outpost-wings": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -766,6 +895,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-outpost-raven",
               "hp": 64,
               "x": 900,
               "y": -740,
@@ -784,6 +914,7 @@
           ]
         },
         "north-rock-arena": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -791,6 +922,7 @@
           "warning": null,
           "members": [
             {
+              "id": "elite-rock-ram",
               "hp": 180,
               "x": 1080,
               "y": -990,
@@ -809,6 +941,7 @@
           ]
         },
         "north-lookout-tracks": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -816,6 +949,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-lookout-wolf",
               "hp": 58,
               "x": -130,
               "y": -770,
@@ -832,6 +966,7 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-lookout-slime",
               "hp": 48,
               "x": -40,
               "y": -720,
@@ -850,6 +985,7 @@
           ]
         },
         "east-road-slimes": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -857,6 +993,7 @@
           "warning": null,
           "members": [
             {
+              "id": "slime-1",
               "hp": 48,
               "x": 2450,
               "y": 1060,
@@ -873,6 +1010,7 @@
               "guardOpen": 0
             },
             {
+              "id": "slime-2",
               "hp": 48,
               "x": 2670,
               "y": 1230,
@@ -891,6 +1029,7 @@
           ]
         },
         "east-brook-reapers": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -898,6 +1037,7 @@
           "warning": null,
           "members": [
             {
+              "id": "leaf-1",
               "hp": 72,
               "x": 2920,
               "y": 1070,
@@ -914,6 +1054,7 @@
               "guardOpen": 0
             },
             {
+              "id": "leaf-2",
               "hp": 72,
               "x": 3170,
               "y": 930,
@@ -932,6 +1073,7 @@
           ]
         },
         "east-mushroom-watch": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -939,6 +1081,7 @@
           "warning": null,
           "members": [
             {
+              "id": "spore-1",
               "hp": 60,
               "x": 2730,
               "y": 1840,
@@ -957,6 +1100,7 @@
           ]
         },
         "east-spring-boar": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -964,6 +1108,7 @@
           "warning": null,
           "members": [
             {
+              "id": "boar-1",
               "hp": 90,
               "x": 3150,
               "y": 340,
@@ -982,6 +1127,7 @@
           ]
         },
         "east-canopy-raven": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -989,6 +1135,7 @@
           "warning": null,
           "members": [
             {
+              "id": "raven-1",
               "hp": 64,
               "x": 3250,
               "y": 1830,
@@ -1007,6 +1154,7 @@
           ]
         },
         "east-spore-ring": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -1014,6 +1162,7 @@
           "warning": null,
           "members": [
             {
+              "id": "elite-ashen-brood",
               "hp": 160,
               "x": 3070,
               "y": 2100,
@@ -1032,6 +1181,7 @@
           ]
         },
         "east-brook-burrows": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -1039,6 +1189,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-brook-worm",
               "hp": 62,
               "x": 2840,
               "y": 1450,
@@ -1057,6 +1208,7 @@
           ]
         },
         "ruins-gate-watch": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -1064,6 +1216,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-ruins-gate",
               "hp": 84,
               "x": 2770,
               "y": -100,
@@ -1082,6 +1235,7 @@
           ]
         },
         "ruins-court-front": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -1089,6 +1243,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-court-guardian",
               "hp": 84,
               "x": 3220,
               "y": -350,
@@ -1105,6 +1260,7 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-court-reaper",
               "hp": 72,
               "x": 3340,
               "y": -320,
@@ -1123,6 +1279,7 @@
           ]
         },
         "ruins-court-flank": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -1130,6 +1287,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-court-raven",
               "hp": 64,
               "x": 3500,
               "y": -530,
@@ -1146,6 +1304,7 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-court-slime",
               "hp": 48,
               "x": 3600,
               "y": -470,
@@ -1164,6 +1323,7 @@
           ]
         },
         "ruins-hall-watch": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -1171,6 +1331,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-hall-spore",
               "hp": 60,
               "x": 3800,
               "y": -720,
@@ -1187,6 +1348,7 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-hall-guardian",
               "hp": 84,
               "x": 3910,
               "y": -640,
@@ -1205,6 +1367,7 @@
           ]
         },
         "ruins-exit-watch": {
+          "composition": 2,
           "cycle": 0,
           "activated": false,
           "cleared": false,
@@ -1212,6 +1375,7 @@
           "warning": null,
           "members": [
             {
+              "id": "wild-exit-worm",
               "hp": 62,
               "x": 4020,
               "y": -140,
@@ -1228,6 +1392,7 @@
               "guardOpen": 0
             },
             {
+              "id": "wild-exit-guardian",
               "hp": 84,
               "x": 3900,
               "y": -240,
@@ -1246,6 +1411,11 @@
           ]
         }
       }
+    },
+    "southEvents": {
+      "herb": 96,
+      "orchard": 64,
+      "claimed": []
     },
     "fieldQuests": {
       "south-supply": "available"
@@ -2802,8 +2972,16 @@
       "general:potion": 8,
       "healer:potion": 16,
       "smith:ironSword": 8,
-      "smith:leatherCoat": 8
+      "smith:leatherCoat": 8,
+      "general:bread": 12,
+      "healer:tea": 12,
+      "inn:bread": 12,
+      "inn:tea": 12,
+      "inn:soup": 8,
+      "carpenter:wood": 24,
+      "carpenter:stone": 16
     },
+    "shopStockDay": 0,
     "economyRevision": 0,
     "map_version": 8,
     "player": {

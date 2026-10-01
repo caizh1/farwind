@@ -22,6 +22,7 @@ export function interact(this: World, p: Prop) {
   if(p.id === "west-gate-sign"){openWestRoad(this);return;}
   if(p.id === "west-road-survey"){surveyWestRoad(this);return;}
   if(p.id === "xiaobao"){this.xiaobao?.open(this);return;}
+  if(p.id==='lesson-sail-left'||p.id==='lesson-sail-right'){this.lessons?.adjustSail(p.id.endsWith('left')?'left':'right');return;}
   if(p.id.startsWith("lesson-")&&LESSON_IDS.includes(p.id.slice(7) as LessonId)){this.lessons?.open(p.id.slice(7) as LessonId);return;}
   if(p.id==="waterside-night"){void this.discoverNight();return;}
   if(lifeInteract(this,p))return;
@@ -59,7 +60,7 @@ export function interact(this: World, p: Prop) {
       if (s.quest === 0) {
         s.quest = 1;
         talk(
-          "东边的森林昨夜传来奇怪的风声。替我去看看吧。先找些药草和浆果，路上记得照顾好自己。南侧木桥的守风教本记着送风之法：面向北方，三连斩后再送出第四击，便能触到水面远铃。你也可以先去读教本，不必等我。",
+          "东边的森林昨夜传来奇怪的风声。替我去看看吧。先找些药草和浆果，路上记得照顾好自己。南侧木桥的守风教本记着送风之法：面向北方，按 I／中键独立送风，便能触到水面远铃。你也可以先去读教本，不必等我。",
         );
       } else if (s.quest === 6) {
         if (reward(s)) {
@@ -97,6 +98,7 @@ export function interact(this: World, p: Prop) {
   }
   if (p.kind === "npc") void this.persist().catch(() => {});
   if (p.kind === "resource") {
+    const blocked=southResourceBlock(s.southEvents,p.id);if(blocked){this.ui.message(SOUTH_EVENTS[blocked].hint);return;}
     if (s.collected[p.id] !== undefined && s.time - s.collected[p.id] < 180) {
       this.ui.message("这里已采集，三个游戏小时后再生。");
       return;
@@ -146,11 +148,7 @@ export function interact(this: World, p: Prop) {
       "东村口路牌",
       "向东：翡翠森林与风之遗迹。向西：风铃广场。\n北面练习场可练三连击与风步，南面环湖小径经过果园回到广场。",
     );
-  if (p.id === "training-guide")
-    this.ui.dialog(
-      "练习场教本",
-      "J / 左键挥剑，连续按下接三连击；从木桩四面靠近练习朝向。L 风步可快速移动，不能穿过木桩与围栏。练习不消耗任务物品、不掉落战利品。",
-    );
+  if (p.id === "training-guide")this.buildTraining.open();
   if (
     [
       "north-gate-sign",
@@ -216,3 +214,4 @@ export function interact(this: World, p: Prop) {
     } else this.ui.message("归乡风径尚未开放。");
   }
 }
+import {southResourceBlock,SOUTH_EVENTS} from './southEvents';

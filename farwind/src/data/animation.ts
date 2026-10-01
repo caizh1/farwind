@@ -1,3 +1,4 @@
+import {sampleAttackTiming} from '../game/systems/attackTiming';
 import {COUNTER_WEAPONS} from "./counterArt";
 import {FEEDBACK} from '../game/systems/combatFeedback';
 import type { Facing, MotionAction } from "../game/systems/locomotion";
@@ -27,7 +28,7 @@ export function hurtVisual(hurt:HurtReaction,now:number):CombatVisual {
 }
 export function swordWindVisual(facing:Facing,elapsed:number,m:StrikeConfig):CombatVisual {
  const end=m.windup+m.active,total=end+m.recovery,t=Math.max(0,Math.min(total,elapsed));
- const phase=t<m.windup?'windup':t<end?'active':'recovery',start=phase==='windup'?0:phase==='active'?m.windup:end,duration=phase==='windup'?m.windup:phase==='active'?m.active:m.recovery,progress=Math.min(1,(t-start)/duration);
+ const timing=sampleAttackTiming(t,0,m.windup,m.active,m.recovery),phase=timing.phase,progress=timing.progress;
  const times=[0,m.windup*35/110,m.windup*70/110,m.windup,m.windup+m.active*.25,end,end+m.recovery*60/190,end+m.recovery*130/190];let pose=0;for(let i=1;i<times.length;i++)if(t>=times[i])pose=i;
  const view=facing===0?0:facing===1?1:2,sample=SWORD_WIND_WEAPONS[view][pose],point=(p:{x:number;y:number})=>({x:p.x*(facing===2?-1:1),y:p.y});
  return {texture:'hero-sword-wind',frame:view*8+pose,clip:`hero/sword-wind/${facing}`,frameIndex:pose,facing,phase,phaseProgress:progress,provisional:SWORD_WIND_HERO_PROVISIONAL,weapon:{grip:point(sample.grip),tip:point(sample.tip),visible:phase==='active',progress,alpha:phase==='active'?.45:0,provisional:SWORD_WIND_HERO_PROVISIONAL}};
@@ -58,15 +59,14 @@ export function alertVisual(facing:Facing,progress:number):CombatVisual {
 }
 export function counterVisual(a:import("../game/systems/combat").Attack,now:number,improved=true):CombatVisual {
  const m=a.config??resolveStrike(1,a.counter),elapsed=now-a.start,pose=elapsed<20?2:elapsed<m.windup?3:elapsed<m.windup+m.active?4:5;
- const phase=elapsed<m.windup?"windup":elapsed<m.windup+m.active?"active":"recovery";
- const start=phase==="windup"?0:phase==="active"?m.windup:m.windup+m.active,duration=phase==="windup"?m.windup:phase==="active"?m.active:m.recovery;
+ const timing=sampleAttackTiming(now,a.start,m.windup,m.active,m.recovery),phase=timing.phase;
  if(improved&&elapsed>=FEEDBACK.counterMotion) {
   // 115ms内四个真实挥剑姿态；历史采样取同一帧的剑尖，避免画一条脱离手与剑的独立弧线。
   const index=phase==='windup'?0:phase==='active'?1+Math.min(3,Math.floor((elapsed-m.windup)/m.active*4)):5;
   const sample=COUNTER_WEAPONS[a.facing===0?0:a.facing===1?1:2][index],point=(p:{x:number;y:number})=>({x:p.x*(a.facing===2?-1:1),y:p.y});
-  return {texture:'hero-counter-v3',frame:(a.facing===0?0:a.facing===1?1:2)*6+index,clip:`hero/counter/${a.facing}`,frameIndex:index,facing:a.facing,phase,phaseProgress:Math.min(1,(elapsed-start)/duration),provisional:true,weapon:{grip:point(sample.grip),tip:point(sample.tip),visible:phase==='active',progress:Math.min(1,(elapsed-start)/duration),alpha:phase==='active'?.85:0,provisional:true}};
+  return {texture:'hero-counter-v3',frame:(a.facing===0?0:a.facing===1?1:2)*6+index,clip:`hero/counter/${a.facing}`,frameIndex:index,facing:a.facing,phase,phaseProgress:timing.progress,provisional:true,weapon:{grip:point(sample.grip),tip:point(sample.tip),visible:phase==='active',progress:timing.progress,alpha:phase==='active'?.85:0,provisional:true}};
  }
- const result=defensivePose(a.facing,pose,phase,Math.min(1,(elapsed-start)/duration));
+ const result=defensivePose(a.facing,pose,phase,timing.progress);
  result.clip=`hero/counter/${a.facing}`;
  result.weapon={...parryWeapon(a.facing,pose),visible:phase==="active",progress:result.phaseProgress,alpha:phase==="active"?.85:0};
  return result;
@@ -78,21 +78,15 @@ export function combatVisual(
   enter = false,
   move: StrikeConfig = resolveStrike(stage),
 ): CombatVisual {
-  if(stage===4)return swordWindVisual(facing,elapsed,move);
+  if(stage===4){
+    const v=combatVisual(3,facing,elapsed,enter,move);
+    return {...v,clip:`hero/melee-finisher/${facing}`,provisional:true};
+  }
   const activeEnd = move.windup + move.active;
   const total = activeEnd + move.recovery;
   const t = Math.max(0, Math.min(elapsed, total));
-  const phase =
-    t < move.windup ? "windup" : t < activeEnd ? "active" : "recovery";
-  const phaseStart =
-    phase === "windup" ? 0 : phase === "active" ? move.windup : activeEnd;
-  const phaseDuration =
-    phase === "windup"
-      ? move.windup
-      : phase === "active"
-        ? move.active
-        : move.recovery;
-  const phaseProgress = Math.min(1, (t - phaseStart) / phaseDuration);
+  const timing=sampleAttackTiming(t,0,move.windup,move.active,move.recovery);
+  const phase=timing.phase,phaseProgress=timing.progress;
   const view = facing === 0 ? 0 : facing === 1 ? 1 : 2;
   const boundaries = combatPoseTimes(stage, facing,move);
   let frameIndex = 0;
@@ -389,7 +383,7 @@ const activeWeaponPoints = [
   ],
 ] as const;
 export function weaponSample(stage: number, facing: Facing, elapsed: number,m:StrikeConfig=resolveStrike(stage)):WeaponPose {
-  if(stage===4)return swordWindVisual(facing,elapsed,m).weapon!;
+  if(stage===4)return weaponSample(3,facing,elapsed,m);
   const sample = combatVisual(stage, facing, elapsed,false,m);
   const view = facing === 0 ? 0 : facing === 1 ? 1 : 2;
   const index = sample.frameIndex < 3 ? 0 : 1;

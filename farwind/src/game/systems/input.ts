@@ -5,12 +5,15 @@ export type InputEvent = {
   sequence: number;
   axis: { x: number; y: number };
   running?: boolean;
+  windHeld?: boolean;
 };
 export class Input {
   held = new Set<string>();
   pressed = new Set<string>();
   events: InputEvent[] = [];
   sequence = 0;
+  private lifetime=new AbortController();
+  destroy(){this.clear();this.lifetime.abort();}
   enabled = () => true;
   uiKey = (_event: KeyboardEvent) => false;
   focusCanvas = () => {};
@@ -21,10 +24,12 @@ export class Input {
     target?.addEventListener("keydown", (e) => {
       if (!this.uiKey(e))
         this.keyDown(e.key, e.repeat, () => e.preventDefault());
-    });
-    target?.addEventListener("keyup", (e) => this.keyUp(e.key));
-    target?.addEventListener("blur", () => this.clear());
+    },{signal:this.lifetime.signal});
+    target?.addEventListener("keyup", (e) => this.keyUp(e.key),{signal:this.lifetime.signal});
+    target?.addEventListener("blur", () => this.clear(),{signal:this.lifetime.signal});
   }
+  windHeld(){return this.held.has('i')||this.held.has('mouse-wind');}
+  cancelWind(){this.held.delete('i');this.held.delete('mouse-wind');}
   keyDown(key: string, repeat = false, prevent = () => {}) {
     if (
       ["Tab", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(
@@ -37,8 +42,8 @@ export class Input {
     this.pressed.add(k);
     this.held.add(k);
     if (this.enabled()) {
-      if (k === "j" || k === "k" || k === "l")
-        this.request(k === "j" ? "attack" : k === "k" ? "parry" : "dash");
+      if (k === "j" || k === "k" || k === "l" || k === "i")
+        this.request(k === "j" ? "attack" : k === "k" ? "parry" : k === "i" ? "wind" : "dash");
       else if (
         [
           "w",
@@ -70,6 +75,7 @@ export class Input {
       sequence: ++this.sequence,
       axis: this.axis(),
       running: this.held.has(" "),
+      windHeld:this.windHeld(),
     });
   }
   bindCanvas(canvas: HTMLCanvasElement) {
@@ -77,11 +83,18 @@ export class Input {
       this.focusCanvas();
       if (e.button === 0) this.request("attack");
       if (e.button === 2) this.request("parry");
+      if(e.button===1&&this.enabled()){e.preventDefault();this.held.add('mouse-wind');this.request('wind');}
     };
     const menu = (e: MouseEvent) => e.preventDefault();
+    const release=(e:PointerEvent)=>{if(e.button===1){this.held.delete('mouse-wind');this.record('axis');}};
+    const cancel=()=>{this.cancelWind();this.record('axis');};
+    window.addEventListener('pointerup',release);
+    canvas.addEventListener('pointercancel',cancel);
     canvas.addEventListener("pointerdown", pointer);
     canvas.addEventListener("contextmenu", menu);
     return () => {
+      window.removeEventListener('pointerup',release);
+      canvas.removeEventListener('pointercancel',cancel);
       canvas.removeEventListener("pointerdown", pointer);
       canvas.removeEventListener("contextmenu", menu);
     };

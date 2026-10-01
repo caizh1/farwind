@@ -1,5 +1,5 @@
 import {VILLAGE_ANCHORS, FIELD_TARGET_ANCHORS} from '../../data/maps/windbell/layout';
-import { attackConfig, type Attack, type Target } from "./combat";
+import { attackConfig, isWindAttack, type Attack, type Target } from "./combat";
 export const TRAINING = {
   ...VILLAGE_ANCHORS.training,
   near: 185,
@@ -26,7 +26,7 @@ export class TrainingDummy implements Target {
   lastDamage = 0;
   lastHit = -TRAINING.linger;
   facing = 0;
-  windHits:{attackId:number;comboId:number;damage:number;at:number;firstTarget:string}[]=[];
+  windHits:{attackId:number;comboId:number;damage:number;at:number;firstTarget:string;leg:string}[]=[];
   reset() {
     this.windHits=[];
     this.comboId = -1;
@@ -50,7 +50,7 @@ export class TrainingDummy implements Target {
     }
   }
   hit(a: Attack, now: number, damage = attackConfig(a).damage) {
-    if(a.stage===4){if(this.windHits.some(h=>h.attackId===a.id))return false;this.windHits.push({attackId:a.id,comboId:a.comboId??a.id,damage,at:now,firstTarget:this.id});if(this.windHits.length>32)this.windHits.shift();return true;}
+    if(isWindAttack(a)){if(this.windHits.some(h=>h.attackId===a.id&&h.leg===(a.windLeg??'out')))return false;this.windHits.push({attackId:a.id,comboId:a.comboId??a.id,damage,at:now,firstTarget:this.id,leg:a.windLeg??'out'});if(this.windHits.length>32)this.windHits.shift();return true;}
     this.begin(a);
     if (this.instances.has(a.id)) return false;
     this.instances.add(a.id);

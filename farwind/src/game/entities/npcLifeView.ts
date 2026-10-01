@@ -1,3 +1,4 @@
+import {INTERIOR_FURNITURE,INTERIOR_BEDS} from '../../data/villageInteriors';
 import Phaser from "phaser";
 import {
   PEOPLE,
@@ -112,6 +113,11 @@ export class NpcLifeView {
           .setVisible(false),
       });
     };
+    for(const f of INTERIOR_FURNITURE){
+      addFurniture(f.space, `interior-${f.asset}`, f.x, f.y, f.width, f.height);
+      if(f.ground) this.furniture.at(-1)!.sprite.setDepth(7001);
+    }
+    for(const bed of INTERIOR_BEDS) addFurniture(bed.space,LIFE_ART.bed,bed.x,bed.y-15,64,110);
     for (const f of FACILITIES.filter((f) => f.place.space !== "village")) {
       if (f.kind === "bed")
         addFurniture(
@@ -132,7 +138,7 @@ export class NpcLifeView {
           55,
         );
     }
-    for (const h of HOMES)
+    for (const h of HOMES.filter(h=>!INTERIOR_FURNITURE.some(f=>f.space===h.id&&f.asset==="counter")))
       addFurniture(
         h.id,
         LIFE_ART.table,
@@ -196,7 +202,14 @@ export class NpcLifeView {
       18,
     );
     g.fillStyle(0xd5bc90).fillRoundedRect(ROOM.left, ROOM.top, 640, 540, 12);
-    // 木地板与织物用确定性细线；角色继续使用已有手绘图集。
+    // 木梁、墙板与窗户留在边界内；家具按脚底与角色共同排序。
+    g.fillStyle(0x91704c).fillRect(ROOM.left,ROOM.top,640,30);
+    for(const x of [395,1004]) g.fillStyle(0x674a33).fillRect(x-5,ROOM.top,10,540);
+    for(const x of [480,860]) {
+      g.fillStyle(0x634d38).fillRoundedRect(x,438,95,62,6);
+      g.fillStyle(0xb8d4ba).fillRect(x+7,445,81,47);
+      g.lineStyle(4,0x76573a).lineBetween(x+47,445,x+47,492).lineBetween(x+7,469,x+88,469);
+    }
     for (let y = 440; y < 960; y += 28) {
       g.lineStyle(1, 0x886d4c, 0.25).lineBetween(395, y, 1004, y);
       for (let x = 400 + (y % 56); x < 1000; x += 115)
@@ -411,7 +424,7 @@ export class NpcLifeView {
           .fillStyle(0xf3c678, 0.7)
           .fillCircle(h.door.x + 32, h.door.y - 28, 5);
       t.setVisible(!indoor).setText(
-        `${h.name} · ${life.data.unavailable.homes[h.id] ? "通路暂不可用" : occupants.length ? (awake ? "有人活动" : "休息中") : "外出"} · E`,
+        `${h.name} · ${life.data.unavailable.homes[h.id] ? "通路暂不可用" : occupants.length ? (awake ? "有人活动" : "休息中") : h.owners.length ? "外出" : "开放"} · E`,
       );
     }
 

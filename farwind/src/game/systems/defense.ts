@@ -4,13 +4,14 @@ import type {GuardId} from '../../data/defense';
 import { DEFENSE, DEFENSE_RULES, raidInterval, TOWERS, RAID_GATES, RAID_TIMING, GUARD_DEFS, GUARD_WEAPONS, GUARD_ARMOR, type GateId } from "../../data/defense";
 import { props } from "../../data/world";
 import { regionAt, inPolygon } from "../../data/village";
-import { localPath, nearestStanding, enemyNavigation, enemyAttackSpace, type EnemyBody, NAV } from "./enemy";
+import { localPath, pathSearch, planPath, pathPending, cancelPath, nearestStanding, enemyNavigation, enemyAttackSpace, type EnemyBody, type NavigationBudget, NAV } from "./enemy";
 import { motionBlocked, clearMotionLine, clearMeleeLine, shotLineBlocker, shotLineImpact, type Point, type Rect, type FiringPort } from "./obstacles";
 import { createEnemyAttack, creatureCooldown, advanceEnemyAttack, delayEnemyAttack, type EnemyContact } from "./enemyAttack";
 import {advanceEnemyRecoil} from './enemyReaction';
 import { resolveDamage, resolveReleasedDamage, type ReleasedAttack, type DamageEvent } from "./damage";
 import type { DefenseState, GuardState } from "./defenseState";
 import { movementFacing } from "./locomotion";
+import {updateFungalPriest} from './fungalCombat';
 import {enemyProtection,turnToward} from './enemyTraits';
 import {enemyProfile} from '../../data/enemies';
 import {DEMON_KING,validRaidOrder,demonFormation,raidUnitProfile,type RaidOrder} from '../../data/demonKing';
@@ -97,7 +98,7 @@ export class EastDefense {
     if(id==='player')return player.hp>0?{...player,id}:undefined;
     return this.state.guards.find(g=>g.id===id&&!g.dead&&(g.space??'village')==='village') ?? this.civilianTargets?.().find(n=>n.id===id) ?? this.facilityTargets?.().find(f=>f.id===id) ?? (id==='xiaobao'?this.companionTarget?.():undefined);
   }
-  leaveGuard(id:GuardId){const g=this.state.guards.find(g=>g.id===id)!;if(g.dead||g.offDuty)return;g.offDuty=true;g.mode="life";g.towerTransitMs=GUARD_DEFS.find(d=>d.id===id)!.role==="archer"?1800:0;this.runtime.get(id)!.attack=null;}
+  leaveGuard(id:GuardId){const g=this.state.guards.find(g=>g.id===id)!;if(g.dead||g.offDuty)return;g.offDuty=true;g.mode="life";g.towerTransitMs=GUARD_DEFS.find(d=>d.id===id)!.role==="archer"?1800:0;const r=this.runtime.get(id)!;r.attack=null;cancelPath(r.nav);r.nav.path=[];}
   recallGuard(id:GuardId){const g=this.state.guards.find(g=>g.id===id)!;this.peaceOrders.delete(id);if(!g.dead&&g.offDuty)g.mode="return";}
   healGuard(id:string,amount:number){const g=this.state.guards.find(g=>g.id===id);if(g&&!g.dead&&amount>0)g.hp=Math.min(GUARD_DEFS.find(d=>d.id===id)!.maxHP,g.hp+Math.min(30,amount));}
   enemies: DefenseEnemy[] = [];
@@ -214,6 +215,7 @@ export class EastDefense {
     return !this.allHostiles().some(e=>this.threatReason(gateId,e)!==null)&&spawnLegal(gateId,spawns,player,view,occupied);
   }
   returnGuard(g:GuardState){const r=this.runtime.get(g.id)!;
+    cancelPath(r.nav);
     if(r.targetId){r.blockedTarget=r.targetId;r.blockedUntil=this.now+DEFENSE_RULES.reacquire;}
     r.targetId=null;r.chaseMs=r.stuckMs=0;r.attack=null;r.nav.path=[];r.nav.target=undefined;g.mode='return';
   }
@@ -261,7 +263,7 @@ export class EastDefense {
     this.note({ kind: "hit", id: g.id, eventKey:`${receipt}:hit`, sourceId: source.id, at: this.now, damage: hit.damage, x: g.x, y: g.y });
     if (hit.killed) {
       g.dead = true; g.mode = "dead"; g.cooldownMs = 0;
-      const r = this.runtime.get(g.id)!; r.attack = null; r.nav.path = [];
+      const r = this.runtime.get(g.id)!; r.attack = null; cancelPath(r.nav);r.nav.path = [];
       this.critical = true;
       this.note({ kind: "death", id: g.id, eventKey:`${receipt}:death`, sourceId: source.id, at: this.now, x: g.x, y: g.y });
     }
@@ -276,17 +278,17 @@ export class EastDefense {
     this.enemyDamage?.(e,event,{damage:hit.damage,killed:hit.killed,guarded:target.reduction>0});
     if (event.sourceType === "player-melee" || event.sourceType === "player-wind") e.playerAggroUntil = this.now + 2500;
     this.note({ kind: "hit", id: e.id, sourceId: event.sourceId, at: this.now, damage: hit.damage, x: e.x, y: e.y });
-    if (hit.killed) {
-      if (e.attack) e.attack.cancelled = true;
-      e.attack = null; e.nav.path = []; e.ai = "死亡";
-      this.critical = true;
-      this.note({ kind: "death", id: e.id, sourceId: event.sourceId, at: this.now, x: e.x, y: e.y });
-    }
+    if(hit.killed)this.settleEnemyDeath(e,event.sourceId);
     this.sync();
     return true;
   }
+  settleEnemyDeath(e:DefenseHostile,sourceId='environment'){
+    if(e.hp>0||e.ai==='死亡')return;
+    if(e.attack)e.attack.cancelled=true;e.attack=null;cancelPath(e.nav);e.nav.path=[];e.ai='死亡';this.critical=true;
+    this.note({kind:'death',id:e.id,sourceId,at:this.now,x:e.x,y:e.y});this.sync();
+  }
   move(body: Point, nav: EnemyBody["nav"], target: Point, speed: number, dt: number,
-    budget: { queries: number }, allowed: (p: Point) => boolean, peers: Point[] = []) {
+    budget: NavigationBudget, allowed: (p: Point) => boolean, peers: Point[] = []) {
     const old = {x:body.x,y:body.y}; let goal: Point = {x:target.x,y:target.y};
     const close = peers.filter(p => p !== body && dist(p, body) < 32);
     if (close.length) {
@@ -297,13 +299,16 @@ export class EastDefense {
       goal = { x: target.x + dx * 26, y: target.y + dy * 26 };
     }
     let waypoint: Point | undefined;
-    if (allowed(goal) && clearMotionLine(body, goal)) { waypoint = goal; nav.path = []; }
+    if (allowed(goal) && clearMotionLine(body, goal)) { cancelPath(nav);waypoint = goal; nav.path = []; }
     else {
-      if (this.now >= nav.next && budget.queries > 0 && (!nav.target || dist(nav.target, goal) > 32 || !nav.path.length)) {
-        budget.queries--; const found = localPath(body, p => dist(p, goal) < 26 && clearMotionLine(p, goal), goal, allowed);
-        nav.path = found.path ?? []; nav.target = { ...goal }; nav.next = this.now + NAV.interval;
-        nav.queries++; nav.visited = found.visited; nav.failed = !found.path;
-        if (found.path) nav.path.push(goal);
+      if(pathPending(nav)||this.now>=nav.next&&(!nav.target||dist(nav.target,goal)>32||!nav.path.length)){
+        const context='mode' in body?String(body.mode):'targetId' in body?String(body.targetId??'返回'):'移动';
+        const found=planPath(nav,goal,context,frozen=>pathSearch(body,p=>dist(p,frozen)<26&&clearMotionLine(p,frozen),frozen,allowed),budget);
+        if(found){
+          nav.path=found.path??[];if(found.path)nav.path.push(found.target);
+          nav.target={...found.target};nav.next=this.now+NAV.interval;nav.visited=found.visited;nav.failed=!found.path;
+          if(nav.path[0]&&!clearMotionLine(body,nav.path[0])){nav.path=[];nav.next=this.now;nav.failed=false;}
+        }
       }
       while (nav.path.length && dist(body, nav.path[0]) < 1) nav.path.shift();
       waypoint = nav.path[0];
@@ -351,7 +356,9 @@ export class EastDefense {
     for (const e of this.hostiles()) {
       advanceEnemyRecoil(e,now);
       const fixed = this.external.includes(e);
-      if (e.hp <= 0 || e.disabled) continue;
+      if(e.passiveRoot)continue;
+      if (e.hp <= 0 || e.disabled) {cancelPath(e.nav);continue;}
+      if(e.type==='priest'){updateFungalPriest(e,this.allHostiles(),player,now,dtMs,'player',(enemy,id)=>this.playerAttackPermit?.(enemy,id)??true);continue;}
       if(e.attack&&!e.attack.cancelled){
         const frozen=Math.max(0,Math.min(now,e.staggerUntil)-Math.max(now-dtMs,e.staggerSince??now-dtMs));
         delayEnemyAttack(e.attack,frozen);
@@ -384,8 +391,9 @@ export class EastDefense {
       const destination = !fixed && raid?.phase === "retreat" ? { x: e.homeX, y: e.homeY } : target ??
         (fixed ? {x:e.homeX,y:e.homeY} : locallyProtected(this.gate().id,e)?this.gate().inside:this.gate().entry);
       const aligned=e.type!=='guardian'||!target||dist(e,target)<1||((target.x-e.x)*(e.face?.x??0)+(target.y-e.y)*(e.face?.y??1))/dist(e,target)>.94;
-      const added=['wolf','burrow','guardian'].includes(e.type),reach=e.elite?creatureReach(e.type,e.elite):added?enemyProfile(e.type).reach:73;
+      const added=['wolf','burrow','guardian','priest','bomber'].includes(e.type),reach=e.elite?creatureReach(e.type,e.elite):added?enemyProfile(e.type).reach:73;
       if (target && (fixed || raid?.phase !== "retreat") && dist(e, target) < reach && clearMeleeLine(e, target) && now >= e.cool && aligned&&(this.playerAttackPermit?.(e,target.id)??true)) {
+        cancelPath(e.nav);e.nav.path=[];
         e.attack = createEnemyAttack(e.id, e.attackSerial = (e.attackSerial ?? 0) + 1, e.type, now, e, target,undefined,e.elite);
         if(!fixed)e.attack.damage=raidUnitProfile(e.type,e.eliteLevel??0).damage;
         if(e.type==='guardian'){e.attack.direction={...e.face!};e.attack.locked=true;}
@@ -440,7 +448,7 @@ export class EastDefense {
       }else{
         if(['retreat','recover'].includes(g.mode))this.returnGuard(g);
         if(target){
-          if(r.targetId!==target.id){r.targetId=target.id;r.chaseMs=r.stuckMs=0;r.nav.path=[];r.nav.target=undefined;}
+          if(r.targetId!==target.id){cancelPath(r.nav);r.targetId=target.id;r.chaseMs=r.stuckMs=0;r.nav.path=[];r.nav.target=undefined;}
           if(!locallyProtected(gate,target)&&!this.attackingProtected(gate,target))r.chaseMs+=dtMs;else r.chaseMs=0;
           if(!ranged&&r.chaseMs>=DEFENSE_RULES.pursuit){this.returnGuard(g);target=undefined;}
         }else if(r.targetId||r.attack||g.mode==='intercept'||g.mode==='attack')this.returnGuard(g);
@@ -459,6 +467,7 @@ export class EastDefense {
           }
         }else if(target){
           if(ranged||inActivity(gate,target)&&dist(g,target)<=weapon.range+8&&clearMeleeLine(g,target)){
+            cancelPath(r.nav);r.nav.path=[];
             g.mode='attack';
             if(g.cooldownMs===0){const n=Math.max(1,dist(g,target)),direction={x:(target.x-g.x)/n,y:(target.y-g.y)/n};
               r.attack={id:`${g.id}:${++r.serial}`,start:now,contact:now+weapon.windup,end:now+weapon.windup+220,targetId:target.id,hit:false,direction};
@@ -468,14 +477,14 @@ export class EastDefense {
             g.mode='intercept';const intercept=zoneFor(gate).intercept;
             const goal=inPolygon(target,zoneFor(gate).inside)||locallyProtected(gate,target)&&dist(g,intercept)<30?target:intercept;
             r.moved=this.move(g,r.nav,goal,DEFENSE.speed,dt,budget,p=>this.guardAllowed(g,p),[...this.state.guards.filter(p=>!p.dead&&p!==g),player]);
-            r.stuckMs=r.moved>.001||dist(g,goal)<10?0:r.stuckMs+dtMs;
+            r.stuckMs=r.moved>.001||dist(g,goal)<10||pathPending(r.nav)?0:r.stuckMs+dtMs;
             if(r.stuckMs>=DEFENSE_RULES.stuck)this.returnGuard(g);
           }
         }else{
           const returning=g.mode==='return',post=returning?d.post:d.patrol[r.patrol%d.patrol.length];
           g.mode=returning?'return':ranged||d.patrol.length===1?'post':'patrol';
           if(!ranged&&dist(g,post)>3)r.moved=this.move(g,r.nav,post,DEFENSE.speed*(returning?1:.45),dt,budget,p=>this.guardAllowed(g,p),[...this.state.guards.filter(p=>!p.dead&&p!==g),player]);
-          else if(returning){g.mode=d.patrol.length===1?'post':'patrol';r.nav.path=[];}else r.patrol++;
+          else if(returning){g.mode=d.patrol.length===1?'post':'patrol';cancelPath(r.nav);r.nav.path=[];}else r.patrol++;
         }
       }
       if(r.moved>.001){const dx=g.x-old.x,dy=g.y-old.y;

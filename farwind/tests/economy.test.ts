@@ -22,6 +22,24 @@ const buy = (quantity = 1): EconomyRequest => ({
   quantity,
 });
 describe("真实交易和失败原子性", () => {
+  it("行囊制作保存失败保留材料，成功后只扣一次并推进任务", async () => {
+    let state = initialState();
+    state.quest = 2;
+    add(state, "herb", 4);
+    add(state, "berry", 2);
+    const before = structuredClone(state);
+    const commit = new EconomyCommit();
+    const request: EconomyRequest = { sequence: 1, kind: "craft" };
+    const publish = (next: typeof state) => { state = next; };
+    await expect(commit.run(() => state, request, async () => { throw Error("保存失败"); }, publish)).rejects.toThrow("保存失败");
+    expect(state).toEqual(before);
+    await commit.run(() => state, request, async () => {}, publish);
+    expect([count(state, "herb"), count(state, "berry"), count(state, "potion"), state.quest, state.crafted, state.economyRevision]).toEqual([2, 1, 1, 3, true, 1]);
+    expect(state.coins).toBe(before.coins);
+    expect(state.shopStock).toEqual(before.shopStock);
+    await expect(commit.run(() => state, request, async () => {}, publish)).rejects.toThrow("已处理");
+    expect(count(state, "potion")).toBe(1);
+  });
   it("购买、普通材料出售、库存及钱同步改变，原状态保持", () => {
     const s = initialState(),
       before = structuredClone(s),

@@ -19,17 +19,17 @@ export const RETURN_WIND_ORB = {
   message: "归风珠将你带回风铃村。行囊与旅途进度都还在。",
   respawn: { x: 670, y: 720 },
 } as const;
-export type ShopId = "general" | "healer" | "smith" | "inn";
+export type ShopId = "general" | "healer" | "smith" | "inn" | "carpenter";
 export const shops = {
   general: {
     name: "风铃杂货铺",
     greeting: "普通材料可以换钱。风之结晶与纪念护符不收购。",
-    goods: { wood: 3, stone: 3, herb: 5, berry: 4, potion: 18 },
+    goods: { wood: 3, stone: 3, herb: 5, berry: 4, potion: 18, bread: 7 },
   },
   healer: {
     name: "药师 · 小满",
     greeting: "带药草两株、浆果一份，确认后我再替你调药。也可在行囊自行制作。",
-    goods: { potion: 18 },
+    goods: { potion: 18, tea: 10 },
   },
   smith: {
     name: "溪石铁匠铺",
@@ -40,8 +40,9 @@ export const shops = {
   inn: {
     name: "归风旅馆",
     greeting: "休息补给不推进时间；夜间可另购住宿，睡到清晨06:00。",
-    goods: {},
+    goods: { bread: 7, tea: 10, soup: 14 },
   },
+  carpenter: { name: "阿禾的木工坊", greeting: "备些木材和溪石，路标与捷径的维修会用得到。", goods: { wood: 3, stone: 3 } },
 } as const;
 export const salePrices: Partial<Record<ItemId, number>> = {
   wood: 2,
@@ -58,6 +59,13 @@ export const initialStock = (): Record<string, number> => ({
   "healer:potion": 16,
   "smith:ironSword": 8,
   "smith:leatherCoat": 8,
+  "general:bread": 12,
+  "healer:tea": 12,
+  "inn:bread": 12,
+  "inn:tea": 12,
+  "inn:soup": 8,
+  "carpenter:wood": 24,
+  "carpenter:stone": 16,
 });
 export const isEquipment = (id: string): id is EquipmentId =>
   Object.hasOwn(equipment, id);

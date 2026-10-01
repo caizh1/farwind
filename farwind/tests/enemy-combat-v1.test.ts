@@ -86,8 +86,9 @@ describe('独立连续姿态映射',()=>{
     for(const type of ['leaf','spore','boar','raven'])for(const facing of [{x:0,y:1},{x:0,y:-1},{x:1,y:0},{x:-1,y:0}]){
       const body={x:850,y:700,hp:60,type},a=createEnemyAttack('a',1,type,0,body,{x:body.x+facing.x,y:body.y+facing.y}),anim=new EnemyAnimation();a.locked=true;const frames=[];
       for(let now=0;now<a.recoveryUntil;now+=5)frames.push(anim.sample(body,a,now));
-      expect(new Set(frames.map(p=>p.index)).size).toBe(8);const direction=facing.y>0?0:facing.y<0?1:2,block=ENEMIES[type as keyof typeof ENEMIES].frames;
-      expect(frames.every(p=>p.frame>=direction*block+8&&p.frame<direction*block+16)).toBe(true);
+      const sample=type==='leaf'||type==='spore',count=sample?12:8,start=sample?12:8;
+      expect(new Set(frames.map(p=>p.index)).size).toBe(count);const direction=facing.y>0?0:facing.y<0?1:2,block=ENEMIES[type as keyof typeof ENEMIES].frames;
+      expect(frames.every(p=>p.frame>=direction*block+start&&p.frame<direction*block+start+count)).toBe(true);
     }
   });
   it('林豕撞墙、被弹反与死亡各有姿态，死亡和弹反优先',()=>{

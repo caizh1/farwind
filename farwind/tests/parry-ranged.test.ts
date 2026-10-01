@@ -49,7 +49,7 @@ describe('远程弹反专用剑气',()=>{
  it('无需解锁，且所有已学等级仍只发一发24伤害，不修改永久本领',()=>{
   for(const stage of [0,1,2,3,4,5] as const){const a=setup();a.c.swordWindEnabled=stage>0;a.c.swordWindConfig=stage?resolveSwordWindConfig(stage):null;
    const w=release(a);expect(a.s.winds).toHaveLength(1);expect(w.config).toMatchObject({speed:900,distance:300,width:28,maxTargets:1,damage:24,angles:[0]});
-   expect(a.c.maxStage).toBe(stage?4:3);expect(a.c.swordWindConfig?.stage??0).toBe(stage);
+   expect(a.c.maxStage).toBe(3);expect(a.c.swordWindConfig?.stage??0).toBe(stage);
   }
  });
  it('基础反击伤害继续通过现有装备修正，发射快照不再读取后续状态',()=>{

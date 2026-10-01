@@ -1,3 +1,4 @@
+import {INTERIOR_FURNITURE,INTERIOR_BEDS,interiorBounds} from '../../data/villageInteriors';
 import {mapGeometryRevision} from "../../data/world";
 import {
   HOMES,
@@ -8,7 +9,7 @@ import {
   type Place,
   type SpaceId,
 } from "../../data/npcLife";
-import { pathSearch, enemyNavigation, type EnemyBody } from "./enemy";
+import { pathSearch, advancePathSearch, enemyNavigation, type EnemyBody, type NavigationBudget } from "./enemy";
 import {
   motionBlocked,
   clearMotionLine,
@@ -18,6 +19,8 @@ import {
 export const distance = (a: Point, b: Point) =>
   Math.hypot(a.x - b.x, a.y - b.y);
 const roomFurniture = (space: SpaceId) => [
+  ...INTERIOR_BEDS.filter(b=>b.space===space).map(b=>({left:b.x-40,right:b.x+40,top:b.y-70,bottom:b.y-15})),
+  ...INTERIOR_FURNITURE.filter(f=>f.space===space&&f.solid).map(interiorBounds),
   ...PRIVATE_STORAGE.filter((s) => s.space === space).map((s) => ({
     left: s.x - 10,
     right: s.x + 10,
@@ -114,7 +117,7 @@ export function moveLife(
   target: Place,
   ms: number,
   now: number,
-  budget: { queries: number },
+  budget: NavigationBudget,
   runtime: LifeNav,
   safe: (p: Place) => boolean = () => true,
   peers: Place[] = [],
@@ -305,22 +308,19 @@ export function moveLife(
       nav.target = { ...goal };
     }
     if (runtime.search && budget.queries > 0) {
-      budget.queries--;
-      runtime.batches++;
       const { iterator, origin } = runtime.search;
-      for (let i = 0; i < LIFE.pathNodesPerBatch; i++) {
-        const result = iterator.next();
-        runtime.maxExpanded = Math.max(runtime.maxExpanded, i + 1);
-        if (!result.done) continue;
-        nav.path = result.value.path ?? [];
-        if (result.value.path) {
+      const batch=advancePathSearch(iterator,budget,LIFE.pathNodesPerBatch);
+      if(batch.expanded)runtime.batches++;
+      runtime.maxExpanded=Math.max(runtime.maxExpanded,batch.expanded);
+      if(batch.result){
+        nav.path = batch.result.path ?? [];
+        if (batch.result.path) {
           nav.path.unshift(origin);
           nav.path.push(goal);
         }
-        nav.failed = !result.value.path;
+        nav.failed = !batch.result.path;
         nav.next = now + LIFE.pathRetryMs;
         runtime.search = null;
-        break;
       }
     }
     while (nav.path.length && distance(body, nav.path[0]) < 0.001)

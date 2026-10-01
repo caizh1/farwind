@@ -3,7 +3,7 @@ export type UnitRef = { id: string; faction: Faction; hp: number; armor: number;
   reduction?: number; hpFloor?:number; shield?: { amount: number; remaining: number } };
 export type DamageEvent = {
   sourceId: string; targetId: string; attackId: string; amount: number;
-  sourceType: "player-replay" | "player-rune" | "player-phantom" | "player-melee" | "player-wind" | "guard-melee" | "tower-arrow" | "enemy-melee" | "enemy-shot" | "companion-melee" | "companion-shot" | "companion-element";
+  sourceType: "player-replay" | "player-rune" | "player-phantom" | "player-melee" | "player-wind" | "guard-melee" | "tower-arrow" | "enemy-melee" | "enemy-shot" | "enemy-blast" | "companion-melee" | "companion-shot" | "companion-element";
   eventId: string | null;
   sourceScale?:number;
   origin?:{x:number;y:number};
@@ -21,9 +21,14 @@ export function resolveReleasedDamage(event:DamageEvent,source:ReleasedAttack,ta
     return {applied:false,damage:0,hp:target.hp,killed:false};
   return damage(event,{id:source.sourceId,faction:source.faction},target);
 }
-function damage(event:DamageEvent,source:Pick<UnitRef,'id'|'faction'>,target:UnitRef){
+// 滚兽爆炸是明确允许波及敌人的环境攻击，仍检查来源、身份与存活。
+export function resolveBlastDamage(event:DamageEvent,source:UnitRef,target:UnitRef){
+  if(event.sourceType!=='enemy-blast'||source.faction!=='hostile'||source.hp<=0)return {applied:false,damage:0,hp:target.hp,killed:false};
+  return damage(event,source,target,true);
+}
+function damage(event:DamageEvent,source:Pick<UnitRef,'id'|'faction'>,target:UnitRef,friendlyFire=false){
   if (event.sourceId !== source.id || event.targetId !== target.id ||
-    source.id === target.id || source.faction === target.faction || target.hp <= 0 ||
+    source.id === target.id || (!friendlyFire&&source.faction === target.faction) || target.hp <= 0 ||
     !event.attackId || !Number.isFinite(event.amount) || event.amount <= 0 || event.amount > 10000)
     return { applied: false, damage: 0, hp: target.hp, killed: false };
   let damage = Math.max(event.sourceType==='player-rune'||event.sourceType==='player-phantom'||event.sourceType==='player-replay'?0:1, event.amount*(Math.max(0,Math.min(1,event.sourceScale??1))) - target.armor) * (1 - Math.max(0, Math.min(.8, target.reduction ?? 0)));

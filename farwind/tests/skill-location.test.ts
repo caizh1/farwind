@@ -8,6 +8,9 @@ import {
 } from "../src/data/world";
 import { motionBlocked, clearMotionLine } from "../src/game/systems/obstacles";
 import { localPath } from "../src/game/systems/enemy";
+import {WORLD_PLAYABLE} from '../src/data/maps/windbell/bounds';
+import {regionAt} from '../src/data/village';
+const at=(stage:number,dx=0,dy=0)=>({x:WIND_LESSONS[stage-1].stand.x+dx,y:WIND_LESSONS[stage-1].stand.y+dy});
 test("五个传承站位与固定教本有完整通路", () => {
   let previous = { x: 670, y: 720 };
   for (const l of WIND_LESSONS) {
@@ -32,7 +35,7 @@ test("五个传承站位与固定教本有完整通路", () => {
       previous,
       (q) => Math.hypot(q.x - p.x, q.y - p.y) < 15 && clearMotionLine(q, p),
       p,
-      (q) => q.x >= 30 && q.x <= 4170 && q.y >= 80 && q.y <= 2170,
+      (q) => q.x >= WORLD_PLAYABLE.left && q.x <= WORLD_PLAYABLE.right && q.y >= WORLD_PLAYABLE.top && q.y <= WORLD_PLAYABLE.bottom,
       undefined,
       { radius: 5000, nodes: 30000 },
     );
@@ -40,37 +43,40 @@ test("五个传承站位与固定教本有完整通路", () => {
     previous = p;
   }
 });
+test('五段传承分布在五个探索区域，任意两处发现点相隔至少八百像素',()=>{
+  expect(new Set(WIND_LESSONS.map(l=>regionAt(l).id)).size).toBe(5);
+  for(let i=0;i<WIND_LESSONS.length;i++)for(const l of WIND_LESSONS.slice(i+1))expect(Math.hypot(l.x-WIND_LESSONS[i].x,l.y-WIND_LESSONS[i].y)).toBeGreaterThan(800);
+});
 import { SwordWindSystem } from "../src/game/systems/swordWind";
 import { resolveSwordWindConfig } from "../src/data/swordWind";
 import { lessonTargets } from "../src/game/systems/windLessons";
 test.each([
   {
     stage: 2,
-    root: { x: 2500.5, y: 978.8 },
+    root: at(2,40,-20),
     facing: 3,
-    ids: ["lesson-double-0", "lesson-double-1"],
+    ids: ["lesson-serial-bell-0", "lesson-serial-bell-1"],
   },
   {
     stage: 3,
-    root: { x: 2940, y: 1180 },
+    root: at(3,50,0),
     facing: 3,
     ids: ["lesson-through-0", "lesson-through-1", "lesson-through-2"],
   },
   {
     stage: 4,
-    root: { x: 3610, y: 1060 },
+    root: at(4,0,-50),
     facing: 1,
     ids: ["lesson-wide-0", "lesson-wide-1"],
   },
   {
     stage: 5,
-    root: { x: 3910, y: 1000 },
+    root: at(5,0,-50),
     facing: 1,
     ids: [
       "lesson-three-left",
       "lesson-three-center",
       "lesson-three-right",
-      "lesson-three-overlap",
     ],
   },
 ] as const)(
@@ -79,7 +85,7 @@ test.each([
     const system = new SwordWindSystem(),
       config = resolveSwordWindConfig(stage);
     system.launch(
-      { id: 1, stage: 4, facing, start: 0, hit: new Set(), swordWind: config },
+      { id: 1, stage: 1,kind:"swordWind",delivery:"wind", facing, start: 0, hit: new Set(), swordWind: config },
       root,
       110,
       36,
@@ -116,14 +122,14 @@ test("教学区内的真实敌伤站位无遮挡", () => {
   expect(clearMotionLine({ x: 3330, y: 1120 }, p)).toBe(true);
 });
 
-test("远铃同时体现距离和宽度，窄道允许旧剑风而截断疾风", () => {
+test("田野远铃同时体现距离和宽度", () => {
   const release = (stage: 3 | 4, root: { x: number; y: number }) => {
     const system = new SwordWindSystem(),
       config = resolveSwordWindConfig(stage);
     system.launch(
       {
         id: 1,
-        stage: 4,
+        stage: 1,kind:"swordWind",delivery:"wind",
         facing: 1,
         start: 0,
         hit: new Set(),
@@ -143,8 +149,8 @@ test("远铃同时体现距离和宽度，窄道允许旧剑风而截断疾风",
       })),
     );
   };
-  const thin = release(3, { x: 3610, y: 1060 }),
-    wide = release(4, { x: 3610, y: 1060 });
+  const thin = release(3, at(4,0,-50)),
+    wide = release(4, at(4,0,-50));
   expect(thin.filter((e) => e.target)).toEqual([]);
   expect(
     wide
@@ -152,17 +158,4 @@ test("远铃同时体现距离和宽度，窄道允许旧剑风而截断疾风",
       .map((e) => e.target!.id)
       .sort(),
   ).toEqual(["lesson-wide-0", "lesson-wide-1"]);
-  expect(
-    release(3, { x: 3700, y: 1100 }).some(
-      (e) => e.target?.id === "lesson-wide-channel-bell",
-    ),
-  ).toBe(true);
-  expect(
-    release(4, { x: 3700, y: 1100 }).some((e) => e.reason === "obstacle"),
-  ).toBe(true);
-  expect(
-    release(4, { x: 3700, y: 1100 }).some(
-      (e) => e.target?.id === "lesson-wide-channel-bell",
-    ),
-  ).toBe(false);
 });

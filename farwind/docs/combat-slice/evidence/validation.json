@@ -1,0 +1,57 @@
+{
+  "说明": "当前工作树的战斗切片验证；不是已提交版本、正式发布或主观美术验收。",
+  "类型检查": "通过",
+  "生产构建": "通过，保留既有大包体提示",
+  "全量逻辑": {
+    "文件": 59,
+    "用例": 1142,
+    "通过": 1142,
+    "失败": 0,
+    "运行秒": 380.13,
+    "执行方式": "单个工作进程；保持默认超时限制"
+  },
+  "专项逻辑": {
+    "文件": 7,
+    "用例": 214,
+    "通过": 214
+  },
+  "浏览器": {
+    "唯一用例": 7,
+    "执行方式": "分批；其余五项在最后全组检查通过，修正模拟时序假设后混合遭遇与录屏两项专项通过。",
+    "结果": {
+      "melee-parry-result.json": "通过",
+      "mixed-runtime-result.json": "通过",
+      "spore-locked-dodge-result.json": "通过",
+      "effects-disabled-runtime-result.json": "通过",
+      "runtime-recording-result.json": "通过",
+      "diagonal-buffer-cancel-result.json": "通过",
+      "boar-locked-dodge-result.json": "通过"
+    }
+  },
+  "审查": "PASS；没有成立的 P0/P1 阻塞问题",
+  "验收边界": [
+    "素材保持临时标记",
+    "主观手感、美术、音效和设备性能未验收",
+    "未运行全部历史浏览器套件",
+    "录像没有声音轨"
+  ],
+  "文件校验": {
+    "src/game/systems/combat.ts": "5d8e4754f0712823a2fd7932df4f970fb6783c02a52d9c29aedc05d11defce28",
+    "src/game/systems/attackTiming.ts": "843ce2284bfc98fbb5b5649beb96e7d5fbcd1c353e784191b3a369495e27048f",
+    "src/game/systems/enemyAttack.ts": "3cb2351ce3cce289bddaa57bc41c4b2fec152650859316533e66953c20dffbc3",
+    "src/data/animation.ts": "9c86bd0607a14f170b7ce7b78344e7ceee48aa86e47ae4183933be60eff7adbe",
+    "src/game/entities/actor.ts": "e0186be9db3bada0bc2ab1da2112a3be9e228df2aacf107e695658239ca26e4d",
+    "src/game/systems/combatFeedback.ts": "e6cdeb30d3dcc7d5506f0972cfdbba5715285c1beab423cd2582e16d4cea3e62",
+    "src/game/scenes/CombatSlice.ts": "328b05e190e89be8dd2cd715fdc9d0d029dc8bbde889f76aba07776df63b8909",
+    "src/game/scenes/World.ts": "e18528cdc686837aa854b41bb82157fc9459dd6bbf950fdcff31b4118079b630",
+    "src/game/systems/combatFeelDebug.ts": "32c92ec710b10e0ca9354df47662bd58214780e12ebb682f3febd19fdbb07c76",
+    "src/game/systems/swordWind.ts": "d5b752d7c659ae10c143acc48d87a9da4ab0bd587e382d7733d3ccd326f1c757",
+    "src/game/systems/save.ts": "46bde193497a35f15997b236b67a234c4ccf0c062b584ea7abd61b45396eac44",
+    "src/game/systems/skills.ts": "da0a1adea8e9d0e35f42c24be28ec64ba662608b62dceab0a5d975d67ca82965",
+    "src/main.ts": "98ea15c931a7560f118b03cb43f7dd6862eb19e36a04f371393119acadcafd19",
+    "tests/combat-slice.test.ts": "efdbd97ddba6eb94773a0043bce45fb5b524a85c930ce5d89971c87aa66609a7",
+    "tests/combat-slice.spec.ts": "e55a0b729944e8be6e7fcc01c69b2a473829e9c96f4bba74c18fba994c9eb760",
+    "tools/playwright-combat-slice.config.ts": "073ec6c340a248e9e2e85c4c1dbc5d8c6f9cce4c87ce3f480348cc4a312773cd",
+    "package.json": "8e67dd1c78dae0c2e44d533ddc4234f65daa485375bfad8db11dbf4c671cf672"
+  }
+}

@@ -1,5 +1,5 @@
 import {inProtected} from "../../data/defenseZones";
-import { enemyDefs } from "../../data/world";
+import { enemyDefs, mapGeometryRevision } from "../../data/world";
 import { createEnemyAttack, advanceEnemyAttack, ENEMY_ATTACK, delayEnemyAttack, sampleEnemyAttack, creatureCooldown, type EnemyAttack, type EnemyContact } from "./enemyAttack";
 import { enemyKind, enemyProfile } from '../../data/enemies';
 import {creatureReach,type EliteKind} from '../../data/maps/windbell/elites';
@@ -8,6 +8,7 @@ import {advanceEnemyRecoil,type EnemyRecoil} from './enemyReaction';
 import {CAMP_BOSSES,BOSS_RULES,type CampBossKind} from '../../data/maps/windbell/campBosses';
 import type {BossBattle} from './campBossState';
 import {updateCampBoss} from './campBossCombat';
+import {updateFungalPriest} from './fungalCombat';
 import {ENEMY_PURSUIT,BOSS_PURSUIT,enemyLeashRadius} from '../../data/enemyPursuit';
 export {ENEMY_PURSUIT,enemyLeashRadius} from '../../data/enemyPursuit';
 import {
@@ -26,7 +27,12 @@ export const NAV = {
   repairCandidates: 512,
   repairPaths: 8,
   queriesPerFrame: 2,
+  nodesPerBatch: 64,
+  frameMs: 2,
 } as const;
+// 正式画面帧显式携带时间预算；旧模拟调用仍保留每批节点数与查询数的确定性约束。
+export type NavigationBudget = {queries:number;remainingMs?:number};
+export const navigationBudget = ():NavigationBudget => ({queries:NAV.queriesPerFrame,remainingMs:NAV.frameMs});
 const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 type Space = {
   blocked: (x: number, y: number) => boolean;
@@ -43,6 +49,8 @@ export function* pathSearch(
   query: Space = space,
   limits: {radius:number;nodes:number} = NAV,
 ): Generator<void, { path: Point[] | null; visited: number }> {
+  // 分帧期间实体可以移动；搜索网格始终以开始时的位置为基准。
+  start={...start};target={...target};
   const nodes = [
     { p: { ...start }, g: 0, f: distance(start, target), parent: -1 },
   ];
@@ -117,6 +125,44 @@ export function localPath(...args: Parameters<typeof pathSearch>) {
   while (!result.done) result = search.next();
   return result.value;
 }
+type PathResult=ReturnType<typeof localPath>;
+type PathJob={search:ReturnType<typeof pathSearch>;target:Point;context:string;revision:number};
+// 生成器不进入实体、诊断快照或存档；重建导航对象时自然释放旧任务。
+const pathJobs=new WeakMap<EnemyBody['nav'],PathJob>();
+export const pathPending=(nav:EnemyBody['nav'])=>pathJobs.has(nav);
+export const cancelPath=(nav:EnemyBody['nav'])=>{pathJobs.delete(nav);};
+export function advancePathSearch(search:ReturnType<typeof pathSearch>,budget:NavigationBudget,limit:number=NAV.nodesPerBatch):{expanded:number;result?:PathResult}{
+  if(budget.queries<=0||(budget.remainingMs??Infinity)<=0)return {expanded:0};
+  budget.queries--;
+  const start=performance.now(),allowance=budget.remainingMs??Infinity;
+  let expanded=0;
+  try{
+    while(expanded<limit){
+      const next=search.next();expanded++;
+      if(next.done)return {expanded,result:next.value};
+      if(performance.now()-start>=allowance)break;
+    }
+    return {expanded};
+  }finally{
+    // 时间预算在完整节点之后检查，最多超出一个节点；节点数量另有硬上限。
+    if(budget.remainingMs!==undefined)budget.remainingMs=Math.max(0,budget.remainingMs-(performance.now()-start));
+  }
+}
+export function planPath(nav:EnemyBody['nav'],target:Point,context:string,build:(target:Point)=>ReturnType<typeof pathSearch>,budget:NavigationBudget): (PathResult&{target:Point})|undefined{
+  let job=pathJobs.get(nav);
+  // 小幅移动继续完成已有规划，避免追击目标每帧移动导致搜索永远重头开始。
+  if(job&&(job.context!==context||job.revision!==mapGeometryRevision||distance(job.target,target)>NAV.radius/2)){
+    cancelPath(nav);nav.path=[];job=undefined;
+  }
+  if(!job){
+    if(budget.queries<=0||(budget.remainingMs??Infinity)<=0)return;
+    const frozen={...target};job={search:build(frozen),target:frozen,context,revision:mapGeometryRevision};
+    pathJobs.set(nav,job);nav.queries++;nav.target={...frozen};nav.failed=false;
+  }
+  const batch=advancePathSearch(job.search,budget);
+  if(!batch.result)return;
+  cancelPath(nav);return {...batch.result,target:job.target};
+}
 export function nearestStanding(
   origin: Point,
   anchors: Point[],
@@ -167,6 +213,8 @@ export function repairEnemyPoint(origin: Point, home: Point, radius = 420) {
   return nearestStanding(origin, anchors, allowed);
 }
 export type EnemyBody = Point & {
+  fungalShield?:EnemyBody;
+  passiveRoot?:{owner:string;index:number;attempt:number};
   runeSlow?:number;
   eliteLevel?:number;
   maxHP?:number;
@@ -267,18 +315,22 @@ export function updateEnemy(
   player: Point,
   now: number,
   dtMs: number,
-  budget?: {queries:number},
+  budget?: NavigationBudget,
   targetId = "player",
   permission: (enemy:EnemyBody,targetId:string)=>boolean = ()=>true,
+  peers:readonly EnemyBody[] = [],
 ): EnemyContact | null {
   const dt = dtMs/1000*(1-(e.runeSlow??0)), prev=now-dtMs;
   advanceEnemyRecoil(e,now);
   if (e.hp <= 0 || e.disabled) {
+    cancelPath(e.nav);
     e.ai = e.hp <= 0 ? "死亡" : "无合法位置";
     return null;
   }
   validateEnemyPosition(e);
   if (e.disabled) return null;
+  if(e.passiveRoot){e.ai='祭根护心';return null;}
+  if(e.type==='priest')return updateFungalPriest(e,peers,player,now,dtMs,targetId,permission);
   const d = distance(e, player),
     home = { x: e.homeX, y: e.homeY };
   const safe = enemyAttackPermitted(e,player);
@@ -321,6 +373,7 @@ export function updateEnemy(
     e.windup = e.attack.contactAt-now;
     e.ai = "前摇";
     e.nav.path = [];
+    cancelPath(e.nav);
     e.nav.mode = "chase";
     e.nav.returning = false;
     e.nav.lastSeen = {...player};
@@ -366,15 +419,16 @@ export function updateEnemy(
     if(distance(retreat,home)<radius&&!motionBlocked(retreat.x,retreat.y)&&clearMotionLine(e,retreat))target=retreat;}
   const
     mode = chase ? "chase" : "return";
-  const reached = (p: Point) =>
+  const reached = (p: Point,aim=player,destination=target) =>
     tracking
-      ? (e.boss?distance(p,player)<100:!permitted&&e.type!=='spore'?distance(p,target)<12:e.type==='spore'?distance(p,player)>=155&&distance(p,player)<270:distance(p, player) < Math.max(70,creatureReach(e.type,e.elite)-10)) && clearMeleeLine(p, player)
-      : distance(p, target) <= 8;
+      ? (e.boss?distance(p,aim)<100:!permitted&&e.type!=='spore'?distance(p,destination)<12:e.type==='spore'?distance(p,aim)>=155&&distance(p,aim)<270:distance(p,aim) < Math.max(70,creatureReach(e.type,e.elite)-10)) && clearMeleeLine(p,aim)
+      : distance(p,destination) <= 8;
   if (reached(e)) {
     e.ai = chase ? tracking?"等待冷却":"搜索目标" : "家园";
     e.nav.mode=mode;
     e.nav.target={...target};
     e.nav.path = [];
+    cancelPath(e.nav);
     return null;
   }
   const allowed = (p: Point) =>
@@ -386,6 +440,7 @@ export function updateEnemy(
   e.nav.mode=mode;
   let waypoint: Point | undefined;
   if (allowed(target) && clearMotionLine(e, target)) {
+    cancelPath(e.nav);
     waypoint = target;
     e.nav.path = [];
     e.nav.failed = false;
@@ -393,35 +448,29 @@ export function updateEnemy(
     e.nav.mode = mode;
   } else {
     if (
-      now >= e.nav.next &&
-      (changed || (!e.nav.failed && !e.nav.path.length)) &&
-      (!budget||budget.queries>0)
+      pathPending(e.nav)||now >= e.nav.next &&
+      (changed || (!e.nav.failed && !e.nav.path.length))
     ) {
-      if(budget)budget.queries--;
-      const targetDistance=distance(e,target),distant=targetDistance>NAV.radius-NAV.cell*2;
       // 大范围追击和返家分段推进，仍保留每次查询的半径、节点与帧预算。
-      const goal=(q:Point)=>chase?reached(q):distance(q,target)<30&&clearMotionLine(q,target);
-      const result = localPath(
-        e,
-        q=>goal(q)||distant&&distance(q,target)<=targetDistance-NAV.radius/2,
-        target,
-        allowed,
-      );
-      if (!chase && result.path&&goal(result.path.at(-1)??e)) result.path.push(target);
-      e.nav.path = result.path ?? [];
-      e.nav.target = { ...target };
-      e.nav.mode = mode;
-      e.nav.next = now + NAV.interval;
-      e.nav.failed = result.path === null;
-      e.nav.queries++;
-      e.nav.visited = result.visited;
+      const result=planPath(e.nav,target,`${mode}:${targetId}`,frozen=>{
+        const origin={x:e.x,y:e.y},aim={...player},targetDistance=distance(origin,frozen),distant=targetDistance>NAV.radius-NAV.cell*2;
+        const goal=(q:Point)=>chase?reached(q,aim,frozen):distance(q,frozen)<30&&clearMotionLine(q,frozen);
+        return pathSearch(origin,q=>goal(q)||distant&&distance(q,frozen)<=targetDistance-NAV.radius/2,frozen,allowed);
+      },budget??navigationBudget());
+      if(result){
+        const last=result.path?.at(-1);
+        if(!chase&&last&&distance(last,result.target)<30&&clearMotionLine(last,result.target))result.path!.push(result.target);
+        e.nav.path=result.path??[];e.nav.target={...result.target};e.nav.next=now+NAV.interval;
+        e.nav.failed=result.path===null;e.nav.visited=result.visited;
+        if(e.nav.path[0]&&!clearMotionLine(e,e.nav.path[0])){e.nav.path=[];e.nav.next=now;e.nav.failed=false;}
+      }
     }
     while (e.nav.path.length && distance(e, e.nav.path[0]) < 0.01)
       e.nav.path.shift();
     waypoint = e.nav.path[0];
   }
   if (!waypoint) {
-    e.ai = e.nav.failed ? "无路径等待" : "等待查询";
+    e.ai = e.nav.failed ? "无路径等待" : pathPending(e.nav)?"分帧规划路线":"等待查询";
     return null;
   }
   const length = distance(e, waypoint),

@@ -8,7 +8,12 @@ export type SpaceId =
   | "healer-home"
   | "carpenter-home"
   | "barracks"
-  | "inn";
+  | "inn"
+  | "old-home"
+  | "south-home"
+  | "general-shop"
+  | "smith-shop"
+  | "wood-workshop";
 export type Place = { space: SpaceId; x: number; y: number };
 export type Activity =
   | "work"
@@ -107,6 +112,11 @@ export const ROOM = {
   entry: { x: 700, y: 910 },
 } as const;
 export const HOMES = [
+  { id: "old-home", name: "西巷旧宅", building: "home", door: buildingLot('home').door, owners: [] as ResidentId[], private: "旧书、炉火与织毯" },
+  { id: "south-home", name: "西巷小屋", building: "resident-cottage-2", door: buildingLot('resident-cottage-2').door, owners: [] as ResidentId[], private: "针线、陶罐与生活小物" },
+  { id: "general-shop", name: "风铃杂货铺", building: "general-building", door: buildingLot('general-building').door, owners: [] as ResidentId[], private: "日常补给与材料收购" },
+  { id: "smith-shop", name: "溪石铁匠铺", building: "smith-building", door: buildingLot('smith-building').door, owners: [] as ResidentId[], private: "炉火、武器与护甲" },
+  { id: "wood-workshop", name: "阿禾的木工坊", building: "carpenter-workshop", door: buildingLot('carpenter-workshop').door, owners: [] as ResidentId[], private: "木料、工具与修路材料" },
   {
     id: "elder-home",
     name: "岚爷爷的家",

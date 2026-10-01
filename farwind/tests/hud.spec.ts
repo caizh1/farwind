@@ -144,6 +144,36 @@ test("hud-navigation", async ({ page }) => {
   expect((await read(page)).attackSerial).toBe(frozen.attackSerial);
 });
 
+test("鼠标点击状态栏后空格仍可奔跑，键盘激活仍可操作按钮", async ({ page }) => {
+  await start(page);
+  for (const selector of ["#minimap-toggle", "#quest-toggle", "#hotbar button:first-child"]) {
+    const button = page.locator(selector);
+    await button.click();
+    await expect(button).not.toBeFocused();
+    const expanded = await page.locator("#minimap-toggle").getAttribute("aria-expanded");
+    const attacks = (await read(page)).attackSerial;
+    await page.keyboard.down("Space");
+    await page.keyboard.down("a");
+    try {
+      await expect.poll(async () => (await read(page)).animation.hero.speed, {
+        intervals: [16, 32, 50],
+      }).toBeCloseTo(235, 0);
+      expect((await read(page)).state.player.stamina).toBeLessThan(100);
+      expect((await read(page)).attackSerial).toBe(attacks);
+      await expect(page.locator("#minimap-toggle")).toHaveAttribute("aria-expanded", expanded!);
+    } finally {
+      await page.keyboard.up("a");
+      await page.keyboard.up("Space");
+    }
+  }
+  const toggle = page.locator("#minimap-toggle");
+  await toggle.focus();
+  const expanded = await toggle.getAttribute("aria-expanded");
+  await page.keyboard.press("Space");
+  await expect(toggle).toBeFocused();
+  await expect(toggle).toHaveAttribute("aria-expanded", expanded === "true" ? "false" : "true");
+});
+
 test("hud-hotbar", async ({ page }) => {
   await start(page);
   const fixture = initialState();
@@ -183,7 +213,7 @@ test("hud-hotbar", async ({ page }) => {
   const button = page.locator("#hotbar button").nth(berry);
   await button.click();
   await expect.poll(async () => (await read(page)).state.player.hp).toBe(54);
-  await expect(button).toBeFocused();
+  await expect(button).not.toBeFocused();
   await expect(button.locator("strong")).toHaveText("1");
   await page.keyboard.press(String(potion + 1));
   await expect.poll(async () => (await read(page)).state.player.hp).toBe(100);

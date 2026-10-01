@@ -29,14 +29,14 @@ import { TrainingDummy } from "../src/game/systems/training";
 import { staggerEnemy } from "../src/game/systems/enemy";
 import { Input } from "../src/game/systems/input";
 import { CombatTimeline } from "../src/game/systems/timeline";
-import { combatVisual, weaponSample } from "../src/data/animation";
+import { combatVisual, weaponSample, swordWindVisual } from "../src/data/animation";
 import type { Prop } from "../src/data/world";
 const noWall = () => null;
 function attack(id = 4, facing: 0 | 1 | 2 | 3 = 3): Attack {
   return {
     id,
     comboId: 7,
-    stage: 4,
+    stage: 1,kind:"swordWind",delivery:"wind",config:{...SWORD_WIND.strike},
     start: 0,
     facing,
     hit: new Set(),
@@ -45,7 +45,7 @@ function attack(id = 4, facing: 0 | 1 | 2 | 3 = 3): Attack {
 }
 function arena(enabled = true) {
   const c = new CombatController();
-  c.swordWindEnabled = enabled;
+  c.swordWindEnabled = enabled;c.meleeFinisherEnabled=enabled;
   const p = { x: 0, y: 0, stamina: 100 },
     starts: Attack[] = [],
     release: { a: Attack; at: number }[] = [],
@@ -141,12 +141,12 @@ describe("连段预约、输入和终结段", () => {
     a.tick(909.999, 910);
     expect(a.c.attack?.stage).toBe(4);
     a.tick(910, 1020);
-    expect(a.release.map((r) => r.at)).toEqual([1020]);
-    a.tick(1020, 1310);
-    a.c.requestAttack(1311);
-    a.tick(1310, 1311);
+    expect(a.release).toHaveLength(0);
+    a.tick(1020, 1585);
+    a.c.requestAttack(1586);
+    a.tick(1585, 1586);
     expect(a.starts.map((a) => a.stage)).toEqual([1, 2, 3, 4, 1]);
-    expect(a.release).toHaveLength(1);
+    expect(a.release).toHaveLength(0);
   });
   it("无技能第三刀仍在完整收招后重启第一刀", () => {
     const a = arena(false);
@@ -170,7 +170,7 @@ describe("连段预约、输入和终结段", () => {
     a.third();
     a.tick(500, 1050);
     expect(a.c.nextStage).toBe(4);
-    a.c.swordWindEnabled = false;
+    a.c.meleeFinisherEnabled = false;
     a.c.requestAttack(1051);
     a.tick(1050, 1051);
     expect(a.c.attack?.stage).toBe(1);
@@ -262,11 +262,11 @@ describe("连段预约、输入和终结段", () => {
     a.c.requestAttack(1000);
     a.tick(640, 1200);
     expect(a.starts.map((a) => a.stage)).toEqual([1, 1, 2, 3, 4]);
-    expect(a.release).toHaveLength(1);
-    expect(a.release[0].a.automatic).toBe(false);
+    expect(a.release).toHaveLength(0);
+    expect(a.starts.at(-1)?.isFinisher).toBe(true);
   });
 });
-describe("第四击释放、取消和动画", () => {
+describe("独立剑风释放、取消和动画", () => {
   it.each([109.999, 110, 110.001, 400])(
     "跨释放边界%s仅一次模拟事件且无近战伤害",
     (to) => {
@@ -309,7 +309,7 @@ describe("第四击释放、取消和动画", () => {
         3,
       );
       expect(a.c.flushActions(200, a.p)).toEqual([]);
-      expect(a.c.attack?.stage).toBe(4);
+      expect(a.c.attack?.kind).toBe("swordWind");
       expect(a.c.flushActions(280, a.p)).toEqual([kind]);
       expect(a.release).toHaveLength(1);
     }
@@ -329,13 +329,13 @@ describe("第四击释放、取消和动画", () => {
   it("四向专用图集八帧、统一镜像和采样点，不落入三刀偏移", () => {
     for (const facing of [0, 1, 2, 3] as const) {
       const frames = [0, 35, 70, 110, 135, 210, 270, 340].map((t) =>
-        combatVisual(4, facing, t, false, attackConfig(attack())),
+        swordWindVisual(facing,t,attackConfig(attack())),
       );
       expect(new Set(frames.map((v) => v.frame)).size).toBe(8);
       expect(frames.every((v) => v.texture === "hero-sword-wind")).toBe(true);
     }
-    const left = weaponSample(4, 2, 110, attackConfig(attack())),
-      right = weaponSample(4, 3, 110, attackConfig(attack()));
+    const left = swordWindVisual(2,110,attackConfig(attack())).weapon!,
+      right = swordWindVisual(3,110,attackConfig(attack())).weapon!;
     expect(left.tip.x).toBe(-right.tip.x);
     expect(left.tip.y).toBe(right.tip.y);
   });
@@ -601,7 +601,7 @@ describe("时间、训练与旧系统边界", () => {
       t = new CombatTimeline(),
       { s, w } = shot();
     t.reset(0);
-    c.stopOnHit(4);
+    c.hitStopRemaining=SWORD_WIND.hitStop;
     c.stopOnHit(1);
     expect(c.hitStopRemaining).toBe(36);
     const sim = t.frame(
@@ -625,7 +625,7 @@ describe("时间、训练与旧系统边界", () => {
   it("原木桩三连完成独立；远程旧快照不改新连段、不走生命或掉落", () => {
     const d = new TrainingDummy();
     for (let stage = 1; stage <= 3; stage++)
-      d.hit({ ...attack(stage), stage }, stage * 100);
+      d.hit({ ...attack(stage), stage,kind:"melee",delivery:"blade",config:undefined }, stage * 100);
     expect(d.snapshot(350)).toMatchObject({
       complete: true,
       damage: 68,
@@ -638,7 +638,7 @@ describe("时间、训练与旧系统边界", () => {
       windDamage: 36,
     });
     expect(d.hit(attack(), 410, 36)).toBe(false);
-    d.begin({ ...attack(10), stage: 1, comboId: 99 });
+    d.begin({ ...attack(10), stage: 1,kind:"melee",delivery:"blade",comboId: 99 });
     d.hit(attack(11), 500, 36);
     expect(d.snapshot(500).comboId).toBe(99);
     expect(d.snapshot(500).swordWind).toMatchObject({
@@ -671,7 +671,7 @@ describe("时间、训练与旧系统边界", () => {
 describe("上撩与地面切痕", () => {
   it("释放剑尖明显高于剑柄，左向离刃与地面出生对称", () => {
     for (const d of [0, 1, 2, 3] as const) {
-      const p = weaponSample(4, d, 110, attackConfig(attack()));
+      const p = swordWindVisual(d,110,attackConfig(attack())).weapon!;
       expect(p.tip.y).toBeLessThan(p.grip.y - 15);
     }
     const cfg = resolveSwordWindConfig(),

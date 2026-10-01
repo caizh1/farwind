@@ -7,12 +7,14 @@ export type EnemyRecoil={at:number;until:number;vector:Point;progress:number};
 
 // 只在正式扣血完成后调用；受创、打断和破防分别记录，已释放弹体归独立系统。
 export function reactToEnemyHit(e:EnemyBody,now:number,move:StrikeConfig,direction:Point,guarded:boolean,heavy:boolean,guardBroken=false){
+ // 祭根是固定环境机关；受击反馈沿用扣血动画，不改变脚点或留下无法恢复的位移。
+ if(e.passiveRoot){e.recoil=undefined;e.staggerUntil=Math.max(e.staggerUntil,now+move.stagger);e.staggerSince=now;return {guarded,interrupted:false,guardBroken:false};}
  if(e.boss){
   const broken=e.bossBattle&&now<e.bossBattle.exposedUntil&&!!e.attack?.bossCocoon;
   if(broken){e.attack!.cancelled=true;e.parried={at:now,until:now+800,direction:{...direction},perfect:false};e.staggerUntil=now+800;e.staggerSince=now;}
   return {guarded,interrupted:!!broken,guardBroken:!!broken};
  }
- const a=e.attack,interruptible=heavy||e.type==='slime'&&!!a&&now<a.contactAt;
+ const a=e.attack,interruptible=heavy||e.type==='priest'||e.type==='slime'&&!!a&&now<a.contactAt;
  const interrupted=interruptible&&!!a&&!a.cancelled&&!a.emitted&&!a.launched;
  if(interrupted){a!.cancelled=true;e.windup=0;e.cool=Math.max(e.cool,now+(heavy?ENEMY_REACTION.interruptRecovery:ENEMY_REACTION.slimeRecovery));}
  const stagger=guardBroken?GUARDIAN.breakMs:guarded?0:move.stagger;

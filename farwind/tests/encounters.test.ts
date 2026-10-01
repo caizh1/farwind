@@ -14,8 +14,8 @@ describe("首条荒野遭遇与据点闭环",()=>{
  });
  it("初次出现遵守距离与视野，不反复生成同一身体",()=>{
   const h=harness();h.runtime.update(20,20,{x:900,y:1000},{left:-2110,right:4290,top:-1380,bottom:3420});expect(h.bodies()).toHaveLength(0);
-  h.runtime.update(20,40,{x:900,y:1000},outsideView);expect(h.bodies().map(e=>e.id)).toEqual(["wild-reed-slime","wild-margin-slime"]);
-  h.runtime.restore({x:900,y:1000});h.runtime.update(20,60,{x:900,y:1000},outsideView);expect(h.bodies()).toHaveLength(2);expect(new Set(h.bodies().map(e=>e.id)).size).toBe(2);expect(validateEncounters(h.data)).toEqual(h.data);
+  h.runtime.update(20,40,{x:900,y:1000},outsideView);expect(h.bodies().map(e=>e.id)).toEqual(["wild-reed-slime","wild-reed-spore","wild-margin-slime"]);
+  h.runtime.restore({x:900,y:1000});h.runtime.update(20,60,{x:900,y:1000},outsideView);expect(h.bodies()).toHaveLength(3);expect(new Set(h.bodies().map(e=>e.id)).size).toBe(3);expect(validateEncounters(h.data)).toEqual(h.data);
  });
  it("远处休眠保留伤势与身份，交战或在途事件不被卸载",()=>{
   const h=harness(),reed=()=>h.bodies().filter(e=>e.id==='wild-reed-slime');h.runtime.update(20,20,{x:900,y:1000},outsideView);reed()[0].hp=19;h.busy.add("wild-reed-slime");h.runtime.update(20,40,{x:-1800,y:1000},outsideView);expect(reed()).toHaveLength(1);
@@ -27,10 +27,10 @@ describe("首条荒野遭遇与据点闭环",()=>{
   expect(settleEncounterDeath(s,"wild-reed-slime",false)).toBe(true);expect(settleEncounterDeath(s,"wild-reed-slime",true)).toBe(false);expect(unitState(s,"wild-reed-slime")!.drop).toBe(false);expect(validateEncounters(s)).toEqual(s);
  });
  it("批次复用固定槽位，遵守冷却和未领取掉落，长跨度不回放离线时间",()=>{
-  const s=initialEncounters(),g=s.groups["south-reed-patrol"];g.activated=true;g.members[0].serial=7;settleEncounterDeath(s,"wild-reed-slime",true);
+  const s=initialEncounters(),g=s.groups["south-reed-patrol"];g.activated=true;g.members[0].serial=7;for(const m of ENCOUNTERS.find(d=>d.id==="south-reed-patrol")!.members)settleEncounterDeath(s,m.id,true);
   expect(resetEncounter(s,"south-reed-patrol")).toBe(false);advanceEncounters(s,1e9);expect(s.elapsed).toBe(250);
   for(let i=0;i<2400;i++)advanceEncounters(s,250);
-  expect(resetEncounter(s,"south-reed-patrol")).toBe(true);expect(g.members).toHaveLength(1);expect(g.cycle).toBe(1);expect(g.members[0].serial).toBe(7);expect(validateEncounters(s)).toEqual(s);
+  expect(resetEncounter(s,"south-reed-patrol")).toBe(true);expect(g.members).toHaveLength(2);expect(g.cycle).toBe(1);expect(g.members[0].serial).toBe(7);expect(validateEncounters(s)).toEqual(s);
  });
  it("清剿永久据点减少巡游与南门预算，重复读档不恢复据点",()=>{
   const s=initialEncounters(),camp=ENCOUNTERS.find(d=>d.kind==="camp")!;const before=regionalThreat(s,"south");

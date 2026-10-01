@@ -107,11 +107,11 @@ export class BossHazards{
   hazards:BossHazard[]=[];
   clear(owner?:string){this.hazards=owner?this.hazards.filter(h=>h.owner!==owner):[];}
   launch(e:EnemyBody,now:number){const a=e.attack;if(!e.boss||!a?.bossArea||a.launched||a.cancelled)return;
-    const owned=this.hazards.filter(h=>h.owner===e.id);if(owned.length>=BOSS_RULES.maxHazards)return;
+    const owned=this.hazards.filter(h=>h.owner===e.id);if(owned.length>=3||this.hazards.length>=3)return;
     a.launched=true;
     const geometry=a.bossGeometry!,d=a.direction;
     const points=e.boss==='bound-branch'?[-80,0,80].map(n=>({x:geometry.point.x-d.y*n,y:geometry.point.y+d.x*n})):[{...geometry.point}];
-    for(const [i,p] of points.entries())if(!motionBlocked(p.x,p.y)&&this.hazards.filter(h=>h.owner===e.id).length<BOSS_RULES.maxHazards){
+    for(const [i,p] of points.entries())if(!motionBlocked(p.x,p.y)&&this.hazards.length<3&&this.hazards.filter(h=>h.owner===e.id).length<3){
       this.hazards.push({id:`${a.attackId}:地面${i}`,owner:e.id,attempt:e.bossAttempt??0,kind:a.bossArea,point:p,born:a.startedAt,activeAt:a.contactAt,expires:a.activeUntil,radius:geometry.radius,speed:a.bossArea==='ring'?165:0,damage:a.damage,used:[]});
     }
   }

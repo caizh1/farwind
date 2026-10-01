@@ -1,4 +1,4 @@
-import { attackConfig, COMBAT, facingVector, type Attack, type Target } from "./combat";
+import { attackConfig, COMBAT, attackVector, isWindAttack, type Attack, type Target } from "./combat";
 import { counterVisual } from '../../data/animation';
 import {
   resolveSwordWindConfig,
@@ -16,6 +16,10 @@ export type WindMotion = {
 export type WindEnd = "target" | "obstacle" | "range" | "lifetime";
 export type SwordWind = {
   id: number;
+  leg: 'out'|'back';
+  returnHit:Set<string>;
+  returnMode?:'path'|'anchor';
+  rootActionId:number;
   releaseId:number;
   direction:Point;
   targetCount:number;
@@ -93,9 +97,9 @@ export function swordWindBirth(
   root: Point,
   config: SwordWindConfig,
 ) {
-  const [x, y] = attack.delivery==='wind'&&attack.windDirection?[attack.windDirection.x,attack.windDirection.y]:facingVector(attack.facing),
+  const [x, y] = attackVector(attack),
     angle = Math.atan2(y, x),
-    tip = attack.delivery==='wind'?counterVisual(attack,attack.start+attackConfig(attack).windup,true).weapon!.tip:
+    tip = !!attack.counter&&attack.delivery==='wind'?counterVisual(attack,attack.start+attackConfig(attack).windup,true).weapon!.tip:
       SWORD_WIND_RELEASES[
         attack.facing === 0 ? 0 : attack.facing === 1 ? 1 : 2
       ];
@@ -110,7 +114,7 @@ export function swordWindBirth(
   const ax = attachment.x * Math.cos(angle) - attachment.y * Math.sin(angle),
     ay = attachment.x * Math.sin(angle) + attachment.y * Math.cos(angle);
   const visual = {
-    x: tip.x * (attack.delivery!=='wind'&&attack.facing === 2 ? -1 : 1) - ax,
+    x: tip.x * (!attack.counter&&attack.facing === 2 ? -1 : 1) - ax,
     y: tip.y - ay,
   };
   // 可见前缘与碰撞前缘共用接触平面。上身投影只转回地面高度，不把剑尖屏幕高度当地图坐标。
@@ -134,20 +138,21 @@ export class SwordWindSystem {
   lastAttackId=0;
   events:WindEvent[]=[];
   clear(){this.winds=[];this.lastAttackId=0;this.events=[];}
+  returnAnchor:()=>Point=()=>({x:0,y:0});
   launch(attack:Attack,root:Point,at:number,damage:number) {
-    if((attack.stage!==4&&attack.delivery!=='wind')||attack.id<=this.lastAttackId)return null;
+    if(!isWindAttack(attack)||attack.id<=this.lastAttackId)return null;
     this.lastAttackId=attack.id;
     // 专用反击始终单刃、300px；不读取已学剑风等级，也不授予永久本领。
-    const config={...structuredClone(attack.delivery==='wind'?resolveSwordWindConfig(1):attack.swordWind??resolveSwordWindConfig()),damage};
-    if(attack.delivery==='wind'){config.name='迎风反斩·剑气';config.hitStop=COMBAT.hitStop[0];}
+    const config={...structuredClone(!!attack.counter?resolveSwordWindConfig(1):attack.swordWind??resolveSwordWindConfig()),damage};
+    if(!!attack.counter){config.name='迎风反斩·剑气';config.hitStop=COMBAT.hitStop[0];}
     const birth=swordWindBirth(attack,root,config);
-    const hit=new Set<string>(),snapshot:Attack={...attack,hit:new Set(),config:{...attackConfig(attack)},swordWind:config};
-    const [dx,dy]=attack.delivery==='wind'&&attack.windDirection?[attack.windDirection.x,attack.windDirection.y]:facingVector(attack.facing),baseForward=Math.hypot(birth.position.x-root.x,birth.position.y-root.y);
+    const hit=new Set<string>(),returnHit=new Set<string>(),snapshot:Attack={...attack,hit:new Set(),config:{...attackConfig(attack)},swordWind:config};
+    const [dx,dy]=attackVector(attack),baseForward=Math.hypot(birth.position.x-root.x,birth.position.y-root.y);
     const created=config.angles.map(offset=>{
       const direction={x:dx*Math.cos(offset)-dy*Math.sin(offset),y:dx*Math.sin(offset)+dy*Math.cos(offset)},position={x:root.x+direction.x*baseForward,y:root.y+direction.y*baseForward};
       // 上身投影不旋转到地面；侧刃只旋转平面偏移，中央刃严格保留原锚点。
       const plane={x:birth.visualOffset.x,y:birth.visualOffset.y+config.art.bodyHeight};
-      const w:SwordWind={id:++this.serial,releaseId:attack.id,attackId:attack.id,comboId:attack.comboId??attack.id,source:'hero',config,attack:{...snapshot,windDirection:direction},born:at,
+      const w:SwordWind={id:++this.serial,leg:'out',returnHit,returnMode:attack.kind==='swordWind'&&!config.trialLesson?attack.returnMode:undefined,rootActionId:attack.rootActionId??attack.id,releaseId:attack.id,attackId:attack.id,comboId:attack.comboId??attack.id,source:'hero',config,attack:{...snapshot,windDirection:direction},born:at,
         previous:{...position},position,origin:{...root},birthPosition:{...position},direction,facing:attack.facing,distance:0,maxTargets:config.maxTargets,targetCount:0,hit,terminated:false,
         visualOffset:{x:plane.x*Math.cos(offset)-plane.y*Math.sin(offset),y:plane.x*Math.sin(offset)+plane.y*Math.cos(offset)-config.art.bodyHeight},initialChecked:false};
       this.winds.push(w);return w;
@@ -165,8 +170,8 @@ export class SwordWindSystem {
         if(wall)pending.push({wind:w,kind:'end',pathOrder:Math.hypot(a.x-w.origin.x,a.y-w.origin.y)+Math.hypot(b.x-a.x,b.y-a.y)*wall.t,at:start+(end-start)*wall.t,point:mix(a,b,wall.t),reason:'obstacle'});
         for(const motion of targets){
           const target=motion.target;
-          if(w.attack.delivery==='wind'&&target.id!==w.attack.primaryTarget)continue;
-          if(target.hp<=0||target.disabled||w.hit.has(target.id)||w.config.trialLesson&&target.lessonId!==w.config.trialLesson)continue;
+          if(w.attack.counter&&w.attack.delivery==='wind'&&target.id!==w.attack.primaryTarget)continue;
+          if(w.maxTargets!=='all'&&w.targetCount>=w.maxTargets||target.hp<=0||target.disabled||w.hit.has(target.id)||w.config.trialLesson&&target.lessonId!==w.config.trialLesson)continue;
           const u=(at:number)=>now>prev?Math.max(0,Math.min(1,(at-prev)/(now-prev))):1;
           const old=mix(motion.previous,motion.current,u(start)),current=mix(motion.previous,motion.current,u(end)),radius=w.config.width/2+(target.radius??14);
           // 先筛选有限路径的包围区域，再做连续接触裁决。
@@ -191,10 +196,10 @@ export class SwordWindSystem {
       const w=event.wind;
       if(w.terminated)continue;
       if(event.kind==='hit'){
-        if(w.hit.has(event.target!.id))continue;
+        if(w.hit.has(event.target!.id)||!event.target!.windSensitive&&w.maxTargets!=='all'&&w.targetCount>=w.maxTargets)continue;
         w.hit.add(event.target!.id);
         if(!event.target!.windSensitive)w.targetCount++;
-        if(w.maxTargets==='all'||w.targetCount<w.maxTargets||event.target!.windSensitive){event.terminal=false;result.push(event);continue;}
+        if(w.returnMode||w.leg==='back'||w.maxTargets==='all'||w.targetCount<w.maxTargets||event.target!.windSensitive){event.terminal=false;result.push(event);continue;}
       }
       event.terminal=true;w.position={...event.point};w.terminated=true;w.reason=event.reason;w.ended=event.at;
       w.contact={x:event.point.x+w.direction.x*w.config.width/2,y:event.point.y+w.direction.y*w.config.width/2};
@@ -204,10 +209,37 @@ export class SwordWindSystem {
       if(!w.terminated){w.position=plan.end;w.distance+=plan.travel;}
       else w.distance+=Math.max(0,(w.position.x-w.previous.x)*w.direction.x+(w.position.y-w.previous.y)*w.direction.y);
     }
+    // 回返仍属于同一次原生动作；每道分束共享第二个命中集合，不再派生新的回返。
+    for(const event of [...result]){
+      const w=event.wind;
+      if(!event.terminal||w.leg!=='out'||!w.returnMode)continue;
+      const anchor=w.returnMode==='anchor'?this.returnAnchor():w.origin;
+      const retreat=event.reason==='obstacle'?.02:0;
+      const point={x:event.point.x-w.direction.x*retreat,y:event.point.y-w.direction.y*retreat};
+      const length=Math.hypot(anchor.x-point.x,anchor.y-point.y);
+      if(length<1)continue;
+      const direction={x:(anchor.x-point.x)/length,y:(anchor.y-point.y)/length};
+      const distance=Math.min(length,w.config.distance+Math.hypot(w.birthPosition.x-w.origin.x,w.birthPosition.y-w.origin.y));
+      const config={...w.config,damage:w.config.damage*.6,distance,lifetime:distance/w.config.speed*1000+100};
+      const back:SwordWind={...w,id:++this.serial,leg:'back',returnMode:undefined,hit:w.returnHit,targetCount:0,initialChecked:true,
+        direction,previous:{...point},position:{...point},origin:{...point},birthPosition:{...point},born:event.at,
+        distance:0,config,terminated:false,reason:undefined,ended:undefined,contact:undefined,
+        attack:{...w.attack,windLeg:'back',windDirection:direction,swordWind:config}};
+      const others=this.winds;
+      this.winds=[back];
+      const offset=now>prev?Math.max(0,Math.min(1,(event.at-prev)/(now-prev))):1;
+      const returningTargets=targets.map(t=>({...t,previous:mix(t.previous,t.current,offset)}));
+      const history=this.events;this.events=[];
+      const returned=this.advance(event.at,now,returningTargets,blocker);
+      this.events=history;
+      this.winds=[...others,...this.winds];
+      result.push(...returned);
+    }
+    result.sort((a,b)=>a.at-b.at||a.wind.id-b.wind.id);
     this.events.push(...result);
     if(this.events.length>80)this.events.splice(0,this.events.length-80);
     this.winds=this.winds.filter(w=>!w.terminated||now-w.ended!<(w.reason==='target'?w.config.art.hit:w.config.art.dissolve));
     return result;
   }
-  snapshot(){return this.winds.map(w=>({...w,hit:[...w.hit],attack:{...w.attack,hit:[...w.attack.hit]}}));}
+  snapshot(){return this.winds.map(w=>({...w,hit:[...w.hit],returnHit:[...w.returnHit],attack:{...w.attack,hit:[...w.attack.hit]}}));}
 }

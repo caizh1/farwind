@@ -1,0 +1,180 @@
+ M .gitignore
+ M docs/first-map/evidence-m2/defense/fixed-intruder-fixed.json
+ M docs/first-map/evidence-m2/defense/forty-progress.json
+ M docs/first-map/evidence-m2/defense/return-fixed.json
+ M docs/npc-life/evidence/civilian-contact-unit.json
+ M docs/npc-life/evidence/civilian-encounter-save.json
+ M docs/npc-life/evidence/facility-combat-unit.json
+ M docs/npc-life/evidence/facility-encounter-save.json
+ M docs/npc-life/evidence/guard-rest-save.json
+ M docs/npc-life/evidence/navigation-performance.json
+ M docs/npc-life/evidence/pharmacy-crisis-unit.json
+ M docs/npc-life/evidence/pharmacy-encounter-save.json
+ M docs/npc-life/evidence/simulation-performance.json
+ M docs/npc-life/locomotion/REPORT.md
+ M docs/npc-life/locomotion/manifest.json
+ M docs/npc-life/locomotion/prompts.md
+ M docs/traveler-skills/DESIGN.md
+ M docs/traveler-skills/evidence/death-boundary.json
+ M docs/traveler-skills/evidence/natural-double.png
+ M docs/traveler-skills/evidence/natural-first-failure.json
+ M docs/traveler-skills/evidence/natural-first-failure.png
+ M docs/traveler-skills/evidence/natural-journal.png
+ M docs/traveler-skills/evidence/natural-journey.json
+ M docs/traveler-skills/evidence/natural-three.png
+ M docs/traveler-skills/evidence/natural-through-wall.png
+ M docs/traveler-skills/evidence/natural-water-learning.png
+ M docs/xiaobao/evidence/integration/navigation-progress.json
+ M docs/xiaobao/evidence/integration/navigation.json
+ M enemy-preview.html
+ M package.json
+ M public/assets/manifest.json
+ M src/data/animation.ts
+ M src/data/content.ts
+ M src/data/economy.ts
+ M src/data/enemies.ts
+ M src/data/maps/windbell/encounters.ts
+ M src/data/npcLife.ts
+ M src/data/windLessons.ts
+ M src/enemy-preview.ts
+ M src/game/entities/defenders.ts
+ M src/game/entities/enemyView.ts
+ M src/game/entities/npcLifeView.ts
+ M src/game/entities/runeView.ts
+ M src/game/scenes/World.ts
+ M src/game/systems/audio.ts
+ M src/game/systems/campBossCombat.ts
+ M src/game/systems/campBossState.ts
+ M src/game/systems/combat.ts
+ M src/game/systems/combatFeelDebug.ts
+ M src/game/systems/creatureAudio.ts
+ M src/game/systems/damage.ts
+ M src/game/systems/defense.ts
+ M src/game/systems/economy.ts
+ M src/game/systems/encounterRuntime.ts
+ M src/game/systems/encounterState.ts
+ M src/game/systems/encounterTempo.ts
+ M src/game/systems/enemy.ts
+ M src/game/systems/enemyAnimation.ts
+ M src/game/systems/enemyAttack.ts
+ M src/game/systems/enemyProjectiles.ts
+ M src/game/systems/enemyReaction.ts
+ M src/game/systems/enemyTraits.ts
+ M src/game/systems/fieldQuest.ts
+ M src/game/systems/interactions.ts
+ M src/game/systems/npcLife.ts
+ M src/game/systems/npcLifeState.ts
+ M src/game/systems/npcNavigation.ts
+ M src/game/systems/runeCombat.ts
+ M src/game/systems/runeWorld.ts
+ M src/game/systems/save.ts
+ M src/game/systems/skills.ts
+ M src/game/systems/sleep.ts
+ M src/game/systems/state.ts
+ M src/game/systems/swordWind.ts
+ M src/game/systems/windLessons.ts
+ M src/game/systems/xiaobaoCombat.ts
+ M src/game/systems/xiaobaoWorld.ts
+ M src/game/ui/campBossHud.ts
+ M src/game/ui/commissions.ts
+ M src/game/ui/interface.ts
+ M src/game/ui/npcLife.ts
+ M src/game/ui/runePreview.ts
+ M src/game/ui/runes.ts
+ M src/game/ui/shop.ts
+ M src/main.ts
+ M src/style.css
+ M tests/economy.test.ts
+ M tests/encounters.test.ts
+ M tests/enemy-combat-v1.test.ts
+ M tests/hud.spec.ts
+ M tests/npc-walk.spec.ts
+ M tests/npc-walk.test.ts
+ M tests/runes.spec.ts
+ M tests/skill-growth.spec.ts
+ M tests/skill-growth.test.ts
+ M tests/skill-location.test.ts
+ M tests/skill-navigation.ts
+ M tests/wilderness-enemies.test.ts
+ M tools/playwright-skill-growth.config.ts
+?? .village-houses-local/
+?? .wind-chimes-local/
+?? docs/combat-build/
+?? docs/combat-expansion/
+?? docs/combat-slice/
+?? docs/enemy-art-v2/
+?? docs/npc-life/locomotion/evidence/development-guard-step-phase-0.png
+?? docs/npc-life/locomotion/evidence/development-guard-step-phase-1.png
+?? docs/npc-life/locomotion/evidence/development-guard-step.json
+?? docs/npc-life/locomotion/evidence/development-guard-step.png
+?? docs/npc-life/locomotion/evidence/development-guard-step.webm
+?? docs/npc-life/locomotion/evidence/guard-step-other-npcs.json
+?? docs/npc-life/locomotion/evidence/production-guard-step.json
+?? docs/npc-life/locomotion/guard-step-followup.md
+?? docs/npc-life/locomotion/sources/guard-back-opposite.png
+?? docs/npc-life/locomotion/sources/guard-front-opposite.png
+?? docs/npc-life/locomotion/sources/guard-side-opposite.png
+?? docs/performance/
+?? docs/potion-crafting/
+?? docs/runes/combat-art/
+?? docs/runes/lightning-animation/
+?? docs/sprint-focus/
+?? docs/village-houses/
+?? docs/village-interiors/
+?? docs/wind-chimes/
+?? public/assets/enemies-v1/fungal-priest.png
+?? public/assets/enemies-v1/fungal-root.png
+?? public/assets/enemies-v1/sac-roller.png
+?? public/assets/enemies-v2/
+?? public/assets/runes/combat/
+?? public/assets/village-defense/m3/guard-walk.png
+?? public/assets/village-houses/
+?? public/assets/village-interiors/
+?? public/assets/wind-chimes/
+?? src/data/villageHouseArt.ts
+?? src/data/villageInteriors.ts
+?? src/game/entities/runeArt.ts
+?? src/game/entities/runeElements.ts
+?? src/game/entities/runeLightning.ts
+?? src/game/entities/windChimeView.ts
+?? src/game/scenes/CombatSlice.ts
+?? src/game/systems/attackTiming.ts
+?? src/game/systems/fungalCombat.ts
+?? src/game/systems/meleeGeometry.ts
+?? src/game/systems/southEvents.ts
+?? src/shop.css
+?? tests/boss-reward-save.test.ts
+?? tests/combat-slice.spec.ts
+?? tests/combat-slice.test.ts
+?? tests/enemy-art-v2.spec.ts
+?? tests/enemy-art-v2.test.ts
+?? tests/fungal-combat.test.ts
+?? tests/melee-hurtbox.test.ts
+?? tests/navigation-budget.test.ts
+?? tests/repair-flow.spec.ts
+?? tests/rune-elements.spec.ts
+?? tests/rune-elements.test.ts
+?? tests/south-combat.spec.ts
+?? tests/south-navigation.ts
+?? tests/village-interiors.spec.ts
+?? tests/village-interiors.test.ts
+?? tests/wind-chime-audio.test.ts
+?? tests/wind-chimes.spec.ts
+?? tools/capture-village-houses.mjs
+?? tools/capture-village-interiors.mjs
+?? tools/measure-navigation-browser.mjs
+?? tools/pack-enemy-art-v2.mjs
+?? tools/pack-guard-walk.mjs
+?? tools/pack-rune-combat.mjs
+?? tools/pack-south-enemies.mjs
+?? tools/pack-village-houses.mjs
+?? tools/pack-village-interiors.mjs
+?? tools/pack-wind-chimes.mjs
+?? tools/playwright-combat-slice.config.ts
+?? tools/playwright-enemy-art-v2.config.ts
+?? tools/playwright-repair.config.ts
+?? tools/playwright-rune-elements.config.ts
+?? tools/playwright-south-combat.config.ts
+?? tools/playwright-village-interiors.config.ts
+?? tools/playwright-wind-chimes.config.ts
+?? tools/vite-enemy-art-v2.config.ts

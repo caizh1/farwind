@@ -1,6 +1,7 @@
+import {SOUTH_EVENTS,type SouthEventId} from '../systems/southEvents';
 import { items, itemIcon, objectives, type ItemId } from "../../data/content";
 import { campCleared } from "../systems/encounterState";
-import { southQuestSnapshot } from "../systems/fieldQuest";
+import { southQuestSnapshot,southEventRewardSnapshot } from "../systems/fieldQuest";
 import { westRoadSnapshot } from "../systems/mapTravel";
 import { count } from "../systems/state";
 import { save } from "../systems/save";
@@ -64,6 +65,10 @@ export function openCommissions(world: World) {
           ? "先调查旧道路口"
           : "交付材料并修复旧道";
 
+    const eventContent=`<section class="commission-goals"><h3>南线采集事件</h3>${(Object.keys(SOUTH_EVENTS) as SouthEventId[]).map(id=>{
+      const d=SOUTH_EVENTS[id],done=s.southEvents[id]===0,claimed=s.southEvents.claimed.includes(id);
+      return `<p>${d.name}：${done?claimed?'已领取谢礼':'采集已恢复，谢礼待领取':d.hint}</p>${done&&!claimed?`<button id="commission-event-${id}">领取${d.name}谢礼 · 铜币×12、药剂×1</button>`:''}`;
+    }).join('')}</section>`;
     const content =
       view === "journal"
         ? `<div class="commission-journal"><section><small>主线 · 失落的风</small><h2>风的足迹</h2><p>${objectives[s.quest]}</p><ol>${objectives
@@ -75,7 +80,7 @@ export function openCommissions(world: World) {
             .join(
               "",
             )}</ol></section><section><small>支线 · 木匠的托付</small><h2>阿禾的托付</h2><p>${["与西南方的木匠阿禾交谈", "为阿禾收集 4 份木材", "已交付，收到浆果与谢意"][s.side]}</p>${ui.skillJournal(s)}</section></div>`
-        : `<nav class="commission-index" aria-label="选择村庄委托"><button id="commission-south" aria-pressed="${south}">${icon("herb")}<span>南路补给</span><small>${southStatus}</small></button><button id="commission-west" aria-pressed="${!south}">${icon("wood")}<span>恢复西侧旧道</span><small>${westStatus}</small></button></nav><div class="commission-detail"><div class="commission-copy"><header class="commission-heading"><div class="commission-title">${icon(south ? "herb" : "wood")}<h2>${south ? "南路补给" : "恢复西侧旧道"}</h2><span class="commission-status ${complete ? "complete" : ""}">${south ? southStatus : westStatus}</span></div><p>${south ? "委托人 · 药师小满" : "风铃村 · 旧道修复"}</p></header><p class="commission-story">${south ? (phase === "complete" ? "药草已送回，南侧采集恢复。孢根巢地保持清空，你仍可在湿地采集与探索。" : "小满的药草供应断在了南边。请沿南门石路过芦苇桥，恢复药草洼地的采集。") : road === "open" ? "西侧旧道已恢复，西门可以直接通往旧农庄与外围环线。" : "西门的断栅与门轴需要修补。先到旧道路口确认路况，再带材料回村施工。"}</p><section class="commission-goals"><h3>委托目标</h3><ul>${south ? goal("清理驻守并击败孢心巢母", cleared) + goal(`交付药草 ×2${phase === "active" ? ` · 持有 ${herbs}/2` : ""}`, phase === "complete") : goal("调查西侧旧道路口", road !== "unknown") + goal("交付木材 ×4、石材 ×2", road === "open")}</ul></section><section class="commission-route-copy"><h3>路线说明</h3><p>${south ? "从南门沿石路过芦苇桥，药草洼地在西南岸，孢根巢地在洼地东南方。" : "从北门或南门沿村外环线绕到西侧，再向西北走到旧道路口。调查后可在西门或本簿交付材料。"}</p></section><div class="commission-rewards">${south ? `<section><h3>启程补给</h3>${item("potion", 2)}${phase !== "available" ? "<small>已领取</small>" : ""}</section><section><h3>完成奖励</h3><div class="commission-item-group">${item("potion", 2)}<span class="commission-item"><img src="/assets/commission/coin.webp" alt=""><span>铜币 ×24</span></span></div>${phase === "complete" ? "<small>已领取</small>" : ""}</section>` : `<section><h3>施工材料</h3><div class="commission-item-group">${item("wood", 4)}${item("stone", 2)}</div><small>${road === "open" ? "已交付" : `持有木材 ${count(s, "wood")}、石材 ${count(s, "stone")}`}</small></section><section><h3>修复结果</h3><p>永久开放西门<br>直接通往西侧旧道</p></section>`}</div>${!canSubmit && !complete ? `<p class="commission-hint">${south ? (!cleared ? "先清理驻守并击败孢心巢母，再带药草回村交付。" : "还需要药草两份，采集后回村交付。") : road === "unknown" ? "路况调查登记后，才能交付施工材料。" : s.defense.raid ? "当前来袭结束后再施工。" : "修复需要木材四份、石材两份。"}</p>` : ""}</div><figure class="commission-art">${south ? `<img class="commission-route-image" src="/assets/commission/south-route.webp" alt="南门石路经芦苇桥通往西南岸药草洼地，孢根巢地位于其东南方"><figcaption><span>南门</span><span>芦苇桥</span><span>药草洼地</span><span>孢根巢地</span></figcaption>` : `<img class="commission-ledger-image" src="/assets/commission/ledger-prop.webp" alt="木匣公共委托簿"><figcaption>调查路况，修复门轴与断栅。</figcaption>`}</figure></div>`;
+        : `<nav class="commission-index" aria-label="选择村庄委托"><button id="commission-south" aria-pressed="${south}">${icon("herb")}<span>南路补给</span><small>${southStatus}</small></button><button id="commission-west" aria-pressed="${!south}">${icon("wood")}<span>恢复西侧旧道</span><small>${westStatus}</small></button></nav><div class="commission-detail"><div class="commission-copy"><header class="commission-heading"><div class="commission-title">${icon(south ? "herb" : "wood")}<h2>${south ? "南路补给" : "恢复西侧旧道"}</h2><span class="commission-status ${complete ? "complete" : ""}">${south ? southStatus : westStatus}</span></div><p>${south ? "委托人 · 药师小满" : "风铃村 · 旧道修复"}</p></header><p class="commission-story">${south ? (phase === "complete" ? "药草已送回，南侧采集恢复。孢根巢地保持清空，你仍可在湿地采集与探索。" : "小满的药草供应断在了南边。请沿南门石路过芦苇桥，恢复药草洼地的采集。") : road === "open" ? "西侧旧道已恢复，西门可以直接通往旧农庄与外围环线。" : "西门的断栅与门轴需要修补。先到旧道路口确认路况，再带材料回村施工。"}</p><section class="commission-goals"><h3>委托目标</h3><ul>${south ? goal("清理驻守并击败孢心巢母", cleared) + goal(`交付药草 ×2${phase === "active" ? ` · 持有 ${herbs}/2` : ""}`, phase === "complete") : goal("调查西侧旧道路口", road !== "unknown") + goal("交付木材 ×4、石材 ×2", road === "open")}</ul></section><section class="commission-route-copy"><h3>路线说明</h3><p>${south ? "从南门沿石路过芦苇桥，药草洼地在西南岸，孢根巢地在洼地东南方。" : "从北门或南门沿村外环线绕到西侧，再向西北走到旧道路口。调查后可在西门或本簿交付材料。"}</p></section><div class="commission-rewards">${south ? `<section><h3>启程补给</h3>${item("potion", 2)}${phase !== "available" ? "<small>已领取</small>" : ""}</section><section><h3>完成奖励</h3><div class="commission-item-group">${item("potion", 2)}<span class="commission-item"><img src="/assets/commission/coin.webp" alt=""><span>铜币 ×24</span></span></div>${phase === "complete" ? "<small>已领取</small>" : ""}</section>` : `<section><h3>施工材料</h3><div class="commission-item-group">${item("wood", 4)}${item("stone", 2)}</div><small>${road === "open" ? "已交付" : `持有木材 ${count(s, "wood")}、石材 ${count(s, "stone")}`}</small></section><section><h3>修复结果</h3><p>永久开放西门<br>直接通往西侧旧道</p></section>`}</div>${!canSubmit && !complete ? `<p class="commission-hint">${south ? (!cleared ? "先清理驻守并击败孢心巢母，再带药草回村交付。" : "还需要药草两份，采集后回村交付。") : road === "unknown" ? "路况调查登记后，才能交付施工材料。" : s.defense.raid ? "当前来袭结束后再施工。" : "修复需要木材四份、石材两份。"}</p>` : ""}${south?eventContent:""}</div><figure class="commission-art">${south ? `<img class="commission-route-image" src="/assets/commission/south-route.webp" alt="南门石路经芦苇桥通往西南岸药草洼地，孢根巢地位于其东南方"><figcaption><span>南门</span><span>芦苇桥</span><span>药草洼地</span><span>孢根巢地</span></figcaption>` : `<img class="commission-ledger-image" src="/assets/commission/ledger-prop.webp" alt="木匣公共委托簿"><figcaption>调查路况，修复门轴与断栅。</figcaption>`}</figure></div>`;
 
     ui.shell(
       "公共委托簿",
@@ -107,6 +112,13 @@ export function openCommissions(world: World) {
     ui.button("commission-west", () => {
       selected = "west";
       render("", "commission-west");
+    });
+    for(const id of Object.keys(SOUTH_EVENTS) as SouthEventId[])ui.button('commission-event-'+id,async()=>{
+      if(world.economy.busy||world.defenseSaving||ui.economyBusy)return;
+      world.defenseSaving=true;ui.economyBusy=true;ui.modal.querySelectorAll<HTMLButtonElement>('button').forEach(b=>b.disabled=true);let message='';
+      try{await world.economy.run(()=>world.state,current=>southEventRewardSnapshot(current,id),save,next=>world.publishState(next));message=`${SOUTH_EVENTS[id].name}谢礼已保存并领取。`;}
+      catch(error){message=`未领取谢礼：${(error as Error).message}`;}finally{world.defenseSaving=false;ui.economyBusy=false;}
+      render(message);
     });
     ui.button("commission-submit", async () => {
       if (

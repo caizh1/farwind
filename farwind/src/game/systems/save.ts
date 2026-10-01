@@ -1,7 +1,7 @@
 import { validate, type State } from "./state";
 import { SaveQueue } from './saveQueue';
 // 第一张正式地图从新档开始，旧数据库保留供原版本读取或导出。
-export const SAVE_DATABASE = import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('runeLab') ? 'farwind-rune-lab-isolated' : import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('combatFeel')
+export const SAVE_DATABASE = import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('combatSlice') ? 'farwind-combat-slice-isolated' : import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('runeLab') ? 'farwind-rune-lab-isolated' : import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('combatFeel')
   ? 'farwind-combat-feel-isolated' : 'farwind-first-map';
 let fault = { delay: 0, failures: 0 };
 // 只在显式开发样板使用；生产构建无法启用故障注入。
@@ -34,7 +34,10 @@ async function writeSave(s: State) {
       d.close();
       no(Error("保存失败，上一份有效存档仍保留，请导出备份。"));
     };
-    try{t.objectStore("states").put(clean,"current");}
+    try{
+      const store=t.objectStore('states'),old=store.get('current');
+      old.onsuccess=()=>{if(old.result&&old.result.schema_version<15){const previous=store.get('before-combat-build');previous.onsuccess=()=>{if(!previous.result)store.put(old.result,'before-combat-build');};}store.put(clean,'current');};
+    }
     catch(e){t.abort();d.close();no(e);}
   });
 }
@@ -63,3 +66,8 @@ export const saveBarrier = () => queue.barrier();
 export const markSaveDirty = () => queue.markDirty();
 export const switchSaveSession = () => queue.switchSession();
 export const saveDiagnostic = () => queue.snapshot();
+
+export async function migrationBackup(){
+ await queue.barrier();const d=await db();
+ return new Promise<unknown>((ok,no)=>{const t=d.transaction('states','readonly'),r=t.objectStore('states').get('before-combat-build');r.onsuccess=()=>ok(r.result??null);r.onerror=()=>no(r.error);t.oncomplete=()=>d.close();});
+}

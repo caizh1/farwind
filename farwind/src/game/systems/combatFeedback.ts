@@ -3,7 +3,7 @@ import type {Point} from './obstacles';
 export type FeedbackMode='A'|'B'|'C'|'D';
 export type FeedbackKind='guard-start'|'enemy-charge'|'enemy-strike'|'parry-contact'|'parry-perfect-contact'|'deflect-release'|'counter-start'|'counter-swing'|'counter-hit'|'afterguard'|'hit'|'protected-hit'|'interrupt'|'guard-break'|'kill';
 export type FeedbackMaterial='slime'|'leaf'|'straw'|'armor';
-export type FeedbackEvent=Readonly<{id:string;kind:FeedbackKind;at:number;targetId:string;attackId:string;sourceContactId?:string;point:Readonly<Point>;incoming:Readonly<Point>;blade:Readonly<Point>;deflect:Readonly<Point>;quality:CounterKind;material:FeedbackMaterial;until?:number;alive?:boolean;depth?:number;legacyHit?:'hit'|'straw';stage?:number;damage?:number;guarded?:boolean;interrupted?:boolean;killed?:boolean;sourceId?:string}>;
+export type FeedbackEvent=Readonly<{id:string;kind:FeedbackKind;at:number;targetId:string;attackId:string;sourceContactId?:string;point:Readonly<Point>;incoming:Readonly<Point>;blade:Readonly<Point>;deflect:Readonly<Point>;quality:CounterKind;material:FeedbackMaterial;until?:number;alive?:boolean;depth?:number;legacyHit?:'hit'|'straw';stage?:number;isFinisher?:boolean;actionKind?:'melee'|'swordWind'|'counter';damage?:number;guarded?:boolean;interrupted?:boolean;killed?:boolean;sourceId?:string}>;
 export const FEEDBACK={history:96,effects:32,reactions:24,contactLife:150,hitLife:115,afterguardLife:65,peak:60,recover:160,secondaryLife:95,release:20,counterMotion:20} as const;
 // 仅影响成功反馈；红刃在拨开后建立，沿正式反斩的收势衰减，不表示额外伤害。
 export const BLADE_GLOW={start:20,rise:40,fade:145,maxLife:450,width:6,edgeWidth:2.6} as const;
@@ -84,7 +84,7 @@ export class CombatFeedback {
  }
  impact(id:string,now:number){
   let e:FeedbackEvent|undefined;for(let i=this.effects.length-1;i>=0;i--)if(this.effects[i].targetId===id&&isHitFeedback(this.effects[i].kind)){e=this.effects[i];break;}if(!e||e.killed||!feedbackVisual(this.mode))return null;
-  const age=Math.max(0,now-e.at),life=e.kind==='guard-break'?180:FEEDBACK.hitLife,u=Math.min(1,age/life),amount=(e.guarded?1.5:e.stage===3?5:3)*Math.sin(Math.PI*u);
+  const age=Math.max(0,now-e.at),life=e.kind==='guard-break'?180:FEEDBACK.hitLife,u=Math.min(1,age/life),amount=(e.guarded?1.5:(e.isFinisher??e.stage===3)?5:3)*Math.sin(Math.PI*u);
   return {x:e.incoming.x*amount,y:e.incoming.y*amount*.5,rotation:(e.incoming.x||1)*amount*.008};
  }
  attackAudible(startedAt:number,root:Point|undefined,player:Point){return startedAt>=this.resetAt&&(!root||Math.hypot(root.x-player.x,root.y-player.y)<600);}

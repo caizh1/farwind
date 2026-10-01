@@ -1,10 +1,14 @@
+import {validOutdoorPoint} from '../../data/maps/windbell/bounds';
+import {ENCOUNTERS} from '../../data/maps/windbell/encounters';
 import {CAMP_BOSSES,BOSS_RULES} from '../../data/maps/windbell/campBosses';
 import type {EnemyAttack} from './enemyAttack';
 import type {SporeShot} from './enemyProjectiles';
 import {SPORE} from './enemyAttack';
+import {FUNGAL} from './fungalCombat';
+import {enemyLeashRadius} from '../../data/enemyPursuit';
 import type {Point} from './obstacles';
 
-export type BossBattle={phase:1|2;next:number;move:number;part:number;nextAt:number;entryUntil:number;exposedUntil:number;transformUntil:number;controlImmuneUntil:number;startedAt:number};
+export type BossBattle={phase:1|2;next:number;move:number;part:number;nextAt:number;entryUntil:number;exposedUntil:number;transformUntil:number;controlImmuneUntil:number;startedAt:number;roots?:{x:number;y:number;hp:number}[]};
 export type BossHazard={id:string;owner:string;attempt:number;kind:'circle'|'ring';point:Point;born:number;activeAt:number;expires:number;radius:number;speed:number;damage:number;used:string[]};
 export type SavedBossCombat={battle:BossBattle;attack:EnemyAttack|null;hazards:BossHazard[];shots:SporeShot[];stagger:number;parried:{at:number;until:number;direction:Point;perfect:boolean}|null};
 export type CampBossState={stage:'guards'|'warning'|'battle'|'defeated'|'legacy';warning:number;attempt:number;away:number;combat:SavedBossCombat|null};
@@ -15,7 +19,7 @@ export function shiftBossAttack(attack:EnemyAttack,delta:number){
   const a=structuredClone(attack);for(const key of ATTACK_TIMES)if(a[key]!==undefined)a[key]!+=delta;return a;
 }
 export const BATTLE_TIMES=['nextAt','entryUntil','exposedUntil','transformUntil','controlImmuneUntil','startedAt'] as const;
-export function shiftBossBattle(battle:BossBattle,delta:number){const b={...battle};for(const key of BATTLE_TIMES)b[key]+=delta;return b;}
+export function shiftBossBattle(battle:BossBattle,delta:number){const b=structuredClone(battle);for(const key of BATTLE_TIMES)b[key]+=delta;return b;}
 export function shiftBossHazard(h:BossHazard,delta:number):BossHazard{return {...h,point:{...h.point},used:[...h.used],born:h.born+delta,activeAt:h.activeAt+delta,expires:h.expires+delta};}
 export function shiftBossShot(s:SporeShot,delta:number):SporeShot{return {...structuredClone(s),born:s.born+delta,now:s.now+delta,...s.burstAt===undefined?{}:{burstAt:s.burstAt+delta},attack:shiftBossAttack(s.attack,delta)};}
 
@@ -33,6 +37,9 @@ export function validateCampBoss(raw:unknown,owner:string):CampBossState{
     if(b&&b.entryUntil===undefined)b.entryUntil=0;
     if(!b||![1,2].includes(b.phase)||!integer(b.next,0,1e9)||!integer(b.move,-1,3)||!integer(b.part,0,6)||!BATTLE_TIMES.every(k=>num(b[k],-1e12,20000))||!num(c.stagger,0,1200)||!Array.isArray(c.hazards)||c.hazards.length>BOSS_RULES.maxHazards||!Array.isArray(c.shots)||c.shots.length>16)fail();
     const boss=Object.entries(CAMP_BOSSES).find(([kind])=>owner==='boss-'+kind);if(!boss)fail();
+    // 首领合法追击范围加保存余量，再容纳围绕实际核心生成的祭根距离。
+    const rootHome=ENCOUNTERS.find(d=>d.id==='south-spore-camp')!,rootRange=enemyLeashRadius({boss:true,leashRadius:rootHome.radius})+100+FUNGAL.rootRadius;
+    if(b.roots!==undefined&&(owner!=='boss-spore-heart'||b.phase!==2||!Array.isArray(b.roots)||b.roots.length>2||b.roots.some(r=>!point(r)||!validOutdoorPoint(r)||!num(r.hp,0,96)||Math.hypot(r.x-rootHome.x,r.y-rootHome.y)>rootRange)))fail();
     const attack=(a:EnemyAttack)=>{
       if(!a||a.boss!==boss![0]||a.attackerId!==owner||typeof a.attackId!=='string'||a.attackId.length>160||!point(a.direction)||Math.abs(Math.hypot(a.direction.x,a.direction.y)-1)>.001||!ATTACK_TIMES.every(k=>a[k]===undefined||num(a[k],-30000,20000))||!['startedAt','lockAt','contactAt','activeUntil','recoveryUntil','scanAt'].every(k=>num(a[k as keyof EnemyAttack],-30000,20000))||typeof a.locked!=='boolean'||typeof a.parryable!=='boolean'||!num(a.range,0,450)||!num(a.halfAngle,0,Math.PI)||!integer(a.bossSkill,0,3)||!num(a.damage,0,60)||!num(a.motionAt,0,600)||typeof a.cancelled!=='boolean'||typeof a.resolved!=='boolean'||typeof a.emitted!=='boolean'||a.bossAttempt!==s.attempt)fail();
       if(a.startedAt>a.lockAt||a.lockAt>a.contactAt||a.contactAt>a.activeUntil||a.activeUntil>a.recoveryUntil)fail();

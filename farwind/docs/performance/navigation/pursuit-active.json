@@ -1,0 +1,323 @@
+{
+  "时间": 11814.450000000012,
+  "玩家": {
+    "x": -756.1973967923369,
+    "y": 2150,
+    "hp": 100
+  },
+  "界面": "",
+  "事务": {
+    "保存": false,
+    "忙碌": false,
+    "会话重建": false
+  },
+  "敌人": [
+    {
+      "id": "wild-margin-slime",
+      "x": -208.8670000000069,
+      "y": 2150,
+      "hp": 48,
+      "动作": "追击",
+      "路径": [],
+      "查询": 0,
+      "节点": 0
+    },
+    {
+      "id": "wild-herb-spore",
+      "x": 724.8667527782164,
+      "y": 2583.9334351015336,
+      "hp": 60,
+      "动作": "家园",
+      "路径": [],
+      "查询": 0,
+      "节点": 0
+    },
+    {
+      "id": "wild-herb-priest",
+      "x": 730,
+      "y": 2580,
+      "hp": 96,
+      "动作": "寻找护盾同伴",
+      "路径": [],
+      "查询": 0,
+      "节点": 0
+    },
+    {
+      "id": "wild-track-wolf-a",
+      "x": -553.5329332356953,
+      "y": 1472.9341335286094,
+      "hp": 58,
+      "动作": "家园",
+      "路径": [],
+      "查询": 0,
+      "节点": 0
+    },
+    {
+      "id": "wild-track-wolf-b",
+      "x": -443.532933235696,
+      "y": 1502.934133528609,
+      "hp": 58,
+      "动作": "家园",
+      "路径": [],
+      "查询": 0,
+      "节点": 0
+    },
+    {
+      "id": "south-event-herb",
+      "x": 740,
+      "y": 2460,
+      "hp": 96,
+      "动作": "祭根护心",
+      "路径": [],
+      "查询": 0,
+      "节点": 0
+    },
+    {
+      "id": "wild-farm-reaper",
+      "x": -786.5054454518937,
+      "y": 1193.903267271136,
+      "hp": 72,
+      "动作": "家园",
+      "路径": [],
+      "查询": 0,
+      "节点": 0
+    },
+    {
+      "id": "elite-thorn-alpha",
+      "x": -1185.624054212183,
+      "y": 1734.375945787817,
+      "hp": 150,
+      "动作": "家园",
+      "路径": [],
+      "查询": 0,
+      "节点": 0
+    },
+    {
+      "id": "wild-den-wolf-a",
+      "x": -1704.1427552644977,
+      "y": 1513.785867103253,
+      "hp": 58,
+      "动作": "家园",
+      "路径": [],
+      "查询": 0,
+      "节点": 0
+    },
+    {
+      "id": "wild-den-wolf-b",
+      "x": -1554.1427552644977,
+      "y": 1613.785867103253,
+      "hp": 58,
+      "动作": "家园",
+      "路径": [],
+      "查询": 0,
+      "节点": 0
+    },
+    {
+      "id": "wild-den-reaper",
+      "x": -1624.2223159136386,
+      "y": 1433.6665261295411,
+      "hp": 72,
+      "动作": "家园",
+      "路径": [],
+      "查询": 0,
+      "节点": 0
+    }
+  ],
+  "芦边遭遇": {
+    "composition": 2,
+    "cycle": 0,
+    "activated": true,
+    "cleared": false,
+    "cooldown": 0,
+    "warning": null,
+    "members": [
+      {
+        "id": "wild-margin-slime",
+        "hp": 48,
+        "x": -208.8670000000069,
+        "y": 2150,
+        "serial": 0,
+        "cooldown": 0,
+        "defeated": false,
+        "drop": false,
+        "dropRemaining": 0,
+        "participated": false,
+        "face": {
+          "x": 0,
+          "y": 1
+        },
+        "guardOpen": 0
+      }
+    ]
+  },
+  "守卫": [
+    {
+      "id": "east-watch",
+      "x": 2010,
+      "y": 970,
+      "hp": 180,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "east-north-post",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    },
+    {
+      "id": "east-patrol",
+      "x": 603.997763760118,
+      "y": 550.5145631557172,
+      "hp": 180,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "east-south-post",
+      "mode": "life",
+      "peaceMs": 8000,
+      "cooldownMs": 0,
+      "offDuty": true,
+      "towerTransitMs": 0,
+      "space": "barracks"
+    },
+    {
+      "id": "east-archer",
+      "x": 2030,
+      "y": 900,
+      "hp": 100,
+      "dead": false,
+      "weaponId": "watch-bow",
+      "armorId": "watch-leather",
+      "postId": "east-gate-tower",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    },
+    {
+      "id": "north-watch",
+      "x": 740,
+      "y": 300,
+      "hp": 180,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "north-west-post",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    },
+    {
+      "id": "north-patrol",
+      "x": 1371.520678653838,
+      "y": 771.5206786538388,
+      "hp": 180,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "north-east-post",
+      "mode": "life",
+      "peaceMs": 8000,
+      "cooldownMs": 0,
+      "offDuty": true,
+      "towerTransitMs": 0,
+      "space": "village"
+    },
+    {
+      "id": "north-archer",
+      "x": 680,
+      "y": 350,
+      "hp": 100,
+      "dead": false,
+      "weaponId": "watch-bow",
+      "armorId": "watch-leather",
+      "postId": "north-gate-tower",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    },
+    {
+      "id": "south-watch",
+      "x": 810,
+      "y": 1720,
+      "hp": 180,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "south-west-post",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    },
+    {
+      "id": "south-patrol",
+      "x": 1608.1760635788262,
+      "y": 1171.8239364211738,
+      "hp": 180,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "south-east-post",
+      "mode": "life",
+      "peaceMs": 8000,
+      "cooldownMs": 0,
+      "offDuty": true,
+      "towerTransitMs": 0,
+      "space": "village"
+    },
+    {
+      "id": "south-archer",
+      "x": 1140,
+      "y": 1750,
+      "hp": 100,
+      "dead": false,
+      "weaponId": "watch-bow",
+      "armorId": "watch-leather",
+      "postId": "south-gate-tower",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    },
+    {
+      "id": "west-watch",
+      "x": 200,
+      "y": 1340,
+      "hp": 180,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "west-north-post",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    },
+    {
+      "id": "west-patrol",
+      "x": 893.3450141493001,
+      "y": 1146.6549858507003,
+      "hp": 180,
+      "dead": false,
+      "weaponId": "watch-blade",
+      "armorId": "watch-mail",
+      "postId": "west-south-post",
+      "mode": "life",
+      "peaceMs": 8000,
+      "cooldownMs": 0,
+      "offDuty": true,
+      "towerTransitMs": 0,
+      "space": "village"
+    },
+    {
+      "id": "west-archer",
+      "x": 160,
+      "y": 1710,
+      "hp": 100,
+      "dead": false,
+      "weaponId": "watch-bow",
+      "armorId": "watch-leather",
+      "postId": "west-gate-tower",
+      "mode": "post",
+      "peaceMs": 8000,
+      "cooldownMs": 0
+    }
+  ]
+}

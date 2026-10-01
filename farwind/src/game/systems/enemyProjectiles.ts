@@ -12,7 +12,7 @@ export class EnemyProjectiles {
     attack.launched=true;attack.emitted=true;
     for(const [index,direction] of sporeDirections(attack).entries()){
     const origin=sporeOrigin(root,direction,!!attack.boss),a=createEnemyAttack(attack.attackerId,0,'spore',attack.contactAt,origin,{x:origin.x+direction.x,y:origin.y+direction.y});
-    Object.assign(a,{attackId:attack.attackId+':spore'+(attack.elite==='brood'||attack.boss?`:${index}`:''),...attack.boss?{boss:attack.boss,bossAttempt:attack.bossAttempt,bossSkill:attack.bossSkill,bossPart:attack.bossPart}:{},damage:attack.damage,direction:{...direction},locked:true,startedAt:attack.contactAt,lockAt:attack.contactAt,contactAt:attack.contactAt,activeUntil:attack.contactAt+SPORE.life,recoveryUntil:attack.contactAt+SPORE.life,chargeSound:true,strikeSound:true});
+    Object.assign(a,{attackId:attack.attackId+':spore'+(attack.elite==='brood'||attack.boss||attack.shotAngles?`:${index}`:''),...attack.boss?{boss:attack.boss,bossAttempt:attack.bossAttempt,bossSkill:attack.bossSkill,bossPart:attack.bossPart}:{},damage:attack.damage,direction:{...direction},locked:true,startedAt:attack.contactAt,lockAt:attack.contactAt,contactAt:attack.contactAt,activeUntil:attack.contactAt+SPORE.life,recoveryUntil:attack.contactAt+SPORE.life,chargeSound:true,strikeSound:true});
     this.shots.push({...origin,id:a.attackId,attack:a,born:attack.contactAt,now:attack.contactAt,state:'flying',released:Object.freeze({sourceId:attack.attackerId,faction:'hostile',attackId:a.attackId,amount:a.damage,sourceType:'enemy-shot',eventId:null})});
     }
   }

@@ -1,5 +1,5 @@
 {
-  "说明": "四种人物的真实步态补齐；最终美术仍待用户验收。左右只由Actor镜像。",
+  "说明": "四套居民与弓手图集，加近战卫兵三个朝向的左右脚交替帧；最终美术仍待用户验收。左右只由Actor镜像。",
   "资源": [
     {
       "ID": "npc-motion-archer",
@@ -1683,6 +1683,60 @@
         }
       ],
       "来源": "内置imagegen，保持现有人物身份；Sharp仅切分、等比缩放和地面根对齐",
+      "是否临时": true
+    },
+    {
+      "ID": "defender-guard-walk",
+      "人物": "近战卫兵",
+      "文件": "public/assets/village-defense/m3/guard-walk.png",
+      "帧尺寸": [
+        160,
+        160
+      ],
+      "帧数": 6,
+      "地面根": [
+        80,
+        148
+      ],
+      "帧": [
+        {
+          "朝向": "朝前",
+          "步相": "原有迈步",
+          "来源": "public/assets/village-defense/m3/guard-source.png",
+          "摘要": "f07c79e8275a5e1a70f8c14c5f5e164bd8a3e037cdde294611c522bbbd80e127"
+        },
+        {
+          "朝向": "朝前",
+          "步相": "另一只脚迈步",
+          "来源": "docs/npc-life/locomotion/sources/guard-front-opposite.png",
+          "摘要": "d6515f7630d594d3477642f18442dde5d9ee81937c925a4376e956bbc8f901f2"
+        },
+        {
+          "朝向": "朝后",
+          "步相": "原有迈步",
+          "来源": "public/assets/village-defense/m3/guard-source.png",
+          "摘要": "09f96f5d9364944af61086323ae86f9d654330fc6409b5420ed610b25df41b68"
+        },
+        {
+          "朝向": "朝后",
+          "步相": "另一只脚迈步",
+          "来源": "docs/npc-life/locomotion/sources/guard-back-opposite.png",
+          "摘要": "3824d259366d75444c1a6fe2cd085e9ae419ffb312434d46500a7a7f984f0a66"
+        },
+        {
+          "朝向": "朝右",
+          "步相": "原有迈步",
+          "来源": "public/assets/village-defense/m3/guard-source.png",
+          "摘要": "af116b4fca9a343e312fbb749bbf7d98793d44591beb29b5ebb8b216b1205106"
+        },
+        {
+          "朝向": "朝右",
+          "步相": "另一只脚迈步",
+          "来源": "docs/npc-life/locomotion/sources/guard-side-opposite.png",
+          "摘要": "c3a310740fc562bbcbc9e14146866e290c674dab5438e632a5a0c418db8bcce8"
+        }
+      ],
+      "来源": "原卫兵行走帧与内置imagegen生成的反向迈步帧；Sharp仅裁切、等比缩放和对齐",
       "是否临时": true
     }
   ]

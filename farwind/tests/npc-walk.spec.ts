@@ -112,7 +112,7 @@ test("NPC-WALK-01", async ({ page }) => {
   await page.getByRole("button", { name: "启程 · 新游戏" }).click();
   await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
   await observeNpc(page, "elder");
-  const rows = await observe(page, 15000),
+  const rows = await observe(page, 30000),
     summary = checkWalk(rows, ["elder", "healer", "carpenter"]);
   await page.screenshot({ path: `${root}/${label}-residents.png` });
   await page.keyboard.press("Escape");
@@ -179,13 +179,14 @@ test("NPC-WALK-02", async ({ page }) => {
   Object.assign(s.player, { x: 340, y: 1690 });
   await imported(page, s);
   await observeNpc(page, "west-archer");
-  const rows = await observe(page, 4000, true);
+  const rows = await observe(page, 30000, true);
   writeFileSync(
     `${root}/${label}-archers-observed.json`,
     JSON.stringify(
       {
         说明: "首日晚间的完整轮休任务，南门芦边史莱姆已击败且尚未重生；按实际模拟时长采样，页面内仅观察。",
         结束状态: (await read(page)).state,
+        导航: (await read(page)).npcLife.people.filter((n: any) => ids.includes(n.id)).map((n: any) => ({ 人物: n.id, 路径: n.path })),
         样本: rows,
       },
       null,
@@ -245,4 +246,46 @@ test("NPC-WALK-02", async ({ page }) => {
     ),
   );
   await saveVideo(page, `${root}/${label}-archers.webm`);
+});
+
+// 新游戏自然返程，核对近战卫兵真正使用了交替靴子的行走图集。
+test("NPC-WALK-03", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(production ? "/" : "/?npcDebug=1");
+  await page.getByRole("button", { name: "启程 · 新游戏" }).click();
+  await page.waitForFunction(() => (window as any).__farwind?.().mode === "");
+  await observeNpc(page, "west-watch");
+  const rows = await observe(page, 30000);
+  const moving = rows.filter((r) =>
+    r.人物 === "west-watch" && r.速度 > 4 && r.图集 === "defender-guard-walk"
+  );
+  expect(moving.length, "禾岩自然返程的实际移动样本").toBeGreaterThan(20);
+  expect([...new Set(moving.map((r) => r.帧 % 2))].sort()).toEqual([0, 1]);
+  for (const row of moving) {
+    expect(Math.floor(row.帧 / 2)).toBe(row.朝向 === 1 ? 1 : row.朝向 >= 2 ? 2 : 0);
+    expect(row.镜像).toBe(row.朝向 === 2);
+    expect(row.锚点).toEqual([0.5, 148 / 160]);
+  }
+  const idle = rows.filter((r) => r.人物 === "west-watch" && r.速度 === 0);
+  expect(idle.every((r) => r.图集 !== "defender-guard-walk")).toBe(true);
+  expect(errors).toEqual([]);
+  for (const phase of [0, 1]) {
+    await page.waitForFunction((expected) => {
+      const v = (window as any).__farwind().defendersView.find((item: any) => item.id === "west-watch");
+      return v?.visible && v.texture === "defender-guard-walk" && v.frame % 2 === expected;
+    }, phase, { timeout: 15000 });
+    if (!production) await page.screenshot({ path: `${root}/${label}-guard-step-phase-${phase}.png` });
+  }
+  if (!production) await page.screenshot({ path: `${root}/${label}-guard-step.png` });
+  writeFileSync(`${root}/${label}-guard-step.json`, JSON.stringify({
+    说明: "新游戏自然行程与摄像机观察；只读卫兵实际位移、朝向、图集和帧，素材靴子位置由像素测试核对。",
+    移动样本: moving.length,
+    两个步相: [...new Set(moving.map((r) => r.帧 % 2))].sort(),
+    停步样本: idle.length,
+    页面错误: errors,
+    样本: rows.filter((r) => r.人物 === "west-watch"),
+  }, null, 2));
+  if (production) await page.close();
+  else await saveVideo(page, `${root}/${label}-guard-step.webm`);
 });

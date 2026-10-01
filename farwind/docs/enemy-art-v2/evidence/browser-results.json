@@ -1,0 +1,211 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+      "/Users/archer/Documents/ChatGPT/Game/farwind/node_modules/.bin/playwright",
+      "test",
+      "--config",
+      "tools/playwright-enemy-art-v2.config.ts"
+    ],
+    "configFile": "/Users/archer/Documents/ChatGPT/Game/farwind/tools/playwright-enemy-art-v2.config.ts",
+    "rootDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/art-v2-runs/1790820023690",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/archer/Documents/ChatGPT/Game/farwind/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "enemy-art-v2.spec.ts"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/archer/Documents/ChatGPT/Game/farwind/docs/enemy-art-v2/evidence/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "npx vite --config tools/vite-enemy-art-v2.config.ts",
+      "url": "http://127.0.0.1:5176",
+      "reuseExistingServer": true
+    }
+  },
+  "suites": [
+    {
+      "title": "enemy-art-v2.spec.ts",
+      "file": "enemy-art-v2.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "fixed-directions-actions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2951,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T02:00:24.020Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/art-v2-runs/1790820023993/enemy-art-v2-fixed-directions-actions/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b0c3df15bec860a80f7a-fd725c608398f2acb873",
+          "file": "enemy-art-v2.spec.ts",
+          "line": 20,
+          "column": 1
+        },
+        {
+          "title": "forest-leaf",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 31571,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T02:00:27.076Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/art-v2-runs/1790820023993/enemy-art-v2-forest-leaf/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b0c3df15bec860a80f7a-e63a1e019390821597b0",
+          "file": "enemy-art-v2.spec.ts",
+          "line": 30,
+          "column": 45
+        },
+        {
+          "title": "forest-spore",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 33178,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T02:00:58.652Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/archer/Documents/ChatGPT/Game/farwind/.enemy-local/art-v2-runs/1790820023993/enemy-art-v2-forest-spore/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b0c3df15bec860a80f7a-9b1053e2d0e77d293958",
+          "file": "enemy-art-v2.spec.ts",
+          "line": 30,
+          "column": 45
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-01T02:00:23.693Z",
+    "duration": 68274.08899999999,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

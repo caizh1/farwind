@@ -782,7 +782,7 @@ describe("飞援、委托与结构8保存", () => {
     old.schema_version = 7;
     delete old.xiaobao;
     const current = validate(old);
-    expect(current.schema_version).toBe(14);
+    expect(current.schema_version).toBe(15);
     expect(current.xiaobao).toEqual(initialXiaobao());
     const f = fixture([enemy(enemyDefs[0].id)]);
     f.c.start("fire", f.env.enemies[0]);

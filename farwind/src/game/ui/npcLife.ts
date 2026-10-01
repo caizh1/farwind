@@ -1,3 +1,5 @@
+import {INTERIOR_FURNITURE,INTERIOR_SERVICE} from '../../data/villageInteriors';
+import type {ShopId} from '../../data/economy';
 import {
   PEOPLE,
   HOMES,
@@ -10,6 +12,12 @@ import {
 import type { World } from "../scenes/World";
 import type { Prop } from "../../data/world";
 export function lifeInteract(world: World, p: Prop) {
+  if(p.id.startsWith("interior:")){
+    const f=INTERIOR_FURNITURE.find(f=>`interior:${f.id}`===p.id&&f.space===world.state.life.playerSpace);
+    if(!f) return false;
+    if(f.shop) world.ui.shop(f.shop); else world.ui.dialog(f.label,f.description);
+    return true;
+  }
   if (p.id === "life-exit") {
     leaveRoom(world);
     return true;
@@ -54,6 +62,15 @@ export function lifeInteract(world: World, p: Prop) {
   }
   return false;
 }
+export function enterShop(world:World,id:ShopId){
+  const spaces:Record<ShopId,SpaceId>={general:'general-shop',smith:'smith-shop',healer:'healer-home',inn:'inn',carpenter:'wood-workshop'};
+  const h=HOMES.find(h=>h.id===spaces[id]);
+  if(!h||world.state.life.playerSpace!=='village'||Math.hypot(world.state.player.x-h.door.x,world.state.player.y-h.door.y)>=95||!world.clearLine(world.state.player.x,world.state.player.y,h.door.x,h.door.y)){
+    world.ui.message('请到房屋入口再进入店内。');return;
+  }
+  world.ui.close(true);
+  lifeInteract(world,{id:`life-door:${h.id}`,art:'',w:0,h:0,...h.door,kind:'sign',label:h.name});
+}
 function transition(world: World) {
   const companion=world.xiaobao?.controller;
   if(companion?.data.task==='follow'){companion.data.wait=null;companion.data.command=null;if(companion.data.cast&&!companion.data.cast.released)companion.cancel();}
@@ -92,6 +109,7 @@ export function lifeTargets(world: World): Prop[] {
           label: `${h.name} · 敲门/进入`,
         }))
       : [
+          ...INTERIOR_FURNITURE.filter(f=>f.space===l.playerSpace&&!f.ground).map(f=>({id:`interior:${f.id}`,art:"",w:0,h:0,...(f.shop?INTERIOR_SERVICE:{x:f.x,y:f.y+20}),kind:"sign" as const,label:`${f.label} · ${f.shop?"交易":"查看"}`})),
           ...PRIVATE_STORAGE.filter((box) => box.space === l.playerSpace).map(
             (box) => ({
               id: box.id,

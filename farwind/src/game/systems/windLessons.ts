@@ -10,116 +10,25 @@ import {
   resolveSwordWindConfig,
   type SwordWindConfig,
 } from "../../data/swordWind";
-import { completeWindLesson, effectiveWindStage } from "./skills";
+import { completeWindLesson, effectiveWindStage, windLessonStatus } from "./skills";
 import type { World } from "../scenes/World";
 import type { State } from "./state";
 import { save } from "./save";
 import type { WindEvent, WindTarget } from "./swordWind";
 import type Phaser from "phaser";
+import { WindChimeView } from "../entities/windChimeView";
 
-// 投影用于比较真实弹道，风铃属于机关，二者不共享敌方命中名额。
-export const lessonTargets: WindTarget[] = [
-  {
-    id: "lesson-water-bell",
-    lessonId: LESSON_IDS[0],
-    x: 1310,
-    y: 1160,
-    windSensitive: true,
-    radius: 18,
-    hp: 1e9,
-  },
-  {
-    id: "lesson-water-followup",
-    lessonId: LESSON_IDS[0],
-    x: 1430,
-    y: 1240,
-    windSensitive: true,
-    radius: 18,
-    hp: 1e9,
-  },
-  ...[2570, 2660].map((x, i) => ({
-    id: `lesson-serial-bell-${i}`,
-    lessonId: LESSON_IDS[1],
-    x,
-    y: 900,
-    windSensitive: true,
-    radius: 10,
-    hp: 1e9,
-  })),
-  ...[2570, 2660].map((x, i) => ({
-    id: `lesson-double-${i}`,
-    lessonId: LESSON_IDS[1],
-    x,
-    y: 980,
-    radius: 14,
-    hp: 1e9,
-  })),
-  ...[2970, 3050, 3130, 3260].map((x, i) => ({
-    id: `lesson-through-${i}`,
-    lessonId: LESSON_IDS[2],
-    x,
-    y: 1180,
-    radius: 14,
-    hp: 1e9,
-  })),
-  ...[3574, 3646].map((x, i) => ({
-    id: `lesson-wide-${i}`,
-    lessonId: LESSON_IDS[3],
-    x,
-    y: 670,
-    windSensitive: true,
-    radius: 10,
-    hp: 1e9,
-  })),
-  {
-    id: "lesson-wide-channel-bell",
-    lessonId: LESSON_IDS[3],
-    x: 3700,
-    y: 930,
-    windSensitive: true,
-    radius: 10,
-    hp: 1e9,
-  },
-  {
-    id: "lesson-three-left",
-    lessonId: LESSON_IDS[4],
-    x: 3780,
-    y: 825,
-    radius: 14,
-    hp: 1e9,
-  },
-  {
-    id: "lesson-three-center",
-    lessonId: LESSON_IDS[4],
-    x: 3910,
-    y: 790,
-    radius: 14,
-    hp: 1e9,
-  },
-  {
-    id: "lesson-three-right",
-    lessonId: LESSON_IDS[4],
-    x: 4000,
-    y: 844,
-    radius: 14,
-    hp: 1e9,
-  },
-  {
-    id: "lesson-three-gap",
-    lessonId: LESSON_IDS[4],
-    x: 3830,
-    y: 730,
-    radius: 14,
-    hp: 1e9,
-  },
-  {
-    id: "lesson-three-overlap",
-    lessonId: LESSON_IDS[4],
-    x: 3910,
-    y: 975,
-    radius: 44,
-    hp: 1e9,
-  },
+// 风铃是世界中的独立悬挂机关，不占敌人的命中名额。
+const target=(lessonId:LessonId,id:string,dx:number,dy:number,radius=14):WindTarget=>({id,lessonId,x:lessonById(lessonId).stand.x+dx,y:lessonById(lessonId).stand.y+dy,windSensitive:true,radius,hp:1e9});
+export const lessonTargets:WindTarget[]=[
+  target(LESSON_IDS[0],'lesson-water-bell',0,-240,18),
+  target(LESSON_IDS[0],'lesson-water-followup',120,-160,18),
+  ...[110,200].map((x,i)=>target(LESSON_IDS[1],`lesson-serial-bell-${i}`,x,-20,10)),
+  ...[80,160,240,370].map((x,i)=>target(LESSON_IDS[2],`lesson-through-${i}`,x,0)),
+  ...[-36,36].map((x,i)=>target(LESSON_IDS[3],`lesson-wide-${i}`,x,-440,10)),
+  target(LESSON_IDS[4],'lesson-three-left',-130,-225),
+  target(LESSON_IDS[4],'lesson-three-center',0,-260),
+  target(LESSON_IDS[4],'lesson-three-right',90,-206),
 ];
 type Request = { id: LessonId; change?: (s: State) => void; complete: boolean };
 export class WindLessons {
@@ -130,8 +39,7 @@ export class WindLessons {
   private targetViews = new Map<
     string,
     {
-      image: Phaser.GameObjects.Image;
-      label: Phaser.GameObjects.Text;
+      chime: WindChimeView;
       at: number;
       hits: number;
       release: number;
@@ -139,6 +47,11 @@ export class WindLessons {
     }
   >();
   private flow: Phaser.GameObjects.Graphics;
+  private siteLabels:{x:number;y:number;text:Phaser.GameObjects.Text}[]=[];
+  private vines:Phaser.GameObjects.Image;
+  private branches:Phaser.GameObjects.Image;
+  private sails:Phaser.GameObjects.Image[]=[];
+  static preload(scene:Phaser.Scene){WindChimeView.preload(scene);}
   readonly targets = lessonTargets.map((t) => ({ ...t }));
   constructor(private world: World) {
     const scene = world;
@@ -160,65 +73,25 @@ export class WindLessons {
         .setOrigin(0.5, 0)
         .setDepth(l.y + 2);
       this.visuals.push(marker, text);
+      this.siteLabels.push({x:l.x,y:l.y,text});
     }
-    this.visuals.push(
-      scene.add
-        .graphics()
-        .setDepth(-1)
-        .lineStyle(2, 0xb2d7bd, 0.7)
-        .strokeEllipse(3700, 1150, 48, 22),
-      scene.add
-        .text(3700, 1175, "窄通道对照 · 面向北方", {
-          fontSize: "12px",
-          color: "#fff2d3",
-          stroke: "#264938",
-          strokeThickness: 3,
-        })
-        .setOrigin(0.5, 0)
-        .setDepth(1176),
-    );
-    for (const t of this.targets) {
-      const image = scene.add
-        .image(t.x, t.y, "rune")
-        .setOrigin(0.5, 1)
-        .setDisplaySize(t.windSensitive ? 35 : 44, t.windSensitive ? 54 : 62)
-        .setAlpha(t.windSensitive ? 0.85 : 0.45)
-        .setTint(0xb7e3dd)
-        .setDepth(t.y);
-      const label = scene.add
-        .text(
-          t.x,
-          t.y + 5,
-          t.windSensitive
-            ? "风敏铃"
-            : t.id.endsWith("gap")
-              ? "轨迹空隙"
-              : t.id.endsWith("overlap")
-                ? "重叠投影"
-                : "剑风投影",
-          {
-            fontSize: "11px",
-            color: "#edf7e8",
-            stroke: "#284434",
-            strokeThickness: 3,
-          },
-        )
-        .setOrigin(0.5, 0)
-        .setDepth(t.y + 1);
-      this.targetViews.set(t.id, {
-        image,
-        label,
-        at: -1e6,
-        hits: 0,
-        release: 0,
-        damage: 0,
-      });
-      this.visuals.push(image, label);
+    const serial=lessonById(LESSON_IDS[1]).stand,long=lessonById(LESSON_IDS[2]).stand;
+    this.vines=scene.add.image(serial.x+110,serial.y-38,'bush').setDisplaySize(40,26).setDepth(serial.y+.4);
+    this.branches=scene.add.image(long.x+130,long.y,'wood').setDisplaySize(80,32).setDepth(long.y+.4);
+    this.sails=['left','right'].map(side=>world.propImages.get(`lesson-sail-${side}`)!);
+    this.visuals.push(this.vines,this.branches);
+    const wSound=(t:WindTarget,index:number)=>world.soundFx.chime(index%3,Math.hypot(world.state.player.x-t.x,world.state.player.y-t.y),world.sim);
+    for(const [index,t] of this.targets.entries()){
+      const order=index-this.targets.findIndex(other=>other.lessonId===t.lessonId);
+      const chime=new WindChimeView(scene,t.x,t.y,order*220,()=>wSound(t,order));
+      this.targetViews.set(t.id,{chime,at:-1e6,hits:0,release:0,damage:0});
     }
     scene.events.once("shutdown", () => {
       this.endTrial();
       for (const v of this.visuals) v.destroy();
       this.visuals = [];
+      for(const v of this.targetViews.values())v.chime.destroy();
+      this.targetViews.clear();
     });
   }
   endTrial() {
@@ -233,6 +106,7 @@ export class WindLessons {
       v.hits = 0;
       v.release = 0;
       v.damage = 0;
+      v.chime.reset();
     }
   }
   config(): SwordWindConfig | null {
@@ -280,7 +154,7 @@ export class WindLessons {
       return;
     w.ui.dialog(
       l.name,
-      `${l.hint}\n${done ? "这段经历已经记录，重复练习不再提升阶段。" : "成长来自这次具体经历，不需要击杀、材料或重复练习。"}\n${id === LESSON_IDS[0] || id === LESSON_IDS[3] ? "圆形铺垫标示试用站位。J／左键连按完成三连斩，再接第四击；面向北方。临时能力仅用于教学风铃。" : ""}`,
+      `${l.hint}\n${done ? windLessonStatus(w.state.skills, id) : "成长来自这次具体经历，不需要击杀、材料或重复练习。"}\n${!done && (id === LESSON_IDS[0] || id === LESSON_IDS[3]) ? "圆形铺垫标示试用站位。按 I／中键独立送风；按住可持续施放；面向北方。临时能力仅用于教学风铃。" : ""}`,
       "rune",
     );
     if (this.pending?.id === id) {
@@ -298,51 +172,18 @@ export class WindLessons {
         w.ui.message(
           done
             ? WIND_EFFECTS[w.state.skills.swordWindStage]
-            : "临时试用：站上铺垫，面向北方，三连斩后接第四击。离开范围后结束。",
+            : "临时试用：站上铺垫，面向北方，按 I／中键独立送风。离开范围后结束。",
         );
       });
     }
     if (!done && id === LESSON_IDS[1])
-      for (const [choice, text] of [
-        [0, "关闭旁路"],
-        [1, "沿两铃之间导流"],
-        [2, "将风分向溪面"],
-      ] as const)
-        this.button(
-          text,
-          () =>
-            void this.submit({
-              id,
-              change: (s) => (s.skills.devices.serialValve = choice),
-              complete: choice === 1,
-            }),
-        );
+      this.button("解开缠住铃绳的藤蔓",()=>void this.submit({id,change:s=>s.skills.devices.serialValve=1,complete:true}));
     if (!done && id === LESSON_IDS[2])
-      this.button(
-        "沿风痕封闭裂开的泄口",
-        () =>
-          void this.submit({
-            id,
-            change: (s) => (s.skills.devices.leakClosed = true),
-            complete: true,
-          }),
-      );
-    if (!done && id === LESSON_IDS[4])
-      for (const side of ["splitLeft", "splitRight"] as const)
-        for (const [choice, text] of [
-          [0, "关闭"],
-          [1, "导向左前"],
-          [2, "导向右前"],
-        ] as const)
-          this.button(
-            `${side === "splitLeft" ? "左闸" : "右闸"} · ${text}`,
-            () =>
-              void this.submit({
-                id,
-                change: (s) => (s.skills.devices[side] = choice),
-                complete: false,
-              }),
-          );
+      this.button("清走挡风的落枝",()=>void this.submit({id,change:s=>s.skills.devices.leakClosed=true,complete:true}));
+    if (!done && id === LESSON_IDS[4]) {
+      if(w.state.skills.devices.splitLeft!==1)this.button("扶正左侧风帆",()=>void this.submit({id,change:s=>s.skills.devices.splitLeft=1,complete:false}));
+      if(w.state.skills.devices.splitRight!==2)this.button("扶正右侧风帆",()=>void this.submit({id,change:s=>s.skills.devices.splitRight=2,complete:false}));
+    }
     if (this.trial)
       this.button("结束临时试用", () => {
         this.endTrial();
@@ -369,6 +210,12 @@ export class WindLessons {
     } catch (e) {
       w.ui.message(`线索尚未保存：${(e as Error).message}；重新阅读可重试。`);
     }
+  }
+  adjustSail(side:'left'|'right'){
+    const l=lessonById(LESSON_IDS[4]),d=this.world.state.skills.devices,p=this.world.state.player;
+    if(Math.hypot(p.x-l.stand.x-(side==='left'?-70:70),p.y-l.stand.y)>110)return;
+    if(side==='left'?d.splitLeft===1:d.splitRight===2){this.world.ui.message('这面风帆已经立稳，铜铃正在随风鸣响。');return;}
+    void this.submit({id:l.id,complete:false,change:s=>{if(side==='left')s.skills.devices.splitLeft=1;else s.skills.devices.splitRight=2;}});
   }
   async submit(request: Request) {
     const w = this.world;
@@ -418,15 +265,13 @@ export class WindLessons {
       } else if (w.state.skills.completedLessons.includes(request.id))
         w.ui.dialog(
           "经历已经记录",
-          lessonById(request.id).stage > after
-            ? "这处风道已经恢复。前置本领补齐后会自动结算，无需重做。"
-            : "这段经历已经补记；当前本领保留，重复学习不会额外升阶。",
+          windLessonStatus(w.state.skills, request.id),
           "rune",
         );
       else {
         w.ui.close(true);
         w.ui.message(
-          "分流位置已保存。观察场景中的风痕与风铃，再调整另一处闸。",
+          "这侧风帆已扶正，铜铃开始随风鸣响。另一侧仍然歪倒，再扶正它便能让三铃齐响。",
         );
       }
     } catch (e) {
@@ -449,6 +294,7 @@ export class WindLessons {
       view.hits++;
       view.damage = event.wind.config.damage;
       view.at = event.at;
+      view.chime.ring(event.at);
     }
     if (!event.wind.config.trialLesson || this.pending || this.saving) return;
     const id = event.wind.config.trialLesson as LessonId;
@@ -496,68 +342,29 @@ export class WindLessons {
             .fillCircle(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, 3);
         }
     };
-    line(
-      [
-        { x: 2460, y: 900 },
-        { x: 2570, y: 900 },
-        { x: 2660, y: 900 },
-      ],
-      d.serialValve === 1,
-    );
-    if (d.serialValve === 2)
-      line(
-        [
-          { x: 2460, y: 900 },
-          { x: 2530, y: 850 },
-          { x: 2610, y: 850 },
-        ],
-        true,
-      );
-    line(
-      [
-        { x: 2760, y: 830 },
-        { x: 2920, y: 830 },
-        { x: 3160, y: 830 },
-      ],
-      d.leakClosed,
-    );
-    line(
-      [
-        { x: 3910, y: 1080 },
-        { x: 3910, y: 790 },
-      ],
-      true,
-    );
-    line(
-      [
-        { x: 3880, y: 1060 },
-        { x: 3780, y: 825 },
-      ],
-      d.splitLeft === 1,
-    );
-    line(
-      [
-        { x: 3940, y: 1060 },
-        { x: 4000, y: 844 },
-      ],
-      d.splitRight === 2,
-    );
-    for (const [id, v] of this.targetViews) {
-      const lit = now - v.at < 500;
-      v.image.setTint(lit ? 0xfff0aa : 0xb7e3dd);
-      v.label.setText(
-        lit
-          ? `${Math.round(v.damage)} · 本次一次`
-          : id.endsWith("gap")
-            ? "轨迹空隙"
-            : id.endsWith("overlap")
-              ? "重叠投影"
-              : this.targets.find((t) => t.id === id)!.windSensitive
-                ? "风敏铃"
-                : "剑风投影",
-      );
+    const serial=lessonById(LESSON_IDS[1]).stand,long=lessonById(LESSON_IDS[2]).stand,split=lessonById(LESSON_IDS[4]).stand;
+    line([{x:serial.x,y:serial.y-20},{x:serial.x+110,y:serial.y-20},{x:serial.x+200,y:serial.y-20}],d.serialValve===1);
+    line([{x:long.x-80,y:long.y},{x:long.x+160,y:long.y},{x:long.x+240,y:long.y}],d.leakClosed);
+    for(const id of ['lesson-three-left','lesson-three-center','lesson-three-right']){
+      const t=this.targets.find(t=>t.id===id)!;
+      line([{x:split.x,y:split.y+25},{x:t.x,y:t.y}],id.endsWith('center')||id.endsWith('left')&&d.splitLeft===1||id.endsWith('right')&&d.splitRight===2);
+    }
+    this.vines.setVisible(d.serialValve!==1);this.branches.setVisible(!d.leakClosed);
+    this.sails.forEach((s,i)=>s.setRotation((i===0?d.splitLeft===1:d.splitRight===2)?Math.sin(now*.003+i)*.08:(i===0?-.9:.9)));
+    const p=this.world.state.player;
+    for(const label of this.siteLabels)label.text.setVisible(Math.hypot(p.x-label.x,p.y-label.y)<220);
+    for(const t of this.targets){
+      const v=this.targetViews.get(t.id)!,distance=Math.hypot(p.x-t.x,p.y-t.y);
+      const visible=t.x>view.x-90&&t.x<view.right+90&&t.y>view.y-30&&t.y<view.bottom+130;
+      v.chime.draw(now,this.powered(t),visible,distance<180);
+      v.chime.label.setText(now-v.at<700?'叮——':this.powered(t)?'随风鸣响':'铜风铃');
     }
   }
+  private powered(t:WindTarget){
+    const d=this.world.state.skills.devices;
+    return t.lessonId===LESSON_IDS[1]?d.serialValve===1:t.lessonId===LESSON_IDS[2]?d.leakClosed&&!t.id.endsWith('-3'):t.lessonId===LESSON_IDS[4]?t.id.endsWith('center')||t.id.endsWith('left')&&d.splitLeft===1||t.id.endsWith('right')&&d.splitRight===2:false;
+  }
+
   snapshot() {
     return {
       trial: this.trial,
@@ -570,6 +377,8 @@ export class WindLessons {
         windSensitive: !!t.windSensitive,
         hits: this.targetViews.get(t.id)!.hits,
         damage: this.targetViews.get(t.id)!.damage,
+        powered:this.powered(t),
+        animation:this.targetViews.get(t.id)!.chime.snapshot(),
       })),
     };
   }

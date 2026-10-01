@@ -357,7 +357,7 @@ export class XiaobaoCombat extends Xiaobao {
       targetId: "xiaobao",
       attackId: contact.attack.attackId,
       amount: contact.attack.damage,
-      sourceType: contact.projectileId ? "enemy-shot" : "enemy-melee",
+      sourceType: contact.projectileId ? "enemy-shot" : contact.blastId ? "enemy-blast" : "enemy-melee",
       eventId: contact.projectileId
         ? null
         : ((source as EnemyBody & { eventId?: string }).eventId ?? null),

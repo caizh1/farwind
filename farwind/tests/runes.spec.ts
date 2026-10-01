@@ -62,7 +62,7 @@ test('rune-normal-acquisition',async({page})=>{
  await page.goto('http://127.0.0.1:5197/');await page.getByRole('button',{name:'启程 · 新游戏',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().mode==='');expect((await read(page)).state.runes.owned).toEqual([]);
  await move(page,380,1335);expect((await read(page)).target).toBe('wood-v1');await page.keyboard.press('e');await page.waitForFunction(()=>(window as any).__farwind().state.runes.owned.includes('r01'));
  await move(page,580,1520);expect((await read(page)).target).toBe('village-chest');await page.keyboard.press('e');await page.waitForFunction(()=>(window as any).__farwind().state.runes.owned.includes('r04'));
- await move(page,VILLAGE_ANCHORS.general.x,VILLAGE_ANCHORS.general.y+65);await page.keyboard.press('e');await page.locator('[data-rune-buy="r08"]').click();await page.waitForFunction(()=>(window as any).__farwind().state.runes.owned.includes('r08'));await page.keyboard.press('Escape');
+ await move(page,VILLAGE_ANCHORS.general.x,VILLAGE_ANCHORS.general.y+65);await page.keyboard.press('e');await page.locator('[data-flow="runes"]').click();await page.locator('[data-rune-buy="r08"]').click();await page.waitForFunction(()=>(window as any).__farwind().state.runes.owned.includes('r08'));await page.keyboard.press('Escape');
  await page.keyboard.press('r');await page.locator('[data-rune-id="r01"]').click();await page.locator('#rune-equip').click();await page.waitForFunction(()=>(window as any).__farwind().state.runes.slots[0]==='r01');await page.locator('[data-rune-slot="1"]').click();await page.locator('[data-rune-id="r08"]').click();await page.locator('#rune-equip').click();await page.waitForFunction(()=>(window as any).__farwind().state.runes.slots[1]==='r08');await evidence(page,'normal-acquisition',await read(page));await page.keyboard.press('Escape');
  await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().mode==='');expect((await read(page)).state.runes.slots.slice(0,2)).toEqual(['r01','r08']);expect((await read(page)).state.skills.swordWindStage).toBe(0);
  const before=(await read(page)).state.player;await page.keyboard.down('g');await page.waitForTimeout(550);await page.keyboard.press('d');await page.keyboard.up('g');expect((await read(page)).state.runes.cooldowns['return-wind']??0).toBe(0);
@@ -90,13 +90,41 @@ test('rune-room-lifecycle',async({page})=>{
 });
 
 // 原画与真实界面分开验收：逐一解码正式图片，并比对生产服务返回的文件哈希。
+test('rune-build-painted-icons',async({page})=>{
+ const output='docs/combat-build/rune-art/evidence',errors:string[]=[];
+ await mkdir(output,{recursive:true});page.on('pageerror',e=>errors.push(e.message));
+ await reset(page,'r31');await page.keyboard.press('r');
+ for(const [i,id] of ['r31','r32','r33'].entries()){
+  await page.locator(`[data-rune-slot="${i}"]`).click();await page.locator(`[data-rune-id="${id}"]`).click();
+  await expect(page.locator('.rune-detail image')).toHaveAttribute('href',`/assets/runes/painted/${id}.webp`);
+  await page.locator('#rune-equip').click();await page.waitForFunction(({i,id})=>(window as any).__farwind().state.runes.slots[i]===id,{i,id});
+  await page.locator('.rune-panel').evaluate(e=>{e.scrollTop=0;});
+  await page.screenshot({path:`${output}/${id}-detail.png`});
+ }
+ await page.keyboard.press('Escape');await page.keyboard.down('i');await page.waitForTimeout(700);await page.keyboard.up('i');
+ await page.keyboard.down('d');await page.waitForTimeout(180);await page.keyboard.up('d');
+ await expect(page.locator('#rune-hud svg image')).toHaveCount(4);
+ await page.screenshot({path:`${output}/hud.png`});await page.keyboard.press('r');
+ const widths=[];
+ for(const width of [590,390]){
+  await page.setViewportSize({width,height:844});
+  const bounds=await page.locator('.rune-panel').evaluate(e=>({可视宽度:e.clientWidth,内容宽度:e.scrollWidth}));
+  expect(bounds.内容宽度).toBeLessThanOrEqual(bounds.可视宽度+2);widths.push({屏幕宽度:width,...bounds});
+  await page.screenshot({path:`${output}/narrow-${width}.png`});
+ }
+ expect(errors).toEqual([]);
+ await writeFile(`${output}/validation.json`,JSON.stringify({说明:'隔离图标验收，正式收藏/详情/装备/HUD及真实按住施放。不是正常解锁证据；未改变正式存档。',窄屏:widths,页面异常:errors,结果:'通过'},null,2));
+});
+
 test('rune-painted-icons',async({page})=>{
  const output='docs/runes/painted-icons',errors:string[]=[];
  page.on('pageerror',e=>errors.push(e.message));
  await mkdir(output,{recursive:true});await reset(page,'build-5');await page.keyboard.press('r');
  await expect(page.locator('.rune-panel')).toBeVisible();
- const manifest=JSON.parse(await readFile(`${output}/manifest.json`,'utf8'));
- expect(manifest.图片).toHaveLength(31);
+ const original=JSON.parse(await readFile(`${output}/manifest.json`,'utf8'));
+ const added=JSON.parse(await readFile('docs/combat-build/rune-art/manifest.json','utf8'));
+ const manifest={图片:[...original.图片,...added.图片]};
+ expect(manifest.图片).toHaveLength(34);
  const audit=await page.evaluate(async()=>{
   const icons=[...document.querySelectorAll<SVGElement>('svg[data-rune-art]')];
   const cards=[...document.querySelectorAll<SVGElement>('.rune-card>svg')];
@@ -113,10 +141,10 @@ test('rune-painted-icons',async({page})=>{
    重画能力形体:icons.filter(e=>e.querySelector('defs')).length,
    固定归风:document.querySelector<SVGElement>('#rune-fixed svg')!.dataset.runeTier};
  });
- expect(audit.图鉴数量).toBe(30);expect(audit.品阶).toEqual({low:10,mid:8,high:7,legend:5});
+ expect(audit.图鉴数量).toBe(33);expect(audit.品阶).toEqual({low:13,mid:8,high:7,legend:5});
  expect(audit.绘制模式).toEqual(['painted-v3']);expect(audit.缺少图片).toBe(0);
  expect(audit.重画能力形体).toBe(0);expect(audit.固定归风).toBe('fixed');
- expect(audit.图片).toHaveLength(31);
+ expect(audit.图片).toHaveLength(34);
  for(const image of audit.图片){expect(image.尺寸).toEqual([512,512]);expect(image.角透明度).toBe(0);}
  const files=[];
  for(const item of manifest.图片){
@@ -126,7 +154,7 @@ test('rune-painted-icons',async({page})=>{
   expect(hash).toBe(item.正式图片哈希);files.push({符文:item.符文,生产图片哈希:hash,状态:response.status()});
  }
  await page.locator('[data-rune-id="r01"]').click();await page.screenshot({path:`${output}/runtime-wide.png`});
- for(const [tier,id,count] of [['low','r01',10],['mid','r11',8],['high','r19',7],['legend','r27',5]] as const){
+ for(const [tier,id,count] of [['low','r01',13],['mid','r11',8],['high','r19',7],['legend','r27',5]] as const){
   await page.locator('#rune-tier').selectOption(tier);await expect(page.locator('.rune-card')).toHaveCount(count);
   await page.locator(`[data-rune-id="${id}"]`).click();await page.screenshot({path:`${output}/runtime-${tier}.png`});
  }

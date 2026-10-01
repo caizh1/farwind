@@ -15,6 +15,7 @@ export default defineConfig({
     launchOptions: { args: ["--enable-webgl", "--use-angle=metal"] },
   },
   webServer: {
+    cwd: process.cwd(),
     command:
       "npx vite preview --host 127.0.0.1 --port 4196 --strictPort --outDir .skill-growth-local/production",
     url: "http://127.0.0.1:4196",

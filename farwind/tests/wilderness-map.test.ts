@@ -189,7 +189,7 @@ describe("四向地图与西侧旧道", () => {
   });
   it("西门调查与修复持久化，一次扣料且原守军伤亡保持", () => {
     const s = initialState();
-    expect(s.schema_version).toBe(14);
+    expect(s.schema_version).toBe(15);
     expect(s.map_version).toBe(CURRENT_MAP_VERSION);
     s.player.x = -390;
     s.player.y = 1120;

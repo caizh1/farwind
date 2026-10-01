@@ -78,7 +78,8 @@ export function xiaobaoEnvironment(w: World): XiaobaoEnvironment {
   const c = w.xiaobao!.controller,
     outside = w.state.life.playerSpace === "village",
     p = outside ? w.state.player : { ...w.state.life.outside, hp: 0 };
-  const enemies = [...w.enemies, ...w.defense.enemies],
+  // 静止菌根是可拆的环境机关，不作为伙伴自主索敌或持久施法目标。
+  const enemies = [...w.enemies, ...w.defense.enemies].filter(e=>!e.passiveRoot),
     allies = xiaobaoAllies(w);
   for (const e of enemies) {
     if (

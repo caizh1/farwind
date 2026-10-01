@@ -4,6 +4,9 @@ export const items = {
   herb: { name: "药草", description: "两株药草与一份浆果可调制药剂。" },
   berry: { name: "浆果", description: "食用恢复 12 点生命。" },
   potion: { name: "恢复药剂", description: "恢复 50 点生命。" },
+  bread: { name: "麦香面包", description: "恢复20点生命与10点体力。适合短途补给。" },
+  tea: { name: "清叶茶", description: "恢复35点体力。生命已满也可使用。" },
+  soup: { name: "热蔬汤", description: "恢复20点生命与50点体力。适合长途前的补给。" },
   crystal: { name: "风之结晶", description: "叶灵留下的风，修复路标所需。" },
   ironSword: {
     name: "风杉铁剑",
@@ -29,6 +32,13 @@ export const objectives = [
 
 // 沿用旧素材；皮甲以物品文字展示，避免错误图标。
 export const itemIcon = (id: ItemId) =>
-  id === "leatherCoat"
+  ["bread", "tea", "soup"].includes(id)
+    ? `/assets/village-interiors/${id}.webp`
+    : id === "leatherCoat"
     ? null
     : `/assets/icon-${id === "ironSword" ? "sword" : id}.png`;
+
+export const consumables: Partial<Record<ItemId, { hp: number; stamina: number }>> = {
+  potion: { hp: 50, stamina: 0 }, berry: { hp: 12, stamina: 0 },
+  bread: { hp: 20, stamina: 10 }, tea: { hp: 0, stamina: 35 }, soup: { hp: 20, stamina: 50 },
+};

@@ -44,13 +44,15 @@ export class DefendersView {
       else if (now < r.flashUntil) pose = key === "archer" ? 6 : 5;
       else if (r.attack) pose = key !== "guard" ? now < r.attack.contact - 180 ? 1 : now < r.attack.contact ? 2 : 3
         : now < r.attack.contact ? 3 : 4;
-      else if (motion.speed > 0 && key === "guard") pose = 1 + Math.floor(motion.distance / 32) % 2;
       const row = facing === 1 ? 1 : facing >= 2 ? 2 : 0;
       const frame = key === "guard" ? row * 6 + pose : key === "vertical" ?
         (tower!.gateId === "south-gate" ? 4 : 0) + Math.min(pose,3) : pose;
       const data = art[key], f = data.frames[frame];
       const point = d.role === "archer" && !g.offDuty ? tower!.perch : g;
-      const walking = groundArcher ? npcWalkPose("archer", motion) : null;
+      const walking = groundArcher ? npcWalkPose("archer", motion)
+        : key === "guard" && motion.speed > 0
+          ? { texture: "defender-guard-walk", frame: row * 2 + Math.floor(motion.distance / 32) % 2 }
+          : null;
       Actor.mirror(view.sprite,walking ? motion.direction === 2 : key === "guard" && facing === 2 || key === "archer" && tower?.outward.x === -1);
       view.sprite.setTexture(walking?.texture ?? `defender-${key}`,walking?.frame ?? frame)
         .setOrigin(walking ? .5 : f.footX/f.w,walking ? NPC_WALK.footY/NPC_WALK.frameSize : f.footY/f.h)

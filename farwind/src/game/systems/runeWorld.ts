@@ -3,7 +3,7 @@ import {RuneCombat,type RuneEvent,type RuneTarget} from './runeCombat';
 import {RuneView} from '../entities/runeView';
 import {runeLock,runeSnapshot,acquisitionReady,type RuneRequest} from './runeState';
 import {RUNES,RETURN_RUNE,runeById} from '../../data/runes';
-import {STRIKES,attackConfig,sweepMove,type Attack} from './combat';
+import {STRIKES,attackConfig,sweepMove,isWindAttack,isMeleeFinisher,type Attack} from './combat';
 import {outgoingDamage} from './economy';
 import {resolveDamage,type DamageEvent} from './damage';
 import {enemyProtection} from './enemyTraits';
@@ -15,16 +15,17 @@ import {RETURN_WIND_ORB} from '../../data/economy';
 import {save} from './save';
 import {leaveRoom} from '../ui/npcLife';
 export class RuneWorld {
+ static preload(scene:import('phaser').Scene){RuneView.preload(scene);}
  engine:RuneCombat;view:RuneView;eligible=new Set<string>();space='';
  attacks=new Map<number,{base:number;A:number}>();returning?:{point:{x:number;y:number};start:number;committed:boolean;origin:{x:number;y:number};node:string};lastReturnNotice=0;
  constructor(public world:World){const w=world;this.engine=new RuneCombat({state:()=>w.state,targets:()=>w.combatTargets(),A:()=>outgoingDamage(w.state,STRIKES[0].damage),visible:e=>{const v=w.cameras.main.worldView;return e.x>=v.x-100&&e.x<=v.right+100&&e.y>=v.y-100&&e.y<=v.bottom+100;},clear:(a,b)=>clearMeleeLine(a,b),blocker:firstSwordWindBlocker,damage:(e,ev)=>this.damage(e,ev),push:(e,d,amount)=>{if(e.kind==='trainingDummy'||e.boss)return 'immune';const before={x:e.x,y:e.y};sweepMove(e,d.x*amount,d.y*amount,(x,y)=>w.blocked(x,y),clearMotionLine);return Math.hypot(e.x-before.x,e.y-before.y)<amount*.75?'wall':'moved';},sound:(family,phase,now)=>w.soundFx.rune(family,phase,now),checkpoint:()=>{void w.persist().catch(()=>{});}});w.enemyProjectiles.speedScale=shot=>1-this.engine.timeSlow({...shot,boss:shot.attack.boss});this.view=new RuneView(w,this.engine);this.reset();}
  reset(){this.engine.clear();this.engine.equipped='';this.engine.rebind();this.view.clear();this.attacks.clear();this.returning=undefined;this.space=this.world.state.life.playerSpace;this.eligible=new Set(RUNES.filter(r=>acquisitionReady(this.world.state,r)).map(r=>r.id));}
  clear(){this.engine.clear();this.view.clear();this.returning=undefined;this.attacks.clear();for(const e of [...this.world.enemies,...this.world.defense.enemies]){e.runeSlow=0;}}
- safety(){const w=this.world,p=w.state.player;return {combat:w.state.runes.peace<8000||[...w.enemies,...w.defense.enemies].some(e=>e.hp>0&&!e.disabled&&Math.hypot(e.x-p.x,e.y-p.y)<380&&clearMeleeLine(p,e)),boss:Object.values(w.state.encounters.groups).some(g=>g.boss?.stage==='battle'||g.boss?.stage==='warning'),defense:!!w.state.defense.raid,trial:!!w.lessons?.trial,story:w.ui.mode==='dialog',action:!!w.combat.attack||!!w.combat.parry||w.sim<w.combat.dashUntil};}
+ safety(){const w=this.world,p=w.state.player;return {combat:w.state.runes.peace<8000||[...w.enemies,...w.defense.enemies].some(e=>e.hp>0&&!e.disabled&&Math.hypot(e.x-p.x,e.y-p.y)<380&&clearMeleeLine(p,e)),boss:Object.values(w.state.encounters.groups).some(g=>g.boss?.stage==='battle'||g.boss?.stage==='warning'),defense:!!w.state.defense.raid,trial:!!w.lessons?.trial,story:w.ui.mode==='dialog',action:w.swordWind.winds.some(x=>!x.terminated)||this.engine.projectiles.length>0||this.engine.fields.length>0||this.engine.jobs.length>0||this.engine.traces.length>0||!!w.combat.attack||!!w.combat.parry||w.sim<w.combat.dashUntil};}
  lock(){return runeLock(this.safety());}
- async change(request:RuneRequest){const w=this.world;if(request.kind==='claim'&&request.shop&&w.target?.id!=='service-general')throw Error('请到风铃杂货铺购买符文。');await w.economy.run(()=>w.state,s=>runeSnapshot(s,request,this.safety()),save,next=>{w.publishState(next);this.engine.rebind();this.view.clear();});}
+ async change(request:RuneRequest){const w=this.world;const atGeneral=w.state.life.playerSpace==='village'?w.target?.id==='service-general':w.state.life.playerSpace==='general-shop'&&w.target?.id==='interior:general-shop:counter';if(request.kind==='claim'&&request.shop&&!atGeneral)throw Error('请到风铃杂货铺购买符文。');let saving=false;try{await w.economy.run(()=>w.state,s=>runeSnapshot(s,request,this.safety()),s=>{saving=true;return save(s);},next=>{w.publishState(next);w.ui.saved(next);this.engine.rebind();this.view.clear();});}catch(error){if(saving)w.ui.saveFailed(error);throw error;}}
  capture(attack:Attack){if(this.engine.has('r01')||this.engine.has('r27'))this.engine.fx('thunder-charge',this.world.state.player,28,this.engine.has('r27')?'r27':'r01',attackConfig(attack).windup+90);if(this.engine.has('r06'))this.engine.fx('moon',this.world.state.player,38,'r06',280);if(this.engine.has('r18'))this.engine.fx('wind-band',this.world.state.player,42,'r18',260);this.attacks.set(attack.id,{base:outgoingDamage(this.world.state,attackConfig(attack).damage),A:outgoingDamage(this.world.state,STRIKES[0].damage)});if(this.attacks.size>64)this.attacks.delete(this.attacks.keys().next().value!);}
- prepare(attack:Attack,target:RuneTarget,base?:number){const snapshot=this.attacks.get(attack.id),ev=this.engine.native(`attack:${attack.id}`,target,base??snapshot?.base??outgoingDamage(this.world.state,attackConfig(attack).damage),attack.stage,attack.stage===4||attack.delivery==='wind');if(snapshot)ev.A=snapshot.A;return ev;}
+ prepare(attack:Attack,target:RuneTarget,base?:number){const snapshot=this.attacks.get(attack.id),ev=this.engine.native(`attack:${attack.id}`,target,base??snapshot?.base??outgoingDamage(this.world.state,attackConfig(attack).damage),attack.stage,isWindAttack(attack),isMeleeFinisher(attack,this.world.combat.maxStage),attack.windLeg??'out');if(snapshot)ev.A=snapshot.A;return ev;}
  damage(e:RuneTarget,ev:RuneEvent){const w=this.world;
  if(e.kind==='trainingDummy'){w.float(e.x,e.y,`${ev.critical?'✧ ':''}${Math.round(ev.amount)}`);return {applied:true,damage:ev.amount,killed:false};}
  if(e.kind==='trainingProjection')return {applied:false,damage:0,killed:false};
@@ -37,7 +38,7 @@ export class RuneWorld {
  advance(delta:number){const w=this.world;if(this.space!==w.state.life.playerSpace){this.clear();this.space=w.state.life.playerSpace;}this.engine.advance(delta);
  for(const e of [...w.enemies,...w.defense.enemies]){e.runeSlow=this.engine.movementSlow(e);const slow=this.engine.timeSlow(e),delay=delta*slow;if(delay&&e.attack&&!e.attack.cancelled)delayEnemyAttack(e.attack,delay);if(delay&&e.cool>w.sim)e.cool+=delay;if(delay&&e.bossBattle&&e.bossBattle.nextAt>w.sim)e.bossBattle.nextAt+=delay;}
  }
- milestone(){const s=this.world.state;const earned=RUNES.filter(r=>r.acquisition.kind!=='shop'&&!this.eligible.has(r.id)&&acquisitionReady(s,r));for(const r of earned){this.eligible.add(r.id);if(!s.runes.owned.includes(r.id))s.runes.owned.push(r.id);}if(earned.length){this.world.ui.message(`获得符文：${earned.map(r=>r.name).join('、')}（R 查看）`);void this.world.persist().catch(()=>{});}}
+ milestone(){const s=this.world.state;const eligible=RUNES.filter(r=>r.acquisition.kind!=='shop'&&!this.eligible.has(r.id)&&acquisitionReady(s,r));const earned=eligible.filter(r=>!s.runes.owned.includes(r.id));for(const r of eligible)this.eligible.add(r.id);for(const r of earned)s.runes.owned.push(r.id);if(earned.length){this.world.ui.message(`获得符文：${earned.map(r=>r.name).join('、')}（R 查看）`);void this.world.persist().catch(()=>{});}return earned;}
  destination(){const w=this.world,s=w.state;const candidates=s.runes.nodes.map(id=>{const p=props.find(p=>p.id===id);return p?{id,point:{x:p.x,y:p.y+65}}:null;}).filter((p):p is NonNullable<typeof p>=>!!p&&this.validNode(p.id,p.point)).sort((a,b)=>Math.hypot(a.point.x-s.player.x,a.point.y-s.player.y)-Math.hypot(b.point.x-s.player.x,b.point.y-s.player.y));return candidates[0]??{id:'initial',point:{...RETURN_WIND_ORB.respawn}};}
  validNode(id:string,p:{x:number;y:number}){const w=this.world;return !motionBlocked(p.x,p.y)&&(id==='initial'||id==='waymark'&&w.state.shortcut&&w.state.runes.nodes.includes(id))&&![...w.enemies,...w.defense.enemies].some(e=>e.hp>0&&!e.disabled&&Math.hypot(e.x-p.x,e.y-p.y)<380);}
  cancelReturn(){this.returning=undefined;this.engine.effects=this.engine.effects.filter(f=>f.rune!==RETURN_RUNE.id);}
@@ -55,6 +56,6 @@ export class RuneWorld {
  this.view.draw();
  }
  alpha(){const r=this.returning;if(!r)return 1;const age=this.engine.now-r.start;if(r.committed)return Math.min(1,(age-1440)/480);return age<1200?1:Math.max(.08,1-(age-1200)/240);}
- snapshot(){return {...this.engine.snapshot(),lock:this.lock(),returning:this.returning,destination:this.destination()};}
+ snapshot(){return {...this.engine.snapshot(),visual:this.view.snapshot(),lock:this.lock(),returning:this.returning,destination:this.destination()};}
  destroy(){this.clear();this.view.destroy();}
 }

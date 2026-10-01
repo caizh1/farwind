@@ -1,35 +1,53 @@
-import {ENCOUNTERS,ENCOUNTER_LIMITS,encounterUnit} from "../../data/maps/windbell/encounters";
+import {ENCOUNTERS,ENCOUNTER_LIMITS,encounterUnit,LEGACY_ENCOUNTER_IDS,ENCOUNTER_COMPOSITION_VERSION} from "../../data/maps/windbell/encounters";
 import {creatureMaxHP,ARENA_STONES,type ArenaStoneId,type EliteKind} from "../../data/maps/windbell/elites";
 import {validOutdoorPoint} from "../../data/maps/windbell/bounds";
 import {type CampBossKind} from '../../data/maps/windbell/campBosses';
 import {initialCampBoss,validateCampBoss,type CampBossState} from './campBossState';
 import {enemyLeashRadius} from '../../data/enemyPursuit';
-export type EncounterMemberState={hp:number;x:number;y:number;serial:number;cooldown:number;defeated:boolean;drop:boolean;dropRemaining:number;participated:boolean;face:{x:number;y:number};guardOpen:number};
-export type EncounterGroupState={cycle:number;activated:boolean;cleared:boolean;cooldown:number;members:EncounterMemberState[];warning:number|null;boss?:CampBossState};
+export type EncounterMemberState={id:string;hp:number;x:number;y:number;serial:number;cooldown:number;defeated:boolean;drop:boolean;dropRemaining:number;participated:boolean;face:{x:number;y:number};guardOpen:number};
+export type EncounterGroupState={composition:number;cycle:number;activated:boolean;cleared:boolean;cooldown:number;members:EncounterMemberState[];warning:number|null;boss?:CampBossState};
 export type EncounterState={elapsed:number;broken:ArenaStoneId[];groups:Record<string,EncounterGroupState>};
-const member=(m:{type:string;elite?:EliteKind;boss?:CampBossKind;x:number;y:number}):EncounterMemberState=>({hp:creatureMaxHP(m.type,m.elite,m.boss),x:m.x,y:m.y,serial:0,cooldown:0,defeated:false,drop:false,dropRemaining:0,participated:false,face:{x:0,y:1},guardOpen:0});
-export const initialEncounters=():EncounterState=>({elapsed:0,broken:[],groups:Object.fromEntries(ENCOUNTERS.map(d=>[d.id,{cycle:0,activated:false,cleared:false,cooldown:0,warning:null,members:d.members.map(member),...d.kind==='camp'?{boss:initialCampBoss()}: {}}]))});
+const member=(m:{id:string;type:string;elite?:EliteKind;boss?:CampBossKind;x:number;y:number}):EncounterMemberState=>({id:m.id,hp:creatureMaxHP(m.type,m.elite,m.boss),x:m.x,y:m.y,serial:0,cooldown:0,defeated:false,drop:false,dropRemaining:0,participated:false,face:{x:0,y:1},guardOpen:0});
+export const initialEncounters=():EncounterState=>({elapsed:0,broken:[],groups:Object.fromEntries(ENCOUNTERS.map(d=>[d.id,{composition:ENCOUNTER_COMPOSITION_VERSION,cycle:0,activated:false,cleared:false,cooldown:0,warning:null,members:d.members.map(member),...d.kind==='camp'?{boss:initialCampBoss()}: {}}]))});
 export const campGuardsDefeated=(d:typeof ENCOUNTERS[number],g:EncounterGroupState)=>d.members.every((m,i)=>!!m.boss||g.members[i].defeated);
 
 // 仅结构升级调用：原成员槽位保持原值，历史已清据点明确继承，不伪造首领死亡。
 export function migrateCampBosses(s:EncounterState){
-  for(const d of ENCOUNTERS.filter(d=>d.kind==='camp')){const g=s.groups[d.id],boss=d.members.find(m=>m.boss)!;
-    if(!g||!Array.isArray(g.members)||![d.members.length-1,d.members.length].includes(g.members.length))throw Error('旧据点成员记录缺失，不能覆盖清剿进度。');
-    const historical=g.cleared;
-    if(historical&&!g.members.slice(0,d.members.length-1).every(u=>u.defeated&&u.hp===0))throw Error('旧据点清除记录不一致。');
-    if(g.members.length===d.members.length-1)g.members.push(member(boss));
-    g.boss??=initialCampBoss();if(historical){g.members[g.members.length-1]=member(boss);Object.assign(g.boss,{stage:'legacy',warning:0,away:0,combat:null});}
-    else if(campGuardsDefeated(d,g)&&g.boss.stage==='guards'){g.boss.stage='warning';g.boss.warning=2500;g.activated=true;}
+  for(const d of ENCOUNTERS.filter(d=>d.kind==='camp')){const g=s.groups[d.id],boss=d.members.find(m=>m.boss)!,legacy=LEGACY_ENCOUNTER_IDS[d.id];
+    if(!g||!Array.isArray(g.members))throw Error('旧据点成员记录缺失，不能覆盖清剿进度。');
+    if(g.composition===undefined){
+      if(![legacy.length-1,legacy.length].includes(g.members.length))throw Error('旧据点成员记录缺失，不能覆盖清剿进度。');
+      if(g.members.length===legacy.length-1)g.members.push(member(boss));
+    }
+    if(g.composition===ENCOUNTER_COMPOSITION_VERSION&&g.members.length===d.members.length-1&&g.members.every((u,i)=>u.id===d.members[i].id))g.members.push(member(boss));
+    const historical=g.cleared;g.boss??=initialCampBoss();
+    if(historical){const i=g.composition===undefined?legacy.indexOf(boss.id):d.members.findIndex(m=>m.boss);if(g.members.some((u,n)=>n!==i&&(!u.defeated||u.hp!==0)))throw Error('旧据点清除记录不一致。');g.members[i]=member(boss);Object.assign(g.boss,{stage:'legacy',warning:0,away:0,combat:null});}
+  }
+  migrateEncounterComposition(s);
+  for(const d of ENCOUNTERS.filter(d=>d.kind==='camp')){const g=s.groups[d.id];
+    if(!g.cleared&&campGuardsDefeated(d,g)&&g.boss!.stage==='guards'){g.boss!.stage='warning';g.boss!.warning=2500;g.activated=true;}
+  }
+  return s;
+}
+// 已激活的旧批次不加入新敌人；新增槽位记为本批次不参战，后续合法重生才出现。
+export function migrateEncounterComposition(s:EncounterState){
+  for(const d of ENCOUNTERS){const g=s.groups?.[d.id];if(!g||g.composition!==undefined)continue;
+    const ids=LEGACY_ENCOUNTER_IDS[d.id];
+    if(!Array.isArray(g.members)||g.members.length!==ids.length||g.members.some((u,i)=>u.id!==undefined&&u.id!==ids[i]))throw Error('旧遭遇成员身份不一致，不能覆盖进度。');
+    const old=new Map(g.members.map((u,i)=>[ids[i],{...u,id:ids[i]}]));
+    g.members=d.members.map(m=>old.get(m.id)??{...member(m),...g.activated?{hp:0,defeated:true}: {}});
+    g.composition=ENCOUNTER_COMPOSITION_VERSION;
   }
   return s;
 }
 export function validateEncounters(raw:unknown):EncounterState{
  const s=structuredClone(raw) as EncounterState;
+ migrateEncounterComposition(s);
  const n=(v:unknown,max:number)=>typeof v==="number"&&Number.isFinite(v)&&v>=0&&v<=max;
  const fail=()=>{throw Error("荒野遭遇存档无效，上一份有效存档仍保留。");};
  if(!s||!n(s.elapsed,1e12)||!s.groups||Object.keys(s.groups).length!==ENCOUNTERS.length||!Array.isArray(s.broken)||new Set(s.broken).size!==s.broken.length||s.broken.some(id=>!ARENA_STONES.some(p=>p.id===id)))fail();
  for(const d of ENCOUNTERS){const g=s.groups[d.id];
-  if(!g||!Number.isSafeInteger(g.cycle)||!n(g.cycle,1e9)||typeof g.activated!=="boolean"||typeof g.cleared!=="boolean"||!n(g.cooldown,d.cooldownMs)||!Array.isArray(g.members)||g.members.length!==d.members.length)fail();
+  if(!g||g.composition!==ENCOUNTER_COMPOSITION_VERSION||!Number.isSafeInteger(g.cycle)||!n(g.cycle,1e9)||typeof g.activated!=="boolean"||typeof g.cleared!=="boolean"||!n(g.cooldown,d.cooldownMs)||!Array.isArray(g.members)||g.members.length!==d.members.length)fail();
   if(g.warning!==null&&(!d.after||g.activated||!n(g.warning,2500)||!s.groups[d.after]?.cleared))fail();
   if(d.kind==='camp'){
    g.boss=validateCampBoss(g.boss,d.members.find(m=>m.boss)!.id);
@@ -39,12 +57,12 @@ export function validateEncounters(raw:unknown):EncounterState{
   for(const [i,u] of g.members.entries()){
    // 额外余量容纳边缘受击后撤，坐标仍受室外边界及有限活动范围校验。
    const savedRadius=enemyLeashRadius({...d.members[i],leashRadius:d.radius})+100;
-   if(!u||!n(u.hp,creatureMaxHP(d.members[i].type,d.members[i].elite,d.members[i].boss))||!validOutdoorPoint(u)||Math.hypot(u.x-d.members[i].x,u.y-d.members[i].y)>savedRadius||!Number.isSafeInteger(u.serial)||!n(u.serial,1e9)||!n(u.cooldown,10000)||typeof u.defeated!=="boolean"||u.defeated!==(u.hp===0)||typeof u.drop!=="boolean"||!n(u.dropRemaining,ENCOUNTER_LIMITS.dropLifetimeMs)||u.drop!==(u.dropRemaining>0)||u.drop&&!u.defeated||typeof u.participated!=="boolean"||!u.face||!Number.isFinite(u.face.x)||!Number.isFinite(u.face.y)||Math.abs(Math.hypot(u.face.x,u.face.y)-1)>.001||!n(u.guardOpen,1200))fail();
+   if(!u||u.id!==d.members[i].id||!n(u.hp,creatureMaxHP(d.members[i].type,d.members[i].elite,d.members[i].boss))||!validOutdoorPoint(u)||Math.hypot(u.x-d.members[i].x,u.y-d.members[i].y)>savedRadius||!Number.isSafeInteger(u.serial)||!n(u.serial,1e9)||!n(u.cooldown,10000)||typeof u.defeated!=="boolean"||u.defeated!==(u.hp===0)||typeof u.drop!=="boolean"||!n(u.dropRemaining,ENCOUNTER_LIMITS.dropLifetimeMs)||u.drop!==(u.dropRemaining>0)||u.drop&&!u.defeated||typeof u.participated!=="boolean"||!u.face||!Number.isFinite(u.face.x)||!Number.isFinite(u.face.y)||Math.abs(Math.hypot(u.face.x,u.face.y)-1)>.001||!n(u.guardOpen,1200))fail();
   }
   if(g.cleared!==(g.members.every(u=>u.defeated)||g.boss?.stage==='legacy')||!g.activated&&(g.cycle!==0||g.cleared||g.cooldown>0||g.members.some((u,i)=>u.hp!==creatureMaxHP(d.members[i].type,d.members[i].elite,d.members[i].boss)||u.defeated||u.drop||u.participated||u.x!==d.members[i].x||u.y!==d.members[i].y||u.serial!==0||u.cooldown!==0)))fail();
  }
  if(s.broken.length&&!s.groups["north-rock-arena"].activated)fail();
- return {elapsed:s.elapsed,broken:[...s.broken],groups:Object.fromEntries(ENCOUNTERS.map(d=>{const g=s.groups[d.id];return [d.id,{cycle:g.cycle,activated:g.activated,cleared:g.cleared,cooldown:g.cooldown,warning:g.warning,...g.boss?{boss:g.boss}:{},members:g.members.map(u=>({hp:u.hp,x:u.x,y:u.y,serial:u.serial,cooldown:u.cooldown,defeated:u.defeated,drop:u.drop,dropRemaining:u.dropRemaining,participated:u.participated,face:{...u.face},guardOpen:u.guardOpen}))}];}))};
+ return {elapsed:s.elapsed,broken:[...s.broken],groups:Object.fromEntries(ENCOUNTERS.map(d=>{const g=s.groups[d.id];return [d.id,{composition:g.composition,cycle:g.cycle,activated:g.activated,cleared:g.cleared,cooldown:g.cooldown,warning:g.warning,...g.boss?{boss:g.boss}:{},members:g.members.map(u=>({id:u.id,hp:u.hp,x:u.x,y:u.y,serial:u.serial,cooldown:u.cooldown,defeated:u.defeated,drop:u.drop,dropRemaining:u.dropRemaining,participated:u.participated,face:{...u.face},guardOpen:u.guardOpen}))}];}))};
 }
 export function unitState(s:EncounterState,id:string){const d=encounterUnit(id);if(!d)return;const group=ENCOUNTERS.find(g=>g.id===d.group)!;return s.groups[d.group].members[group.members.findIndex(m=>m.id===id)];}
 export const campCleared=(s:EncounterState,id:string)=>ENCOUNTERS.some(d=>d.id===id&&d.kind==="camp")&&s.groups[id].cleared;

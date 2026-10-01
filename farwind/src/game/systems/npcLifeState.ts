@@ -638,10 +638,10 @@ export function validateLife(raw: unknown, time: number): LifeState {
       ([space, t]) => isSpace(space) && space !== "village" && num(t, 1e9),
     ) ||
     !l.observed ||
-    Object.keys(l.observed).length > 12 ||
+    Object.keys(l.observed).length > PEOPLE.length ||
     !Object.entries(l.observed).every(
       ([id, o]) =>
-        subject(id) &&
+        PEOPLE.some((p) => p.id === id) &&
         o &&
         num(o.time, time) &&
         text(o.label) &&

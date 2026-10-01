@@ -3,11 +3,11 @@ import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 
 // 仅整理生成原画的透明留白、尺寸与编码，不绘制或替换原画内容。
-const directory='docs/runes/painted-icons';
+const directory=process.argv[2]??'docs/runes/painted-icons';
 const destination='public/assets/runes/painted';
 const input=JSON.parse(await readFile(`${directory}/sources.json`,'utf8'));
-const expected=[...Array.from({length:30},(_,i)=>`r${String(i+1).padStart(2,'0')}`),'return-wind'];
-if(input.图片.length!==31||expected.some(id=>input.图片.filter(a=>a.符文===id).length!==1))throw Error('必须有三十一份独立原画且符文编号不重复');
+const expected=directory==='docs/combat-build/rune-art'?['r31','r32','r33']:[...Array.from({length:30},(_,i)=>`r${String(i+1).padStart(2,'0')}`),'return-wind'];
+if(input.图片.length!==expected.length||expected.some(id=>input.图片.filter(a=>a.符文===id).length!==1))throw Error(`必须有${expected.length}份独立原画且符文编号不重复`);
 await mkdir(destination,{recursive:true});
 const records=[];
 for(const item of input.图片){
@@ -32,5 +32,5 @@ for(const item of input.图片){
   原图尺寸:[info.width,info.height],裁剪范围:region,原图哈希:createHash('sha256').update(original).digest('hex'),
   正式图片哈希:createHash('sha256').update(webp).digest('hex'),字节:webp.length});
 }
-await writeFile(`${directory}/manifest.json`,JSON.stringify({说明:'三十一枚正式手绘位图；仅裁除透明留白、统一尺寸并编码。原画形体、笔触与光感未由代码重绘。',图片:records,总字节:records.reduce((sum,r)=>sum+r.字节,0)},null,2));
-console.log(JSON.stringify({结果:'三十一枚透明手绘图标整理完成',数量:records.length,总字节:records.reduce((sum,r)=>sum+r.字节,0)}));
+await writeFile(`${directory}/manifest.json`,JSON.stringify({说明:`${records.length}枚手绘位图；仅裁除透明留白、统一尺寸并编码。原画形体、笔触与光感未由代码重绘。`,图片:records,总字节:records.reduce((sum,r)=>sum+r.字节,0)},null,2));
+console.log(JSON.stringify({结果:'透明手绘图标整理完成',数量:records.length,总字节:records.reduce((sum,r)=>sum+r.字节,0)}));

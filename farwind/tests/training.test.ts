@@ -60,7 +60,7 @@ describe("训练对象共享战斗链", () => {
     b.c.requestAttack(300);
     b.tick(260, 1200);
     expect(b.events).toEqual([1, 2, 3]);
-    expect(b.t.damage).toBe(STRIKES.reduce((n, s) => n + s.damage, 0));
+    expect(b.t.damage).toBe(STRIKES.slice(0,3).reduce((n, s) => n + s.damage, 0));
     expect(b.t.damage).toBe(68);
     expect(b.t.snapshot(1200).complete).toBe(true);
     expect(b.c.hitStopRemaining).toBe(58);

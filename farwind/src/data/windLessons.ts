@@ -18,51 +18,52 @@ export const WIND_LESSONS = [
     x: 1380,
     y: 1500,
     stand: { x: 1310, y: 1400 },
-    hint: "在南侧木桥边读教本，面向北方，以三连斩后的第四击触动水面风铃。",
-    next: "森林溪边的两枚旧风铃，仍在等待同一股风。",
+    hint: "在南侧木桥边读教本，面向北方，按 I／鼠标中键独立送风，触动水面风铃。",
+    next: "西门外旧农庄的两枚铜铃，被藤蔓缠住了铃绳。",
   },
   {
     id: LESSON_IDS[1],
     stage: 2,
     name: "两铃相继",
-    source: "森林串联风铃",
-    x: 2460,
-    y: 900,
-    stand: { x: 2460, y: 920 },
-    hint: "观察两铃之间的风痕，调整旁路，让自然风先后经过两枚风铃。",
-    next: "沿森林北侧的细长风痕，寻找中途泄散的风。",
+    source: "西部旧农庄的串联风铃",
+    x: -600,
+    y: 1780,
+    stand: { x: -600, y: 1720 },
+    hint: "西门外旧农庄，藤蔓缠住了第一枚铃。解开铃绳，看同一阵风先后吹响两枚铜铃。",
+    next: "北门外山口的听风径，落枝挡住了远铃的风。",
   },
   {
     id: LESSON_IDS[2],
     stage: 3,
     name: "长风不息",
-    source: "森林长风道",
-    x: 2920,
-    y: 830,
-    stand: { x: 2890, y: 830 },
-    hint: "顺着连续风痕寻找裂开的导风口，封闭泄口，让气流一直流到尽头。",
-    next: "遗迹南侧的扩流风口，可以把细风展开。",
+    source: "北部山口的听风径",
+    x: 550,
+    y: -335,
+    stand: { x: 550, y: -400 },
+    hint: "北门外山口，落枝挡住了铃间的小径。清走落枝，看风一路吹响三枚铜铃。",
+    next: "南门外田野的双铃架，相隔很远，等待一股展开的风。",
   },
   {
     id: LESSON_IDS[3],
     stage: 4,
     name: "展风于野",
-    source: "遗迹扩流装置",
-    x: 3610,
-    y: 1175,
-    stand: { x: 3610, y: 1110 },
-    hint: "在铺垫处面向北方，试用宽幅剑风，一次触动远处左右两枚风铃；右侧另有窄通道对照。",
-    next: "遗迹东侧的分流庭，记着一风三向的传承。",
+    source: "南部田野的双铃架",
+    x: 1900,
+    y: 2465,
+    stand: { x: 1900, y: 2400 },
+    hint: "南门外田野，两枚铜铃分挂在左右。站上浅色铺垫，面向北方，按 I，让独立施放的宽幅剑风同时吹响它们。",
+    next: "远端风之遗迹的分流庭，两面歪倒的风帆挡住了左右铜铃。",
   },
   {
     id: LESSON_IDS[4],
     stage: 5,
     name: "一风三向",
-    source: "遗迹三向分流庭",
-    x: 3910,
-    y: 1095,
-    stand: { x: 3910, y: 1050 },
-    hint: "中央风道已经连通；分别把左右分流闸导向左前与右前，让三枚风铃同时回应。",
+    source: "远端遗迹的三向分流庭",
+    x: 3870,
+    y: -355,
+    // 独立剑风不再借前三刀前移；宽剑风起点须离开教本实体膨胀边界。
+    stand: { x: 3910, y: -430 },
+    hint: "远端遗迹，中央铜铃正随风摆动。扶正左右两面风帆，让风也吹到两侧的铃；三铃齐响时记录这段传承。",
     next: "已经掌握三向疾风斩。继续在真实旅途中尝试新的解法。",
   },
 ] as const;
@@ -84,7 +85,11 @@ export const WIND_EFFECTS = [
   "贯通风刃更宽、更远：宽64，距离420",
   "一次释放三道疾风，左右各偏30°，同一敌人只受击一次",
 ] as const;
+export const BUILD_LESSONS=['melee','finisher','wind-advance','resume-advance'] as const;
+export type BuildLesson=(typeof BUILD_LESSONS)[number];
 export type SkillState = {
+  meleeFinisher:boolean;
+  buildLessons:BuildLesson[];
   swordWindStage: SwordWindStage;
   completedLessons: LessonId[];
   discoveredLessons: LessonId[];
@@ -97,6 +102,7 @@ export type SkillState = {
   };
 };
 export const initialSkills = (): SkillState => ({
+  meleeFinisher:false,buildLessons:[],
   swordWindStage: 0,
   completedLessons: [],
   discoveredLessons: [],
@@ -121,26 +127,15 @@ export const lessonProps: Prop[] = WIND_LESSONS.map((l) => ({
 }));
 lessonProps.push({
   id: "lesson-through-barrier",
-  x: 3220,
-  y: 1220,
+  x: WIND_LESSONS[2].stand.x+330,
+  y: WIND_LESSONS[2].stand.y+40,
   w: 32,
   h: 132,
   art: "rock",
   solid: [24, 120],
   label: "长风道尽头石障",
 });
-
-for (const [side, x] of [
-  ["left", 3675],
-  ["right", 3725],
-] as const)
-  lessonProps.push({
-    id: `lesson-wide-channel-${side}`,
-    x,
-    y: 1070,
-    w: 22,
-    h: 68,
-    art: "rock",
-    solid: [12, 40],
-    label: "扩流窄道石柱",
-  });
+for(const [side,dx] of [['left',-70],['right',70]] as const)lessonProps.push({
+  id:`lesson-sail-${side}`,x:WIND_LESSONS[4].stand.x+dx,y:WIND_LESSONS[4].stand.y,
+  w:22,h:72,art:'wind-chime-ribbon',ground:false,kind:'sign',label:`扶正${side==='left'?'左':'右'}侧风帆`,
+});

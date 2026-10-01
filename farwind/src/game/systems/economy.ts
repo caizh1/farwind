@@ -4,13 +4,18 @@ import {
   shops,
   salePrices,
   MAX_COINS,
+  initialStock,
+  stackLimit,
   type ShopId,
   type EquipmentSlot,
 } from "../../data/economy";
-import { items, type ItemId } from "../../data/content";
-import { add, remove, craft, validate, type State } from "./state";
+import { items, consumables, type ItemId } from "../../data/content";
+import { add, remove, craft, count, validate, type State } from "./state";
 import {sleepSnapshot,type SleepSafety} from "./sleep";
 export type EconomyRequest = { sequence: number } & (
+  | { kind: "craft" }
+  | { kind: "restock" }
+  | { kind: "consume"; item: ItemId }
   | { kind: "buy" | "sell"; shop: ShopId; item: ItemId; quantity: number }
   | { kind: "exchange"; shop: ShopId; quantity: number }
   | { kind: "rest"; shop: ShopId; quantity: number }
@@ -31,10 +36,26 @@ export function economySnapshot(state: State, request: EconomyRequest, safety?:S
     if(request.shop!=="inn"||request.quantity!==1)fail("住宿服务无效。");
     return sleepSnapshot(state,request.sequence,safety!);
   }
-  if (!["buy", "sell", "exchange", "rest", "equip"].includes(request.kind))
+  if (!["craft", "buy", "sell", "exchange", "rest", "equip", "restock", "consume"].includes(request.kind))
     fail("交易类型无效。");
   const next = validate(state);
-  if (request.kind === "equip") {
+  if (request.kind === "restock") {
+    const day = Math.floor(next.time / 1440);
+    if (day <= next.shopStockDay) fail("今天的库存已经补齐。");
+    for (const [key, stock] of Object.entries(initialStock())) next.shopStock[key] = Math.max(next.shopStock[key], stock);
+    next.shopStockDay = day;
+  } else if (request.kind === "consume") {
+    const effect = consumables[request.item];
+    if (!effect) fail("这件物品不能食用或饮用。");
+    if ((effect.hp === 0 || next.player.hp >= 100) && (effect.stamina === 0 || next.player.stamina >= 100)) fail("状态充足，暂时不用消耗物品。");
+    if (!remove(next, request.item, 1)) fail("行囊里没有这个物品。");
+    next.player.hp = Math.min(100, next.player.hp + effect.hp);
+    next.player.stamina = Math.min(100, next.player.stamina + effect.stamina);
+  } else if (request.kind === "craft") {
+    if (count(next, "herb") < 2 || count(next, "berry") < 1)
+      fail("需要药草×2、浆果×1；未扣材料。");
+    if (!craft(next)) fail("行囊没有成品空间，请腾出一格；未扣材料。");
+  } else if (request.kind === "equip") {
     const { item, slot } = request;
     if (slot !== "weapon" && slot !== "armor") fail("装备栏位无效。");
     if (item !== null && (!isEquipment(item) || equipment[item].slot !== slot))
@@ -128,4 +149,16 @@ export function incomingDamage(state: State, base: number) {
     1,
     base - (state.equipment.armor ? equipment[state.equipment.armor].bonus : 0),
   );
+}
+
+// 预览上限与事务仍各自验证；交易后再次按权威状态校验，不信任界面数量。
+export function maxTradeQuantity(state: State, shop: ShopId, item: ItemId, selling = false) {
+  const stock = state.shopStock[`${shop}:${item}`] ?? 0;
+  if(selling&&(shop!=="general"||salePrices[item]===undefined))return 0;
+  if (selling) return Math.max(0, Math.min(99, count(state, item), 9999 - stock, Math.floor((MAX_COINS - state.coins) / (salePrices[item] ?? MAX_COINS))));
+  const price = (shops[shop].goods as Partial<Record<ItemId, number>>)[item];
+  if (!price) return 0;
+  const limit = stackLimit(item);
+  const capacity = state.bag.reduce((sum, slot) => sum + (!slot ? limit : slot.id === item ? limit - slot.count : 0), 0);
+  return Math.max(0, Math.min(99, stock, capacity, Math.floor(state.coins / price)));
 }
