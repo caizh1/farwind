@@ -14,6 +14,9 @@ function lightning(g:RuneInk,x:number,y:number,r:number,_c:string,alpha:number,s
 export function paintRuneFx(g:RuneInk,f:RuneFx,now:number,simple=false,lowFlash=false){
  if(paintElementFx(g,f,now,simple,lowFlash))return;
  const age=now-f.born;if(age<0||age>=f.life)return;const u=age/f.life,alpha=Math.min(1,age/50)*(1-u)*(lowFlash&&/fork|jolt|thunder|storm|phoenix/.test(f.visual)?.62:1),c=runeById(f.rune)?.color??'#a5e1d1',gold='#ead7a3',white='#e8f3de',r=f.radius,x=f.point.x,y=f.point.y,v=f.visual,count=simple?5:9;
+ if(v==='wind-focus'){for(let i=0;i<3;i++)g.line(x-r*.8,y-r*.55+i*8,x+r*.8,y+r*.3+i*2,white,alpha,3-i*.6);return;}
+ if(v==='wind-connect'&&f.end){g.ellipse(x,y,18*(1-u),18*(1-u),white,alpha,2);g.ellipse(f.end.x,f.end.y,18*(1-u),18*(1-u),white,alpha,2);return;}
+ if(v==='tide-ring'){g.ellipse(x,y,r*u,r*u,c,alpha,3);g.ellipse(x,y,r*u*.88,r*u*.88,white,alpha*.6,1.5);return;}
  if(v==='wind-turbulence'){
   g.ellipse(x,y,r*(.3+u*.7),r*(.3+u*.7)*.55,c,alpha,2.5);
   for(let i=0;i<3;i++){const points=Array.from({length:12},(_,j)=>point(x,y,r*(.1+j/15)*(1-u*.6),i*2.094+j*.35+u*3));g.path(points,white,alpha,2);}
@@ -70,6 +73,16 @@ export function paintRuneProjectile(g:RuneInk,p:import('../systems/runeCombat').
  else if(p.kind==='seeking'){const d=p.direction,n={x:-d.y,y:d.x};g.line(p.previous.x,p.previous.y-25,x,y-25,'#c3d9ae',.65,1.6);g.path([[x-d.x*28-n.x*3,y-25-d.y*28-n.y*3],[x+d.x*12,y-25+d.y*12],[x-d.x*28+n.x*3,y-25-d.y*28+n.y*3],[x-d.x*28-n.x*3,y-25-d.y*28-n.y*3]],'#e1eacb',.9,1.7,true);g.line(x-d.x*20-n.x*9,y-25-d.y*20-n.y*9,x-d.x*20+n.x*9,y-25-d.y*20+n.y*9,'#e9d6a5',.8,2);}
  else paintWaveCrest(g,x,y,p.radius,a,(now-p.born)/400,p.kind==='phantom'?.55:.9,engine.duo('d01')&&p.kind==='wave',settings.simple);
 }
+// 风痕与风带的世界和详情预览共用同一几何表现。
+export function paintWindTraces(g:RuneInk,engine:RuneCombat){const now=engine.now;
+ for(const t of engine.traces){
+  const age=now-(t.until-engine.cfg('r32').duration),alpha=Math.max(.15,Math.min(.85,(t.until-now)/1000));
+  if(age<240)g.ellipse(t.point.x,t.point.y,32-age/24,20-age/40,'#eff4ce',1-age/300,2);
+  g.ellipse(t.point.x,t.point.y,26,14,'#d3e9a1',alpha,2);
+  g.path([[t.point.x-17,t.point.y+2],[t.point.x-5,t.point.y-6],[t.point.x+15,t.point.y-3]],'#eff4ce',alpha,2.4);
+ }
+ for(const b of engine.bands){const a=Math.min(1,(now-b.born)/90)*Math.min(.65,(b.until-now)/220);g.line(b.point.x,b.point.y,b.end.x,b.end.y,'#afce9c',a*.22,b.width);for(const end of [b.point,b.end])g.ellipse(end.x,end.y,b.width/2,b.width/2,'#afce9c',a*.22,1,true);g.line(b.point.x,b.point.y,b.end.x,b.end.y,'#e6edc1',a,2);g.ellipse(b.point.x,b.point.y,5,5,'#e6edc1',a,1.5);g.ellipse(b.end.x,b.end.y,5,5,'#e6edc1',a,1.5);}
+}
 export class RuneView {
  ground:Phaser.GameObjects.Graphics;body:Phaser.GameObjects.Graphics;marks:Phaser.GameObjects.Graphics;
  private art:Phaser.GameObjects.Image[]=[];private used=0;
@@ -79,11 +92,7 @@ export class RuneView {
  constructor(scene:Phaser.Scene,public engine:RuneCombat){this.ground=scene.add.graphics().setDepth(WORLD.top-900);this.body=scene.add.graphics().setDepth(8989);this.marks=scene.add.graphics().setDepth(8991);}
  draw(){const engine=this.engine,now=engine.now,settings=engine.state.runes.settings;this.ground.clear();this.body.clear();this.marks.clear();this.used=0;const g=graphicsInk(this.body),ground=graphicsInk(this.ground),marks=graphicsInk(this.marks);g.stamp=this.stamp;
  for(const f of engine.effects){const floor=/mist|void|time/.test(f.visual)&&f.lead===undefined;const feet=/fork|thunder|jolt|phoenix|cloud|storm|wave|breaker|mirror-sea|mist|void|seed|time|domain|wind/.test(f.visual);paintRuneFx(floor?ground:g,{...f,point:{x:f.point.x,y:f.point.y-(feet?0:22)}},now,settings.simple,settings.lowFlash);}
- for(const t of engine.traces){
-  const alpha=Math.max(.15,Math.min(.85,(t.until-now)/1000));
-  ground.ellipse(t.point.x,t.point.y,26,14,'#d3e9a1',alpha,2);
-  ground.path([[t.point.x-17,t.point.y+2],[t.point.x-5,t.point.y-6],[t.point.x+15,t.point.y-3]],'#eff4ce',alpha,2.4);
- }
+ paintWindTraces(ground,engine);
  for(const p of engine.projectiles)paintRuneProjectile(g,p,engine);
  for(const e of engine.ctx.targets()){const s=engine.statuses.get(e.id);if(!s||e.hp<=0)continue;if(s.chill)for(let i=0;i<s.chill.stacks;i++)feather(marks,e.x,e.y,21,'#bce9f3',.85,i*1.256-1.57);
  if(s.poison)for(let i=0;i<s.poison.stacks;i++){const a=i*Math.PI*2/Math.max(8,s.poison.stacks),x=e.x+Math.cos(a)*25,y=e.y-20+Math.sin(a)*15;marks.ellipse(x,y,3,3,i>=8?'#e9b0c2':'#c4a0d9',.9,1);if(i>=8){feather(marks,x,y,8,'#e9b0c2',.85,-1.8);feather(marks,x,y,8,'#e9b0c2',.85,-1.3);}}

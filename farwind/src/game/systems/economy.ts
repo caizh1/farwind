@@ -1,3 +1,4 @@
+import {catCareGain} from './catBond';
 import {
   equipment,
   isEquipment,
@@ -12,6 +13,7 @@ import {
 import { items, consumables, type ItemId } from "../../data/content";
 import { add, remove, craft, count, validate, type State } from "./state";
 import {sleepSnapshot,type SleepSafety} from "./sleep";
+import { playerVitals } from './journeyTraining';
 export type EconomyRequest = { sequence: number } & (
   | { kind: "craft" }
   | { kind: "restock" }
@@ -39,6 +41,7 @@ export function economySnapshot(state: State, request: EconomyRequest, safety?:S
   if (!["craft", "buy", "sell", "exchange", "rest", "equip", "restock", "consume"].includes(request.kind))
     fail("交易类型无效。");
   const next = validate(state);
+  const { maxHp, maxStamina } = playerVitals(next);
   if (request.kind === "restock") {
     const day = Math.floor(next.time / 1440);
     if (day <= next.shopStockDay) fail("今天的库存已经补齐。");
@@ -47,17 +50,17 @@ export function economySnapshot(state: State, request: EconomyRequest, safety?:S
   } else if (request.kind === "consume") {
     const effect = consumables[request.item];
     if (!effect) fail("这件物品不能食用或饮用。");
-    if ((effect.hp === 0 || next.player.hp >= 100) && (effect.stamina === 0 || next.player.stamina >= 100)) fail("状态充足，暂时不用消耗物品。");
+    if ((effect.hp === 0 || next.player.hp >= maxHp) && (effect.stamina === 0 || next.player.stamina >= maxStamina)) fail("状态充足，暂时不用消耗物品。");
     if (!remove(next, request.item, 1)) fail("行囊里没有这个物品。");
-    next.player.hp = Math.min(100, next.player.hp + effect.hp);
-    next.player.stamina = Math.min(100, next.player.stamina + effect.stamina);
+    next.player.hp = Math.min(maxHp, next.player.hp + effect.hp);
+    next.player.stamina = Math.min(maxStamina, next.player.stamina + effect.stamina);
   } else if (request.kind === "craft") {
     if (count(next, "herb") < 2 || count(next, "berry") < 1)
       fail("需要药草×2、浆果×1；未扣材料。");
     if (!craft(next)) fail("行囊没有成品空间，请腾出一格；未扣材料。");
   } else if (request.kind === "equip") {
     const { item, slot } = request;
-    if (slot !== "weapon" && slot !== "armor" && slot !== "head") fail("装备栏位无效。");
+    if (slot !== "weapon" && slot !== "armor" && slot !== "head" && slot !== "feet") fail("装备栏位无效。");
     if (item !== null && (!isEquipment(item) || equipment[item].slot !== slot))
       fail("装备与栏位不匹配。");
     if (next.equipment[slot] === item) fail("已经穿戴这件装备。");
@@ -80,11 +83,12 @@ export function economySnapshot(state: State, request: EconomyRequest, safety?:S
     } else if (request.kind === "rest") {
       if (request.shop !== "inn" || request.quantity !== 1)
         fail("旅馆服务无效。");
-      if (next.player.hp === 100 && next.player.stamina === 100)
+      if (next.player.hp === maxHp && next.player.stamina === maxStamina)
         fail("生命与体力已满，无需花费。");
       if (next.coins < 12) fail("金币不足，休息需要12枚。");
       next.coins -= 12;
-      next.player.hp = next.player.stamina = 100;
+      next.player.hp = maxHp; next.player.stamina = maxStamina;
+      catCareGain(next.catBond,'rest',next.time);
     } else {
       if (!Object.hasOwn(items, request.item)) fail("物品不存在。");
       const key = `${request.shop}:${request.item}`;
@@ -150,6 +154,11 @@ export function incomingDamage(state: State, base: number) {
     1,
     base - (state.equipment.armor ? equipment[state.equipment.armor].bonus : 0),
   );
+}
+
+// 鞋子只加速正常行走与奔跑；风步、架剑、受伤及攻击动作沿用各自速度。
+export function movementSpeed(state: State, base: number) {
+  return base * (1 + (state.equipment.feet === "windBoots" ? equipment.windBoots.speedBonus : 0));
 }
 
 // 预览上限与事务仍各自验证；交易后再次按权威状态校验，不信任界面数量。

@@ -32,7 +32,7 @@ test('DEMON-KING-01',async({page})=>{
  await page.keyboard.press('Escape');await page.getByRole('button',{name:'保存旅途',exact:true}).click();await expect(page.locator('#toast')).toContainText('已保存');
  await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().mode==='');
  const restored=(await read(page)).state;expect(restored.schema_version).toBe(14);expect(restored.demonKing.introduced).toBe(true);expect(demonMalice(restored.encounters)).toBe(1);expect(restored.fieldQuests['south-supply']).toBe('complete');
- await expect(page.locator('#demon-king-summary')).toContainText('？？？ · 恶意 1');await snap('读档保留恶意和初见消费','reloaded');
+ await expect(page.locator('#demon-king-summary')).toContainText('恶意 1');await expect(page.locator('#demon-king-summary')).toHaveAttribute('title',/？？？ · 恶意 1/);await snap('读档保留恶意和初见消费','reloaded');
  await move(page,1685,1680);await page.waitForFunction(()=>(window as any).__farwind().state.time%1440>=1140,{},{timeout:600000});
  await page.waitForFunction(()=>(window as any).__farwind().target==='service-inn');await page.keyboard.press('e');
  await page.locator('[data-flow="sleep"]').click();await page.locator('#shop-review').click();await page.locator('#shop-confirm').click();await expect(page.locator('#shop-feedback')).toContainText('已完成');await page.locator('#close').click();

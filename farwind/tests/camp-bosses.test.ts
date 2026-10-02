@@ -107,7 +107,7 @@ describe('四据点首领清除与恢复',()=>{
  it('旧13档保留历史清除、奖励、恶意和在途状态；未清档追加首领',()=>{
   const old:any=initialState();old.schema_version=13;old.coins=144;
   for(const d of ENCOUNTERS.filter(d=>d.kind==='camp')){const g=old.encounters.groups[d.id];g.members.pop();delete g.boss;if(d.direction==='south'){g.activated=g.cleared=true;for(const m of g.members)Object.assign(m,{hp:0,defeated:true});}}
-  const next=validate(old);expect(next.schema_version).toBe(16);const south=next.encounters.groups['south-spore-camp'];expect(south.boss!.stage).toBe('legacy');expect(south.members.at(-1)!.defeated).toBe(false);expect(next.encounters.groups['west-wolf-den'].boss!.stage).toBe('guards');expect(next.coins).toBe(144);expect(demonMalice(next.encounters)).toBe(1);expect(validate(next)).toEqual(next);expect(next.defense).toEqual(old.defense);
+  const next=validate(old);expect(next.schema_version).toBe(initialState().schema_version);const south=next.encounters.groups['south-spore-camp'];expect(south.boss!.stage).toBe('legacy');expect(south.members.at(-1)!.defeated).toBe(false);expect(next.encounters.groups['west-wolf-den'].boss!.stage).toBe('guards');expect(next.coins).toBe(144);expect(demonMalice(next.encounters)).toBe(1);expect(validate(next)).toEqual(next);expect(next.defense).toEqual(old.defense);
  });
  it('暂停与存档只移动相对时钟，保留阶段、招序、地面效果和弹丸',()=>{
   const h=harness('spore-heart');enter(h);const e=h.bodies()[0];e.bossBattle!.phase=2;e.bossBattle!.move=0;e.bossBattle!.next=6;e.attack=createBossAttack(e,10000,h.player,e.bossBattle!);h.shots.launch(e.attack,e,10900);

@@ -14,15 +14,15 @@ export class Sprint {
     // 新会话没有旧锁存历史；低于恢复线时采用保守一致的恢复状态。
     this.exhausted = stamina < SPRINT.resumeAt;
   }
-  update(stamina: number, requested: boolean, dt: number, recover = true) {
+  update(stamina: number, requested: boolean, dt: number, recover = true, maximum: number = SPRINT.maximum, recoveryBonus = 0) {
     if (stamina <= SPRINT.exhaustedAt) this.exhausted = true;
     if (stamina >= SPRINT.resumeAt) this.exhausted = false;
     const running = requested && !this.exhausted;
     const next = Math.max(
       0,
       Math.min(
-        SPRINT.maximum,
-        stamina + (running ? -SPRINT.drain : recover ? SPRINT.recover : 0) * dt,
+        maximum,
+        stamina + (running ? -SPRINT.drain : recover ? SPRINT.recover * (1 + recoveryBonus) : 0) * dt,
       ),
     );
     if (next <= SPRINT.exhaustedAt) this.exhausted = true;

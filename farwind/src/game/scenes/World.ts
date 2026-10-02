@@ -1,6 +1,10 @@
+import {CatCompanion,catCareSnapshot} from '../systems/catCompanion';
+import {CatCompanionView} from '../entities/catCompanionView';
+import {catBenefits,catStage,CAT_STAGES,type CatCare} from '../systems/catBond';
+import {legacyEncounterEnabled,updateLegacyDevice} from '../systems/windLegacy';
 import {WindAim} from '../systems/windAim';
 import {creditCombatCoins,settleEncounterCoins} from '../systems/combatCoins';
-import {BuildTraining} from '../systems/buildTraining';
+import {BuildTraining,nearBuildTraining} from '../systems/buildTraining';
 import {momentumConfig,returnMode} from '../systems/runeState';
 import {isWindAttack,isMeleeFinisher} from '../systems/combat';
 import {SOUTH_EVENTS,type SouthEventId} from '../systems/southEvents';
@@ -14,7 +18,7 @@ import {ARENA_STONES,creatureMaxHP,type EliteKind} from "../../data/maps/windbel
 import {enemyProtection} from '../systems/enemyTraits';
 import {reactToEnemyHit} from '../systems/enemyReaction';
 import {playerAttackPermitted} from '../systems/encounterTempo';
-import {DEMON_KING} from '../../data/demonKing';
+import {DEMON_KING,retaliationSummary} from '../../data/demonKing';
 import {demonMalice,demonKingIntroduction} from '../systems/demonKingState';
 import {regionalThreat} from "../systems/wildThreat";
 import {ENCOUNTERS,ENCOUNTER_LIMITS,encounterUnit} from "../../data/maps/windbell/encounters";
@@ -36,7 +40,7 @@ import {lifeTargets,attachLifeUi,showNotes,enterShop} from '../ui/npcLife';
 import {spaceBlocked,spaceClear} from '../systems/npcNavigation';
 import {CombatFeedback,feedbackVisual,feedbackAudio,hitFeedbackKind,feedbackContactDepth,parryContactPoint,deflectDirection,unit,type FeedbackKind,type FeedbackEvent} from "../systems/combatFeedback";
 import {CombatFeedbackView} from "../entities/combatFeedbackView";
-import { economySnapshot, outgoingDamage, incomingDamage, type EconomyRequest } from "../systems/economy";
+import { economySnapshot, outgoingDamage, incomingDamage, movementSpeed, type EconomyRequest } from "../systems/economy";
 import { EastDefense, prepareEastRaid, type DefenseEnemy } from "../systems/defense";
 import { resolveDamage,resolveReleasedDamage,resolveBlastDamage } from "../systems/damage";
 import { DefendersView } from "../entities/defenders";
@@ -67,7 +71,7 @@ import { TrainingDummyView } from "../entities/trainingDummy";
 import type { Attack } from "../systems/combat";
 import { CombatTimeline } from "../systems/timeline";
 import { StateCommit } from "../systems/stateCommit";
-import { advanceNight,mayStartNight,nightWarningSnapshot,RaidDeferredError } from "../systems/nightDirector";
+import { advanceNight,mayStartNight,nightWarningSnapshot,mayStartRetaliation,retaliationWarningSnapshot,RaidDeferredError } from "../systems/nightDirector";
 import { canDiscover,discoverySnapshot } from "../systems/nightDiscovery";
 import { RAID_GATES, RAID_TIMING } from "../../data/defense";
 import { inProtected } from "../../data/defenseZones";
@@ -83,6 +87,7 @@ import {SwordWindSystem,type WindMotion,type WindEvent} from '../systems/swordWi
 import {SwordWindView} from '../entities/swordWindView';
 import {hasSwordWind,swordWindSource} from '../systems/skills';
 import { Sprint } from "../systems/sprint";
+import { playerVitals, recordRunDistance } from '../systems/journeyTraining';
 import { resetSessionTimers } from "../systems/session";
 import {
   CombatController,
@@ -96,6 +101,7 @@ import {
   sweepMove,
 } from "../systems/combat";
 import { interact } from "../systems/interactions";
+import { springSnapshot } from "../systems/villageSpring";
 import { makeTerrain } from "../systems/terrain";
 import Phaser from "phaser";
 import { props, roads, enemyDefs, region, type Prop } from "../../data/world";
@@ -138,7 +144,7 @@ type Enemy = EnemyBody & {
   shadow: Phaser.GameObjects.Ellipse;
 };
 type CombatTarget = Enemy | DefenseEnemy | TrainingDummy | NonNullable<ParryTraining["projection"]>;
-type StrikeFeedback = {runeEvent?:RuneEvent;damage:number;stop?:number;point?:{x:number;y:number};at?:number};
+type StrikeFeedback = {catBoost?:boolean;runeEvent?:RuneEvent;damage:number;stop?:number;point?:{x:number;y:number};at?:number};
 export class World extends Phaser.Scene {
   runes?:RuneWorld;
   state: State = initialState();
@@ -174,8 +180,13 @@ export class World extends Phaser.Scene {
   defenseRetryAt=0;
   hero!: Actor;
   windAim=new WindAim();
+  legacyDeviceArmed=false;legacyDeviceSaving=false;
   scopeMarker?:Phaser.GameObjects.Graphics;
   cat!: Actor;
+  catCompanion = new CatCompanion();
+  catView?: CatCompanionView;
+  catSpace = '';
+  catCareUntil = 0;
   propImages = new Map<string, Phaser.GameObjects.Image>();
   waterEffects?: WaterEffects;
   enemies: Enemy[] = [];
@@ -234,7 +245,7 @@ export class World extends Phaser.Scene {
     super(key);
   }
   preload() {
-    this.load.image("wind-scope", "/assets/equipment/wind-scope.webp");
+    Actor.preloadScope(this);
     WindLessons.preload(this);
     for(const id of INTERIOR_ASSETS) this.load.image(`interior-${id}`, `/assets/village-interiors/${id}.webp`);
     for (const [id, texture] of Object.entries(VILLAGE_HOUSE_ART))
@@ -256,6 +267,7 @@ export class World extends Phaser.Scene {
     this.load.image("defender-archer","/assets/village-defense/m3/archer-source.png");
     this.load.image("defender-vertical", "/assets/village-defense/m4/archer-vertical-candidate.png");
     this.load.image("east-watchtower","/assets/village-defense/m3/watchtower-candidate.png");
+    this.load.spritesheet('hero-melee-finisher','/assets/animation/hero-melee-finisher.png',{frameWidth:160,frameHeight:160});
     this.load.spritesheet('hero-sword-wind','/assets/animation/sword-wind/hero-sword-wind.png',{frameWidth:160,frameHeight:160});
     for(const name of ['release','flight','hit','dissolve','ground'])this.load.spritesheet(`sword-wind-${name}`,`/assets/animation/sword-wind/sword-wind-${name}.png`,{frameWidth:128,frameHeight:128});
     this.load.image("smith-building","/assets/village-economy/smith-candidate.png");
@@ -388,6 +400,7 @@ export class World extends Phaser.Scene {
     this.events.once('shutdown',()=>{this.runes?.destroy();this.runes=undefined;});
     this.events.once('shutdown',()=>this.clearSwordWind());
     this.cat = new Actor(this, 720, 740, true);
+    this.catView = new CatCompanionView(this);
     this.cameras.main
       .setBounds(WORLD.left, WORLD.top, WORLD.width, WORLD.height)
       .startFollow(this.hero.sprite, true, 0.1, 0.1, 0, 150);
@@ -399,6 +412,9 @@ export class World extends Phaser.Scene {
     this.events.once("shutdown", () => this.scale.off("resize", resize));
     this.dayNight = new DayNightView(this,()=>this.state,()=>this.ui.hudPreferences.nightVisibility);
     this.ui.actions = {
+      catCare:kind=>this.careForCat(kind),
+      catCareReason:()=>this.catCareReason(),
+      catStatus:()=>this.catStatus(),
       runeChange:r=>this.runes!.change(r),
       runeLock:()=>this.runes?.lock()??'',
       runeA:()=>outgoingDamage(this.state,STRIKES[0].damage),
@@ -433,7 +449,7 @@ export class World extends Phaser.Scene {
         this.timeline.reset(performance.now());
       },
       practice: (mode) => this.selectPractice(mode),
-      trainBuild:()=>{if(Math.hypot(this.state.player.x-TRAINING.x,this.state.player.y-TRAINING.y)<TRAINING.near)this.buildTraining.open();},
+      trainBuild:()=>{if(nearBuildTraining(this.state.player))this.buildTraining.open();},
       indicators:(value)=>this.practice.indicators=value,
       getIndicators:()=>this.practice.indicators,
       volume: (v) => (this.soundFx.volume = v),
@@ -470,7 +486,9 @@ export class World extends Phaser.Scene {
       value: () =>
         structuredClone({
           windAim:{target:this.windAim.target,enabled:this.state.equipment.head==='windScope'},
+          equipmentVisual:this.hero.debug(),
           state: this.state,
+          catCompanion:{...this.catCompanion.snapshot(this.state),position:{x:this.cat.sprite.x,y:this.cat.sprite.y},blocked:this.blocked(this.cat.sprite.x,this.cat.sprite.y)},
           runes: this.runes?.snapshot(),
           ground: this.data.get('groundSnapshot')?.(),
           defense: this.defense.snapshot(),
@@ -487,6 +505,7 @@ export class World extends Phaser.Scene {
           ...(import.meta.env.DEV
             ? {
                 layoutLabels: this.data.get("layoutLabelCount") ?? 0,
+                missingPropTextures: [...this.propImages].filter(([, image]) => image.texture.key === '__MISSING').map(([id]) => id),
                 obstacles: props
                   .filter((p) => p.solid)
                   .map((p) => ({
@@ -612,7 +631,7 @@ export class World extends Phaser.Scene {
     this.snapshotPending=false;this.snapshotCapture=null;this.nextSnapshot=5000;this.defenseRetryAt=0;
     this.state =
       continued && this.loaded ? structuredClone(this.loaded) : initialState();
-    syncMapGeometry(this.state.mapProgress.westRoad === "open",this.state.mapProgress.shortcuts,this.state.encounters.broken);
+    syncMapGeometry(this.state.mapProgress.westRoad === "open",this.state.mapProgress.shortcuts,this.state.encounters.broken,this.state.windLegacy);
     if (this.blocked(this.state.player.x, this.state.player.y)) {
       const savedRegion = regionAt(this.state.player).id;
       const safe = nearestStanding(
@@ -635,6 +654,7 @@ export class World extends Phaser.Scene {
       );
     }
     this.ui.state = this.state;
+    this.catCompanion.reset();this.catView?.clear();this.catSpace=this.state.life.playerSpace;this.catCareUntil=0;
     this.runes?.reset();
     this.active = true;
     this.xiaobao?.reset();
@@ -659,14 +679,14 @@ export class World extends Phaser.Scene {
     this.runIntent=false;
     this.fieldTargets.forEach((t) => t.reset());
     this.fieldViews.forEach((v) => v.reset());
-    this.training.reset();this.buildTraining.clear();
+    this.training.reset();this.buildTraining.clear();this.legacyDeviceArmed=false;this.legacyDeviceSaving=false;
     this.trainingView.reset();
     this.pointerAttack = false;
     this.respawnInvulnerable = 0;
     this.gatherUntil = 0;
     this.keys.clear();
     this.sprint.reset(this.state.player.stamina);
-    this.hero.sprite.setAlpha(1);
+    this.hero.setAlpha(1);
     this.follower.reset(this.state.player);
     this.cat.place(this.state.player.x - 78, this.state.player.y + 18);
     if (this.blocked(this.cat.sprite.x, this.cat.sprite.y))
@@ -677,7 +697,7 @@ export class World extends Phaser.Scene {
     this.refresh();
     this.spawnEnemies();
     this.wilderness=new WildernessEncounters({
-      read:()=>this.state.encounters,bodies:()=>this.enemies,
+      enabled:d=>legacyEncounterEnabled(this.state,d.id),read:()=>this.state.encounters,bodies:()=>this.enemies,
       signal:d=>this.ui.message(`${d.name}正在接近，注意地面预兆。`),
       bossEnter:d=>{this.soundFx.play(d.boss==='crag-tusk'?'enemy-stagger':'enemy-charge');if(this.combatShake>0)this.cameras.main.shake(180,.0015*this.combatShake);},
       spawn:(d,u)=>{const e=this.makeEnemy(d);Object.assign(e,{elite:d.elite,boss:d.boss,bossAttempt:this.state.encounters.groups[encounterUnit(d.id)!.group].boss?.attempt,hp:u.hp,x:u.x,y:u.y,attackSerial:u.serial,cool:this.sim+u.cooldown,face:{...u.face},guardOpenUntil:this.sim+u.guardOpen,leashRadius:ENCOUNTERS.find(g=>g.id===encounterUnit(d.id)!.group)!.radius});if(d.boss)restoreBossCombat(e,this.state.encounters.groups[encounterUnit(d.id)!.group].boss!.combat,this.sim,this.bossHazards,this.enemyProjectiles);validateEnemyPosition(e);this.enemies.push(e);},
@@ -697,6 +717,31 @@ export class World extends Phaser.Scene {
     this.ui.message("风铃村欢迎你。向北走几步，按 E 与守风人交谈。");
     }finally{this.sessionStarting=false;}
   }
+  catCareReason() {
+    if(this.state.player.hp<=0)return '先回到安全处恢复状态。';
+    if(Math.hypot(this.cat.sprite.x-this.state.player.x,this.cat.sprite.y-this.state.player.y)>150||!this.clearLine(this.cat.sprite.x,this.cat.sprite.y,this.state.player.x,this.state.player.y))return '小黑还没跟上，等它走近再相处。';
+    const safety=this.sleepSafety();
+    return safety.action||safety.threat||safety.projectile||safety.conflict||this.enemyProjectiles.shots.length>0||this.catCompanion.pounce?'附近还有战斗风险，先带小黑到安全处。':'';
+  }
+  catStatus() {
+    const c=this.state.catBond;
+    return `${this.catCompanion.aura?`灵猫同行：体力恢复 +${Math.round(catBenefits(c.score).recovery*100)}%`:'小黑正在跟上你'}${c.shield>0?` · 灵息护盾 ${Math.ceil(c.shield)}`:''}${c.clawCooldown>0?` · 影爪冷却 ${Math.ceil(c.clawCooldown/1000)}秒`:''}${c.guardCooldown>0?` · 护主冷却 ${Math.ceil(c.guardCooldown/1000)}秒`:''}${this.catCompanion.hint?` · 嗅到了${this.catCompanion.hint.label}`:''}`;
+  }
+  async careForCat(kind:CatCare) {
+    if(kind!=='pet'&&kind!=='feed')throw Error('未知的相处方式。');
+    const reason=this.catCareReason();if(reason)throw Error(reason);
+    const previous=catStage(this.state.catBond.score);
+    await this.economy.run(()=>this.state,s=>catCareSnapshot(s,kind),save,next=>this.publishState(next));
+    this.catCareUntil=this.sim+1800;
+    this.catView?.event({kind:'care',point:{...this.state.player},text:'小黑蹭了蹭你的手'},this.sim);
+    this.soundFx.play('cat-meow');
+    const stage=catStage(this.state.catBond.score);
+    if(stage>previous){this.ui.message(`默契提升：${CAT_STAGES[stage].name} · ${CAT_STAGES[stage].skill}`);this.catView?.event({kind:'unlock',point:{...this.state.player},text:CAT_STAGES[stage].skill},this.sim);}
+  }
+  catRemember(key:string,point:{x:number;y:number}=this.state.player) {
+    if(this.practice.mode!=='off'||this.lessons?.trial)return;
+    if(this.catCompanion.remember(this.state,key,point))this.snapshotPending=true;
+  }
   async trade(request: EconomyRequest) {
     if(request.kind==="equip" && request.slot==="head" && (this.state.life.playerSpace!=="village" || regionAt(this.state.player).id!=="village" || this.runes?.lock()))throw Error("请在安全村庄脱战8秒且攻击结束后更换头部装备。");
     await this.economy.run(() => this.state,s=>economySnapshot(request.kind==="sleep"?{...s,dashCooldownRemaining:Math.max(0,this.combat.dashCooldown-this.sim)}:s,request,this.sleepSafety()),save,next => {
@@ -711,6 +756,27 @@ export class World extends Phaser.Scene {
       if(request.kind==="sleep")this.afterSleep();
     });
   }
+  async drinkSpring() {
+    if (this.ui.paused || this.defenseSaving || this.sessionStarting || !this.runes) return;
+    let saving = false;
+    try {
+      await this.economy.run(() => this.state, state => {
+        const next = springSnapshot(state, this.runes!.safety());
+        next.dashCooldownRemaining = Math.max(0, this.combat.dashCooldown - this.sim);
+        return next;
+      }, next => { saving = true; return save(next); }, next => {
+        this.publishState(next);
+        this.sprint.reset(next.player.stamina);
+        this.ui.saved(next);
+        this.soundFx.play("success");
+        this.float(next.player.x, next.player.y, "生命与体力全满");
+        this.ui.message("饮用了清凉的泉水，生命与体力已全部恢复。");
+      });
+    } catch (error) {
+      if (saving) this.ui.saveFailed(error);
+      this.ui.message(error instanceof Error ? error.message : "泉水恢复失败，请稍后再试。");
+    }
+  }
   sleepSafety(){
     const c=this.combat,p=this.state.life.playerSpace === "village" ? this.state.player : this.state.life.outside;
     return {conflict:this.defenseSaving||this.defenseCheckpointPending,action:!!c.attack||!!c.pending||!!c.parry||this.sim<c.dashUntil||this.sim<this.gatherUntil||!!this.xiaobao?.controller.busy||!!this.xiaobao?.controller.data.support,
@@ -718,9 +784,10 @@ export class World extends Phaser.Scene {
       projectile:this.defense.arrows.length>0||this.swordWind.winds.length>0||!!this.xiaobao?.controller.data.flight};
   }
   afterSleep(){
+    this.catCompanion.transition();this.catView?.clear();
     this.clearFeedback();
     this.keys.clear();this.combat.reset(this.sim+this.state.dashCooldownRemaining);this.battleAxis={x:0,y:0};this.runIntent=false;this.pointerAttack=false;this.attackUntil=this.gatherUntil=0;
-    this.clearSwordWind();this.slash?.clear();this.slashBack?.clear();this.parryInk?.clear();this.warningInk?.clear();this.parryEffects=[];this.sprint.reset(100);
+    this.clearSwordWind();this.slash?.clear();this.slashBack?.clear();this.parryInk?.clear();this.warningInk?.clear();this.parryEffects=[];this.sprint.reset(this.state.player.stamina);
     this.follower.reset(this.state.player);this.cat.place(this.state.player.x-78,this.state.player.y+18);if(this.blocked(this.cat.sprite.x,this.cat.sprite.y))this.cat.place(this.state.player.x,this.state.player.y);
     this.windAim.clear();
     this.hero.place(this.state.player.x,this.state.player.y);this.cameras.main.centerOn(this.state.player.x,this.state.player.y-150);this.timeline.reset(performance.now());this.ui.update(this.state,"");this.dayNight.render(true);this.soundFx.ambience(lightAt(this.state.time).lamps,false);
@@ -846,18 +913,18 @@ export class World extends Phaser.Scene {
     });
     return true;
   }
-  async startNightRaid(){
+  async startNightRaid(retaliation=false){
     this.nextNightAttempt=this.sim+RAID_TIMING.retry;
     try{
       const v=this.cameras.main.worldView;
-      await this.economy.run(()=>this.state,s=>{const occupied=this.enemies.filter(e=>e.hp>0&&!e.disabled),view={left:v.x,right:v.right,top:v.y,bottom:v.bottom};return nightWarningSnapshot(s,view,occupied,this.defense);},save,next=>this.publishState(next));
+      await this.economy.run(()=>this.state,s=>{const occupied=this.enemies.filter(e=>e.hp>0&&!e.disabled),view={left:v.x,right:v.right,top:v.y,bottom:v.bottom};return (retaliation?retaliationWarningSnapshot:nightWarningSnapshot)(s,view,occupied,this.defense);},save,next=>this.publishState(next));
       const raid=this.state.defense.raid!;
-      this.ui.message(raid.order?.source==='demon-king'?`${DEMON_KING.name}的部队接近村门，共 ${raid.members.length} 只；防线可能需要支援。`:"村门外发现动静，卫队正在戒备；可以参与或继续旅行。");
+      this.ui.message(retaliation?`魔王为据点陷落发起报复！${retaliationSummary(raid.order!)}正在地图边缘集结，即将向村庄总攻。`:raid.order?.source==='demon-king'?`${DEMON_KING.name}的部队接近村门，共 ${raid.members.length} 只；防线可能需要支援。`:"村门外发现动静，卫队正在戒备；可以参与或继续旅行。");
     }catch(e){
       // 同一个计划重试，失败不发布预警、不消费序号、不生成敌人。
       this.state.defense.retryMs=RAID_TIMING.retry;
       if(!(e instanceof RaidDeferredError))this.ui.open("pause");
-      this.ui.message(e instanceof RaidDeferredError?"今晚的来袭暂缓："+e.message:"预警尚未保存，已暂停："+(e as Error).message);
+      this.ui.message(e instanceof RaidDeferredError?(retaliation?'魔王报复暂缓：':'今晚的来袭暂缓：')+e.message:"预警尚未保存，已暂停："+(e as Error).message);
     }
   }
   async discoverNight(){
@@ -867,7 +934,7 @@ export class World extends Phaser.Scene {
     }catch(e){this.ui.message((e as Error).message);}
   }
   openDefenseDrill() {
-    this.ui.dialog("东门驻防", "岑风和青禾守住通路两侧，弦雨在塔上警戒。门洞保持畅通，门外道路是巡逻近郊，往远处才进入森林。首夜安静；后续夜晚需冷却结束、三名卫兵健康返岗，才可能来袭。恶意为零时有1～3只；清剿据点引起黑焰回应后，恶意1～9时增加5只，后续逐步加入精英。清剿仍会阻止当地巡游和当地来源入侵。");
+    this.ui.dialog("东门驻防", "岑风和青禾守住通路两侧，弦雨在塔上警戒。门洞保持畅通，门外道路是巡逻近郊，往远处才进入森林。首夜安静；后续夜晚需冷却结束、三名卫兵健康返岗，才可能来袭。恶意为零时有1～3只；清剿据点引起黑焰回应后，恶意1～9时增加5只，后续逐步加入精英。每处据点首次陷落后，魔王另派一波10只精英裂枝镰灵从地图边缘向村庄总攻；第一处一阶、第二处二阶，此后逐阶增强，已有袭击时排队接续，不受首夜与常规冷却限制。此后按恶意决定夜间骚扰概率，恶意0～4依次为50%、60%、70%、80%、90%。清剿仍会阻止当地巡游和当地来源入侵。");
     if (!import.meta.env.DEV || !new URLSearchParams(location.search).has("defenseDebug")) return;
     const button=document.createElement("button"); button.id="defense-drill";
     button.textContent="启动东门演练 · 3只普通怪";
@@ -910,7 +977,7 @@ export class World extends Phaser.Scene {
       this.warningInk?.clear();
       this.fieldTargets.forEach((t) => t.reset());
       this.fieldViews.forEach((v) => v.reset());
-      this.training.reset();this.buildTraining.clear();
+      this.training.reset();this.buildTraining.clear();this.legacyDeviceArmed=false;this.legacyDeviceSaving=false;
       this.trainingView.reset();
       this.pointerAttack = false;
       this.attackUntil = 0;
@@ -942,8 +1009,10 @@ export class World extends Phaser.Scene {
   }
   refresh() {
     this.renderCampRoots();
-    syncMapGeometry(this.state.mapProgress.westRoad === "open",this.state.mapProgress.shortcuts,this.state.encounters.broken);
+    syncMapGeometry(this.state.mapProgress.westRoad === "open",this.state.mapProgress.shortcuts,this.state.encounters.broken,this.state.windLegacy);
     for(const p of ARENA_STONES){const broken=this.state.encounters.broken.includes(p.id);this.propImages.get(p.id)?.setDisplaySize(p.w,broken?35:p.h).setAlpha(broken?.55:1);}
+    this.propImages.get('legacy-residual-a')?.setAlpha(.4).setTint(0xd3e9a1);this.propImages.get('legacy-residual-b')?.setAlpha(.4).setTint(0xd3e9a1);
+    this.propImages.get('legacy-wind-seal')?.setVisible(this.state.windLegacy.wind<4&&this.state.life.playerSpace==='village');this.propImages.get('legacy-blade-seal')?.setVisible(this.state.windLegacy.blade<4&&this.state.life.playerSpace==='village');this.propImages.get('legacy-wind-bell')?.setTint(this.state.windLegacy.device?0xbfffff:0xffffff);this.propImages.get('legacy-windDevice')?.setTint(this.state.windLegacy.device?0xbfffff:0xffffff);
     for(const s of SHORTCUTS)this.propImages.get(`barrier-${s.id}`)?.setVisible(!this.state.mapProgress.shortcuts.includes(s.id)&&this.state.life.playerSpace==="village");
     this.propImages.get("west-gate-barrier")?.setVisible(this.state.mapProgress.westRoad !== "open" && this.state.life.playerSpace === "village");
     this.xiaobao?.render(this.active && this.state.life.playerSpace === "village",xiaobaoAllies(this));
@@ -1039,6 +1108,7 @@ export class World extends Phaser.Scene {
     }
     if(e.boss)this.clearBossEffects(e.id);
     const definition=encounterUnit(e.id),direct=source!=="guard",item=enemyProfile(e.type).drop;
+    if(direct&&Math.hypot(e.x-this.state.player.x,e.y-this.state.player.y)<400)this.catRemember(`battle:${e.id}`,e);
     const legacy=enemyDefs.some(d=>d.id===e.id);
     if(definition){
       const group=this.state.encounters.groups[definition.group],wasCleared=group.cleared;
@@ -1047,7 +1117,7 @@ export class World extends Phaser.Scene {
       const u=unitState(this.state.encounters,e.id)!;u.x=e.x;u.y=e.y;
       if(!legacy&&direct&&add(this.state,item,1)){u.drop=false;u.dropRemaining=0;this.soundFx.play("pick");}
       if(!wasCleared&&group.cleared&&ENCOUNTERS.find(d=>d.id===definition.group)!.kind==="camp"){
-        const d=ENCOUNTERS.find(d=>d.id===definition.group)!;this.ui.message(`${d.name}已清理，当地巡游与当地来源来袭停止。${DEMON_KING.name}的恶意 +1，当前 ${demonMalice(this.state.encounters)}。`);this.refresh();
+        const d=ENCOUNTERS.find(d=>d.id===definition.group)!;this.nextNightAttempt=0;if(!this.state.defense.raid)this.state.defense.retryMs=0;this.ui.message(`${d.name}已陷落，当地巡游停止。魔王恶意 +1，当前 ${demonMalice(this.state.encounters)}；10只精英镰灵将从地图边缘向村庄总攻，报复每波升一阶。`);this.refresh();
       }
     }
     if(legacy||!definition){
@@ -1200,6 +1270,13 @@ export class World extends Phaser.Scene {
     if(stop!==undefined){this.combat.lastHitStopRequested=stop;this.combat.hitStopRemaining=Math.max(this.combat.hitStopRemaining,stop);}
   }
   settledPlayerHit(target:CombatTarget,attack:Attack,result:{damage:number;killed:boolean;guarded:boolean;guardBroken:boolean;interrupted:boolean},feedback?:StrikeFeedback){
+    if(target.kind==='enemy'||target.kind==='defense-enemy'){
+      this.catCompanion.landed(target,result.damage,!!feedback?.catBoost);
+      if(result.damage>0&&isMeleeFinisher(attack,this.combat.maxStage)&&this.practice.mode==='off'&&!this.lessons?.trial){
+        const supportTarget=target.hp>0?target:[...this.enemies,...this.defense.enemies].filter(e=>e.hp>0&&!e.disabled&&!e.passiveRoot&&Math.hypot(e.x-this.state.player.x,e.y-this.state.player.y)<=300&&Math.hypot(e.x-this.cat.sprite.x,e.y-this.cat.sprite.y)<=300&&clearMotionLine(this.cat.sprite,e)).sort((a,b)=>Math.hypot(a.x-this.state.player.x,a.y-this.state.player.y)-Math.hypot(b.x-this.state.player.x,b.y-this.state.player.y))[0];
+        if(supportTarget)this.catCompanion.requestClaw(this.state,this.cat.sprite,supportTarget,`finisher:${attack.id}`,clearMotionLine);
+      }
+    }
     if(feedback?.runeEvent)this.runes?.engine.nativeLanded(target,feedback.runeEvent,result.damage);
     const at=feedback?.at??this.sim,direction=attack.windDirection??unit({x:target.x-this.state.player.x,y:target.y-this.state.player.y}),point=feedback?.point??{x:target.x-direction.x*12,y:target.y-28-direction.y*6};
     this.hitFeedback(attack.stage,target.kind==='trainingDummy'?'straw':'enemy',feedback?.stop,!!attack.counter,attack.id);
@@ -1208,7 +1285,11 @@ export class World extends Phaser.Scene {
     if(this.combatShake>0&&(result.killed||result.guardBroken||result.interrupted))this.cameras.main.shake(65,.0012*this.combatShake);
   }
   strikeTarget(target: CombatTarget, stage: number, attack: Attack,feedback?:StrikeFeedback,feedbackTarget?:CombatTarget) {
-    if(target.kind!=='trainingProjection'&&this.runes){const ev=this.runes.prepare(attack,target,feedback?.damage);feedback={...feedback,damage:ev.amount,runeEvent:ev};}
+    const catScale=(target.kind==='enemy'||target.kind==='defense-enemy')&&this.practice.mode==='off'&&!this.lessons?.trial?this.catCompanion.multiplier(this.state,target):1;
+    let base=feedback?.damage;
+    if(catScale>1)base=(base??outgoingDamage(this.state,attackConfig(attack).damage))*catScale;
+    if(target.kind!=='trainingProjection'&&this.runes){const ev=this.runes.prepare(attack,target,base);feedback={...feedback,damage:ev.amount,runeEvent:ev,catBoost:catScale>1};}
+    else if(base!==undefined)feedback={...feedback,damage:base,catBoost:catScale>1};
     if((target.kind==='enemy'||target.kind==='defense-enemy')&&!target.passiveRoot)this.xiaobaoRecent={id:target.id,at:this.sim};
     const origin=isWindAttack(attack)&&attack.windDirection?{x:target.x-attack.windDirection.x*40,y:target.y-attack.windDirection.y*40}:this.state.player;
     if (target.kind === "defense-enemy") {
@@ -1317,6 +1398,7 @@ export class World extends Phaser.Scene {
   clearSwordWind(){this.buildTraining.clear();this.runes?.clear();this.swordWind.clear();this.swordWindView?.clear();this.lessons?.endTrial();}
   resolveSwordWind(events:WindEvent[]){
     for(const wind of this.swordWind.winds)this.runes?.engine.tracePass(wind);
+    updateLegacyDevice(this);
     for(const event of events){
     if(event.target){
       if(event.target.lessonId)this.lessons?.hit(event);
@@ -1332,6 +1414,8 @@ export class World extends Phaser.Scene {
     this.runes?.advance(now-prev);
     const p=this.state.player,a=this.battleAxis,dt=(now-prev)/1000,length=Math.hypot(a.x,a.y),outside=this.state.life.playerSpace==="village",battlePlayer=outside?p:{x:-10000,y:-10000,hp:0};
     const hazardPrevious={...battlePlayer},companionPrevious=this.xiaobao?.controller?{x:this.xiaobao.controller.x,y:this.xiaobao.controller.y}:null;
+    const previousPlayer={...p};
+    this.catCompanion.advance(this.state,now-prev,this.cat.sprite,(a,b)=>this.clearLine(a.x,a.y,b.x,b.y));
     const previousTime=this.state.time;
     const previousNight=this.state.night.plan?.night;
     this.state.time=advanceTime(previousTime,now-prev);
@@ -1343,14 +1427,23 @@ export class World extends Phaser.Scene {
     const dash=prev<this.combat.dashUntil;
     const hurt=this.combat.hurting(prev);
     const busy=!!this.combat.attack||guard||dash||this.combat.pending||hurt;
-    const movement=this.sprint.update(p.stamina,this.runIntent&&length>0&&!busy,dash?0:dt,prev>=this.combat.regenUntil);
+    const movement=this.sprint.update(p.stamina,this.runIntent&&length>0&&!busy,dash?0:dt,prev>=this.combat.regenUntil,playerVitals(this.state).maxStamina,this.catCompanion.aura?catBenefits(this.state.catBond.score).recovery:0);
     p.stamina=movement.stamina;
-    const speed=(hurt?0:guard?PARRY.speed:busy?this.combat.attack?55:0:movement.speed)*(1+(this.runes?.engine.speedBonus()??0));
+    const speed=(hurt?0:guard?PARRY.speed:busy?this.combat.attack?55:0:movementSpeed(this.state,movement.speed))*(1+(this.runes?.engine.speedBonus()??0));
     if(length&&speed){
+      const origin={x:p.x,y:p.y};
       const bodies=this.combatTargets();
       sweepMove(p,a.x/length*speed*dt,a.y/length*speed*dt,(x,y)=>this.blocked(x,y),
         (from,to)=>this.clearLine(from.x,from.y,to.x,to.y),bodies);
+      // 紧贴自主奔跑采集，后续攻击、击退和传送绝不能混入里程。
+      const gain=recordRunDistance(this.state,origin,p,movement.running&&!busy&&p.hp>0&&!document.hidden&&document.hasFocus());
+      if(gain.hp||gain.stamina){
+        const vitals=playerVitals(this.state);
+        this.ui.message(`旅途锻炼：${[gain.stamina?`体力上限 +${gain.stamina}（${vitals.maxStamina}）`:'',gain.hp?`生命上限 +${gain.hp}（${vitals.maxHp}）`:''].filter(Boolean).join(' · ')}`);
+        this.snapshotPending=true;
+      }
     }
+    this.catCompanion.travel(this.state,previousPlayer,now-prev,!busy&&this.practice.mode==='off'&&!this.lessons?.trial);
     const encounterView=this.cameras.main.worldView;
     this.wilderness?.update(now-prev,now,outside?p:this.state.life.outside,{left:encounterView.x,right:encounterView.right,top:encounterView.y,bottom:encounterView.bottom});
     for(const e of this.enemies){if(e.boss)continue;const unit=encounterUnit(e.id);if(!unit)continue;const d=ENCOUNTERS.find(g=>g.id===unit.group)!,way=d.patrol[Math.floor(this.state.encounters.elapsed/6000)%d.patrol.length];e.patrolTarget={x:unit.x+way.x-d.patrol[0].x,y:unit.y+way.y-d.patrol[0].y};}
@@ -1388,7 +1481,7 @@ export class World extends Phaser.Scene {
     if(this.state.life.playerSpace!=="village"){contacts.length=0;return;}
     for(const action of this.combat.flushActions(now,p)) {
       if(action==="dash"){this.sprint.reset(p.stamina);this.runes?.engine.dashStart(`dash:${this.combat.dashStart}`);}
-      else {this.sprint.update(p.stamina,false,0);this.practice.started(now);}
+      else {this.sprint.update(p.stamina,false,0,true,playerVitals(this.state).maxStamina);this.practice.started(now);}
       if(action==='parry')this.emitFeedback('guard-start',`guard:${this.combat.parry!.id}`,now);else this.soundFx.play('dash');
     }
     refreshFungalShields([...this.enemies,...this.defense.enemies],now);
@@ -1482,7 +1575,7 @@ export class World extends Phaser.Scene {
       const valid=contact.blastId?!!e&&validFungalBlastContact(contact,e,'player'):contact.bossHazardId?!!e&&e.hp>0&&e.bossAttempt===contact.attack.bossAttempt&&this.state.encounters.groups[encounterUnit(e.id)!.group].boss?.stage==='battle':contact.projectileId?!!projectile&&projectile.state==='contact'&&projectile.attack===contact.attack&&(!contact.training||this.practice.mode!=="off"):
         contact.training?this.practice.mode!=="off":!!e&&e.hp>0&&!e.disabled&&e.attack?.attackId===contact.attack.attackId&&
         (e.kind==="defense-enemy" || enemyAttackPermitted(e,p));
-      let result=adjudicateContact(contact,this.combat,p,{valid,immune:now<this.invulnerable||now<this.respawnInvulnerable||!!this.runes?.engine.immune(),clear:(a,b,id)=>clearMeleeLine(a,b,id),attacker:owner&&owner.hp>0?owner:undefined});
+      let result=adjudicateContact(contact,this.combat,p,{valid,maxStamina:playerVitals(this.state).maxStamina,immune:now<this.invulnerable||now<this.respawnInvulnerable||!!this.runes?.engine.immune(),clear:(a,b,id)=>clearMeleeLine(a,b,id),attacker:owner&&owner.hp>0?owner:undefined});
       if(contact.training)this.practice.observe(contact,result,this.combat,p);
       if(contact.projectileId&&contact.attack.parryable&&e&&this.runes?.engine.dash&&valid&&this.runes.engine.reflect(e,contact.attack.attackId)){result='immune';this.runes.engine.fx('mirror-step',contact.origin,42,'r08',350,{end:e});}
       if(result==='hurt'&&!contact.training&&this.runes?.engine.protectHit(e,contact.attack.attackId))result='immune';
@@ -1500,6 +1593,7 @@ export class World extends Phaser.Scene {
 
           e.nav.path=[];
         }
+        if(result==='perfect'&&e&&!contact.training&&this.practice.mode==='off'&&!this.lessons?.trial)this.catCompanion.requestClaw(this.state,this.cat.sprite,e,`parry:${contact.attack.attackId}`,clearMotionLine);
         this.runes?.engine.block(result==='perfect',contact.attack.attackId,contact.origin);
         const guard=this.combat.parry!,w=parryWeapon(guard.facing,1),g=contact.geometry;
         const attackPoint=g?{x:(g.a.x+g.b.x)/2,y:(g.a.y+g.b.y)/2-28}:{x:contact.origin.x,y:contact.origin.y-28};
@@ -1507,7 +1601,7 @@ export class World extends Phaser.Scene {
         this.emitFeedback(result==='perfect'?'parry-perfect-contact':'parry-contact',`parry:${contact.attack.attackId}`,contact.at,body??undefined,undefined,{attackId:contact.attack.attackId,point:touch.point,incoming,blade:touch.blade,deflect,quality:result,until:contact.at+PARRY[result].stagger,depth:feedbackContactDepth(p.y,body?.y)});
         const legacyTouch=parryContactPoint(p,w,{x:contact.origin.x,y:contact.origin.y-28});
         this.parryEffects.push({at:now,x:legacyTouch.point.x,y:legacyTouch.point.y,perfect:result==='perfect'});
-        this.sprint.update(p.stamina,false,0);
+        this.sprint.update(p.stamina,false,0,true,playerVitals(this.state).maxStamina);
         this.ui.update(this.state,this.target?`E · ${this.target.label}`:"");
 
       } else if(result==="afterguard") {
@@ -1519,13 +1613,15 @@ export class World extends Phaser.Scene {
           amount:damage,sourceType:contact.blastId?"enemy-blast":"enemy-melee",eventId:e?.kind==="defense-enemy"?e.eventId:null},
           {id:contact.attack.attackerId,hp:contact.projectileId?1:e?.hp??1,faction:"hostile",armor:0},{id:"player",hp:p.hp,faction:"village",armor:0,...this.xiaobao?.controller.protection('player')});
         if(hit.applied) {
-          p.hp=this.runes?.engine.damaged(e,hit.hp,hit.damage)??hit.hp;
+          const {damage:remaining,hp}=this.catCompanion.protect(this.state,hit);
+          p.hp=this.runes?.engine.damaged(e,hp,remaining)??hp;
+          if(remaining>0&&this.practice.mode==='off'&&!this.lessons?.trial)this.catCompanion.hurt(this.state);
           this.invulnerable=now+850;
           this.combat.takeHit(now,this.combat.effectiveFacing(now,this.hero.direction),contact.attack.direction,p);
           this.gatherUntil=0;
           this.feedback.cancelRelease();
           this.soundFx.play("hit");
-          this.float(p.x,p.y,`-${Math.round(hit.damage)}`);
+          if(remaining>0)this.float(p.x,p.y,`-${Math.round(remaining)}`);
         }
       }
       this.contactHistory.push({at:contact.at,id:contact.attack.attackId,...contact.attack.boss?{skill:contact.attack.bossSkill,part:contact.attack.bossPart}:{},result,parryAge:this.combat.lastParry?contact.at-this.combat.lastParry.start:null,stamina:p.stamina,hp:p.hp,inputAt:this.combat.lastParryRequestAt,startAt:this.combat.lastParry?.start??null,phase:sampleEnemyAttack(contact.attack,contact.at,contact.origin).phase,predicted:this.warnings.find(w=>w.id===contact.attack.attackId)?.predicted??null,direction:{attack:contact.attack.direction,guard:this.combat.lastParry?.facing},rejection:this.combat.lastRejection});
@@ -1672,6 +1768,7 @@ export class World extends Phaser.Scene {
       this.tweens.pauseAll();
       return;
     }
+    if(this.catSpace!==this.state.life.playerSpace){this.catCompanion.transition();this.catView?.clear();this.catSpace=this.state.life.playerSpace;}
     this.lessons?.checkTrial();
     // 保存冻结期间仍记录物理按键的按下/松开；恢复时只同步方向，不补放攻击。
     if(this.commitInputSuspended){this.battleAxis=this.keys.axis();this.runIntent=this.keys.held.has(" ");this.keys.pressed.clear();this.keys.drain();this.commitInputSuspended=false;}
@@ -1691,8 +1788,9 @@ export class World extends Phaser.Scene {
     const p=this.state.player,oldX=p.x,oldY=p.y,prevSim=this.sim;
     const contacts:EnemyContact[]=[];
     const navigationFrame=navigationBudget();
-    if(!this.combat.windAuto||this.state.life.playerSpace!=="village"||this.state.equipment.head!=="windScope")this.windAim.clear();
+    if(!this.combat.windAuto&&!this.windAim.manual||this.state.life.playerSpace!=="village"||this.state.equipment.head!=="windScope"||!this.state.skills.swordWindStage)this.windAim.clear();
     this.combat.resolveWindAim=(point,config)=>this.state.equipment.head==='windScope'&&this.state.life.playerSpace==='village'?this.windAim.select(point,config,[...this.enemies,...this.defense.enemies].filter(e=>!('passiveRoot' in e&&e.passiveRoot))):null;
+    if(this.keys.take(this.ui.hudPreferences.cycleTarget)&&this.keys.held.has('i')&&this.state.equipment.head==='windScope'&&this.state.life.playerSpace==='village'&&this.state.skills.swordWindStage>0&&this.combat.swordWindConfig){this.windAim.cycle(p,this.combat.swordWindConfig,[...this.enemies,...this.defense.enemies].filter(e=>!('passiveRoot' in e&&e.passiveRoot)));}
     this.combat.dashCostMultiplier=this.runes?.engine.dashCost()??1;
     this.combat.recoveryCancelEnabled=this.runes?.engine.has('r09')??false;
     this.sim=this.timeline.frame(this.sim,performance.now(),delta,this.keys.drain(),this.combat,{
@@ -1719,10 +1817,8 @@ export class World extends Phaser.Scene {
     const feedbackEvents=this.feedback.drain();
     this.soundFx.feedbackBatch(feedbackEvents,this.feedback.mode);
     this.swordWindView?.draw(this.sim);this.lessons?.draw(this.sim);
-    const aimStatus=this.ui.root.querySelector<HTMLElement>('#wind-aim-status')!;
-    aimStatus.hidden=this.state.equipment.head!=='windScope';
     const aimed=[...this.enemies,...this.defense.enemies].find(e=>e.id===this.windAim.target&&e.hp>0&&!e.disabled);
-    aimStatus.textContent=this.state.skills.swordWindStage===0?'瞄准镜 · 尚未学会剑风':aimed?'I 自动瞄准 · 已锁定目标 / 中键手动':this.combat.windAuto?'无可锁定目标 · 手动剑风':'瞄准镜 · 按住 I 自动瞄准 / 中键手动';
+    this.ui.windAimStatus(this.state.skills.swordWindStage===0?'瞄准镜 · 尚未学会剑风':aimed?`I 自动瞄准 · 已锁定 / ${this.ui.hudPreferences.cycleTarget.toUpperCase()} 切换 / 中键手动`:this.combat.windAuto?'无可锁定目标 · 手动剑风':'瞄准镜 · 按住 I 自动瞄准 / 中键手动',this.state.skills.swordWindStage===0?'I 未学习':aimed?'I 已锁定':this.combat.windAuto?'I 手动剑风':'I 自动瞄准',this.state.equipment.head==='windScope');
     if(!this.scopeMarker)this.scopeMarker=this.add.graphics();this.scopeMarker.clear();
     if(aimed&&this.state.equipment.head==='windScope'&&this.combat.windAuto&&feedbackVisual(this.feedback.mode))this.scopeMarker.lineStyle(2,0xc1ffe6,.9).strokeCircle(aimed.x,aimed.y,20).setDepth(aimed.y+.2);
 
@@ -1804,7 +1900,7 @@ export class World extends Phaser.Scene {
     );
     this.drawSlash();
     this.drawDashTrail();
-    this.hero.sprite.setAlpha(
+    this.hero.setAlpha(
       !hurting && (this.sim < this.invulnerable ||
         this.sim < this.respawnInvulnerable ||
         this.combat.invulnerable(this.sim))
@@ -1845,13 +1941,26 @@ export class World extends Phaser.Scene {
       }
     }
     const cat = this.cat.sprite;
-    const next = this.follower.update(
+    let next = this.follower.update(
       p,
       { x: cat.x, y: cat.y },
       dt,
       (a, b) => this.clearLine(a.x, a.y, b.x, b.y),
       (x, y) => this.blocked(x, y),
     );
+    const catTargets=[...this.enemies,...this.defense.enemies].filter(e=>e.hp>0&&!e.disabled);
+    this.catCompanion.sniff(this.state,cat,(a,b,ignore)=>this.clearLine(a.x,a.y,b.x,b.y,ignore),this.practice.mode!=='off'||!!this.lessons?.trial||catTargets.some(e=>Math.hypot(e.x-p.x,e.y-p.y)<320));
+    let catGoal=this.catCompanion.pounceGoal(this.state,cat,catTargets,clearMotionLine);
+    const pouncing=!!this.catCompanion.pounce;
+    if(!catGoal&&!length&&this.catCompanion.aura&&this.follower.stationary>1&&!striking&&!this.combat.parry){
+      const hint=this.catCompanion.hint;
+      if(hint){const gap=Math.hypot(hint.x-p.x,hint.y-p.y)||1;catGoal={x:p.x+(hint.x-p.x)/gap*90,y:p.y+(hint.y-p.y)/gap*90};}
+      else if(this.state.catBond.score>=20||this.sim<this.catCareUntil)catGoal={x:p.x+42,y:p.y+18};
+    }
+    if(catGoal&&!this.blocked(catGoal.x,catGoal.y)&&this.clearLine(cat.x,cat.y,catGoal.x,catGoal.y)){
+      const gap=Math.hypot(catGoal.x-cat.x,catGoal.y-cat.y),step=Math.min(gap,(pouncing?420:90)*dt);
+      next={x:cat.x,y:cat.y};if(gap>1)sweepMove(next,(catGoal.x-cat.x)/gap*step,(catGoal.y-cat.y)/gap*step,(x,y)=>this.blocked(x,y),(a,b)=>this.clearLine(a.x,a.y,b.x,b.y));
+    }
     this.cat.move(
       next.x,
       next.y,
@@ -1861,8 +1970,16 @@ export class World extends Phaser.Scene {
       false,
       dt,
     );
+    for(const event of this.catCompanion.drain()){
+      this.catView?.event(event,this.sim);
+      if(event.kind==='unlock'||event.kind==='hint')this.ui.message(event.text);
+      else if(event.kind!=='claw')this.float(event.point.x,event.point.y-26,event.text);
+      if(['hint','claw','guard'].includes(event.kind))this.soundFx.play('cat-meow');
+      if(['bond','unlock','guard','claw','absorb'].includes(event.kind))this.snapshotPending=true;
+    }
+    this.catView?.draw(this.state,this.catCompanion,this.cat,this.sim,catTargets);
     this.xiaobao?.render(this.state.life.playerSpace==='village',xiaobaoAllies(this));
-    const xstatus=document.querySelector<HTMLElement>('#xiaobao-summary');if(xstatus&&this.xiaobao){const c=this.xiaobao.controller;xstatus.textContent=`小宝 · ${c.data.task==='follow'?'随行':c.data.task==='guard'?'守村':'自由'} · ${Math.ceil(c.data.hp)}/640${c.data.rest?' · 调息':c.data.flight?` · 飞援${c.snapshot().eta.toFixed(1)}秒`:''}`;}
+    if(this.xiaobao){const c=this.xiaobao.controller;this.ui.xiaobaoStatus(`小宝 · ${c.data.task==='follow'?'随行':c.data.task==='guard'?'守村':'自由'} · ${Math.ceil(c.data.hp)}/640${c.data.rest?' · 调息':c.data.flight?` · 飞援${c.snapshot().eta.toFixed(1)}秒`:''}`);}
     if(this.xiaobao)for(const event of this.xiaobao.controller.drain())this.soundFx.xiaobao(event,Math.hypot(event.point.x-p.x,event.point.y-p.y),this.state.life.playerSpace==='village');
     this.target = [...lifeTargets(this),...(this.state.life.playerSpace==="village"&&this.xiaobao?[this.xiaobao.controller.target()]:[]),...(this.state.life.playerSpace==="village"?props.filter(p=>p.kind!=="npc"):[]),...(this.state.life.playerSpace==="village"&&canDiscover(this.state)?[{...NIGHT_DISCOVERY,art:"",w:0,h:0,kind:"sign" as const}]:[])]
       .filter(
@@ -1905,7 +2022,7 @@ export class World extends Phaser.Scene {
     this.enemyView.mechanics([...this.enemies,...this.defense.enemies],this.sim);
     this.enemyView.projectile(this.enemyProjectiles,this.sim,this.state.life.playerSpace==="village");
     this.runes?.update();
-    this.hero.sprite.setAlpha(this.hero.sprite.alpha*(this.runes?.alpha()??1));
+    this.hero.setAlpha(this.hero.sprite.alpha*(this.runes?.alpha()??1));
     this.syncDrops();
     const defenseEvents=this.defense.drainNotices();
     this.life.consumeDefense(defenseEvents);
@@ -1916,7 +2033,7 @@ export class World extends Phaser.Scene {
       if(event.kind==="death"&&this.state.defense.guards.some(g=>g.id===event.id))this.ui.message("守卫阵亡；不会因读档自动复活。");
       if(event.kind==="death"){const enemy=this.enemies.find(e=>e.id===event.id);if(enemy)this.recordEnemyDefeat(enemy,"guard");}
       if(event.kind==="warning")this.ui.message(`${event.id}外发现动静，卫队正在戒备。`);
-      if(event.kind==="started")this.ui.message(this.state.defense.raid?.order?.source==='demon-king'?`${event.id}遭遇${DEMON_KING.name}的派遣，共 ${this.state.defense.raid.members.length} 只；防线可能需要支援。`:`${event.id}有小怪接近；卫队会自行拦截。`);
+      if(event.kind==="started")this.ui.message(this.state.defense.raid?.order?.retaliationCamp?`魔王报复部队已从地图边缘出发：${retaliationSummary(this.state.defense.raid.order)}，正向${event.id}行军！`:this.state.defense.raid?.order?.source==='demon-king'?`${event.id}遭遇${DEMON_KING.name}的派遣，共 ${this.state.defense.raid.members.length} 只；防线可能需要支援。`:`${event.id}有小怪接近；卫队会自行拦截。`);
       if(event.kind==="delayed")this.ui.message("防线健康、岗位或路径条件已变化；本次未出生来袭已取消并延期。");
       if(event.kind==="ended")this.ui.message("村门来袭已结束，驻防变化正在保存。");
     }
@@ -1944,6 +2061,7 @@ export class World extends Phaser.Scene {
     this.drawObstacleDebug();
     if(this.snapshotPending||this.sim>=this.nextSnapshot){this.snapshotPending=false;this.nextSnapshot=this.sim+5000;void this.persist().catch(()=>{});}
     if (p.hp <= 0) {
+      this.catCompanion.transition();this.catView?.clear();this.state.catBond.shield=0;this.state.catBond.shieldTime=0;
       this.wilderness?.resetBosses();
       this.clearSwordWind();
       this.combat.reset(this.combat.dashCooldown);
@@ -1956,8 +2074,9 @@ export class World extends Phaser.Scene {
       this.attackUntil = 0;
       this.slash?.clear();
       this.slashBack?.clear();
-      p.hp = 100;
-      p.stamina = 100;
+      const vitals = playerVitals(this.state);
+      p.hp = vitals.maxHp;
+      p.stamina = vitals.maxStamina;
       this.sprint.reset(p.stamina);
       p.x = RETURN_WIND_ORB.respawn.x;
       p.y = RETURN_WIND_ORB.respawn.y;
@@ -2035,6 +2154,9 @@ export class World extends Phaser.Scene {
       this.warningInk?.clear();this.parryInk?.clear();this.slash?.clear();this.slashBack?.clear();
     }
     if(this.defense.critical)void this.checkpointDefense();
-    else if(!this.showDemonKingIntroduction()&&mayStartNight(this.state)&&this.sim>=this.nextNightAttempt&&!this.economy.busy&&!this.defenseCheckpointPending)void this.startNightRaid();
+    else if(!this.showDemonKingIntroduction()&&this.sim>=this.nextNightAttempt&&!this.economy.busy&&!this.defenseCheckpointPending){
+      if(mayStartRetaliation(this.state))void this.startNightRaid(true);
+      else if(mayStartNight(this.state))void this.startNightRaid();
+    }
   }
 }

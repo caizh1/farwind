@@ -306,9 +306,47 @@ test("hud-dialog-training", async ({ page }) => {
   );
   await expect(page.locator("#objective-summary")).toContainText("森林异响");
   await expect(page.locator("#toast")).toContainText("目标已更新");
-  await move(page, 850, 720);
-  await expect(page.locator("#training-panel")).toBeVisible();
+  // 只需走进训练范围，避免旧终点被木桩旁的居民占据。
+  await page.keyboard.down("d");
+  try {
+    await expect(page.locator("#training-panel")).toBeVisible();
+  } finally {
+    await page.keyboard.up("d");
+  }
   await expect(page.locator("[data-practice-menu]")).toBeVisible();
+  await expect(page.locator("#toast")).toHaveCSS("opacity", "0", { timeout: 6000 });
+  for (const [width, height] of [[1280, 720], [1024, 600], [720, 600], [480, 420]]) {
+    await page.setViewportSize({ width, height });
+    const notes = page.getByRole("button", { name: "居民笔记 · N", exact: true });
+    await notes.scrollIntoViewIfNeeded();
+    const notesBox = (await notes.boundingBox())!;
+    const trainingBox = (await page.locator("#training-panel").boundingBox())!;
+    // 笔记在底部网格，训练在左上；缩窄与短屏都不相互覆盖。
+    expect(trainingBox.y + trainingBox.height).toBeLessThanOrEqual(notesBox.y);
+    expect(await notes.evaluate(element => element.parentElement?.parentElement?.classList.contains("bottom"))).toBe(true);
+    await notes.click();
+    await expect(page.locator("#dialog-title")).toHaveText("居民笔记");
+    await page.keyboard.press("Escape");
+    for (const selector of ["[data-practice-menu]", "[data-build-training]"]) {
+      const button = page.locator(selector);
+      await button.scrollIntoViewIfNeeded();
+      const box = (await button.boundingBox())!;
+      const footer = (await page.locator(".bottom").boundingBox())!;
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(width);
+      expect(box.y).toBeGreaterThanOrEqual(0);
+      expect(box.y + box.height).toBeLessThanOrEqual(footer.y - 8);
+      expect(await button.evaluate(element => {
+        const box = element.getBoundingClientRect();
+        return element.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2));
+      })).toBe(true);
+    }
+    const stack = (await page.locator(".vitals-stack").boundingBox())!;
+    const footer = (await page.locator(".bottom").boundingBox())!;
+    expect(stack.y + stack.height).toBeLessThanOrEqual(footer.y - 8);
+    await page.screenshot({ path: `docs/hud-redesign/after/training-layout-${width}.png` });
+  }
+  await page.setViewportSize({ width: 1280, height: 720 });
   await page.locator("[data-practice-menu]").click();
   await expect(
     page.getByRole("heading", { name: "迎风架剑练习" }),

@@ -1,3 +1,7 @@
+import {showCatCompanion} from './catCompanion';
+import {CAT_STAGES,catStage,type CatCare} from '../systems/catBond';
+import {legacyJournal,legacyTracked} from '../systems/windLegacy';
+import type {LegacyTrack} from '../systems/windLegacyState';
 import {migrationBackup} from '../systems/save';
 import {showRunes,updateRuneHud} from './runes';
 import {CAMP_BOSSES,type CampBossKind} from '../../data/maps/windbell/campBosses';
@@ -7,7 +11,7 @@ import type {RuneTier,Ability} from '../../data/runes';
 import {updateCampBossHud} from './campBossHud';
 import {ENCOUNTERS} from '../../data/maps/windbell/encounters';
 import {southQuestObjective} from "../systems/fieldQuest";
-import {DEMON_KING,demonFormation} from '../../data/demonKing';
+import {DEMON_KING,demonFormation,retaliationSummary} from '../../data/demonKing';
 import {demonMalice,demonKingSummary} from '../systems/demonKingState';
 import {SHORTCUTS} from "../../data/maps/windbell/shortcuts";
 import {WIND_NAMES,WIND_EFFECTS,WIND_LESSONS} from '../../data/windLessons';
@@ -15,7 +19,7 @@ import {windLearningSource,windLessonStatus} from '../systems/skills';
 import { showShop } from "./shop";
 import { showEquipment, type EquipmentViewSlot } from "./equipment";
 import { clockLabel } from "../systems/worldClock";
-import { equipment, isEquipment, RETURN_WIND_ORB, type ShopId } from "../../data/economy";
+import { equipment, isEquipment, RETURN_WIND_ORB, type ShopId, type EquipmentSlot } from "../../data/economy";
 import type { EconomyRequest } from "../systems/economy";
 import {
   WORLD,
@@ -39,8 +43,17 @@ import { count, discard, parseSave, type State } from "../systems/state";
 import { region } from "../../data/world";
 import type { PracticeMode } from "../systems/parryTraining";
 import { dialoguePortraitFor } from "../../data/dialoguePortraits";
+import { journeyProgress, playerVitals } from '../systems/journeyTraining';
+function journeyJournal(state: State) {
+  const progress=journeyProgress(state);
+  const next=(distance:number|null)=>distance===null?'锻炼已满':`距下次上限 +1 还需 ${Math.ceil(distance).toLocaleString('zh-CN')} 米`;
+  return `<section id="journey-training" aria-label="旅途锻炼"><h2>旅途锻炼</h2><p>累计有效奔跑里程：${Math.floor(progress.meters).toLocaleString('zh-CN')} 米</p><p>体力上限 ${progress.maxStamina} / 200 · 永久 +${progress.maxStamina-100}；${next(progress.staminaRemaining)}</p><p>生命上限 ${progress.maxHp} / 200 · 永久 +${progress.maxHp-100}；${next(progress.healthRemaining)}</p><p>正常奔跑自动积累，每次上限 +1，后续所需里程逐次增加。永久生效，不占装备或符文槽。${progress.healthRemaining===null?'两项锻炼已满。':''}</p></section>`;
+}
 const campMapStatus=(s:State,id:string)=>{const g=s.encounters.groups[id];return g.cleared?'已清除':g.boss?.stage==='battle'?'首领交战':g.boss?.stage==='warning'?'首领待挑战':'驻守未清';};
 export type Actions = {
+  catCare?:(kind:CatCare)=>Promise<void>;
+  catCareReason?:()=>string;
+  catStatus?:()=>string;
   enterShop?:(id:ShopId)=>void;
   runeChange:(request:RuneRequest)=>Promise<void>;
   runeLock:()=>string;
@@ -88,9 +101,10 @@ export class Interface {
   constructor() {
     this.root.addEventListener("click",e=>{if(this.actions&&!this.actions.canMutate()){e.preventDefault();e.stopImmediatePropagation();}},true);
     this.root.innerHTML = `<div id="hud" hidden>
-      <div class="top"><div class="vitals-stack"><section class="vitals"><img class="portrait" src="/assets/portrait.png" alt="旅行者"><div><b>旅人 <small>与小黑同行</small></b><div class="meter health"><i></i><span></span></div><div class="meter stamina"><i></i><span></span></div></div></section>
-      <span id="coin-status" aria-label="金币余额">金币 120</span><span id="combat-status">L 风步 · 就绪</span><span id="parry-status" role="status">K 架剑就绪</span><small id="sword-wind-status" hidden></small><small id="wind-aim-status" hidden></small><button id="demon-king-summary" class="text-button" data-panel="quest" hidden></button>
-      <section id="training-panel" hidden><b>木桩练习</b><small>J / 左键：攻击；连按接三／四连；I／中键：剑风；L：风步</small><span id="training-stats"></span><button data-practice-menu="true">迎风架剑练习</button><button data-build-training="true">本领与构筑训练</button><span id="parry-feedback" hidden></span></section></div>
+      <div class="top"><div class="vitals-stack"><section class="vitals"><div class="hero-vitals"><img class="portrait" src="/assets/portrait.png" alt="旅行者"><div><b>旅人 <small>与小黑同行</small></b><div class="meter health" role="progressbar" aria-label="生命" aria-valuemin="0" aria-valuemax="100"><i></i><span></span></div><div class="meter stamina" role="progressbar" aria-label="体力" aria-valuemin="0" aria-valuemax="100"><i></i><span></span></div></div></div><div class="hud-meta"><span class="hud-coins"><img src="/assets/commission/coin.webp" alt=""><span id="coin-status" aria-label="金币余额">120</span></span><button id="cat-summary" class="cat-summary" data-panel="cat" aria-label="小黑 · 默契与同行能力"><img src="/assets/cat.png" alt=""><span>小黑 · 熟悉</span></button><button id="xiaobao-summary" class="xiaobao-summary" data-xiaobao="true" aria-label="小宝 · 听风小宗师"><img src="/assets/xiaobao/portrait.webp" alt=""><span>小宝 640/640</span></button><button id="demon-king-summary" class="text-button" data-panel="quest" hidden></button><button id="hud-details-toggle" class="text-button" data-hud-fold="hud-status-details" aria-expanded="false" aria-controls="hud-status-details">详情</button></div></section>
+      <div class="combat-status-row"><span id="combat-status">L 风步 · 就绪</span><span id="parry-status" role="status">K 架剑就绪</span><small id="wind-aim-status" hidden></small></div>
+      <section id="training-panel" hidden><div class="training-actions"><button id="training-details-toggle" data-hud-fold="training-details" aria-expanded="false" aria-controls="training-details"><img src="/assets/icon-sword.png" alt="">木桩练习</button><button data-practice-menu="true" aria-label="迎风架剑练习">迎风架剑</button><button data-build-training="true" aria-label="本领与构筑训练">构筑训练</button></div><span id="training-stats" hidden></span><div id="training-details" class="training-details" hidden><small>J / 左键：攻击；连按接三／四连；I／中键：剑风；L：风步</small><span id="training-stats-detail"></span><span id="parry-feedback" hidden></span></div></section>
+      <section id="hud-status-details" class="hud-status-details" hidden><b>操作与本领</b><small id="sword-wind-status" hidden></small><span id="combat-status-detail">L 风步 · 就绪</span><span id="parry-status-detail">K 架剑就绪</span><span id="wind-aim-detail" hidden></span><span id="demon-king-detail" hidden></span><small>J / 左键：连斩；K / 右键：架剑；L：风步；I / 中键：剑风。</small></section></div>
       <div class="hud-info"><section class="location"><button id="minimap-toggle" class="hud-summary" aria-expanded="false" aria-controls="minimap-details" aria-label="展开小地图"><b id="region">风铃村</b><span>·</span><span id="clock"></span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2Zm6-2v16m6-14v16"/></svg><span class="chevron" aria-hidden="true">▾</span></button><div id="minimap-details" class="hud-details map-details" hidden><small id="day"></small><canvas id="minimap" width="192" height="101" aria-label="位置小地图"></canvas><button class="text-button" data-panel="map">M 完整地图</button></div></section>
       <section class="quest-tracker"><button id="quest-toggle" class="hud-summary" aria-expanded="false" aria-controls="quest-details"><span id="objective-summary" class="ellipsis"></span><span class="chevron" aria-hidden="true">▾</span></button><div id="quest-details" class="hud-details quest-details" hidden><small>主线 · 失落的风</small><p id="objective"></p><button class="text-button" data-panel="quest">Q 旅途手记</button></div></section></div></div>
       <div id="prompt"></div><div id="menu-hint" role="status" hidden>Esc 打开菜单 / 查看操作</div><div class="bottom"><span id="hotbar-info" role="tooltip" hidden></span><div id="hotbar" role="group" aria-label="快捷道具栏，1 至 8"></div></div></div><div id="toast" role="status"></div><div id="modal"></div>`;
@@ -104,8 +118,16 @@ export class Interface {
       if (b?.dataset.practiceMenu) this.open("practice");
       if (b?.dataset.use) this.useSlot(Number(b.dataset.hotbarSlot));
       if(b?.dataset.xiaobao)this.actions.xiaobao?.();
+      if (b?.dataset.hudFold) {
+        const details = this.root.querySelector<HTMLElement>(`#${b.dataset.hudFold}`)!;
+        details.hidden = !details.hidden;
+        b.setAttribute("aria-expanded", String(!details.hidden));
+      }
       // 鼠标操作完成后交还游戏焦点；键盘激活仍保留按钮焦点供导航。
-      if (e.detail > 0 && b && this.hud.contains(b)) this.focusGame();
+      if (e.detail > 0 && b && this.hud.contains(b)) {
+        if(b.dataset.panel)this.returnFocus=null;
+        this.focusGame();
+      }
     });
     for (const name of ["minimap", "quest"] as const) {
       this.root
@@ -118,7 +140,6 @@ export class Interface {
     }
     this.syncFolds();
     const boss=document.createElement('section');boss.id='camp-boss-status';boss.className='camp-boss-status';boss.hidden=true;boss.setAttribute('aria-label','据点首领战');boss.innerHTML='<div class="boss-title"><b></b><span data-boss-health></span></div><progress max="1" value="1"></progress><span data-boss-state role="status"></span>';this.root.querySelector('.hud-info')!.before(boss);
-    const companion=document.createElement('button');companion.dataset.xiaobao='true';companion.className='xiaobao-summary';companion.id='xiaobao-summary';companion.textContent='小宝 · 听风小宗师';this.root.querySelector('#sword-wind-status')!.after(companion);
     this.root.addEventListener("pointerdown", (e) => {
       if ((e.target as Element).closest("button, .hud-details, #modal"))
         e.stopPropagation();
@@ -147,6 +168,7 @@ export class Interface {
     const defaults = {
       version: 1,
       nightVisibility: 0.5,
+      cycleTarget: 'v',
       combatNumbers: true,
       combatShake: true,
       minimap: false,
@@ -155,6 +177,7 @@ export class Interface {
     };
     try {
       const p = JSON.parse(localStorage.getItem("farwind-hud-v1") ?? "null");
+      if(['v','b','c'].includes(p?.cycleTarget))defaults.cycleTarget=p.cycleTarget;
       if(Number.isFinite(p?.nightVisibility)&&p.nightVisibility>=0&&p.nightVisibility<=1)defaults.nightVisibility=p.nightVisibility;
       if (p?.version === 1)
         for (const key of ["minimap", "quest", "menuHintSeen","combatNumbers","combatShake"] as const)
@@ -287,10 +310,35 @@ export class Interface {
       return true;
     return false;
   }
-  parryStatus(text:string) {this.root.querySelector("#parry-status")!.textContent=text;}
+  parryStatus(text:string) {
+    const status = this.root.querySelector<HTMLElement>("#parry-status")!;
+    status.textContent = text.split('；')[0];
+    status.title = text;
+    this.root.querySelector("#parry-status-detail")!.textContent = text;
+  }
+  windAimStatus(text: string, compact: string, visible: boolean) {
+    const status = this.root.querySelector<HTMLElement>("#wind-aim-status")!;
+    status.hidden = !visible;
+    status.textContent = compact;
+    status.title = text;
+    const detail = this.root.querySelector<HTMLElement>("#wind-aim-detail")!;
+    detail.hidden = !visible;
+    detail.textContent = text;
+  }
+  xiaobaoStatus(text: string) {
+    const status = this.root.querySelector<HTMLButtonElement>("#xiaobao-summary")!;
+    const parts = text.split(' · ');
+    status.querySelector('span')!.textContent = `小宝 ${parts[2] ?? ''}${parts.length > 3 ? ` · ${parts.slice(3).join(' · ')}` : ''}`;
+    status.title = text;
+    status.setAttribute('aria-label', text);
+  }
   practiceFeedback(feedback: string, mode: PracticeMode) {
     const text = this.root.querySelector<HTMLElement>("#parry-feedback");
     if (text) {
+      if (mode !== "off" && text.hidden) {
+        this.root.querySelector<HTMLElement>("#training-details")!.hidden = false;
+        this.root.querySelector("#training-details-toggle")!.setAttribute("aria-expanded", "true");
+      }
       text.hidden = mode === "off";
       text.textContent = feedback;
     }
@@ -299,9 +347,14 @@ export class Interface {
     const panel = this.root.querySelector<HTMLElement>("#training-panel")!;
     panel.hidden = this.state?.life.playerSpace !== "village" || (!near && !s.visible);
     const stats = this.root.querySelector<HTMLElement>("#training-stats")!;
-    stats.textContent = s.visible
-      ? `${s.lastStage?`第${s.lastStage}段 · ${Math.round(s.lastDamage*10)/10}伤害；本组命中${s.stages.length}/${this.state?.skills.meleeFinisher?4:3}；累计${Math.round(s.damage*10)/10}${[1,2,3,4].every(n=>s.stages.includes(n))?" · 四连完成":s.complete&&!this.state?.skills.meleeFinisher ? " · 三连完成" : ""}`:''}${s.swordWind?` · 剑风 ${Math.round(s.swordWind.damage*10)/10}伤害 · 首靶 ${s.swordWind.firstTarget}`:''}`
+    const targetNames: Record<string, string> = {'training-dummy': '训练稻草人', 'field-dummy-west': '西侧木桩', 'field-dummy-east': '东侧木桩', 'field-dummy-south': '南侧木桩'};
+    const detail = s.visible
+      ? `${s.lastStage?`第${s.lastStage}段 · ${Math.round(s.lastDamage*10)/10}伤害；本组命中${s.stages.length}/${this.state?.skills.meleeFinisher?4:3}；累计${Math.round(s.damage*10)/10}${[1,2,3,4].every(n=>s.stages.includes(n))?" · 四连完成":s.complete&&!this.state?.skills.meleeFinisher ? " · 三连完成" : ""}`:''}${s.swordWind?` · 剑风 ${Math.round(s.swordWind.damage*10)/10}伤害 · 首靶 ${targetNames[s.swordWind.firstTarget] ?? '练习木桩'}`:''}`
       : "";
+    stats.hidden = !s.visible;
+    stats.textContent = s.visible ? [s.lastStage ? `第${s.lastStage}段 ${Math.round(s.lastDamage*10)/10}伤害 · 累计${Math.round(s.damage*10)/10}` : '', s.swordWind ? `剑风 ${Math.round(s.swordWind.damage*10)/10}伤害` : ''].filter(Boolean).join(' · ') : '';
+    stats.title = detail;
+    this.root.querySelector('#training-stats-detail')!.textContent = detail;
     stats.style.opacity = String(
       Math.max(0, Math.min(1, (TRAINING.linger - s.age) / TRAINING.fade)),
     );
@@ -311,6 +364,8 @@ export class Interface {
   }
   swordWind(source:string,name="剑风",trial=false){const badge=this.root.querySelector<HTMLElement>('#sword-wind-status')!;badge.hidden=source==='未学习'&&!trial;badge.textContent=`${name}：${trial?'教学试用':source}`;}
   message(s: string) {
+    const host = this.hud.hidden ? this.root : this.root.querySelector<HTMLElement>(".hud-info")!;
+    if (this.toastEl.parentElement !== host) host.append(this.toastEl);
     this.toastEl.textContent = s;
     this.toastEl.classList.add("show");
     setTimeout(() => {
@@ -352,7 +407,7 @@ export class Interface {
     this.previewCleanup?.();this.previewCleanup=undefined;
     this.root.classList.remove("dialog-open");
     this.hud.inert = true;
-    this.modal.classList.remove("story-modal", "equipment-modal");
+    this.modal.classList.remove("story-modal", "equipment-modal", "rune-modal");
     this.modal.hidden = false;
     this.modal.innerHTML = `<section class="panel${this.mode === "pause" ? " pause-panel" : ""}" role="dialog" aria-modal="true" aria-labelledby="panel-title"><header><small>远 风 之 地</small><h1 id="panel-title">${title}</h1></header>${body}</section>`;
     this.actions?.pause();
@@ -427,7 +482,7 @@ export class Interface {
   shop(id: ShopId) {
     showShop(this, id);
   }
-  async changeEquipment(slot: "weapon" | "armor" | "head", item: ItemId | null, page = "bag") {
+  async changeEquipment(slot: EquipmentSlot, item: ItemId | null, page = "bag") {
     if (this.economyBusy || !this.state) return;
     this.economyBusy = true;
     this.modal.querySelectorAll<HTMLButtonElement | HTMLSelectElement>("button,select").forEach(button => { button.disabled = true; });
@@ -488,6 +543,7 @@ export class Interface {
     const s = this.state;
     if (mode === "equipment" && s) showEquipment(this);
     if(mode==='runes'&&s)showRunes(this);
+    if(mode==='cat'&&s)showCatCompanion(this,bagFeedback);
     if (mode === "practice") {
       this.shell(
         "迎风架剑练习",
@@ -505,7 +561,7 @@ export class Interface {
     if (mode === "bag" && s) {
       this.shell(
         "旅人的行囊",
-        `<nav class="bag-equipment-nav" aria-label="旅人物品页"><button id="bag-equipment">装备</button><button data-panel="runes">符文</button><button aria-current="page" disabled>行囊</button></nav><p class="muted">金币 ${s.coins} · 24 格 · 材料20件/格，装备1件/格 · 选择物品后使用或穿戴</p><div class="bag">${s.bag.map((a, i) => `<button class="slot" data-slot="${i}">${a ? `${itemIcon(a.id) ? `<img class="item-icon" src="${itemIcon(a.id)}" alt="">` : ""}${items[a.id].name}<strong>×${a.count}</strong>` : "·"}</button>`).join("")}</div><p id="item-info">恢复药剂：药草 ×2 + 浆果 ×1，恢复 50 生命。</p><p>持有药草 ${count(s, "herb")}/2 · 浆果 ${count(s, "berry")}/1</p><p id="craft-feedback" role="status" aria-live="polite"></p><div class="row"><button id="craft">制作恢复药剂</button><button id="consume">使用选中物品</button><button id="equip">穿戴选中装备</button><button id="discard">丢弃一件</button><select id="bind" aria-label="快捷栏位置">${Array.from({ length: 8 }, (_, i) => `<option value="${i}">快捷栏 ${i + 1}</option>`).join("")}</select><button id="bind-button">绑定</button></div><p>武器：${s.equipment.weapon ? items[s.equipment.weapon].name : "原有佩剑"} · 头部：${s.equipment.head ? items[s.equipment.head].name : "未佩戴"} · 护甲：${s.equipment.armor ? items[s.equipment.armor].name : "原有衣物"} · 宝珠：${RETURN_WIND_ORB.name}（默认装备）</p><div class="row"><button id="unequip-weapon" ${!s.equipment.weapon ? "disabled" : ""}>卸下武器</button><button id="unequip-head" ${!s.equipment.head ? "disabled" : ""}>卸下头部装备</button><button id="unequip-armor" ${!s.equipment.armor ? "disabled" : ""}>卸下护甲</button></div><button id="close">收好行囊</button>`,
+        `<nav class="bag-equipment-nav" aria-label="旅人物品页"><button id="bag-equipment">装备</button><button data-panel="runes">符文</button><button aria-current="page" disabled>行囊</button></nav><p class="muted">金币 ${s.coins} · 24 格 · 材料20件/格，装备1件/格 · 选择物品后使用或穿戴</p><div class="bag">${s.bag.map((a, i) => `<button class="slot" data-slot="${i}">${a ? `${itemIcon(a.id) ? `<img class="item-icon" src="${itemIcon(a.id)}" alt="">` : ""}${items[a.id].name}<strong>×${a.count}</strong>` : "·"}</button>`).join("")}</div><p id="item-info">恢复药剂：药草 ×2 + 浆果 ×1，恢复 50 生命。</p><p>持有药草 ${count(s, "herb")}/2 · 浆果 ${count(s, "berry")}/1</p><p id="craft-feedback" role="status" aria-live="polite"></p><div class="row"><button id="craft">制作恢复药剂</button><button id="consume">使用选中物品</button><button id="equip">穿戴选中装备</button><button id="discard">丢弃一件</button><select id="bind" aria-label="快捷栏位置">${Array.from({ length: 8 }, (_, i) => `<option value="${i}">快捷栏 ${i + 1}</option>`).join("")}</select><button id="bind-button">绑定</button></div><p>武器：${s.equipment.weapon ? items[s.equipment.weapon].name : "原有佩剑"} · 头部：${s.equipment.head ? items[s.equipment.head].name : "未佩戴"} · 护甲：${s.equipment.armor ? items[s.equipment.armor].name : "原有衣物"} · 鞋子：${s.equipment.feet ? items[s.equipment.feet].name : "原有布鞋"} · 宝珠：${RETURN_WIND_ORB.name}（默认装备）</p><div class="row"><button id="unequip-weapon" ${!s.equipment.weapon ? "disabled" : ""}>卸下武器</button><button id="unequip-head" ${!s.equipment.head ? "disabled" : ""}>卸下头部装备</button><button id="unequip-armor" ${!s.equipment.armor ? "disabled" : ""}>卸下护甲</button><button id="unequip-feet" ${!s.equipment.feet ? "disabled" : ""}>卸下鞋子</button></div><button id="close">收好行囊</button>`,
       );
       this.modal.querySelectorAll<HTMLButtonElement>("[data-slot]").forEach(
         (b) =>
@@ -523,7 +579,7 @@ export class Interface {
       this.button("bag-equipment", () => this.open("equipment"));
       this.button("equip", () => {
         if (!this.selected || !isEquipment(this.selected)) {
-          this.message("请先选择武器或护甲。");
+          this.message("请先选择可穿戴的装备。");
           return;
         }
         void this.changeEquipment(equipment[this.selected].slot, this.selected);
@@ -531,6 +587,7 @@ export class Interface {
       this.button("unequip-weapon", () => void this.changeEquipment("weapon", null));
       this.button("unequip-head", () => void this.changeEquipment("head", null));
       this.button("unequip-armor", () => void this.changeEquipment("armor", null));
+      this.button("unequip-feet", () => void this.changeEquipment("feet", null));
       this.modal.querySelector("#craft-feedback")!.textContent = bagFeedback;
       this.button("craft", () => void this.makePotion());
       this.button("consume", () => {
@@ -565,7 +622,7 @@ export class Interface {
     if (mode === "quest" && s)
       this.shell(
         "旅途手记",
-        `<h2>远处的黑焰 · ${DEMON_KING.name}</h2><p>${demonKingSummary(s)}</p><p>${demonMalice(s.encounters)?'每完整清剿一处据点，恶意增加 1；同一据点只计一次。当地巡游与当地来袭来源停止，远处的黑焰开始回应。':'魔物最初为了果腹而捕猎，远处的存在尚未将人类视为敌人。清剿保护村庄，也会改变它对人类的判断。'}</p><p>恶意 1～9：原编队增加 5 只，单次 6～8 只；每逢 10 点升档，逐步加入更高阶精英，编队最多 10 只。首夜安静，已制定的计划保持原编队。</p>${demonMalice(s.encounters)?`<p>当前新派遣：${demonFormation(demonMalice(s.encounters),1).count}～${demonFormation(demonMalice(s.encounters),3).count}只。${s.defense.raid?.order?.source==='demon-king'?`在途派遣按恶意 ${s.defense.raid.order.malice} 编队，共 ${s.defense.raid.members.length} 只；不会因清剿而临时升阶。`:''}</p>`:''}<h2>南路补给</h2><p>${southQuestObjective(s)}</p><p>从南门沿路过芦苇桥，药草洼地在西南岸，孢根巢地在洼地东南方。药师与公共委托簿均可办理。</p><h2>主线 · 失落的风</h2><p>${objectives[s.quest]}</p><ol class="journal">${objectives
+        `${journeyJournal(s)}<h2>远处的黑焰 · ${DEMON_KING.name}</h2><p>${demonKingSummary(s)}</p><p>${demonMalice(s.encounters)?'每完整清剿一处据点，恶意增加 1；同一据点只计一次。当地巡游与当地来袭来源停止；魔王会为每处陷落据点，从地图边缘派出一波 10 只精英裂枝镰灵向村庄总攻。第一波一阶，第二波二阶，此后每波升一阶；每只生命依次为94、115、137、158，伤害依次为22、26、30、34。已有战斗时依次接续，读档不会重复刷出。':'魔物最初为了果腹而捕猎，远处的存在尚未将人类视为敌人。清剿保护村庄，也会改变它对人类的判断。'}</p><p>恶意 1～9：原编队增加 5 只，单次 6～8 只；每逢 10 点升档，逐步加入更高阶精英，编队最多 10 只。常规骚扰首夜安静，恶意 0～4 的单夜来袭概率依次为 50%、60%、70%、80%、90%；单夜至多一次，仍受冷却与防线状态限制。报复总攻不受首夜、时段或常规冷却限制；已出发的编队保持原恶意档位。</p>${demonMalice(s.encounters)?`<p>当前新派遣：${demonFormation(demonMalice(s.encounters),1).count}～${demonFormation(demonMalice(s.encounters),3).count}只。${s.defense.raid?.order?.source==='demon-king'?`${s.defense.raid.order.retaliationCamp?`在途报复：${retaliationSummary(s.defense.raid.order)}`:`在途派遣按恶意 ${s.defense.raid.order.malice} 编队，共 ${s.defense.raid.members.length} 只`}；不会因清剿而临时升阶。`:''}</p>`:''}<h2>南路补给</h2><p>${southQuestObjective(s)}</p><p>从南门沿路过芦苇桥，药草洼地在西南岸，孢根巢地在洼地东南方。药师与公共委托簿均可办理。</p><h2>主线 · 失落的风</h2><p>${objectives[s.quest]}</p><ol class="journal">${objectives
           .slice(0, 7)
           .map(
             (q, i) =>
@@ -573,8 +630,9 @@ export class Interface {
           )
           .join(
             "",
-          )}</ol><h2>支线 · 木匠的托付</h2><p>${["与西南方的木匠阿禾交谈", "为阿禾收集 4 份木材", "已交付，收到浆果与谢意"][s.side]}</p>${this.skillJournal(s)}<button id="close">合上手记</button>`,
+          )}</ol><h2>支线 · 木匠的托付</h2><p>${["与西南方的木匠阿禾交谈", "为阿禾收集 4 份木材", "已交付，收到浆果与谢意"][s.side]}</p>${legacyJournal(s)}${this.skillJournal(s)}<button id="close">合上手记</button>`,
       );
+    if(mode==='quest'&&s)this.modal.querySelectorAll<HTMLButtonElement>('[data-legacy-track]').forEach(b=>b.onclick=async()=>{if(this.economyBusy)return;this.economyBusy=true;b.disabled=true;try{await this.actions.runeChange({kind:'track',target:(b.dataset.legacyTrack||null) as LegacyTrack});this.message('目标已追踪，M 查看实际地点。');this.open('quest');}catch(e){this.message((e as Error).message);b.disabled=false;}finally{this.economyBusy=false;}});
     if (mode === "map" && s) {
       this.shell(
         "风的足迹",
@@ -585,7 +643,7 @@ export class Interface {
     if (mode === "pause") {
       this.shell(
         "在风中歇一会儿",
-        `<p class="pause-note">世界与时间已暂停。</p><button id="close" class="resume" aria-label="继续旅途" aria-keyshortcuts="Escape">继续旅途 <kbd>Esc</kbd></button><div class="pause-grid"><button id="pause-bag" data-panel="bag">行囊 <kbd>Tab</kbd></button><button id="pause-map" data-panel="map">完整地图 <kbd>M</kbd></button><button id="pause-quest" data-panel="quest">旅途手记 <kbd>Q</kbd></button><button id="pause-runes" data-panel="runes">符文与共鸣 <kbd>R</kbd></button><button id="pause-help" data-panel="help">操作说明 <span>查看操作</span></button></div><h2>存档与设置</h2><div class="pause-grid"><button id="save">保存旅途</button><button id="export">导出备份</button><button id="import">导入存档</button><button id="migration-backup">导出迁移前备份</button><button id="settings">设置</button><button id="title" class="wide">保存并返回标题</button></div><p class="backup-note">备份需下载到站点之外；清理站点数据会删除本地存档。</p>`,
+        `<p class="pause-note">世界与时间已暂停。</p><button id="close" class="resume" aria-label="继续旅途" aria-keyshortcuts="Escape">继续旅途 <kbd>Esc</kbd></button><div class="pause-grid"><button id="pause-cat" data-panel="cat">小黑 · 默契与能力</button><button id="pause-bag" data-panel="bag">行囊 <kbd>Tab</kbd></button><button id="pause-map" data-panel="map">完整地图 <kbd>M</kbd></button><button id="pause-quest" data-panel="quest">旅途手记 <kbd>Q</kbd></button><button id="pause-runes" data-panel="runes">符文与共鸣 <kbd>R</kbd></button><button id="pause-help" data-panel="help">操作说明 <span>查看操作</span></button></div><h2>存档与设置</h2><div class="pause-grid"><button id="save">保存旅途</button><button id="export">导出备份</button><button id="import">导入存档</button><button id="migration-backup">导出迁移前备份</button><button id="settings">设置</button><button id="title" class="wide">保存并返回标题</button></div><p class="backup-note">备份需下载到站点之外；清理站点数据会删除本地存档。</p>`,
       );
       this.button("save", () => void this.actions.save().catch(() => {}));
       this.button("export", () => this.export());
@@ -597,13 +655,14 @@ export class Interface {
     if (mode === "help")
       this.shell(
         "操作说明",
-        `<dl class="controls-guide"><dt>移动</dt><dd>WASD / 方向键</dd><dt>奔跑</dt><dd>按住空格并移动，消耗体力</dd><dt>交互 / 继续对话</dt><dd>E</dd><dt>攻击 / 连斩</dt><dd>J / 游戏画布左键；连按衔接，教本训练后接近战第四刀；I／中键独立剑风，按住连续施放；可越水，不能穿实体障碍</dd><dt>迎风架剑 / 弹反</dt><dd>K / 游戏画布右键；成功自动反斩；远程弹反发出剑气，J 接第二、第三刀</dd><dt>风步</dt><dd>L</dd><dt>符文 / 归风</dt><dd>R 查看符文；脱战后长按 G 引导归风</dd><dt>使用快捷道具</dt><dd>1–8 / 点击对应格子</dd><dt>行囊 / 完整地图 / 手记</dt><dd>Tab / M / Q（游戏中）</dd><dt>暂停 / 返回</dt><dd>Esc；子页面先返回菜单</dd><dt>菜单焦点与操作</dt><dd>Tab / Shift + Tab 切换；Enter / 空格确认</dd></dl><button id="close">返回暂停菜单</button>`,
+        `<dl class="controls-guide"><dt>移动</dt><dd>WASD / 方向键</dd><dt>奔跑</dt><dd>按住空格并移动，消耗体力</dd><dt>交互 / 继续对话</dt><dd>E</dd><dt>攻击 / 连斩</dt><dd>J / 游戏画布左键；连按衔接，教本训练后接近战第四刀；I／中键独立剑风，按住连续施放；可越水，不能穿实体障碍</dd><dt>切换瞄准镜目标</dt><dd>${this.hudPreferences.cycleTarget.toUpperCase()}（按住 I 自动瞄准时）；设置可改键，中键仍手动布局</dd><dt>迎风架剑 / 弹反</dt><dd>K / 游戏画布右键；成功自动反斩；远程弹反发出剑气，J 接第二、第三刀</dd><dt>风步</dt><dd>L</dd><dt>符文 / 归风</dt><dd>R 查看符文；脱战后长按 G 引导归风</dd><dt>使用快捷道具</dt><dd>1–8 / 点击对应格子</dd><dt>行囊 / 完整地图 / 手记</dt><dd>Tab / M / Q（游戏中）</dd><dt>暂停 / 返回</dt><dd>Esc；子页面先返回菜单</dd><dt>菜单焦点与操作</dt><dd>Tab / Shift + Tab 切换；Enter / 空格确认</dd></dl><button id="close">返回暂停菜单</button>`,
       );
     if (mode === "settings") {
       this.shell(
         "旅途设置",
-        `<label>音效音量 <input id="volume" type="range" min="0" max="100" value="${Math.round(this.actions.getVolume() * 100)}"></label><label>夜间可见度 <input id="night-visibility" type="range" min="0" max="100" value="${Math.round(this.hudPreferences.nightVisibility*100)}"></label><p class="muted">可见度只调整表现。环境音与音效均使用程序合成。</p><button id="fullscreen">切换全屏</button><button id="back">返回</button>`,
+        `<label>切换锁定目标 <select id="cycle-target">${["v","b","c"].map(key=>`<option value="${key}" ${this.hudPreferences.cycleTarget===key?"selected":""}>${key.toUpperCase()}</option>`).join("")}</select></label><label>音效音量 <input id="volume" type="range" min="0" max="100" value="${Math.round(this.actions.getVolume() * 100)}"></label><label>夜间可见度 <input id="night-visibility" type="range" min="0" max="100" value="${Math.round(this.hudPreferences.nightVisibility*100)}"></label><p class="muted">可见度只调整表现。环境音与音效均使用程序合成。</p><button id="fullscreen">切换全屏</button><button id="back">返回</button>`,
       );
+      this.modal.querySelector<HTMLSelectElement>('#cycle-target')!.onchange=e=>{this.hudPreferences.cycleTarget=(e.target as HTMLSelectElement).value;this.savePreferences();};
       this.modal.querySelector<HTMLInputElement>("#night-visibility")!.oninput=(e)=>{this.hudPreferences.nightVisibility=Number((e.target as HTMLInputElement).value)/100;this.savePreferences();};
       const options=document.createElement('div');options.style.cssText='display:grid;gap:8px';options.innerHTML=`<label><input id="combat-numbers-option" type="checkbox" ${this.hudPreferences.combatNumbers?'checked':''}> 显示战斗伤害数字</label><label><input id="combat-shake-option" type="checkbox" ${this.hudPreferences.combatShake?'checked':''}> 轻微击杀与破防震屏</label>`;
       this.modal.querySelector('#night-visibility')!.closest('label')!.after(options);
@@ -715,22 +774,36 @@ export class Interface {
     input.click();
   }
   update(s: State, prompt: string) {
-    this.root.querySelector("#coin-status")!.textContent=`金币 ${s.coins}`;
+    const coins = this.root.querySelector<HTMLElement>("#coin-status")!;
+    coins.textContent = String(s.coins);
+    coins.title = `金币 ${s.coins}`;
+    coins.setAttribute('aria-label', `金币余额 ${s.coins}`);
     this.state = s;
+    const vitals = playerVitals(s);
     updateRuneHud(this);
     updateCampBossHud(this.root.querySelector<HTMLElement>("#camp-boss-status")!,s);
     const demon=this.root.querySelector<HTMLButtonElement>('#demon-king-summary')!;
-    demon.hidden=demonMalice(s.encounters)===0;demon.textContent=demonKingSummary(s);demon.title='查看旅途手记中的黑焰与来袭规则';
+    demon.hidden=demonMalice(s.encounters)===0;demon.textContent=`恶意 ${demonMalice(s.encounters)}`;demon.title=`${demonKingSummary(s)}；点击查看黑焰与来袭规则`;
+    const demonDetail = this.root.querySelector<HTMLElement>('#demon-king-detail')!;
+    demonDetail.hidden = demon.hidden;
+    demonDetail.textContent = demonKingSummary(s);
     this.root
       .querySelector(".health i")!
-      .setAttribute("style", `width:${s.player.hp}%`);
+      .setAttribute("style", `width:${s.player.hp / vitals.maxHp * 100}%`);
     this.root.querySelector(".health span")!.textContent =
-      `生命 ${Math.ceil(s.player.hp)} / 100`;
+      `${Math.ceil(s.player.hp)} / ${vitals.maxHp}`;
+    this.root.querySelector('.health')!.setAttribute('aria-valuenow', String(Math.ceil(s.player.hp)));
+    this.root.querySelector('.health')!.setAttribute('aria-valuemax', String(vitals.maxHp));
     this.root
       .querySelector(".stamina i")!
-      .setAttribute("style", `width:${s.player.stamina}%`);
+      .setAttribute("style", `width:${s.player.stamina / vitals.maxStamina * 100}%`);
     this.root.querySelector(".stamina span")!.textContent =
-      `体力 ${Math.ceil(s.player.stamina)} / 100`;
+      `${Math.ceil(s.player.stamina)} / ${vitals.maxStamina}`;
+    this.root.querySelector('.stamina')!.setAttribute('aria-valuenow', String(Math.ceil(s.player.stamina)));
+    this.root.querySelector('.stamina')!.setAttribute('aria-valuemax', String(vitals.maxStamina));
+    const cat=this.root.querySelector<HTMLButtonElement>('#cat-summary')!;
+    cat.querySelector('span')!.textContent=`小黑 · ${CAT_STAGES[catStage(s.catBond.score)].name}`;
+    cat.title=`默契 ${s.catBond.score}/100 · ${this.actions.catStatus?.()??''}`;
     this.root.querySelector("#region")!.textContent = region(
       s.player.x,
       s.player.y,
@@ -739,7 +812,7 @@ export class Interface {
     this.root.querySelector("#clock")!.textContent = clockLabel(s.time);
     this.root.querySelector("#day")!.textContent =
       `第 ${Math.floor(s.time / 1440) + 1} 日 · ${region(s.player.x, s.player.y)}`;
-    const objective=s.fieldQuests["south-supply"]==="active"?southQuestObjective(s):objectives[s.quest];
+    const tracked=legacyTracked(s);const objective=tracked?`${tracked.name}：${tracked.text}`:s.fieldQuests["south-supply"]==="active"?southQuestObjective(s):objectives[s.quest];
     this.root.querySelector("#objective")!.textContent = objective;
     this.root.querySelector("#objective-summary")!.textContent =
       `任务 · ${objective}`;
@@ -754,6 +827,8 @@ export class Interface {
     this.lastQuest = s.quest;
     this.root.querySelector("#prompt")!.textContent = prompt;
     this.root.querySelector("#combat-status")!.textContent = this.combatStatus;
+    this.root.querySelector<HTMLElement>("#combat-status")!.title = this.combatStatus;
+    this.root.querySelector("#combat-status-detail")!.textContent = this.combatStatus;
     const hotbar = this.root.querySelector("#hotbar")!;
     if (!hotbar.children.length)
       hotbar.innerHTML = Array.from(
@@ -891,6 +966,7 @@ export class Interface {
       for(const r of MAP_REGIONS){const x=r.polygon.reduce((n,p)=>n+p.x,0)/r.polygon.length,y=r.polygon.reduce((n,p)=>n+p.y,0)/r.polygon.length;ctx.fillText(r.name,px(x),py(y));}
       ctx.textAlign = "start";
     }
+    const tracked=legacyTracked(s);if(tracked){const x=px(tracked.point.x),y=py(tracked.point.y);ctx.strokeStyle='#ffeb94';ctx.lineWidth=mini?2:3;ctx.beginPath();ctx.arc(x,y,mini?5:11,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#ffeb94';ctx.beginPath();ctx.arc(x,y,mini?2:4,0,Math.PI*2);ctx.fill();if(!mini){ctx.font='bold 13px serif';ctx.textAlign='center';ctx.fillText(tracked.name,Math.max(100,Math.min(w-100,x)),y-18);}}
     // 四据点的地图标记与清除结算共用固定记录，历史继承同样显示已清除。
     for(const d of ENCOUNTERS.filter(d=>d.kind==='camp')){
       const cleared=s.encounters.groups[d.id].cleared,x=px(d.x),y=py(d.y);ctx.fillStyle=cleared?'#56766a':'#a34f3d';ctx.beginPath();ctx.arc(x,y,mini?2.5:6,0,Math.PI*2);ctx.fill();

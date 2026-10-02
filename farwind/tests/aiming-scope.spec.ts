@@ -3,7 +3,7 @@ import {mkdir,writeFile,readFile} from 'node:fs/promises';
 import {move} from './skill-navigation';
 import {VILLAGE_ANCHORS} from '../src/data/maps/windbell/layout';
 import {initialState} from '../src/game/systems/state';
-const dir='docs/aiming-scope/evidence';
+const dir=process.env.SCOPE_EVIDENCE_DIR??'docs/aiming-scope/evidence';
 const read=(p:Page)=>p.evaluate(()=>(window as any).__farwind());
 async function resume(p:Page){await p.keyboard.press('Escape');if((await read(p)).mode==='pause')await p.locator('#close').click();await p.waitForFunction(()=>(window as any).__farwind().mode==='');}
 test('scope-normal-flow',async({page})=>{
@@ -16,6 +16,10 @@ test('scope-normal-flow',async({page})=>{
  await page.keyboard.press('Tab');await page.locator('#bag-equipment').click();await page.locator('[data-equipment-slot="head"]').click();await page.locator('#equipment-equip').click();
  await expect.poll(async()=>(await read(page)).state.equipment.head).toBe('windScope');await expect(page.locator('.equipment-rules')).toContainText('尚未学会剑风');await page.screenshot({path:dir+'/equipped-unlearned.png'});
  await resume(page);const serial=(await read(page)).attackSerial;await page.keyboard.press('i');await page.waitForTimeout(600);expect((await read(page)).attackSerial).toBe(serial);
+ // 已实际购买并穿戴的新档四向行走；直接读角色呈现，不注入装备或动画状态。
+ const wearing=[];
+ for(const [key,view] of [['s','front'],['a','side'],['w','back'],['d','side']] as const){await page.keyboard.down(key);await page.waitForTimeout(250);const actor=(await read(page)).equipmentVisual;expect(actor.scope.visible).toBe(true);expect(actor.scope.texture).toBe(`scope-wear-${view}`);expect(actor.scope.alpha).toBe(actor.alpha);wearing.push(actor);await page.screenshot({path:`docs/aiming-scope/wear/production-${key}.png`});await page.keyboard.up(key);}
+ await writeFile('docs/aiming-scope/wear/movement.json',JSON.stringify({说明:'生产新档正常购买穿戴后，通过真实键盘四向行走，只读取角色显示状态。',观察:wearing},null,2));
  // 正式第一阶教本与机关：即使装备镜子也可用中键手动完成学习。
  await move(page,1380,1525);await page.keyboard.press('e');await page.getByRole('button',{name:'开始限定试用',exact:true}).click();await move(page,1310,1400);await page.keyboard.press('w');await page.mouse.down({button:'middle'});await page.waitForTimeout(300);await page.mouse.up({button:'middle'});
  await expect.poll(async()=>(await read(page)).state.skills.swordWindStage).toBe(1);
@@ -33,7 +37,11 @@ test('scope-normal-flow',async({page})=>{
  await resume(page);await page.keyboard.press('Escape');await page.locator('#save').click();const saved=(await read(page)).state;await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind().mode==='');const reloaded=await read(page);expect(reloaded.state.equipment.head).toBe('windScope');expect(reloaded.state.coins).toBe(saved.coins);expect(reloaded.state.skills.swordWindStage).toBe(1);expect(reloaded.windAim.target).toBeNull();
  await page.keyboard.press('Tab');await page.locator('#bag-equipment').click();await page.locator('[data-equipment-slot="head"]').click();await page.locator('#equipment-unequip').click();await expect.poll(async()=>(await read(page)).state.equipment.head).toBeNull();await resume(page);
  await page.keyboard.down('i');await page.waitForTimeout(450);await page.keyboard.up('i');expect((await read(page)).windAim.enabled).toBe(false);expect((await read(page)).windAim.target).toBeNull();await page.waitForTimeout(4500);
+ expect((await read(page)).equipmentVisual.scope.visible).toBe(false);
  await page.keyboard.press('Tab');await page.locator('#bag-equipment').click();await page.locator('[data-equipment-slot="head"]').click();await page.locator('#equipment-equip').click();await expect.poll(async()=>(await read(page)).state.equipment.head).toBe('windScope');await resume(page);
+ const combatWear=[];
+ for(const key of ['j','k','l','i']){await page.keyboard.press(key);await page.waitForTimeout(30);const actor=(await read(page)).equipmentVisual;expect(actor.scope.visible).toBe(true);expect(actor.scope.alpha).toBe(actor.alpha);combatWear.push({按键:key,角色:actor});await page.screenshot({path:`docs/aiming-scope/wear/combat-${key}.png`});await page.waitForTimeout(1000);}
+ await writeFile('docs/aiming-scope/wear/combat.json',JSON.stringify({说明:'生产新档真实近战、架剑、风步和剑风输入，只读角色佩戴层与身体透明度。',观察:combatWear},null,2));
  // 已正式解锁的生产新档持续施放，观察真实对象回收；此段没有修改游戏状态。
  await page.waitForTimeout(800);const beforeSoak=await read(page);await page.keyboard.down('i');
  const timing=await page.evaluate(()=>new Promise<{中位帧毫秒:number;九五分位帧毫秒:number;最大帧毫秒:number;帧数:number}>(ok=>{const start=performance.now(),frames:number[]=[];let last=start;const frame=(now:number)=>{frames.push(now-last);last=now;if(now-start<20000)requestAnimationFrame(frame);else {const sorted=frames.slice(1).sort((a,b)=>a-b);ok({中位帧毫秒:sorted[Math.floor(sorted.length*.5)],九五分位帧毫秒:sorted[Math.floor(sorted.length*.95)],最大帧毫秒:sorted.at(-1)!,帧数:sorted.length});}};requestAnimationFrame(frame);}));

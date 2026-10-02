@@ -1,8 +1,9 @@
 import {sourceAllowsRaid} from "./wildThreat";
 import {DAY_NIGHT as C} from "../../data/dayNight";
 import {RAID_GATES,DEFENSE,type GateId} from "../../data/defense";
-import {DEMON_KING,demonFormation,validRaidOrder,wildOrder,type RaidOrder} from '../../data/demonKing';
-import {demonMalice} from './demonKingState';
+import {DEMON_KING,demonFormation,harassmentChance,validRaidOrder,wildOrder,type RaidOrder} from '../../data/demonKing';
+import {demonMalice,pendingRetaliations} from './demonKingState';
+import {ENCOUNTERS} from '../../data/maps/windbell/encounters';
 import {dayNumber,nightWindowEnd,crossedBoundaries,minuteOfDay} from "./worldClock";
 import {nextRandom,prepareRaid,raidSpawnPoints,EastDefense} from "./defense";
 import type {State} from "./state";
@@ -17,7 +18,7 @@ export function validateNight(s:State){
   if(!n||!integer(n.takeoverNight)||n.takeoverNight<1||n.takeoverNight>dayNumber(s.time)+1||typeof n.discovered!=="boolean"||p===undefined)throw Error("昼夜存档字段无效。");
   if(p!==null&&(!p||!integer(p.night)||p.night<1||p.night<n.takeoverNight||p.night>dayNumber(s.time)||s.time<(p.night-1)*C.day+C.dusk||
     !Number.isFinite(p.at)||p.at<(p.night-1)*C.day+C.raidStart||p.at>=nightWindowEnd(p.night)||
-    !validRaidOrder(p.order)||!RAID_GATES.some(g=>g.id===p.gate)||!Number.isInteger(p.count)||p.count<1||p.count>(p.order?.source==='demon-king'?DEMON_KING.maxUnits:DEFENSE.historyUnitLimit)||
+    !validRaidOrder(p.order)||p.order?.retaliationCamp!==undefined||!RAID_GATES.some(g=>g.id===p.gate)||!Number.isInteger(p.count)||p.count<1||p.count>(p.order?.source==='demon-king'?DEMON_KING.maxUnits:DEFENSE.historyUnitLimit)||
     !["quiet","pending","started","cancelled","skipped"].includes(p.outcome)||
     (p.outcome==="started"? !integer(p.raidSequence!)||p.raidSequence!<1||p.raidSequence!>s.defense.sequence:p.raidSequence!==null)||
     (p.night===1&&p.outcome!=="quiet"&&p.outcome!=="skipped")||
@@ -37,7 +38,7 @@ export function makeNightPlan(s:State,night:number):NightPlan{
   const seed=nextRandom((s.defense.seed^Math.imul(night,2654435761))>>>0||1729),r=nextRandom(seed);
   const malice=demonMalice(s.encounters),order:RaidOrder=malice?{source:'demon-king',malice,profileVersion:1}:wildOrder();
   return {night,at:(night-1)*C.day+C.raidStart+r%210,gate:RAID_GATES[seed%RAID_GATES.length].id,count:demonFormation(malice,1+r%DEFENSE.unitLimit).count,order,
-    outcome:night===1||!malice&&!sourceAllowsRaid(s.encounters,RAID_GATES[seed%RAID_GATES.length].id)||nextRandom(r)%4===0?"quiet":"pending",raidSequence:null};
+    outcome:night===1||!malice&&!sourceAllowsRaid(s.encounters,RAID_GATES[seed%RAID_GATES.length].id)||nextRandom(r)%100>=harassmentChance(malice)?"quiet":"pending",raidSequence:null};
 }
 // 只在常规推进的黄昏边界制定计划；加载不调用本函数，长跨度不回放历史。
 export function advanceNight(s:State,previous:number){
@@ -55,6 +56,25 @@ export function mayStartNight(s:State){
     !d.raid&&!d.protectionMs&&!d.cooldownMs&&!d.retryMs;
 }
 export class RaidDeferredError extends Error {}
+export const mayStartRetaliation=(s:State)=>!s.defense.raid&&!s.defense.retryMs&&pendingRetaliations(s).length>0;
+export function retaliationWarningSnapshot(s:State,view?:Rect,occupied:readonly Point[]=[],defense?:EastDefense){
+  if(!mayStartRetaliation(s))throw Error('当前没有可启动的据点报复。');
+  const camp=pendingRetaliations(s)[0],direction=ENCOUNTERS.find(d=>d.id===camp)!.direction;
+  const order:RaidOrder={source:'demon-king',malice:demonMalice(s.encounters),profileVersion:1,retaliationCamp:camp,retaliationLevel:(s.demonKing.retaliatedCamps?.length??0)+1};
+  const admission=defense??new EastDefense(structuredClone(s.defense),0);
+  const player=s.life.playerSpace==='village'?s.player:{x:-10000,y:-10000},visible=s.life.playerSpace==='village'?view:undefined;
+  const first=RAID_GATES.findIndex(g=>g.id===`${direction}-gate`);
+  const gate=RAID_GATES.map((_,i)=>RAID_GATES[(first+i)%RAID_GATES.length]).find(g=>{
+    if(g.id==='west-gate'&&s.mapProgress.westRoad!=='open')return false;
+    const points=raidSpawnPoints(g.id,DEMON_KING.maxUnits,player,visible,occupied,order);
+    return points.length===DEMON_KING.maxUnits&&admission.canScheduleAtGate(g.id,player,points,visible,occupied,order);
+  });
+  if(!gate)throw new RaidDeferredError('地图边缘尚无足量安全站位，报复部队等待出发。');
+  const next=structuredClone(s);
+  next.defense=prepareRaid(next.defense,player,gate.id,DEMON_KING.maxUnits,true,visible,occupied,order);
+  next.demonKing.retaliatedCamps=[...(next.demonKing.retaliatedCamps??[]),camp];
+  return next;
+}
 export function nightWarningSnapshot(s:State,view?:Rect,occupied:readonly Point[]=[],defense?:EastDefense){
   if(!mayStartNight(s))throw Error("当前夜间计划尚不能启动。");
   const next=structuredClone(s),p=next.night.plan!;

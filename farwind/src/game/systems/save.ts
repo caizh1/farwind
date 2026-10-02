@@ -36,7 +36,7 @@ async function writeSave(s: State) {
     };
     try{
       const store=t.objectStore('states'),old=store.get('current');
-      old.onsuccess=()=>{if(old.result&&old.result.schema_version<15){const previous=store.get('before-combat-build');previous.onsuccess=()=>{if(!previous.result)store.put(old.result,'before-combat-build');};}if(old.result&&old.result.schema_version<16){const backup=store.get('before-aiming-scope');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-aiming-scope');};}store.put(clean,'current');};
+      old.onsuccess=()=>{if(old.result&&old.result.schema_version<15){const previous=store.get('before-combat-build');previous.onsuccess=()=>{if(!previous.result)store.put(old.result,'before-combat-build');};}if(old.result&&old.result.schema_version<16){const backup=store.get('before-aiming-scope');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-aiming-scope');};}if(old.result&&old.result.schema_version<20){const backup=store.get('before-cat-companion');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-cat-companion');};}store.put(clean,'current');};
     }
     catch(e){t.abort();d.close();no(e);}
   });
@@ -69,5 +69,5 @@ export const saveDiagnostic = () => queue.snapshot();
 
 export async function migrationBackup(){
  await queue.barrier();const d=await db();
- return new Promise<unknown>((ok,no)=>{const t=d.transaction('states','readonly'),r=t.objectStore('states').get('before-aiming-scope');r.onsuccess=()=>{if(r.result)ok(r.result);else {const older=t.objectStore('states').get('before-combat-build');older.onsuccess=()=>ok(older.result??null);}};r.onerror=()=>no(r.error);t.oncomplete=()=>d.close();});
+ return new Promise<unknown>((ok,no)=>{const t=d.transaction('states','readonly'),r=t.objectStore('states').get('before-cat-companion');r.onsuccess=()=>{if(r.result)ok(r.result);else {const older=t.objectStore('states').get('before-aiming-scope');older.onsuccess=()=>{if(older.result)ok(older.result);else{const first=t.objectStore('states').get('before-combat-build');first.onsuccess=()=>ok(first.result??null);first.onerror=()=>no(first.error);}};older.onerror=()=>no(older.error);}};r.onerror=()=>no(r.error);t.oncomplete=()=>d.close();});
 }

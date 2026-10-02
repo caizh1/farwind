@@ -4,6 +4,41 @@ import {sampleLightning,LIGHTNING_MOTION} from '../src/game/entities/runeLightni
 import type {RuneInk} from '../src/game/entities/runeView';
 import {RuneCombat,type RuneFx} from '../src/game/systems/runeCombat';
 import {initialState} from '../src/game/systems/state';
+import {runePreviewScene} from '../src/game/ui/runePreview';
+import {RUNES} from '../src/data/runes';
+
+describe('单枚符文效果预览',()=>{
+ const equipped=()=>{const s=initialState();s.runes.slots=['r29','r27','r24','r31','r32'];s.skills.swordWindStage=1;s.skills.legacySwordWind=true;return s;};
+ it.each([...RUNES.map(r=>r.id),'return-wind'])('%s 不混入其他配装，不修改正式状态',id=>{
+  const s=equipped(),before=structuredClone(s),preview=runePreviewScene(id,s,18);
+  expect(preview.state.runes.slots.filter(Boolean)).toEqual(id==='return-wind'?[]:[id]);
+  for(let t=0;t<4000;t+=5)preview.step(5);
+  expect(s).toEqual(before);preview.clear();expect(preview.winds.winds).toHaveLength(0);expect(preview.engine.effects).toHaveLength(0);
+ });
+ it.each([1,5] as const)('回风第%s阶真实去返各命中一次，伤害与配装基准一致，没有雷霆',stage=>{
+  const s=equipped();s.skills.swordWindStage=stage;const preview=runePreviewScene('r31',s,27);
+  for(let t=0;t<1200;t+=5)preview.step(5);
+  const events=preview.engine.events;
+  expect(events).toHaveLength(2);expect(events.every(e=>e.sourceKind==='native')).toBe(true);
+  expect(events.map(e=>e.tags.find(t=>t==='wind_out'||t==='wind_back'))).toEqual(['wind_out','wind_back']);
+  expect(events.map(e=>e.actual)).toEqual([54,32.4]);expect(preview.engine.effects).toHaveLength(0);expect(preview.engine.activeDuos.size).toBe(0);
+ });
+ it('引风归身按已保存分支展示移步与斜向回返',()=>{
+  const s=equipped();s.runes.growth.r31={advanced:true,branch:'anchor'};const preview=runePreviewScene('r31',s,18);
+  for(let t=0;t<460;t+=5)preview.step(5);
+  const returning=preview.winds.winds.find(w=>w.leg==='back');
+  expect(preview.state.player.y).toBeGreaterThan(130);expect(returning).toBeDefined();expect(returning!.direction.y).toBeGreaterThan(0);
+  expect(preview.phase).toContain('回程');
+  expect(preview.state.runes.growth.r31).toEqual(s.runes.growth.r31);
+ });
+ it('留痕单枚仍由后续剑风消费，进阶分支保留且没有附带回风或落雷',()=>{
+  const s=equipped();s.runes.growth.r32={advanced:true,branch:'weave'};const preview=runePreviewScene('r32',s,18);
+  for(let t=0;t<1200;t+=5)preview.step(5);
+  expect(preview.engine.events.some(e=>e.tags.includes('trace_band_hit'))).toBe(true);
+  expect(preview.winds.events.every(e=>e.wind.leg==='out')).toBe(true);
+  expect(preview.engine.events.every(e=>e.sourceKind==='native'||e.sourceRuneId==='r32')).toBe(true);
+ });
+});
 
 function ink(){const calls:{kind:string;args:unknown[]}[]=[];const record=(kind:string)=>(...args:unknown[])=>{calls.push({kind,args});};const g:RuneInk={line:record('line'),path:record('path'),ellipse:record('ellipse'),solid:record('solid'),stamp:record('stamp')};return {g,calls};}
 function fx(visual:string,extra:Partial<RuneFx>={}):RuneFx{return {id:7,visual,rune:'r27',point:{x:120,y:150},radius:46,born:0,life:650,...extra};}

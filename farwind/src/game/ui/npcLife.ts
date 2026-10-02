@@ -72,6 +72,7 @@ export function enterShop(world:World,id:ShopId){
   lifeInteract(world,{id:`life-door:${h.id}`,art:'',w:0,h:0,...h.door,kind:'sign',label:h.name});
 }
 function transition(world: World) {
+  world.catCompanion.transition();world.catView?.clear();
   const companion=world.xiaobao?.controller;
   if(companion?.data.task==='follow'){companion.data.wait=null;companion.data.command=null;if(companion.data.cast&&!companion.data.cast.released)companion.cancel();}
   // 同一帧已切换空间；立刻清掉上一空间的交互提示，保存期间也不显示旧门牌。
@@ -160,7 +161,9 @@ export function attachLifeUi(world: World) {
   bar.className = "resident-tools";
   bar.hidden = true;
   const notes = document.createElement("button");
-  notes.textContent = "居民笔记 · N";
+  notes.innerHTML = '<img src="/assets/commission/ledger-prop.webp" alt=""><span>笔记 N</span>';
+  notes.setAttribute('aria-label', '居民笔记 · N');
+  notes.title = '居民笔记 · N';
   notes.onclick = () => showNotes(world);
   bar.append(notes);
   if (
@@ -254,7 +257,7 @@ export function attachLifeUi(world: World) {
     }, 500);
     world.events.once("shutdown", () => clearInterval(timer));
   }
-  document.body.append(bar);
+  world.ui.root.querySelector(".bottom")!.append(bar);
   world.events.once("shutdown", () => bar.remove());
 }
 export function showNotes(world: World) {

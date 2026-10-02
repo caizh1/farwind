@@ -446,7 +446,7 @@ export class CombatController {
     if (!a || a.successAt !== undefined || now < a.start || now >= a.start+PARRY.active) return null;
     return now < a.start+PARRY.precise ? "perfect" : "normal";
   }
-  succeedParry(now: number, kind: CounterKind, p: {stamina:number;x?:number;y?:number},target="",origin?:{x:number;y:number},counter?:{delivery:Attack["delivery"];sourceContactId:string;direction?:{x:number;y:number}}) {
+  succeedParry(now: number, kind: CounterKind, p: {stamina:number;x?:number;y?:number},target="",origin?:{x:number;y:number},counter?:{delivery:Attack["delivery"];sourceContactId:string;direction?:{x:number;y:number}},maximum=100) {
     const a = this.parry;
     if (!a || a.successAt !== undefined) return false;
     a.successAt = now;
@@ -460,7 +460,7 @@ export class CombatController {
     this.autoCounter={at:a.actionUntil,successAt:now,kind,target,facing,delivery:counter?.delivery,sourceContactId:counter?.sourceContactId,direction:Math.hypot(dx,dy)>1e-7?{x:dx/Math.hypot(dx,dy),y:dy/Math.hypot(dx,dy)}:undefined};
     if(this.pending&&this.requestedAt<now){this.pending=false;this.reservationOwner=null;}
     if(this.pending)this.bufferUntil=a.actionUntil+strikeDuration(resolveStrike(1,kind))-COMBAT.chainWindow+COMBAT.buffer;
-    p.stamina = Math.min(100,p.stamina+PARRY.cost+(kind==="perfect"?PARRY.bonus:0));
+    p.stamina = Math.min(maximum,p.stamina+PARRY.cost+(kind==="perfect"?PARRY.bonus:0));
     this.hitStopRemaining = Math.max(this.hitStopRemaining,PARRY[kind].stop);
     this.lastHitStopRequested=PARRY[kind].stop;
     this.readyUntil = a.actionUntil+COMBAT.ready;

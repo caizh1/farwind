@@ -1,12 +1,20 @@
 {
   "runes": {
-    "version": 2,
+    "version": 3,
     "growth": {
       "r31": {
         "advanced": false,
         "branch": null
       },
       "r33": {
+        "advanced": false,
+        "branch": null
+      },
+      "r32": {
+        "advanced": false,
+        "branch": null
+      },
+      "r12": {
         "advanced": false,
         "branch": null
       }
@@ -76,9 +84,33 @@
       "splitRight": 0
     }
   },
-  "schema_version": 15,
+  "windLegacy": {
+    "wind": 0,
+    "blade": 0,
+    "device": false,
+    "ending": false,
+    "track": null
+  },
+  "schema_version": 20,
+  "catBond": {
+    "score": 0,
+    "memories": [],
+    "day": 0,
+    "pet": false,
+    "feed": false,
+    "rest": false,
+    "last": "",
+    "clawCooldown": 0,
+    "guardCooldown": 0,
+    "shield": 0,
+    "shieldTime": 0
+  },
+  "physique": {
+    "runDistance": 0
+  },
   "demonKing": {
-    "introduced": false
+    "introduced": false,
+    "retaliatedCamps": []
   },
   "encounters": {
     "elapsed": 0,
@@ -1407,6 +1439,216 @@
             "guardOpen": 0
           }
         ]
+      },
+      "legacy-wind-device": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "legacy-device-leaf",
+            "hp": 72,
+            "x": 2320,
+            "y": 1650,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "legacy-device-slime",
+            "hp": 48,
+            "x": 2710,
+            "y": 1670,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "legacy-wind-passage": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "legacy-passage-guardian",
+            "hp": 84,
+            "x": 2500,
+            "y": 1900,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "legacy-passage-leaf",
+            "hp": 72,
+            "x": 2600,
+            "y": 2020,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "legacy-passage-slime",
+            "hp": 48,
+            "x": 2380,
+            "y": 2020,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "legacy-blade-post": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "legacy-post-guardian",
+            "hp": 84,
+            "x": 2950,
+            "y": 780,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "legacy-post-priest",
+            "hp": 96,
+            "x": 3130,
+            "y": 740,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "legacy-blade-road": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "legacy-road-guardian",
+            "hp": 84,
+            "x": 3290,
+            "y": 600,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "legacy-road-priest",
+            "hp": 96,
+            "x": 3380,
+            "y": 580,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "legacy-road-leaf",
+            "hp": 72,
+            "x": 3470,
+            "y": 650,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
       }
     }
   },
@@ -2506,7 +2748,9 @@
   "coins": 120,
   "equipment": {
     "weapon": null,
-    "armor": null
+    "armor": null,
+    "head": null,
+    "feet": null
   },
   "shopStock": {
     "general:wood": 20,
@@ -2517,6 +2761,8 @@
     "healer:potion": 16,
     "smith:ironSword": 8,
     "smith:leatherCoat": 8,
+    "smith:windScope": 1,
+    "smith:windBoots": 4,
     "general:bread": 12,
     "healer:tea": 12,
     "inn:bread": 12,

@@ -1,6 +1,8 @@
 import {MAP_REGIONS} from "../../data/village";
 import {WILD_WATERS,WILD_BRIDGES} from "../../data/maps/windbell/wilderness";
 import {groundChunks} from './terrainChunks';
+import {ellipseDistance,featherCoverage,polygonDistance,strokeCoverage,terrainBounds,terrainJitter,terrainSegments} from './terrainBlend';
+import type {TerrainBounds,TerrainPoint} from './terrainBlend';
 import {SERVICE_SIGNS,VILLAGE_ANCHORS} from '../../data/maps/windbell/layout';
 import { TRAINING } from "./training";
 import Phaser from "phaser";
@@ -35,6 +37,38 @@ export function makeTerrain(this: World) {
     herb = this.textures.get("herb").getSourceImage() as HTMLImageElement,
     flowerBed = this.textures.get("orchard-flower-bed").getSourceImage() as HTMLImageElement;
   const tiles=new Map<string,Phaser.GameObjects.Image>();
+  // 区域边缘只烘焙一次；世界坐标决定起伏，相邻块和淘汰后重建保持一致。
+  const blend = 32;
+  const surface = document.createElement('canvas'), mask = document.createElement('canvas');
+  surface.width = 600; surface.height = 550;
+  // 每两个世界像素采样一次；四边各留一个采样点，缩放时跨块插值一致。
+  mask.width = 302; mask.height = 277;
+  // 遮罩由CPU写入，离屏合成也留在CPU，避免每层在显存与像素缓冲之间往返。
+  const layer = surface.getContext('2d',{willReadFrequently:true})!, matte = mask.getContext('2d',{willReadFrequently:true})!;
+  const pixels = matte.createImageData(mask.width, mask.height); pixels.data.fill(255);
+  const upper = new Float64Array(mask.width), lower = new Float64Array(mask.width);
+  const edge = (t:number) => Math.sin(t / 79) * 10 + Math.sin(t / 27) * 5 + Math.sin(t / 11) * 3;
+  const regions = MAP_REGIONS.filter(r => r.id !== 'village').map(region => {
+    // 当前地图的区域均为矩形；这里只改变显示边缘，不改变区域判定和碰撞。
+    const left = Math.min(...region.polygon.map(p => p.x)), right = Math.max(...region.polygon.map(p => p.x));
+    const top = Math.min(...region.polygon.map(p => p.y)), bottom = Math.max(...region.polygon.map(p => p.y));
+    return {id:region.id, left, right, top, bottom};
+  });
+  const roadSegments = roads.flatMap((path,i)=>terrainSegments(path.map(([x,y])=>[x,y] as TerrainPoint),roadWidth(i)));
+  const plaza = {x:670,y:760,rx:245,ry:150};
+  const ellipseBounds = (p:{x:number;y:number;rx:number;ry:number},pad:number):TerrainBounds =>
+    ({left:p.x-p.rx-pad,right:p.x+p.rx+pad,top:p.y-p.ry-pad,bottom:p.y+p.ry+pad});
+  // 原河道曲线仅在建场时离散化；水与岸共用中线，不修改通行判定。
+  const riverPoints:TerrainPoint[]=Array.from({length:33},(_,i)=>{
+    const t=i/32,u=1-t;
+    return [u**3*2620+3*u*u*t*2540+3*u*t*t*2700+t**3*2570,u**3*650+3*u*u*t*850+3*u*t*t*1250+t**3*1580];
+  });
+  const riverBank=terrainSegments(riverPoints,92),riverWater=terrainSegments(riverPoints,68);
+  // 保留院落主体，边缘改为柔和的草土交错；少量轮廓点仅供静态地面烘焙。
+  const soilAreas=[
+    {points:[[1430,343],[1540,337],[1700,339],[1876,340],[1882,450],[1879,590],[1883,715],[1770,729],[1660,723],[1540,730],[1422,717],[1416,600],[1423,470],[1418,367],[1430,343]] as TerrainPoint[],opacity:1,base:true},
+    {points:[[1060,406],[1130,420],[1179,467],[1188,540],[1166,604],[1120,650],[1070,622],[1034,570],[1019,509],[1024,444],[1060,406]] as TerrainPoint[],opacity:.42,base:false},
+  ].map(a=>({...a,bounds:terrainBounds(a.points,25),edges:terrainSegments(a.points,0)}));
   let peak=0,created=0,released=0;
   const drawTile=(cx:number,cy:number,key:string)=>{
       const texture = this.textures.createCanvas(key, 600, 550)!;
@@ -44,92 +78,82 @@ export function makeTerrain(this: World) {
       gp.setTransform(new DOMMatrix().scale(0.6));
       const rp = c.createPattern(road, "repeat")!;
       rp.setTransform(new DOMMatrix().scale(0.25));
+      const intersects=(b:TerrainBounds,pad=0)=>cx+601>=b.left-pad&&cx-1<=b.right+pad&&cy+551>=b.top-pad&&cy-1<=b.bottom+pad;
+      // 共用区域遮罩和离屏画布，只采样与当前地面块相交的范围。
+      const paintBlend=(bounds:TerrainBounds,coverage:(x:number,y:number)=>number,paint:CanvasPattern|string,opacity=1,base?:string)=>{
+        if(!intersects(bounds))return;
+        pixels.data.fill(0);
+        const left=Math.max(0,Math.floor((bounds.left-cx+1)/2)),right=Math.min(mask.width-1,Math.ceil((bounds.right-cx+1)/2));
+        const top=Math.max(0,Math.floor((bounds.top-cy+1)/2)),bottom=Math.min(mask.height-1,Math.ceil((bounds.bottom-cy+1)/2));
+        for(let row=top;row<=bottom;row++)for(let column=left;column<=right;column++)
+          pixels.data[(row*mask.width+column)*4+3]=Math.round(255*coverage(cx+column*2-1,cy+row*2-1));
+        matte.putImageData(pixels,0,0);
+        const x=Math.max(cx,Math.floor(bounds.left)),y=Math.max(cy,Math.floor(bounds.top));
+        const w=Math.min(cx+600,Math.ceil(bounds.right))-x,h=Math.min(cy+550,Math.ceil(bounds.bottom))-y;
+        if(w<=0||h<=0)return;
+        layer.clearRect(0,0,600,550);layer.save();layer.translate(-cx,-cy);
+        if(base){layer.fillStyle=base;layer.fillRect(x,y,w,h);layer.globalAlpha=.6;}
+        layer.fillStyle=paint;layer.fillRect(x,y,w,h);layer.globalAlpha=1;
+        layer.globalCompositeOperation='destination-in';layer.drawImage(mask,1+(x-cx)/2,1+(y-cy)/2,w/2,h/2,x,y,w,h);layer.restore();
+        c.save();c.globalAlpha=opacity;c.drawImage(surface,x-cx,y-cy,w,h,x,y,w,h);c.restore();
+      };
       c.fillStyle = gp;
       c.fillRect(cx, cy, 600, 550);
       const fp = c.createPattern(forest, "repeat")!;
       fp.setTransform(new DOMMatrix().scale(0.6));
-      for(const region of MAP_REGIONS){
-        if(region.id==='village')continue;
-        c.save();c.beginPath();region.polygon.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.closePath();c.clip();
-        c.fillStyle=region.id==='forest'||region.id==='north'?fp:region.id==='ruins'?rp:gp;c.fillRect(cx,cy,600,550);
-        c.fillStyle=region.id==='north'?'#688c9235':region.id==='south'?'#baa15d35':region.id==='west'?'#877d5330':'#64817425';c.fillRect(cx,cy,600,550);c.restore();
+      for(const region of regions){
+        // 起伏最大18像素，加上32像素羽化；远离边缘的块直接铺纹理。
+        const margin = blend + 18;
+        if(cx + 600 <= region.left - margin || cx >= region.right + margin || cy + 550 <= region.top - margin || cy >= region.bottom + margin) continue;
+        layer.clearRect(0, 0, 600, 550);
+        layer.save(); layer.translate(-cx, -cy);
+        layer.fillStyle=region.id==='forest'||region.id==='north'?fp:region.id==='ruins'?rp:gp;layer.fillRect(cx,cy,600,550);
+        layer.fillStyle=region.id==='north'?'#688c9235':region.id==='south'?'#baa15d35':region.id==='west'?'#877d5330':'#64817425';layer.fillRect(cx,cy,600,550);
+        if(cx < region.left + margin || cx + 600 > region.right - margin || cy < region.top + margin || cy + 550 > region.bottom - margin){
+          for(let column=0;column<mask.width;column++){
+            const x=cx+column*2-1;
+            upper[column]=region.top+edge(x+region.top*.41);
+            lower[column]=region.bottom+edge(x+region.bottom*.41);
+          }
+          for(let row=0;row<mask.height;row++){
+            const y=cy+row*2-1,l=region.left+edge(y+region.left*.41),r=region.right+edge(y+region.right*.41);
+            for(let column=0;column<mask.width;column++){
+              const x=cx+column*2-1,distance=Math.min(x-l,r-x,y-upper[column],lower[column]-y);
+              const t=Math.max(0,Math.min(1,(distance+blend)/(blend*2)));
+              pixels.data[(row*mask.width+column)*4+3]=Math.round(255*t*t*(3-2*t));
+            }
+          }
+          matte.putImageData(pixels,0,0);
+          layer.globalCompositeOperation='destination-in';layer.drawImage(mask,1,1,300,275,cx,cy,600,550);
+        }
+        layer.restore(); c.drawImage(surface,cx,cy);
       }
+      const water=c.createPattern(this.textures.get('water').getSourceImage() as HTMLImageElement,'repeat')!;
       for(const p of WILD_WATERS){
-        c.beginPath();c.ellipse(p.x,p.y,p.rx+12,p.ry+12,0,0,Math.PI*2);c.fillStyle='#aaa477';c.fill();
-        c.beginPath();c.ellipse(p.x,p.y,p.rx,p.ry,0,0,Math.PI*2);c.fillStyle=c.createPattern(this.textures.get('water').getSourceImage() as HTMLImageElement,'repeat')!;c.fill();
+        paintBlend(ellipseBounds(p,31),(x,y)=>featherCoverage(ellipseDistance(x,y,p)+12+terrainJitter(x,y),14),'#aaa477');
+        paintBlend(ellipseBounds(p,13),(x,y)=>featherCoverage(ellipseDistance(x,y,p)+terrainJitter(x,y)*.6,10),water);
       }
-      c.beginPath();
-      c.moveTo(2620, 650);
-      c.bezierCurveTo(2540, 850, 2700, 1250, 2570, 1580);
-      c.strokeStyle = "#bab18b";
-      c.lineWidth = 92;
-      c.stroke();
-      c.strokeStyle = c.createPattern(
-        this.textures.get("water").getSourceImage() as HTMLImageElement,
-        "repeat",
-      )!;
-      c.lineWidth = 68;
-      c.stroke();
-      c.lineCap = "round";
-      c.lineJoin = "round";
-      // 全部外轮廓先画，随后全部路面覆盖，交叉点内部没有后画的描边。
-      for (const outline of [true, false]) {
-        for (const [index, path] of roads.entries()) {
-          c.beginPath();
-          path.forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y)));
-          c.strokeStyle = outline ? "#9f9d62" : rp;
-          c.lineWidth = roadWidth(index) + (outline ? 15 : 0);
-          c.stroke();
-        }
-        if (outline) {
-          c.beginPath();
-          c.ellipse(670, 760, 245, 150, 0, 0, Math.PI * 2);
-          c.fillStyle = rp;
-          c.fill();
-          c.strokeStyle = "#b1a06b";
-          c.lineWidth = 6;
-          c.stroke();
-        }
+      const nearbyBank=riverBank.filter(s=>intersects(s,19)),nearbyWater=riverWater.filter(s=>intersects(s,13));
+      if(nearbyBank.length)paintBlend(terrainBounds(riverPoints,65),(x,y)=>strokeCoverage(x,y,nearbyBank,14),'#bab18b');
+      if(nearbyWater.length)paintBlend(terrainBounds(riverPoints,47),(x,y)=>strokeCoverage(x,y,nearbyWater,8),water);
+      const nearbyRoads=roadSegments.filter(s=>intersects(s,19)),hasPlaza=intersects(ellipseBounds(plaza,19));
+      if(nearbyRoads.length||hasPlaza){
+        // 所有道路与广场先取并集，再羽化一次；路口不留下内部接缝。
+        const bounds=[...nearbyRoads.map(s=>({left:s.left-19,right:s.right+19,top:s.top-19,bottom:s.bottom+19})),...(hasPlaza?[ellipseBounds(plaza,19)]:[])];
+        paintBlend({left:Math.min(...bounds.map(b=>b.left)),right:Math.max(...bounds.map(b=>b.right)),top:Math.min(...bounds.map(b=>b.top)),bottom:Math.max(...bounds.map(b=>b.bottom))},(x,y)=>{
+          const cover=strokeCoverage(x,y,nearbyRoads,14);
+          return cover===1||!hasPlaza?cover:Math.max(cover,featherCoverage(ellipseDistance(x,y,plaza)+terrainJitter(x,y),14));
+        },rp);
       }
       for(const b of WILD_BRIDGES){
         c.fillStyle="#76583b";c.fillRect(b.x,b.y,b.w,b.h);c.strokeStyle="#b99a66";c.lineWidth=3;for(let y=b.y+4;y<b.y+b.h;y+=18){c.beginPath();c.moveTo(b.x+3,y);c.lineTo(b.x+b.w-3,y);c.stroke();}
       }
-      c.beginPath();
-      c.ellipse(TRAINING.x, TRAINING.y, 76, 52, 0, 0, Math.PI * 2);
-      c.fillStyle = "#b2a16a88";
-      c.fill();
+      const worn={x:TRAINING.x,y:TRAINING.y,rx:76,ry:52};
+      paintBlend(ellipseBounds(worn,19),(x,y)=>featherCoverage(ellipseDistance(x,y,worn)+terrainJitter(x,y),14),'#b2a16a',.53);
       // 草地中的夯土边缘略有起伏，低饱和土色上叠手绘土粒，不铺石板。
       const soil = c.createPattern(earth, "repeat")!;
       soil.setTransform(new DOMMatrix().scale(0.32));
-      c.save();
-      c.beginPath();
-      c.moveTo(1430, 343);
-      c.bezierCurveTo(1530, 327, 1760, 342, 1876, 340);
-      c.bezierCurveTo(1890, 440, 1875, 605, 1883, 715);
-      c.quadraticCurveTo(1780, 736, 1660, 723);
-      c.quadraticCurveTo(1540, 738, 1422, 717);
-      c.bezierCurveTo(1406, 612, 1428, 466, 1418, 367);
-      c.closePath();
-      c.clip();
-      c.fillStyle = "#b69b70";
-      c.fillRect(1400, 330, 500, 410);
-      c.globalAlpha = 0.6;
-      c.fillStyle = soil;
-      c.fillRect(1400, 330, 500, 410);
-      c.restore();
-      // 院内仅是门前与药床旁磨出的土，保留草地，不铺满方形石路。
-      c.save();
-      c.beginPath();
-      c.moveTo(1060, 406);
-      c.bezierCurveTo(1150, 403, 1200, 473, 1188, 540);
-      c.quadraticCurveTo(1178, 610, 1120, 650);
-      c.quadraticCurveTo(1060, 632, 1034, 570);
-      c.bezierCurveTo(1010, 510, 1010, 443, 1060, 406);
-      c.closePath();
-      c.globalAlpha = 0.42;
-      c.fillStyle = soil;
-      c.fill();
-      c.restore();
+      for(const a of soilAreas)paintBlend(a.bounds,(x,y)=>featherCoverage(polygonDistance(x,y,a.edges)+terrainJitter(x,y),20),soil,a.opacity,a.base?'#b69b70':undefined);
       // 低矮花床保持地面装饰和原区域，所有区块从同一世界坐标采样。
       c.drawImage(flowerBed, 1730, 1480, 210, 80);
       for (let i = 0; i < 4; i++) {
@@ -137,17 +161,7 @@ export function makeTerrain(this: World) {
         c.fillRect(VILLAGE_ANCHORS.workbench.x - 95 + i * 17, VILLAGE_ANCHORS.workbench.y - 45, 12, 40);
       }
       // 地面缓存保留静态岸底；动态水面及上层装饰不重复烘焙。
-      c.beginPath();
-      for (let i = 0; i <= 96; i++) {
-        const a = i / 96 * Math.PI * 2,
-          edge = 10 + Math.sin(a * 7) * 2 + Math.sin(a * 13) * 1.8,
-          x = POND.x + Math.cos(a) * (POND.rx + edge),
-          y = POND.y + Math.sin(a) * (POND.ry + edge);
-        if (i) c.lineTo(x, y); else c.moveTo(x, y);
-      }
-      c.closePath();
-      c.fillStyle = "#b2b57e";
-      c.fill();
+      paintBlend(ellipseBounds(POND,31),(x,y)=>featherCoverage(ellipseDistance(x,y,POND)+12+terrainJitter(x,y),14),'#b2b57e');
       // 原手绘池水由独立Shader一次绘制，地面不再保留静态副本。
       // 岸底继续缓存；水面、浅水、荷叶及桥面按原世界坐标独立分层。
       // 沿湖岸与主路之外点缀花簇，避免覆盖通行信息。

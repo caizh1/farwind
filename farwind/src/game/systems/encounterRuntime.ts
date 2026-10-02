@@ -8,7 +8,7 @@ import {enemyLeashRadius} from '../../data/enemyPursuit';
 type Member=EncounterDefinition["members"][number];
 const distance=(a:Point,b:Point)=>Math.hypot(a.x-b.x,a.y-b.y);
 const inView=(p:Point,v:Rect,margin=140)=>p.x>=v.left-margin&&p.x<=v.right+margin&&p.y>=v.top-margin&&p.y<=v.bottom+margin;
-export type EncounterPort={read:()=>EncounterState;bodies:()=>EnemyBody[];spawn:(d:Member,s:EncounterMemberState)=>void;release:(id:string)=>void;busy:(id:string)=>boolean;signal?:(d:EncounterDefinition)=>void;bossEnter?:(d:Member)=>void;occupied?:()=>readonly Point[];bossCapture?:(e:EnemyBody,now:number)=>SavedBossCombat;bossReset?:(id:string)=>void;};
+export type EncounterPort={enabled?:(d:EncounterDefinition)=>boolean;read:()=>EncounterState;bodies:()=>EnemyBody[];spawn:(d:Member,s:EncounterMemberState)=>void;release:(id:string)=>void;busy:(id:string)=>boolean;signal?:(d:EncounterDefinition)=>void;bossEnter?:(d:Member)=>void;occupied?:()=>readonly Point[];bossCapture?:(e:EnemyBody,now:number)=>SavedBossCombat;bossReset?:(id:string)=>void;};
 // 本控制器只决定实例生灭；血量仍由 World 里唯一的 EnemyBody 和伤害系统结算。
 export class WildernessEncounters{
   constructor(private port:EncounterPort){}
@@ -66,6 +66,7 @@ export class WildernessEncounters{
     }
     for(const d of [...ENCOUNTERS].sort((a,b)=>distance(a,player)-distance(b,player))){
       const g=state.groups[d.id];
+      if(this.port.enabled&&!this.port.enabled(d))continue;
       this.updateBoss(d,delta,player);
       if(g.cleared){
         if(d.kind==="patrol"&&distance(d,player)>ENCOUNTER_LIMITS.respawnDistance&&d.members.every(m=>!inView(m,view)&&!this.port.busy(m.id))){
@@ -78,15 +79,15 @@ export class WildernessEncounters{
       }
       if(!g.activated&&d.kind==="patrol"&&campCleared(state,d.source))continue;
       if(distance(d,player)>ENCOUNTER_LIMITS.activateDistance)continue;
-      if(!g.activated&&d.after){
-        if(!state.groups[d.after].cleared)continue;
+      if(!g.activated&&(d.after||d.id.startsWith('legacy-'))){
+        if(d.after&&!state.groups[d.after].cleared)continue;
         if(g.warning===null){g.warning=2500;this.port.signal?.(d);continue;}
         if(g.warning>0)continue;
       }
       const existing=new Set(this.port.bodies().map(e=>e.id));
       const missing=d.members.filter((m,i)=>!m.boss&&!g.members[i].defeated&&!existing.has(m.id));
       if(!missing.length)continue;
-      if(!g.activated&&missing.some(m=>(!d.after&&inView(m,view))||distance(m,player)<(d.after?150:350)||motionBlocked(m.x,m.y)))continue;
+      if(!g.activated&&missing.some(m=>(!d.after&&!d.id.startsWith('legacy-')&&inView(m,view))||distance(m,player)<(d.id.startsWith('legacy-')?75:d.after?150:350)||motionBlocked(m.x,m.y)))continue;
       let live=this.port.bodies().filter(e=>(encounterUnit(e.id)||e.passiveRoot)&&e.hp>0).length;
       if(live+missing.length>ENCOUNTER_LIMITS.active){
         // 给近处新场地让出显示预算。休眠前已经捕获伤势，不卸载交战、返家或在途事件。

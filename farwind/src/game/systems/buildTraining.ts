@@ -2,21 +2,23 @@ import type {World} from '../scenes/World';
 import type {Attack} from './combat';
 import {isWindAttack} from './combat';
 import type {BuildLesson} from '../../data/windLessons';
-import {TRAINING} from './training';
+import {TRAINING,FIELD_TARGETS} from './training';
 import {grantMilestoneRunes} from './runeState';
 import {save} from './save';
 
 export const BUILD_TRAINING:Record<BuildLesson,{name:string;hint:string}>={
  melee:{name:'四连入门',hint:'面向木桩，J／左键依次接三刀，实际命中同一组即可学会四连终结并获得续势。'},
  finisher:{name:'破岸终结',hint:'在木桩前完成一组四刀实际命中，领取破岸；原东路奖励途径仍然保留。'},
- 'wind-advance':{name:'回流训练',hint:'装备回风，在木桩前按 I／中键送风，完成两次去程与回程命中，即解锁回风进阶。'},
+ 'wind-advance':{name:'回流训练',hint:'装备回风，在练习木桩或稻草人前按 I／中键送风，60秒内完成两次去程与回程命中同一目标，即解锁回风进阶。'},
  'resume-advance':{name:'借势训练',hint:'装备续势，第二刀挥击结束后按 L 调整站位，700毫秒内按 J 接回第三刀并命中木桩；完成两组即解锁进阶。'},
 };
 
-// 只观察正式结算的主木桩接触；不写血量、背包或任务结果来模拟训练。
+// 只观察正式结算的练习目标接触；不写血量、背包或任务结果来模拟训练。
+const trainingTargets=[TRAINING,...FIELD_TARGETS];
+export function nearBuildTraining(p:{x:number;y:number},radius:number=TRAINING.near){return trainingTargets.some(t=>Math.hypot(p.x-t.x,p.y-t.y)<radius);}
 export class BuildTraining {
  active:BuildLesson|null=null;until=0;saving=false;
- combos=new Map<number,Set<number>>();out=new Set<number>();completed=new Set<number>();
+ combos=new Map<number,Set<number>>();out=new Set<string>();completed=new Set<number>();
  constructor(private w:World){}
  clear(){this.active=null;this.combos.clear();this.out.clear();this.completed.clear();}
  open(){
@@ -33,12 +35,15 @@ export class BuildTraining {
  }
  observe(a:Attack,targetId:string){
   const id=this.active,w=this.w;
-  if(!id||this.saving||targetId!==TRAINING.id||w.state.player.hp<=0)return;
-  if(w.sim>this.until||w.state.life.playerSpace!=='village'||Math.hypot(w.state.player.x-TRAINING.x,w.state.player.y-TRAINING.y)>450){this.clear();return;}
+  if(!id||this.saving||!trainingTargets.some(t=>t.id===targetId)||w.state.player.hp<=0)return;
+  if(w.sim>this.until||w.state.life.playerSpace!=='village'||!nearBuildTraining(w.state.player,450)){this.clear();return;}
   if(isWindAttack(a)){
    if(id!=='wind-advance'||a.kind!=='swordWind'||!w.state.runes.slots.includes('r31'))return;
-   if(a.windLeg!=='back')this.out.add(a.id);
-   else if(this.out.has(a.id))this.completed.add(a.id);
+   const key=`${a.id}:${targetId}`;
+   if(a.windLeg!=='back')this.out.add(key);
+   else if(this.out.has(key)&&!this.completed.has(a.id)){
+    this.completed.add(a.id);w.ui.message(`回流训练：去程与回程已完成 ${this.completed.size}/2。`);
+   }
    if(this.completed.size>=2)void this.complete(id);
    return;
   }

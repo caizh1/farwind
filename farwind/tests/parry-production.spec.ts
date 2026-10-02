@@ -18,6 +18,6 @@ test('V2-PRODUCTION-real-input-auto-counter',async({page})=>{
   for(let y=0;y<100;y++)for(let x=0;x<130;x++){const k=(y*info.width+x)*4,r=data[k],g=data[k+1],b=data[k+2];if(r>155&&r<225&&g>225&&b>200&&g-r>20)green++;}
   observations.push({截图:i,普通提示像素:green});if(green>12){await page.keyboard.press('k');received=true;break;}
  }
- expect(received).toBe(true);await expect(page.locator('#training-stats')).toContainText('24伤害');await expect(page.locator('#training-stats')).toContainText('命中1/3');
+ expect(received).toBe(true);await expect(page.locator('#training-stats')).toContainText('24伤害');await expect(page.locator('#training-stats-detail')).toContainText('命中1/3');
  await mkdir('docs/parry-v2/evidence',{recursive:true});await writeFile('docs/parry-v2/evidence/production-summary.json',JSON.stringify({说明:'实际生产构建；正式导入夹具，真实K／右键，按截图提示架剑；未按J也有24伤害首刀，调试战斗状态未暴露',观察:observations,训练:await page.locator('#training-stats').textContent(),页面错误:errors},null,2));await page.screenshot({path:'docs/parry-v2/evidence/production.png'});expect(errors).toEqual([]);
 });

@@ -1,19 +1,23 @@
 import {RUNES,RUNE_BALANCE as B,runeById,duoById,resolveDuos,type RuneDefinition} from '../../data/runes';
+import {RUNE_GROWTH} from '../../data/runeGrowth';
+import {growthMode} from './runeState';
 import type {State} from './state';
+import { playerVitals } from './journeyTraining';
 import type {Point} from './obstacles';
 import type {SwordWindConfig} from '../../data/swordWind';
 import type {SwordWind} from './swordWind';
 import {sweptTargetContact} from './swordWindGeometry';
 export type RuneTarget=Point&{id:string;hp:number;boss?:unknown;disabled?:boolean;kind?:string;radius?:number};
-export type RuneEvent={eventId:string;rootEventId:string;parentEventId:string|null;attackInstanceId:string;sourceKind:'native'|'rune'|'duo'|'status'|'phantom'|'reflection';sourceRuneId?:string;sourceDuoId?:string;targetId:string;tags:string[];procDepth:number;amount:number;actual?:number;critical?:boolean;A:number;point:Point};
+export type RuneEvent={eventId:string;rootEventId:string;parentEventId:string|null;attackInstanceId:string;sourceKind:'native'|'rune'|'duo'|'status'|'phantom'|'reflection';sourceRuneId?:string;sourceDuoId?:string;targetId:string;tags:string[];procDepth:number;amount:number;actual?:number;critical?:boolean;A:number;point:Point;origin?:Point;direction?:Point};
 export type RuneFx={id:number;visual:string;rune:string;duo?:string;point:Point;end?:Point;born:number;life:number;radius:number;direction?:Point;lead?:number;stacks?:number;critical?:boolean};
 export type RuneStatus={chill?:{stacks:number;until:number};poison?:{stacks:number;until:number;next:number;damage:number;A:number;parent:RuneEvent};weak?:{until:number};doom?:{at:number;amount:number;stacks:number;parent:RuneEvent};jolt?:{until:number;next:number;parent:RuneEvent};iceUntil?:number};
-export type RuneProjectile={id:string;kind:'seeking'|'wave'|'vortex'|'phantom';rune:string;duo?:string;parent:RuneEvent;point:Point;previous:Point;direction:Point;born:number;until:number;radius:number;speed:number;damage:number;hit:Map<string,number>;target?:string;distance:number;maxDistance:number;canCrit:boolean;maxTargets:number;reflection?:boolean;finish?:boolean;returning?:boolean;returnOrigin?:Point};
+export type RuneProjectile={id:string;kind:'seeking'|'wave'|'vortex'|'phantom';rune:string;duo?:string;parent:RuneEvent;point:Point;previous:Point;direction:Point;born:number;until:number;radius:number;speed:number;damage:number;hit:Map<string,number>;target?:string;distance:number;maxDistance:number;canCrit:boolean;maxTargets:number;reflection?:boolean;finish?:boolean;returning?:boolean;returnOrigin?:Point;impact?:{push:number;wall:number;immune:number;breaking:boolean}};
 export type RuneField={id:string;kind:'mist'|'void'|'cloud'|'crystal';rune:string;parent:RuneEvent;point:Point;born:number;until:number;radius:number;next:number;duoNext:Record<string,number>;round:number};
 export type RuneContext={state:()=>State;targets:()=>RuneTarget[];A:()=>number;clear:(a:Point,b:Point)=>boolean;blocker:(a:Point,b:Point,radius:number)=>{t:number}|null;visible:(e:RuneTarget)=>boolean;damage:(e:RuneTarget,event:RuneEvent)=>{applied:boolean;damage:number;killed:boolean};push:(e:RuneTarget,direction:Point,amount:number)=>'wall'|'immune'|'moved';sound:(family:string,phase:'release'|'hit'|'finish',now:number)=>void;checkpoint:()=>void};
 const dist=(a:Point,b:Point)=>Math.hypot(a.x-b.x,a.y-b.y);
 const direction=(a:Point,b:Point)=>{const d=dist(a,b)||1;return {x:(b.x-a.x)/d,y:(b.y-a.y)/d};};
 export class RuneCombat {
+ bands:{point:Point;end:Point;width:number;until:number;born:number;parent:RuneEvent;hit:Set<string>}[]=[];
  traces:{id:number;point:Point;until:number;root:string;parent:RuneEvent}[]=[];
  statuses=new Map<string,RuneStatus>();projectiles:RuneProjectile[]=[];fields:RuneField[]=[];effects:RuneFx[]=[];events:RuneEvent[]=[];
  jobs:{at:number;serial:number;run:()=>void}[]=[];serial=0;seen=new Map<string,number>();intervals=new Map<string,number>();
@@ -25,7 +29,7 @@ export class RuneCombat {
  has(id:string){return this.state.runes.slots.includes(id);}cfg(id:string){return runeById(id)!.config;}duo(id:string){return this.activeDuos.has(id);}
  rebind(){const key=this.state.runes.slots.join('|')+':'+this.state.skills.swordWindStage+':'+JSON.stringify(this.state.runes.growth);if(key!==this.equipped){this.clear();this.equipped=key;this.activeDuos=new Set(resolveDuos(this.state.runes.slots,this.state.skills.swordWindStage>0).filter(d=>d.active).map(d=>d.id));}}
  // 临时效果无存档恢复入口；冷却、蓄积与收藏属于符文本身，清理绝不返还冷却。
- clear(){this.traces=[];this.statuses.clear();this.projectiles=[];this.fields=[];this.jobs=[];this.effects=[];this.seen.clear();this.intervals.clear();this.domainUntil=this.phoenixUntil=this.bossGuardUntil=this.speedUntil=this.featherGrace=0;this.feathers=0;this.time=undefined;this.dash=undefined;}
+ clear(){this.traces=[];this.bands=[];this.statuses.clear();this.projectiles=[];this.fields=[];this.jobs=[];this.effects=[];this.seen.clear();this.intervals.clear();this.domainUntil=this.phoenixUntil=this.bossGuardUntil=this.speedUntil=this.featherGrace=0;this.feathers=0;this.time=undefined;this.dash=undefined;}
  cooldown(id:string){return this.state.runes.cooldowns[id]??0;}
  startCooldown(id:string,duration:number){this.state.runes.cooldowns[id]=duration;this.state.runes.counts[id]=0;this.ctx.checkpoint();}
  gate(key:string,ms:number){if((this.intervals.get(key)??-Infinity)>this.now)return false;this.intervals.set(key,this.now+ms);return true;}
@@ -112,7 +116,18 @@ export class RuneCombat {
  }
  }
  finisher(e:RuneTarget,ev:RuneEvent){
- if(this.has('r12'))this.wave(this.player,direction(this.player,e),ev,'r12',this.cfg('r12').damage,this.cfg('r12').distance,this.cfg('r12').width);
+ if(this.has('r12')){
+  const mode=growthMode(this.state,'r12'),base=this.cfg('r12'),c=mode==='break'?RUNE_GROWTH.r12.branches.break:mode==='ring'?RUNE_GROWTH.r12.branches.ring:base;
+  const origin={x:this.player.x,y:this.player.y},d=ev.direction??direction(this.player,e);
+  if(mode==='ring'){
+   this.fx('tide-ring',origin,RUNE_GROWTH.r12.branches.ring.radius,'r12',430);
+   for(const target of this.targets(origin,RUNE_GROWTH.r12.branches.ring.radius)){
+    const hit=this.child(ev,target,ev.A*c.damage,['tide_hit'],'r12');hit.origin=origin;
+    if(this.apply(target,hit)&&target.hp>0)this.impact(target,ev,direction(origin,target),{push:c.push,wall:c.wall,immune:c.immune,breaking:false});
+   }
+  }else{this.wave(origin,d,ev,'r12',c.damage,'distance' in c?c.distance:base.distance,'width' in c?c.width:base.width);this.projectiles.at(-1)!.impact={push:c.push,wall:c.wall,immune:c.immune,breaking:mode==='break'};}
+ }
+
  if(this.has('r16')&&!this.cooldown('r16')){this.startCooldown('r16',this.cfg('r16').cooldown);this.field('mist',e,ev,'r16');}
  if(this.has('r22')&&!this.cooldown('r22')){this.startCooldown('r22',this.cfg('r22').cooldown);this.vortex(ev,direction(this.player,e));}
  if(this.has('r28')){this.fx('void-wave',this.player,110,'r28',550);this.damageArea(this.player,110,ev,this.cfg('r28').passive,['tide_hit'],'r28');this.count('r28',ev,()=>this.field('void',e,ev,'r28'));}
@@ -144,7 +159,7 @@ export class RuneCombat {
  const arc=(rune:string,ratio:number,radius:number)=>{const visual=rune==='r29'?'mirror-arc':runeById(rune)!.visual;this.fx(visual,this.player,radius,rune,500,{end:origin});this.damageArea(this.player,radius,ev,ratio,['mirror_hit'],rune,undefined,visual);};
  if(this.has('r29'))arc('r29',this.cfg('r29').passive,120);
  if(perfect&&this.has('r10'))arc('r10',this.cfg('r10').damage,this.cfg('r10').radius);
- if(perfect&&this.has('r17')){arc('r17',this.cfg('r17').damage,this.cfg('r17').radius);this.player.stamina=Math.min(100,this.player.stamina+this.cfg('r17').stamina);}
+ if(perfect&&this.has('r17')){arc('r17',this.cfg('r17').damage,this.cfg('r17').radius);this.player.stamina=Math.min(playerVitals(this.state).maxStamina,this.player.stamina+this.cfg('r17').stamina);}
  if(this.duo('d13')){const d=duoById('d13').config;this.bossGuardUntil=this.now+d.duration;this.fx('mirror-sea',this.player,d.radius,'r20',550,{duo:'d13'});for(const e of this.targets(this.player,d.radius))this.tide(e,ev,d.damage,'r20',0,'d13');}
  if(perfect&&this.has('r29')&&!this.cooldown('r29')){this.startCooldown('r29',this.cfg('r29').cooldown);this.time={until:this.now+this.cfg('r29').duration,point:{...this.player},A:ev.A,records:[],parent:ev};this.fx('time',this.player,this.cfg('r29').radius,'r29',this.cfg('r29').duration);this.ctx.sound('time','release',this.now);}
  }
@@ -156,8 +171,8 @@ export class RuneCombat {
  immune(){return this.now<this.phoenixUntil||this.now<this.featherGrace;}
  protectHit(source:RuneTarget|undefined,hitId:string){if(this.immune())return true;if(!this.feathers)return false;this.feathers--;this.featherGrace=this.now+duoById('d15').config.grace;this.metrics.prevented++;const ev=this.parent('r30','feather_block',this.player);this.fx('mirror-phoenix',this.player,75,'r30',650,{duo:'d15',stacks:this.feathers,lead:0});if(source&&this.legal(source)){const point={...this.player};this.projectiles.push({id:`feather:${++this.serial}`,kind:'seeking',rune:'r30',duo:'d15',parent:ev,point,previous:{x:point.x,y:point.y},direction:direction(point,source),born:this.now,until:this.now+2000,radius:12,speed:540,damage:ev.A*duoById('d15').config.damage,hit:new Map(),target:source.id,distance:0,maxDistance:900,canCrit:false,maxTargets:1,reflection:true});}return true;}
  damaged(source:RuneTarget|undefined,hpAfter:number,actual:number){if(actual<=0)return hpAfter;if(this.has('r10'))this.fx('armor',this.player,38,'r10',350);this.state.runes.peace=0;
- if(hpAfter<=0&&this.has('r30')&&!this.cooldown('r30')){const c=this.cfg('r30'),ev=this.parent('r30','rebirth',this.player);this.startCooldown('r30',c.cooldown);this.player.hp=100*c.heal;this.phoenixUntil=this.now+c.immune;this.feathers=this.duo('d15')?duoById('d15').config.feathers:0;this.metrics.phoenix++;
- this.fx(this.duo('d15')?'mirror-phoenix':'phoenix',this.player,c.radius,'r30',2000,{lead:360,duo:this.duo('d15')?'d15':undefined});const point={...this.player};this.schedule(360,()=>this.damageArea(point,c.radius,ev,c.damage,['phoenix_hit'],'r30'));for(let i=1;i<=6;i++)this.schedule(i*1000,()=>{if(this.player.hp>0)this.player.hp=Math.min(100,this.player.hp+100*c.regen);});this.ctx.sound('phoenix','finish',this.now);this.ctx.checkpoint();return 100*c.heal;
+ if(hpAfter<=0&&this.has('r30')&&!this.cooldown('r30')){const c=this.cfg('r30'),ev=this.parent('r30','rebirth',this.player),maxHp=playerVitals(this.state).maxHp;this.startCooldown('r30',c.cooldown);this.player.hp=maxHp*c.heal;this.phoenixUntil=this.now+c.immune;this.feathers=this.duo('d15')?duoById('d15').config.feathers:0;this.metrics.phoenix++;
+ this.fx(this.duo('d15')?'mirror-phoenix':'phoenix',this.player,c.radius,'r30',2000,{lead:360,duo:this.duo('d15')?'d15':undefined});const point={...this.player};this.schedule(360,()=>this.damageArea(point,c.radius,ev,c.damage,['phoenix_hit'],'r30'));for(let i=1;i<=6;i++)this.schedule(i*1000,()=>{const maximum=playerVitals(this.state).maxHp;if(this.player.hp>0)this.player.hp=Math.min(maximum,this.player.hp+maximum*c.regen);});this.ctx.sound('phoenix','finish',this.now);this.ctx.checkpoint();return maxHp*c.heal;
  }
  if(hpAfter>0&&this.has('r30')&&this.gate('phoenix-passive',this.cfg('r30').interval)){const ev=this.parent('r30','hurt',this.player);this.fx('phoenix-counter',this.player,95,'r30',600,{lead:180});const point={...this.player};this.schedule(180,()=>this.damageArea(point,95,ev,this.cfg('r30').passive,['phoenix_hit'],'r30',undefined,'phoenix-counter'));}
  return hpAfter;
@@ -171,6 +186,7 @@ export class RuneCombat {
   if(s.doom&&s.doom.at<=this.now)this.detonate(e);
   if(s.poison){const p=s.poison;p.stacks=Math.min(p.stacks,this.poisonCap(id));const interval=this.duo('d07')?duoById('d07').config.interval:B.poisonInterval;while(p.next<=this.now&&p.next<=p.until&&e.hp>0){p.next+=interval;this.apply(e,this.child(p.parent,e,p.damage*p.stacks,['poison_tick'],this.has('r25')?'r25':'r05',this.duo('d07')?'d07':undefined,'status'),this.duo('d08')&&this.weak(id)?'rose-brew':this.duo('d07')?'doom-brew':'brew');}if(p.until<=this.now)s.poison=undefined;}
  }
+ this.bands=this.bands.filter(b=>this.now<b.until);for(const band of this.bands)this.advanceBand(band);
  for(const f of [...this.fields])this.advanceField(f);
  this.fields=this.fields.filter(f=>this.now<f.until);
  this.advanceProjectiles(delta);
@@ -196,8 +212,9 @@ export class RuneCombat {
  for(const {e} of hits){if(p.kind!=='vortex'&&p.hit.size>=p.maxTargets)break;p.hit.set(e.id,p.kind==='vortex'?this.now+250:Infinity);
   const tags=p.reflection?['mirror_hit']:p.kind==='seeking'?['seeking_projectile_hit']:p.kind==='vortex'?['vortex_hit']:p.kind==='phantom'?['phantom_hit']:['tide_hit'],ev=this.child(p.parent,e,p.damage,tags,p.rune,p.duo,p.reflection?'reflection':p.kind==='phantom'?'phantom':'rune');
   if(p.finish){this.fx('sword-calligraphy',e,115,'r26',700,{direction:p.direction});this.ctx.sound('swords','finish',this.now);}
-  this.apply(e,ev,p.kind==='vortex'?this.duo('d12')?'ice-vortex':this.duo('d03')?'hunter-vortex':'vortex':p.kind==='seeking'?'sword-hit':p.kind==='phantom'?'phantom-wave':this.duo('d01')?'storm-wave':'wave',p.canCrit);
-  if(p.kind==='wave'&&e.hp>0){const pushed=this.ctx.push(e,p.direction,this.cfg(p.rune).push??0);if(pushed==='immune'&&this.has('r12'))this.apply(e,this.child(p.parent,e,p.parent.A*this.cfg('r12').immune,['compensation_hit'],'r12'),'breaker');else if(pushed==='wall')this.apply(e,this.child(p.parent,e,p.parent.A*(this.has('r12')?this.cfg('r12').wall:this.cfg('r02').wall),['wall_hit'],p.rune),'wall-wave');}
+  ev.origin={...p.previous};ev.direction={...p.direction};if(p.impact?.breaking)ev.tags.push('breaking_tide');
+  const applied=this.apply(e,ev,p.kind==='vortex'?this.duo('d12')?'ice-vortex':this.duo('d03')?'hunter-vortex':'vortex':p.kind==='seeking'?'sword-hit':p.kind==='phantom'?'phantom-wave':this.duo('d01')?'storm-wave':'wave',p.canCrit);
+  if(applied&&p.kind==='wave'&&e.hp>0)this.impact(e,p.parent,p.direction,p.impact??{push:this.cfg(p.rune).push??0,wall:this.has('r12')?this.cfg('r12').wall:this.cfg('r02').wall,immune:this.has('r12')?this.cfg('r12').immune:0,breaking:false},p.rune);
  }
  const done=!!wall||p.distance>=p.maxDistance||p.kind==='seeking'&&p.hit.size>0;
  if(done&&p.returning){const point={...p.point},d={x:-p.direction.x,y:-p.direction.y};p.returning=false;p.direction=d;p.hit=new Map();p.distance=0;p.born=this.now;p.until=this.now+p.maxDistance/p.speed*1000+300;p.point=point;live.push(p);}
@@ -205,23 +222,37 @@ export class RuneCombat {
  }
  this.projectiles=live;
  }
+ impact(e:RuneTarget,parent:RuneEvent,d:Point,c:{push:number;wall:number;immune:number;breaking:boolean},rune='r12'){
+  const pushed=this.ctx.push(e,d,c.push);
+  if(pushed==='immune'&&c.immune>0)this.apply(e,this.child(parent,e,parent.A*c.immune,['compensation_hit'],'r12'),'breaker');
+  else if(pushed==='wall')this.apply(e,this.child(parent,e,parent.A*c.wall,['wall_hit'],rune),'wall-wave');
+ }
  tracePass(w:SwordWind){
   if(!this.has('r32')||w.attack.kind!=='swordWind'||w.config.trialLesson)return;
-  const root=`attack:${w.rootActionId}`;
+  const root=`attack:${w.rootActionId}`,eligible=(trace:typeof this.traces[number])=>this.traces.includes(trace)&&this.now<trace.until&&!(trace.root===root&&w.leg==='out');
   for(const trace of [...this.traces]){
-   if(this.now>=trace.until||trace.root===root&&w.leg==='out')continue;
+   if(!eligible(trace))continue;
    const t=sweptTargetContact(w.previous,w.position,trace.point,trace.point,w.config.width/2+18);
    if(t===null)continue;
    const contact={x:w.previous.x+(w.position.x-w.previous.x)*t,y:w.previous.y+(w.position.y-w.previous.y)*t};
    if(!this.ctx.clear(contact,trace.point))continue;
-   this.traces=this.traces.filter(x=>x!==trace);
-   this.fx('wind-turbulence',trace.point,this.cfg('r32').radius,'r32',500);
-   const ev={...trace.parent,attackInstanceId:root,rootEventId:`action:${root}`};
-   for(const e of this.targets(trace.point,this.cfg('r32').radius)){
-    this.apply(e,this.child(ev,e,ev.A*this.cfg('r32').damage,['trace_hit'],'r32'));
-    if(e.hp>0)this.ctx.push(e,direction(trace.point,e),12);
-   }
+   const ev={...trace.parent,attackInstanceId:root,rootEventId:`action:${root}`},mode=growthMode(this.state,'r32'),weave=RUNE_GROWTH.r32.branches.weave;
+   const partner=mode==='weave'&&this.bands.length<weave.max?this.traces.filter(other=>other!==trace&&eligible(other)&&dist(trace.point,other.point)<=weave.distance&&!this.ctx.blocker(trace.point,other.point,weave.width/2)).sort((a,b)=>dist(trace.point,a.point)-dist(trace.point,b.point)||a.id-b.id)[0]:undefined;
+   // 先移除两枚资格，再生成派生风带，同帧后续剑风不能再次连接。
+   this.traces=this.traces.filter(x=>x!==trace&&x!==partner);
+   if(partner){const band={point:{...trace.point},end:{...partner.point},width:weave.width,born:this.now,until:this.now+weave.duration,parent:ev,hit:new Set<string>()};this.bands.push(band);this.fx('wind-connect',band.point,band.width/2,'r32',240,{end:band.end});this.advanceBand(band);continue;}
+   const c=mode==='focus'?RUNE_GROWTH.r32.branches.focus:this.cfg('r32');
+   this.fx(mode==='focus'?'wind-focus':'wind-turbulence',trace.point,c.radius,'r32',mode==='focus'?240:500);
+   for(const e of this.targets(trace.point,c.radius)){this.apply(e,this.child(ev,e,ev.A*c.damage,['trace_hit'],'r32'));if(e.hp>0)this.ctx.push(e,direction(trace.point,e),12);}
   }
  }
- snapshot(){return {traces:this.traces,clock:this.now,duos:[...this.activeDuos],cooldowns:{...this.state.runes.cooldowns},counts:{...this.state.runes.counts},statuses:Object.fromEntries(this.statuses),fields:this.fields,projectiles:this.projectiles.map(p=>({...p,hit:[...p.hit]})),effects:this.effects,events:this.events,metrics:{...this.metrics},temporary:{feathers:this.feathers,immune:this.immune(),domain:this.domainUntil,time:this.time,bossGuard:this.bossGuardUntil},pending:this.jobs.length};}
+ advanceBand(band:typeof this.bands[number]){
+  for(const e of this.ctx.targets()){
+   if(!this.legal(e)||band.hit.has(e.id)||sweptTargetContact(band.point,band.end,e,e,band.width/2+(e.radius??14))===null)continue;
+   const dx=band.end.x-band.point.x,dy=band.end.y-band.point.y,u=Math.max(0,Math.min(1,((e.x-band.point.x)*dx+(e.y-band.point.y)*dy)/(dx*dx+dy*dy||1))),near={x:band.point.x+u*dx,y:band.point.y+u*dy};
+   if(!this.ctx.clear(near,e))continue;
+   band.hit.add(e.id);this.apply(e,this.child(band.parent,e,band.parent.A*RUNE_GROWTH.r32.branches.weave.damage,['trace_band_hit'],'r32'));
+  }
+ }
+ snapshot(){return {bands:this.bands.map(b=>({...b,hit:[...b.hit]})),traces:this.traces,clock:this.now,duos:[...this.activeDuos],cooldowns:{...this.state.runes.cooldowns},counts:{...this.state.runes.counts},statuses:Object.fromEntries(this.statuses),fields:this.fields,projectiles:this.projectiles.map(p=>({...p,hit:[...p.hit]})),effects:this.effects,events:this.events,metrics:{...this.metrics},temporary:{feathers:this.feathers,immune:this.immune(),domain:this.domainUntil,time:this.time,bossGuard:this.bossGuardUntil},pending:this.jobs.length};}
 }

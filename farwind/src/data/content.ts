@@ -17,6 +17,7 @@ export const items = {
     description: "护甲 · 每次受击减少3点伤害，至少受到1点。需穿戴才生效。",
   },
   windScope: { name: "寻风瞄准镜", description: "头部 · 学会剑风并穿戴后，按住 I 自动瞄准射程内无遮挡的怪物。中键保留手动瞄准，不增加伤害、射程或速度。" },
+  windBoots: { name: "轻风靴", description: "鞋子 · 行走与奔跑速度提升25%。购买后需穿戴才生效，不额外消耗体力。" },
   charm: { name: "旅风护符", description: "黑猫发现的纪念品。" },
 } as const;
 export type ItemId = keyof typeof items;
@@ -33,6 +34,7 @@ export const objectives = [
 
 // 沿用旧素材；皮甲以物品文字展示，避免错误图标。
 export const itemIcon = (id: ItemId) =>
+  id === "windBoots" ? "/assets/equipment/wind-boots.webp" :
   id === "windScope" ? "/assets/equipment/wind-scope.webp" :
   ["bread", "tea", "soup"].includes(id)
     ? `/assets/village-interiors/${id}.webp`

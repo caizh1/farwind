@@ -1,3 +1,4 @@
+import {LEGACY_PROPS} from './windLegacy';
 import {ARENA_STONES,type ArenaStoneId} from "./maps/windbell/elites";
 import {SHORTCUTS,type ShortcutId} from "./maps/windbell/shortcuts";
 import {WORLD_BOUNDS,WORLD_PLAYABLE} from "./maps/windbell/bounds";
@@ -37,7 +38,7 @@ export const BRIDGES = [
 ];
 export const VILLAGE_GATE = { x: 1870, y: 1010, postOffset: 88 } as const;
 export const villageAreas = [
-  { id: "A", name: "风铃广场", x: 670, y: 780, detail: "接任务、辨方向、回村" },
+  { id: "A", name: "风铃广场", x: 670, y: 780, detail: "接任务、辨方向、饮用泉水恢复全部生命与体力" },
   { id: "B", name: "西侧生活巷", x: 320, y: 990, detail: "木匠委托、收集木材" },
   {
     id: "C",
@@ -426,6 +427,8 @@ props.push(
   {
     id: "plaza-fountain",
     art: "fountain",
+    kind: "sign",
+    label: "饮用泉水 · 恢复全部生命与体力",
     x: 680,
     y: 890,
     w: 130,
@@ -853,18 +856,19 @@ export function region(x: number, y: number) {
   const p={x,y},r=regionAt(p);return r.id!=="village"&&inProtected(p)?"巡逻近郊":r.name;
 }
 
-props.push(...WILDERNESS_PROPS);
+props.push(...WILDERNESS_PROPS,...LEGACY_PROPS);
 const westBarrier:Prop={id:'west-gate-barrier',art:'vertical-fence',frame:'trim',x:80,y:1557,w:38,h:254,solid:[22,254],owner:'village',role:'boundary',cover:'low'};
 props.push(westBarrier);
 let geometryKey="";
 export let mapGeometryRevision=0;
 // 仅场景把已提交的进度投影到派生碰撞；生命、守军和任务状态不会被重建。
-export function syncMapGeometry(open:boolean,shortcuts:readonly ShortcutId[]=[],broken:readonly ArenaStoneId[]=[]){
-  const key=JSON.stringify([open,[...shortcuts].sort(),[...broken].sort()]);
+export function syncMapGeometry(open:boolean,shortcuts:readonly ShortcutId[]=[],broken:readonly ArenaStoneId[]=[],legacy:{wind:number;blade:number}={wind:0,blade:0}){
+  const key=JSON.stringify([open,[...shortcuts].sort(),[...broken].sort(),legacy.wind,legacy.blade]);
   if(geometryKey===key)return;
   geometryKey=key;westBarrier.solid=open?undefined:[22,254];
   for(const s of SHORTCUTS)props.find(p=>p.id===`barrier-${s.id}`)!.solid=shortcuts.includes(s.id)?undefined:[s.barrier.w,s.barrier.h];
   for(const p of ARENA_STONES)props.find(s=>s.id===p.id)!.solid=broken.includes(p.id)?undefined:[...p.solid];
+  props.find(p=>p.id==='legacy-wind-seal')!.solid=legacy.wind>=4?undefined:[80,25];props.find(p=>p.id==='legacy-blade-seal')!.solid=legacy.blade>=4?undefined:[85,25];
   mapGeometryRevision++;
 }
 

@@ -1,3 +1,5 @@
+import {initialCatBond,migrateCatBond,validateCatBond,type CatBondState} from './catBond';
+import {initialWindLegacy,validateWindLegacy,type WindLegacyState} from './windLegacyState';
 import {migrateInteriorPosition} from '../../data/villageInteriors';
 import {initialRunes,migrateBuildRunes,validateRunes,type RuneState} from './runeState';
 import {initialSouthEvents,validateSouthEvents,type SouthEventState} from './southEvents';
@@ -20,16 +22,21 @@ import {
   equipment,
   RETURN_WIND_ORB,
   type EquipmentId,
+  type EquipmentSlot,
 } from "../../data/economy";
 import { props, enemyDefs, WORLD } from "../../data/world";
 import { items, type ItemId } from "../../data/content";
 import { initialDefense, migrateEastDefense, validateDefense, type DefenseState } from "./defenseState";
 import {initialNight,migratedNight,validateNight,type NightState} from "./nightDirector";
+import { JOURNEY_MAX_DISTANCE, playerVitals } from './journeyTraining';
 export type Slot = { id: ItemId; count: number } | null;
 export type State = {
   runes: RuneState;
   skills: SkillState;
-  schema_version: 16;
+  windLegacy:WindLegacyState;
+  schema_version: 20;
+  catBond: CatBondState;
+  physique: { runDistance: number };
   demonKing:DemonKingState;
   encounters:EncounterState;
   southEvents:SouthEventState;
@@ -40,7 +47,7 @@ export type State = {
   night: NightState;
   defense: DefenseState;
   coins: number;
-  equipment: { weapon: EquipmentId | null; armor: EquipmentId | null; head: EquipmentId | null };
+  equipment: Record<EquipmentSlot, EquipmentId | null>;
   shopStock: Record<string, number>;
   shopStockDay: number;
   economyRevision: number;
@@ -64,7 +71,10 @@ export type State = {
 export const initialState = (): State => ({
   runes: initialRunes(),
   skills: initialSkills(),
-  schema_version: 16,
+  windLegacy:initialWindLegacy(),
+  schema_version: 20,
+  catBond: initialCatBond(),
+  physique: { runDistance: 0 },
   demonKing:initialDemonKing(),
   encounters:initialEncounters(),
   southEvents:initialSouthEvents(),
@@ -75,7 +85,7 @@ export const initialState = (): State => ({
   night: initialNight(),
   defense: initialDefense(),
   coins: STARTER_COINS,
-  equipment: { weapon: null, armor: null, head: null },
+  equipment: { weapon: null, armor: null, head: null, feet: null },
   shopStock: initialStock(),
   shopStockDay: 0,
   economyRevision: 0,
@@ -165,7 +175,7 @@ export function validate(raw: unknown): State {
     s.dashCooldownRemaining ??= 0;
     (s as {schema_version:number}).schema_version = 2;
     s.coins = STARTER_COINS;
-    s.equipment = { weapon: null, armor: null, head: null };
+    s.equipment = { weapon: null, armor: null, head: null, feet: null };
     s.shopStock = initialStock();
     s.economyRevision = 0;
   }
@@ -208,14 +218,14 @@ export function validate(raw: unknown): State {
       d.members.forEach(m=>{if(s.killed?.includes(m.id)){s.encounters.groups[d.id].activated=true;settleEncounterDeath(s.encounters,m.id,false);}});
     }
     for(const d of ENCOUNTERS.filter(d=>d.kind==='camp')){const g=s.encounters.groups[d.id];if(d.members.every((m,i)=>m.boss||g.members[i].defeated))g.cleared=true;}
-    s.demonKing=initialDemonKing();(s as {schema_version:number}).schema_version=13;
+    s.demonKing=initialDemonKing(s.encounters);(s as {schema_version:number}).schema_version=13;
   }
   if(s&&(s as {schema_version:number}).schema_version===13){s.encounters=migrateCampBosses(s.encounters);(s as {schema_version:number}).schema_version=14;}
   if(s&&(s as {schema_version:number}).schema_version===14){
     if(s.skills){s.skills.meleeFinisher??=false;s.skills.buildLessons??=[];}
     s.runes=migrateBuildRunes(s.runes);(s as {schema_version:number}).schema_version=15;
   }
-  if(s&&(s as {schema_version:number}).schema_version===15){s.skills=validateSkills(s.skills);s.runes=s.runes===undefined?initialRunes():validateRunes(s.runes);}
+  if(s&&(s as {schema_version:number}).schema_version===15){s.skills=validateSkills(s.skills);s.runes=migrateBuildRunes(s.runes);}
   // 商店子版本迁移：只补新增商品，旧库存与余额不重置。
   if (s && (s as {schema_version:number}).schema_version === 15 && s.shopStockDay === undefined) {
     const legacy = ["general:wood", "general:stone", "general:herb", "general:berry", "general:potion", "healer:potion", "smith:ironSword", "smith:leatherCoat"];
@@ -227,18 +237,32 @@ export function validate(raw: unknown): State {
   }
   if(s && (s as {schema_version:number}).schema_version===15){
     if(!s.equipment || !s.shopStock)throw Error("旧装备或商店记录缺失，请使用备份。");
-    s.equipment.head=null;s.shopStock["smith:windScope"]=1;s.schema_version=16;
+    s.equipment.head=null;s.shopStock["smith:windScope"]=1;(s as {schema_version:number}).schema_version=16;
   }
-  if(s&&s.schema_version===16){s.skills=validateSkills(s.skills);s.runes=validateRunes(s.runes);}
+  if(s&&(s as {schema_version:number}).schema_version===16){s.windLegacy=initialWindLegacy();s.runes=migrateBuildRunes(s.runes);const fresh=initialEncounters();for(const id of Object.keys(fresh.groups).filter(id=>id.startsWith('legacy-')))s.encounters.groups[id]??=fresh.groups[id];(s as {schema_version:number}).schema_version=17;}
+  if(s&&(s as {schema_version:number}).schema_version===17){
+    // 仅新增空鞋槽与鞋子库存，不赠送装备，不重置原有金币和交易。
+    if(!s.equipment||!s.shopStock)throw Error("旧装备或商店记录缺失，请使用备份。");
+    s.equipment.feet=null;s.shopStock["smith:windBoots"]=initialStock()["smith:windBoots"];(s as {schema_version:number}).schema_version=18;
+  }
+  if(s&&(s as {schema_version:number}).schema_version===18){
+    // 历史奔跑没有可信记录，只补零里程；不改变已有旅途状态。
+    s.physique={runDistance:0};(s as {schema_version:number}).schema_version=19;
+  }
+  if(s&&(s as {schema_version:number}).schema_version===19){s.catBond=migrateCatBond(s);(s as {schema_version:number}).schema_version=20;}
+  if(s&&s.schema_version===20){s.skills=validateSkills(s.skills);s.runes=validateRunes(s.runes);s.windLegacy=validateWindLegacy(s.windLegacy);}
   const num = (n: unknown, min: number, max: number) =>
     typeof n === "number" && Number.isFinite(n) && n >= min && n <= max;
   const strarr = (a: unknown) =>
     Array.isArray(a) &&
     a.length < 300 &&
     a.every((x) => typeof x === "string" && x.length < 80);
+  if (!s?.physique || !num(s.physique.runDistance, 0, JOURNEY_MAX_DISTANCE))
+    throw Error("锻炼里程无效，请使用有效存档或备份。");
+  const vitals = playerVitals(s);
   if (
     !s ||
-    s.schema_version !== 16 ||
+    s.schema_version !== 20 ||
     !s.mapProgress || !["unknown","surveyed","open"].includes(s.mapProgress.westRoad) ||
     !Array.isArray(s.mapProgress.shortcuts) || s.mapProgress.shortcuts.length>3 || new Set(s.mapProgress.shortcuts).size!==s.mapProgress.shortcuts.length || !s.mapProgress.shortcuts.every(id=>SHORTCUT_IDS.includes(id)) ||
     (s.map_version !== undefined &&
@@ -255,8 +279,8 @@ export function validate(raw: unknown): State {
       s.map_version === CURRENT_MAP_VERSION ? B.right : s.map_version !== undefined ? 4175 : 3575,
     ) ||
     !num(s.player.y, s.map_version === CURRENT_MAP_VERSION ? B.top : 25, s.map_version === CURRENT_MAP_VERSION ? B.bottom : 2175) ||
-    !num(s.player.hp, 1, 100) ||
-    !num(s.player.stamina, 0, 100) ||
+    !num(s.player.hp, 1, vitals.maxHp) ||
+    !num(s.player.stamina, 0, vitals.maxStamina) ||
     !Array.isArray(s.bag) ||
     s.bag.length !== 24 ||
     !s.bag.every(
@@ -309,8 +333,8 @@ export function validate(raw: unknown): State {
     !Number.isSafeInteger(s.shopStockDay) ||
     !num(s.shopStockDay, 0, Math.floor(s.time / 1440)) ||
     !s.equipment ||
-    !["weapon", "armor", "head"].every((slot) => {
-      const id = s.equipment[slot as "weapon" | "armor" | "head"];
+    !(["weapon", "armor", "head", "feet"] as const).every((slot) => {
+      const id = s.equipment[slot];
       return id === null || (isEquipment(id) && equipment[id].slot === slot);
     }) ||
     (count(s,"windScope")+(s.equipment.head==="windScope"?1:0)>1) ||
@@ -324,14 +348,18 @@ export function validate(raw: unknown): State {
     )
   )
     throw Error("存档交易或装备状态无效，请使用有效备份。");
+  if(s.runes.growth.r32.advanced!==(s.windLegacy.wind>=3)||s.runes.growth.r12.advanced!==(s.windLegacy.blade>=3))throw Error('传承与符文进阶记录不一致。');
   s.encounters=validateEncounters(s.encounters);s.southEvents=validateSouthEvents(s.southEvents,s.encounters);s.fieldQuests=validateFieldQuests(s.fieldQuests);
   s.demonKing=validateDemonKing(s);
+  for(const key of ['wind','blade'] as const){const phase=s.windLegacy[key];if(phase>=3&&!s.encounters.groups[key==='wind'?'legacy-wind-device':'legacy-blade-post'].cleared||phase===4&&!s.encounters.groups[key==='wind'?'legacy-wind-passage':'legacy-blade-road'].cleared)throw Error('传承节点与战斗记录不一致。');}
+  if(s.windLegacy.ending&&(!s.encounters.groups['east-thorn-camp'].cleared||!s.mapProgress.shortcuts.includes('east-corridor')))throw Error('传承归途与据点或回廊记录不一致。');
   if(s.fieldQuests["south-supply"]==="complete"&&!s.encounters.groups["south-spore-camp"].cleared)throw Error("南部委托与据点进度不一致。");
   s.defense = validateDefense(s.defense);
   if((s.defense.raid?.order?.malice??0)>demonMalice(s.encounters))throw Error('在途魔王派遣与清剿进度不一致。');
   s.xiaobao=validateXiaobao(s.xiaobao,s.killed,s.defense.raid?.members.map(m=>m.id)??[],s.encounters);
   s.night=validateNight(s);
   s.life=validateLife(s.life,s.time);
+  s.catBond=validateCatBond(s.catBond,s.time,vitals.maxHp);
   const validIds = (ids: string[], kind: string) =>
     new Set(ids).size === ids.length &&
     ids.every((id) => props.some((p) => p.id === id && p.kind === kind));

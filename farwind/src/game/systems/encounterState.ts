@@ -48,7 +48,7 @@ export function validateEncounters(raw:unknown):EncounterState{
  if(!s||!n(s.elapsed,1e12)||!s.groups||Object.keys(s.groups).length!==ENCOUNTERS.length||!Array.isArray(s.broken)||new Set(s.broken).size!==s.broken.length||s.broken.some(id=>!ARENA_STONES.some(p=>p.id===id)))fail();
  for(const d of ENCOUNTERS){const g=s.groups[d.id];
   if(!g||g.composition!==ENCOUNTER_COMPOSITION_VERSION||!Number.isSafeInteger(g.cycle)||!n(g.cycle,1e9)||typeof g.activated!=="boolean"||typeof g.cleared!=="boolean"||!n(g.cooldown,d.cooldownMs)||!Array.isArray(g.members)||g.members.length!==d.members.length)fail();
-  if(g.warning!==null&&(!d.after||g.activated||!n(g.warning,2500)||!s.groups[d.after]?.cleared))fail();
+  if(g.warning!==null&&(!d.after&&!d.id.startsWith('legacy-')||g.activated||!n(g.warning,2500)||!!d.after&&!s.groups[d.after]?.cleared))fail();
   if(d.kind==='camp'){
    g.boss=validateCampBoss(g.boss,d.members.find(m=>m.boss)!.id);
    const guards=campGuardsDefeated(d,g),boss=g.members[d.members.findIndex(m=>m.boss)];

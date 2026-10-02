@@ -159,7 +159,7 @@ export class SwordWindSystem {
     });
     return created.find(w=>Math.abs(w.direction.x-dx)<1e-8&&Math.abs(w.direction.y-dy)<1e-8)!;
   }
-  advance(prev:number,now:number,targets:WindMotion[],blocker=firstSwordWindBlocker) {
+  advance(prev:number,now:number,targets:WindMotion[],blocker:(a:Point,b:Point,radius:number)=>{id:string;t:number}|null=firstSwordWindBlocker) {
     const pending:WindEvent[]=[],result:WindEvent[]=[];
     const plans=new Map<SwordWind,{end:Point;travel:number}>();
     for(const w of this.winds){

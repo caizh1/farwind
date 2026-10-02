@@ -11,7 +11,7 @@ export function rangedCounterDirection(player:Point,facing:0|1|2|3,incoming:Poin
   const [x,y]=facingVector(facing),reverse=aim({x:0,y:0},{x:-incoming.x,y:-incoming.y},{x,y});
   return attacker&&defends(facing,attacker,player,incoming)?aim(player,attacker,reverse):reverse;
 }
-export function adjudicateContact(contact:EnemyContact,c:CombatController,p:Point&{stamina:number},rules:{valid:boolean;immune:boolean;clear:(a:Point,b:Point,id:string)=>boolean;attacker?:Point}):ContactResult {
+export function adjudicateContact(contact:EnemyContact,c:CombatController,p:Point&{stamina:number},rules:{valid:boolean;immune:boolean;clear:(a:Point,b:Point,id:string)=>boolean;attacker?:Point;maxStamina?:number}):ContactResult {
   const a=contact.attack,now=contact.at;
   if(a.cancelled||a.resolved)return "invalid";
   if(!rules.valid||!attackTouches(contact,p)||!rules.clear(contact.origin,contact.sampledPoint??p,a.attackerId))return "invalid";
@@ -25,7 +25,7 @@ export function adjudicateContact(contact:EnemyContact,c:CombatController,p:Poin
   const quality=c.parryQuality(now);
   if(a.parryable&&quality&&defends(c.parry!.facing,contact.origin,p,a.direction)) {
     c.succeedParry(now,quality as CounterKind,p,a.attackerId,contact.origin,{delivery:contact.projectileId?'wind':'blade',sourceContactId:a.attackId,
-      direction:contact.projectileId?rangedCounterDirection(p,c.parry!.facing,a.direction,rules.attacker):undefined});
+      direction:contact.projectileId?rangedCounterDirection(p,c.parry!.facing,a.direction,rules.attacker):undefined},rules.maxStamina);
     a.cancelled=true;
     return quality;
   }

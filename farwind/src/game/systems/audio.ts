@@ -162,10 +162,11 @@ export class Sound {
     const c = this.context,
       o = c.createOscillator(),
       g = c.createGain();
-    o.type = kind === "hit" || kind === "finish" ? "triangle" : "sine";
+    o.type = kind === "cat-meow" ? "triangle" : kind === "hit" || kind === "finish" ? "triangle" : "sine";
     o.frequency.setValueAtTime(
       (
         {
+          "cat-meow": 600,
           pick: 650,
           talk: 420,
           hit: 140,
@@ -177,16 +178,14 @@ export class Sound {
       )[kind] ?? 520,
       c.currentTime,
     );
-    o.frequency.exponentialRampToValueAtTime(
-      kind === "hit" ? 60 : 900,
-      c.currentTime + 0.15,
-    );
-    g.gain.setValueAtTime(this.volume * 0.3, c.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.2);
+    o.frequency.exponentialRampToValueAtTime(kind === "cat-meow" ? 1050 : kind === "hit" ? 60 : 900,c.currentTime + 0.15);
+    if(kind === "cat-meow")o.frequency.exponentialRampToValueAtTime(480,c.currentTime+.28);
+    g.gain.setValueAtTime(this.volume * (kind === "cat-meow" ? .12 : .3), c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + (kind === "cat-meow" ? .3 : .2));
     o.connect(g);
     g.connect(this.route(kind));
     o.start();
-    o.stop(c.currentTime + 0.21);
+    o.stop(c.currentTime + (kind === "cat-meow" ? .31 : .21));
     o.onended=()=>{o.disconnect();g.disconnect();};
   }
   private swordWindSound(kind:string){

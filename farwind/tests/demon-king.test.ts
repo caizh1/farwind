@@ -37,7 +37,7 @@ describe('魔王恶意的清剿事实与恢复',()=>{
   const old:any=planned();old.schema_version=12;delete old.demonKing;old.night.plan=null;
   old.defense=prepareRaid(old.defense,player,'east-gate');old.defense.raid.members[0].hp=13;old.defense.raid.members[1].hp=0;
   Object.assign(old.defense.guards[0],{hp:0,dead:true,mode:'dead'});
-  const next=validate(old);expect(next.schema_version).toBe(16);expect(next.defense).toEqual(old.defense);expect(next.time).toBe(old.time);
+  const next=validate(old);expect(next.schema_version).toBe(initialState().schema_version);expect(next.defense).toEqual(old.defense);expect(next.time).toBe(old.time);
   expect(demonMalice(next.encounters)).toBe(1);expect(next.demonKing.introduced).toBe(false);expect(validate(next)).toEqual(next);
  });
  it('初见在完整观看后持久化，失败不会消费，不能在零恶意时伪造初见',async()=>{

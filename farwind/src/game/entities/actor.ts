@@ -8,11 +8,13 @@ import {
   weaponSample,
 } from "../../data/animation";
 import type { Facing } from "../systems/locomotion";
+import {scopePlacement,scopeViews} from './scopeWear';
 export class Actor {
   // 镜像集中在角色表现层，其他视图只提交方向决定。
   static mirror(sprite: Phaser.GameObjects.Sprite | Phaser.GameObjects.Image, flip: boolean) {
     sprite.setFlipX(flip);
   }
+  static preloadScope(scene:Phaser.Scene){for(const view of scopeViews)scene.load.image(`scope-wear-${view}`,`/assets/equipment/scope-wear-${view}.webp`);}
   sprite: Phaser.GameObjects.Sprite;
   shadow: Phaser.GameObjects.Ellipse;
   carrySword: Phaser.GameObjects.Image;
@@ -51,12 +53,13 @@ export class Actor {
     this.carrySword = scene.add
       .image(x, y, "hero-carry-sword")
       .setVisible(false);
-    if(!cat&&scene.textures.exists("wind-scope"))this.scopeImage=scene.add.image(x,y,"wind-scope").setVisible(false);
+    if(!cat&&scene.textures.exists("scope-wear-front"))this.scopeImage=scene.add.image(x,y,"scope-wear-front").setOrigin(.5,0).setVisible(false);
     this.place(x, y);
   }
   get direction() {
     return this.motion.direction;
   }
+  setAlpha(alpha:number){this.sprite.setAlpha(alpha);this.scopeImage?.setAlpha(alpha);}
   place(x: number, y: number) {
     this.motion.reset();
     this.draw(x, y);
@@ -164,10 +167,13 @@ export class Actor {
       facing: combat?.facing ?? dashFacing ?? this.motion.direction,
       anchor: art ? [art.frameSize / 2, art.footY] : [64, 124],
     };
-    // 临时头部挂件：脚底仍由角色维护；不旋转角色图，不改变武器或碰撞。
-    if(this.scopeImage){const facing=this.presentation.facing,bob=combat?0:Math.sin(this.motion.phase*Math.PI*2)*1.2;
-      this.scopeImage.setVisible(this.scopeEquipped&&facing!==1).setDisplaySize(22,15).setPosition(x+(facing===2?-5:facing===3?5:-4),y-61+bob).setDepth(y+.1);
-      Actor.mirror(this.scopeImage,facing===2);
+    if(this.scopeImage){const pose=scopePlacement(texture,Number(frame),this.presentation.facing,this.sprite.flipX);
+      this.scopeImage.setVisible(this.scopeEquipped&&!!pose).setAlpha(this.sprite.alpha);
+      if(pose){this.scopeImage.setTexture(`scope-wear-${pose.view}`);
+        const width=pose.width*this.sprite.scaleX,source=this.scopeImage.frame;
+        this.scopeImage.setDisplaySize(width,width*source.realHeight/source.realWidth).setPosition(x+pose.x*this.sprite.scaleX,y+(pose.y-this.sprite.originY*this.sprite.frame.realHeight)*this.sprite.scaleY).setDepth(y+.1);
+        Actor.mirror(this.scopeImage,pose.flip);
+      }
     }
     this.shadow.setPosition(x, y - 3).setDepth(y - 0.5);
   }
@@ -190,6 +196,7 @@ export class Actor {
       origin: [this.sprite.originX, this.sprite.originY],
       scale: [this.sprite.scaleX, this.sprite.scaleY],
       alpha: this.sprite.alpha,
+      scope:{equipped:this.scopeEquipped,visible:!!this.scopeImage?.visible,texture:this.scopeImage?.texture.key,position:this.scopeImage?[this.scopeImage.x,this.scopeImage.y]:null,alpha:this.scopeImage?.alpha,provisional:true},
       provisional: this.presentation.provisional,
     };
   }

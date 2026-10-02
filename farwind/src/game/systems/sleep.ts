@@ -1,3 +1,4 @@
+import {catCareGain} from './catBond';
 import {INTERIOR_SERVICE} from '../../data/villageInteriors';
 import {spaceClear} from './npcNavigation';
 import {VILLAGE_ANCHORS} from '../../data/maps/windbell/layout';
@@ -6,6 +7,7 @@ import {currentNight,nextDawn} from "./worldClock";
 import {validate,type State} from "./state";
 import {clearMotionLine} from "./obstacles";
 import {makeNightPlan} from "./nightDirector";
+import { playerVitals } from './journeyTraining';
 export type SleepSafety={action:boolean;threat:boolean;projectile:boolean;conflict:boolean};
 export function sleepSnapshot(s:State,sequence:number,safety:SleepSafety){
   if(!safety||safety.conflict)throw Error("存在冲突的状态提交，请稍候。");
@@ -18,8 +20,10 @@ export function sleepSnapshot(s:State,sequence:number,safety:SleepSafety){
   const target=nextDawn(s.time);
   if(s.coins<C.sleepCost)throw Error(`金币不足，住宿需要${C.sleepCost}枚。`);
   const next=validate(s),night=currentNight(s.time)!;
-  next.coins-=C.sleepCost;next.player.hp=next.player.stamina=100;next.time=target;next.economyRevision=sequence;
+  const { maxHp, maxStamina } = playerVitals(next);
+  next.coins-=C.sleepCost;next.player.hp=maxHp;next.player.stamina=maxStamina;next.time=target;next.economyRevision=sequence;
   if(!next.night.plan&&night>=next.night.takeoverNight&&night>=1)next.night.plan=makeNightPlan(s,night);
   if(next.night.plan?.night===night&&next.night.plan.outcome!=="started")next.night.plan.outcome="skipped";
+  catCareGain(next.catBond,'rest',next.time);
   return validate(next);
 }

@@ -1,3 +1,4 @@
+import {appendLegacyEntry,legacyInteract} from './windLegacy';
 import {appendSouthQuest} from "./fieldQuest";
 import {openCommissions} from "../ui/commissions";
 import {regionalThreat} from "./wildThreat";
@@ -15,6 +16,8 @@ import { add, remove, count, reward } from "./state";
 import type { World } from "../scenes/World";
 
 export function interact(this: World, p: Prop) {
+  if(legacyInteract(this,p))return;
+  if (p.id === "plaza-fountain") { void this.drinkSpring(); return; }
   if(p.id.startsWith('camp-root-')){const d=ENCOUNTERS.find(d=>d.id===p.id.slice(10));if(d){const t=regionalThreat(this.state.encounters,d.direction),boss=d.members.find(m=>m.boss)!.boss!;this.ui.dialog(d.name,t.cleared?'营地已经清空。这个方向的巡游不再补充，据点不再组织袭村。':`足迹与巢穴通往附近道路。清理全部驻守后，${CAMP_BOSSES[boss].name}会在预警后入场。击败首领，才能切断巡游与当地袭村来源。可以撤战回村守卫。`);return;}}
   if(p.id.startsWith("repair-")&&SHORTCUT_IDS.includes(p.id.slice(7) as ShortcutId)){openShortcut(this,p.id.slice(7) as ShortcutId);return;}
   if(p.id === "community-ledger"){openCommissions(this);return;}
@@ -23,7 +26,7 @@ export function interact(this: World, p: Prop) {
   if(p.id === "west-road-survey"){surveyWestRoad(this);return;}
   if(p.id === "xiaobao"){this.xiaobao?.open(this);return;}
   if(p.id==='lesson-sail-left'||p.id==='lesson-sail-right'){this.lessons?.adjustSail(p.id.endsWith('left')?'left':'right');return;}
-  if(p.id.startsWith("lesson-")&&LESSON_IDS.includes(p.id.slice(7) as LessonId)){this.lessons?.open(p.id.slice(7) as LessonId);return;}
+  if(p.id.startsWith("lesson-")&&LESSON_IDS.includes(p.id.slice(7) as LessonId)){this.lessons?.open(p.id.slice(7) as LessonId);if(p.id==='lesson-windLessonResolved')appendLegacyEntry(this,true);return;}
   if(p.id==="waterside-night"){void this.discoverNight();return;}
   if(lifeInteract(this,p))return;
   const s = this.state;
@@ -115,7 +118,7 @@ export function interact(this: World, p: Prop) {
   if (p.kind === "chest" && !s.chests.includes(p.id)) {
     const id = p.id === "hidden-chest" ? "charm" : "potion";
     if (add(s, id, 1)) {
-      s.chests.push(p.id);
+      s.chests.push(p.id);this.catRemember(`find:${p.id}`,p);
       this.soundFx.play("success");
       this.ui.message(`宝箱奖励：${items[id].name} ×1`);
       this.refresh();
@@ -129,7 +132,7 @@ export function interact(this: World, p: Prop) {
     }
     const expected = s.stones.length;
     if (p.index === expected) {
-      s.stones.push(p.index);
+      s.stones.push(p.index);this.catRemember(`find:${p.id}`,p);
       this.soundFx.play("success");
       this.ui.message(`第 ${expected + 1} 道风声已回应`);
       if (s.stones.length === 3) {
@@ -148,7 +151,7 @@ export function interact(this: World, p: Prop) {
       "东村口路牌",
       "向东：翡翠森林与风之遗迹。向西：风铃广场。\n北面练习场可练三连击与风步，南面环湖小径经过果园回到广场。",
     );
-  if (p.id === "training-guide")this.buildTraining.open();
+  if (p.id === "training-guide"){this.buildTraining.open();appendLegacyEntry(this,false);}
   if (
     [
       "north-gate-sign",
@@ -165,12 +168,14 @@ export function interact(this: World, p: Prop) {
           ? "沿石路穿过东门进入翡翠森林，原主线仍从这里出发。"
           : "门外的山路与荒野尚未深入探明。谨慎前行，沿路返回。",
     );
-  if (p.id === "clue")
+  if (p.id === "clue"){
+    this.catRemember("find:clue",p);
     this.ui.dialog(
       "被风磨亮的碑文",
       "晨风自西方醒来，林风在北方低吟，暮风向东方归去。循此顺序，三风相和。修复需要风之结晶、木材 ×2、石材 ×2。",
       "rune",
     );
+  }
   if (p.id === "waymark") {
     if (s.quest === 5) {
       if (
@@ -206,6 +211,7 @@ export function interact(this: World, p: Prop) {
       s.player.x = 740;
       s.player.y = 780;
       this.xiaobao?.controller.transitioned(s.player);
+      this.catCompanion.transition();this.catView?.clear();
       this.cat.place(662, 798);
       this.hero.place(s.player.x, s.player.y);
       this.follower.reset(s.player);

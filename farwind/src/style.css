@@ -822,18 +822,31 @@ button:focus-visible {
   align-items: flex-start;
   gap: 8px;
   min-width: 0;
+  max-height: calc(100dvh - 132px);
+  overflow: auto;
+  pointer-events: auto;
+  padding-bottom: 4px;
+}
+.vitals-stack > * {
+  flex-shrink: 0;
+}
+/* 道具与符文分成两行时，给底栏留出完整高度。 */
+@media (max-width: 740px) {
+  .vitals-stack {
+    max-height: calc(100dvh - 160px);
+  }
 }
 #training-panel {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  max-width: min(360px, 60vw);
+  max-width: min(360px, 100%);
   padding: 10px 14px;
   border: 1px solid #c8b07c;
   border-radius: 10px;
   background: #263e35e8;
   color: #fff1ce;
-  pointer-events: none;
+  pointer-events: auto;
 }
 #training-panel[hidden] {
   display: none;
@@ -845,6 +858,28 @@ button:focus-visible {
 #training-panel button {
   pointer-events: auto;
   align-self: flex-start;
+  max-width: 100%;
+  padding: 6px 9px;
+  font-size: 12px;
+}
+.training-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+/* 操作在前；命中统计只在自己的区域滚动，不推移训练按钮。 */
+.training-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  max-height: 72px;
+  overflow: auto;
+  overflow-wrap: anywhere;
+}
+.training-details > * {
+  flex-shrink: 0;
 }
 .practice-options {
   display: flex;
@@ -862,7 +897,6 @@ button:focus-visible {
 @media (max-width: 650px) {
   #training-panel {
     padding: 6px 9px;
-    max-width: 55vw;
   }
 }
 
@@ -1061,13 +1095,13 @@ kbd {
 .practice-toggle { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 8px 0 16px; }
 
 /* 居民入口与开发工具使用正常流中的按钮组，无绝对定位图标。 */
-.resident-tools { position: fixed; left: 18px; bottom: 98px; z-index: 5; display: flex; gap: 8px; align-items: flex-end; max-width: calc(100vw - 36px); }
+.resident-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; max-width: 100%; pointer-events: auto; }
 .resident-tools button, .resident-tools select { font: inherit; color: #f5edcf; background: #344b40; border: 1px solid #ab9767; border-radius: 7px; padding: 7px 12px; }
 .resident-debug { display: flex; flex-direction: column; gap: 8px; background: #20382ff2; padding: 12px; border: 1px solid #9e8c61; border-radius: 9px; max-width: 500px; max-height: 65vh; overflow: auto; }
 .resident-debug[hidden] { display: none; }
 .resident-debug-actions { display: flex; flex-wrap: wrap; gap: 6px; }
 .resident-debug pre { white-space: pre-wrap; max-width: 460px; color: #f0e9c9; margin: 0; font-size: 12px; }
-@media (max-width: 800px) { .resident-tools { bottom: 110px; flex-wrap: wrap; } .resident-debug { max-width: 340px; } }
+@media (max-width: 800px) { .resident-debug { max-width: 340px; } }
 
 .resident-tools[hidden] { display: none; }
 
@@ -1099,3 +1133,32 @@ kbd {
 .camp-map-status li[data-cleared="true"] i { background: #56766a; }
 @media(max-width:1100px) { .top { grid-template-columns: minmax(0, 1fr) var(--info-width); grid-template-areas: 'boss boss' 'vitals info'; } .top:not(:has(.camp-boss-status:not([hidden]))) { grid-template-areas: 'vitals info'; } }
 @media(max-width:480px) { .top { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 8px; } .hud-info { width: 100%; } .vitals { min-width: 0; width: 100%; box-sizing: border-box; } .vitals > div { min-width: 0; width: auto; flex: 1; } .vitals .portrait { width: 32px; height: 36px; flex-shrink: 0; } .vitals b { font-size: 12px; } }
+
+/* 传承交互留在对话正常流，窄屏与教学选项共用滚动区。 */
+.dialog-copy:has(.legacy-actions){overflow:auto;min-height:0;}
+.dialog-copy:has(.legacy-actions) > *{flex-shrink:0;}
+.dialog-copy:has(.legacy-actions) .dialog-text{overflow:visible;flex:0 0 auto;}
+.legacy-actions{display:flex;flex-wrap:wrap;gap:8px;min-width:0;}
+
+/* 小黑入口与默契页：图标留在文档流中，小屏自动换行。 */
+.cat-summary{display:inline-flex;align-items:center;gap:5px;min-width:0;padding:3px 7px;font-size:11px;line-height:1.2;}
+.cat-summary img{width:22px;height:22px;flex:0 0 22px;object-fit:cover;object-position:left;}
+.vitals .hud-meta .cat-summary img{object-fit:cover;object-position:left;}
+.cat-summary span{min-width:0;overflow-wrap:anywhere;}
+.panel:has(.cat-companion-panel){width:min(860px,calc(100vw - 24px));min-width:0;padding:20px 28px;}
+.panel:has(.cat-companion-panel) h1{font-size:28px;letter-spacing:3px;margin:8px 0 12px;}
+.cat-companion-panel{display:grid;gap:8px;text-align:left;}
+.cat-bond-heading{display:flex;align-items:center;gap:18px;min-width:0;}
+.cat-bond-heading img{width:58px;height:58px;flex:0 0 58px;object-fit:cover;object-position:left;image-rendering:pixelated;}
+.cat-bond-heading div{min-width:0;}.cat-bond-heading h2{margin:5px 0;}.cat-bond-heading p{margin:0;}
+.cat-companion-panel progress{width:100%;height:12px;accent-color:#79ab83;}
+.cat-companion-panel p{line-height:1.6;margin:0;}.cat-next,.cat-recent{font-size:13px;color:#705c36;}
+.cat-abilities{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.cat-ability{border:1px solid #99825966;border-radius:10px;padding:10px;min-width:0;background:#f6f0de;}
+.cat-ability>div{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;}
+.cat-ability h3,.cat-care h3{font-size:15px;margin:0 0 6px;}.cat-ability span{font-size:11px;color:#626546;}.cat-ability p,.cat-care p{font-size:13px;}
+.cat-locked{background:#e7dec6;color:#636754;}.cat-locked span{color:#796c51;}
+.cat-care{padding:12px;background:#d9dfca;border-radius:10px;}
+.cat-care-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0;}.cat-care-actions button{min-width:0;}
+#cat-care-feedback{min-height:1.6em;color:#4d603b;}.cat-companion-panel>.muted{max-width:none;}
+@media(max-width:640px){.cat-abilities{grid-template-columns:minmax(0,1fr);}.cat-bond-heading{gap:12px;}.cat-bond-heading img{width:52px;height:52px;flex-basis:52px;}.cat-care-actions button{flex:1 1 130px;}.panel:has(.cat-companion-panel){padding:16px;}.panel:has(.cat-companion-panel) h1{font-size:23px;}}

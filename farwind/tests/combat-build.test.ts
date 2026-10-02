@@ -1,4 +1,4 @@
-import {describe,it,expect} from 'vitest';
+import {describe,it,expect,vi} from 'vitest';
 import {CombatController,attackConfig,isWindAttack,STRIKES,type Attack} from '../src/game/systems/combat';
 import {SwordWindSystem,type WindMotion} from '../src/game/systems/swordWind';
 import {resolveSwordWindConfig,SWORD_WIND} from '../src/data/swordWind';
@@ -9,9 +9,50 @@ import {RuneCombat,type RuneContext,type RuneEvent} from '../src/game/systems/ru
 import {Input} from '../src/game/systems/input';
 import {firstRectContact} from '../src/game/systems/swordWindGeometry';
 import {combatVisual,swordWindVisual} from '../src/data/animation';
+import {BuildTraining,nearBuildTraining} from '../src/game/systems/buildTraining';
+import {TRAINING,FIELD_TARGETS,TrainingDummy} from '../src/game/systems/training';
+vi.mock('../src/game/systems/save',()=>({save:vi.fn(async()=>{})}));
 const safe={combat:false,boss:false,defense:false,trial:false,story:false,action:false};
 const motion=(id:string,x:number,y=0):WindMotion=>({target:{id,x,y,hp:10000},previous:{x,y},current:{x,y}});
 const shot=(stage:1|2|3|4|5=1,mode:'path'|'anchor'|undefined='path'):Attack=>({id:1,rootActionId:1,kind:'swordWind',delivery:'wind',stage:1,facing:3,start:0,hit:new Set(),isFinisher:false,config:{...SWORD_WIND.strike},swordWind:resolveSwordWindConfig(stage),returnMode:mode});
+describe('正式回流训练的场地与计数',()=>{
+ function lesson(target=FIELD_TARGETS[2]){
+  const state=completeWindLesson(initialState(),'windLessonResolved');
+  state.runes.slots[0]='r31';state.player.x=target.x+80;state.player.y=target.y;
+  const w={state,sim:0,ui:{message:vi.fn()},economy:{run:async(read:any,change:any,write:any,publish:any)=>{const next=change(read());await write(next);publish(next);}},publishState(next:any){this.state=next;}};
+  const training=new BuildTraining(w as any);training.active='wind-advance';training.until=60000;
+  const hit=(id:number,leg:'out'|'back',targetId=target.id)=>training.observe({...shot(),id,windLeg:leg},targetId);
+  return {w,training,hit};
+ }
+ it.each([TRAINING,...FIELD_TARGETS])('$id 两次实际去返命中保存进阶',async target=>{
+  const a=lesson(target);a.hit(1,'out');a.hit(1,'back');expect(a.training.snapshot().completed).toBe(1);
+  expect(a.w.state.runes.growth.r31.advanced).toBe(false);
+  a.hit(2,'out');a.hit(2,'back');await vi.waitFor(()=>expect(a.w.state.runes.growth.r31.advanced).toBe(true));
+  expect(a.w.state.skills.buildLessons).toContain('wind-advance');expect(a.training.active).toBeNull();
+ });
+ it.each(FIELD_TARGETS)('$id 正式剑风扫掠、木桩接触与训练结算贯通',async target=>{
+  const a=lesson(target),sys=new SwordWindSystem(),dummy=new TrainingDummy(target.id,target.x,target.y);
+  expect(nearBuildTraining(a.w.state.player)).toBe(true);
+  const contact={target:dummy,previous:target,current:target};
+  for(let id=1;id<=2;id++){
+   const at=(id-1)*1200;sys.launch({...shot(),id,facing:2},a.w.state.player,at,36);
+   for(let t=at;t<at+1100;t+=5){a.w.sim=t+5;for(const e of sys.advance(t,t+5,[contact]))if(e.target&&dummy.hit(e.wind.attack,e.at,e.wind.config.damage))a.training.observe(e.wind.attack,e.target.id);}
+   if(id===1)expect(a.training.completed.size).toBe(1);
+  }
+  await vi.waitFor(()=>expect(a.w.state.runes.growth.r31.advanced).toBe(true));
+ });
+ it('同次施放重复命中或去返命中不同木桩不能凑成两次',()=>{
+  const a=lesson();a.hit(1,'out');a.hit(1,'back',FIELD_TARGETS[0].id);expect(a.training.completed.size).toBe(0);
+  a.hit(1,'back');a.hit(1,'back');a.hit(1,'out');expect(a.training.completed.size).toBe(1);
+  a.hit(2,'back');expect(a.training.completed.size).toBe(1);
+ });
+ it('敌人、未装备回风、离场与超时均不能获得进阶',()=>{
+  const a=lesson();a.hit(1,'out','敌人');a.hit(1,'back','敌人');expect(a.training.completed.size).toBe(0);
+  a.w.state.runes.slots[0]=null;a.hit(2,'out');a.hit(2,'back');expect(a.training.completed.size).toBe(0);
+  const b=lesson();b.w.state.player.x=3000;b.hit(1,'out');expect(b.training.active).toBeNull();
+  const c=lesson();c.w.sim=60001;c.hit(1,'out');expect(c.training.active).toBeNull();
+ });
+});
 function arena(four=false){
  const c=new CombatController();c.meleeFinisherEnabled=four;c.swordWindEnabled=true;
  const p={x:0,y:0,stamina:100},starts:Attack[]=[],hits:Attack[]=[],releases:Attack[]=[];

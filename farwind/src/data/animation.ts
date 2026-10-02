@@ -1,3 +1,4 @@
+import {FINISHER_WEAPONS,FINISHER_PROVISIONAL} from './meleeFinisherArt';
 import {sampleAttackTiming} from '../game/systems/attackTiming';
 import {COUNTER_WEAPONS} from "./counterArt";
 import {FEEDBACK} from '../game/systems/combatFeedback';
@@ -79,8 +80,10 @@ export function combatVisual(
   move: StrikeConfig = resolveStrike(stage),
 ): CombatVisual {
   if(stage===4){
-    const v=combatVisual(3,facing,elapsed,enter,move);
-    return {...v,clip:`hero/melee-finisher/${facing}`,provisional:true};
+    const timing=sampleAttackTiming(Math.max(0,elapsed),0,move.windup,move.active,move.recovery),view=facing===0?0:facing===1?1:2;
+    const pose=timing.phase==='windup'?timing.progress<.55?0:1:timing.phase==='active'?timing.progress<.5?2:3:timing.progress<.55?4:5;
+    const sample=FINISHER_WEAPONS[view][pose],point=(p:{x:number;y:number})=>({x:p.x*(facing===2?-1:1),y:p.y});
+    return {texture:'hero-melee-finisher',frame:view*6+pose,frameIndex:pose,clip:`hero/melee-finisher/${facing}`,facing,phase:timing.phase,phaseProgress:timing.progress,provisional:FINISHER_PROVISIONAL,weapon:{grip:point(sample.grip),tip:point(sample.tip),visible:timing.phase==='active',progress:timing.progress,alpha:timing.phase==='active'?.75:0,provisional:FINISHER_PROVISIONAL}};
   }
   const activeEnd = move.windup + move.active;
   const total = activeEnd + move.recovery;
@@ -383,7 +386,7 @@ const activeWeaponPoints = [
   ],
 ] as const;
 export function weaponSample(stage: number, facing: Facing, elapsed: number,m:StrikeConfig=resolveStrike(stage)):WeaponPose {
-  if(stage===4)return weaponSample(3,facing,elapsed,m);
+  if(stage===4)return combatVisual(4,facing,elapsed,false,m).weapon!;
   const sample = combatVisual(stage, facing, elapsed,false,m);
   const view = facing === 0 ? 0 : facing === 1 ? 1 : 2;
   const index = sample.frameIndex < 3 ? 0 : 1;

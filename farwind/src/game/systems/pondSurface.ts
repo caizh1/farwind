@@ -13,6 +13,7 @@ uniform vec2 uAmplitude;
 uniform vec2 uRate;
 uniform vec2 uEdge;
 uniform float uLight;
+uniform float uShoreWidth;
 void main() {
   vec2 uv = vec2(outTexCoord.x, 1.0-outTexCoord.y);
   float radius = length((uv-0.5)*2.0);
@@ -29,7 +30,9 @@ void main() {
   // 光照沿已有的手绘浅色笔触缓慢变化；不额外生成白色条带或焦散网格。
   float reflection = smoothstep(0.42, 0.78, water.r);
   water.rgb *= 1.0+reflection*strength*uLight*(sin(a)*0.6+sin(b)*0.4);
-  float coverage = 1.0-smoothstep(1.0-1.0/min(uSize.x,uSize.y), 1.0, radius);
+  // 岸边的静态起伏与浅水羽化在原通道中完成，水面主体仍保留手绘纹理。
+  float shore = (sin(p.x/31.0+p.y/43.0)*2.0+sin(p.x/13.0-p.y/19.0))/min(uSize.x,uSize.y);
+  float coverage = 1.0-smoothstep(1.0-uShoreWidth, 1.0, radius+shore);
   gl_FragColor = water*coverage;
 }`;
 
@@ -39,7 +42,7 @@ export function createPondSurface(scene: Phaser.Scene, time: () => number) {
     name: "FarwindPondSurfaceV1", fragmentSource,
     setupUniforms: (set: (name: string, value: unknown) => void) => set("uTime", time()/1000),
     initialUniforms: { uWater: 0, uSize: [width,height], uAmplitude: config.amplitude,
-      uRate: config.rate, uEdge: [1-(config.fixedInset+config.fadeWidth)/minRadius,1-config.fixedInset/minRadius], uLight: config.lightAmplitude },
+      uRate: config.rate, uEdge: [1-(config.fixedInset+config.fadeWidth)/minRadius,1-config.fixedInset/minRadius], uLight: config.lightAmplitude, uShoreWidth:14/minRadius },
   }, POND.x,POND.y,width,height,["pond-water"]).setDepth(WATER.depth.pond);
   scene.add.existing(surface);
   // Phaser 4.2.1的Shader.preDestroy仅清引用。释放本对象的顶点缓冲和VAO；

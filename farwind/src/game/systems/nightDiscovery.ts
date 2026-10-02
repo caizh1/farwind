@@ -1,3 +1,4 @@
+import {catRemember} from './catBond';
 import {NIGHT_DISCOVERY as D} from "../../data/dayNight";
 import {phaseAt} from "./worldClock";
 import {motionBlocked,clearMotionLine} from "./obstacles";
@@ -6,5 +7,5 @@ export function canDiscover(s:State){return s.life.playerSpace==="village"&&!s.n
 export function discoverySnapshot(s:State){
   if(!canDiscover(s))throw Error("临水夜风只能在夜间靠近草坡时聆听。");
   const next=validate(s);if(!add(next,"potion",1))throw Error("行囊已满，请腾出空间；夜风仍在等你。");
-  next.night.discovered=true;return validate(next);
+  next.night.discovered=true;catRemember(next.catBond,'night');return validate(next);
 }

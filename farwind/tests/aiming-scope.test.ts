@@ -9,14 +9,21 @@ import {Input} from '../src/game/systems/input';
 import {creditCombatCoins,settleEncounterCoins,combatCoinValue} from '../src/game/systems/combatCoins';
 import {unitState,resetEncounter} from '../src/game/systems/encounterState';
 import {ENCOUNTERS} from '../src/data/maps/windbell/encounters';
+import {scopePlacement} from '../src/game/entities/scopeWear';
 const target=(id:string,x:number,y=0)=>({id,x,y,hp:100});
 const open=()=>null;
 
 describe('寻风瞄准镜与金币',()=>{
+ it('佩戴锚点随实际源帧变化，左右共用原点镜像；未知和空白帧不乱贴',()=>{
+  const right=scopePlacement('hero-motion',0,3,false)!,left=scopePlacement('hero-motion',0,2,true)!;
+  expect(left.x).toBe(-right.x);expect(left.width).toBe(right.width);expect(left.flip).toBe(true);expect(right.view).toBe('side');
+  expect(scopePlacement('hero-motion',1,3,false)?.x).not.toBe(right.x);expect(scopePlacement('hero-motion',18,1,false)?.view).toBe('back');
+  expect(scopePlacement('hero-hurt',0,0,false)?.view).toBe('front');expect(scopePlacement('hero-motion',51,0,false)).toBeNull();expect(scopePlacement('cat-motion',0,0,false)).toBeNull();expect(scopePlacement('hero-motion',999,0,false)).toBeNull();
+ });
  it('十五版迁移保留钱、背包、任务、技能与世界记录，不发镜、不补历史金币，重复幂等',()=>{
   const old:any=initialState();old.schema_version=15;delete old.equipment.head;delete old.shopStock['smith:windScope'];old.coins=47;old.bag[0]={id:'herb',count:7};
   const before=structuredClone(old),next=validate(old);
-  expect(next.schema_version).toBe(16);expect(next.coins).toBe(47);expect(next.equipment.head).toBeNull();expect(count(next,'windScope')).toBe(0);expect(next.shopStock['smith:windScope']).toBe(1);
+  expect(next.schema_version).toBe(initialState().schema_version);expect(next.coins).toBe(47);expect(next.equipment.head).toBeNull();expect(count(next,'windScope')).toBe(0);expect(next.shopStock['smith:windScope']).toBe(1);
   for(const k of ['skills','runes','encounters','defense','bag','quest'] as const)expect(next[k]).toEqual(old[k]);expect(validate(next)).toEqual(next);expect(old).toEqual(before);
  });
  it('购买、穿戴、读档、卸下保持唯一持有，未学本领不授予剑风',()=>{

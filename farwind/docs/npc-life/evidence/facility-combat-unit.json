@@ -11,11 +11,11 @@
     "space": "village",
     "speech": null,
     "metrics": {
-      "steps": 2565,
-      "decisions": 865,
+      "steps": 2535,
+      "decisions": 851,
       "queries": 21,
-      "ms": 996.8129840000078,
-      "maxMs": 23.655250000000024,
+      "ms": 805.3581570000003,
+      "maxMs": 19.29483399999998,
       "pathBatches": 16,
       "maxExpandedPerBatch": 64
     },
@@ -30,7 +30,7 @@
       {
         "facility": "pharmacy",
         "owner": "healer",
-        "expires": 63300
+        "expires": 62700
       }
     ],
     "tasks": [],
@@ -38,9 +38,9 @@
       {
         "id": "elder",
         "body": {
-          "space": "village",
-          "x": 562.0400000000002,
-          "y": 650,
+          "space": "elder-home",
+          "x": 680.5887607722926,
+          "y": 872.1146630831563,
           "hp": 100,
           "health": "healthy",
           "episode": 0,
@@ -67,8 +67,8 @@
         },
         "reason": "整理风向笔记（评分 78）",
         "needs": {
-          "hunger": 0.5716666666666702,
-          "fatigue": 0.09183333333333293
+          "hunger": 0.5616666666666713,
+          "fatigue": 0.08683333333333307
         },
         "alarm": 0,
         "candidates": [
@@ -79,7 +79,7 @@
               "x": 720,
               "y": 650
             },
-            "score": 77.48296432287381,
+            "score": 78.56800292221861,
             "label": "整理风向笔记",
             "facility": null,
             "task": null
@@ -91,7 +91,7 @@
               "x": 570,
               "y": 800
             },
-            "score": 17.12644762904068,
+            "score": 18.297862578979764,
             "label": "窗口错过或设施忙，回家等待",
             "facility": "seat:elder-home",
             "task": null
@@ -100,8 +100,8 @@
             "kind": "rest",
             "target": {
               "space": "elder-home",
-              "x": 694.7064539002216,
-              "y": 899.6684711819589,
+              "x": 659.4122210803991,
+              "y": 830.7839509349524,
               "hp": 100,
               "health": "healthy",
               "episode": 0,
@@ -127,7 +127,7 @@
           "batches": 0,
           "maxExpanded": 0,
           "failure": "",
-          "goal": "0:village:90:81",
+          "goal": "0:elder-home:88:114",
           "planning": false
         },
         "memories": [
@@ -165,19 +165,6 @@
             "source": "alarm",
             "importance": 40,
             "expires": 5116.079999999985
-          },
-          {
-            "eventId": "life:5",
-            "sequence": 5,
-            "kind": "repair",
-            "time": 856.94999999993,
-            "subjects": [
-              "wind-bell"
-            ],
-            "result": "到场维修，消耗从工坊带来的两份木料，广场风铃挂架恢复至100%",
-            "source": "seen",
-            "importance": 40,
-            "expires": 5176.94999999993
           }
         ]
       },
@@ -204,7 +191,7 @@
           "facility": "pharmacy",
           "task": null,
           "phase": "perform",
-          "progress": 7680,
+          "progress": 7080,
           "duration": 8000,
           "started": 40620,
           "failures": 0,
@@ -213,8 +200,8 @@
         },
         "reason": "近日遇险，留在药房画图鉴（评分 80）",
         "needs": {
-          "hunger": 0.3523333333333365,
-          "fatigue": 0.4275000000003739
+          "hunger": 0.34233333333333593,
+          "fatigue": 0.42250000000037446
         },
         "alarm": 0,
         "candidates": [
@@ -305,8 +292,8 @@
         "id": "carpenter",
         "body": {
           "space": "village",
-          "x": 717.6781951401939,
-          "y": 654.1838923573705,
+          "x": 717.6952328932167,
+          "y": 655.1149367148402,
           "hp": 100,
           "health": "healthy",
           "episode": 0,
@@ -315,8 +302,8 @@
         "action": null,
         "reason": "带工具与木料维修（评分 144）",
         "needs": {
-          "hunger": 15.855000000001045,
-          "fatigue": 10.427500000000522
+          "hunger": 15.845000000001033,
+          "fatigue": 10.422500000000516
         },
         "alarm": 0,
         "candidates": [
@@ -327,7 +314,7 @@
               "x": 720,
               "y": 650
             },
-            "score": 148.9138709252744,
+            "score": 148.89901610326237,
             "label": "带工具与木料维修",
             "facility": null,
             "task": "repair:wind-bell:2"
@@ -339,7 +326,7 @@
               "x": 480,
               "y": 1425
             },
-            "score": 73.48069972816029,
+            "score": 73.4966231811774,
             "label": "木工与保养工具",
             "facility": "tools",
             "task": null
@@ -348,8 +335,8 @@
             "kind": "rest",
             "target": {
               "space": "village",
-              "x": 717.6781951401939,
-              "y": 654.1838923573705,
+              "x": 717.6952328932167,
+              "y": 655.1149367148402,
               "hp": 100,
               "health": "healthy",
               "episode": 0,
@@ -367,7 +354,7 @@
               "x": 570,
               "y": 800
             },
-            "score": 8.264352205038126,
+            "score": 8.275889027440439,
             "label": "窗口错过或设施忙，回家等待",
             "facility": "seat:carpenter-home",
             "task": null
@@ -387,7 +374,7 @@
               "y": 650
             }
           },
-          "stuck": 40,
+          "stuck": 20,
           "queries": 1,
           "batches": 12,
           "maxExpanded": 64,
@@ -435,14 +422,14 @@
             "eventId": "life:5",
             "sequence": 5,
             "kind": "repair",
-            "time": 856.94999999993,
+            "time": 856.0199999999309,
             "subjects": [
               "wind-bell"
             ],
             "result": "到场维修，消耗从工坊带来的两份木料，广场风铃挂架恢复至100%",
             "source": "seen",
             "importance": 40,
-            "expires": 5176.94999999993
+            "expires": 5176.019999999931
           }
         ]
       },
@@ -456,8 +443,8 @@
         "action": null,
         "reason": "值守或沿路返回岗位",
         "needs": {
-          "hunger": 15.855000000001045,
-          "fatigue": 10.427500000000522
+          "hunger": 15.845000000001033,
+          "fatigue": 10.422500000000516
         },
         "alarm": 0,
         "candidates": [],
@@ -506,7 +493,7 @@
           "facility": null,
           "task": null,
           "phase": "perform",
-          "progress": 4420,
+          "progress": 3820,
           "duration": 8000,
           "started": 40420,
           "failures": 0,
@@ -515,8 +502,8 @@
         },
         "reason": "训练、聊天（评分 80）",
         "needs": {
-          "hunger": 15.855000000001045,
-          "fatigue": 0.09083333333333296
+          "hunger": 15.845000000001033,
+          "fatigue": 0.0858333333333331
         },
         "alarm": 0,
         "candidates": [],
@@ -577,8 +564,8 @@
         "action": null,
         "reason": "值守或沿路返回岗位",
         "needs": {
-          "hunger": 15.855000000001045,
-          "fatigue": 10.427500000000522
+          "hunger": 15.845000000001033,
+          "fatigue": 10.422500000000516
         },
         "alarm": 0,
         "candidates": [],
@@ -618,8 +605,8 @@
         "action": null,
         "reason": "已阵亡",
         "needs": {
-          "hunger": 15.855000000001045,
-          "fatigue": 10.427500000000522
+          "hunger": 15.845000000001033,
+          "fatigue": 10.422500000000516
         },
         "alarm": 0,
         "candidates": [],
@@ -659,8 +646,8 @@
         "action": null,
         "reason": "已阵亡",
         "needs": {
-          "hunger": 15.855000000001045,
-          "fatigue": 10.427500000000522
+          "hunger": 15.845000000001033,
+          "fatigue": 10.422500000000516
         },
         "alarm": 0,
         "candidates": [],
@@ -700,8 +687,8 @@
         "action": null,
         "reason": "已阵亡",
         "needs": {
-          "hunger": 15.855000000001045,
-          "fatigue": 10.427500000000522
+          "hunger": 15.845000000001033,
+          "fatigue": 10.422500000000516
         },
         "alarm": 0,
         "candidates": [],
@@ -741,8 +728,8 @@
         "action": null,
         "reason": "值守或沿路返回岗位",
         "needs": {
-          "hunger": 15.855000000001045,
-          "fatigue": 10.427500000000522
+          "hunger": 15.845000000001033,
+          "fatigue": 10.422500000000516
         },
         "alarm": 0,
         "candidates": [],
@@ -791,7 +778,7 @@
           "facility": null,
           "task": null,
           "phase": "perform",
-          "progress": 4680,
+          "progress": 4080,
           "duration": 8000,
           "started": 40420,
           "failures": 0,
@@ -800,8 +787,8 @@
         },
         "reason": "训练、聊天（评分 80）",
         "needs": {
-          "hunger": 15.855000000001045,
-          "fatigue": 0.09083333333333296
+          "hunger": 15.845000000001033,
+          "fatigue": 0.0858333333333331
         },
         "alarm": 0,
         "candidates": [],
@@ -862,8 +849,8 @@
         "action": null,
         "reason": "值守或沿路返回岗位",
         "needs": {
-          "hunger": 15.855000000001045,
-          "fatigue": 10.427500000000522
+          "hunger": 15.845000000001033,
+          "fatigue": 10.422500000000516
         },
         "alarm": 0,
         "candidates": [],
@@ -903,8 +890,8 @@
         "action": null,
         "reason": "值守或沿路返回岗位",
         "needs": {
-          "hunger": 15.855000000001045,
-          "fatigue": 10.427500000000522
+          "hunger": 15.845000000001033,
+          "fatigue": 10.422500000000516
         },
         "alarm": 0,
         "candidates": [],
@@ -953,7 +940,7 @@
           "facility": null,
           "task": null,
           "phase": "perform",
-          "progress": 6620,
+          "progress": 6020,
           "duration": 8000,
           "started": 40420,
           "failures": 0,
@@ -962,8 +949,8 @@
         },
         "reason": "训练、聊天（评分 80）",
         "needs": {
-          "hunger": 15.855000000001045,
-          "fatigue": 0.09083333333333296
+          "hunger": 15.845000000001033,
+          "fatigue": 0.0858333333333331
         },
         "alarm": 0,
         "candidates": [],
@@ -1019,8 +1006,8 @@
         "action": null,
         "reason": "值守或沿路返回岗位",
         "needs": {
-          "hunger": 15.855000000001045,
-          "fatigue": 10.427500000000522
+          "hunger": 15.845000000001033,
+          "fatigue": 10.422500000000516
         },
         "alarm": 0,
         "candidates": [],
@@ -1119,7 +1106,7 @@
       {
         "id": "life:5",
         "sequence": 5,
-        "time": 856.94999999993,
+        "time": 856.0199999999309,
         "kind": "repair",
         "place": {
           "space": "village",

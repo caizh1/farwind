@@ -1,0 +1,13 @@
+<!doctype html><html lang="zh-CN"><meta charset="UTF-8"><title>回身终结斩固定根预览</title>
+<style>body{background:#e9e4cd;color:#26483d;font:16px system-ui;margin:24px}header{display:flex;align-items:center;gap:20px;flex-wrap:wrap}button{padding:8px 18px}canvas{max-width:100%;border:1px solid #678375}input{width:340px}p{max-width:900px}</style>
+<header><h1>第四刀 · 回身终结斩</h1><button id="play">暂停</button><label>战斗时间轴<input id="time" type="range" min="0" max="400" value="0"></label></header>
+<p>原创三视向六姿态，左向沿用镜像。脚底十字为唯一场景根，动画读取正式第四刀起势／挥击／收势时间；预览不产生伤害。素材、握点和衔接仍保留待验收标记。</p><canvas id="view" width="1280" height="350"></canvas><p id="status"></p>
+<script type="module">
+import {combatVisual,COMBAT_ACTION_ART} from '/src/data/animation.ts';import {resolveStrike,strikeDuration} from '/src/game/systems/combat.ts';
+const atlas=new Image();atlas.src='/assets/animation/hero-melee-finisher.png';await atlas.decode();
+const canvas=document.querySelector('#view'),g=canvas.getContext('2d'),slider=document.querySelector('#time'),play=document.querySelector('#play'),m=resolveStrike(4),total=strikeDuration(m);slider.max=total;let elapsed=0,last=performance.now(),running=true;
+play.onclick=()=>{running=!running;play.textContent=running?'暂停':'播放';};slider.oninput=()=>{running=false;play.textContent='播放';elapsed=Number(slider.value);};
+function draw(now){if(running)elapsed=(elapsed+Math.min(50,now-last))%(total+350);last=now;slider.value=Math.min(total,elapsed);g.fillStyle='#e9e4cd';g.fillRect(0,0,1280,350);let phase='';
+for(let d=0;d<4;d++){const root={x:160+d*320,y:295},v=combatVisual(4,d,Math.min(total,elapsed)),scale=2;phase=v.phase;g.save();g.translate(root.x,root.y);if(d===2)g.scale(-1,1);g.drawImage(atlas,(v.frame%6)*160,Math.floor(v.frame/6)*160,160,160,-80*scale,-COMBAT_ACTION_ART.footY*scale,160*scale,160*scale);g.restore();g.strokeStyle='#b35c46';g.beginPath();g.moveTo(root.x-8,root.y);g.lineTo(root.x+8,root.y);g.moveTo(root.x,root.y-8);g.lineTo(root.x,root.y+8);g.stroke();g.fillStyle='#26483d';g.font='18px system-ui';g.textAlign='center';g.fillText(['向下','向上','向左 · 镜像','向右'][d],root.x,325);}
+document.querySelector('#status').textContent=`第四刀 ${Math.round(Math.min(total,elapsed))}毫秒 / ${total}毫秒 · ${phase==='windup'?'收紧蓄势':phase==='active'?'回身挥斩':'收剑'} · 固定脚根 · 素材待验收`;requestAnimationFrame(draw);}requestAnimationFrame(draw);
+</script></html>

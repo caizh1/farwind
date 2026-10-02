@@ -42,21 +42,21 @@
 .equipment-traveler { display: flex; flex-direction: column; justify-content: center; min-width: 0; margin: 0; border-right: 1px solid #b19a6345; padding-right: 12px; }
 .equipment-traveler img { display: block; width: 100%; height: 360px; object-fit: cover; object-position: center top; }
 .equipment-traveler figcaption { padding: 10px 10px 0; font-family: "Songti SC", "STSong", serif; color: #8b7147; font-size: 17px; line-height: 1.7; letter-spacing: 2px; }
-.equipment-slots { display: flex; flex-direction: column; justify-content: start; gap: 12px; min-width: 0; border-right: 1px solid #b19a6345; padding-right: 16px; }
-.equipment-panel .equipment-slot { width: 100%; justify-content: start; text-align: left; gap: 16px; min-height: 116px; padding: 12px 8px; background: transparent; color: inherit; border: 1px solid transparent; border-bottom-color: #b19a6360; border-radius: 5px; }
+.equipment-slots { display: flex; flex-direction: column; justify-content: start; gap: 8px; min-width: 0; border-right: 1px solid #b19a6345; padding-right: 16px; }
+.equipment-panel .equipment-slot { width: 100%; justify-content: start; text-align: left; gap: 12px; min-height: 88px; padding: 6px 8px; background: transparent; color: inherit; border: 1px solid transparent; border-bottom-color: #b19a6360; border-radius: 5px; }
 .equipment-slot:hover { background: #ddcfaa45; }
-.equipment-panel .equipment-slot[aria-pressed="true"] { border: 2px solid #7d9e7c; background: #b7d3b345; padding: 11px 7px; }
-.equipment-icon { display: flex; justify-content: center; align-items: center; flex: 0 0 76px; width: 76px; height: 84px; border: 1px solid #ad986780; border-radius: 6px; background: #c9b78535; }
-.equipment-icon img { display: block; width: 68px; height: 74px; object-fit: contain; }
+.equipment-panel .equipment-slot[aria-pressed="true"] { border: 2px solid #7d9e7c; background: #b7d3b345; padding: 5px 7px; }
+.equipment-icon { display: flex; justify-content: center; align-items: center; flex: 0 0 64px; width: 64px; height: 68px; border: 1px solid #ad986780; border-radius: 6px; background: #c9b78535; }
+.equipment-icon img { display: block; width: 60px; height: 62px; object-fit: contain; }
 .equipment-slot[data-equipment-slot="orb"] .equipment-icon img { object-fit: cover; }
-.equipment-slot-copy { display: flex; flex-direction: column; gap: 5px; min-width: 0; flex: 1; }
-.equipment-label { font-size: 15px; }
+.equipment-slot-copy { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+.equipment-label { font-size: 15px; line-height: 1.2; }
 .equipment-name-line { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-width: 0; }
 .equipment-slot strong { font-size: 22px; line-height: 1.3; }
 .equipment-badge { display: inline-flex; align-items: center; justify-content: center; padding: 4px 12px; border-radius: 16px; background: #527967; color: #f6edce; font-size: 12px; line-height: 1.3; white-space: nowrap; }
 .equipment-summary { color: #65715d; font-size: 13px; line-height: 1.55; }
 .equipment-detail { display: flex; flex-direction: column; min-width: 0; padding-left: 4px; }
-.equipment-art { display: block; width: 100%; height: 166px; object-fit: contain; margin: 0 0 8px; }
+.equipment-art { display: block; width: 100%; height: 118px; object-fit: contain; margin: 0 0 8px; }
 .equipment-panel h2 { margin: 0; font-size: 32px; letter-spacing: 3px; line-height: 1.3; }
 .equipment-panel .equipment-effect { margin: 12px 0 0; font-size: 16px; font-weight: 600; line-height: 1.65; }
 .equipment-panel .equipment-recovery { margin: 3px 0 0; font-size: 14px; line-height: 1.7; color: #66705b; }
@@ -73,7 +73,7 @@
   .panel.equipment-panel { width: min(1200px, 100%); padding: 12px 20px 20px; }
   .equipment-traveler img { height: 410px; }
   .equipment-art { height: 208px; }
-  .equipment-panel .equipment-slot { min-height: 135px; }
+  .equipment-panel .equipment-slot { min-height: 100px; }
 }
 @media (max-width: 1050px) {
   .equipment-panel > header { grid-template-columns: minmax(0, 1fr) auto; }

@@ -35,6 +35,28 @@ const tick = (e: ReturnType<typeof setup>, ms: number) => {
   }
 };
 describe("居民生活 M1 基础与事务", () => {
+  it("认识全部居民和玩家后仍可保存，未知身份与损坏坐标仍拒绝", () => {
+    const { s, l } = setup();
+    const place = { space: "village" as const, x: 720, y: 650 };
+    for (const n of s.life.people) {
+      if (n.body) Object.assign(n.body, place);
+      n.nextDecision = 0;
+    }
+    for (const guard of s.defense.guards) Object.assign(guard, place);
+    Object.assign(s.player, place);
+    l.step(100, { queries: 0 });
+    l.observePlayer();
+    const observer = s.life.people.find(n => n.id === "east-watch")!;
+    expect(Object.keys(observer.known)).toHaveLength(PEOPLE.length);
+    const known = validate(s).life.people.find(n => n.id === observer.id)!.known;
+    expect(Object.keys(known)).toEqual(Object.keys(observer.known));
+    expect(observer.known).toMatchObject(known);
+    observer.known.unknown = { ...place, time: s.time };
+    expect(() => validate(s)).toThrow("人物状态或记忆无效");
+    delete observer.known.unknown;
+    observer.known.player.x = NaN;
+    expect(() => validate(s)).toThrow("人物状态或记忆无效");
+  });
   it("十五个稳定身份、独立床位和卫兵唯一权威状态", () => {
     const { s, l } = setup();
     expect(PEOPLE).toHaveLength(15);
@@ -60,7 +82,7 @@ describe("居民生活 M1 基础与事务", () => {
     old.coins = 17;
     old.bag[0] = { id: "wood", count: 4 };
     const next = validate(old);
-    expect(next.schema_version).toBe(16);
+    expect(next.schema_version).toBe(initialState().schema_version);
     expect(next.defense.guards[0].dead).toBe(true);
     expect(next.defense.guards[1].hp).toBe(73);
     expect(next.coins).toBe(17);

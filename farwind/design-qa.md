@@ -138,3 +138,24 @@ P3：角落叶纹、侧扣与风纹未逐项复制；独立旅人和衣物保持
 - 已保存原图、独立美术、最终运行图、完整和详情组合对照。
 - 已修复本轮主要视觉问题并复验桌面、小窗口与临界宽度。
 - 已记录完整穿戴与阵亡流程待验收，未将初始样本冒充完成证据。
+
+# 符文书册方案三视觉增补
+
+日期：2026-10-01。用户已选择方案三，正式符文界面已按配装、列表、详情三栏接入。
+
+final result: passed
+
+详细报告：docs/rune-layout-redesign/design-qa.md。源图为docs/rune-layout-redesign/rune-layout-03.png；最终1440×900运行图为docs/rune-layout-redesign/evidence/desktop-final.jpg；完整与详情并列对照已实际打开，分别为evidence/comparison-final.png和evidence/comparison-detail.png。
+
+三栏、五槽、固定归风、筛选、空状态、效果与组合切换、窄屏和短屏均已检查。正式按钮的装备、卸下、第二套配装保存及载入、刷新保留已在隔离试验场完成，不能替代正常获取验收。类型检查与当前构建通过，68项符文测试通过。共享工作区的其他战斗和存档变更不纳入本轮全范围发布结论。
+
+
+# 紧凑 HUD 方案一增补
+
+日期：2026-10-01。用户选定方案一。
+
+final result: passed
+
+详细报告：docs/hud-redesign/compact-design-qa.md。源图为 docs/hud-redesign/design/compact-hud-reference.png；当前页面最终截图为 docs/hud-redesign/after/compact-desktop.jpg；完整和左侧组合对照为 after/comparison-full.jpg、after/comparison-left.jpg，均已实际检查。
+
+左上摘要合并、训练横排、笔记底栏、临时消息右侧正常流已实现。五尺寸实测入口可点击、无横向溢出，实际命中前后训练顶部不变。480×420 双侧详情展开时底部与底栏保留 26 像素间隔。独立正式导入样本不是正常获取验收；不扩大为全游戏或其他并行玩法的发布结论。HUD 改动审查 VERDICT: PASS。

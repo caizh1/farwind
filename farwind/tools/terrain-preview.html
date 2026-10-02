@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>地形过渡验收 · 远风之地</title></head>
+  <body>
+    <div id="game"></div><div id="ui"></div><output id="terrain-check" hidden>等待地面缓存</output>
+    <script type="module">
+      import Phaser from 'phaser';
+      import {World} from '../src/game/scenes/World';
+      import {parseSave} from '../src/game/systems/state';
+      import '../src/style.css';
+      import '../src/runes.css';
+      import '../src/commission.css';
+      import '../src/equipment.css';
+      import '../src/shop.css';
+      import '../src/hud.css';
+      // 独立端口的固定起点，通过正式导入与保存流程启动，未修改任何结算结果。
+      class TerrainPreview extends World {
+        create(){
+          const bakeMs=[],bakeParts=[],createCanvas=this.textures.createCanvas;
+          let baking=false,nativeMs=0;
+          const nativeMethods=['fillRect','drawImage','clearRect','putImageData'].map(name=>{
+            const original=CanvasRenderingContext2D.prototype[name];
+            CanvasRenderingContext2D.prototype[name]=function(...args){const start=performance.now();const result=original.apply(this,args);if(baking)nativeMs+=performance.now()-start;return result;};
+            return [name,original];
+          });
+          this.textures.createCanvas=(...args)=>{
+            const start=performance.now(),texture=createCanvas.apply(this.textures,args);
+            if(texture&&args[0].startsWith('ground-')){baking=true;nativeMs=0;const refresh=texture.refresh.bind(texture);texture.refresh=()=>{const result=refresh(),total=performance.now()-start;bakeMs.push(total);bakeParts.push({地面块:args[0],总毫秒:total,画布毫秒:nativeMs,采样及其他毫秒:total-nativeMs});baking=false;return result;};}
+            return texture;
+          };
+          this.events.once('shutdown',()=>{this.textures.createCanvas=createCanvas;for(const [name,original] of nativeMethods)CanvasRenderingContext2D.prototype[name]=original;});
+          super.create();
+          const site=new URLSearchParams(location.search).get('site');
+          fetch(site?`../docs/terrain-transition/world/starts/${site}.json`:'../docs/terrain-transition/starting-save.json').then(r=>r.text()).then(t=>this.ui.actions.import(parseSave(t))).catch(e=>this.ui.title(`验收起点加载失败：${e.message}`));
+          let checked=false;
+          this.events.on('prerender',()=>{
+            if(checked||!this.active)return;
+            const ground=this.data.get('groundSnapshot')();
+            if(site){
+              const p=this.state.player,cx=-2110+Math.floor((p.x+2110)/600)*600,cy=-1380+Math.floor((p.y+1380)/550)*550;
+              const key=`ground-${cx}-${cy}`;if(!this.textures.exists(key))return;
+              const bytes=this.textures.get(key).getSourceImage().getContext('2d').getImageData(0,0,600,550).data;
+              let hash=2166136261;for(const value of bytes)hash=Math.imul(hash^value,16777619)>>>0;
+              const sorted=bakeMs.slice().sort((a,b)=>a-b);
+              document.querySelector('#terrain-check').textContent=JSON.stringify({结果:ground.resident<=30&&ground.heroDepth>ground.floorDepth?'通过':'失败',地点:site,玩家位置:{x:p.x,y:p.y},驻留地面块:ground.resident,纹理校验值:hash,单块生成毫秒最大值:sorted.at(-1),单块生成毫秒百分之九十五:sorted[Math.ceil(sorted.length*.95)-1],生成拆分:bakeParts,说明:'正式场景与合法固定起点；截图核对地形，未冒充任务或战斗通关。'});
+              checked=true;return;
+            }
+            const sample=document.createElement('canvas');sample.width=200;sample.height=20;
+            const c=sample.getContext('2d');
+            // 采样横跨两个实际缓存块，覆盖草石过渡；对照旧矩形裁切，旧实现会得到零个变化像素。
+            const sx=2350,sy=-840;
+            for(const [cx,cy] of [[2090,-1380],[2090,-830]]){
+              const key=`ground-${cx}-${cy}`;if(!this.textures.exists(key))return;
+              c.drawImage(this.textures.get(key).getSourceImage(),cx-sx,cy-sy);
+            }
+            const actual=c.getImageData(0,0,200,20).data;
+            const reference=document.createElement('canvas');reference.width=200;reference.height=20;
+            const r=reference.getContext('2d');r.translate(-sx,-sy);
+            const forest=r.createPattern(this.textures.get('forest').getSourceImage(),'repeat');forest.setTransform(new DOMMatrix().scale(.6));
+            const road=r.createPattern(this.textures.get('road').getSourceImage(),'repeat');road.setTransform(new DOMMatrix().scale(.25));
+            r.fillStyle=forest;r.fillRect(sx,sy,200,20);r.fillStyle='#688c9235';r.fillRect(sx,sy,200,20);
+            r.fillStyle=road;r.fillRect(2450,sy,100,20);r.fillStyle='#64817425';r.fillRect(2450,sy,100,20);
+            const old=r.getImageData(0,0,200,20).data;
+            let changed=0,hash=2166136261;
+            for(let x=0;x<200;x++)if([0,1,2].some(k=>Math.abs(actual[(10*200+x)*4+k]-old[(10*200+x)*4+k])>8))changed++;
+            for(const value of actual)hash=Math.imul(hash^value,16777619)>>>0;
+            checked=true;
+            const sorted=bakeMs.slice().sort((a,b)=>a-b);
+            document.querySelector('#terrain-check').textContent=JSON.stringify({结果:changed>=24&&ground.resident<=30?'通过':'失败',过渡变化像素:changed,采样跨块:'北部接缝，跨过世界纵坐标负830的块边界',纹理校验值:hash,驻留地面块:ground.resident,地面块预算:30,生成块数:sorted.length,单块生成毫秒最大值:sorted.at(-1),单块生成毫秒百分之九十五:sorted[Math.ceil(sorted.length*.95)-1],说明:'当前工作树、完整正式场景、固定合法起点；测量只覆盖本次起点的同步地面生成，不代表长时间游玩帧率。'});
+          });
+        }
+      }
+      const width=Math.min(1920,Math.round(innerWidth*Math.min(devicePixelRatio,1.5)));
+      const game=new Phaser.Game({type:Phaser.WEBGL,parent:'game',width,height:Math.round(width*innerHeight/innerWidth),backgroundColor:'#90ac6f',render:{antialias:true,antialiasGL:true,pixelArt:false,roundPixels:false},scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},scene:[TerrainPreview],audio:{noAudio:true}});
+      addEventListener('resize',()=>{const w=Math.min(1920,Math.round(innerWidth*Math.min(devicePixelRatio,1.5)));game.scale.setGameSize(w,Math.round(w*innerHeight/innerWidth));});
+    </script>
+  </body>
+</html>

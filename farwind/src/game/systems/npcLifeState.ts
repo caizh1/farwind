@@ -493,7 +493,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
           Number.isFinite(r.lastPositive),
       ) ||
       !n.known ||
-      Object.keys(n.known).length > 12 ||
+      // 身份白名单已限定总量；正常巡视可认识十五名居民及玩家。
       !Object.entries(n.known).every(
         ([id, p]) => subject(id) && validPlace(p) && num(p.time, time),
       ) ||

@@ -1,3 +1,4 @@
+import {LEGACY_ENCOUNTERS} from '../../windLegacy';
 import type {EliteKind} from "./elites";
 import type {CampBossKind} from './campBosses';
 import type { EnemyKind } from "../../enemies";
@@ -44,7 +45,7 @@ const BASE_ENCOUNTERS:readonly EncounterDefinition[]=[
 
 ];
 // 旧批次的身份顺序永久保留，用于第十四版位置存档的无损迁移。
-export const LEGACY_ENCOUNTER_IDS=Object.fromEntries(BASE_ENCOUNTERS.map(d=>[d.id,d.members.map(m=>m.id)]));
+export const LEGACY_ENCOUNTER_IDS=Object.fromEntries([...BASE_ENCOUNTERS,...LEGACY_ENCOUNTERS].map(d=>[d.id,d.members.map(m=>m.id)]));
 export const ENCOUNTER_COMPOSITION_VERSION=2;
 const SOUTH_ADDITIONS:Record<string,EncounterDefinition['members']>={
  'south-reed-patrol':[{id:'wild-reed-spore',type:'spore',x:1210,y:2140}],
@@ -52,7 +53,7 @@ const SOUTH_ADDITIONS:Record<string,EncounterDefinition['members']>={
  'south-spore-camp':[{id:'wild-camp-priest',type:'priest',x:1190,y:2820}],
  'south-orchard-burrows':[{id:'wild-orchard-bomber',type:'bomber',x:1810,y:2400}],
 };
-export const ENCOUNTERS:readonly EncounterDefinition[]=BASE_ENCOUNTERS.map(d=>({...d,members:[...d.members.filter(m=>!m.boss),...SOUTH_ADDITIONS[d.id]??[],...d.members.filter(m=>m.boss)]}));
+export const ENCOUNTERS:readonly EncounterDefinition[]=[...BASE_ENCOUNTERS.map(d=>({...d,members:[...d.members.filter(m=>!m.boss),...SOUTH_ADDITIONS[d.id]??[],...d.members.filter(m=>m.boss)]})),...LEGACY_ENCOUNTERS];
 export const ENCOUNTER_UNITS=ENCOUNTERS.flatMap(group=>group.members.map(member=>({...member,group:group.id})));
 export const encounterUnit=(id:string)=>ENCOUNTER_UNITS.find(s=>s.id===id);
 export const ENCOUNTER_LIMITS={active:12,activateDistance:1250,respawnDistance:1350,dropLifetimeMs:600000} as const;
