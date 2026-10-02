@@ -11,15 +11,16 @@ export function turnToward(facing:Point,target:Point,seconds:number):Point{
 }
 export function enemyProtection(e:Pick<EnemyBody,'type'|'x'|'y'|'face'|'guardOpenUntil'|'staggerUntil'|'attack'|'boss'|'bossBattle'|'hp'|'fungalShield'>,origin:Point|undefined,now:number,breaksGuard=false){
  if(e.boss&&e.bossBattle){
-  const b=e.bossBattle,a=e.attack,hpFloor=now<b.entryUntil||now<b.transformUntil?e.hp:b.phase===1?CAMP_BOSSES[e.boss].hp*.5:0;
+  const b=e.bossBattle,a=e.attack,hpFloor=now<b.entryUntil||now<b.transformUntil?e.hp:b.phase===1?CAMP_BOSSES[e.boss].hp*.55:0;
   if(now<b.exposedUntil)return {reduction:0,hpFloor};
   if(a?.bossCocoon&&!a.cancelled&&now>=a.contactAt&&now<a.activeUntil){
    const d=origin?Math.hypot(origin.x-e.x,origin.y-e.y):0,back=!!origin&&d>0&&((origin.x-e.x)*a.direction.x+(origin.y-e.y)*a.direction.y)/d<-.35;
    if(breaksGuard||back){b.exposedUntil=now+BOSS_RULES.exposed;a.cancelled=true;e.staggerUntil=now+800;return {reduction:0,hpFloor};}
    return {reduction:.8,hpFloor};
   }
-  if(e.boss==='spore-heart')return {reduction:b.phase===2?Math.min(.55,.15+(b.roots?.filter(r=>r.hp>0).length??0)*.2):.2,hpFloor};
-  return {reduction:BOSS_RULES.reduction,hpFloor};
+  if(e.boss==='spore-heart')return {reduction:b.phase===2?Math.min(.4,(b.roots?.filter(r=>r.hp>0&&(r.kind??'root')==='root').length??0)*.2):0,hpFloor};
+  if(e.boss==='crag-tusk'&&origin){const d=Math.hypot(origin.x-e.x,origin.y-e.y),f=e.face??{x:0,y:1};return {reduction:d>0&&((origin.x-e.x)*f.x+(origin.y-e.y)*f.y)/d>.25?.55:0,hpFloor};}
+  return {reduction:0,hpFloor};
  }
  if(fungalShieldActive(e,now))return {reduction:FUNGAL.reduction};
  if(e.type!=='guardian')return {reduction:0};

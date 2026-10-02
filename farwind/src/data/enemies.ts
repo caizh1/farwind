@@ -10,6 +10,10 @@ export const ENEMIES = {
   guardian: { name: '苔甲守卫', art: 'moss-guardian', hp: 84, speed: 52, reach: 95, height: 84, stride: 38, frames: 24, drop: 'stone' },
   priest: { name: '菌铃祭司', art: 'fungal-priest', hp: 96, speed: 48, reach: 340, height: 66, stride: 36, frames: 24, drop: 'herb' },
   bomber: { name: '爆囊滚兽', art: 'sac-roller', hp: 112, speed: 68, reach: 260, height: 57, stride: 42, frames: 24, drop: 'berry' },
+  archer: {name:'风针弩灵',art:'archer',hp:64,speed:62,reach:320,height:80,stride:40,frames:24,drop:'berry'},
+  bell: {name:'唤巢铃妖',art:'bell',hp:88,speed:48,reach:310,height:76,stride:36,frames:24,drop:'herb'},
+  shade: {name:'裂影猎手',art:'shade',hp:68,speed:110,reach:180,height:74,stride:46,frames:24,drop:'berry'},
+  geomancer: {name:'岩脉术士',art:'geomancer',hp:84,speed:46,reach:330,height:90,stride:38,frames:24,drop:'stone'},
 } as const;
 export type EnemyKind = keyof typeof ENEMIES;
 export const enemyKind = (type: string): EnemyKind => Object.hasOwn(ENEMIES, type) ? type as EnemyKind : 'slime';
@@ -17,5 +21,6 @@ export const enemyProfile = (type: string) => ENEMIES[enemyKind(type)];
 // 素材分辨率独立于屏幕高度；样片仍保留临时美术标记。
 export function enemyArt(type: string) {
   const kind=enemyKind(type),sample=kind==='leaf'||kind==='spore';
+  if(['archer','bell','shade','geomancer'].includes(kind))return {path:`/assets/enemies-combat-v2/${kind}/atlas.json`,frameWidth:480,frameHeight:480,nativeHeight:480,originY:1};
   return {path:`/assets/enemies-${sample?'v2':'v1'}/${ENEMIES[kind].art}.png`,frameWidth:sample?384:160,frameHeight:sample?256:160,nativeHeight:sample?160:60,originY:110/128};
 }

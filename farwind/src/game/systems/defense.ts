@@ -91,6 +91,7 @@ export function prepareRaid(s: DefenseState, player: Point, gateId: GateId, coun
 }
 export function prepareEastRaid(s: DefenseState, player: Point) { return prepareRaid(s, player, "east-gate"); }
 export class EastDefense {
+  hostileLimit=Infinity;
   runeEnemyScale:(id:string)=>number=()=>1;
   playerAttackPermit?: (enemy:EnemyBody,targetId:string)=>boolean;
   enemyDeath?: (enemy:DefenseHostile,sourceId:string)=>void;
@@ -216,6 +217,7 @@ export class EastDefense {
     return this.guardAllowed(g,g);
   }
   canScheduleAtGate(gateId:GateId,player:Point,spawns:readonly Point[],view?:Rect,occupied:readonly Point[]=[],order=this.state.raid?.order){
+    if(occupied.length+spawns.length>this.hostileLimit)return false;
     const raid=this.state.raid;
     // 报复不依赖常规冷却、守卫健康或值班；已有战斗仍互斥，地图边缘生成门禁保留。
     if(order?.retaliationCamp)return (!raid||raid.phase==='warning'&&raid.gateId===gateId)&&validRaidOrder(order)&&

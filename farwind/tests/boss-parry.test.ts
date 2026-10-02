@@ -1,7 +1,6 @@
 import {describe,it,expect,vi} from 'vitest';
 vi.mock('phaser',()=>({default:{Math:{Vector2:class{constructor(public x:number,public y:number){}}}}}));
 import {CAMP_BOSSES,type CampBossKind} from '../src/data/maps/windbell/campBosses';
-import {CAMP_BOSS_ART} from '../src/data/campBossArt';
 import {CampBossView} from '../src/game/entities/campBossView';
 import {sampleBossParry} from '../src/game/systems/bossParry';
 import {initialBossBattle} from '../src/game/systems/campBossState';
@@ -13,13 +12,13 @@ const kinds=Object.keys(CAMP_BOSSES) as CampBossKind[];
 function body(kind:CampBossKind,perfect=false,direction={x:1,y:0}):EnemyBody{return {id:'boss-'+kind,boss:kind,type:CAMP_BOSSES[kind].type,hp:CAMP_BOSSES[kind].hp,x:100,y:150,homeX:100,homeY:150,cool:0,windup:0,ai:'首领失衡',nav:enemyNavigation(),bossBattle:initialBossBattle(0),staggerSince:2000,staggerUntil:perfect?2800:2600,parried:{at:2000,until:perfect?2800:2600,direction,perfect}};}
 function surface(){let ink:any;ink=new Proxy({}, {get:()=>()=>ink});return ink;}
 function sprite(){const s:any={x:0,y:0,rotation:0,frame:{name:0},alpha:1};for(const method of ['setTexture','setOrigin','setDisplaySize','setPosition','setDepth','setRotation','setAlpha','setVisible','setFlipX','clearTint'])s[method]=(...a:any[])=>{if(method==='setTexture'){s.frame.name=a[1];s.texture={key:a[0]};}if(method==='setPosition'){s.x=a[0];s.y=a[1];}if(method==='setRotation')s.rotation=a[0];if(method==='setDisplaySize'){s.width=a[0];s.height=a[1];}return s;};return s;}
-function view(){return new CampBossView({add:{graphics:surface,text:sprite}} as any);}
+function view(){const v=new CampBossView({add:{graphics:surface,text:sprite}} as any);v.assets={ready:()=>true,key:kind=>`首领图集:${kind}`,manifest:{frames:Object.fromEntries(['down','up','right'].map(d=>[`${d}/idle`,{width:500,height:500,nativeHeight:480,foot:[250,480],sourceHeight:600}]))}} as any;return v;}
 const samples=kinds.flatMap(kind=>[false,true].map(perfect=>[kind,perfect] as const));
 describe('所有首领的正式弹反表现',()=>{
  it.each(samples)('%s 精准=%s，最大失衡有实际姿态变化，收势在真实硬直结束前完整出现',(kind,perfect)=>{
   const e=body(kind,perfect),v=view(),s=sprite(),before=structuredClone(e);
   v.draw(e,null,s,2180,false);expect(Math.abs(s.rotation)).toBeGreaterThan(.08);expect(Math.hypot(s.x-e.x,s.y-e.y)).toBeGreaterThan(1);
-  const pose=v.draw(e,null,s,e.parried!.until-1,false),direction=2,n=CAMP_BOSS_ART[kind].rows[direction][5];expect(pose.index).toBe(n-1);expect(Math.abs(s.rotation)).toBeLessThan(.002);expect(e).toEqual(before);
+  const pose=v.draw(e,null,s,e.parried!.until-1,false),phase=pose.phase;expect(phase).toBe('recover');expect(Math.abs(s.rotation)).toBeLessThan(.002);expect(e).toEqual(before);
   v.draw(e,null,s,e.parried!.until,false);expect(s.rotation).toBe(0);expect([s.x,s.y]).toEqual([e.x,e.y]);
  });
  it.each(kinds)('%s 四阶段、精准幅度和暂停重复采样不改变战斗数据',kind=>{

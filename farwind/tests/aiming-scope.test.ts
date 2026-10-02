@@ -71,10 +71,10 @@ describe('寻风瞄准镜与金币',()=>{
   c.windAuto=false;c.requestActions(events.filter((e):e is typeof e & {kind:'wind'}=>e.kind==='wind'),0,p,0);c.update(0,1,0,p,[],()=>false,()=>{},()=>{},()=>{});expect(count).toBe(1);expect(c.attack?.primaryTarget).toBe('enemy');
   c.reset(0);c.windAuto=true;c.requestActions([{kind:'wind',at:0,sequence:2,axis:{x:0,y:0},windAuto:false}],0,p,0);c.update(0,1,0,p,[],()=>false,()=>{},()=>{},()=>{});expect(count).toBe(1);expect(c.attack?.primaryTarget).toBeUndefined();
  });
- it('金币与正式死亡一起结算，重载不重复；新合法刷新可再领取',()=>{
+ it('金币与首次死亡一起结算，重载及冷却不能重复领取',()=>{
   const s=initialState(),group=ENCOUNTERS.find(g=>g.kind==='patrol')!,g=s.encounters.groups[group.id];g.activated=true;const id=group.members[0].id;
   expect(settleEncounterCoins(s,id,true,false)).toBe(3);expect(s.coins).toBe(123);expect(settleEncounterCoins(s,id,true,false)).toBeNull();const next=validate(s);expect(settleEncounterCoins(next,id,true,false)).toBeNull();expect(next.coins).toBe(123);
-  for(const m of group.members.slice(1))settleEncounterCoins(s,m.id,false,false);g.cooldown=0;expect(resetEncounter(s.encounters,group.id)).toBe(true);expect(settleEncounterCoins(s,id,true,false)).toBe(3);
+  for(const m of group.members.slice(1))settleEncounterCoins(s,m.id,false,false);g.cooldown=0;expect(resetEncounter(s.encounters,group.id)).toBe(false);expect(settleEncounterCoins(s,id,true,false)).toBeNull();
  });
  it('参与后守卫补刀得奖励，纯守卫无奖；满包上限只收实际可容纳金额',()=>{
   const s=initialState(),g=ENCOUNTERS.find(g=>g.kind==='patrol')!;s.encounters.groups[g.id].activated=true;unitState(s.encounters,g.members[0].id)!.participated=true;expect(settleEncounterCoins(s,g.members[0].id,false,false)).toBe(3);

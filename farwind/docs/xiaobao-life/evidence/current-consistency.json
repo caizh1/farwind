@@ -1,0 +1,32 @@
+{
+  "说明": "固定包released-production的一小时证据只支持build.json中的版本；当前源码后续战斗变化另行验证，小宝核心与资源一致。",
+  "记录时间": "2026-10-02T05:29:27.427727+00:00",
+  "不同文件": [
+    "src/game/scenes/World.ts",
+    "src/game/systems/adventureSpawns.ts",
+    "src/game/systems/combatCoins.ts",
+    "src/game/systems/encounterState.ts",
+    "src/game/systems/state.ts",
+    "src/game/systems/windGifts.ts",
+    "src/game/ui/interface.ts",
+    "src/game/ui/windGifts.ts",
+    "src/style.css"
+  ],
+  "固定包整仓回归": {
+    "文件": 67,
+    "通过": 1337
+  },
+  "当前源码整仓回归": {
+    "文件": 67,
+    "通过": 1339,
+    "秒": 405.36
+  },
+  "相关专项": 174,
+  "当前源码类型检查与构建": "通过",
+  "当前新增波次反证": {
+    "首次整仓": "带实例前缀的风忆第二波未推进，一项失败、1338项通过",
+    "根因": "运行定义已带实例身份，波次推进再次套用成员定义造成前缀重复",
+    "当前修正": "从固定定义重建波次成员；原复现及该文件25项通过，随后整仓1339项通过"
+  },
+  "后续源码真实Chrome一小时": "未验证，与固定包分开记录"
+}

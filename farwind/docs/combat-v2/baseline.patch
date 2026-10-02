@@ -1,0 +1,932 @@
+diff --git a/farwind/README.md b/farwind/README.md
+index 6a6de276..926435fa 100644
+--- a/farwind/README.md
++++ b/farwind/README.md
+@@ -2,6 +2,15 @@
+ 
+ 桌面浏览器二维俯视手绘冒险游戏。TypeScript + Phaser 4 + Vite，无后端、账号或在线业务接口。
+ 
++## 开发状态与完整内容
++
++完整开发文档集中在 [docs/developed 阅读入口](docs/developed/README.md)，后续直接读取该目录即可。
++
++- [已开发内容与机制总览](docs/developed/DEVELOPED-CONTENT.md)：按25类说明玩法入口、规则、成长、伙伴、敌人、村庄生活、界面、存档和验收边界。
++- [游戏内容完整目录](docs/developed/CONTENT-CATALOG.md)：逐项列出物品、商店价格库存、全部符文与共鸣、成长分支、敌人与首领、35组遭遇、建筑、兴趣点及小宝技能数值。
++
++以上文档核对日期为2026年10月2日，并注明源码截点及进行中的并行开发。下面保留的早期路线、地图规模与专项通过数量属于阶段记录；了解当前机制时优先查阅总览和内容目录。
++
+ ## 启动
+ 
+ 需要 Node.js 22.12 或更新版本。当前实测 Node.js 26.0.0、npm 11.12.1。
+diff --git a/farwind/src/data/npcLife.ts b/farwind/src/data/npcLife.ts
+index 9fea0074..fc2e1b3d 100644
+--- a/farwind/src/data/npcLife.ts
++++ b/farwind/src/data/npcLife.ts
+@@ -1,6 +1,6 @@
+ import {buildingLot, VILLAGE_ANCHORS} from './maps/windbell/layout';
+ import { GUARD_DEFS, type GuardId } from "./defense";
+-export type ResidentId = "elder" | "healer" | "carpenter" | GuardId;
++export type ResidentId = "elder" | "healer" | "carpenter" | "xiaobao" | GuardId;
+ export const CIVILIAN_IDS = ["elder", "healer", "carpenter"] as const;
+ export type SpaceId =
+   | "village"
+@@ -122,7 +122,7 @@ export const HOMES = [
+     name: "岚爷爷的家",
+     building: "resident-cottage-1",
+     door: buildingLot('resident-cottage-1').door,
+-    owners: ["elder"],
++    owners: ["elder", "xiaobao"],
+     private: "风向笔记与旧风铃",
+   },
+   {
+@@ -176,7 +176,7 @@ export const FACILITIES = [
+       owner: id,
+       capacity: 1,
+       place: h.id === "barracks" ? indoor(h.id,430+(i%4)*120,520+Math.floor(i/4)*100) : indoor(h.id,460+(i%5)*110,560+Math.floor(i/5)*120),
+-      label: `${id === "elder" ? "岚爷爷" : id === "healer" ? "小满" : id === "carpenter" ? "阿禾" : GUARD_DEFS.find((d) => d.id === id)!.name}的床位`,
++      label: `${id === "xiaobao" ? "小宝" : id === "elder" ? "岚爷爷" : id === "healer" ? "小满" : id === "carpenter" ? "阿禾" : GUARD_DEFS.find((d) => d.id === id)!.name}的床位`,
+     })),
+   ),
+   ...Array.from({ length: 6 }, (_, i) => ({
+@@ -492,6 +492,13 @@ export const PEOPLE: PersonDef[] = [
+       ],
+     };
+   }),
++  {
++    id: 'xiaobao', name: '小宝', job: '听风小宗师', art: 'xiaobao-motion', home: 'elder-home', bed: 'bed:xiaobao',
++    ability: {medicine:0,repair:0}, traits:{fear:0.05,compassion:0.95,duty:1,curiosity:0.95},
++    habit:'喜欢听风、学手艺，也惦记村里的朋友', wish:'留下属于自己的生活与作品',
++    friends:['elder','healer','carpenter'],
++    schedule:[slot(0,6,'sleep',indoor('elder-home',570,560),'在岚爷爷家睡觉','bed:xiaobao'),slot(6,21,'habit',outdoor(810,725),'按今日心愿自主生活'),slot(21,24,'sleep',indoor('elder-home',570,560),'回家睡觉','bed:xiaobao')],
++  },
+ ];
+ export const person = (id: string) => PEOPLE.find((p) => p.id === id);
+ export const ACTION_LABELS: Record<Activity, string> = {
+@@ -522,7 +529,9 @@ export const PRIVATE_STORAGE = PEOPLE.map((p) => {
+     y: bed.place.y - 54,
+     label: `${p.name}的储物箱`,
+     item:
+-      p.id === "healer"
++      p.id === "xiaobao"
++        ? "小风向本与木鸟收纳盒"
++        : p.id === "healer"
+         ? "药箱"
+         : p.id === "carpenter"
+           ? "工具包"
+diff --git a/farwind/src/data/xiaobao.ts b/farwind/src/data/xiaobao.ts
+index 197c8123..60810031 100644
+--- a/farwind/src/data/xiaobao.ts
++++ b/farwind/src/data/xiaobao.ts
+@@ -14,6 +14,10 @@ export const XIAOBAO = {
+ 
+ const clip = (name: string, sheet: string, row: number, duration: number, loop = false) => ({ name, sheet, row, duration, loop, frames: 6 });
+ export const XIAOBAO_CLIPS = {
++  eat: clip("端碗吃饭", "daily", 0, 1800, true),
++  gather: clip("俯身采药", "daily", 1, 1800, true),
++  carry: clip("提篮送物", "daily", 2, 1000, true),
++  write: clip("写风向笔记", "daily", 3, 2100, true),
+   idle: clip("听风待机", "motion", 0, 2100, true),
+   walkDown: clip("正面小步", "motion", 1, 1000, true),
+   walkSide: clip("侧面小步", "motion", 2, 1000, true),
+@@ -32,7 +36,7 @@ export type XiaobaoClip = keyof typeof XIAOBAO_CLIPS;
+ // 预览和真实人物共用选帧，不另造一套看起来会动的预览动画。
+ export function xiaobaoPose(action: XiaobaoClip, elapsed: number, distance = 0) {
+   const clip = XIAOBAO_CLIPS[action];
+-  const frameIndex = action.startsWith("walk")
++  const frameIndex = action.startsWith("walk") || action === "carry"
+     ? Math.floor(Math.max(0, distance) / XIAOBAO.stride * 6) % 6
+     : action === "sleep" && elapsed >= clip.duration
+       ? 4 + Math.floor((elapsed - clip.duration) / 900) % 2
+diff --git a/farwind/src/game/entities/xiaobaoView.ts b/farwind/src/game/entities/xiaobaoView.ts
+index 8709e319..7023f8c5 100644
+--- a/farwind/src/game/entities/xiaobaoView.ts
++++ b/farwind/src/game/entities/xiaobaoView.ts
+@@ -1,3 +1,5 @@
++import {xiaobaoDiary} from '../systems/xiaobaoLife';
++import {HOMES} from '../../data/npcLife';
+ import Phaser from "phaser";
+ import { XIAOBAO, XIAOBAO_CLIPS } from "../../data/xiaobao";
+ import {XIAOBAO_SKILLS, XIAOBAO_TASK_NAMES, XIAOBAO_TACTIC_NAMES} from '../../data/xiaobaoCombat';
+@@ -18,7 +20,7 @@ export class XiaobaoView {
+   effects: Phaser.GameObjects.Graphics;
+   shieldTargets: {id:string;x:number;y:number}[]=[];
+   static preload(scene: Phaser.Scene) {
+-    for (const sheet of ["motion", "social", "mastery"])
++    for (const sheet of ["motion", "social", "mastery", "daily"])
+       scene.load.spritesheet(`xiaobao-${sheet}`, `/assets/xiaobao/${sheet}.png`, { frameWidth: XIAOBAO.frameSize, frameHeight: XIAOBAO.frameSize });
+     for(const direction of ['front','side','back'])scene.load.spritesheet(`xiaobao-battle-${direction}`,`/assets/xiaobao/battle-${direction}.png`,{frameWidth:160,frameHeight:160});
+   }
+@@ -95,6 +97,13 @@ export class XiaobaoView {
+     world.soundFx.play("talk");
+     world.state.xiaobao.known=true;
+     world.ui.dialog(`${XIAOBAO.name} · ${XIAOBAO.title}`, `${XIAOBAO.story}\n\n“村灯，我看着。一起！”\n${XIAOBAO_TASK_NAMES[this.controller.data.task]} · 生命${Math.ceil(this.controller.data.hp)}/640 · 真气${Math.floor(this.controller.data.qi)}/100\n${this.controller.data.rest?`护风调息还需${(this.controller.data.rest/1000).toFixed(1)}秒`:this.controller.status}`, XIAOBAO.id);
++    const diary=document.createElement('details');diary.className='xiaobao-diary';diary.open=true;
++    const diaryTitle=document.createElement('summary');diaryTitle.textContent='小宝的心愿与生活日记';
++    const copy=document.createElement('p');copy.className='xiaobao-diary-copy';copy.textContent=xiaobaoDiary(world.state);
++    const observed=world.state.life.observed.xiaobao;
++    const whereabouts=document.createElement('p');whereabouts.textContent=observed?`上次见到：${observed.label}；${HOMES.find(h=>h.id===observed.space)?.name??'村庄与近郊'}`:'还没记录去向，可以到岚爷爷家或广场找我。';
++    diary.append(diaryTitle,copy,whereabouts);world.ui.modal.querySelector('#dialog-text')!.after(diary);
++    const present=this.controller.data.space===world.state.life.playerSpace&&Math.hypot(this.controller.x-world.state.player.x,this.controller.y-world.state.player.y)<120;
+     const feedback=document.createElement('p');feedback.className='xiaobao-feedback';feedback.hidden=true;feedback.setAttribute('role','status');
+     const explain=(message:string)=>{feedback.textContent=message;feedback.hidden=false;feedback.scrollIntoView({block:'nearest'});world.ui.message(message);};
+     const actions = document.createElement("div");
+@@ -102,7 +111,7 @@ export class XiaobaoView {
+     for (const [kind, label] of [["palm", "请演示听风掌"], ["step", "请演示踏叶轻步"], ["all", "看一套小宗师演武"]] as const) {
+       const button = document.createElement("button"); button.textContent = label;
+       button.addEventListener("click", () => {
+-        if(this.controller.busy||this.controller.data.rest||this.controller.data.task!=='free'){explain('请在脱战后解除委托，再请小宝演武；完整本领可在演武页查看。');return;}
++        if(!present){explain('请到小宝身边，再邀请他演武。');return;}if(this.controller.busy||this.controller.data.rest||this.controller.data.life.emergency||this.controller.data.task!=='free'){explain('请在脱战后解除委托，再请小宝演武；完整本领可在演武页查看。');return;}
+         this.controller.perform(kind, world.state.player);
+         world.ui.close(); world.ui.focusGame();
+         world.ui.message(`小宝轻轻抱拳，开始${kind === "all" ? "演武" : kind === "palm" ? "演示听风掌" : "演示踏叶轻步"}。`);
+@@ -114,15 +123,14 @@ export class XiaobaoView {
+     const buttons=document.createElement('div');buttons.className='xiaobao-command-grid';
+     const act=(label:string,run:()=>void|Promise<void>)=>{const b=document.createElement('button');b.textContent=label;b.onclick=async()=>{b.disabled=true;feedback.hidden=true;try{await run();}catch(e){explain((e as Error).message);}finally{if(b.isConnected)b.disabled=false;}};buttons.append(b);};
+     const saveSetting=async(control:HTMLSelectElement|HTMLInputElement,change:Parameters<World['configureXiaobao']>[0],sync:()=>void)=>{control.disabled=true;feedback.hidden=true;try{await world.configureXiaobao(change);}catch(e){explain((e as Error).message);}finally{sync();if(control.isConnected)control.disabled=false;}};
+-    for(const [task,label]of [['guard','委托守村'],['follow','与我出征'],['free','解除委托']] as const)act(label,async()=>{await world.configureXiaobao({task});world.ui.close(true);world.ui.message(task==='guard'?'村灯，我看着。':task==='follow'?'一起！小宝已加入队伍。':'小宝回广场自由活动。');});
++    for(const [task,label]of [['guard','委托守村'],['follow','与我出征'],['free','自由生活']] as const)act(label,async()=>{if(!present){explain('请到小宝身边，再商量他的安排。');return;}const response=await world.configureXiaobao({task});if(task==='follow'&&world.state.xiaobao.task!=='follow'){explain(response);copy.textContent=xiaobaoDiary(world.state);return;}world.ui.close(true);world.ui.message(response);});
+     const gate=document.createElement('select');gate.setAttribute('aria-label','驻防范围');gate.append(new Option('全村巡护','all'),...RAID_GATES.map(g=>new Option(`${g.name}驻防`,g.id)));gate.value=this.controller.data.gate;
+     gate.onchange=()=>{void saveSetting(gate,{gate:gate.value as typeof this.controller.data.gate},()=>{gate.value=this.controller.data.gate;});};
+     const tactic=document.createElement('select');tactic.setAttribute('aria-label','小宝战术');for(const [id,name]of Object.entries(XIAOBAO_TACTIC_NAMES))tactic.append(new Option(name,id));tactic.value=this.controller.data.tactic;
+     tactic.onchange=()=>{void saveSetting(tactic,{tactic:tactic.value as typeof this.controller.data.tactic},()=>{tactic.value=this.controller.data.tactic;});};
+-    const support=document.createElement('label'),toggle=document.createElement('input');toggle.type='checkbox';toggle.checked=this.controller.data.autoSupport;support.append(toggle,'出征时村庄危急自动回援');
+-    toggle.onchange=()=>{void saveSetting(toggle,{autoSupport:toggle.checked},()=>{toggle.checked=this.controller.data.autoSupport;});};
++    const support=document.createElement('p');support.textContent='村庄有难时，小宝会优先保护大家。';
+     panel.append(gate,tactic,support,feedback,buttons);
+-    for(const [kind,label]of [['focus','集火当前目标'],['protect','保护我'],['wait','在此等候'],['return','归队'],['rock','落石压制'],['fire','火域封路'],['thunder','天雷点杀'],['unity','五行归元']] as const)act(label,()=>{this.controller.command(kind,xiaobaoEnvironment(world));world.ui.close(true);world.ui.message(`小宝收到：${label}`);});
++    for(const [kind,label]of [['focus','集火当前目标'],['protect','保护我'],['wait','在此等候'],['return','归队'],['rock','落石压制'],['fire','火域封路'],['thunder','天雷点杀'],['unity','五行归元']] as const)act(label,()=>{if(this.controller.data.life.emergency){explain('村庄仍有危险，小宝正在护村。');return;}this.controller.command(kind,xiaobaoEnvironment(world));world.ui.close(true);world.ui.message(`小宝收到：${label}`);});
+     const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='查看十二项本领与守村回报';details.append(summary);
+     for(const [key,s]of Object.entries(XIAOBAO_SKILLS)){const row=document.createElement('p');row.textContent=`${s.name} · ${s.range}距离 · ${s.damage.reduce((a,b)=>a+b,0)}原始伤害 · 耗气${s.qi} · 冷却${s.cooldown/1000}秒${this.controller.data.cooldowns[key as keyof typeof XIAOBAO_SKILLS]>0?`（还需${(this.controller.data.cooldowns[key as keyof typeof XIAOBAO_SKILLS]/1000).toFixed(1)}秒）`:''}`;if(key==='chain')row.textContent+='；五个不同目标合计520';if(key==='guard'||key==='flight')row.textContent+='；每人120护盾，最多五人';details.append(row);}
+     for(const report of this.controller.data.reports){const row=document.createElement('p');row.textContent=`${RAID_GATES.find(g=>g.id===report.gate)!.name} · ${report.result} · 命中${report.hits}、击退${report.kills} · ${report.injured?'有人受伤':'未收到伤情报告'}`;details.append(row);}
+diff --git a/farwind/src/game/scenes/World.ts b/farwind/src/game/scenes/World.ts
+index d510eee6..cf6a64ac 100644
+--- a/farwind/src/game/scenes/World.ts
++++ b/farwind/src/game/scenes/World.ts
+@@ -1,3 +1,4 @@
++import {requestXiaobaoFollow} from '../systems/xiaobaoLife';
+ import {CatCompanion,catCareSnapshot} from '../systems/catCompanion';
+ import {CatCompanionView} from '../entities/catCompanionView';
+ import {catBenefits,catStage,CAT_STAGES,type CatCare} from '../systems/catBond';
+@@ -850,7 +851,7 @@ export class World extends Phaser.Scene {
+       .catch(e=>{this.ui.open('pause');this.ui.message(`飞援尚未保存，已暂停：${(e as Error).message}`);});
+   }
+   receiveXiaobao(contact:EnemyContact,source:EnemyBody){
+-    const c=this.xiaobao?.controller;if(!c)return false;
++    const c=this.xiaobao?.controller;if(!c||c.data.space!=='village')return false;
+     return c.receive(contact,source,event=>{const target={id:'xiaobao',hp:c.data.hp,faction:'village' as const,armor:12,...c.protection('xiaobao')},shot=contact.projectileId?this.enemyProjectiles.shots.find(s=>s.id===contact.projectileId):undefined;
+       const adjusted={...event,sourceScale:this.runes?.engine.enemyScale(source.id)??1};return shot?resolveReleasedDamage(adjusted,shot.released,target):resolveDamage(adjusted,{id:source.id,hp:source.hp,faction:'hostile',armor:0},target);},this.sim);
+   }
+@@ -899,11 +900,13 @@ export class World extends Phaser.Scene {
+     }
+     return {applied:true,killed,damage:before-e.hp};
+   }
+-  async configureXiaobao(change:Partial<Pick<State['xiaobao'],'task'|'gate'|'tactic'|'autoSupport'>>){
++  async configureXiaobao(change:Partial<Pick<State['xiaobao'],'task'|'gate'|'tactic'>>){
+     const oldTask=this.state.xiaobao.task,oldGate=this.state.xiaobao.gate;
+-    await this.economy.run(()=>this.state,s=>{const next=structuredClone(s);Object.assign(next.xiaobao,change,{known:true});
++    let response='小宝记下了你的安排。';
++    await this.economy.run(()=>this.state,s=>{const next=structuredClone(s);if(change.task==='follow'){const {task,...settings}=change;Object.assign(next.xiaobao,settings,{known:true});response=requestXiaobaoFollow(next);}else{Object.assign(next.xiaobao,change,{known:true});response=change.task==='free'?'好，我去做今天想做的事。':change.task==='guard'?'村灯，我看着。':response;if(change.task&&next.xiaobao.life.promise)next.xiaobao.life.promise.status='cancelled';}
+       if(change.task&&change.task!==s.xiaobao.task||change.gate&&change.gate!==s.xiaobao.gate){if(next.xiaobao.cast&&!next.xiaobao.cast.released){next.xiaobao.cast=null;next.xiaobao.recovery=Math.max(300,next.xiaobao.recovery);}next.xiaobao.command=null;next.xiaobao.wait=null;}
+       return next;},save,next=>{this.publishState(next);if(oldTask!==next.xiaobao.task||oldGate!==next.xiaobao.gate)this.xiaobao!.controller.taskChanged();});
++    return response;
+   }
+   showDemonKingIntroduction(){
+     if(this.ui.paused||this.economy.busy||this.defenseSaving||this.defenseCheckpointPending||!demonMalice(this.state.encounters)||this.state.demonKing.introduced||this.state.defense.raid)return false;
+@@ -1015,7 +1018,7 @@ export class World extends Phaser.Scene {
+     this.propImages.get('legacy-wind-seal')?.setVisible(this.state.windLegacy.wind<4&&this.state.life.playerSpace==='village');this.propImages.get('legacy-blade-seal')?.setVisible(this.state.windLegacy.blade<4&&this.state.life.playerSpace==='village');this.propImages.get('legacy-wind-bell')?.setTint(this.state.windLegacy.device?0xbfffff:0xffffff);this.propImages.get('legacy-windDevice')?.setTint(this.state.windLegacy.device?0xbfffff:0xffffff);
+     for(const s of SHORTCUTS)this.propImages.get(`barrier-${s.id}`)?.setVisible(!this.state.mapProgress.shortcuts.includes(s.id)&&this.state.life.playerSpace==="village");
+     this.propImages.get("west-gate-barrier")?.setVisible(this.state.mapProgress.westRoad !== "open" && this.state.life.playerSpace === "village");
+-    this.xiaobao?.render(this.active && this.state.life.playerSpace === "village",xiaobaoAllies(this));
++    this.xiaobao?.render(this.active && this.state.life.playerSpace === this.state.xiaobao.space,xiaobaoAllies(this));
+     for (const p of props) {
+       const im = this.propImages.get(p.id)!;
+       if (p.kind === "chest")
+@@ -1978,10 +1981,10 @@ export class World extends Phaser.Scene {
+       if(['bond','unlock','guard','claw','absorb'].includes(event.kind))this.snapshotPending=true;
+     }
+     this.catView?.draw(this.state,this.catCompanion,this.cat,this.sim,catTargets);
+-    this.xiaobao?.render(this.state.life.playerSpace==='village',xiaobaoAllies(this));
+-    if(this.xiaobao){const c=this.xiaobao.controller;this.ui.xiaobaoStatus(`小宝 · ${c.data.task==='follow'?'随行':c.data.task==='guard'?'守村':'自由'} · ${Math.ceil(c.data.hp)}/640${c.data.rest?' · 调息':c.data.flight?` · 飞援${c.snapshot().eta.toFixed(1)}秒`:''}`);}
++    this.xiaobao?.render(this.state.life.playerSpace===this.state.xiaobao.space,xiaobaoAllies(this));
++    if(this.xiaobao){const c=this.xiaobao.controller;this.ui.xiaobaoStatus(`小宝 · ${c.data.task==='follow'?'随行':c.data.task==='guard'?'守村':'生活'} · ${Math.ceil(c.data.hp)}/640${c.data.life.emergency?' · 优先护村':''}${c.data.rest?' · 调息':c.data.flight?` · 飞援${c.snapshot().eta.toFixed(1)}秒`:''}`);}
+     if(this.xiaobao)for(const event of this.xiaobao.controller.drain())this.soundFx.xiaobao(event,Math.hypot(event.point.x-p.x,event.point.y-p.y),this.state.life.playerSpace==='village');
+-    this.target = [...lifeTargets(this),...(this.state.life.playerSpace==="village"&&this.xiaobao?[this.xiaobao.controller.target()]:[]),...(this.state.life.playerSpace==="village"?props.filter(p=>p.kind!=="npc"):[]),...(this.state.life.playerSpace==="village"&&canDiscover(this.state)?[{...NIGHT_DISCOVERY,art:"",w:0,h:0,kind:"sign" as const}]:[])]
++    this.target = [...lifeTargets(this),...(this.state.life.playerSpace===this.state.xiaobao.space&&this.xiaobao?[this.xiaobao.controller.target()]:[]),...(this.state.life.playerSpace==="village"?props.filter(p=>p.kind!=="npc"):[]),...(this.state.life.playerSpace==="village"&&canDiscover(this.state)?[{...NIGHT_DISCOVERY,art:"",w:0,h:0,kind:"sign" as const}]:[])]
+       .filter(
+         (o) =>
+           o.kind &&
+diff --git a/farwind/src/game/systems/npcLife.ts b/farwind/src/game/systems/npcLife.ts
+index b21a4844..cd35258e 100644
+--- a/farwind/src/game/systems/npcLife.ts
++++ b/farwind/src/game/systems/npcLife.ts
+@@ -1,3 +1,4 @@
++import {stepXiaobaoLife} from './xiaobaoLife';
+ import {
+   PEOPLE,
+   person,
+@@ -73,24 +74,28 @@ export class NpcLife {
+     this.speech = null;
+   }
+   body(id: string): Place | null {
++    if(id==='xiaobao')return {space:this.state.xiaobao.space,x:this.state.xiaobao.x,y:this.state.xiaobao.y};
+     const n = this.data.people.find((n) => n.id === id);
+     if (n?.body) return n.body;
+     const g = this.state.defense.guards.find((g) => g.id === id);
+     return g ? { space: g.space ?? "village", x: g.x, y: g.y } : null;
+   }
+   live(id: string) {
++    if(id==='xiaobao')return this.state.xiaobao.hp>0&&!this.state.xiaobao.rest;
+     const g = this.state.defense.guards.find((g) => g.id === id);
+     return g
+       ? !g.dead
+       : this.data.people.find((n) => n.id === id)?.body?.health !== "down";
+   }
+   health(id: string) {
++    if(id==='xiaobao')return this.state.xiaobao.hp/640*100;
+     const n = this.data.people.find((n) => n.id === id);
+     if (n?.body) return n.body.hp;
+     const g = this.state.defense.guards.find((g) => g.id === id);
+     return g ? (g.hp / GUARD_DEFS.find((d) => d.id === id)!.maxHP) * 100 : 100;
+   }
+   needsTreatment(id: string) {
++    if(id==='xiaobao')return false;
+     const body = this.data.people.find((n) => n.id === id)?.body;
+     return body
+       ? body.health === "hurt" || body.health === "down"
+@@ -109,6 +114,7 @@ export class NpcLife {
+     return n.gear === "carried";
+   }
+   gearNeeded(n: PersonState, kind: Activity) {
++    if(n.id==='xiaobao')return false;
+     return n.id === "healer"
+       ? ["work", "supply", "shelter", "treat", "escort"].includes(kind)
+       : n.id === "carpenter"
+@@ -1274,7 +1280,7 @@ export class NpcLife {
+         for (const id of here)
+           if (id !== n.id) this.report(n.id, id, memory.eventId);
+     }
+-    if (a.kind === "talk") {
++    if (a.kind === "talk" && n.id!=='xiaobao') {
+       if (a.social) finishSocial(this, n, a);
+       const me = this.body(n.id)!;
+       for (const other of l.people) {
+@@ -1415,6 +1421,7 @@ export class NpcLife {
+     for (const f of MAINTENANCE)
+       if (l.facilities[f.id] < 100) this.ensureTask("repair", f.id, f.place);
+     for (const n of l.people) {
++      if(n.id==='xiaobao'){stepXiaobaoLife(this,ms);continue;}
+       const p = this.body(n.id)!;
+       n.memories = n.memories.filter((m) => m.expires >= this.state.time);
+       n.emotion = Math.max(0, n.emotion - ms / 30000);
+@@ -2165,6 +2172,7 @@ export class NpcLife {
+   }
+   entities(space = this.data.playerSpace) {
+     return this.data.people
++      .filter(n=>n.id!=='xiaobao')
+       .map((n) => {
+         const p = this.body(n.id)!,
+           d = person(n.id)!;
+diff --git a/farwind/src/game/systems/npcLifeState.ts b/farwind/src/game/systems/npcLifeState.ts
+index 2157ce21..df739134 100644
+--- a/farwind/src/game/systems/npcLifeState.ts
++++ b/farwind/src/game/systems/npcLifeState.ts
+@@ -1,3 +1,4 @@
++import {XIAOBAO_WISHES,type XiaobaoWish} from './xiaobaoLifeState';
+ import {validOutdoorPoint} from "../../data/maps/windbell/bounds";
+ import {VILLAGE_ANCHORS} from '../../data/maps/windbell/layout';
+ import {
+@@ -36,7 +37,8 @@ export type LifeEvent = {
+     | "visit"
+     | "access"
+     | "company"
+-    | "report";
++    | "report"
++    | "activity";
+   place: Place;
+   source: string;
+   subjects: string[];
+@@ -55,6 +57,7 @@ export type Memory = {
+   expires: number;
+ };
+ export type Action = {
++  xiaobao?: {wish:XiaobaoWish;partner:ResidentId|null};
+   social?: { partner: ResidentId; occasion: number } | null;
+   id: number;
+   kind: Activity;
+@@ -129,7 +132,7 @@ export type LifeTask = {
+   retryAt: number;
+ };
+ export type LifeState = {
+-  version: 4;
++  version: 5;
+   speechAt: number;
+   speechUrgentAt: number;
+   speechEventFloor: number;
+@@ -163,7 +166,7 @@ export type LifeState = {
+   defenseReceipts: string[];
+ };
+ export const initialLife = (time = 480): LifeState => ({
+-  version: 4,
++  version: 5,
+   speechAt: 0,
+   speechUrgentAt: 0,
+   speechEventFloor: 0,
+@@ -305,6 +308,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
+         "access",
+         "company",
+         "report",
++        "activity",
+       ].includes(k as string);
+   if (l) l.defenseReceipts ??= [];
+   // 主存档6的生活子版本1→2：保留进行中的行动、伤情、账本与已有携带事实。
+@@ -353,7 +357,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
+   }
+   // 子版本3→4：不重演旧社交经历，不增关系、不修改资源或已有伤情。
+   if (l && (l as { version?: number }).version === 3) {
+-    l.version = 4;
++    Object.assign(l,{version:4});
+     for (const n of l.people ?? []) {
+       n.social = {
+         cooldownUntil: l.elapsed,
+@@ -363,9 +367,14 @@ export function validateLife(raw: unknown, time: number): LifeState {
+       if (n.action) n.action.social = null;
+     }
+   }
++  if(l && (l as {version?:number}).version===4){
++    const added=initialLife(time).people.find(n=>n.id==='xiaobao')!;
++    if(!l.people.some(n=>n.id==='xiaobao'))l.people.push(added);
++    Object.assign(l,{version:5});
++  }
+   if (
+     !l ||
+-    l.version !== 4 ||
++    l.version !== 5 ||
+     !num(l.speechAt, l.elapsed + LIFE.speechPersonMs) ||
+     !num(l.speechUrgentAt, l.elapsed + LIFE.speechPersonMs) ||
+     !integer(l.speechEventFloor, l.sequence) ||
+@@ -417,7 +426,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
+     const def = PEOPLE.find((p) => p.id === n.id);
+     if (
+       !def ||
+-      (!def.id.includes("-")
++      (def.id !== "xiaobao" && !def.id.includes("-")
+         ? !n.body ||
+           !validPlace(n.body) ||
+           !num(n.body.hp, 100) ||
+@@ -552,6 +561,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
+           ))
+     )
+       throw Error("同伴探访目标或事件凭据无效。");
++    if(a?.xiaobao && (n.id!=='xiaobao' || !Object.hasOwn(XIAOBAO_WISHES,a.xiaobao.wish) || !(a.xiaobao.partner===null || PEOPLE.some(p=>p.id===a.xiaobao!.partner && p.id!=='xiaobao'))))throw Error('小宝生活行动元数据无效。');
+     if (a?.phase === "stock") {
+       const source = FACILITIES.find(
+         (f) =>
+@@ -692,6 +702,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
+       : null,
+     action: n.action
+       ? {
++          ...(n.action.xiaobao ? {xiaobao:{wish:n.action.xiaobao.wish,partner:n.action.xiaobao.partner}} : {}),
+           id: n.action.id,
+           kind: n.action.kind,
+           target: place(n.action.target),
+@@ -771,7 +782,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
+     },
+   }));
+   return {
+-    version: 4,
++    version: 5,
+     speechAt: l.speechAt,
+     speechUrgentAt: l.speechUrgentAt,
+     speechEventFloor: l.speechEventFloor,
+diff --git a/farwind/src/game/systems/npcSpeech.ts b/farwind/src/game/systems/npcSpeech.ts
+index 91a1e180..27ad58d7 100644
+--- a/farwind/src/game/systems/npcSpeech.ts
++++ b/farwind/src/game/systems/npcSpeech.ts
+@@ -1,3 +1,4 @@
++import {xiaobaoThought} from './xiaobaoLife';
+ import {
+   LIFE,
+   MAINTENANCE,
+@@ -23,6 +24,7 @@ type Line = {
+   routine?: Activity;
+ };
+ const routine = (n: PersonState): string | undefined => {
++  if(n.id==='xiaobao')return xiaobaoThought(n);
+   const a = n.action;
+   if (
+     !a ||
+diff --git a/farwind/src/game/systems/save.ts b/farwind/src/game/systems/save.ts
+index dba709c9..31112ead 100644
+--- a/farwind/src/game/systems/save.ts
++++ b/farwind/src/game/systems/save.ts
+@@ -36,7 +36,7 @@ async function writeSave(s: State) {
+     };
+     try{
+       const store=t.objectStore('states'),old=store.get('current');
+-      old.onsuccess=()=>{if(old.result&&old.result.schema_version<15){const previous=store.get('before-combat-build');previous.onsuccess=()=>{if(!previous.result)store.put(old.result,'before-combat-build');};}if(old.result&&old.result.schema_version<16){const backup=store.get('before-aiming-scope');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-aiming-scope');};}if(old.result&&old.result.schema_version<20){const backup=store.get('before-cat-companion');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-cat-companion');};}store.put(clean,'current');};
++      old.onsuccess=()=>{if(old.result&&old.result.schema_version<15){const previous=store.get('before-combat-build');previous.onsuccess=()=>{if(!previous.result)store.put(old.result,'before-combat-build');};}if(old.result&&old.result.schema_version<16){const backup=store.get('before-aiming-scope');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-aiming-scope');};}if(old.result&&old.result.schema_version<20){const backup=store.get('before-cat-companion');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-cat-companion');};}if(old.result&&old.result.schema_version<21){const backup=store.get('before-xiaobao-life');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-xiaobao-life');};}store.put(clean,'current');};
+     }
+     catch(e){t.abort();d.close();no(e);}
+   });
+diff --git a/farwind/src/game/systems/state.ts b/farwind/src/game/systems/state.ts
+index 90907f75..b70f46b1 100644
+--- a/farwind/src/game/systems/state.ts
++++ b/farwind/src/game/systems/state.ts
+@@ -1,3 +1,4 @@
++import {initialXiaobaoLife} from './xiaobaoLifeState';
+ import {initialCatBond,migrateCatBond,validateCatBond,type CatBondState} from './catBond';
+ import {initialWindLegacy,validateWindLegacy,type WindLegacyState} from './windLegacyState';
+ import {migrateInteriorPosition} from '../../data/villageInteriors';
+@@ -34,7 +35,7 @@ export type State = {
+   runes: RuneState;
+   skills: SkillState;
+   windLegacy:WindLegacyState;
+-  schema_version: 20;
++  schema_version: 21;
+   catBond: CatBondState;
+   physique: { runDistance: number };
+   demonKing:DemonKingState;
+@@ -72,7 +73,7 @@ export const initialState = (): State => ({
+   runes: initialRunes(),
+   skills: initialSkills(),
+   windLegacy:initialWindLegacy(),
+-  schema_version: 20,
++  schema_version: 21,
+   catBond: initialCatBond(),
+   physique: { runDistance: 0 },
+   demonKing:initialDemonKing(),
+@@ -250,7 +251,11 @@ export function validate(raw: unknown): State {
+     s.physique={runDistance:0};(s as {schema_version:number}).schema_version=19;
+   }
+   if(s&&(s as {schema_version:number}).schema_version===19){s.catBond=migrateCatBond(s);(s as {schema_version:number}).schema_version=20;}
+-  if(s&&s.schema_version===20){s.skills=validateSkills(s.skills);s.runes=validateRunes(s.runes);s.windLegacy=validateWindLegacy(s.windLegacy);}
++  if(s&&(s as {schema_version:number}).schema_version===20){
++    s.xiaobao.space='village';s.xiaobao.life=initialXiaobaoLife();s.xiaobao.autoSupport=true;
++    (s as {schema_version:number}).schema_version=21;
++  }
++  if(s&&s.schema_version===21){s.skills=validateSkills(s.skills);s.runes=validateRunes(s.runes);s.windLegacy=validateWindLegacy(s.windLegacy);}
+   const num = (n: unknown, min: number, max: number) =>
+     typeof n === "number" && Number.isFinite(n) && n >= min && n <= max;
+   const strarr = (a: unknown) =>
+@@ -262,7 +267,7 @@ export function validate(raw: unknown): State {
+   const vitals = playerVitals(s);
+   if (
+     !s ||
+-    s.schema_version !== 20 ||
++    s.schema_version !== 21 ||
+     !s.mapProgress || !["unknown","surveyed","open"].includes(s.mapProgress.westRoad) ||
+     !Array.isArray(s.mapProgress.shortcuts) || s.mapProgress.shortcuts.length>3 || new Set(s.mapProgress.shortcuts).size!==s.mapProgress.shortcuts.length || !s.mapProgress.shortcuts.every(id=>SHORTCUT_IDS.includes(id)) ||
+     (s.map_version !== undefined &&
+@@ -359,6 +364,7 @@ export function validate(raw: unknown): State {
+   s.xiaobao=validateXiaobao(s.xiaobao,s.killed,s.defense.raid?.members.map(m=>m.id)??[],s.encounters);
+   s.night=validateNight(s);
+   s.life=validateLife(s.life,s.time);
++  if(s.xiaobao.life.day>Math.floor(s.time/1440)||s.xiaobao.life.journal.some(e=>e.time>s.time))throw Error('小宝的经历时间不能晚于世界时间。');
+   s.catBond=validateCatBond(s.catBond,s.time,vitals.maxHp);
+   const validIds = (ids: string[], kind: string) =>
+     new Set(ids).size === ids.length &&
+diff --git a/farwind/src/game/systems/xiaobaoCombat.ts b/farwind/src/game/systems/xiaobaoCombat.ts
+index 911588f4..a28ee933 100644
+--- a/farwind/src/game/systems/xiaobaoCombat.ts
++++ b/farwind/src/game/systems/xiaobaoCombat.ts
+@@ -94,6 +94,8 @@ export type XiaobaoEnvironment = {
+   takeoffClear?: (p: Point) => boolean;
+   checkpoint?: (flightId: string) => void;
+   message: (s: string) => void;
++  lifeMove?: (ms:number,budget:{queries:number})=>void;
++  lifeEmergency?: (active:boolean)=>void;
+ };
+ // 日常序列保持原实现。长期任务与短时动作分开，释放实例与施法者生命分开。
+ export class XiaobaoCombat extends Xiaobao {
+@@ -114,7 +116,7 @@ export class XiaobaoCombat extends Xiaobao {
+   private regrouping = false;
+   private guardPlayer = false;
+   private get support() {
+-    return this.guardPlayer ? null : this.data.support;
++    return this.guardPlayer && !this.data.life.emergency ? null : this.data.support;
+   }
+   events: XiaobaoEvent[] = [];
+   visuals: XiaobaoEvent[] = [];
+@@ -178,7 +180,7 @@ export class XiaobaoCombat extends Xiaobao {
+         state.cast = null;
+         state.recovery = Math.max(state.recovery, 300);
+       }
+-      if (!this.airborne && motionBlocked(this.x, this.y)) {
++      if (state.space==='village' && !this.airborne && motionBlocked(this.x, this.y)) {
+         const safe = this.candidates(this).find(
+           (p) => !motionBlocked(p.x, p.y),
+         );
+@@ -199,7 +201,7 @@ export class XiaobaoCombat extends Xiaobao {
+     return !!this.data.flight && this.data.flight.stage !== "takeoff";
+   }
+   get available() {
+-    return this.data.hp > 0 && !this.data.rest && !this.airborne;
++    return this.data.space === "village" && this.data.hp > 0 && !this.data.rest && !this.airborne;
+   }
+   get busy() {
+     return (
+@@ -247,6 +249,7 @@ export class XiaobaoCombat extends Xiaobao {
+     kind: NonNullable<XiaobaoState["command"]>["kind"] | "wait" | "return",
+     env: XiaobaoEnvironment,
+   ) {
++    if(this.data.life.emergency)throw Error("村庄仍有危险，小宝正在优先护村。");
+     if (this.data.task !== "follow") throw Error("请先委托小宝与你出征。");
+     if (kind === "wait") {
+       this.data.wait = { ...point(this), region: env.player.region };
+@@ -1082,8 +1085,8 @@ export class XiaobaoCombat extends Xiaobao {
+   }
+   choose(env: XiaobaoEnvironment) {
+     this.metrics.decisions++;
+-    const following = this.data.task === "follow" && !this.data.wait &&
+-      env.player.outside && env.player.hp > 0;
++    let following = this.data.task === "follow" && !this.data.wait &&
++      env.player.outside && env.player.hp > 0 && !this.data.life.emergency;
+     const threatensPlayer = (e: EnemyBody) => e.targetId === "player" ||
+       env.playerThreats?.includes(e.id) || (e.playerAggroUntil ?? 0) > env.now;
+     this.guardPlayer = following && env.enemies.some(e =>
+@@ -1097,7 +1100,18 @@ export class XiaobaoCombat extends Xiaobao {
+           distance(this, a.point) - distance(this, b.point) ||
+           a.key.localeCompare(b.key),
+       );
+-    const major = this.fronts.filter((f) => f.major);
++    const danger=this.fronts.length>0;
++    const life=this.data.life;
++    if(danger){
++      if(!life.emergency){life.emergency=true;env.lifeEmergency?.(true);if(this.data.cast&&!this.data.cast.released)this.cancel(0);}
++      life.clearSince=null;this.guardPlayer=false;following=false;this.demonstration=false;
++      this.data.wait=null;this.data.command=null;
++    }else if(life.emergency){
++      life.clearSince??=this.data.clock;
++      if(this.data.clock-life.clearSince>=10000){life.emergency=false;life.clearSince=null;life.aftercareUntil=env.minute+180;env.lifeEmergency?.(false);}
++    }
++    const major = this.fronts;
++    if(this.data.space!=='village')return;
+     if (major.length && !this.data.alarmActive) {
+       this.data.alarmActive = true;
+       this.data.alarmCycle++;
+@@ -1108,6 +1122,7 @@ export class XiaobaoCombat extends Xiaobao {
+       .filter(
+         (a) =>
+           a.hp > 0 &&
++          (!life.emergency||a.role!=='player') &&
+           a.threatAt !== null &&
+           a.threatAt - env.now <= 600 &&
+           distance(this, a) < 600,
+@@ -1119,14 +1134,14 @@ export class XiaobaoCombat extends Xiaobao {
+           a.hp / a.maxHP - b.hp / b.maxHP ||
+           a.id.localeCompare(b.id),
+       )[0];
+-    const protectPlayer =
++    const protectPlayer = !life.emergency && (
+       this.guardPlayer || (env.player.hp < 30 &&
+       env.allies.some(
+         (a) =>
+           a.id === "player" &&
+           a.threatAt !== null &&
+           a.threatAt - env.now <= 600,
+-      ));
++      )));
+     const front = major.find(
+       (f) => !this.data.responded.includes(`${this.data.alarmCycle}:${f.key}`),
+     );
+@@ -1172,14 +1187,13 @@ export class XiaobaoCombat extends Xiaobao {
+     if (
+       this.data.task === "follow" &&
+       env.player.outside &&
+-      env.player.hp <= 0
++      env.player.hp <= 0 && !life.emergency
+     ) {
+       if (this.data.cast && !this.data.cast.released) this.cancel();
+       return;
+     }
+     if (
+       front &&
+-      (this.data.task !== "follow" || this.data.autoSupport) &&
+       !protectPlayer
+     ) {
+       if (distance(this, front.point) > 240 && this.beginFlight(front, env))
+@@ -1210,7 +1224,7 @@ export class XiaobaoCombat extends Xiaobao {
+     }
+     if (protectPlayer) this.status = "先护住旅人";
+     // 尚未释放的进攻可让位给主角遇险；已释放实例仍正常结算。
+-    if (this.guardPlayer && this.data.cast && !this.data.cast.released &&
++    if (!life.emergency && this.guardPlayer && this.data.cast && !this.data.cast.released &&
+       this.data.cast.target && !env.enemies.some(e =>
+         e.id === this.data.cast!.target && threatensPlayer(e))) this.cancel(0);
+     if (
+@@ -1268,7 +1282,7 @@ export class XiaobaoCombat extends Xiaobao {
+       (e) =>
+         this.valid(e, env, this, 600) &&
+         this.allowed(e, env, anchor, gate) &&
+-        (this.data.task === "follow" && !support
++        (this.data.task === "follow" && !support && !life.emergency
+           ? env.player.outside &&
+             (e.targetId === "player" ||
+               env.playerThreats?.includes(e.id) ||
+@@ -1284,7 +1298,7 @@ export class XiaobaoCombat extends Xiaobao {
+       env.allies.find((a) => a.id === e.targetId && a.threatAt !== null);
+     candidates.sort(
+       (a, b) =>
+-        (following
++        (following && !life.emergency
+           ? Number(!!b.attack && !b.attack.cancelled && !b.attack.resolved && b.targetId === "player") -
+               Number(!!a.attack && !a.attack.cancelled && !a.attack.resolved && a.targetId === "player") ||
+             Number(b.id === this.data.command?.target) - Number(a.id === this.data.command?.target) ||
+@@ -1341,7 +1355,7 @@ export class XiaobaoCombat extends Xiaobao {
+   }
+   anchor(env: XiaobaoEnvironment): Point {
+     if (this.support) return xiaobaoGatePoint(this.support.gate);
+-    if (this.data.task === "follow") return this.data.wait ?? env.player;
++    if (this.data.task === "follow" && !this.data.life.emergency) return this.data.wait ?? env.player;
+     if (this.data.task === "guard" && this.data.gate !== "all")
+       return xiaobaoGatePoint(this.data.gate);
+     return XIAOBAO.home;
+@@ -1378,7 +1392,7 @@ export class XiaobaoCombat extends Xiaobao {
+     } else if (this.support || (front && this.data.task !== "follow")) {
+       destination = front?.point ?? anchor;
+       speed = 420;
+-    } else if (this.data.task === "follow") {
++    } else if (this.data.task === "follow" && !this.data.life.emergency) {
+       this.status = this.data.wait ? "原地等候" : "留距巡护";
+       if (this.data.wait) {
+         destination = this.data.wait;
+@@ -1507,6 +1521,7 @@ export class XiaobaoCombat extends Xiaobao {
+   tick(dt: number, env: XiaobaoEnvironment, budget: { queries: number }) {
+     if (!(dt > 0) || !Number.isFinite(dt)) return;
+     let left = dt;
++    let lifeMoved=false;
+     while (left > 1e-7) {
+       const slice = Math.min(5, left),
+         priorCast = this.data.cast,
+@@ -1558,7 +1573,7 @@ export class XiaobaoCombat extends Xiaobao {
+           this.data.hp = 320;
+           this.data.qi = 50;
+           this.data.recovery = 1000;
+-          const safe = this.landingPoints(this, env)[0];
++          const safe = this.data.space==='village' ? this.landingPoints(this, env)[0] : undefined;
+           if (safe) {
+             this.x = safe.x;
+             this.y = safe.y;
+@@ -1577,6 +1592,10 @@ export class XiaobaoCombat extends Xiaobao {
+         if (this.data.flight === priorFlight) this.flightTick(slice, env);
+         continue;
+       }
++      if(this.data.space!=='village'){
++        if(!lifeMoved){env.lifeMove?.(dt,budget);lifeMoved=true;}
++        continue;
++      }
+       const fighting =
+         !!this.targetId ||
+         env.allies.some((a) => a.threatAt !== null && distance(this, a) < 600);
+@@ -1618,9 +1637,12 @@ export class XiaobaoCombat extends Xiaobao {
+       }
+       this.effectsTick(slice, env);
+       if (this.data.recovery > 0) continue;
+-      if (
++      if(env.lifeMove && this.data.task==='free' && !this.data.life.emergency && !this.targetId && !this.data.support && !this.demonstration && !this.data.effects.length){
++        if(!lifeMoved){env.lifeMove(dt,budget);lifeMoved=true;}
++      }else if (
+         this.data.task === "free" &&
+         !this.data.support &&
++        !this.data.life.emergency &&
+         !this.targetId &&
+         distance(this, XIAOBAO.home) < 180
+       ) {
+@@ -1708,6 +1730,8 @@ export class XiaobaoCombat extends Xiaobao {
+   override snapshot() {
+     return {
+       ...super.snapshot(),
++      space:this.data.space,
++      life:this.data.life,
+       state: structuredClone(this.data),
+       status: this.status,
+       airborne: this.airborne,
+diff --git a/farwind/src/game/systems/xiaobaoState.ts b/farwind/src/game/systems/xiaobaoState.ts
+index c0f9ef72..19cfb910 100644
+--- a/farwind/src/game/systems/xiaobaoState.ts
++++ b/farwind/src/game/systems/xiaobaoState.ts
+@@ -1,3 +1,6 @@
++import {isSpace,validPlace,} from './npcLifeState'
++import type {SpaceId} from '../../data/npcLife';
++import {initialXiaobaoLife,validateXiaobaoLife,type XiaobaoLifeState} from './xiaobaoLifeState';
+ import {creatureMaxHP} from '../../data/maps/windbell/elites';
+ import {historicalRaidMember} from '../../data/demonKing';
+ import {ENCOUNTER_UNITS,encounterUnit} from "../../data/maps/windbell/encounters";
+@@ -52,6 +55,8 @@ export type XiaobaoFlight = {
+   imprint: boolean;
+ };
+ export type XiaobaoState = {
++  space: SpaceId;
++  life: XiaobaoLifeState;
+   known: boolean;
+   task: XiaobaoTask;
+   gate: GateId | "all";
+@@ -112,6 +117,8 @@ export type XiaobaoState = {
+ };
+ export function initialXiaobao(): XiaobaoState {
+   return {
++    space: "village",
++    life: initialXiaobaoLife(),
+     known: false,
+     task: "free",
+     gate: "all",
+@@ -183,7 +190,7 @@ export function validateXiaobao(
+   const skills = Object.keys(XIAOBAO_SKILLS) as XiaobaoSkill[];
+   if (
+     !s ||
+-    !point(s) ||
++    !isSpace(s.space) || !validPlace({...s,space:s.space}) ||
+     !task(s.task) ||
+     !(s.gate === "all" || gate(s.gate)) ||
+     !["steady", "protect", "full"].includes(s.tactic) ||
+@@ -378,7 +385,7 @@ export function validateXiaobao(
+     (s.wait !== null && typeof s.wait !== "object")
+   )
+     fail();
+-  if ((!s.flight || s.flight.stage === "takeoff") && motionBlocked(s.x, s.y)) {
++  if (s.space === "village" && (!s.flight || s.flight.stage === "takeoff") && motionBlocked(s.x, s.y)) {
+     const safe = [
+       s,
+       ...Array.from({ length: 15 }, (_, i) => ({
+@@ -388,6 +395,8 @@ export function validateXiaobao(
+     ].some((p) => point(p) && !motionBlocked(p.x, p.y));
+     if (!safe) fail();
+   }
++  s.life=validateXiaobaoLife(s.life);
++  if(s.space!=="village"&&(s.flight||s.cast||s.effects.length))fail();
+   // 明确白名单；所有嵌套对象也从定义字段取值。
+   const pick = <T extends object>(v: T, keys: readonly string[]): T =>
+     Object.fromEntries(
+diff --git a/farwind/src/game/systems/xiaobaoWorld.ts b/farwind/src/game/systems/xiaobaoWorld.ts
+index 1fb428e8..08a56f66 100644
+--- a/farwind/src/game/systems/xiaobaoWorld.ts
++++ b/farwind/src/game/systems/xiaobaoWorld.ts
+@@ -1,3 +1,4 @@
++import {moveXiaobaoLife,suspendXiaobaoLife} from './xiaobaoLife';
+ import type { World } from "../scenes/World";
+ import { GUARD_DEFS, RAID_GATES } from "../../data/defense";
+ import { zoneFor, locallyProtected } from "../../data/defenseZones";
+@@ -28,15 +29,15 @@ export function xiaobaoAllies(w: World): XiaobaoAlly[] {
+           },
+         ]
+       : []),
+-    {
++    ...(c.data.space==='village' ? [{
+       id: "xiaobao",
+       x: c.x,
+       y: c.y,
+       hp: c.data.hp,
+       maxHP: 640,
+-      role: "self",
++      role: "self" as const,
+       threatAt: null,
+-    },
++    }] : []),
+     ...w.state.defense.guards
+       .filter((g) => !g.dead && (g.space ?? "village") === "village")
+       .map((g) => ({
+@@ -97,6 +98,8 @@ export function xiaobaoEnvironment(w: World): XiaobaoEnvironment {
+       victim.threatAt = Math.min(victim.threatAt ?? Infinity, at);
+   }
+   return {
++    lifeMove:w.life ? (ms,budget)=>moveXiaobaoLife(w.life,c,ms,budget) : undefined,
++    lifeEmergency:w.life ? active=>{if(active)suspendXiaobaoLife(w.life);} : undefined,
+     now: w.sim,
+     minute: w.state.time,
+     player: { ...p, outside, region: regionAt(p).id },
+@@ -154,7 +157,7 @@ export function xiaobaoFronts(w: World, allies: XiaobaoAlly[]): XiaobaoFront[] {
+           distance(e, a.inside) <= distance(e, b.inside) ? a : b,
+         ).id === g.id;
+       return (
+-        !!reason ||
++        !!reason || w.state.defense.raid?.gateId===g.id&&w.state.defense.raid.members.some(m=>m.id===e.id) ||
+         (nearest &&
+           (hurt || !!actual || (seen && locallyProtected(g.id, e)))) ||
+         reported
+diff --git a/farwind/src/game/ui/interface.ts b/farwind/src/game/ui/interface.ts
+index 77802be7..90746ddf 100644
+--- a/farwind/src/game/ui/interface.ts
++++ b/farwind/src/game/ui/interface.ts
+@@ -1,3 +1,4 @@
++import {HOMES} from '../../data/npcLife';
+ import {showCatCompanion} from './catCompanion';
+ import {CAT_STAGES,catStage,type CatCare} from '../systems/catBond';
+ import {legacyJournal,legacyTracked} from '../systems/windLegacy';
+@@ -986,7 +987,7 @@ export class Interface {
+     ctx.strokeStyle = "#8d512e";
+     ctx.lineWidth = 2;
+     ctx.stroke();
+-    const xb=s.xiaobao;ctx.fillStyle='#b7ffe0';ctx.strokeStyle='#315e4c';ctx.beginPath();ctx.arc(px(xb.x),py(xb.y),mini?3:5,0,Math.PI*2);ctx.fill();ctx.stroke();
++    const xb=s.xiaobao;const xbPoint=xb.space==='village'?xb:(HOMES.find(h=>h.id===xb.space)?.door??xb);ctx.fillStyle='#b7ffe0';ctx.strokeStyle='#315e4c';ctx.beginPath();ctx.arc(px(xbPoint.x),py(xbPoint.y),mini?3:5,0,Math.PI*2);ctx.fill();ctx.stroke();
+     if(!mini){ctx.font='12px sans-serif';ctx.fillStyle='#174537';ctx.fillText(`小宝 · ${xb.flight?'飞援中':xb.rest?'调息中':xb.task==='guard'?'守村':xb.task==='follow'?'随行':'自由活动'}`,px(xb.x)+8,py(xb.y)-8);}
+   }
+ }
+diff --git a/farwind/src/game/ui/npcLife.ts b/farwind/src/game/ui/npcLife.ts
+index ff26d35e..16148013 100644
+--- a/farwind/src/game/ui/npcLife.ts
++++ b/farwind/src/game/ui/npcLife.ts
+@@ -12,6 +12,7 @@ import {
+ import type { World } from "../scenes/World";
+ import type { Prop } from "../../data/world";
+ export function lifeInteract(world: World, p: Prop) {
++  if(p.id==='xiaobao'){world.xiaobao?.open(world);return true;}
+   if(p.id.startsWith("interior:")){
+     const f=INTERIOR_FURNITURE.find(f=>`interior:${f.id}`===p.id&&f.space===world.state.life.playerSpace);
+     if(!f) return false;
+@@ -46,6 +47,7 @@ export function lifeInteract(world: World, p: Prop) {
+     return true;
+   }
+   if (p.id.startsWith("locker:")) {
++    if(p.id==='locker:xiaobao'){const goals=world.state.xiaobao.life.projects;world.ui.dialog('小宝的收纳盒',`小风向本、正在雕刻的木鸟和药草笔记都收在这里。\n${goals.wind.stage===3?'已经完成：自己的风向笔记。':'风向笔记还在慢慢写。'}\n${goals.wood.stage===3?'已经完成：第一只小木鸟。':'木鸟还在慢慢雕。'}\n${goals.herb.stage===3?'已经完成：常用药草辨认笔记。':'药草笔记还在慢慢学。'}`,'xiaobao');return true;}
+     world.ui.dialog(p.label!, world.life.storageText(p.id));
+     return true;
+   }
+diff --git a/farwind/src/style.css b/farwind/src/style.css
+index 2319af24..2a366892 100644
+--- a/farwind/src/style.css
++++ b/farwind/src/style.css
+@@ -1162,3 +1162,8 @@ kbd {
+ .cat-care-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0;}.cat-care-actions button{min-width:0;}
+ #cat-care-feedback{min-height:1.6em;color:#4d603b;}.cat-companion-panel>.muted{max-width:none;}
+ @media(max-width:640px){.cat-abilities{grid-template-columns:minmax(0,1fr);}.cat-bond-heading{gap:12px;}.cat-bond-heading img{width:52px;height:52px;flex-basis:52px;}.cat-care-actions button{flex:1 1 130px;}.panel:has(.cat-companion-panel){padding:16px;}.panel:has(.cat-companion-panel) h1{font-size:23px;}}
++
++/* 小宝日记与按钮均在正常文档流中，窄屏允许换行和滚动。 */
++.xiaobao-diary {min-width:0;margin:8px 0;padding:10px;border:1px solid #bc9d65;border-radius:8px;background:#263f33;overflow-wrap:anywhere;}
++.xiaobao-diary-copy {white-space:pre-wrap;line-height:1.7;margin:8px 0;}
++.dialog-copy:has(.xiaobao-diary)>* {flex-shrink:0;}
+diff --git a/farwind/tests/npc-social.test.ts b/farwind/tests/npc-social.test.ts
+index f736c630..c79c0d6a 100644
+--- a/farwind/tests/npc-social.test.ts
++++ b/farwind/tests/npc-social.test.ts
+@@ -177,7 +177,7 @@ describe("战后同伴探访与认知边界", () => {
+     old.life.version = 3;
+     for (const n of old.life.people) delete n.social;
+     const migrated = validate(old);
+-    expect(migrated.life.version).toBe(4);
++    expect(migrated.life.version).toBe(5);
+     expect(migrated.life.stores).toEqual(e.s.life.stores);
+     expect(migrated.life.people[0].relations).toEqual(e.visitor.relations);
+     expect(migrated.life.people[0].social.occasionFloor).toBe(
+diff --git a/farwind/tests/xiaobao-combat.test.ts b/farwind/tests/xiaobao-combat.test.ts
+index d647f9e8..4908df38 100644
+--- a/farwind/tests/xiaobao-combat.test.ts
++++ b/farwind/tests/xiaobao-combat.test.ts
+@@ -156,15 +156,15 @@ describe("随行护卫的距离与危险优先级", () => {
+     f.step(900);
+     expect(f.hits[0]?.id).toBe(threat.id);
+   });
+-  it("主角满血遇险也优先护卫，不启动远处村庄飞援", () => {
++  it("确认村庄遇险后覆盖主角护卫并启动飞援", () => {
+     const e = enemy("主角攻击者", 1140), f = fixture([e]);
+     f.c.data.task = "follow";
+     f.env.player = { ...f.env.player, x: 1040, y: 725 };
+     e.targetId = "player";
+     f.setFronts([front()]);
+     f.step(5);
+-    expect(f.c.data.flight).toBeNull();
+-    expect(f.c.targetId).toBe(e.id);
++    expect(f.c.data.life.emergency).toBe(true);
++    expect(f.c.data.flight?.gate).toBe('east-gate');
+   });
+   it("识别正式追击但尚未出手的敌人，不主动攻击附近的家园怪", () => {
+     const chasing = enemy("正在追击", 1120), passive = enemy("家园旁观", 850), f = fixture([chasing, passive]);
+@@ -182,7 +182,7 @@ describe("随行护卫的距离与危险优先级", () => {
+     expect(idle.hits).toHaveLength(0);
+     expect(idle.c.targetId).toBeNull();
+   });
+-  it("正在支援村庄时主角遇险，暂时转为护卫且不把援护伤害记到村庄战报", () => {
++  it("正在支援村庄时主角遇险，仍保持护村锚点", () => {
+     const e = enemy("主角攻击者", 1140), f = fixture([e]);
+     f.c.data.task = "follow";
+     f.env.player = { ...f.env.player, x: 1040, y: 725 };
+@@ -190,9 +190,8 @@ describe("随行护卫的距离与危险优先级", () => {
+     f.c.data.support = { key: "村庄支援", gate: "east-gate", age: 0, hits: 0, kills: 0, injured: false };
+     f.setFronts([front()]);
+     f.step(1000);
+-    expect(f.c.anchor(f.env)).toEqual({ x: 1040, y: 725, hp: 100, outside: true, region: "village" });
+-    expect(f.hits.some(h => h.id === e.id)).toBe(true);
+-    expect(f.c.data.support?.hits).toBe(0);
++    expect(f.c.anchor(f.env)).toEqual({x:2190,y:1100});
++    expect(f.c.data.life.emergency).toBe(true);
+     expect(f.c.data.flight).toBeNull();
+   });
+   it("未释放的次要攻击让位给主角攻击者，取消不消耗真气和冷却", () => {
+@@ -733,7 +732,7 @@ describe("飞援、委托与结构8保存", () => {
+     expect(f.c.data.flight).toBeNull();
+     expect(f.c.data.shields).toHaveLength(0);
+   });
+-  it("随行关闭回援、调息与护主危急分别挡住自动起飞", () => {
++  it("调息不能起飞，旧关闭回援和护主危急不能挡住护村", () => {
+     for (const mode of ["关闭", "调息", "护主"]) {
+       const f = fixture();
+       f.c.data.task = "follow";
+@@ -758,7 +757,8 @@ describe("飞援、委托与结构8保存", () => {
+         ];
+       }
+       f.step(200);
+-      expect(f.c.data.flight).toBeNull();
++      if(mode==='调息')expect(f.c.data.flight).toBeNull();
++      else expect(f.c.data.flight?.gate).toBe('east-gate');
+     }
+   });
+   it("飞行存档保持空中投影根、冷却和任务，零时步冻结全部状态", () => {

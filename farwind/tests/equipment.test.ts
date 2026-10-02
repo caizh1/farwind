@@ -1,16 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { RETURN_WIND_ORB, equipment, initialStock, shops, STARTER_COINS } from "../src/data/economy";
 import { items } from "../src/data/content";
-import { add, count, initialState, parseSave } from "../src/game/systems/state";
+import { add, count, initialState, parseSave, validate } from "../src/game/systems/state";
 import { EconomyCommit, economySnapshot, incomingDamage, movementSpeed, outgoingDamage, maxTradeQuantity, type EconomyRequest } from "../src/game/systems/economy";
 import { SPRINT } from "../src/game/systems/sprint";
 import { equippedItem } from "../src/game/ui/equipment";
 
 describe("旅人装备与永久归风珠", () => {
-  it("新档、有效旧结构及重复读档都有同一颗保底宝珠，不增加背包或交易物品", () => {
+  it("新档保底归风珠及内部历史格式校验幂等，外部旧备份拒绝导入", () => {
     const fresh = initialState();
     const old = { ...structuredClone(fresh), schema_version: 12 };
-    const restored = parseSave(JSON.stringify(old));
+    expect(()=>parseSave(JSON.stringify(old))).toThrow('旧战斗');
+    const restored = validate(old);
     const reloaded = parseSave(JSON.stringify(restored));
     for (const state of [fresh, restored, reloaded]) {
       expect(equippedItem(state, "orb").name).toBe("归风珠");
@@ -78,12 +79,13 @@ describe("轻风靴购买、穿戴与存档", () => {
     expect(movementSpeed(s, SPRINT.walkSpeed)).toBe(150);
     expect(parseSave(JSON.stringify(s))).toEqual(s);
   });
-  it("第17版旧档仅补鞋槽和库存，原有钱、库存、装备与任务不变，重复读档幂等", () => {
+  it("内部第17版格式校验仅补鞋槽与库存，外部旧备份不能导入新版", () => {
     const old: any = initialState(); old.schema_version = 17;
     delete old.equipment.feet; delete old.shopStock["smith:windBoots"];
     old.coins = 47; old.shopStock["smith:ironSword"] = 2;
     old.equipment.weapon = "ironSword"; old.bag[0] = { id: "herb", count: 5 };
-    const before = structuredClone(old), next = parseSave(JSON.stringify(old));
+    expect(()=>parseSave(JSON.stringify(old))).toThrow('旧战斗');
+    const before = structuredClone(old), next = validate(old);
     expect(next.schema_version).toBe(initialState().schema_version);
     expect(next.equipment).toEqual({ ...old.equipment, feet: null });
     expect(next.shopStock).toEqual({ ...old.shopStock, "smith:windBoots": 4 });

@@ -13,9 +13,13 @@
     "metrics": {
       "steps": 2535,
       "decisions": 851,
-      "queries": 21,
-      "ms": 805.3581570000003,
-      "maxMs": 19.29483399999998,
+      "queries": 20,
+      "ms": 1039.525498999998,
+      "maxMs": 23.028166000000056,
+      "xiaobaoDecisionMs": 3.4453510000006133,
+      "xiaobaoDecisionMaxMs": 0.14170900000002007,
+      "xiaobaoMoveMs": 0,
+      "xiaobaoMoveMaxMs": 0,
       "pathBatches": 16,
       "maxExpandedPerBatch": 64
     },
@@ -23,10 +27,15 @@
       "medicine": 2,
       "herbs": 8,
       "wood": 4,
-      "food": 16,
+      "food": 17,
       "day": 0
     },
     "reservations": [
+      {
+        "facility": "seat:elder-home",
+        "owner": "xiaobao",
+        "expires": 62700
+      },
       {
         "facility": "pharmacy",
         "owner": "healer",
@@ -39,15 +48,15 @@
         "id": "elder",
         "body": {
           "space": "elder-home",
-          "x": 680.5887607722926,
-          "y": 872.1146630831563,
+          "x": 561.6264589173554,
+          "y": 636.8943268105719,
           "hp": 100,
           "health": "healthy",
           "episode": 0,
           "recoverAt": 0
         },
         "action": {
-          "id": 9,
+          "id": 10,
           "kind": "work",
           "target": {
             "space": "village",
@@ -60,15 +69,15 @@
           "phase": "travel",
           "progress": 0,
           "duration": 8000,
-          "started": 41180,
+          "started": 41760,
           "failures": 0,
           "label": "整理风向笔记",
           "social": null
         },
-        "reason": "整理风向笔记（评分 78）",
+        "reason": "整理风向笔记（评分 85）",
         "needs": {
-          "hunger": 0.5616666666666713,
-          "fatigue": 0.08683333333333307
+          "hunger": 15.845000000001033,
+          "fatigue": 0.08199999999999986
         },
         "alarm": 0,
         "candidates": [
@@ -79,7 +88,7 @@
               "x": 720,
               "y": 650
             },
-            "score": 78.56800292221861,
+            "score": 78.26564778242376,
             "label": "整理风向笔记",
             "facility": null,
             "task": null
@@ -88,20 +97,8 @@
             "kind": "rest",
             "target": {
               "space": "elder-home",
-              "x": 570,
-              "y": 800
-            },
-            "score": 18.297862578979764,
-            "label": "窗口错过或设施忙，回家等待",
-            "facility": "seat:elder-home",
-            "task": null
-          },
-          {
-            "kind": "rest",
-            "target": {
-              "space": "elder-home",
-              "x": 659.4122210803991,
-              "y": 830.7839509349524,
+              "x": 528.1991428131211,
+              "y": 570.9193608153711,
               "hp": 100,
               "health": "healthy",
               "episode": 0,
@@ -1034,6 +1031,157 @@
             "source": "alarm",
             "importance": 40,
             "expires": 5116.079999999985
+          }
+        ]
+      },
+      {
+        "id": "xiaobao",
+        "body": {
+          "space": "village",
+          "x": 810,
+          "y": 725
+        },
+        "action": {
+          "id": 1,
+          "kind": "eat",
+          "target": {
+            "space": "elder-home",
+            "x": 570,
+            "y": 800
+          },
+          "pickup": null,
+          "facility": "seat:elder-home",
+          "task": null,
+          "phase": "travel",
+          "progress": 0,
+          "duration": 7000,
+          "started": 20,
+          "failures": 0,
+          "label": "吃饭，下午才有精神",
+          "social": null
+        },
+        "reason": "吃饭，下午才有精神",
+        "needs": {
+          "hunger": 15.845000000001033,
+          "fatigue": 10.422500000000516
+        },
+        "alarm": 0,
+        "candidates": [
+          {
+            "kind": "eat",
+            "target": {
+              "space": "elder-home",
+              "x": 570,
+              "y": 800
+            },
+            "label": "吃饭，下午才有精神",
+            "score": 200.47430858748848,
+            "facility": "seat:elder-home",
+            "task": null
+          },
+          {
+            "kind": "supply",
+            "target": {
+              "space": "village",
+              "x": 980,
+              "y": 825
+            },
+            "label": "在安全草坡采一篮药草",
+            "score": 86.44984507380312,
+            "facility": null,
+            "task": null,
+            "wish": "deliver"
+          },
+          {
+            "kind": "habit",
+            "target": {
+              "space": "village",
+              "x": 895,
+              "y": 775
+            },
+            "label": "在广场玩踏叶小步",
+            "score": 73.22492253690156,
+            "facility": null,
+            "task": null,
+            "wish": "play"
+          },
+          {
+            "kind": "rest",
+            "target": {
+              "space": "carpenter-home",
+              "x": 730,
+              "y": 780
+            },
+            "label": "去阿禾常在的地方看看",
+            "score": 68.25251609449472,
+            "facility": null,
+            "task": null
+          },
+          {
+            "kind": "habit",
+            "target": {
+              "space": "village",
+              "x": 900,
+              "y": 1660
+            },
+            "label": "去安全近郊听听风",
+            "score": 58.09221185370481,
+            "facility": null,
+            "task": null,
+            "wish": "wander"
+          }
+        ],
+        "path": null,
+        "memories": [
+          {
+            "eventId": "life:2",
+            "sequence": 2,
+            "kind": "damage",
+            "time": 780.7199999999993,
+            "subjects": [
+              "wind-bell"
+            ],
+            "result": "广场风铃挂架实际受损，完整度90%",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5100.719999999999
+          },
+          {
+            "eventId": "life:3",
+            "sequence": 3,
+            "kind": "damage",
+            "time": 792.1799999999889,
+            "subjects": [
+              "wind-bell"
+            ],
+            "result": "巡视确认广场风铃挂架仍受损，完整度90%",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5112.179999999989
+          },
+          {
+            "eventId": "life:4",
+            "sequence": 4,
+            "kind": "clear",
+            "time": 796.0799999999854,
+            "subjects": [],
+            "result": "持续确认安全，先救护和检修再恢复日常",
+            "source": "alarm",
+            "importance": 40,
+            "expires": 5116.079999999985
+          },
+          {
+            "eventId": "life:5",
+            "sequence": 5,
+            "kind": "repair",
+            "time": 856.0199999999309,
+            "subjects": [
+              "wind-bell"
+            ],
+            "result": "到场维修，消耗从工坊带来的两份木料，广场风铃挂架恢复至100%",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5176.019999999931
           }
         ]
       }

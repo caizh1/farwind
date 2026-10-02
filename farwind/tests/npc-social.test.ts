@@ -177,7 +177,7 @@ describe("战后同伴探访与认知边界", () => {
     old.life.version = 3;
     for (const n of old.life.people) delete n.social;
     const migrated = validate(old);
-    expect(migrated.life.version).toBe(4);
+    expect(migrated.life.version).toBe(5);
     expect(migrated.life.stores).toEqual(e.s.life.stores);
     expect(migrated.life.people[0].relations).toEqual(e.visitor.relations);
     expect(migrated.life.people[0].social.occasionFloor).toBe(

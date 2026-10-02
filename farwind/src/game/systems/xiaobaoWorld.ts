@@ -1,3 +1,4 @@
+import {moveXiaobaoLife,suspendXiaobaoLife,noteXiaobaoHelp} from './xiaobaoLife';
 import type { World } from "../scenes/World";
 import { GUARD_DEFS, RAID_GATES } from "../../data/defense";
 import { zoneFor, locallyProtected } from "../../data/defenseZones";
@@ -28,15 +29,15 @@ export function xiaobaoAllies(w: World): XiaobaoAlly[] {
           },
         ]
       : []),
-    {
+    ...(c.data.space==='village' ? [{
       id: "xiaobao",
       x: c.x,
       y: c.y,
       hp: c.data.hp,
       maxHP: 640,
-      role: "self",
+      role: "self" as const,
       threatAt: null,
-    },
+    }] : []),
     ...w.state.defense.guards
       .filter((g) => !g.dead && (g.space ?? "village") === "village")
       .map((g) => ({
@@ -78,6 +79,7 @@ export function xiaobaoEnvironment(w: World): XiaobaoEnvironment {
   const c = w.xiaobao!.controller,
     outside = w.state.life.playerSpace === "village",
     p = outside ? w.state.player : { ...w.state.life.outside, hp: 0 };
+  if(w.life)w.life.xiaobaoDemonstrating=c.demonstration;
   // 静止菌根是可拆的环境机关，不作为伙伴自主索敌或持久施法目标。
   const enemies = [...w.enemies, ...w.defense.enemies].filter(e=>!e.passiveRoot),
     allies = xiaobaoAllies(w);
@@ -97,6 +99,9 @@ export function xiaobaoEnvironment(w: World): XiaobaoEnvironment {
       victim.threatAt = Math.min(victim.threatAt ?? Infinity, at);
   }
   return {
+    lifeMove:w.life ? (ms,budget)=>{const started=performance.now();moveXiaobaoLife(w.life,c,ms,budget);const cost=performance.now()-started;w.life.metrics.xiaobaoMoveMs+=cost;w.life.metrics.xiaobaoMoveMaxMs=Math.max(w.life.metrics.xiaobaoMoveMaxMs,cost);} : undefined,
+    lifeEmergency:w.life ? active=>{if(active)suspendXiaobaoLife(w.life);} : undefined,
+    lifeHelp:w.life ? id=>noteXiaobaoHelp(w.life,id) : undefined,
     now: w.sim,
     minute: w.state.time,
     player: { ...p, outside, region: regionAt(p).id },
@@ -119,7 +124,7 @@ export function xiaobaoEnvironment(w: World): XiaobaoEnvironment {
 export function xiaobaoFronts(w: World, allies: XiaobaoAlly[]): XiaobaoFront[] {
   const defense = w.defense,
     now = w.sim,
-    live = defense.allHostiles().filter((e) => e.hp > 0 && !e.disabled);
+    live = defense.allHostiles().filter((e) => e.hp > 0 && !e.disabled && !e.passiveRoot);
   const recent = w.state.life.events.filter(
     (e) =>
       !e.debug &&
@@ -127,7 +132,7 @@ export function xiaobaoFronts(w: World, allies: XiaobaoAlly[]): XiaobaoFront[] {
       ((w.state.time - e.time) / DAY_NIGHT.speed) * 1000 <= 1500 &&
       e.place.space === "village",
   );
-  const grouped = RAID_GATES.flatMap((g) => {
+  const grouped = RAID_GATES.flatMap<XiaobaoFront & {battle:boolean;contactAt:number}>((g) => {
     const threats = live.filter((e) => {
       const record = defense.threats.get(e.id),
         reason = defense.threatReason(g.id, e),
@@ -154,13 +159,18 @@ export function xiaobaoFronts(w: World, allies: XiaobaoAlly[]): XiaobaoFront[] {
           distance(e, a.inside) <= distance(e, b.inside) ? a : b,
         ).id === g.id;
       return (
-        !!reason ||
+        !!reason || w.state.defense.raid?.gateId===g.id&&w.state.defense.raid.members.some(m=>m.id===e.id) ||
         (nearest &&
           (hurt || !!actual || (seen && locallyProtected(g.id, e)))) ||
         reported
       );
     });
-    if (!threats.length) return [];
+    if (!threats.length) {
+      const raid=w.state.defense.raid;
+      return raid?.gateId===g.id && raid.phase==='warning'
+        ? [{key:raid.id,gate:g.id,major:false,confirmed:true,priority:2,point:zoneFor(g.id).intercept,enemies:[],injured:false,battle:false,contactAt:Infinity}]
+        : [];
+    }
     const urgent = allies
       .filter(
         (a) =>
@@ -169,6 +179,7 @@ export function xiaobaoFronts(w: World, allies: XiaobaoAlly[]): XiaobaoFront[] {
           threats.some((e) => e.targetId === a.id),
       )
       .sort((a, b) => a.threatAt! - b.threatAt! || a.id.localeCompare(b.id));
+    urgent.sort((a,b)=>Number(b.role==='resident')-Number(a.role==='resident')||a.threatAt!-b.threatAt!||a.id.localeCompare(b.id));
     const injured = recent.some((r) => threats.some((e) => e.id === r.source));
     const intrusion = threats.some(
       (e) =>
@@ -201,12 +212,6 @@ export function xiaobaoFronts(w: World, allies: XiaobaoAlly[]): XiaobaoFront[] {
               80) ||
           distance(e, { x: 760, y: 740 }) < 380,
       );
-    const low = allies.some(
-      (a) =>
-        a.hp / a.maxHP < 0.3 &&
-        a.threatAt !== null &&
-        threats.some((e) => e.targetId === a.id),
-    );
     const key =
       w.state.defense.raid?.gateId === g.id
         ? w.state.defense.raid.id
@@ -216,17 +221,10 @@ export function xiaobaoFronts(w: World, allies: XiaobaoAlly[]): XiaobaoFront[] {
         key,
         gate: g.id,
         major: injured || urgent.length > 0 || failed || breach,
+        confirmed:true,
         priority:
-          injured || urgent.length
-            ? 5
-            : low
-              ? 4
-              : intrusion
-                ? 3
-                : failed
-                  ? 2
-                  : 1,
-        point: urgent[0] ?? zoneFor(g.id).intercept,
+          urgent.some(a=>a.role==='resident') ? 5 : breach ? 4 : failed ? 3 : 2,
+        point: urgent[0] ?? (breach ? [...threats].sort((a,b)=>distance(a,{x:760,y:740})-distance(b,{x:760,y:740}))[0] : null) ?? zoneFor(g.id).intercept,
         enemies: threats.map((e) => e.id),
         injured,
         battle,

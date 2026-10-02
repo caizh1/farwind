@@ -106,7 +106,7 @@ describe('祭根与采集事件的正式保存边界',()=>{
  });
  it('已有两片危险区时，多点招式也不能突破全局三片上限',()=>{
   const e={...body('boss','leaf',1250,2820),boss:'bound-branch' as const,bossAttempt:0,bossBattle:{...initialBossBattle(0),move:2,phase:2 as const}};
-  e.attack=createBossAttack(e,100,{x:1250,y:2820},e.bossBattle);const h=new BossHazards();h.launch(e,100);expect(h.hazards.length).toBe(3);
+  e.attack=createBossAttack(e,100,{x:1250,y:2820},e.bossBattle);const h=new BossHazards();h.launch(e,100);expect(h.hazards.length).toBe(2);
   h.hazards.pop();e.attack=createBossAttack(e,200,{x:1250,y:2820},e.bossBattle);h.launch(e,200);expect(h.hazards.length).toBe(3);
  });
 
@@ -114,7 +114,7 @@ describe('祭根与采集事件的正式保存边界',()=>{
   const e={...body('boss-spore-heart','spore',1250,2820),boss:'spore-heart' as const,bossAttempt:0,bossBattle:{...initialBossBattle(0),phase:2 as const,roots:[{x:1090,y:2820,hp:36},{x:1410,y:2820,hp:0}]}};
   const saved=captureBossCombat(e,1000,new BossHazards(),new EnemyProjectiles());e.bossBattle.roots[0].hp=0;expect(saved.battle.roots![0].hp).toBe(36);
   const copy={...e,bossBattle:undefined};restoreBossCombat(copy,saved,9000,new BossHazards(),new EnemyProjectiles());expect(copy.bossBattle!.roots![0].hp).toBe(36);
-  expect(enemyProtection(copy,undefined,9000).reduction).toBeCloseTo(.35);copy.bossBattle!.roots![0].hp=0;expect(enemyProtection(copy,undefined,9000).reduction).toBe(.15);
+  expect(enemyProtection(copy,undefined,9000).reduction).toBeCloseTo(.2);copy.bossBattle!.roots![0].hp=0;expect(enemyProtection(copy,undefined,9000).reduction).toBe(0);
   expect(()=>validateCampBoss({stage:'battle',warning:0,attempt:0,away:0,combat:saved},e.id)).not.toThrow();
   saved.battle.roots![0].hp=1000;expect(()=>validateCampBoss({stage:'battle',warning:0,attempt:0,away:0,combat:saved},e.id)).toThrow();
  });

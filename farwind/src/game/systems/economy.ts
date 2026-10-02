@@ -1,3 +1,4 @@
+import {giftValue} from './windGifts';
 import {catCareGain} from './catBond';
 import {
   equipment,
@@ -52,7 +53,7 @@ export function economySnapshot(state: State, request: EconomyRequest, safety?:S
     if (!effect) fail("这件物品不能食用或饮用。");
     if ((effect.hp === 0 || next.player.hp >= maxHp) && (effect.stamina === 0 || next.player.stamina >= maxStamina)) fail("状态充足，暂时不用消耗物品。");
     if (!remove(next, request.item, 1)) fail("行囊里没有这个物品。");
-    next.player.hp = Math.min(maxHp, next.player.hp + effect.hp);
+    next.player.hp = Math.min(maxHp, next.player.hp + effect.hp*(request.item==='potion'?1+giftValue(next.windGifts,'potion'):1));
     next.player.stamina = Math.min(maxStamina, next.player.stamina + effect.stamina);
   } else if (request.kind === "craft") {
     if (count(next, "herb") < 2 || count(next, "berry") < 1)

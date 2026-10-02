@@ -14,7 +14,7 @@ export function reactToEnemyHit(e:EnemyBody,now:number,move:StrikeConfig,directi
   if(broken){e.attack!.cancelled=true;e.parried={at:now,until:now+800,direction:{...direction},perfect:false};e.staggerUntil=now+800;e.staggerSince=now;}
   return {guarded,interrupted:!!broken,guardBroken:!!broken};
  }
- const a=e.attack,interruptible=heavy||e.type==='priest'||e.type==='slime'&&!!a&&now<a.contactAt;
+ const a=e.attack,interruptible=heavy||['priest','bell','geomancer'].includes(e.type)||e.type==='slime'&&!!a&&now<a.contactAt;
  const interrupted=interruptible&&!!a&&!a.cancelled&&!a.emitted&&!a.launched;
  if(interrupted){a!.cancelled=true;e.windup=0;e.cool=Math.max(e.cool,now+(heavy?ENEMY_REACTION.interruptRecovery:ENEMY_REACTION.slimeRecovery));}
  const stagger=guardBroken?GUARDIAN.breakMs:guarded?0:move.stagger;

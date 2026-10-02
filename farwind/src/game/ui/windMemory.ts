@@ -1,0 +1,10 @@
+import {ADVENTURE_ROUTES,ENCOUNTERS,type WildernessDirection} from '../../data/maps/windbell/encounters';
+import type {Interface} from './interface';
+const names={south:'南路',west:'西路',north:'北路',east:'东路'};
+export function showWindMemory(ui:Interface,feedback=''){
+ const s=ui.state!,active=s.windMemory.active;ui.mode='wind-memory';
+ ui.shell('四方旅途 · 风忆远征',`<p>首次清剿永久保留。风忆使用独立种子和实例，只发本次金币与长期风赐，死亡后可继续。</p>${active?`<h2>${names[active.direction]}风忆 · 第 ${s.windMemory.serial} 次 · ${active.finished?'已完成':'进行中'}</h2><p>已结算 ${active.receipts.length}/6 场；普通场4金币、精英场8金币、首领16金币。</p><button id="memory-end">${active.finished?'结束此次远征':'主动结束此次远征'}</button>`:''}<div class="gift-held">${(Object.entries(ADVENTURE_ROUTES) as [WildernessDirection,readonly string[]][]).map(([direction,route])=>{const camp=ENCOUNTERS.find(d=>d.id===route[4])!,cleared=s.encounters.groups[camp.id].cleared,near=Math.hypot(s.player.x-camp.x,s.player.y-camp.y)<=camp.radius+80;return `<article><h2>${names[direction]}</h2><ol>${route.map(id=>{const d=ENCOUNTERS.find(d=>d.id===id)!,g=active?.direction===direction?active.encounters.groups[id]:s.encounters.groups[id];return `<li>${d.name}：${g.cleared?'已完成':g.rewarded?'驻守已清':g.activated?`第${(g.wave??0)+1}波`:'待探索'}</li>`;}).join('')}</ol><button data-memory="${direction}" ${!cleared||!near||active&&!active.finished?'disabled':''}>${cleared?near?'开启风忆远征':'到据点附近开启':'清剿后开放风忆'}</button></article>`;}).join('')}</div><p role="status">${feedback}</p><button id="memory-close">继续旅途</button>`);
+ ui.button('memory-close',()=>ui.close(true));
+ const run=async(direction?:WildernessDirection)=>{if(ui.economyBusy)return;ui.economyBusy=true;ui.modal.querySelectorAll<HTMLButtonElement>('button').forEach(b=>b.disabled=true);let message='进度已保存。';try{if(direction)await ui.actions.memoryStart?.(direction);else await ui.actions.memoryEnd?.();}catch(e){message=(e as Error).message;}finally{ui.economyBusy=false;}showWindMemory(ui,message);};
+ ui.button('memory-end',()=>void run());ui.modal.querySelectorAll<HTMLButtonElement>('[data-memory]').forEach(b=>b.addEventListener('click',()=>void run(b.dataset.memory as WildernessDirection)));
+}

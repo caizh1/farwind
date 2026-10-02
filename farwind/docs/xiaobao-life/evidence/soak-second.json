@@ -1,0 +1,3651 @@
+{
+  "说明": "真实 Chrome 固定构建；自然时间推进，无状态注入。",
+  "开始": "2026-10-02T02:07:02.541Z",
+  "样本": [
+    {
+      "采样时间": "2026-10-02T02:08:10.286Z",
+      "记录时间": "2026-10-02T02:07:50.838Z",
+      "模拟毫秒": 52383.389999999956,
+      "游戏时间": 558.5750850001664,
+      "暂停": false,
+      "后台": false,
+      "存档结构": 21,
+      "小宝": {
+        "space": "village",
+        "life": {
+          "version": 1,
+          "seed": 1875050081,
+          "day": 0,
+          "basket": 1,
+          "main": "wood",
+          "optional": "herb",
+          "done": [],
+          "projects": {
+            "wind": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "wood": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "herb": {
+              "stage": 0,
+              "lastDay": -1
+            }
+          },
+          "interests": {
+            "wind": 65,
+            "wood": 55,
+            "herb": 50
+          },
+          "journal": [
+            {
+              "sequence": 1,
+              "time": 485.60249999999814,
+              "text": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。"
+            },
+            {
+              "sequence": 2,
+              "time": 509.12999999998635,
+              "text": "亲手采好一篮药草，准备送给小满。"
+            }
+          ],
+          "promise": null,
+          "emergency": false,
+          "clearSince": null,
+          "aftercareUntil": 0,
+          "resumeTask": null,
+          "metrics": {
+            "attempts": 4,
+            "completed": 2,
+            "failed": 1,
+            "interrupted": 0
+          }
+        },
+        "known": false,
+        "task": "free",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 1072.0499376250548,
+        "y": 609.8152766603513,
+        "hp": 640,
+        "qi": 100,
+        "clock": 52383.38999999978,
+        "serial": 0,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 6000,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "居民": {
+        "id": "xiaobao",
+        "body": null,
+        "blockedTarget": {
+          "space": "village",
+          "x": 590.697810632872,
+          "y": 648.5755473417814,
+          "hp": 100,
+          "health": "healthy",
+          "episode": 0,
+          "recoverAt": 0
+        },
+        "blockedUntil": 33735,
+        "action": {
+          "id": 4,
+          "kind": "rest",
+          "target": {
+            "space": "village",
+            "x": 1071.4125820567199,
+            "y": 614.3496717731261,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 517.7175000000047
+          },
+          "pickup": null,
+          "facility": null,
+          "task": null,
+          "phase": "perform",
+          "progress": 8013.389999999956,
+          "duration": 12000,
+          "started": 39510,
+          "failures": 0,
+          "label": "去小满常在的地方看看",
+          "social": null
+        },
+        "serial": 4,
+        "committed": 3,
+        "needs": {
+          "hunger": 15.87305649999525,
+          "fatigue": 5.4365282499975605
+        },
+        "emotion": 0,
+        "gear": "locker",
+        "supplies": {
+          "medicine": 0,
+          "wood": 0
+        },
+        "project": 0,
+        "nextDecision": 40410,
+        "reason": "去小满常在的地方看看",
+        "pathFailures": 0,
+        "alarm": 0,
+        "relations": {
+          "elder": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          },
+          "healer": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          },
+          "carpenter": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          }
+        },
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "activity",
+            "time": 485.60249999999814,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4805.602499999998
+          },
+          {
+            "eventId": "life:2",
+            "sequence": 2,
+            "kind": "activity",
+            "time": 509.12999999998635,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "亲手采好一篮药草，准备送给小满。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4829.1299999999865
+          }
+        ],
+        "receipt": 2,
+        "receipts": [
+          1,
+          2
+        ],
+        "receiptFloor": 0,
+        "known": {
+          "player": {
+            "x": 670,
+            "y": 720,
+            "hp": 100,
+            "stamina": 100,
+            "space": "village",
+            "time": 513.0075749999884
+          },
+          "elder": {
+            "space": "village",
+            "x": 664.3021893671287,
+            "y": 621.4244526582183,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 512.4224999999866
+          },
+          "north-patrol": {
+            "space": "village",
+            "x": 860.0629693770711,
+            "y": 375.85771653266283,
+            "time": 489.52499999999657
+          },
+          "north-watch": {
+            "space": "village",
+            "x": 1067.0999999999985,
+            "y": 660,
+            "time": 550.1850000001293
+          },
+          "west-watch": {
+            "space": "village",
+            "x": 1036.9578878641,
+            "y": 960.6502774495765,
+            "time": 552.5025000001398
+          },
+          "healer": {
+            "space": "village",
+            "x": 1109.5784132309436,
+            "y": 465.76650803379147,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 544.5375000001036
+          }
+        },
+        "lastSupplyDay": 0,
+        "lastMealDay": -1,
+        "social": {
+          "cooldownUntil": 0,
+          "occasionFloor": 0,
+          "visited": {}
+        },
+        "speech": {
+          "eventFloor": 0,
+          "nextAt": 0,
+          "day": 0,
+          "routines": []
+        }
+      },
+      "库存": {
+        "medicine": 4,
+        "herbs": 12,
+        "wood": 6,
+        "food": 18,
+        "day": 0
+      },
+      "生活耗时": {
+        "steps": 14983,
+        "decisions": 864,
+        "queries": 23,
+        "ms": 3649.0000051259995,
+        "maxMs": 4,
+        "xiaobaoDecisionMs": 22.99999964237213,
+        "xiaobaoDecisionMaxMs": 0.6999999284744263,
+        "xiaobaoMoveMs": 295.60000026226044,
+        "xiaobaoMoveMaxMs": 3.399999976158142
+      },
+      "寻路": {
+        "批次": 2,
+        "单批展开": 44,
+        "受阻毫秒": 0,
+        "失败原因": "",
+        "规划中": false
+      },
+      "对象数": 697,
+      "纹理数": 270,
+      "来袭": null,
+      "主线": 0
+    },
+    {
+      "采样时间": "2026-10-02T02:09:26.038Z",
+      "记录时间": "2026-10-02T02:09:20.860Z",
+      "模拟毫秒": 142413.1999999992,
+      "游戏时间": 693.6198000007869,
+      "暂停": false,
+      "后台": false,
+      "存档结构": 21,
+      "小宝": {
+        "space": "healer-home",
+        "life": {
+          "version": 1,
+          "seed": 1875050081,
+          "day": 0,
+          "basket": 1,
+          "main": "wood",
+          "optional": "herb",
+          "done": [],
+          "projects": {
+            "wind": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "wood": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "herb": {
+              "stage": 0,
+              "lastDay": -1
+            }
+          },
+          "interests": {
+            "wind": 65,
+            "wood": 55,
+            "herb": 50
+          },
+          "journal": [
+            {
+              "sequence": 1,
+              "time": 485.60249999999814,
+              "text": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。"
+            },
+            {
+              "sequence": 2,
+              "time": 509.12999999998635,
+              "text": "亲手采好一篮药草，准备送给小满。"
+            }
+          ],
+          "promise": null,
+          "emergency": false,
+          "clearSince": null,
+          "aftercareUntil": 0,
+          "resumeTask": null,
+          "metrics": {
+            "attempts": 11,
+            "completed": 9,
+            "failed": 1,
+            "interrupted": 0
+          }
+        },
+        "known": false,
+        "task": "free",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 615.4862460790765,
+        "y": 799.4803719400201,
+        "hp": 640,
+        "qi": 100,
+        "clock": 142413.199999992,
+        "serial": 0,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 6000,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "居民": {
+        "id": "xiaobao",
+        "body": null,
+        "blockedTarget": {
+          "space": "village",
+          "x": 590.697810632872,
+          "y": 648.5755473417814,
+          "hp": 100,
+          "health": "healthy",
+          "episode": 0,
+          "recoverAt": 0
+        },
+        "blockedUntil": 33735,
+        "action": {
+          "id": 11,
+          "kind": "supply",
+          "target": {
+            "space": "healer-home",
+            "x": 610.8334526869155,
+            "y": 800.085757514684,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0
+          },
+          "pickup": null,
+          "facility": null,
+          "task": null,
+          "phase": "perform",
+          "progress": 3303.1999999991967,
+          "duration": 10000,
+          "started": 137820,
+          "failures": 0,
+          "label": "把采好的药草送给小满",
+          "social": null,
+          "xiaobao": {
+            "wish": "deliver",
+            "partner": "healer"
+          }
+        },
+        "serial": 11,
+        "committed": 10,
+        "needs": {
+          "hunger": 17.373553333318867,
+          "fatigue": 0.04577666666666034
+        },
+        "emotion": 0,
+        "gear": "locker",
+        "supplies": {
+          "medicine": 0,
+          "wood": 0
+        },
+        "project": 0,
+        "nextDecision": 138720,
+        "reason": "把采好的药草送给小满",
+        "pathFailures": 0,
+        "alarm": 0,
+        "relations": {
+          "elder": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          },
+          "healer": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          },
+          "carpenter": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          }
+        },
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "activity",
+            "time": 485.60249999999814,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4805.602499999998
+          },
+          {
+            "eventId": "life:2",
+            "sequence": 2,
+            "kind": "activity",
+            "time": 509.12999999998635,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "亲手采好一篮药草，准备送给小满。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4829.1299999999865
+          }
+        ],
+        "receipt": 2,
+        "receipts": [
+          1,
+          2
+        ],
+        "receiptFloor": 0,
+        "known": {
+          "player": {
+            "x": 670,
+            "y": 720,
+            "hp": 100,
+            "stamina": 100,
+            "space": "village",
+            "time": 513.0075749999884
+          },
+          "elder": {
+            "space": "village",
+            "x": 664.3021893671287,
+            "y": 621.4244526582183,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 512.4224999999866
+          },
+          "north-patrol": {
+            "space": "village",
+            "x": 860.0629693770711,
+            "y": 375.85771653266283,
+            "time": 489.52499999999657
+          },
+          "north-watch": {
+            "space": "village",
+            "x": 1067.0999999999985,
+            "y": 660,
+            "time": 550.1850000001293
+          },
+          "west-watch": {
+            "space": "village",
+            "x": 1036.9578878641,
+            "y": 960.6502774495765,
+            "time": 552.5025000001398
+          },
+          "healer": {
+            "space": "healer-home",
+            "x": 575.8334526869155,
+            "y": 800.085757514684,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 693.6198000007869
+          }
+        },
+        "lastSupplyDay": 0,
+        "lastMealDay": -1,
+        "social": {
+          "cooldownUntil": 0,
+          "occasionFloor": 0,
+          "visited": {}
+        },
+        "speech": {
+          "eventFloor": 0,
+          "nextAt": 0,
+          "day": 0,
+          "routines": []
+        }
+      },
+      "库存": {
+        "medicine": 10,
+        "herbs": 0,
+        "wood": 6,
+        "food": 18,
+        "day": 0
+      },
+      "生活耗时": {
+        "steps": 38510,
+        "decisions": 2339,
+        "queries": 23,
+        "ms": 4154.200006008148,
+        "maxMs": 4,
+        "xiaobaoDecisionMs": 72.90000033378601,
+        "xiaobaoDecisionMaxMs": 0.6999999284744263,
+        "xiaobaoMoveMs": 447.8000029325485,
+        "xiaobaoMoveMaxMs": 3.399999976158142
+      },
+      "寻路": {
+        "批次": 0,
+        "单批展开": 0,
+        "受阻毫秒": 0,
+        "失败原因": "",
+        "规划中": false
+      },
+      "对象数": 697,
+      "纹理数": 270,
+      "来袭": null,
+      "主线": 0
+    },
+    {
+      "采样时间": "2026-10-02T02:10:35.192Z",
+      "记录时间": "2026-10-02T02:10:20.870Z",
+      "模拟毫秒": 202429.08999999726,
+      "游戏时间": 783.6436350011954,
+      "暂停": false,
+      "后台": false,
+      "存档结构": 21,
+      "小宝": {
+        "space": "village",
+        "life": {
+          "version": 1,
+          "seed": 1875050081,
+          "day": 0,
+          "basket": 0,
+          "main": "wood",
+          "optional": "herb",
+          "done": [
+            "deliver",
+            "herb",
+            "practice"
+          ],
+          "projects": {
+            "wind": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "wood": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "herb": {
+              "stage": 1,
+              "lastDay": 0
+            }
+          },
+          "interests": {
+            "wind": 65,
+            "wood": 55,
+            "herb": 55
+          },
+          "journal": [
+            {
+              "sequence": 1,
+              "time": 485.60249999999814,
+              "text": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。"
+            },
+            {
+              "sequence": 2,
+              "time": 509.12999999998635,
+              "text": "亲手采好一篮药草，准备送给小满。"
+            },
+            {
+              "sequence": 3,
+              "time": 703.6650000008354,
+              "text": "把采好的药草送给小满，已经做到了。"
+            },
+            {
+              "sequence": 4,
+              "time": 720.0150000009107,
+              "text": "跟小满认识止血草的叶片，已经做到了。心愿「学会辨认村庄常用药草」完成第1阶段。"
+            },
+            {
+              "sequence": 5,
+              "time": 750.4200000010513,
+              "text": "在家里吃过饭，肚子不饿了。"
+            },
+            {
+              "sequence": 6,
+              "time": 774.44250000116,
+              "text": "练一会儿轻轻的听风掌，已经做到了。"
+            }
+          ],
+          "promise": null,
+          "emergency": false,
+          "clearSince": null,
+          "aftercareUntil": 0,
+          "resumeTask": null,
+          "metrics": {
+            "attempts": 15,
+            "completed": 13,
+            "failed": 1,
+            "interrupted": 0
+          }
+        },
+        "known": false,
+        "task": "free",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 890.033611100986,
+        "y": 774.8869489383233,
+        "hp": 640,
+        "qi": 100,
+        "clock": 202429.08999995305,
+        "serial": 0,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 6000,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "居民": {
+        "id": "xiaobao",
+        "body": null,
+        "blockedTarget": {
+          "space": "village",
+          "x": 590.697810632872,
+          "y": 648.5755473417814,
+          "hp": 100,
+          "health": "healthy",
+          "episode": 0,
+          "recoverAt": 0
+        },
+        "blockedUntil": 33735,
+        "action": {
+          "id": 15,
+          "kind": "habit",
+          "target": {
+            "space": "village",
+            "x": 895,
+            "y": 775
+          },
+          "pickup": null,
+          "facility": null,
+          "task": null,
+          "phase": "perform",
+          "progress": 4294.089999997261,
+          "duration": 10000,
+          "started": 197195,
+          "failures": 0,
+          "label": "在广场玩踏叶小步",
+          "social": null,
+          "xiaobao": {
+            "wish": "play",
+            "partner": null
+          }
+        },
+        "serial": 15,
+        "committed": 14,
+        "needs": {
+          "hunger": 0.3691514999999373,
+          "fatigue": 0.5459090833333162
+        },
+        "emotion": 0,
+        "gear": "locker",
+        "supplies": {
+          "medicine": 0,
+          "wood": 0
+        },
+        "project": 0.2,
+        "nextDecision": 198095,
+        "reason": "在广场玩踏叶小步",
+        "pathFailures": 0,
+        "alarm": 0,
+        "relations": {
+          "elder": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          },
+          "healer": {
+            "familiar": 38,
+            "trust": 37,
+            "wariness": 0,
+            "lastPositive": 703.6650000008354
+          },
+          "carpenter": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          }
+        },
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "activity",
+            "time": 485.60249999999814,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4805.602499999998
+          },
+          {
+            "eventId": "life:2",
+            "sequence": 2,
+            "kind": "activity",
+            "time": 509.12999999998635,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "亲手采好一篮药草，准备送给小满。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4829.1299999999865
+          },
+          {
+            "eventId": "life:3",
+            "sequence": 3,
+            "kind": "company",
+            "time": 703.6650000008354,
+            "subjects": [
+              "xiaobao",
+              "healer"
+            ],
+            "result": "把采好的药草送给小满，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5023.665000000836
+          },
+          {
+            "eventId": "life:4",
+            "sequence": 4,
+            "kind": "company",
+            "time": 720.0150000009107,
+            "subjects": [
+              "xiaobao",
+              "healer"
+            ],
+            "result": "跟小满认识止血草的叶片，已经做到了。心愿「学会辨认村庄常用药草」完成第1阶段。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5040.015000000911
+          },
+          {
+            "eventId": "life:5",
+            "sequence": 5,
+            "kind": "activity",
+            "time": 750.4200000010513,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "在家里吃过饭，肚子不饿了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5070.420000001051
+          },
+          {
+            "eventId": "life:6",
+            "sequence": 6,
+            "kind": "activity",
+            "time": 774.44250000116,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "练一会儿轻轻的听风掌，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5094.44250000116
+          }
+        ],
+        "receipt": 6,
+        "receipts": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "receiptFloor": 0,
+        "known": {
+          "player": {
+            "x": 670,
+            "y": 720,
+            "hp": 100,
+            "stamina": 100,
+            "space": "village",
+            "time": 783.6436350011954
+          },
+          "elder": {
+            "space": "village",
+            "x": 664.3021893671287,
+            "y": 621.4244526582183,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 512.4224999999866
+          },
+          "north-patrol": {
+            "space": "village",
+            "x": 1110.0301800001143,
+            "y": 660,
+            "time": 732.3900000009694
+          },
+          "north-watch": {
+            "space": "village",
+            "x": 1067.0999999999985,
+            "y": 660,
+            "time": 550.1850000001293
+          },
+          "west-watch": {
+            "space": "village",
+            "x": 1036.9578878641,
+            "y": 960.6502774495765,
+            "time": 552.5025000001398
+          },
+          "healer": {
+            "space": "healer-home",
+            "x": 575.8334526869155,
+            "y": 800.085757514684,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 723.6887250009262
+          }
+        },
+        "lastSupplyDay": 0,
+        "lastMealDay": 0,
+        "social": {
+          "cooldownUntil": 0,
+          "occasionFloor": 0,
+          "visited": {}
+        },
+        "speech": {
+          "eventFloor": 4,
+          "nextAt": 212111.82999999868,
+          "day": 0,
+          "routines": []
+        }
+      },
+      "库存": {
+        "medicine": 10,
+        "herbs": 1,
+        "wood": 6,
+        "food": 14,
+        "day": 0
+      },
+      "生活耗时": {
+        "steps": 54371,
+        "decisions": 3326,
+        "queries": 37,
+        "ms": 6276.400006651878,
+        "maxMs": 4,
+        "xiaobaoDecisionMs": 216.99999809265137,
+        "xiaobaoDecisionMaxMs": 0.6999999284744263,
+        "xiaobaoMoveMs": 715.3000000715256,
+        "xiaobaoMoveMaxMs": 3.899999976158142
+      },
+      "寻路": {
+        "批次": 0,
+        "单批展开": 0,
+        "受阻毫秒": 0,
+        "失败原因": "",
+        "规划中": false
+      },
+      "对象数": 697,
+      "纹理数": 270,
+      "来袭": null,
+      "主线": 0
+    },
+    {
+      "采样时间": "2026-10-02T02:11:13.122Z",
+      "记录时间": "2026-10-02T02:10:50.883Z",
+      "模拟毫秒": 232441.69999999623,
+      "游戏时间": 828.6625500013967,
+      "暂停": false,
+      "后台": false,
+      "存档结构": 21,
+      "小宝": {
+        "space": "village",
+        "life": {
+          "version": 1,
+          "seed": 1875050081,
+          "day": 0,
+          "basket": 0,
+          "main": "wood",
+          "optional": "herb",
+          "done": [
+            "deliver",
+            "herb",
+            "practice",
+            "play"
+          ],
+          "projects": {
+            "wind": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "wood": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "herb": {
+              "stage": 1,
+              "lastDay": 0
+            }
+          },
+          "interests": {
+            "wind": 65,
+            "wood": 55,
+            "herb": 55
+          },
+          "journal": [
+            {
+              "sequence": 1,
+              "time": 485.60249999999814,
+              "text": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。"
+            },
+            {
+              "sequence": 2,
+              "time": 509.12999999998635,
+              "text": "亲手采好一篮药草，准备送给小满。"
+            },
+            {
+              "sequence": 3,
+              "time": 703.6650000008354,
+              "text": "把采好的药草送给小满，已经做到了。"
+            },
+            {
+              "sequence": 4,
+              "time": 720.0150000009107,
+              "text": "跟小满认识止血草的叶片，已经做到了。心愿「学会辨认村庄常用药草」完成第1阶段。"
+            },
+            {
+              "sequence": 5,
+              "time": 750.4200000010513,
+              "text": "在家里吃过饭，肚子不饿了。"
+            },
+            {
+              "sequence": 6,
+              "time": 774.44250000116,
+              "text": "练一会儿轻轻的听风掌，已经做到了。"
+            },
+            {
+              "sequence": 7,
+              "time": 792.2025000012388,
+              "text": "在广场玩踏叶小步，已经做到了。"
+            }
+          ],
+          "promise": null,
+          "emergency": false,
+          "clearSince": null,
+          "aftercareUntil": 0,
+          "resumeTask": null,
+          "metrics": {
+            "attempts": 17,
+            "completed": 15,
+            "failed": 1,
+            "interrupted": 0
+          }
+        },
+        "known": false,
+        "task": "free",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 323.58619999967567,
+        "y": 900,
+        "hp": 640,
+        "qi": 100,
+        "clock": 232441.69999989023,
+        "serial": 0,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 6000,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "居民": {
+        "id": "xiaobao",
+        "body": null,
+        "blockedTarget": {
+          "space": "village",
+          "x": 590.697810632872,
+          "y": 648.5755473417814,
+          "hp": 100,
+          "health": "healthy",
+          "episode": 0,
+          "recoverAt": 0
+        },
+        "blockedUntil": 33735,
+        "action": {
+          "id": 17,
+          "kind": "rest",
+          "target": {
+            "space": "village",
+            "x": 591.3889898902754,
+            "y": 778.4267276342471,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 801.570000001282
+          },
+          "pickup": null,
+          "facility": null,
+          "task": null,
+          "phase": "travel",
+          "progress": 0,
+          "duration": 12000,
+          "started": 230845,
+          "failures": 0,
+          "label": "去阿禾常在的地方看看",
+          "social": null
+        },
+        "serial": 17,
+        "committed": 16,
+        "needs": {
+          "hunger": 0.8693616666665522,
+          "fatigue": 0.02080583333330184
+        },
+        "emotion": 0,
+        "gear": "locker",
+        "supplies": {
+          "medicine": 0,
+          "wood": 0
+        },
+        "project": 0.4,
+        "nextDecision": 231745,
+        "reason": "去阿禾常在的地方看看",
+        "pathFailures": 0,
+        "alarm": 0,
+        "relations": {
+          "elder": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          },
+          "healer": {
+            "familiar": 38,
+            "trust": 37,
+            "wariness": 0,
+            "lastPositive": 703.6650000008354
+          },
+          "carpenter": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          }
+        },
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "activity",
+            "time": 485.60249999999814,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4805.602499999998
+          },
+          {
+            "eventId": "life:2",
+            "sequence": 2,
+            "kind": "activity",
+            "time": 509.12999999998635,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "亲手采好一篮药草，准备送给小满。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4829.1299999999865
+          },
+          {
+            "eventId": "life:3",
+            "sequence": 3,
+            "kind": "company",
+            "time": 703.6650000008354,
+            "subjects": [
+              "xiaobao",
+              "healer"
+            ],
+            "result": "把采好的药草送给小满，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5023.665000000836
+          },
+          {
+            "eventId": "life:4",
+            "sequence": 4,
+            "kind": "company",
+            "time": 720.0150000009107,
+            "subjects": [
+              "xiaobao",
+              "healer"
+            ],
+            "result": "跟小满认识止血草的叶片，已经做到了。心愿「学会辨认村庄常用药草」完成第1阶段。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5040.015000000911
+          },
+          {
+            "eventId": "life:5",
+            "sequence": 5,
+            "kind": "activity",
+            "time": 750.4200000010513,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "在家里吃过饭，肚子不饿了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5070.420000001051
+          },
+          {
+            "eventId": "life:6",
+            "sequence": 6,
+            "kind": "activity",
+            "time": 774.44250000116,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "练一会儿轻轻的听风掌，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5094.44250000116
+          },
+          {
+            "eventId": "life:7",
+            "sequence": 7,
+            "kind": "activity",
+            "time": 792.2025000012388,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "在广场玩踏叶小步，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5112.202500001239
+          }
+        ],
+        "receipt": 7,
+        "receipts": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "receiptFloor": 0,
+        "known": {
+          "player": {
+            "x": 670,
+            "y": 720,
+            "hp": 100,
+            "stamina": 100,
+            "space": "village",
+            "time": 801.8623950012783
+          },
+          "elder": {
+            "space": "village",
+            "x": 664.3021893671287,
+            "y": 621.4244526582183,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 512.4224999999866
+          },
+          "north-patrol": {
+            "space": "village",
+            "x": 1110.0301800001143,
+            "y": 660,
+            "time": 732.3900000009694
+          },
+          "north-watch": {
+            "space": "village",
+            "x": 1067.0999999999985,
+            "y": 660,
+            "time": 550.1850000001293
+          },
+          "west-watch": {
+            "space": "village",
+            "x": 1036.9578878641,
+            "y": 960.6502774495765,
+            "time": 552.5025000001398
+          },
+          "healer": {
+            "space": "healer-home",
+            "x": 575.8334526869155,
+            "y": 800.085757514684,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 723.6887250009262
+          },
+          "carpenter": {
+            "space": "village",
+            "x": 591.3889898902754,
+            "y": 778.4267276342471,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 801.570000001282
+          }
+        },
+        "lastSupplyDay": 0,
+        "lastMealDay": 0,
+        "social": {
+          "cooldownUntil": 0,
+          "occasionFloor": 0,
+          "visited": {}
+        },
+        "speech": {
+          "eventFloor": 4,
+          "nextAt": 212111.82999999868,
+          "day": 0,
+          "routines": []
+        }
+      },
+      "库存": {
+        "medicine": 10,
+        "herbs": 1,
+        "wood": 6,
+        "food": 14,
+        "day": 0
+      },
+      "生活耗时": {
+        "steps": 62335,
+        "decisions": 3819,
+        "queries": 38,
+        "ms": 6527.50000500679,
+        "maxMs": 4,
+        "xiaobaoDecisionMs": 221.59999823570251,
+        "xiaobaoDecisionMaxMs": 0.6999999284744263,
+        "xiaobaoMoveMs": 839.2000000476837,
+        "xiaobaoMoveMaxMs": 3.899999976158142
+      },
+      "寻路": {
+        "批次": 3,
+        "单批展开": 64,
+        "受阻毫秒": 16.699999996228144,
+        "失败原因": "",
+        "规划中": false
+      },
+      "对象数": 697,
+      "纹理数": 270,
+      "来袭": null,
+      "主线": 0
+    },
+    {
+      "采样时间": "2026-10-02T02:12:10.161Z",
+      "记录时间": "2026-10-02T02:11:50.890Z",
+      "模拟毫秒": 292441.2499999986,
+      "游戏时间": 918.6618750018042,
+      "暂停": false,
+      "后台": false,
+      "存档结构": 21,
+      "小宝": {
+        "space": "village",
+        "life": {
+          "version": 1,
+          "seed": 1875050081,
+          "day": 0,
+          "basket": 0,
+          "main": "wood",
+          "optional": "herb",
+          "done": [
+            "deliver",
+            "herb",
+            "practice",
+            "play"
+          ],
+          "projects": {
+            "wind": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "wood": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "herb": {
+              "stage": 1,
+              "lastDay": 0
+            }
+          },
+          "interests": {
+            "wind": 65,
+            "wood": 55,
+            "herb": 55
+          },
+          "journal": [
+            {
+              "sequence": 1,
+              "time": 485.60249999999814,
+              "text": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。"
+            },
+            {
+              "sequence": 2,
+              "time": 509.12999999998635,
+              "text": "亲手采好一篮药草，准备送给小满。"
+            },
+            {
+              "sequence": 3,
+              "time": 703.6650000008354,
+              "text": "把采好的药草送给小满，已经做到了。"
+            },
+            {
+              "sequence": 4,
+              "time": 720.0150000009107,
+              "text": "跟小满认识止血草的叶片，已经做到了。心愿「学会辨认村庄常用药草」完成第1阶段。"
+            },
+            {
+              "sequence": 5,
+              "time": 750.4200000010513,
+              "text": "在家里吃过饭，肚子不饿了。"
+            },
+            {
+              "sequence": 6,
+              "time": 774.44250000116,
+              "text": "练一会儿轻轻的听风掌，已经做到了。"
+            },
+            {
+              "sequence": 7,
+              "time": 792.2025000012388,
+              "text": "在广场玩踏叶小步，已经做到了。"
+            }
+          ],
+          "promise": null,
+          "emergency": false,
+          "clearSince": null,
+          "aftercareUntil": 0,
+          "resumeTask": null,
+          "metrics": {
+            "attempts": 21,
+            "completed": 19,
+            "failed": 1,
+            "interrupted": 0
+          }
+        },
+        "known": false,
+        "task": "free",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 560.2590286472154,
+        "y": 1135.465031761301,
+        "hp": 640,
+        "qi": 100,
+        "clock": 292441.249999838,
+        "serial": 0,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 6000,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "居民": {
+        "id": "xiaobao",
+        "body": null,
+        "blockedTarget": {
+          "space": "village",
+          "x": 590.697810632872,
+          "y": 648.5755473417814,
+          "hp": 100,
+          "health": "healthy",
+          "episode": 0,
+          "recoverAt": 0
+        },
+        "blockedUntil": 33735,
+        "action": {
+          "id": 21,
+          "kind": "rest",
+          "target": {
+            "space": "village",
+            "x": 559.8972291006894,
+            "y": 1140.1027708993106,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 851.2075350014961
+          },
+          "pickup": null,
+          "facility": null,
+          "task": null,
+          "phase": "perform",
+          "progress": 701.249999998603,
+          "duration": 12000,
+          "started": 291740,
+          "failures": 0,
+          "label": "去阿禾常在的地方看看",
+          "social": null
+        },
+        "serial": 21,
+        "committed": 20,
+        "needs": {
+          "hunger": 1.8693541666673048,
+          "fatigue": 0.013343749999988401
+        },
+        "emotion": 0,
+        "gear": "locker",
+        "supplies": {
+          "medicine": 0,
+          "wood": 0
+        },
+        "project": 0.4,
+        "nextDecision": 292640,
+        "reason": "去阿禾常在的地方看看",
+        "pathFailures": 0,
+        "alarm": 0,
+        "relations": {
+          "elder": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          },
+          "healer": {
+            "familiar": 38,
+            "trust": 37,
+            "wariness": 0,
+            "lastPositive": 703.6650000008354
+          },
+          "carpenter": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          }
+        },
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "activity",
+            "time": 485.60249999999814,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4805.602499999998
+          },
+          {
+            "eventId": "life:2",
+            "sequence": 2,
+            "kind": "activity",
+            "time": 509.12999999998635,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "亲手采好一篮药草，准备送给小满。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4829.1299999999865
+          },
+          {
+            "eventId": "life:3",
+            "sequence": 3,
+            "kind": "company",
+            "time": 703.6650000008354,
+            "subjects": [
+              "xiaobao",
+              "healer"
+            ],
+            "result": "把采好的药草送给小满，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5023.665000000836
+          },
+          {
+            "eventId": "life:4",
+            "sequence": 4,
+            "kind": "company",
+            "time": 720.0150000009107,
+            "subjects": [
+              "xiaobao",
+              "healer"
+            ],
+            "result": "跟小满认识止血草的叶片，已经做到了。心愿「学会辨认村庄常用药草」完成第1阶段。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5040.015000000911
+          },
+          {
+            "eventId": "life:5",
+            "sequence": 5,
+            "kind": "activity",
+            "time": 750.4200000010513,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "在家里吃过饭，肚子不饿了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5070.420000001051
+          },
+          {
+            "eventId": "life:6",
+            "sequence": 6,
+            "kind": "activity",
+            "time": 774.44250000116,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "练一会儿轻轻的听风掌，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5094.44250000116
+          },
+          {
+            "eventId": "life:7",
+            "sequence": 7,
+            "kind": "activity",
+            "time": 792.2025000012388,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "在广场玩踏叶小步，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5112.202500001239
+          }
+        ],
+        "receipt": 7,
+        "receipts": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "receiptFloor": 0,
+        "known": {
+          "player": {
+            "x": 670,
+            "y": 720,
+            "hp": 100,
+            "stamina": 100,
+            "space": "village",
+            "time": 858.3547950015259
+          },
+          "elder": {
+            "space": "village",
+            "x": 655.7894600003909,
+            "y": 650,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 857.2350000015286
+          },
+          "north-patrol": {
+            "space": "village",
+            "x": 1110.0301800001143,
+            "y": 660,
+            "time": 732.3900000009694
+          },
+          "north-watch": {
+            "space": "village",
+            "x": 1067.0999999999985,
+            "y": 660,
+            "time": 550.1850000001293
+          },
+          "west-watch": {
+            "space": "village",
+            "x": 1036.9578878641,
+            "y": 960.6502774495765,
+            "time": 552.5025000001398
+          },
+          "healer": {
+            "space": "healer-home",
+            "x": 575.8334526869155,
+            "y": 800.085757514684,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 723.6887250009262
+          },
+          "carpenter": {
+            "space": "village",
+            "x": 559.8972291006894,
+            "y": 1140.1027708993106,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 851.2075350014961
+          }
+        },
+        "lastSupplyDay": 0,
+        "lastMealDay": 0,
+        "social": {
+          "cooldownUntil": 0,
+          "occasionFloor": 0,
+          "visited": {}
+        },
+        "speech": {
+          "eventFloor": 4,
+          "nextAt": 212111.82999999868,
+          "day": 0,
+          "routines": []
+        }
+      },
+      "库存": {
+        "medicine": 10,
+        "herbs": 1,
+        "wood": 6,
+        "food": 14,
+        "day": 0
+      },
+      "生活耗时": {
+        "steps": 78139,
+        "decisions": 4801,
+        "queries": 61,
+        "ms": 8107.7000024318695,
+        "maxMs": 4,
+        "xiaobaoDecisionMs": 231.3999980688095,
+        "xiaobaoDecisionMaxMs": 0.6999999284744263,
+        "xiaobaoMoveMs": 976.800000667572,
+        "xiaobaoMoveMaxMs": 3.899999976158142
+      },
+      "寻路": {
+        "批次": 0,
+        "单批展开": 0,
+        "受阻毫秒": 0,
+        "失败原因": "",
+        "规划中": false
+      },
+      "对象数": 697,
+      "纹理数": 270,
+      "来袭": null,
+      "主线": 0
+    },
+    {
+      "采样时间": "2026-10-02T02:13:49.936Z",
+      "记录时间": "2026-10-02T02:13:20.914Z",
+      "模拟毫秒": 382485.379999987,
+      "游戏时间": 1053.7280700021236,
+      "暂停": false,
+      "后台": false,
+      "存档结构": 21,
+      "小宝": {
+        "space": "village",
+        "life": {
+          "version": 1,
+          "seed": 1875050081,
+          "day": 0,
+          "basket": 0,
+          "main": "wood",
+          "optional": "herb",
+          "done": [
+            "deliver",
+            "herb",
+            "practice",
+            "play",
+            "wander"
+          ],
+          "projects": {
+            "wind": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "wood": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "herb": {
+              "stage": 1,
+              "lastDay": 0
+            }
+          },
+          "interests": {
+            "wind": 65,
+            "wood": 55,
+            "herb": 55
+          },
+          "journal": [
+            {
+              "sequence": 1,
+              "time": 485.60249999999814,
+              "text": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。"
+            },
+            {
+              "sequence": 2,
+              "time": 509.12999999998635,
+              "text": "亲手采好一篮药草，准备送给小满。"
+            },
+            {
+              "sequence": 3,
+              "time": 703.6650000008354,
+              "text": "把采好的药草送给小满，已经做到了。"
+            },
+            {
+              "sequence": 4,
+              "time": 720.0150000009107,
+              "text": "跟小满认识止血草的叶片，已经做到了。心愿「学会辨认村庄常用药草」完成第1阶段。"
+            },
+            {
+              "sequence": 5,
+              "time": 750.4200000010513,
+              "text": "在家里吃过饭，肚子不饿了。"
+            },
+            {
+              "sequence": 6,
+              "time": 774.44250000116,
+              "text": "练一会儿轻轻的听风掌，已经做到了。"
+            },
+            {
+              "sequence": 7,
+              "time": 792.2025000012388,
+              "text": "在广场玩踏叶小步，已经做到了。"
+            },
+            {
+              "sequence": 8,
+              "time": 1009.1550000022263,
+              "text": "去安全近郊听听风，已经做到了。"
+            }
+          ],
+          "promise": null,
+          "emergency": false,
+          "clearSince": null,
+          "aftercareUntil": 0,
+          "resumeTask": null,
+          "metrics": {
+            "attempts": 26,
+            "completed": 24,
+            "failed": 1,
+            "interrupted": 0
+          }
+        },
+        "known": false,
+        "task": "free",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 337.05023953979247,
+        "y": 977.0502395397926,
+        "hp": 640,
+        "qi": 100,
+        "clock": 382485.37999979145,
+        "serial": 0,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 6000,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "居民": {
+        "id": "xiaobao",
+        "body": null,
+        "blockedTarget": {
+          "space": "village",
+          "x": 590.697810632872,
+          "y": 648.5755473417814,
+          "hp": 100,
+          "health": "healthy",
+          "episode": 0,
+          "recoverAt": 0
+        },
+        "blockedUntil": 33735,
+        "action": {
+          "id": 26,
+          "kind": "rest",
+          "target": {
+            "space": "village",
+            "x": 477.14111266942393,
+            "y": 1420.000520780656,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 1018.3725000022611
+          },
+          "pickup": null,
+          "facility": null,
+          "task": null,
+          "phase": "travel",
+          "progress": 0,
+          "duration": 12000,
+          "started": 379870,
+          "failures": 0,
+          "label": "去阿禾常在的地方看看",
+          "social": null
+        },
+        "serial": 26,
+        "committed": 25,
+        "needs": {
+          "hunger": 3.370089666668332,
+          "fatigue": 0.02929483333322503
+        },
+        "emotion": 0,
+        "gear": "locker",
+        "supplies": {
+          "medicine": 0,
+          "wood": 0
+        },
+        "project": 0.6000000000000001,
+        "nextDecision": 380770,
+        "reason": "去阿禾常在的地方看看",
+        "pathFailures": 0,
+        "alarm": 0,
+        "relations": {
+          "elder": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          },
+          "healer": {
+            "familiar": 38,
+            "trust": 37,
+            "wariness": 0,
+            "lastPositive": 703.6650000008354
+          },
+          "carpenter": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          }
+        },
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "activity",
+            "time": 485.60249999999814,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4805.602499999998
+          },
+          {
+            "eventId": "life:2",
+            "sequence": 2,
+            "kind": "activity",
+            "time": 509.12999999998635,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "亲手采好一篮药草，准备送给小满。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4829.1299999999865
+          },
+          {
+            "eventId": "life:3",
+            "sequence": 3,
+            "kind": "company",
+            "time": 703.6650000008354,
+            "subjects": [
+              "xiaobao",
+              "healer"
+            ],
+            "result": "把采好的药草送给小满，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5023.665000000836
+          },
+          {
+            "eventId": "life:4",
+            "sequence": 4,
+            "kind": "company",
+            "time": 720.0150000009107,
+            "subjects": [
+              "xiaobao",
+              "healer"
+            ],
+            "result": "跟小满认识止血草的叶片，已经做到了。心愿「学会辨认村庄常用药草」完成第1阶段。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5040.015000000911
+          },
+          {
+            "eventId": "life:5",
+            "sequence": 5,
+            "kind": "activity",
+            "time": 750.4200000010513,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "在家里吃过饭，肚子不饿了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5070.420000001051
+          },
+          {
+            "eventId": "life:6",
+            "sequence": 6,
+            "kind": "activity",
+            "time": 774.44250000116,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "练一会儿轻轻的听风掌，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5094.44250000116
+          },
+          {
+            "eventId": "life:7",
+            "sequence": 7,
+            "kind": "activity",
+            "time": 792.2025000012388,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "在广场玩踏叶小步，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5112.202500001239
+          },
+          {
+            "eventId": "life:8",
+            "sequence": 8,
+            "kind": "activity",
+            "time": 1009.1550000022263,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "去安全近郊听听风，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5329.155000002226
+          }
+        ],
+        "receipt": 8,
+        "receipts": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "receiptFloor": 0,
+        "known": {
+          "player": {
+            "x": 670,
+            "y": 720,
+            "hp": 100,
+            "stamina": 100,
+            "space": "village",
+            "time": 858.3547950015259
+          },
+          "elder": {
+            "space": "village",
+            "x": 655.7894600003909,
+            "y": 650,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 857.2350000015286
+          },
+          "north-patrol": {
+            "space": "village",
+            "x": 1110.0301800001143,
+            "y": 660,
+            "time": 732.3900000009694
+          },
+          "north-watch": {
+            "space": "village",
+            "x": 1067.0999999999985,
+            "y": 660,
+            "time": 550.1850000001293
+          },
+          "west-watch": {
+            "space": "village",
+            "x": 1036.9578878641,
+            "y": 960.6502774495765,
+            "time": 552.5025000001398
+          },
+          "healer": {
+            "space": "healer-home",
+            "x": 575.8334526869155,
+            "y": 800.085757514684,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 723.6887250009262
+          },
+          "carpenter": {
+            "space": "village",
+            "x": 477.14111266942393,
+            "y": 1420.000520780656,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 1018.3725000022611
+          },
+          "west-patrol": {
+            "space": "village",
+            "x": 317.6709093558591,
+            "y": 1485.6813898624266,
+            "time": 1018.3725000022611
+          },
+          "south-patrol": {
+            "space": "village",
+            "x": 970.3218112471895,
+            "y": 1673.6833347764177,
+            "time": 1016.2920900022376
+          },
+          "south-watch": {
+            "space": "village",
+            "x": 812.6158969301443,
+            "y": 1718.5455615628762,
+            "time": 1013.7975000022428
+          }
+        },
+        "lastSupplyDay": 0,
+        "lastMealDay": 0,
+        "social": {
+          "cooldownUntil": 0,
+          "occasionFloor": 0,
+          "visited": {}
+        },
+        "speech": {
+          "eventFloor": 4,
+          "nextAt": 212111.82999999868,
+          "day": 0,
+          "routines": []
+        }
+      },
+      "库存": {
+        "medicine": 10,
+        "herbs": 1,
+        "wood": 6,
+        "food": 14,
+        "day": 0
+      },
+      "生活耗时": {
+        "steps": 102296,
+        "decisions": 6276,
+        "queries": 61,
+        "ms": 8851.000008702278,
+        "maxMs": 4,
+        "xiaobaoDecisionMs": 245.4999989271164,
+        "xiaobaoDecisionMaxMs": 0.6999999284744263,
+        "xiaobaoMoveMs": 1494.3000057935715,
+        "xiaobaoMoveMaxMs": 3.899999976158142
+      },
+      "寻路": {
+        "批次": 9,
+        "单批展开": 64,
+        "受阻毫秒": 45.37999998702435,
+        "失败原因": "",
+        "规划中": false
+      },
+      "对象数": 697,
+      "纹理数": 270,
+      "来袭": null,
+      "主线": 0
+    },
+    {
+      "采样时间": "2026-10-02T02:16:12.857Z",
+      "记录时间": "2026-10-02T02:15:50.946Z",
+      "模拟毫秒": 532519.6099999842,
+      "游戏时间": 1278.7794150011096,
+      "暂停": false,
+      "后台": false,
+      "存档结构": 21,
+      "小宝": {
+        "space": "elder-home",
+        "life": {
+          "version": 1,
+          "seed": 1875050081,
+          "day": 0,
+          "basket": 0,
+          "main": "wood",
+          "optional": "herb",
+          "done": [
+            "deliver",
+            "herb",
+            "practice",
+            "play",
+            "wander"
+          ],
+          "projects": {
+            "wind": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "wood": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "herb": {
+              "stage": 1,
+              "lastDay": 0
+            }
+          },
+          "interests": {
+            "wind": 65,
+            "wood": 55,
+            "herb": 55
+          },
+          "journal": [
+            {
+              "sequence": 1,
+              "time": 485.60249999999814,
+              "text": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。"
+            },
+            {
+              "sequence": 2,
+              "time": 509.12999999998635,
+              "text": "亲手采好一篮药草，准备送给小满。"
+            },
+            {
+              "sequence": 3,
+              "time": 703.6650000008354,
+              "text": "把采好的药草送给小满，已经做到了。"
+            },
+            {
+              "sequence": 4,
+              "time": 720.0150000009107,
+              "text": "跟小满认识止血草的叶片，已经做到了。心愿「学会辨认村庄常用药草」完成第1阶段。"
+            },
+            {
+              "sequence": 5,
+              "time": 750.4200000010513,
+              "text": "在家里吃过饭，肚子不饿了。"
+            },
+            {
+              "sequence": 6,
+              "time": 774.44250000116,
+              "text": "练一会儿轻轻的听风掌，已经做到了。"
+            },
+            {
+              "sequence": 7,
+              "time": 792.2025000012388,
+              "text": "在广场玩踏叶小步，已经做到了。"
+            },
+            {
+              "sequence": 8,
+              "time": 1009.1550000022263,
+              "text": "去安全近郊听听风，已经做到了。"
+            },
+            {
+              "sequence": 9,
+              "time": 1261.627500001217,
+              "text": "跟阿禾认识木纹和工具没完成：朋友已经离开或正在睡觉，稍后再来。"
+            }
+          ],
+          "promise": null,
+          "emergency": false,
+          "clearSince": null,
+          "aftercareUntil": 0,
+          "resumeTask": null,
+          "metrics": {
+            "attempts": 35,
+            "completed": 32,
+            "failed": 2,
+            "interrupted": 0
+          }
+        },
+        "known": false,
+        "task": "free",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 573.6268620233036,
+        "y": 569.7646285242786,
+        "hp": 640,
+        "qi": 100,
+        "clock": 532519.609999709,
+        "serial": 0,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 6000,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "居民": {
+        "id": "xiaobao",
+        "body": null,
+        "blockedTarget": {
+          "space": "carpenter-home",
+          "x": 813.2675036181668,
+          "y": 778.2668952864211,
+          "hp": 100,
+          "health": "healthy",
+          "episode": 0,
+          "recoverAt": 0
+        },
+        "blockedUntil": 551085,
+        "action": {
+          "id": 35,
+          "kind": "sleep",
+          "target": {
+            "space": "elder-home",
+            "x": 570,
+            "y": 560
+          },
+          "pickup": null,
+          "facility": "bed:xiaobao",
+          "task": null,
+          "phase": "travel",
+          "progress": 0,
+          "duration": 8000,
+          "started": 521985,
+          "failures": 0,
+          "label": "回自己的床上安心睡觉",
+          "social": null
+        },
+        "serial": 35,
+        "committed": 33,
+        "needs": {
+          "hunger": 5.870660166669881,
+          "fatigue": 0.17945508333319526
+        },
+        "emotion": 0,
+        "gear": "locker",
+        "supplies": {
+          "medicine": 0,
+          "wood": 0
+        },
+        "project": 0.6000000000000001,
+        "nextDecision": 522885,
+        "reason": "回自己的床上安心睡觉",
+        "pathFailures": 0,
+        "alarm": 0,
+        "relations": {
+          "elder": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          },
+          "healer": {
+            "familiar": 38,
+            "trust": 37,
+            "wariness": 0,
+            "lastPositive": 703.6650000008354
+          },
+          "carpenter": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          }
+        },
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "activity",
+            "time": 485.60249999999814,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4805.602499999998
+          },
+          {
+            "eventId": "life:2",
+            "sequence": 2,
+            "kind": "activity",
+            "time": 509.12999999998635,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "亲手采好一篮药草，准备送给小满。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4829.1299999999865
+          },
+          {
+            "eventId": "life:3",
+            "sequence": 3,
+            "kind": "company",
+            "time": 703.6650000008354,
+            "subjects": [
+              "xiaobao",
+              "healer"
+            ],
+            "result": "把采好的药草送给小满，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5023.665000000836
+          },
+          {
+            "eventId": "life:4",
+            "sequence": 4,
+            "kind": "company",
+            "time": 720.0150000009107,
+            "subjects": [
+              "xiaobao",
+              "healer"
+            ],
+            "result": "跟小满认识止血草的叶片，已经做到了。心愿「学会辨认村庄常用药草」完成第1阶段。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5040.015000000911
+          },
+          {
+            "eventId": "life:5",
+            "sequence": 5,
+            "kind": "activity",
+            "time": 750.4200000010513,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "在家里吃过饭，肚子不饿了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5070.420000001051
+          },
+          {
+            "eventId": "life:6",
+            "sequence": 6,
+            "kind": "activity",
+            "time": 774.44250000116,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "练一会儿轻轻的听风掌，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5094.44250000116
+          },
+          {
+            "eventId": "life:7",
+            "sequence": 7,
+            "kind": "activity",
+            "time": 792.2025000012388,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "在广场玩踏叶小步，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5112.202500001239
+          },
+          {
+            "eventId": "life:8",
+            "sequence": 8,
+            "kind": "activity",
+            "time": 1009.1550000022263,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "去安全近郊听听风，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5329.155000002226
+          },
+          {
+            "eventId": "life:9",
+            "sequence": 9,
+            "kind": "activity",
+            "time": 1261.627500001217,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "跟阿禾认识木纹和工具没完成：朋友已经离开或正在睡觉，稍后再来。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5581.627500001217
+          }
+        ],
+        "receipt": 9,
+        "receipts": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "receiptFloor": 0,
+        "known": {
+          "player": {
+            "x": 670,
+            "y": 720,
+            "hp": 100,
+            "stamina": 100,
+            "space": "village",
+            "time": 858.3547950015259
+          },
+          "elder": {
+            "space": "elder-home",
+            "x": 465.5108930131295,
+            "y": 557.9452947069014,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 1278.7794150011096
+          },
+          "north-patrol": {
+            "space": "village",
+            "x": 1110.0301800001143,
+            "y": 660,
+            "time": 732.3900000009694
+          },
+          "north-watch": {
+            "space": "village",
+            "x": 1067.0999999999985,
+            "y": 660,
+            "time": 550.1850000001293
+          },
+          "west-watch": {
+            "space": "village",
+            "x": 202.6367686072946,
+            "y": 1338.8048891657393,
+            "time": 1221.840000001405
+          },
+          "healer": {
+            "space": "healer-home",
+            "x": 575.8334526869155,
+            "y": 800.085757514684,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 723.6887250009262
+          },
+          "carpenter": {
+            "space": "carpenter-home",
+            "x": 594.818125226033,
+            "y": 611.913683951517,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 1265.9393550011664
+          },
+          "west-patrol": {
+            "space": "village",
+            "x": 311.70276995267716,
+            "y": 1492.6943676272151,
+            "time": 1221.4500000014066
+          },
+          "south-patrol": {
+            "space": "village",
+            "x": 970.3218112471895,
+            "y": 1673.6833347764177,
+            "time": 1016.2920900022376
+          },
+          "south-watch": {
+            "space": "village",
+            "x": 812.6158969301443,
+            "y": 1718.5455615628762,
+            "time": 1013.7975000022428
+          }
+        },
+        "lastSupplyDay": 0,
+        "lastMealDay": 0,
+        "social": {
+          "cooldownUntil": 0,
+          "occasionFloor": 0,
+          "visited": {}
+        },
+        "speech": {
+          "eventFloor": 4,
+          "nextAt": 212111.82999999868,
+          "day": 0,
+          "routines": []
+        }
+      },
+      "库存": {
+        "medicine": 10,
+        "herbs": 1,
+        "wood": 6,
+        "food": 14,
+        "day": 0
+      },
+      "生活耗时": {
+        "steps": 147985,
+        "decisions": 8737,
+        "queries": 106,
+        "ms": 13339.800011634827,
+        "maxMs": 4.200000047683716,
+        "xiaobaoDecisionMs": 341.19999849796295,
+        "xiaobaoDecisionMaxMs": 0.6999999284744263,
+        "xiaobaoMoveMs": 2179.1000102758408,
+        "xiaobaoMoveMaxMs": 3.899999976158142
+      },
+      "寻路": {
+        "批次": 7,
+        "单批展开": 24,
+        "受阻毫秒": 19.609999984153546,
+        "失败原因": "",
+        "规划中": false
+      },
+      "对象数": 692,
+      "纹理数": 265,
+      "来袭": null,
+      "主线": 0
+    },
+    {
+      "采样时间": "2026-10-02T02:18:06.080Z",
+      "记录时间": "2026-10-02T02:17:50.968Z",
+      "模拟毫秒": 645465.9700000001,
+      "游戏时间": 1448.198955000485,
+      "暂停": false,
+      "后台": false,
+      "存档结构": 21,
+      "小宝": {
+        "space": "elder-home",
+        "life": {
+          "version": 1,
+          "seed": 1915323468,
+          "day": 1,
+          "basket": 0,
+          "main": "herb",
+          "optional": "wind",
+          "done": [],
+          "projects": {
+            "wind": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "wood": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "herb": {
+              "stage": 1,
+              "lastDay": 0
+            }
+          },
+          "interests": {
+            "wind": 65,
+            "wood": 55,
+            "herb": 55
+          },
+          "journal": [
+            {
+              "sequence": 1,
+              "time": 485.60249999999814,
+              "text": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。"
+            },
+            {
+              "sequence": 2,
+              "time": 509.12999999998635,
+              "text": "亲手采好一篮药草，准备送给小满。"
+            },
+            {
+              "sequence": 3,
+              "time": 703.6650000008354,
+              "text": "把采好的药草送给小满，已经做到了。"
+            },
+            {
+              "sequence": 4,
+              "time": 720.0150000009107,
+              "text": "跟小满认识止血草的叶片，已经做到了。心愿「学会辨认村庄常用药草」完成第1阶段。"
+            },
+            {
+              "sequence": 5,
+              "time": 750.4200000010513,
+              "text": "在家里吃过饭，肚子不饿了。"
+            },
+            {
+              "sequence": 6,
+              "time": 774.44250000116,
+              "text": "练一会儿轻轻的听风掌，已经做到了。"
+            },
+            {
+              "sequence": 7,
+              "time": 792.2025000012388,
+              "text": "在广场玩踏叶小步，已经做到了。"
+            },
+            {
+              "sequence": 8,
+              "time": 1009.1550000022263,
+              "text": "去安全近郊听听风，已经做到了。"
+            },
+            {
+              "sequence": 9,
+              "time": 1261.627500001217,
+              "text": "跟阿禾认识木纹和工具没完成：朋友已经离开或正在睡觉，稍后再来。"
+            }
+          ],
+          "promise": null,
+          "emergency": false,
+          "clearSince": null,
+          "aftercareUntil": 0,
+          "resumeTask": null,
+          "metrics": {
+            "attempts": 35,
+            "completed": 32,
+            "failed": 2,
+            "interrupted": 0
+          }
+        },
+        "known": false,
+        "task": "free",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 571.6688211461417,
+        "y": 564.4929800088429,
+        "hp": 640,
+        "qi": 100,
+        "clock": 645465.969999631,
+        "serial": 0,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 6000,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": null,
+        "affected": [],
+        "reports": []
+      },
+      "居民": {
+        "id": "xiaobao",
+        "body": null,
+        "blockedTarget": {
+          "space": "carpenter-home",
+          "x": 813.2675036181668,
+          "y": 778.2668952864211,
+          "hp": 100,
+          "health": "healthy",
+          "episode": 0,
+          "recoverAt": 0
+        },
+        "blockedUntil": 551085,
+        "action": {
+          "id": 35,
+          "kind": "sleep",
+          "target": {
+            "space": "elder-home",
+            "x": 570,
+            "y": 560
+          },
+          "pickup": null,
+          "facility": "bed:xiaobao",
+          "task": null,
+          "phase": "perform",
+          "progress": 8000,
+          "duration": 8000,
+          "started": 521985,
+          "failures": 0,
+          "label": "回自己的床上安心睡觉",
+          "social": null
+        },
+        "serial": 35,
+        "committed": 33,
+        "needs": {
+          "hunger": 7.7530995000045175,
+          "fatigue": 0
+        },
+        "emotion": 0,
+        "gear": "locker",
+        "supplies": {
+          "medicine": 0,
+          "wood": 0
+        },
+        "project": 0.6000000000000001,
+        "nextDecision": 522885,
+        "reason": "回自己的床上安心睡觉",
+        "pathFailures": 0,
+        "alarm": 0,
+        "relations": {
+          "elder": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          },
+          "healer": {
+            "familiar": 38,
+            "trust": 37,
+            "wariness": 0,
+            "lastPositive": 703.6650000008354
+          },
+          "carpenter": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          }
+        },
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "activity",
+            "time": 485.60249999999814,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4805.602499999998
+          },
+          {
+            "eventId": "life:2",
+            "sequence": 2,
+            "kind": "activity",
+            "time": 509.12999999998635,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "亲手采好一篮药草，准备送给小满。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4829.1299999999865
+          },
+          {
+            "eventId": "life:3",
+            "sequence": 3,
+            "kind": "company",
+            "time": 703.6650000008354,
+            "subjects": [
+              "xiaobao",
+              "healer"
+            ],
+            "result": "把采好的药草送给小满，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5023.665000000836
+          },
+          {
+            "eventId": "life:4",
+            "sequence": 4,
+            "kind": "company",
+            "time": 720.0150000009107,
+            "subjects": [
+              "xiaobao",
+              "healer"
+            ],
+            "result": "跟小满认识止血草的叶片，已经做到了。心愿「学会辨认村庄常用药草」完成第1阶段。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5040.015000000911
+          },
+          {
+            "eventId": "life:5",
+            "sequence": 5,
+            "kind": "activity",
+            "time": 750.4200000010513,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "在家里吃过饭，肚子不饿了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5070.420000001051
+          },
+          {
+            "eventId": "life:6",
+            "sequence": 6,
+            "kind": "activity",
+            "time": 774.44250000116,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "练一会儿轻轻的听风掌，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5094.44250000116
+          },
+          {
+            "eventId": "life:7",
+            "sequence": 7,
+            "kind": "activity",
+            "time": 792.2025000012388,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "在广场玩踏叶小步，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5112.202500001239
+          },
+          {
+            "eventId": "life:8",
+            "sequence": 8,
+            "kind": "activity",
+            "time": 1009.1550000022263,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "去安全近郊听听风，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5329.155000002226
+          },
+          {
+            "eventId": "life:9",
+            "sequence": 9,
+            "kind": "activity",
+            "time": 1261.627500001217,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "跟阿禾认识木纹和工具没完成：朋友已经离开或正在睡觉，稍后再来。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5581.627500001217
+          }
+        ],
+        "receipt": 9,
+        "receipts": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "receiptFloor": 0,
+        "known": {
+          "player": {
+            "x": 670,
+            "y": 720,
+            "hp": 100,
+            "stamina": 100,
+            "space": "village",
+            "time": 858.3547950015259
+          },
+          "elder": {
+            "space": "elder-home",
+            "x": 465.5108930131295,
+            "y": 557.9452947069014,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 1448.198955000485
+          },
+          "north-patrol": {
+            "space": "village",
+            "x": 1110.0301800001143,
+            "y": 660,
+            "time": 732.3900000009694
+          },
+          "north-watch": {
+            "space": "village",
+            "x": 1067.0999999999985,
+            "y": 660,
+            "time": 550.1850000001293
+          },
+          "west-watch": {
+            "space": "village",
+            "x": 202.6367686072946,
+            "y": 1338.8048891657393,
+            "time": 1221.840000001405
+          },
+          "healer": {
+            "space": "healer-home",
+            "x": 575.8334526869155,
+            "y": 800.085757514684,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 723.6887250009262
+          },
+          "carpenter": {
+            "space": "carpenter-home",
+            "x": 594.818125226033,
+            "y": 611.913683951517,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 1265.9393550011664
+          },
+          "west-patrol": {
+            "space": "village",
+            "x": 311.70276995267716,
+            "y": 1492.6943676272151,
+            "time": 1221.4500000014066
+          },
+          "south-patrol": {
+            "space": "village",
+            "x": 970.3218112471895,
+            "y": 1673.6833347764177,
+            "time": 1016.2920900022376
+          },
+          "south-watch": {
+            "space": "village",
+            "x": 812.6158969301443,
+            "y": 1718.5455615628762,
+            "time": 1013.7975000022428
+          }
+        },
+        "lastSupplyDay": 0,
+        "lastMealDay": 0,
+        "social": {
+          "cooldownUntil": 0,
+          "occasionFloor": 0,
+          "visited": {}
+        },
+        "speech": {
+          "eventFloor": 4,
+          "nextAt": 212111.82999999868,
+          "day": 0,
+          "routines": []
+        }
+      },
+      "库存": {
+        "medicine": 10,
+        "herbs": 1,
+        "wood": 8,
+        "food": 20,
+        "day": 1
+      },
+      "生活耗时": {
+        "steps": 184706,
+        "decisions": 10615,
+        "queries": 122,
+        "ms": 15826.4000082016,
+        "maxMs": 4.600000023841858,
+        "xiaobaoDecisionMs": 391.90000009536743,
+        "xiaobaoDecisionMaxMs": 0.6999999284744263,
+        "xiaobaoMoveMs": 2341.000008702278,
+        "xiaobaoMoveMaxMs": 3.899999976158142
+      },
+      "寻路": {
+        "批次": 7,
+        "单批展开": 24,
+        "受阻毫秒": 0,
+        "失败原因": "",
+        "规划中": false
+      },
+      "对象数": 697,
+      "纹理数": 270,
+      "来袭": null,
+      "主线": 0
+    },
+    {
+      "采样时间": "2026-10-02T02:23:15.468Z",
+      "记录时间": "2026-10-02T02:22:51.013Z",
+      "模拟毫秒": 856763.479999995,
+      "游戏时间": 1765.1452199993412,
+      "暂停": false,
+      "后台": false,
+      "存档结构": 21,
+      "小宝": {
+        "space": "village",
+        "life": {
+          "version": 1,
+          "seed": 1915323468,
+          "day": 1,
+          "basket": 0,
+          "main": "herb",
+          "optional": "wind",
+          "done": [],
+          "projects": {
+            "wind": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "wood": {
+              "stage": 0,
+              "lastDay": -1
+            },
+            "herb": {
+              "stage": 1,
+              "lastDay": 0
+            }
+          },
+          "interests": {
+            "wind": 65,
+            "wood": 55,
+            "herb": 55
+          },
+          "journal": [
+            {
+              "sequence": 1,
+              "time": 485.60249999999814,
+              "text": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。"
+            },
+            {
+              "sequence": 2,
+              "time": 509.12999999998635,
+              "text": "亲手采好一篮药草，准备送给小满。"
+            },
+            {
+              "sequence": 3,
+              "time": 703.6650000008354,
+              "text": "把采好的药草送给小满，已经做到了。"
+            },
+            {
+              "sequence": 4,
+              "time": 720.0150000009107,
+              "text": "跟小满认识止血草的叶片，已经做到了。心愿「学会辨认村庄常用药草」完成第1阶段。"
+            },
+            {
+              "sequence": 5,
+              "time": 750.4200000010513,
+              "text": "在家里吃过饭，肚子不饿了。"
+            },
+            {
+              "sequence": 6,
+              "time": 774.44250000116,
+              "text": "练一会儿轻轻的听风掌，已经做到了。"
+            },
+            {
+              "sequence": 7,
+              "time": 792.2025000012388,
+              "text": "在广场玩踏叶小步，已经做到了。"
+            },
+            {
+              "sequence": 8,
+              "time": 1009.1550000022263,
+              "text": "去安全近郊听听风，已经做到了。"
+            },
+            {
+              "sequence": 9,
+              "time": 1261.627500001217,
+              "text": "跟阿禾认识木纹和工具没完成：朋友已经离开或正在睡觉，稍后再来。"
+            }
+          ],
+          "promise": {
+            "response": "accepted",
+            "expires": 1665.6827399999565,
+            "actionId": 35,
+            "reason": "一起！村灯若有危险，我会先回去护村。",
+            "status": "done"
+          },
+          "emergency": false,
+          "clearSince": null,
+          "aftercareUntil": 0,
+          "resumeTask": null,
+          "metrics": {
+            "attempts": 35,
+            "completed": 32,
+            "failed": 2,
+            "interrupted": 1
+          }
+        },
+        "known": true,
+        "task": "follow",
+        "gate": "all",
+        "tactic": "steady",
+        "autoSupport": true,
+        "x": 453.0698850771448,
+        "y": 604.6213289937767,
+        "hp": 640,
+        "qi": 100,
+        "clock": 856763.4799995646,
+        "serial": 0,
+        "cooldowns": {
+          "palm": 0,
+          "triple": 0,
+          "star": 0,
+          "blade": 0,
+          "rock": 0,
+          "fire": 0,
+          "thunder": 0,
+          "chain": 0,
+          "unity": 0,
+          "guard": 0,
+          "rescue": 0,
+          "flight": 0
+        },
+        "rest": 0,
+        "recovery": 0,
+        "peace": 6000,
+        "reduction": 0,
+        "shields": [],
+        "cast": null,
+        "effects": [],
+        "flight": null,
+        "support": null,
+        "alarmCycle": 0,
+        "alarmActive": false,
+        "responded": [],
+        "command": null,
+        "wait": {
+          "x": 453.0698850771448,
+          "y": 604.6213289937767,
+          "region": "village"
+        },
+        "affected": [],
+        "reports": []
+      },
+      "居民": {
+        "id": "xiaobao",
+        "body": null,
+        "action": null,
+        "blockedTarget": {
+          "space": "carpenter-home",
+          "x": 813.2675036181668,
+          "y": 778.2668952864211
+        },
+        "blockedUntil": 551085,
+        "serial": 35,
+        "committed": 33,
+        "needs": {
+          "hunger": 11.274724666658589,
+          "fatigue": 0.8859026666668757
+        },
+        "emotion": 0,
+        "gear": "locker",
+        "supplies": {
+          "medicine": 0,
+          "wood": 0
+        },
+        "project": 0.6000000000000001,
+        "nextDecision": 522885,
+        "reason": "答应与你同行，村庄有难时先护村",
+        "pathFailures": 0,
+        "alarm": 0,
+        "relations": {
+          "elder": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          },
+          "healer": {
+            "familiar": 38,
+            "trust": 37,
+            "wariness": 0,
+            "lastPositive": 703.6650000008354
+          },
+          "carpenter": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          }
+        },
+        "memories": [
+          {
+            "eventId": "life:1",
+            "sequence": 1,
+            "kind": "activity",
+            "time": 485.60249999999814,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4805.602499999998
+          },
+          {
+            "eventId": "life:2",
+            "sequence": 2,
+            "kind": "activity",
+            "time": 509.12999999998635,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "亲手采好一篮药草，准备送给小满。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 4829.1299999999865
+          },
+          {
+            "eventId": "life:3",
+            "sequence": 3,
+            "kind": "company",
+            "time": 703.6650000008354,
+            "subjects": [
+              "xiaobao",
+              "healer"
+            ],
+            "result": "把采好的药草送给小满，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5023.665000000836
+          },
+          {
+            "eventId": "life:4",
+            "sequence": 4,
+            "kind": "company",
+            "time": 720.0150000009107,
+            "subjects": [
+              "xiaobao",
+              "healer"
+            ],
+            "result": "跟小满认识止血草的叶片，已经做到了。心愿「学会辨认村庄常用药草」完成第1阶段。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5040.015000000911
+          },
+          {
+            "eventId": "life:5",
+            "sequence": 5,
+            "kind": "activity",
+            "time": 750.4200000010513,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "在家里吃过饭，肚子不饿了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5070.420000001051
+          },
+          {
+            "eventId": "life:6",
+            "sequence": 6,
+            "kind": "activity",
+            "time": 774.44250000116,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "练一会儿轻轻的听风掌，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5094.44250000116
+          },
+          {
+            "eventId": "life:7",
+            "sequence": 7,
+            "kind": "activity",
+            "time": 792.2025000012388,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "在广场玩踏叶小步，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5112.202500001239
+          },
+          {
+            "eventId": "life:8",
+            "sequence": 8,
+            "kind": "activity",
+            "time": 1009.1550000022263,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "去安全近郊听听风，已经做到了。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5329.155000002226
+          },
+          {
+            "eventId": "life:9",
+            "sequence": 9,
+            "kind": "activity",
+            "time": 1261.627500001217,
+            "subjects": [
+              "xiaobao"
+            ],
+            "result": "跟阿禾认识木纹和工具没完成：朋友已经离开或正在睡觉，稍后再来。",
+            "source": "seen",
+            "importance": 40,
+            "expires": 5581.627500001217
+          }
+        ],
+        "receipt": 9,
+        "receipts": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "receiptFloor": 0,
+        "known": {
+          "player": {
+            "x": 577.8524796114851,
+            "y": 691.4845124265381,
+            "hp": 100,
+            "stamina": 100,
+            "space": "village",
+            "time": 1765.1452199993412
+          },
+          "elder": {
+            "space": "elder-home",
+            "x": 465.5108930131295,
+            "y": 557.9452947069014,
+            "hp": 100,
+            "health": "healthy",
+            "episode": 0,
+            "recoverAt": 0,
+            "time": 1610.2724999999336
+          },
+          "north-patrol": {
+            "space": "village",
+            "x": 1110.0301800001143,
+            "y": 660,
+            "time": 732.3900000009694
+          },
+          "north-watch": {
+            "space": "village",
+            "x": 1067.0999999999985,
+            "y": 660,
+            "time": 550.1850000001293
+          },
+          "west-watch": {
+            "space": "village",
+            "x": 202.6367686072946,
+            "y": 1338.8048891657393,
+            "time": 1221.840000001405
+          },
+          "healer": {
+            "space": "healer-home",
+            "x": 575.8334526869155,
+            "y": 800.085757514684,
+            "time": 723.6887250009262
+          },
+          "carpenter": {
+            "space": "carpenter-home",
+            "x": 594.818125226033,
+            "y": 611.913683951517,
+            "time": 1265.9393550011664
+          },
+          "west-patrol": {
+            "space": "village",
+            "x": 311.70276995267716,
+            "y": 1492.6943676272151,
+            "time": 1221.4500000014066
+          },
+          "south-patrol": {
+            "space": "village",
+            "x": 970.3218112471895,
+            "y": 1673.6833347764177,
+            "time": 1016.2920900022376
+          },
+          "south-watch": {
+            "space": "village",
+            "x": 812.6158969301443,
+            "y": 1718.5455615628762,
+            "time": 1013.7975000022428
+          }
+        },
+        "lastSupplyDay": 0,
+        "lastMealDay": 0,
+        "social": {
+          "cooldownUntil": 0,
+          "occasionFloor": 0,
+          "visited": {}
+        },
+        "speech": {
+          "eventFloor": 4,
+          "nextAt": 212111.82999999868,
+          "day": 1,
+          "routines": []
+        }
+      },
+      "库存": {
+        "medicine": 10,
+        "herbs": 1,
+        "wood": 8,
+        "food": 20,
+        "day": 1
+      },
+      "生活耗时": {
+        "steps": 261764,
+        "decisions": 14137,
+        "queries": 122,
+        "ms": 17216.30000913143,
+        "maxMs": 4.600000023841858,
+        "xiaobaoDecisionMs": 452.9999985694885,
+        "xiaobaoDecisionMaxMs": 0.6999999284744263,
+        "xiaobaoMoveMs": 2548.2000085115433,
+        "xiaobaoMoveMaxMs": 3.899999976158142
+      },
+      "寻路": {
+        "批次": 7,
+        "单批展开": 24,
+        "受阻毫秒": 0,
+        "失败原因": "",
+        "规划中": false
+      },
+      "对象数": 697,
+      "纹理数": 270,
+      "来袭": null,
+      "主线": 0
+    }
+  ]
+}

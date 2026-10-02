@@ -44,8 +44,8 @@ export class RuneCombat {
  speedBonus(){return (this.has('r18')?this.cfg('r18').speed:0)+(this.has('r09')&&this.now<this.speedUntil?this.cfg('r09').speed:0);}
  dashCost(){return this.has('r09')?this.cfg('r09').cost:1;}
  nativeBonus(e:RuneTarget){return (this.has('r18')?Math.min(this.cfg('r18').cap,this.speedBonus()*this.cfg('r18').convert):0)+(this.now<this.domainUntil?this.cfg('r26').bonus:0)+(this.has('r23')&&this.weak(e.id)?this.cfg('r23').bonus:0);}
- native(instance:string,e:RuneTarget,base:number,stage:number,wind=false,finisher=!wind&&stage===3,leg='out'):RuneEvent {
- const eventId=`native:${instance}:${e.id}:${wind?leg:'blade'}`,critical=this.random()<this.critRate(e),amount=base*(1+this.nativeBonus(e))*(critical?this.critMultiplier(e):1);
+ native(instance:string,e:RuneTarget,base:number,stage:number,wind=false,finisher=!wind&&stage===3,leg='out',giftBonus=0):RuneEvent {
+ const eventId=`native:${instance}:${e.id}:${wind?leg:'blade'}`,critical=this.random()<this.critRate(e),amount=base*(1+this.nativeBonus(e)+Math.min(.6,Math.max(0,giftBonus)))*(critical?this.critMultiplier(e):1);
  return {eventId,rootEventId:`action:${instance}`,parentEventId:null,attackInstanceId:instance,sourceKind:'native',targetId:e.id,tags:['native',wind?'wind_hit':'melee_hit',finisher?'finisher':'strike',wind?`wind_${leg}`:'blade'],procDepth:0,amount,critical,A:this.ctx.A(),point:{x:e.x,y:e.y}};
  }
  parent(rune:string,tag:string,point:Point):RuneEvent{const id=`action:${++this.serial}`;return {eventId:id,rootEventId:id,parentEventId:null,attackInstanceId:id,sourceKind:'rune',sourceRuneId:rune,targetId:'',tags:[tag],procDepth:0,amount:0,A:this.ctx.A(),point:{x:point.x,y:point.y}};}

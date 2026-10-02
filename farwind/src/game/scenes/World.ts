@@ -1,9 +1,20 @@
+import {activeHostileCount} from '../systems/combatUnitBudget';
+import {observeCombat} from '../systems/combatObservation';
+import {bossGroundContains,bossGroundBlocks} from '../systems/meleeGeometry';
+import {updateSummonSupport} from '../systems/summonSupport';
+import {startWindMemory,endWindMemory,memoryGold} from '../systems/windMemory';
+import {ADVENTURE_ROUTES,adventureIndex,type WildernessDirection} from '../../data/maps/windbell/encounters';
+import {updateBossEnvironment,defeatBossSummon} from '../systems/bossEnvironment';
+import {giftValue,offerWindGift,giftChoiceSnapshot} from '../systems/windGifts';
+const xiaobaoLifeCheck=typeof location!=='undefined'&&new URLSearchParams(location.search).has('xiaobaoLifeCheck');
+import {encounterDefinitions} from '../systems/encounterState';
+import {requestXiaobaoTask} from '../systems/xiaobaoLife';
 import {CatCompanion,catCareSnapshot} from '../systems/catCompanion';
 import {CatCompanionView} from '../entities/catCompanionView';
 import {catBenefits,catStage,CAT_STAGES,type CatCare} from '../systems/catBond';
 import {legacyEncounterEnabled,updateLegacyDevice} from '../systems/windLegacy';
 import {WindAim} from '../systems/windAim';
-import {creditCombatCoins,settleEncounterCoins} from '../systems/combatCoins';
+import {creditCombatCoins,settleEncounterCoins,combatResourceDrop} from '../systems/combatCoins';
 import {BuildTraining,nearBuildTraining} from '../systems/buildTraining';
 import {momentumConfig,returnMode} from '../systems/runeState';
 import {isWindAttack,isMeleeFinisher} from '../systems/combat';
@@ -24,7 +35,7 @@ import {regionalThreat} from "../systems/wildThreat";
 import {ENCOUNTERS,ENCOUNTER_LIMITS,encounterUnit} from "../../data/maps/windbell/encounters";
 import {WildernessEncounters} from "../systems/encounterRuntime";
 import {CAMP_BOSSES,BOSS_RULES,type CampBossKind} from '../../data/maps/windbell/campBosses';
-import {BossHazards,captureBossCombat,restoreBossCombat} from '../systems/campBossCombat';
+import {BossHazards,captureBossCombat,restoreBossCombat,clearBossPendingAttacks} from '../systems/campBossCombat';
 import {unitState,settleEncounterDeath} from "../systems/encounterState";
 import {SHORTCUTS} from "../../data/maps/windbell/shortcuts";
 import {syncMapGeometry} from "../../data/world";
@@ -451,6 +462,10 @@ export class World extends Phaser.Scene {
       practice: (mode) => this.selectPractice(mode),
       trainBuild:()=>{if(nearBuildTraining(this.state.player))this.buildTraining.open();},
       indicators:(value)=>this.practice.indicators=value,
+      memoryStart:direction=>this.changeWindMemory(direction),
+      memoryEnd:()=>this.changeWindMemory(),
+      giftSaved:receipt=>!!this.loaded?.windGifts.pending.some(c=>c.receipt===receipt),
+      giftChoose:async(receipt,id,replace)=>{if(!this.loaded?.windGifts.pending.some(c=>c.receipt===receipt))throw Error('候选尚未保存，请先保存旅途。');await this.economy.run(()=>this.state,s=>giftChoiceSnapshot(s,receipt,id,replace),save,next=>this.publishState(next));},
       getIndicators:()=>this.practice.indicators,
       volume: (v) => (this.soundFx.volume = v),
       getVolume: () => this.soundFx.volume,
@@ -697,16 +712,20 @@ export class World extends Phaser.Scene {
     this.refresh();
     this.spawnEnemies();
     this.wilderness=new WildernessEncounters({
-      enabled:d=>legacyEncounterEnabled(this.state,d.id),read:()=>this.state.encounters,bodies:()=>this.enemies,
+      reserved:()=>this.defense.enemies.filter(e=>e.hp>0&&!e.disabled).length,
+      bossReady:kind=>this.enemyView.boss.assets.ready(kind),
+      checkpoint:()=>this.persist(true),
+      enabled:d=>this.state.windMemory.active?ADVENTURE_ROUTES[this.state.windMemory.active.direction].includes(d.id):legacyEncounterEnabled(this.state,d.id),read:()=>this.combatEncounters,bodies:()=>this.enemies,
       signal:d=>this.ui.message(`${d.name}正在接近，注意地面预兆。`),
-      bossEnter:d=>{this.soundFx.play(d.boss==='crag-tusk'?'enemy-stagger':'enemy-charge');if(this.combatShake>0)this.cameras.main.shake(180,.0015*this.combatShake);},
-      spawn:(d,u)=>{const e=this.makeEnemy(d);Object.assign(e,{elite:d.elite,boss:d.boss,bossAttempt:this.state.encounters.groups[encounterUnit(d.id)!.group].boss?.attempt,hp:u.hp,x:u.x,y:u.y,attackSerial:u.serial,cool:this.sim+u.cooldown,face:{...u.face},guardOpenUntil:this.sim+u.guardOpen,leashRadius:ENCOUNTERS.find(g=>g.id===encounterUnit(d.id)!.group)!.radius});if(d.boss)restoreBossCombat(e,this.state.encounters.groups[encounterUnit(d.id)!.group].boss!.combat,this.sim,this.bossHazards,this.enemyProjectiles);validateEnemyPosition(e);this.enemies.push(e);},
+      bossEnter:d=>{if(d.boss)this.soundFx.bossArrival(d.boss,this.sim);if(this.combatShake>0)this.cameras.main.shake(180,.0015*this.combatShake);},
+      spawn:(d,u)=>{const e=this.makeEnemy(d);Object.assign(e,{elite:d.elite,boss:d.boss,bossAttempt:this.combatEncounters.groups[encounterUnit(d.id)!.group].boss?.attempt,hp:u.hp,x:u.x,y:u.y,attackSerial:u.serial,cool:this.sim+u.cooldown,face:{...u.face},guardOpenUntil:this.sim+u.guardOpen,leashRadius:ENCOUNTERS.find(g=>g.id===encounterUnit(d.id)!.group)!.radius});if(d.boss)restoreBossCombat(e,this.combatEncounters.groups[encounterUnit(d.id)!.group].boss!.combat,this.sim,this.bossHazards,this.enemyProjectiles);validateEnemyPosition(e);this.enemies.push(e);},
       release:id=>{const e=this.enemies.find(e=>e.id===id);if(!e)return;e.sprite.destroy();e.shadow.destroy();this.enemyBlades.get(id)?.destroy();this.enemyBlades.delete(id);this.enemies=this.enemies.filter(e=>e.id!==id);},
       busy:id=>this.encounterBusy(id),
       bossCapture:(e,now)=>captureBossCombat(e,now,this.bossHazards,this.enemyProjectiles),
       occupied:()=>[...this.defense.enemies.filter(e=>e.hp>0),...(this.xiaobao?.controller.available?[this.xiaobao.controller]:[])],
       bossReset:id=>this.clearBossEffects(id),
     });
+    const restoredBoss=ENCOUNTERS.find(d=>this.combatEncounters.groups[d.id].boss?.stage==='battle');if(restoredBoss)await this.enemyView.boss.assets.ensure(restoredBoss.members.find(m=>m.boss)!.boss!);
     this.wilderness.restore(this.state.life.playerSpace==="village"?this.state.player:this.state.life.outside);
     for(const saved of this.state.xiaobao.affected){const enemy=this.enemies.find(e=>e.id===saved.id);if(enemy&&!enemy.boss){Object.assign(enemy,{hp:saved.hp,x:saved.x,y:saved.y,staggerUntil:this.sim+saved.control,staggerSince:this.sim,companionControlGrace:this.sim+saved.control+saved.controlGrace,companionControlLimit:this.sim+saved.controlLimit});validateEnemyPosition(enemy);}}
     this.syncDrops();
@@ -798,7 +817,7 @@ export class World extends Phaser.Scene {
     const confirm=(snapshot:State,serial:number,defense:EastDefense)=>{
       if(session!==saveDiagnostic().session||serial!==this.snapshotSerial)return;
       this.loaded=snapshot;defense.acknowledged(snapshot.defense.sequence);this.ui.available=true;
-      this.ui.saved(snapshot);
+      this.ui.saved(snapshot);this.wilderness?.confirmed();
       if(snapshot.xiaobao.flight)this.xiaobao?.controller.confirmFlight(snapshot.xiaobao.flight.id);
     };
     const report=(error:unknown)=>{if(session===saveDiagnostic().session){this.ui.saveFailed(error);}throw error;};
@@ -825,6 +844,7 @@ export class World extends Phaser.Scene {
   publishState(next:State){this.state=next;this.loaded=structuredClone(next);this.ui.state=next;this.ui.available=true;this.defense.rebind(next.defense);this.life.rebind(next,this.defense);this.xiaobao?.controller.bind(next.xiaobao);this.refresh();this.ui.update(next,"");}
   xiaobaoUnderRoof(p:{x:number;y:number}){return props.some(prop=>['house','shop','smith-building','inn-building'].includes(prop.art)&&p.x>prop.x-prop.w/2&&p.x<prop.x+prop.w/2&&p.y>prop.y-prop.h&&p.y<prop.y);}
   wireXiaobao(){
+    this.defense.hostileLimit=ENCOUNTER_LIMITS.active;
     this.defense.runeEnemyScale=id=>this.runes?.engine.enemyScale(id)??1;
     this.defense.playerAttackPermit=(enemy,target)=>this.attackPermit(enemy,target);
     this.defense.enemyDeath=(enemy,sourceId)=>{
@@ -834,7 +854,7 @@ export class World extends Phaser.Scene {
     };
     this.defense.enemyDamage=(enemy,event,result)=>{
       if(result.damage>0&&(event.sourceId==='player'||event.sourceId==='xiaobao'&&this.state.xiaobao.task==='follow')){
-        const member=unitState(this.state.encounters,enemy.id);if(member)member.participated=true;
+        const member=unitState(this.combatEncounters,enemy.id);if(member)member.participated=true;
         const raid=this.state.defense.raid?.members.find(m=>m.id===enemy.id);if(raid)raid.participated=true;
       }
       if(event.sourceId==='player')return;
@@ -850,7 +870,7 @@ export class World extends Phaser.Scene {
       .catch(e=>{this.ui.open('pause');this.ui.message(`飞援尚未保存，已暂停：${(e as Error).message}`);});
   }
   receiveXiaobao(contact:EnemyContact,source:EnemyBody){
-    const c=this.xiaobao?.controller;if(!c)return false;
+    const c=this.xiaobao?.controller;if(!c||c.data.space!=='village')return false;
     return c.receive(contact,source,event=>{const target={id:'xiaobao',hp:c.data.hp,faction:'village' as const,armor:12,...c.protection('xiaobao')},shot=contact.projectileId?this.enemyProjectiles.shots.find(s=>s.id===contact.projectileId):undefined;
       const adjusted={...event,sourceScale:this.runes?.engine.enemyScale(source.id)??1};return shot?resolveReleasedDamage(adjusted,shot.released,target):resolveDamage(adjusted,{id:source.id,hp:source.hp,faction:'hostile',armor:0},target);},this.sim);
   }
@@ -886,7 +906,7 @@ export class World extends Phaser.Scene {
   xiaobaoHit(e:EnemyBody,event:DamageEvent,released:ReleasedAttack,control:number,knock:number,task:XiaobaoTask,at:number){
     const before=e.hp,applied=this.defense.damageEnemy(e as typeof this.enemies[number],event,released),killed=applied&&e.hp===0;
     if(!applied)return {applied:false,killed:false,damage:0};
-    const member=unitState(this.state.encounters,e.id);if(member&&task==="follow"&&e.hp<before)member.participated=true;
+    const member=unitState(this.combatEncounters,e.id);if(member&&task==="follow"&&e.hp<before)member.participated=true;
     e.companionAggroUntil=at+2500;
     if(control>0)companionControl(e,at,control);
     if(knock>0&&!e.boss){const c=this.xiaobao!.controller,n=Math.max(.001,Math.hypot(e.x-c.x,e.y-c.y));sweepMove(e,(e.x-c.x)/n*knock,(e.y-c.y)/n*knock,motionBlocked,clearMotionLine);e.nav.path=[];}
@@ -899,11 +919,13 @@ export class World extends Phaser.Scene {
     }
     return {applied:true,killed,damage:before-e.hp};
   }
-  async configureXiaobao(change:Partial<Pick<State['xiaobao'],'task'|'gate'|'tactic'|'autoSupport'>>){
+  async configureXiaobao(change:Partial<Pick<State['xiaobao'],'task'|'gate'|'tactic'>>){
     const oldTask=this.state.xiaobao.task,oldGate=this.state.xiaobao.gate;
-    await this.economy.run(()=>this.state,s=>{const next=structuredClone(s);Object.assign(next.xiaobao,change,{known:true});
+    let response='小宝记下了你的安排。';
+    await this.economy.run(()=>this.state,s=>{const next=structuredClone(s);const {task,...settings}=change;Object.assign(next.xiaobao,settings,{known:true});if(task)response=requestXiaobaoTask(next,task);
       if(change.task&&change.task!==s.xiaobao.task||change.gate&&change.gate!==s.xiaobao.gate){if(next.xiaobao.cast&&!next.xiaobao.cast.released){next.xiaobao.cast=null;next.xiaobao.recovery=Math.max(300,next.xiaobao.recovery);}next.xiaobao.command=null;next.xiaobao.wait=null;}
       return next;},save,next=>{this.publishState(next);if(oldTask!==next.xiaobao.task||oldGate!==next.xiaobao.gate)this.xiaobao!.controller.taskChanged();});
+    return response;
   }
   showDemonKingIntroduction(){
     if(this.ui.paused||this.economy.busy||this.defenseSaving||this.defenseCheckpointPending||!demonMalice(this.state.encounters)||this.state.demonKing.introduced||this.state.defense.raid)return false;
@@ -988,7 +1010,13 @@ export class World extends Phaser.Scene {
   }
   makeTerrain = makeTerrain;
   blocked(x: number, y: number, ignore?: string) {
-    return this.state.life.playerSpace==="village"?motionBlocked(x,y,ignore):spaceBlocked(this.state.life.playerSpace,x,y);
+    return this.state.life.playerSpace==="village"?(motionBlocked(x,y,ignore)||this.enemies.some(e=>e.hp>0&&e.id!==ignore&&(e.boss?bossGroundContains(e,{x,y}):e.passiveRoot&&this.enemies.find(b=>b.id===e.passiveRoot!.owner)?.bossBattle?.roots?.[e.passiveRoot.index]?.kind==='rock'&&Math.hypot(e.x-x,e.y-y)<40))):spaceBlocked(this.state.life.playerSpace,x,y);
+  }
+
+  playerBlocked(x:number,y:number){
+    const p=this.state.player;
+    if(this.state.life.playerSpace!=="village")return spaceBlocked(this.state.life.playerSpace,x,y);
+    return motionBlocked(x,y)||this.enemies.some(e=>e.hp>0&&(e.boss?bossGroundBlocks(e,p,{x,y}):e.passiveRoot&&this.enemies.find(b=>b.id===e.passiveRoot!.owner)?.bossBattle?.roots?.[e.passiveRoot.index]?.kind==='rock'&&Math.hypot(e.x-x,e.y-y)<40));
   }
 
   // 身体通路：黑猫、交互和领取掉落沿用脚底扩张范围。
@@ -1015,7 +1043,7 @@ export class World extends Phaser.Scene {
     this.propImages.get('legacy-wind-seal')?.setVisible(this.state.windLegacy.wind<4&&this.state.life.playerSpace==='village');this.propImages.get('legacy-blade-seal')?.setVisible(this.state.windLegacy.blade<4&&this.state.life.playerSpace==='village');this.propImages.get('legacy-wind-bell')?.setTint(this.state.windLegacy.device?0xbfffff:0xffffff);this.propImages.get('legacy-windDevice')?.setTint(this.state.windLegacy.device?0xbfffff:0xffffff);
     for(const s of SHORTCUTS)this.propImages.get(`barrier-${s.id}`)?.setVisible(!this.state.mapProgress.shortcuts.includes(s.id)&&this.state.life.playerSpace==="village");
     this.propImages.get("west-gate-barrier")?.setVisible(this.state.mapProgress.westRoad !== "open" && this.state.life.playerSpace === "village");
-    this.xiaobao?.render(this.active && this.state.life.playerSpace === "village",xiaobaoAllies(this));
+    this.xiaobao?.render(this.active && this.state.life.playerSpace === this.state.xiaobao.space,xiaobaoAllies(this));
     for (const p of props) {
       const im = this.propImages.get(p.id)!;
       if (p.kind === "chest")
@@ -1035,6 +1063,14 @@ export class World extends Phaser.Scene {
         im.setTint(this.state.shortcut ? 0xbfffff : 0xffffff);
     }
   }
+  async changeWindMemory(direction?:WildernessDirection){
+    if(this.wilderness?.saving||this.wilderness?.checkpointFailed)throw Error('先保存当前战斗记录。');
+    if(direction){const safety=this.runes?.safety();if(this.state.life.playerSpace!=='village'||safety&&(safety.combat||safety.boss||safety.defense||safety.trial||safety.action))throw Error('请先离开交战并收招，再开启风忆远征。');}
+    this.syncFungalRoots();this.wilderness?.capture(this.sim);
+    await this.economy.run(()=>this.state,s=>direction?startWindMemory(s,direction):endWindMemory(s),save,next=>this.publishState(next));
+    this.clearSwordWind();this.bossHazards.clear();this.enemyProjectiles.reset();this.spawnEnemies();this.wilderness?.restore(this.state.player);this.enemyView.reset();this.refresh();this.ui.message(direction?'风忆已开启，沿原路线完成新的波次。':'已结束本次风忆，回到真实清剿进度。');
+  }
+  get combatEncounters(){return this.state.windMemory.active?.encounters??this.state.encounters;}
   makeEnemy(d:{id:string;type:string;elite?:EliteKind;boss?:CampBossKind;x:number;y:number}):Enemy {
     return {
         kind: "enemy" as const,
@@ -1054,10 +1090,10 @@ export class World extends Phaser.Scene {
         disabled: false,
         recovered: false,
         sprite: this.add
-          .sprite(d.x, d.y, `enemy-${d.type}`, 0)
+          .sprite(d.x, d.y, ['archer','bell','shade','geomancer'].includes(d.type)?`enemy-hd-${d.type}`:`enemy-${d.type}`, ['archer','bell','shade','geomancer'].includes(d.type)?'down/idle':0)
           .setOrigin(0.5, 1)
           .setDisplaySize(75, 75),
-        shadow: this.add.ellipse(d.x, d.y, 45, 15, 0x18392d, 0.2),
+        shadow: this.add.ellipse(d.x, d.y, d.boss?CAMP_BOSSES[d.boss].height*.56:45, d.boss?CAMP_BOSSES[d.boss].height*.18:15, 0x18392d, 0.2),
     };
   }
   spawnEnemies() {
@@ -1082,54 +1118,68 @@ export class World extends Phaser.Scene {
       }
   }
   clearBossEffects(id:string){
-    for(const root of this.enemies.filter(e=>e.passiveRoot?.owner===id)){root.sprite.destroy();root.shadow.destroy();this.enemies=this.enemies.filter(e=>e!==root);}
+    const owned=(value:string|null|undefined)=>!!value&&(value===id||value.startsWith(id+":"));
+    for(const root of this.enemies.filter(e=>e.passiveRoot?.owner===id||e.bossSummon?.owner===id)){root.sprite.destroy();root.shadow.destroy();this.enemies=this.enemies.filter(e=>e!==root);}
 
     this.bossHazards.clear(id);this.enemyProjectiles.shots=this.enemyProjectiles.shots.filter(s=>s.attack.attackerId!==id);
-    this.state.xiaobao.affected=this.state.xiaobao.affected.filter(e=>e.id!==id);
+    this.state.xiaobao.affected=this.state.xiaobao.affected.filter(e=>!owned(e.id));
     // 撤战只清理涉及该首领的本轮效果，村庄与其他遭遇继续推进。
-    if(this.state.xiaobao.cast?.target===id)this.state.xiaobao.cast=null;
-    this.state.xiaobao.effects=this.state.xiaobao.effects.filter(effect=>effect.target!==id&&!effect.hit.some(key=>key===id||key.endsWith(':'+id)));
-    if(this.state.xiaobao.command?.target===id)this.state.xiaobao.command=null;
+    if(owned(this.state.xiaobao.cast?.target))this.state.xiaobao.cast=null;
+    this.state.xiaobao.effects=this.state.xiaobao.effects.filter(effect=>!owned(effect.target)&&!effect.hit.some(key=>owned(key)||key.endsWith(':'+id)));
+    if(owned(this.state.xiaobao.command?.target??undefined))this.state.xiaobao.command=null;
   }
   encounterBusy(id:string){
     const e=this.enemies.find(e=>e.id===id),x=this.state.xiaobao;
     return !!(e&&e.hp>0&&this.defense.manages(e))||x.affected.some(v=>v.id===id)||x.cast?.target===id||x.effects.some(v=>v.target===id||this.enemies.some(e=>e.id===id&&Math.hypot(e.x-v.center.x,e.y-v.center.y)<800))||this.enemyProjectiles.shots.some(s=>s.state==="flying"&&s.attack.attackerId===id);
   }
   worldDrops(){
-    return [...this.state.pendingDrops,...ENCOUNTERS.flatMap(d=>d.members.flatMap(m=>{const u=unitState(this.state.encounters,m.id)!;return u.drop?[{enemyId:m.id,item:enemyProfile(m.type).drop,x:u.x,y:u.y}]:[];}))];
+    if(this.state.windMemory.active)return [];
+    return [...this.state.pendingDrops,...ENCOUNTERS.flatMap(d=>encounterDefinitions(this.combatEncounters,d).flatMap(m=>{const u=unitState(this.combatEncounters,m.id)!;return u.drop?[{enemyId:m.id,item:enemyProfile(m.type).drop,x:u.x,y:u.y}]:[];}))];
   }
   recordEnemyDefeat(e:Enemy,source:"player"|"companion"|"guard"){
+    this.state.xiaobao.affected=this.state.xiaobao.affected.filter(t=>t.id!==e.id);
     e.sprite.setVisible(false);e.shadow.setVisible(false);if(e.attack)e.attack.cancelled=true;
     if(e.passiveRoot?.owner.startsWith('event:')){const id=e.passiveRoot.owner.slice(6) as SouthEventId;this.state.southEvents[id]=0;this.ui.message(`${SOUTH_EVENTS[id].name}已完成，采集恢复；回村委托簿领取谢礼。`);this.defense.critical=true;return;}
+    if(e.bossSummon){const owner=this.enemies.find(b=>b.id===e.bossSummon!.owner&&b.bossAttempt===e.bossSummon!.attempt);if(defeatBossSummon(owner,e.id,this.sim))this.ui.message('护猎已破，猎王失衡！');this.defense.critical=true;return;}
     if(e.passiveRoot){
       const tag=e.passiveRoot,boss=this.enemies.find(b=>b.id===tag.owner&&b.hp>0&&b.bossAttempt===tag.attempt),root=boss?.bossBattle?.roots?.[tag.index];
-      if(root){root.hp=0;if(boss!.bossBattle!.roots!.every(r=>r.hp<=0)){const b=boss!.bossBattle!;b.exposedUntil=this.sim+2500;b.nextAt=Math.max(b.nextAt,b.exposedUntil);if(boss!.attack)boss!.attack.cancelled=true;this.ui.message('祭根已断，巢母核心暴露！');}else this.ui.message('一处祭根已断，护心力量减弱。');}
+      if(root){root.hp=0;if(root.kind==='sac')this.bossHazards.hazards=this.bossHazards.hazards.filter(h=>!h.independent||h.owner!==boss!.id||!h.id.includes(`:孢囊:${boss!.bossAttempt??0}:${tag.index}:`));if(root.kind!=='sac'&&root.kind!=='rock'&&boss!.bossBattle!.roots!.filter(r=>(r.kind??'root')===(root.kind??'root')).every(r=>r.hp<=0)){const b=boss!.bossBattle!;b.exposedUntil=this.sim+2000;b.nextAt=Math.max(b.nextAt,b.exposedUntil);if(boss!.attack)boss!.attack.cancelled=true;this.bossHazards.hazards=this.bossHazards.hazards.filter(h=>h.owner!==boss!.id);this.ui.message(boss!.boss==='spore-heart'?'祭根已断，巢母核心暴露！':'祭印已破，仪式中止，风核暴露！');}else this.ui.message(root.kind==='rock'?'岩柱已破。':root.kind==='sac'?'孢囊提前击破。':'一处护心机关已断。');}
       this.defense.critical=true;return;
     }
+    if(e.id.includes(':唤巢:')){const u=unitState(this.combatEncounters,e.id);if(u){u.hp=0;u.defeated=true;}this.defense.critical=true;return;}
     if(e.boss)this.clearBossEffects(e.id);
     const definition=encounterUnit(e.id),direct=source!=="guard",item=enemyProfile(e.type).drop;
     if(direct&&Math.hypot(e.x-this.state.player.x,e.y-this.state.player.y)<400)this.catRemember(`battle:${e.id}`,e);
-    const legacy=enemyDefs.some(d=>d.id===e.id);
+    const legacy=enemyDefs.some(d=>d.id===e.id),resourceDrop=combatResourceDrop(e.id,this.combatEncounters.seed??0,legacy&&item==='crystal');
     if(definition){
-      const group=this.state.encounters.groups[definition.group],wasCleared=group.cleared;
-      const earned=settleEncounterCoins(this.state,e.id,direct,direct&&!legacy);if(earned===null)return;
+      const group=this.combatEncounters.groups[definition.group],wasCleared=group.cleared,wasRewarded=group.rewarded;
+      const earned=settleEncounterCoins(this.state,e.id,direct,direct&&!legacy&&resourceDrop);if(earned===null)return;
       if(earned)this.float(e.x,e.y-25,`金币 +${earned}`);
-      const u=unitState(this.state.encounters,e.id)!;u.x=e.x;u.y=e.y;
-      if(!legacy&&direct&&add(this.state,item,1)){u.drop=false;u.dropRemaining=0;this.soundFx.play("pick");}
-      if(!wasCleared&&group.cleared&&ENCOUNTERS.find(d=>d.id===definition.group)!.kind==="camp"){
+      const u=unitState(this.combatEncounters,e.id)!;u.x=e.x;u.y=e.y;
+      if(!legacy&&direct&&u.drop&&add(this.state,item,1)){u.drop=false;u.dropRemaining=0;this.soundFx.play("pick");}
+      if(!wasRewarded&&group.rewarded){for(const u of group.summons??[]){u.hp=0;u.defeated=true;const body=this.enemies.find(e=>e.id===u.id);if(body){body.hp=0;body.sprite.setVisible(false);body.shadow.setVisible(false);if(body.attack)body.attack.cancelled=true;}}}
+      if(!wasRewarded&&group.rewarded&&this.state.windMemory.active)memoryGold(this.state,definition.group,adventureIndex(definition.group)===3?8:4);
+      if(!wasRewarded&&group.rewarded&&offerWindGift(this.state.windGifts,`${this.combatEncounters.instance??'首次'}:${definition.group}`,this.combatEncounters.seed??0,this.state.skills.swordWindStage>0)){
+        this.state.player.hp=Math.min(playerVitals(this.state).maxHp,this.state.player.hp+giftValue(this.state.windGifts,'spring'));
+        this.ui.mode='reward-saving';this.ui.shell('整场胜利','<p>正在保存波次与三选一候选……</p>');
+        void this.persist(true).then(()=>this.ui.open('wind-gifts')).catch(()=>{this.ui.mode='';this.ui.open('pause');this.ui.message('奖励尚未保存，请点击保存后从手记继续领取；候选保持不变。');});
+      }
+      if(!this.state.windMemory.active&&!wasCleared&&group.cleared&&ENCOUNTERS.find(d=>d.id===definition.group)!.kind==="camp"){
         const d=ENCOUNTERS.find(d=>d.id===definition.group)!;this.nextNightAttempt=0;if(!this.state.defense.raid)this.state.defense.retryMs=0;this.ui.message(`${d.name}已陷落，当地巡游停止。魔王恶意 +1，当前 ${demonMalice(this.state.encounters)}；10只精英镰灵将从地图边缘向村庄总攻，报复每波升一阶。`);this.refresh();
       }
     }
     if(legacy||!definition){
       if(this.state.killed.includes(e.id))return;this.state.killed.push(e.id);
       if(!definition&&!e.id.startsWith("practice-")&&!e.id.includes("dummy")){const earned=creditCombatCoins(this.state,e,direct);if(earned)this.float(e.x,e.y-25,`金币 +${earned}`);}
-      if(direct&&add(this.state,item,1)){if(item==="crystal"&&this.state.quest===3)this.state.quest=4;this.soundFx.play("pick");}
-      else if(direct||item==="crystal")this.state.pendingDrops.push({enemyId:e.id,item,x:e.homeX,y:e.homeY});
+      if(resourceDrop){
+        if(direct&&add(this.state,item,1)){if(item==="crystal"&&this.state.quest===3)this.state.quest=4;this.soundFx.play("pick");}
+        else if(direct||item==="crystal")this.state.pendingDrops.push({enemyId:e.id,item,x:e.homeX,y:e.homeY});
+      }
     }
     this.soundFx.creature(e.type,"death",Math.hypot(e.x-this.state.player.x,e.y-this.state.player.y),this.sim);
     this.state.xiaobao.affected=this.state.xiaobao.affected.filter(t=>t.id!==e.id);
     this.syncDrops();this.defense.critical=true;
-    if(e.boss){const rewards=this.runes?.milestone()??[];this.ui.bossVictory(e.boss,rewards);void this.persist().catch(()=>{});}
+    if(e.boss){if(this.state.windMemory.active){memoryGold(this.state,`${definition!.group}:boss`,16);this.state.windMemory.active.finished=true;this.ui.update(this.state,'');this.ui.mode='memory-victory';this.ui.shell('风忆远征完成','<p>记忆中的首领已击败，金币 +16。风赐继续留在旅人身上。</p><p>正在保存远征结果……</p>');void this.persist(true).then(()=>this.ui.open('wind-memory')).catch(()=>{this.ui.mode='';this.ui.open('pause');});}else{const rewards=this.runes?.milestone()??[];this.ui.mode='boss-saving';this.ui.shell('据点胜利','<p>正在保存首次清剿、符文与魔王恶意……</p>');void this.persist(true).then(()=>{this.ui.bossVictory(e.boss!,rewards);if(this.loaded)this.ui.saved(this.loaded);}).catch(()=>{if(this.wilderness)this.wilderness.checkpointFailed=true;this.ui.mode='';this.ui.open('pause');this.ui.message('首次胜利尚未保存，请先保存旅途；清剿结果保持待提交。');});}}
   }
   syncDrops() {
     for (const [id, image] of this.dropImages)
@@ -1174,7 +1224,7 @@ export class World extends Phaser.Scene {
       this.ui.message("行囊已满，请整理后再领取。");
       return true;
     }
-    const member=unitState(this.state.encounters,d.enemyId);if(member){member.drop=false;member.dropRemaining=0;}
+    const member=unitState(this.combatEncounters,d.enemyId);if(member){member.drop=false;member.dropRemaining=0;}
     this.state.pendingDrops = this.state.pendingDrops.filter(
       (v) => v.enemyId !== d.enemyId,
     );
@@ -1278,6 +1328,7 @@ export class World extends Phaser.Scene {
       }
     }
     if(feedback?.runeEvent)this.runes?.engine.nativeLanded(target,feedback.runeEvent,result.damage);
+    if(feedback?.runeEvent&&result.damage>0)this.runes?.giftLanded(target,feedback.runeEvent,isMeleeFinisher(attack,this.combat.maxStage));
     const at=feedback?.at??this.sim,direction=attack.windDirection??unit({x:target.x-this.state.player.x,y:target.y-this.state.player.y}),point=feedback?.point??{x:target.x-direction.x*12,y:target.y-28-direction.y*6};
     this.hitFeedback(attack.stage,target.kind==='trainingDummy'?'straw':'enemy',feedback?.stop,!!attack.counter,attack.id);
     if(attack.counter&&!result.killed&&!result.guardBroken){this.counterHit(target,attack,result,target.kind==='trainingDummy'?'straw':'hit',feedback);return;}
@@ -1337,7 +1388,7 @@ export class World extends Phaser.Scene {
       amount:damage,sourceType:isWindAttack(attack)?"player-wind":"player-melee",eventId:null},
       {id:"player",faction:"village",hp:this.state.player.hp,armor:0},{id:e.id,faction:"hostile",hp:e.hp,armor:0,...protection});
     if(!hit.applied)return;
-    const member=unitState(this.state.encounters,e.id);if(member&&hit.damage>0)member.participated=true;
+    const member=unitState(this.combatEncounters,e.id);if(member&&hit.damage>0)member.participated=true;
     e.hp = hit.hp; e.playerAggroUntil=this.sim+2500;
     if(e.hp>0)this.soundFx.creature(e.type,"hurt",Math.hypot(e.x-this.state.player.x,e.y-this.state.player.y),this.sim);
     const direction=attack.windDirection??unit({x:e.x-this.state.player.x,y:e.y-this.state.player.y});
@@ -1389,7 +1440,7 @@ export class World extends Phaser.Scene {
   tickAttack(prev:number,now:number) {
     this.syncSwordWindAbility();
     this.combat.update(prev,now,this.battleFacing(),this.state.player,this.combatTargets(),
-      (x,y)=>this.blocked(x,y),(x,y,tx,ty,id)=>this.meleeLine(x,y,tx,ty,id),
+      (x,y)=>this.playerBlocked(x,y),(x,y,tx,ty,id)=>this.meleeLine(x,y,tx,ty,id),
       (target,stage,attack)=>this.strikeTarget(target,stage,attack),
       (stage,attack)=>{this.runes?.capture(attack);this.training.sync(this.combat.epoch);this.training.begin(attack);if(attack.counter){const m=attackConfig(attack);this.emitFeedback('counter-start',`counter-start:${attack.id}`,attack.start,undefined,attack,{until:attack.start+m.windup+m.active+m.recovery});}if(attack.kind==='swordWind'){attack.returnMode=returnMode(this.state);this.soundFx.play('wind-charge');}},
       stage=>{const a=this.combat.attack!;if(a.counter){if(!feedbackAudio(this.feedback.mode))this.soundFx.play('counter');}else this.soundFx.play(a.kind==='swordWind'?'wind-release':a.isFinisher?'attack-heavy':'attack');},clearMotionLine,
@@ -1427,13 +1478,13 @@ export class World extends Phaser.Scene {
     const dash=prev<this.combat.dashUntil;
     const hurt=this.combat.hurting(prev);
     const busy=!!this.combat.attack||guard||dash||this.combat.pending||hurt;
-    const movement=this.sprint.update(p.stamina,this.runIntent&&length>0&&!busy,dash?0:dt,prev>=this.combat.regenUntil,playerVitals(this.state).maxStamina,this.catCompanion.aura?catBenefits(this.state.catBond.score).recovery:0);
+    const movement=this.sprint.update(p.stamina,this.runIntent&&length>0&&!busy,dash?0:dt,prev>=this.combat.regenUntil,playerVitals(this.state).maxStamina,(this.catCompanion.aura?catBenefits(this.state.catBond.score).recovery:0)+giftValue(this.state.windGifts,'breath'));
     p.stamina=movement.stamina;
-    const speed=(hurt?0:guard?PARRY.speed:busy?this.combat.attack?55:0:movementSpeed(this.state,movement.speed))*(1+(this.runes?.engine.speedBonus()??0));
+    const speed=(hurt?0:guard?PARRY.speed:busy?this.combat.attack?55:0:movementSpeed(this.state,movement.speed))*(1+(this.runes?.engine.speedBonus()??0)+giftValue(this.state.windGifts,'stride'));
     if(length&&speed){
       const origin={x:p.x,y:p.y};
       const bodies=this.combatTargets();
-      sweepMove(p,a.x/length*speed*dt,a.y/length*speed*dt,(x,y)=>this.blocked(x,y),
+      sweepMove(p,a.x/length*speed*dt,a.y/length*speed*dt,(x,y)=>this.playerBlocked(x,y),
         (from,to)=>this.clearLine(from.x,from.y,to.x,to.y),bodies);
       // 紧贴自主奔跑采集，后续攻击、击退和传送绝不能混入里程。
       const gain=recordRunDistance(this.state,origin,p,movement.running&&!busy&&p.hp>0&&!document.hidden&&document.hasFocus());
@@ -1444,9 +1495,13 @@ export class World extends Phaser.Scene {
       }
     }
     this.catCompanion.travel(this.state,previousPlayer,now-prev,!busy&&this.practice.mode==='off'&&!this.lessons?.trial);
+    const artCamp=ENCOUNTERS.filter(d=>d.kind==='camp').sort((a,b)=>{const active=(d:typeof a)=>this.combatEncounters.groups[d.id].boss?.stage==='battle'?-100000:0;return active(a)+Math.hypot(a.x-p.x,a.y-p.y)-active(b)-Math.hypot(b.x-p.x,b.y-p.y);})[0];
+    if(artCamp&&Math.hypot(artCamp.x-p.x,artCamp.y-p.y)<1500&&!this.enemyView.boss.assets.loading&&!this.enemyView.boss.assets.failure)void this.enemyView.boss.assets.ensure(artCamp.members.find(m=>m.boss)!.boss!).catch(e=>this.ui.message((e as Error).message));
+    const camera=this.cameras.main,boss=outside?this.enemies.find(e=>e.boss&&e.hp>0&&Math.hypot(e.x-p.x,e.y-p.y)<650):undefined,baseZoom=this.scale.width/1280;
+    camera.setZoom(camera.zoom+(baseZoom*(boss?.82:1)-camera.zoom)*.06);camera.setFollowOffset(boss?(p.x-boss.x)*.45:0,boss?(p.y-boss.y)*.35+220:150);
     const encounterView=this.cameras.main.worldView;
     this.wilderness?.update(now-prev,now,outside?p:this.state.life.outside,{left:encounterView.x,right:encounterView.right,top:encounterView.y,bottom:encounterView.bottom});
-    for(const e of this.enemies){if(e.boss)continue;const unit=encounterUnit(e.id);if(!unit)continue;const d=ENCOUNTERS.find(g=>g.id===unit.group)!,way=d.patrol[Math.floor(this.state.encounters.elapsed/6000)%d.patrol.length];e.patrolTarget={x:unit.x+way.x-d.patrol[0].x,y:unit.y+way.y-d.patrol[0].y};}
+    for(const e of this.enemies){if(e.boss)continue;const unit=encounterUnit(e.id);if(!unit)continue;const d=ENCOUNTERS.find(g=>g.id===unit.group)!,way=d.patrol[Math.floor(this.combatEncounters.elapsed/6000)%d.patrol.length];e.patrolTarget={x:unit.x+way.x-d.patrol[0].x,y:unit.y+way.y-d.patrol[0].y};}
     refreshFungalShields([...this.enemies,...this.defense.enemies],now);
     this.syncFungalRoots();
     this.tickAttack(prev,now);
@@ -1502,10 +1557,11 @@ export class World extends Phaser.Scene {
     this.resolveContacts(now,contacts);
   }
   syncFungalRoots(){
+    updateBossEnvironment(this);updateSummonSupport(this);
     for(const [id,d] of Object.entries(SOUTH_EVENTS) as [SouthEventId,typeof SOUTH_EVENTS[SouthEventId]][]){
       const key='south-event-'+id,existing=this.enemies.find(e=>e.id===key);
       if(existing){this.state.southEvents[id]=existing.hp;continue;}
-      if(this.state.southEvents[id]<=0||Math.hypot(d.x-this.state.player.x,d.y-this.state.player.y)>ENCOUNTER_LIMITS.activateDistance||this.enemies.filter(e=>e.hp>0).length>=ENCOUNTER_LIMITS.active)continue;
+      if(this.state.southEvents[id]<=0||Math.hypot(d.x-this.state.player.x,d.y-this.state.player.y)>ENCOUNTER_LIMITS.activateDistance||activeHostileCount(this)>=ENCOUNTER_LIMITS.active)continue;
       const root=this.makeEnemy({id:key,type:'priest',x:d.x,y:d.y});root.hp=this.state.southEvents[id];root.maxHP=d.hp;root.passiveRoot={owner:'event:'+id,index:0,attempt:0};this.enemies.push(root);
     }
     for(const root of this.enemies.filter(e=>e.passiveRoot)){
@@ -1513,19 +1569,10 @@ export class World extends Phaser.Scene {
       if(!owner?.bossBattle?.roots){root.hp=0;root.sprite.destroy();root.shadow.destroy();this.enemies=this.enemies.filter(e=>e!==root);continue;}
       const saved=owner.bossBattle.roots[tag.index];if(saved){saved.hp=root.hp;saved.x=root.x;saved.y=root.y;}
     }
-    for(const boss of [...this.enemies]){const b=boss.bossBattle;if(boss.boss!=='spore-heart'||boss.hp<=0||!b||b.phase!==2)continue;
-      if(b.roots===undefined){
-        const points=Array.from({length:16},(_,i)=>({x:boss.x+Math.cos(i*Math.PI/8)*FUNGAL.rootRadius,y:boss.y+Math.sin(i*Math.PI/8)*FUNGAL.rootRadius}));
-        b.roots=[];
-        for(const p of points){if(b.roots.length===2)break;
-          if(motionBlocked(p.x,p.y)||!clearMotionLine(boss,p)||Math.hypot(p.x-this.state.player.x,p.y-this.state.player.y)<60||this.enemies.some(e=>e.hp>0&&Math.hypot(e.x-p.x,e.y-p.y)<60)||b.roots.some(r=>Math.hypot(r.x-p.x,r.y-p.y)<FUNGAL.rootRadius))continue;
-          b.roots.push({...p,hp:96});
-        }
-        if(b.roots.length)this.ui.message('两侧祭根正护住巢母；普通攻击也能拆除，拆根后反击核心。');
-      }
-      b.roots.forEach((r,index)=>{const id=`${boss.id}:祭根:${boss.bossAttempt??0}:${index}`;
-        if(r.hp<=0||this.enemies.some(e=>e.id===id)||this.enemies.filter(e=>e.hp>0).length>=ENCOUNTER_LIMITS.active)return;
-        const root=this.makeEnemy({id,type:'priest',x:r.x,y:r.y});root.hp=r.hp;root.maxHP=96;root.passiveRoot={owner:boss.id,index,attempt:boss.bossAttempt??0};this.enemies.push(root);
+    for(const boss of [...this.enemies]){const b=boss.bossBattle;if(!boss.boss||boss.hp<=0||!b)continue;
+      b.roots?.forEach((r,index)=>{const id=`${boss.id}:祭根:${boss.bossAttempt??0}:${index}`;
+        if(r.hp<=0||this.enemies.some(e=>e.id===id)||activeHostileCount(this)>=ENCOUNTER_LIMITS.active)return;
+        const root=this.makeEnemy({id,type:'priest',x:r.x,y:r.y});root.hp=r.hp;root.maxHP=96;root.passiveRoot={owner:boss.id,index,attempt:boss.bossAttempt??0,kind:r.kind??'root'};this.enemies.push(root);
       });
     }
   }
@@ -1547,7 +1594,7 @@ export class World extends Phaser.Scene {
     }
   }
   advanceBossHazards(prev:number,now:number,p:{x:number;y:number},previous:{x:number;y:number},companionPrevious:{x:number;y:number}|null,contacts:EnemyContact[],outside:boolean){
-    for(const e of this.enemies)if(e.hp>0&&!e.disabled)this.bossHazards.launch(e,now);
+    for(const e of this.enemies)if(e.hp>0&&!e.disabled){if(e.bossBattle&&now<e.bossBattle.transformUntil)clearBossPendingAttacks(e,prev,this.bossHazards,this.enemyProjectiles);else this.bossHazards.launch(e,now);}
     const c=this.xiaobao?.controller,targets=[...(outside?[{id:'player',...p,previous}]:[]),...(c?.available?[{id:'xiaobao',x:c.x,y:c.y,previous:companionPrevious??c}]:[])];
     for(const event of this.bossHazards.update(prev,now,this.enemies,targets)){
       const source=this.enemies.find(e=>e.id===event.attack.attackerId);
@@ -1572,7 +1619,7 @@ export class World extends Phaser.Scene {
       const owner=e??(contact.training?this.practice.projection:null);
       const projectile=contact.projectileId?this.enemyProjectiles.shots.find(s=>s.id===contact.projectileId):null;
       const body=contact.projectileId&&(!owner||owner.hp<=0||Math.hypot(owner.x-p.x,owner.y-p.y)>100||!clearMeleeLine(owner,p))?null:owner;
-      const valid=contact.blastId?!!e&&validFungalBlastContact(contact,e,'player'):contact.bossHazardId?!!e&&e.hp>0&&e.bossAttempt===contact.attack.bossAttempt&&this.state.encounters.groups[encounterUnit(e.id)!.group].boss?.stage==='battle':contact.projectileId?!!projectile&&projectile.state==='contact'&&projectile.attack===contact.attack&&(!contact.training||this.practice.mode!=="off"):
+      const valid=contact.blastId?!!e&&validFungalBlastContact(contact,e,'player'):contact.bossHazardId?!!e&&e.hp>0&&e.bossAttempt===contact.attack.bossAttempt&&(e.type==='geomancer'&&!!e.attack&&!e.attack.cancelled&&contact.bossHazardId.startsWith(e.attack.attackId+':')||!!e.boss&&this.combatEncounters.groups[encounterUnit(e.id)!.group].boss?.stage==='battle'):contact.projectileId?!!projectile&&projectile.state==='contact'&&projectile.attack===contact.attack&&(!contact.training||this.practice.mode!=="off"):
         contact.training?this.practice.mode!=="off":!!e&&e.hp>0&&!e.disabled&&e.attack?.attackId===contact.attack.attackId&&
         (e.kind==="defense-enemy" || enemyAttackPermitted(e,p));
       let result=adjudicateContact(contact,this.combat,p,{valid,maxStamina:playerVitals(this.state).maxStamina,immune:now<this.invulnerable||now<this.respawnInvulnerable||!!this.runes?.engine.immune(),clear:(a,b,id)=>clearMeleeLine(a,b,id),attacker:owner&&owner.hp>0?owner:undefined});
@@ -1580,6 +1627,7 @@ export class World extends Phaser.Scene {
       if(contact.projectileId&&contact.attack.parryable&&e&&this.runes?.engine.dash&&valid&&this.runes.engine.reflect(e,contact.attack.attackId)){result='immune';this.runes.engine.fx('mirror-step',contact.origin,42,'r08',350,{end:e});}
       if(result==='hurt'&&!contact.training&&this.runes?.engine.protectHit(e,contact.attack.attackId))result='immune';
       if(result==="normal"||result==="perfect") {
+        p.stamina=Math.min(playerVitals(this.state).maxStamina,p.stamina+giftValue(this.state.windGifts,'poise'));
         if(body) {
           if(contact.projectileId&&contact.training&&this.practice.attack)this.practice.attack.cancelled=true;
           body.parried={at:contact.at,until:contact.at+PARRY[result].stagger,direction:{...contact.attack.direction},perfect:result==="perfect"};
@@ -1611,7 +1659,7 @@ export class World extends Phaser.Scene {
         const damage=incomingDamage(this.state,contact.attack.damage)*(this.runes?.engine.incomingScale(contact.attack.attackerId,!!e?.boss)??1);
         const hit=resolveDamage({sourceId:contact.attack.attackerId,targetId:"player",attackId:contact.attack.attackId,
           amount:damage,sourceType:contact.blastId?"enemy-blast":"enemy-melee",eventId:e?.kind==="defense-enemy"?e.eventId:null},
-          {id:contact.attack.attackerId,hp:contact.projectileId?1:e?.hp??1,faction:"hostile",armor:0},{id:"player",hp:p.hp,faction:"village",armor:0,...this.xiaobao?.controller.protection('player')});
+          {id:contact.attack.attackerId,hp:contact.projectileId?1:e?.hp??1,faction:"hostile",armor:0},{id:"player",hp:p.hp,faction:"village",armor:0,flatReduction:giftValue(this.state.windGifts,'armor'),...this.xiaobao?.controller.protection('player')});
         if(hit.applied) {
           const {damage:remaining,hp}=this.catCompanion.protect(this.state,hit);
           p.hp=this.runes?.engine.damaged(e,hp,remaining)??hp;
@@ -1748,6 +1796,13 @@ export class World extends Phaser.Scene {
     );
   }
   update(_time: number, delta: number) {
+    observeCombat(this,delta);
+    if(xiaobaoLifeCheck&&this.life){
+      let probe=document.getElementById('xiaobao-life-check');
+      if(!probe){probe=document.createElement('script');probe.id='xiaobao-life-check';probe.setAttribute('type','application/json');document.body.append(probe);}
+      const last=Number(probe.getAttribute('data-at')??-30000);
+      if(performance.now()-last>=30000){probe.setAttribute('data-at',String(performance.now()));const nav=this.life.nav('xiaobao');probe.textContent=JSON.stringify({记录时间:new Date().toISOString(),模拟毫秒:this.sim,游戏时间:this.state.time,暂停:this.ui.paused,后台:document.hidden,存档结构:this.state.schema_version,小宝:this.state.xiaobao,居民:this.state.life.people.find(n=>n.id==='xiaobao'),库存:this.state.life.stores,生活耗时:this.life.metrics,寻路:{批次:nav.batches,单批展开:nav.maxExpanded,受阻毫秒:nav.stuck,失败原因:nav.failure,规划中:!!nav.search},对象数:this.children.length,纹理数:this.textures.getTextureKeys().length,来袭:this.state.defense.raid,主线:this.state.quest});}
+    }
     this.renderCampRoots();
     const residentTools=document.querySelector<HTMLElement>(".resident-tools");if(residentTools)residentTools.hidden=!this.active||this.ui.paused;
     if (!this.hero) return;
@@ -1759,7 +1814,7 @@ export class World extends Phaser.Scene {
       this.tweens.pauseAll();
       return;
     }
-    if (!this.active || this.ui.paused || this.defenseSaving || this.economy.busy || this.sessionStarting) {
+    if (!this.active || this.ui.paused || this.defenseSaving || this.economy.busy || this.sessionStarting || this.wilderness?.saving || this.wilderness?.checkpointFailed) {
       if(this.active&&!this.ui.paused&&(this.economy.busy||this.defenseSaving))this.commitInputSuspended=true;
       this.pointerAttack = false;
       this.combat.clearInputs(this.sessionStarting?'会话重建':this.economy.busy||this.defenseSaving?'原子事务':'暂停',this.sim);
@@ -1791,7 +1846,7 @@ export class World extends Phaser.Scene {
     if(!this.combat.windAuto&&!this.windAim.manual||this.state.life.playerSpace!=="village"||this.state.equipment.head!=="windScope"||!this.state.skills.swordWindStage)this.windAim.clear();
     this.combat.resolveWindAim=(point,config)=>this.state.equipment.head==='windScope'&&this.state.life.playerSpace==='village'?this.windAim.select(point,config,[...this.enemies,...this.defense.enemies].filter(e=>!('passiveRoot' in e&&e.passiveRoot))):null;
     if(this.keys.take(this.ui.hudPreferences.cycleTarget)&&this.keys.held.has('i')&&this.state.equipment.head==='windScope'&&this.state.life.playerSpace==='village'&&this.state.skills.swordWindStage>0&&this.combat.swordWindConfig){this.windAim.cycle(p,this.combat.swordWindConfig,[...this.enemies,...this.defense.enemies].filter(e=>!('passiveRoot' in e&&e.passiveRoot)));}
-    this.combat.dashCostMultiplier=this.runes?.engine.dashCost()??1;
+    this.combat.dashCostMultiplier=(this.runes?.engine.dashCost()??1)*(1-giftValue(this.state.windGifts,'thrift'));
     this.combat.recoveryCancelEnabled=this.runes?.engine.has('r09')??false;
     this.sim=this.timeline.frame(this.sim,performance.now(),delta,this.keys.drain(),this.combat,{
       beforeInput:(now)=>this.resolveContacts(now,contacts,true),
@@ -1978,10 +2033,10 @@ export class World extends Phaser.Scene {
       if(['bond','unlock','guard','claw','absorb'].includes(event.kind))this.snapshotPending=true;
     }
     this.catView?.draw(this.state,this.catCompanion,this.cat,this.sim,catTargets);
-    this.xiaobao?.render(this.state.life.playerSpace==='village',xiaobaoAllies(this));
-    if(this.xiaobao){const c=this.xiaobao.controller;this.ui.xiaobaoStatus(`小宝 · ${c.data.task==='follow'?'随行':c.data.task==='guard'?'守村':'自由'} · ${Math.ceil(c.data.hp)}/640${c.data.rest?' · 调息':c.data.flight?` · 飞援${c.snapshot().eta.toFixed(1)}秒`:''}`);}
+    this.xiaobao?.render(this.state.life.playerSpace===this.state.xiaobao.space,xiaobaoAllies(this));
+    if(this.xiaobao){const c=this.xiaobao.controller;this.ui.xiaobaoStatus(`小宝 · ${c.data.task==='follow'?'随行':c.data.task==='guard'?'守村':'生活'} · ${Math.ceil(c.data.hp)}/640${c.data.life.emergency?' · 优先护村':''}${c.data.rest?' · 调息':c.data.flight?` · 飞援${c.snapshot().eta.toFixed(1)}秒`:''}`);}
     if(this.xiaobao)for(const event of this.xiaobao.controller.drain())this.soundFx.xiaobao(event,Math.hypot(event.point.x-p.x,event.point.y-p.y),this.state.life.playerSpace==='village');
-    this.target = [...lifeTargets(this),...(this.state.life.playerSpace==="village"&&this.xiaobao?[this.xiaobao.controller.target()]:[]),...(this.state.life.playerSpace==="village"?props.filter(p=>p.kind!=="npc"):[]),...(this.state.life.playerSpace==="village"&&canDiscover(this.state)?[{...NIGHT_DISCOVERY,art:"",w:0,h:0,kind:"sign" as const}]:[])]
+    this.target = [...lifeTargets(this),...(this.state.life.playerSpace===this.state.xiaobao.space&&this.xiaobao?[this.xiaobao.controller.target()]:[]),...(this.state.life.playerSpace==="village"?props.filter(p=>p.kind!=="npc"):[]),...(this.state.life.playerSpace==="village"&&canDiscover(this.state)?[{...NIGHT_DISCOVERY,art:"",w:0,h:0,kind:"sign" as const}]:[])]
       .filter(
         (o) =>
           o.kind &&
@@ -1995,6 +2050,8 @@ export class World extends Phaser.Scene {
           Number(b.id.startsWith("life-door:")) - Number(a.id.startsWith("life-door:")) ||
           a.id.localeCompare(b.id),
       )[0];
+    const memoryCamp=!this.target&&ENCOUNTERS.find(d=>d.kind==='camp'&&this.state.encounters.groups[d.id].cleared&&Math.hypot(d.x-this.state.player.x,d.y-this.state.player.y)<180);
+    if(memoryCamp&&this.keys.take('e'))this.ui.open('wind-memory');
     if (this.keys.take("e") && !(this.state.life.playerSpace==="village"&&this.claimDrop()) && this.target)
       this.interact(this.target);
     for (let i = 0; i < 8; i++)

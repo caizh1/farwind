@@ -1,4 +1,18 @@
 {
+  "content_version": 2,
+  "windGifts": {
+    "held": [],
+    "pending": [],
+    "receipts": [],
+    "cooldowns": {
+      "shock": 0,
+      "chain": 0
+    }
+  },
+  "windMemory": {
+    "serial": 0,
+    "active": null
+  },
   "runes": {
     "version": 3,
     "growth": {
@@ -91,7 +105,7 @@
     "ending": false,
     "track": null
   },
-  "schema_version": 20,
+  "schema_version": 21,
   "catBond": {
     "score": 0,
     "memories": [],
@@ -114,6 +128,7 @@
   },
   "encounters": {
     "elapsed": 0,
+    "seed": 1753869353,
     "broken": [],
     "groups": {
       "south-reed-patrol": {
@@ -1665,6 +1680,47 @@
     "shortcuts": []
   },
   "xiaobao": {
+    "space": "village",
+    "life": {
+      "version": 1,
+      "seed": 1875050081,
+      "day": 0,
+      "basket": 0,
+      "main": "wood",
+      "optional": "herb",
+      "done": [],
+      "projects": {
+        "wind": {
+          "stage": 0,
+          "lastDay": -1
+        },
+        "wood": {
+          "stage": 0,
+          "lastDay": -1
+        },
+        "herb": {
+          "stage": 0,
+          "lastDay": -1
+        }
+      },
+      "interests": {
+        "wind": 65,
+        "wood": 55,
+        "herb": 50
+      },
+      "journal": [],
+      "promise": null,
+      "emergency": false,
+      "clearSince": null,
+      "aftercareUntil": 0,
+      "resumeTask": null,
+      "metrics": {
+        "attempts": 1,
+        "completed": 0,
+        "failed": 0,
+        "interrupted": 0
+      }
+    },
     "known": false,
     "task": "free",
     "gate": "all",
@@ -1708,7 +1764,7 @@
     "reports": []
   },
   "life": {
-    "version": 4,
+    "version": 5,
     "speechAt": 0,
     "speechUrgentAt": 0,
     "speechEventFloor": 0,
@@ -1784,7 +1840,14 @@
         "receipt": 0,
         "receipts": [],
         "receiptFloor": 0,
-        "known": {},
+        "known": {
+          "xiaobao": {
+            "space": "village",
+            "x": 810,
+            "y": 725,
+            "time": 1141.500000000001
+          }
+        },
         "lastSupplyDay": 0,
         "lastMealDay": -1,
         "social": {
@@ -2299,6 +2362,12 @@
             "x": 860,
             "y": 537.2,
             "time": 1150.3500000000063
+          },
+          "xiaobao": {
+            "space": "village",
+            "x": 810,
+            "y": 725,
+            "time": 1234.050000000057
           }
         },
         "lastSupplyDay": 0,
@@ -2380,6 +2449,12 @@
             "x": 860.0073159743882,
             "y": 359.5136735670632,
             "time": 1150.3500000000063
+          },
+          "xiaobao": {
+            "space": "village",
+            "x": 810,
+            "y": 725,
+            "time": 1158.4500000000112
           },
           "east-watch": {
             "space": "village",
@@ -2872,6 +2947,109 @@
             "x": 432.7408621725099,
             "y": 721.9287548621365,
             "time": 1205.1000000000395
+          }
+        },
+        "lastSupplyDay": 0,
+        "lastMealDay": -1,
+        "social": {
+          "cooldownUntil": 0,
+          "occasionFloor": 0,
+          "visited": {}
+        },
+        "speech": {
+          "eventFloor": 0,
+          "nextAt": 0,
+          "day": 0,
+          "routines": []
+        }
+      },
+      {
+        "id": "xiaobao",
+        "body": null,
+        "action": {
+          "xiaobao": {
+            "wish": "wind",
+            "partner": "elder"
+          },
+          "id": 1,
+          "kind": "talk",
+          "target": {
+            "space": "village",
+            "x": 588.1948429825015,
+            "y": 649.2012892543746
+          },
+          "pickup": null,
+          "facility": null,
+          "task": null,
+          "phase": "travel",
+          "progress": 0,
+          "duration": 10000,
+          "started": 1200,
+          "failures": 0,
+          "label": "听岚爷爷讲风与村庄的故事",
+          "social": null
+        },
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "serial": 1,
+        "committed": 0,
+        "needs": {
+          "hunger": 16.333333333333186,
+          "fatigue": 10.66666666666606
+        },
+        "emotion": 0,
+        "gear": "locker",
+        "supplies": {
+          "medicine": 0,
+          "wood": 0
+        },
+        "project": 0,
+        "nextDecision": 2100,
+        "reason": "听岚爷爷讲风与村庄的故事",
+        "pathFailures": 0,
+        "alarm": 0,
+        "relations": {
+          "elder": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          },
+          "healer": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          },
+          "carpenter": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          }
+        },
+        "memories": [],
+        "receipt": 0,
+        "receipts": [],
+        "receiptFloor": 0,
+        "known": {
+          "elder": {
+            "space": "village",
+            "x": 569.8812939850013,
+            "y": 645.0296765037497,
+            "time": 1141.800000000001
+          },
+          "north-archer": {
+            "space": "village",
+            "x": 1160,
+            "y": 660,
+            "time": 1158.4500000000112
+          },
+          "north-patrol": {
+            "space": "village",
+            "x": 860,
+            "y": 370,
+            "time": 1248.750000000066
           }
         },
         "lastSupplyDay": 0,

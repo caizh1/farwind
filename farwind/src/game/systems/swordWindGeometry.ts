@@ -1,3 +1,4 @@
+import {meleeBody,MELEE_HEIGHT,type MeleeBodyTarget} from './meleeGeometry';
 import {WORLD_PLAYABLE as B} from "../../data/maps/windbell/bounds";
 import {
   props,
@@ -65,4 +66,22 @@ export function firstSwordWindBlocker(a:Point,b:Point,radius:number,objects:read
     const t=d>0?(max-s)/d:(min-s)/d;if(t>=0&&t<=1)candidates.push({id:'world-edge',t});
   }
   return candidates.sort((x,y)=>x.t-y.t||x.id.localeCompare(y.id))[0]??null;
+}
+
+// 剑风与首领腿部、躯干共用正式身体轮廓，扫掠圆盘只扩大风刃自身宽度。
+export function sweptBossBodyContact(a:Point,b:Point,old:Point,current:Point,target:MeleeBodyTarget,radius:number):number|null{
+ const body=meleeBody({...target,x:old.x,y:old.y})?.map(p=>({x:p.x,y:p.y+MELEE_HEIGHT}));if(!body)return null;
+ const end={x:b.x-current.x+old.x,y:b.y-current.y+old.y},dx=end.x-a.x,dy=end.y-a.y;
+ const xs=body.map(p=>p.x),ys=body.map(p=>p.y);
+ if(Math.max(a.x,end.x)<Math.min(...xs)-radius||Math.min(a.x,end.x)>Math.max(...xs)+radius||Math.max(a.y,end.y)<Math.min(...ys)-radius||Math.min(a.y,end.y)>Math.max(...ys)+radius)return null;
+ let positive=false,negative=false;const hits:number[]=[];
+ for(let i=0;i<body.length;i++){
+  const p=body[i],q=body[(i+1)%body.length],ex=q.x-p.x,ey=q.y-p.y,length=Math.hypot(ex,ey),cross=ex*(a.y-p.y)-ey*(a.x-p.x);positive ||=cross>EPS;negative ||=cross<-EPS;
+  const vertex=sweptTargetContact(a,end,p,p,radius);if(vertex!==null)hits.push(vertex);
+  if(length<EPS)continue;const nx=-ey/length,ny=ex/length,dist=(a.x-p.x)*nx+(a.y-p.y)*ny,speed=dx*nx+dy*ny,projection=(a.x-p.x)*ex/length+(a.y-p.y)*ey/length;
+  if(Math.abs(dist)<=radius&&projection>=0&&projection<=length)hits.push(0);
+  if(Math.abs(speed)>EPS)for(const side of [-radius,radius]){const t=(side-dist)/speed,u=projection+t*(dx*ex+dy*ey)/length;if(t>=-EPS&&t<=1+EPS&&u>=-EPS&&u<=length+EPS)hits.push(Math.max(0,Math.min(1,t)));}
+ }
+ if(!positive||!negative)return 0;
+ return hits.length?Math.min(...hits):null;
 }

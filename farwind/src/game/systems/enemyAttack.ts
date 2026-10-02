@@ -4,7 +4,7 @@ import {sweepMove,PARRY} from "./combat";
 import {enemyKind,type EnemyKind} from '../../data/enemies';
 import type {EliteKind} from '../../data/maps/windbell/elites';
 import type {CampBossKind} from '../../data/maps/windbell/campBosses';
-export const ENEMY_ATTACK={slime:{windup:450,lock:120,active:100,recovery:260,step:34,cooldown:1100,damage:10},leaf:{windup:650,lock:150,active:130,recovery:320,step:12,cooldown:1400,damage:18},spore:{windup:520,lock:120,active:140,recovery:360,step:0,cooldown:1800,damage:14},boar:{windup:560,lock:160,active:280,recovery:380,step:210,cooldown:1900,damage:20},raven:{windup:450,lock:120,active:170,recovery:380,step:95,cooldown:1600,damage:16},wolf:{windup:620,lock:230,active:180,recovery:460,step:105,cooldown:1700,damage:15},burrow:{windup:1050,lock:650,active:240,recovery:850,step:105,cooldown:2500,damage:18},guardian:{windup:850,lock:300,active:180,recovery:950,step:20,cooldown:2300,damage:22},priest:{windup:900,lock:200,active:2400,recovery:500,step:0,cooldown:4800,damage:0},bomber:{windup:650,lock:250,active:360,recovery:1450,step:180,cooldown:3600,damage:26},range:100,halfAngle:80*Math.PI/180} as const;
+export const ENEMY_ATTACK={slime:{windup:450,lock:120,active:100,recovery:260,step:34,cooldown:1100,damage:10},leaf:{windup:650,lock:150,active:130,recovery:320,step:12,cooldown:1400,damage:18},spore:{windup:520,lock:120,active:140,recovery:360,step:0,cooldown:1800,damage:14},boar:{windup:560,lock:160,active:280,recovery:380,step:210,cooldown:1900,damage:20},raven:{windup:450,lock:120,active:170,recovery:380,step:95,cooldown:1600,damage:16},wolf:{windup:620,lock:230,active:180,recovery:460,step:105,cooldown:1700,damage:15},burrow:{windup:1050,lock:650,active:240,recovery:850,step:105,cooldown:2500,damage:18},guardian:{windup:850,lock:300,active:180,recovery:950,step:20,cooldown:2300,damage:22},priest:{windup:900,lock:200,active:2400,recovery:500,step:0,cooldown:4800,damage:0},bomber:{windup:650,lock:250,active:360,recovery:1450,step:180,cooldown:3600,damage:26},archer:{windup:800,lock:350,active:180,recovery:650,step:0,cooldown:2300,damage:16},bell:{windup:1100,lock:350,active:350,recovery:900,step:0,cooldown:7000,damage:0},shade:{windup:850,lock:350,active:240,recovery:850,step:130,cooldown:2100,damage:18},geomancer:{windup:1000,lock:350,active:1800,recovery:1000,step:0,cooldown:4500,damage:20},range:100,halfAngle:80*Math.PI/180} as const;
 export const FUNGAL_BLAST_RADIUS=94;
 export type AttackGeometry={a:Point;b:Point;radius:number;kind?:'sector'|'circle'|'ring';direction?:Point;halfAngle?:number;inner?:number};
 export type BossGeometry={kind:'sector'|'circle'|'ring';point:Point;radius:number;halfAngle:number;rear?:boolean;offset?:number};
@@ -20,7 +20,7 @@ export function sporeContactAt(origin:Point,d:Point,target:Point,started:number,
  return time<=ended+1e-7&&clear(origin,target)?time:null;
 }
 export function aim(origin:Point,target:Point,fallback:Point={x:0,y:1}):Point {const d=Math.hypot(target.x-origin.x,target.y-origin.y);return d>1e-7?{x:(target.x-origin.x)/d,y:(target.y-origin.y)/d}:{...fallback};}
-export function createEnemyAttack(attackerId:string,serial:number,type:string,now:number,origin:Point,target:Point,windup?:number,elite?:EliteKind):EnemyAttack {
+function baseEnemyAttack(attackerId:string,serial:number,type:string,now:number,origin:Point,target:Point,windup?:number,elite?:EliteKind):EnemyAttack {
  const kind=enemyKind(type),base=ENEMY_ATTACK[kind],combo=elite==='alpha'?(serial%2?1:2):undefined;
  const m=elite==='alpha'?{...base,windup:650,lock:280,step:150,recovery:combo===1?140:1100}:elite==='ram'?{...base,windup:850,lock:400,active:400,step:300,recovery:1000}:elite==='brood'?{...base,windup:900,lock:350,recovery:1000}:base,duration=windup??(kind==='spore'&&!elite&&serial%2===0?880:m.windup);
  // contactAt只表示攻击段起点；首次真实接触另记actualContactAt。
@@ -61,7 +61,7 @@ export function advanceEnemyAttack(a:EnemyAttack,root:Point,target:Point,now:num
  // 孢子在世界层生成独立飞行实例，喷口不会同时造成第二份近战伤害。
  if(a.type==='priest'){a.scanAt=now;return null;}
  if(a.type==='bomber'){const next=sampleEnemyAttack(a,now,root).motion,delta=Math.max(0,next-a.motionAt);sweepMove(root,a.direction.x*delta,a.direction.y*delta,space.blocked,space.clear);a.motionAt=next;a.scanAt=now;return null;}
- if(a.bossShotAngles||a.bossArea||a.bossCocoon||a.type==='spore'&&!a.boss){a.scanAt=now;return null;}
+ if(a.bossShotAngles||a.bossArea||a.bossCocoon||['spore','archer','bell'].includes(a.type)&&!a.boss){a.scanAt=now;return null;}
  let cursor=Math.max(a.scanAt,a.contactAt),event:EnemyContact|null=null;const end=Math.min(now,a.activeUntil);
  // 小段扫描复用同一姿态几何；二分首次接触，不把尚未命中的候选标为已结算。
  while(cursor<=end+1e-7&&now>=a.contactAt) {
@@ -96,8 +96,10 @@ export function advanceEnemyAttack(a:EnemyAttack,root:Point,target:Point,now:num
 export function predictEnemyContact(a:EnemyAttack,root:Point,target:Point,now:number,space:AttackSpace={blocked:motionBlocked,clear:clearMotionLine,melee:clearMeleeLine},pausedFor=0) {
  // 停止滚动后的爆点已经确定，伙伴可据真实膨胀危险保护附近队友。
  if(a.type==='bomber')return !a.cancelled&&!a.detonated&&a.bombAt!==undefined&&now>=a.activeUntil&&now<=a.bombAt&&Math.hypot(root.x-target.x,root.y-target.y)<=FUNGAL_BLAST_RADIUS&&space.melee(root,target)?a.bombAt+Math.max(0,pausedFor):null;
- if(a.type==='priest'||a.cancelled||a.emitted||a.resolved||now>=a.activeUntil)return null;
+ if(a.type==='priest'||a.type==='bell'||a.cancelled||a.emitted||a.resolved||now>=a.activeUntil)return null;
  if(a.bossArea||a.bossCocoon)return null;
- if(a.type==='spore'&&!a.boss||a.bossShotAngles){if(a.launched)return null;const release=a.contactAt+Math.max(0,pausedFor),contacts=sporeDirections({...a,direction:a.locked?a.direction:aim(root,target)}).map(d=>sporeContactAt(sporeOrigin(root,d,!!a.boss),d,target,release,release+SPORE.life,(x,y)=>space.melee(x,y,a.attackerId))).filter(t=>t!==null);return contacts.length?Math.min(...contacts):null;}
+ if(['spore','archer'].includes(a.type)&&!a.boss||a.bossShotAngles){if(a.launched)return null;const release=a.contactAt+Math.max(0,pausedFor),contacts=sporeDirections({...a,direction:a.locked?a.direction:aim(root,target)}).map(d=>sporeContactAt(sporeOrigin(root,d,!!a.boss),d,target,release,release+SPORE.life,(x,y)=>space.melee(x,y,a.attackerId))).filter(t=>t!==null);return contacts.length?Math.min(...contacts):null;}
  const copy:EnemyAttack={...a,direction:{...a.direction}},point={x:root.x,y:root.y};delayEnemyAttack(copy,Math.max(0,pausedFor));return advanceEnemyAttack(copy,point,target,copy.activeUntil,space)?.at??null;}
 export const warningQuality=(lead:number|null)=>lead===null||lead<0?"none":lead<PARRY.precise?"perfect":lead<PARRY.active?"normal":"charge";
+
+export function createEnemyAttack(...args:Parameters<typeof baseEnemyAttack>):EnemyAttack{const a=baseEnemyAttack(...args);if(a.type==='archer')a.shotAngles=[0];if(a.type==='bell')a.parryable=false;if(a.type==='geomancer'){a.bossArea='circle';a.parryable=false;a.bossGeometry={kind:'circle',point:{x:args[5].x,y:args[5].y},radius:52,halfAngle:Math.PI};}return a;}

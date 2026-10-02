@@ -324,11 +324,11 @@ describe("风步、碰撞和保护", () => {
     expect(a.hits).toEqual(["1:b"]);
   });
 });
-it("旧档迁移、满包待领取掉落往返和一次性领取", () => {
+it("拒绝旧战斗备份，满包待领取掉落往返和一次性领取", () => {
   const old = { ...initialState(), schema_version: 1,skills:{swordWind:false} };
   delete (old as Partial<typeof old>).pendingDrops;
   delete (old as Partial<typeof old>).dashCooldownRemaining;
-  expect(parseSave(JSON.stringify(old)).pendingDrops).toEqual([]);
+  expect(()=>parseSave(JSON.stringify(old))).toThrow('旧战斗');
   const withCooldown = initialState();
   withCooldown.dashCooldownRemaining = 380;
   const loaded = parseSave(JSON.stringify(withCooldown));

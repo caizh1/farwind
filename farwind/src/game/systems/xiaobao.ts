@@ -75,7 +75,7 @@ export class Xiaobao {
       } else if (slice === 0) break;
     }
   }
-  get flip() { return this.action === "walkSide" ? this.motion.direction === 2 : ["palm", "guard", "step"].includes(this.action) && this.turnLeft; }
+  get flip() { return this.action === "walkSide" || this.action === "carry" ? this.motion.direction === 2 : ["palm", "guard", "step"].includes(this.action) && this.turnLeft; }
   get pose() { return xiaobaoPose(this.action, this.elapsed, this.motion.distance); }
   target() { return { id: XIAOBAO.id, label: `${XIAOBAO.name} · ${XIAOBAO.title}`, art: this.pose.texture, x: this.x, y: this.y, w: XIAOBAO.displaySize, h: XIAOBAO.displaySize, kind: "npc" as const }; }
   snapshot() { return { ...this.target(), action: this.action, actionName: XIAOBAO_CLIPS[this.action].name, elapsed: this.elapsed, distance: this.motion.distance, flip: this.flip, ...this.pose, demonstration: this.demonstration, night: this.night, anchor: [80, XIAOBAO.footY] }; }

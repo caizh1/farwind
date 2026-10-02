@@ -1,6 +1,20 @@
 {
   "说明": "进行中的配药旧档遇实际突破警报。小满室内未全知伤情，离屋后目击并实际到场照护；没有提交被中断的配药。",
   "状态": {
+    "content_version": 2,
+    "windGifts": {
+      "held": [],
+      "pending": [],
+      "receipts": [],
+      "cooldowns": {
+        "shock": 0,
+        "chain": 0
+      }
+    },
+    "windMemory": {
+      "serial": 0,
+      "active": null
+    },
     "runes": {
       "version": 3,
       "growth": {
@@ -93,7 +107,7 @@
       "ending": false,
       "track": null
     },
-    "schema_version": 20,
+    "schema_version": 21,
     "catBond": {
       "score": 0,
       "memories": [],
@@ -116,6 +130,7 @@
     },
     "encounters": {
       "elapsed": 0,
+      "seed": 3278125750,
       "broken": [],
       "groups": {
         "south-reed-patrol": {
@@ -1667,6 +1682,47 @@
       "shortcuts": []
     },
     "xiaobao": {
+      "space": "village",
+      "life": {
+        "version": 1,
+        "seed": 1875050081,
+        "day": 0,
+        "basket": 0,
+        "main": "wood",
+        "optional": "herb",
+        "done": [],
+        "projects": {
+          "wind": {
+            "stage": 0,
+            "lastDay": -1
+          },
+          "wood": {
+            "stage": 0,
+            "lastDay": -1
+          },
+          "herb": {
+            "stage": 0,
+            "lastDay": -1
+          }
+        },
+        "interests": {
+          "wind": 65,
+          "wood": 55,
+          "herb": 50
+        },
+        "journal": [],
+        "promise": null,
+        "emergency": false,
+        "clearSince": null,
+        "aftercareUntil": 0,
+        "resumeTask": null,
+        "metrics": {
+          "attempts": 1,
+          "completed": 0,
+          "failed": 0,
+          "interrupted": 0
+        }
+      },
       "known": false,
       "task": "free",
       "gate": "all",
@@ -1710,7 +1766,7 @@
       "reports": []
     },
     "life": {
-      "version": 4,
+      "version": 5,
       "speechAt": 0,
       "speechUrgentAt": 0,
       "speechEventFloor": 0,
@@ -1806,14 +1862,14 @@
               "eventId": "life:4",
               "sequence": 4,
               "kind": "down",
-              "time": 548.1299999999926,
+              "time": 549.4799999999914,
               "subjects": [
                 "elder"
               ],
               "result": "近处目击仍需救护的伤员",
               "source": "seen",
               "importance": 40,
-              "expires": 4868.129999999993
+              "expires": 4869.479999999991
             },
             {
               "eventId": "life:5",
@@ -1865,7 +1921,13 @@
               "health": "down",
               "episode": 1,
               "recoverAt": 0,
-              "time": 548.1299999999926
+              "time": 549.4799999999914
+            },
+            "xiaobao": {
+              "space": "village",
+              "x": 810,
+              "y": 725,
+              "time": 574.079999999969
             },
             "healer": {
               "space": "village",
@@ -1965,14 +2027,14 @@
               "eventId": "life:4",
               "sequence": 4,
               "kind": "down",
-              "time": 548.1299999999926,
+              "time": 549.4799999999914,
               "subjects": [
                 "elder"
               ],
               "result": "近处目击仍需救护的伤员",
               "source": "seen",
               "importance": 40,
-              "expires": 4868.129999999993
+              "expires": 4869.479999999991
             },
             {
               "eventId": "life:5",
@@ -2008,6 +2070,12 @@
           ],
           "receiptFloor": 0,
           "known": {
+            "xiaobao": {
+              "space": "village",
+              "x": 810,
+              "y": 725,
+              "time": 564.6299999999776
+            },
             "elder": {
               "space": "village",
               "x": 830.2080033751316,
@@ -2469,8 +2537,8 @@
             },
             "healer": {
               "space": "village",
-              "x": 888.0053869391708,
-              "y": 591.9864659234208,
+              "x": 889.7526288665911,
+              "y": 608.3406872961025,
               "hp": 100,
               "health": "healthy",
               "episode": 0,
@@ -3152,6 +3220,179 @@
             "day": 0,
             "routines": []
           }
+        },
+        {
+          "id": "xiaobao",
+          "body": null,
+          "action": {
+            "id": 1,
+            "kind": "supply",
+            "target": {
+              "space": "village",
+              "x": 980,
+              "y": 825
+            },
+            "pickup": null,
+            "facility": null,
+            "task": null,
+            "phase": "travel",
+            "progress": 0,
+            "duration": 10000,
+            "started": 20,
+            "failures": 0,
+            "label": "在安全草坡采一篮药草",
+            "social": null,
+            "xiaobao": {
+              "wish": "deliver",
+              "partner": null
+            }
+          },
+          "blockedTarget": null,
+          "blockedUntil": 0,
+          "serial": 1,
+          "committed": 0,
+          "needs": {
+            "hunger": 15.38500000000047,
+            "fatigue": 10.192500000000235
+          },
+          "emotion": 4.229999999999061,
+          "gear": "locker",
+          "supplies": {
+            "medicine": 0,
+            "wood": 0
+          },
+          "project": 0,
+          "nextDecision": 11020,
+          "reason": "在安全草坡采一篮药草",
+          "pathFailures": 0,
+          "alarm": 0,
+          "relations": {
+            "elder": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "healer": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            },
+            "carpenter": {
+              "familiar": 35,
+              "trust": 35,
+              "wariness": 0,
+              "lastPositive": -1440
+            }
+          },
+          "memories": [
+            {
+              "eventId": "life:1",
+              "sequence": 1,
+              "kind": "alarm",
+              "time": 540.03,
+              "subjects": [],
+              "result": "居民区威胁，集结与救护",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4860.03
+            },
+            {
+              "eventId": "life:3",
+              "sequence": 3,
+              "kind": "down",
+              "time": 540.8399999999992,
+              "subjects": [
+                "elder"
+              ],
+              "result": "敌人实际命中，失去行动能力，等待到场急救",
+              "source": "seen",
+              "importance": 40,
+              "expires": 4860.839999999999
+            },
+            {
+              "eventId": "life:4",
+              "sequence": 4,
+              "kind": "down",
+              "time": 549.4799999999914,
+              "subjects": [
+                "elder"
+              ],
+              "result": "近处目击仍需救护的伤员",
+              "source": "seen",
+              "importance": 40,
+              "expires": 4869.479999999991
+            },
+            {
+              "eventId": "life:5",
+              "sequence": 5,
+              "kind": "clear",
+              "time": 556.529999999985,
+              "subjects": [],
+              "result": "持续确认安全，先救护和检修再恢复日常",
+              "source": "alarm",
+              "importance": 40,
+              "expires": 4876.529999999985
+            },
+            {
+              "eventId": "life:6",
+              "sequence": 6,
+              "kind": "care",
+              "time": 574.6199999999685,
+              "subjects": [
+                "elder"
+              ],
+              "result": "到场治疗，消耗从药房装入药箱的一份药品",
+              "source": "seen",
+              "importance": 80,
+              "expires": 4894.619999999968
+            }
+          ],
+          "receipt": 6,
+          "receipts": [
+            1,
+            3,
+            4,
+            5,
+            6
+          ],
+          "receiptFloor": 0,
+          "known": {
+            "elder": {
+              "space": "village",
+              "x": 829.6004950164519,
+              "y": 558.6204542289166,
+              "hp": 45,
+              "health": "convalescent",
+              "episode": 1,
+              "recoverAt": 754.6199999999685,
+              "time": 574.6499999999685
+            },
+            "healer": {
+              "space": "village",
+              "x": 924.6460108242989,
+              "y": 611.203870185563,
+              "hp": 100,
+              "health": "healthy",
+              "episode": 0,
+              "recoverAt": 0,
+              "time": 565.8299999999765
+            }
+          },
+          "lastSupplyDay": 0,
+          "lastMealDay": -1,
+          "social": {
+            "cooldownUntil": 0,
+            "occasionFloor": 0,
+            "visited": {}
+          },
+          "speech": {
+            "eventFloor": 0,
+            "nextAt": 0,
+            "day": 0,
+            "routines": []
+          }
         }
       ],
       "elapsed": 23100,
@@ -3217,7 +3458,7 @@
         {
           "id": "life:4",
           "sequence": 4,
-          "time": 548.1299999999926,
+          "time": 549.4799999999914,
           "kind": "down",
           "place": {
             "space": "village",

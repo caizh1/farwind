@@ -1,6 +1,6 @@
 import {buildingLot, VILLAGE_ANCHORS} from './maps/windbell/layout';
 import { GUARD_DEFS, type GuardId } from "./defense";
-export type ResidentId = "elder" | "healer" | "carpenter" | GuardId;
+export type ResidentId = "elder" | "healer" | "carpenter" | "xiaobao" | GuardId;
 export const CIVILIAN_IDS = ["elder", "healer", "carpenter"] as const;
 export type SpaceId =
   | "village"
@@ -122,7 +122,7 @@ export const HOMES = [
     name: "岚爷爷的家",
     building: "resident-cottage-1",
     door: buildingLot('resident-cottage-1').door,
-    owners: ["elder"],
+    owners: ["elder", "xiaobao"],
     private: "风向笔记与旧风铃",
   },
   {
@@ -176,7 +176,7 @@ export const FACILITIES = [
       owner: id,
       capacity: 1,
       place: h.id === "barracks" ? indoor(h.id,430+(i%4)*120,520+Math.floor(i/4)*100) : indoor(h.id,460+(i%5)*110,560+Math.floor(i/5)*120),
-      label: `${id === "elder" ? "岚爷爷" : id === "healer" ? "小满" : id === "carpenter" ? "阿禾" : GUARD_DEFS.find((d) => d.id === id)!.name}的床位`,
+      label: `${id === "xiaobao" ? "小宝" : id === "elder" ? "岚爷爷" : id === "healer" ? "小满" : id === "carpenter" ? "阿禾" : GUARD_DEFS.find((d) => d.id === id)!.name}的床位`,
     })),
   ),
   ...Array.from({ length: 6 }, (_, i) => ({
@@ -492,6 +492,13 @@ export const PEOPLE: PersonDef[] = [
       ],
     };
   }),
+  {
+    id: 'xiaobao', name: '小宝', job: '听风小宗师', art: 'xiaobao-motion', home: 'elder-home', bed: 'bed:xiaobao',
+    ability: {medicine:0,repair:0}, traits:{fear:0.05,compassion:0.95,duty:1,curiosity:0.95},
+    habit:'喜欢听风、学手艺，也惦记村里的朋友', wish:'留下属于自己的生活与作品',
+    friends:['elder','healer','carpenter'],
+    schedule:[slot(0,6,'sleep',indoor('elder-home',570,560),'在岚爷爷家睡觉','bed:xiaobao'),slot(6,21,'habit',outdoor(810,725),'按今日心愿自主生活'),slot(21,24,'sleep',indoor('elder-home',570,560),'回家睡觉','bed:xiaobao')],
+  },
 ];
 export const person = (id: string) => PEOPLE.find((p) => p.id === id);
 export const ACTION_LABELS: Record<Activity, string> = {
@@ -518,11 +525,13 @@ export const PRIVATE_STORAGE = PEOPLE.map((p) => {
     id: `locker:${p.id}`,
     owner: p.id,
     space: p.home,
-    x: bed.place.x + 50,
-    y: bed.place.y - 54,
+    x: p.id === 'xiaobao' ? 940 : bed.place.x + 50,
+    y: p.id === 'xiaobao' ? 850 : bed.place.y - 54,
     label: `${p.name}的储物箱`,
     item:
-      p.id === "healer"
+      p.id === "xiaobao"
+        ? "小风向本与木鸟收纳盒"
+        : p.id === "healer"
         ? "药箱"
         : p.id === "carpenter"
           ? "工具包"
@@ -533,6 +542,6 @@ export const PRIVATE_STORAGE = PEOPLE.map((p) => {
               : p.id.endsWith("spear")
                 ? "保养布"
                 : "巡逻手册",
-    use: indoor(p.home, bed.place.x + 50, bed.place.y - 25),
+    use: p.id === 'xiaobao' ? indoor(p.home,940,880) : indoor(p.home, bed.place.x + 50, bed.place.y - 25),
   };
 });

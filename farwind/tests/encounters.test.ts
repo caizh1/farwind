@@ -6,7 +6,7 @@ import {WildernessEncounters} from "../src/game/systems/encounterRuntime";
 import {ENEMY_PURSUIT,enemyLeashRadius,enemyNavigation,type EnemyBody} from "../src/game/systems/enemy";
 import {motionBlocked,clearMotionLine} from "../src/game/systems/obstacles";
 const outsideView={left:0,right:1600,top:0,bottom:1400};
-function harness(){const data=initialEncounters();let bodies:EnemyBody[]=[];const busy=new Set<string>();const runtime=new WildernessEncounters({read:()=>data,bodies:()=>bodies,spawn:(d,s)=>{bodies.push({...d,hp:s.hp,x:s.x,y:s.y,homeX:d.x,homeY:d.y,cool:0,windup:0,staggerUntil:0,attackSerial:s.serial,nav:enemyNavigation(),ai:"家园",disabled:false,recovered:false});},release:id=>{bodies=bodies.filter(e=>e.id!==id);},busy:id=>busy.has(id)});return {data,runtime,bodies:()=>bodies,busy};}
+function harness(){const data=initialEncounters(42);delete data.seed;let bodies:EnemyBody[]=[];const busy=new Set<string>();const runtime=new WildernessEncounters({read:()=>data,bodies:()=>bodies,spawn:(d,s)=>{bodies.push({...d,hp:s.hp,x:s.x,y:s.y,homeX:d.x,homeY:d.y,cool:0,windup:0,staggerUntil:0,attackSerial:s.serial,nav:enemyNavigation(),ai:"家园",disabled:false,recovered:false});},release:id=>{bodies=bodies.filter(e=>e.id!==id);},busy:id=>busy.has(id)});return {data,runtime,bodies:()=>bodies,busy};}
 describe("首条荒野遭遇与据点闭环",()=>{
  it("固定组与成员身份唯一，出生和巡逻路径不穿越实际地形",()=>{
   expect(new Set(ENCOUNTERS.map(g=>g.id)).size).toBe(ENCOUNTERS.length);expect(new Set(ENCOUNTER_UNITS.map(u=>u.id)).size).toBe(ENCOUNTER_UNITS.length);
@@ -26,11 +26,11 @@ describe("首条荒野遭遇与据点闭环",()=>{
   const s=initialEncounters();s.groups["south-reed-patrol"].activated=true;
   expect(settleEncounterDeath(s,"wild-reed-slime",false)).toBe(true);expect(settleEncounterDeath(s,"wild-reed-slime",true)).toBe(false);expect(unitState(s,"wild-reed-slime")!.drop).toBe(false);expect(validateEncounters(s)).toEqual(s);
  });
- it("批次复用固定槽位，遵守冷却和未领取掉落，长跨度不回放离线时间",()=>{
+ it("首次清剿不会因冷却或读档重生，长跨度不回放离线时间",()=>{
   const s=initialEncounters(),g=s.groups["south-reed-patrol"];g.activated=true;g.members[0].serial=7;for(const m of ENCOUNTERS.find(d=>d.id==="south-reed-patrol")!.members)settleEncounterDeath(s,m.id,true);
   expect(resetEncounter(s,"south-reed-patrol")).toBe(false);advanceEncounters(s,1e9);expect(s.elapsed).toBe(250);
   for(let i=0;i<2400;i++)advanceEncounters(s,250);
-  expect(resetEncounter(s,"south-reed-patrol")).toBe(true);expect(g.members).toHaveLength(2);expect(g.cycle).toBe(1);expect(g.members[0].serial).toBe(7);expect(validateEncounters(s)).toEqual(s);
+  expect(resetEncounter(s,"south-reed-patrol")).toBe(false);expect(g.members).toHaveLength(2);expect(g.cycle).toBe(0);expect(g.members[0].serial).toBe(7);expect(validateEncounters(s)).toEqual(s);
  });
  it("清剿永久据点减少巡游与南门预算，重复读档不恢复据点",()=>{
   const s=initialEncounters(),camp=ENCOUNTERS.find(d=>d.kind==="camp")!;const before=regionalThreat(s,"south");
@@ -40,7 +40,7 @@ describe("首条荒野遭遇与据点闭环",()=>{
  });
  it("损坏状态拒绝，外部冗余字段不进入长期记录",()=>{
   const s=initialEncounters();s.groups["south-reed-patrol"].members[0].hp=0;expect(()=>validateEncounters(s)).toThrow();
-  const clean=initialEncounters();(clean as any).unbounded=Array(500).fill("多余记录");expect(validateEncounters(clean)).toEqual(initialEncounters());
+  const clean=initialEncounters(42);(clean as any).unbounded=Array(500).fill("多余记录");expect(validateEncounters(clean)).toEqual(initialEncounters(42));
  });
 });
 

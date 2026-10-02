@@ -1162,3 +1162,43 @@ kbd {
 .cat-care-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0;}.cat-care-actions button{min-width:0;}
 #cat-care-feedback{min-height:1.6em;color:#4d603b;}.cat-companion-panel>.muted{max-width:none;}
 @media(max-width:640px){.cat-abilities{grid-template-columns:minmax(0,1fr);}.cat-bond-heading{gap:12px;}.cat-bond-heading img{width:52px;height:52px;flex-basis:52px;}.cat-care-actions button{flex:1 1 130px;}.panel:has(.cat-companion-panel){padding:16px;}.panel:has(.cat-companion-panel) h1{font-size:23px;}}
+
+/* 小宝日记与按钮均在正常文档流中，窄屏允许换行和滚动。 */
+.xiaobao-diary {min-width:0;margin:8px 0;padding:10px;border:1px solid #bc9d65;border-radius:8px;background:#263f33;overflow-wrap:anywhere;}
+.xiaobao-diary-copy {white-space:pre-wrap;line-height:1.7;margin:8px 0;}
+.dialog-copy:has(.xiaobao-diary)>* {flex-shrink:0;}
+
+/* 风赐图标和候选均在正常文档流内。 */
+.gift-held,.gift-choices {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}
+.gift-held article,.gift-choices article {min-width:0;border:1px solid #a4bc95;border-radius:10px;padding:14px;background:#edf0df;display:flex;flex-direction:column;gap:8px;}
+.gift-choices button {margin-top:auto;min-height:42px;}
+.gift-choices label {display:flex;flex-direction:column;gap:6px;}
+.gift-choices select {width:100%;min-width:0;}
+@media(max-width:850px){.gift-held,.gift-choices{grid-template-columns:1fr;}}
+
+/* 首领信息独立成行，低分辨率下也保留可读字号。 */
+#camp-boss-status {width:100%;max-width:640px;min-width:0;justify-self:center;display:flex;flex-direction:column;gap:6px;padding:12px 18px;border:2px solid #ccb283;background:#22382eed;box-sizing:border-box;}
+#camp-boss-status[hidden] {display:none;}
+#camp-boss-status b {font-size:22px;line-height:1.2;}
+#camp-boss-status progress {height:18px;width:100%;}
+#camp-boss-status [data-boss-state],#camp-boss-status [data-boss-health] {font-size:14px;line-height:1.4;}
+#camp-boss-status .boss-title {flex-wrap:wrap;}
+#camp-boss-status [data-boss-state] {white-space:normal;overflow-wrap:anywhere;}
+/* 首领专属行位于顶部，避免第二行血条盖住大体型首领的头部与蓄力姿态。 */
+@media(max-width:1500px){.top:has(#camp-boss-status:not([hidden])) {grid-template-columns:minmax(0,1fr) var(--info-width);grid-template-areas:'boss boss' 'vitals info';}}
+@media(min-width:741px) and (max-width:1500px){
+  .top:has(#camp-boss-status:not([hidden])[data-vitals-side="right"]) {grid-template-columns:var(--info-width) minmax(0,1fr);grid-template-areas:'boss boss' 'info vitals';}
+  .top:has(#camp-boss-status:not([hidden])[data-vitals-side="right"]) .vitals-stack {justify-self:end;}
+}
+@media(max-width:480px){.top:has(#camp-boss-status:not([hidden])) {grid-template-columns:minmax(0,1fr) minmax(0,1fr);}}
+
+/* 风赐选择在低窗口中优先展示三个决定与按钮，持有项按需展开。 */
+.panel:has(.gift-owned){width:min(960px,calc(100vw - 24px));padding:20px 24px;text-align:left;}
+.panel:has(.gift-owned) h1{font-size:28px;letter-spacing:3px;margin:6px 0 10px;}
+.panel:has(.gift-owned) p{margin:6px 0;line-height:1.45;}
+.panel:has(.gift-owned) h2{font-size:20px;margin:12px 0 8px;}
+.panel:has(.gift-owned) h3{margin:4px 0;font-size:18px;}
+.gift-owned{margin:8px 0;font-size:14px;}.gift-owned summary{cursor:pointer;padding:6px 0;}
+.gift-owned[open] .gift-held{margin-top:8px;}.gift-empty{grid-column:1/-1;}
+.gift-choices article{padding:12px;}.gift-choices article p{font-size:14px;}
+#gift-feedback{font-size:13px;}#gift-close{margin-top:4px;}

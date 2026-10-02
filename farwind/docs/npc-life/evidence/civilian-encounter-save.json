@@ -1,4 +1,18 @@
 {
+  "content_version": 2,
+  "windGifts": {
+    "held": [],
+    "pending": [],
+    "receipts": [],
+    "cooldowns": {
+      "shock": 0,
+      "chain": 0
+    }
+  },
+  "windMemory": {
+    "serial": 0,
+    "active": null
+  },
   "runes": {
     "version": 3,
     "growth": {
@@ -91,7 +105,7 @@
     "ending": false,
     "track": null
   },
-  "schema_version": 20,
+  "schema_version": 21,
   "catBond": {
     "score": 0,
     "memories": [],
@@ -114,6 +128,7 @@
   },
   "encounters": {
     "elapsed": 0,
+    "seed": 1104615349,
     "broken": [],
     "groups": {
       "south-reed-patrol": {
@@ -1665,6 +1680,47 @@
     "shortcuts": []
   },
   "xiaobao": {
+    "space": "village",
+    "life": {
+      "version": 1,
+      "seed": 20261002,
+      "day": -1,
+      "basket": 0,
+      "main": "wind",
+      "optional": "play",
+      "done": [],
+      "projects": {
+        "wind": {
+          "stage": 0,
+          "lastDay": -1
+        },
+        "wood": {
+          "stage": 0,
+          "lastDay": -1
+        },
+        "herb": {
+          "stage": 0,
+          "lastDay": -1
+        }
+      },
+      "interests": {
+        "wind": 65,
+        "wood": 55,
+        "herb": 50
+      },
+      "journal": [],
+      "promise": null,
+      "emergency": false,
+      "clearSince": null,
+      "aftercareUntil": 0,
+      "resumeTask": null,
+      "metrics": {
+        "attempts": 0,
+        "completed": 0,
+        "failed": 0,
+        "interrupted": 0
+      }
+    },
     "known": false,
     "task": "free",
     "gate": "all",
@@ -1708,7 +1764,7 @@
     "reports": []
   },
   "life": {
-    "version": 4,
+    "version": 5,
     "speechAt": 0,
     "speechUrgentAt": 0,
     "speechEventFloor": 0,
@@ -2496,6 +2552,68 @@
         "alarm": 0,
         "relations": {
           "elder": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          }
+        },
+        "memories": [],
+        "receipt": 0,
+        "receipts": [],
+        "receiptFloor": 0,
+        "known": {},
+        "lastSupplyDay": 0,
+        "lastMealDay": -1,
+        "social": {
+          "cooldownUntil": 0,
+          "occasionFloor": 0,
+          "visited": {}
+        },
+        "speech": {
+          "eventFloor": 0,
+          "nextAt": 0,
+          "day": 0,
+          "routines": []
+        }
+      },
+      {
+        "id": "xiaobao",
+        "body": null,
+        "action": null,
+        "blockedTarget": null,
+        "blockedUntil": 0,
+        "serial": 0,
+        "committed": 0,
+        "needs": {
+          "hunger": 15,
+          "fatigue": 10
+        },
+        "emotion": 0,
+        "gear": "locker",
+        "supplies": {
+          "medicine": 0,
+          "wood": 0
+        },
+        "project": 0,
+        "nextDecision": 1125,
+        "reason": "开始新的一天",
+        "pathFailures": 0,
+        "alarm": 0,
+        "relations": {
+          "elder": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          },
+          "healer": {
+            "familiar": 35,
+            "trust": 35,
+            "wariness": 0,
+            "lastPositive": -1440
+          },
+          "carpenter": {
             "familiar": 35,
             "trust": 35,
             "wariness": 0,

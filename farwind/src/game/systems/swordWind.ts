@@ -5,7 +5,7 @@ import {
   type SwordWindConfig,
 } from "../../data/swordWind";
 import { SWORD_WIND_RELEASES } from "../../data/swordWindArt";
-import { firstSwordWindBlocker, sweptTargetContact } from "./swordWindGeometry";
+import { firstSwordWindBlocker, sweptTargetContact, sweptBossBodyContact } from "./swordWindGeometry";
 import type { Point } from "./obstacles";
 export type WindTarget = Target & { disabled?: boolean; radius?: number; windSensitive?:boolean; lessonId?:string };
 export type WindMotion = {
@@ -175,9 +175,9 @@ export class SwordWindSystem {
           const u=(at:number)=>now>prev?Math.max(0,Math.min(1,(at-prev)/(now-prev))):1;
           const old=mix(motion.previous,motion.current,u(start)),current=mix(motion.previous,motion.current,u(end)),radius=w.config.width/2+(target.radius??14);
           // 先筛选有限路径的包围区域，再做连续接触裁决。
-          if(Math.max(old.x,current.x)+radius<Math.min(a.x,b.x)||Math.min(old.x,current.x)-radius>Math.max(a.x,b.x)||
-            Math.max(old.y,current.y)+radius<Math.min(a.y,b.y)||Math.min(old.y,current.y)-radius>Math.max(a.y,b.y))continue;
-          const t=sweptTargetContact(a,b,old,current,radius);
+          if(!target.boss&&(Math.max(old.x,current.x)+radius<Math.min(a.x,b.x)||Math.min(old.x,current.x)-radius>Math.max(a.x,b.x)||
+            Math.max(old.y,current.y)+radius<Math.min(a.y,b.y)||Math.min(old.y,current.y)-radius>Math.max(a.y,b.y)))continue;
+          const t=target.boss?sweptBossBodyContact(a,b,old,current,target,w.config.width/2):sweptTargetContact(a,b,old,current,radius);
           if(t===null||wall&&t>=wall.t-1e-8)continue;
           pending.push({wind:w,kind:'hit',pathOrder:Math.hypot(a.x-w.origin.x,a.y-w.origin.y)+Math.hypot(b.x-a.x,b.y-a.y)*t,at:start+(end-start)*t,point:mix(a,b,t),target,reason:'target'});
         }

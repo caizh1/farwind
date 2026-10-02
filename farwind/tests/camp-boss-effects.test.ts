@@ -38,9 +38,9 @@ describe('攻击分镜读取正式技能时钟与危险区',()=>{
  it('甩尾读取背后几何，锁向和偏移不由素材镜像重新计算',()=>{
   const e=enemy('thorn-crown'),r=renderer();const a=createBossAttack(e,1000,{x:100,y:110},{...e.bossBattle!,move:2});e.face={x:-1,y:0};r.view.draw(e,a,a.contactAt+50);expect(r.view.snapshot().effects[0].direction!.x).toBeCloseTo(-1);expect(a.direction).toEqual({x:1,y:0});
  });
- it('三处根枝共用已锁定的位置，而不追踪离开的玩家',()=>{
-  const e=enemy('bound-branch'),r=renderer(),hazards=new BossHazards();e.attack=createBossAttack(e,1000,{x:250,y:110},{...e.bossBattle!,move:2});hazards.launch(e,1000);for(const h of hazards.hazards)r.view.ground(h,h.activeAt+160);
-  expect(r.view.snapshot().effects.map(v=>v.point)).toEqual(hazards.hazards.map(h=>h.point));expect(new Set(r.view.snapshot().effects.map(v=>v.id)).size).toBe(3);
+ it('两侧根带保留中央通道，共用锁定位置而不追踪玩家',()=>{
+  const e=Object.assign(enemy('bound-branch'),{x:3710,y:1100}),r=renderer(),hazards=new BossHazards();e.attack=createBossAttack(e,1000,{x:3890,y:1100},{...e.bossBattle!,move:2});hazards.launch(e,1000);for(const h of hazards.hazards)r.view.ground(h,h.activeAt+160);
+  expect(r.view.snapshot().effects.map(v=>v.point)).toEqual(hazards.hazards.map(h=>h.point));expect(new Set(r.view.snapshot().effects.map(v=>v.id)).size).toBe(2);
  });
  it('暂停重复采样完全相同，保存相对时钟后恢复同一攻击帧',()=>{
   const e=enemy('spore-heart'),r=renderer(),hazards=new BossHazards();e.attack=createBossAttack(e,1000,{x:250,y:110},{...e.bossBattle!,move:1});hazards.launch(e,1000);const now=e.attack.contactAt+120;

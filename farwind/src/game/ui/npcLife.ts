@@ -12,6 +12,7 @@ import {
 import type { World } from "../scenes/World";
 import type { Prop } from "../../data/world";
 export function lifeInteract(world: World, p: Prop) {
+  if(p.id==='xiaobao'){world.xiaobao?.open(world);return true;}
   if(p.id.startsWith("interior:")){
     const f=INTERIOR_FURNITURE.find(f=>`interior:${f.id}`===p.id&&f.space===world.state.life.playerSpace);
     if(!f) return false;
@@ -46,6 +47,7 @@ export function lifeInteract(world: World, p: Prop) {
     return true;
   }
   if (p.id.startsWith("locker:")) {
+    if(p.id==='locker:xiaobao'){const goals=world.state.xiaobao.life.projects;world.ui.dialog('小宝的收纳盒',`这里记录着小宝的心愿，完成的成果会好好收在盒里。\n${goals.wind.stage===3?'已经完成：自己的风向笔记。':'风向笔记还在慢慢写。'}\n${goals.wood.stage===3?'已经完成：第一只小木鸟。':'木鸟还在慢慢雕。'}\n${goals.herb.stage===3?'已经完成：常用药草辨认笔记。':'药草笔记还在慢慢学。'}`,'xiaobao');return true;}
     world.ui.dialog(p.label!, world.life.storageText(p.id));
     return true;
   }

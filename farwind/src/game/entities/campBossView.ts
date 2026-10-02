@@ -1,6 +1,6 @@
+import {BossArtCache} from './bossArtCache';
 import Phaser from 'phaser';
 import {CAMP_BOSSES,BOSS_RULES,BOSS_PROJECTILES,type CampBossKind} from '../../data/maps/windbell/campBosses';
-import {CAMP_BOSS_ART} from '../../data/campBossArt';
 import {Actor} from './actor';
 import {slimeFacing,SlimeAnimation} from '../systems/slimeAnimation';
 import {sampleEnemyAttack,sporeDirections,sporeOrigin,SPORE,type EnemyAttack,type AttackGeometry} from '../systems/enemyAttack';
@@ -18,33 +18,30 @@ export class CampBossView{
   ink:Phaser.GameObjects.Graphics;
   reaction:Phaser.GameObjects.Text;
   effects:CampBossEffects;
-  static preload(scene:Phaser.Scene){for(const key of Object.keys(CAMP_BOSSES))scene.load.spritesheet(`camp-boss-${key}`,`/assets/camp-bosses/${key}.png`,{frameWidth:160,frameHeight:160});}
-  constructor(public scene:Phaser.Scene){this.effects=new CampBossEffects(scene);this.ink=scene.add.graphics().setDepth(8994);this.reaction=scene.add.text(0,0,'',{fontFamily:'sans-serif',fontSize:'14px',color:'#fff0cc',backgroundColor:'#233c34e8',padding:{x:8,y:5}}).setOrigin(.5,1).setDepth(8996).setVisible(false);}
+  assets:BossArtCache;
+  static preload(_scene:Phaser.Scene){}
+  constructor(public scene:Phaser.Scene){this.assets=new BossArtCache(scene);this.effects=new CampBossEffects(scene);this.ink=scene.add.graphics().setDepth(8994);this.reaction=scene.add.text(0,0,'',{fontFamily:'sans-serif',fontSize:'14px',color:'#fff0cc',backgroundColor:'#233c34e8',padding:{x:8,y:5}}).setOrigin(.5,1).setDepth(8996).setVisible(false);}
   reset(){this.entries=new WeakMap();this.ink.clear();this.effects.begin();this.reaction.setVisible(false);}
   begin(){this.ink.clear();this.effects.begin();this.reaction.setVisible(false);}
   draw(body:AnimatedEnemy&Pick<EnemyBody,'boss'|'bossBattle'>,attack:EnemyAttack|null|undefined,sprite:Phaser.GameObjects.Sprite,now:number,showBar:boolean):EnemyPose{
-    const kind=body.boss!,d=CAMP_BOSSES[kind],art=CAMP_BOSS_ART[kind];
+    const kind=body.boss!,d=CAMP_BOSSES[kind];
     let entry=this.entries.get(sprite);if(!entry){entry={motion:new SlimeAnimation(),parry:null};this.entries.set(sprite,entry);}
     const base=entry.motion.sample(body,attack,now);if(base.action==='idle'&&body.face)base.facing=entry.motion.facing=slimeFacing(body.face.x,body.face.y,base.facing);const direction=base.facing===0?0:base.facing===1?1:2;
     const arriving=(body.hp??0)>0&&!!body.bossBattle&&now<body.bossBattle.entryUntil,u=arriving?Math.max(0,Math.min(1,1-(body.bossBattle!.entryUntil-now)/BOSS_RULES.appearance)):1;
     const parry=sampleBossParry(body,now);entry.parry=parry;
-    let row=0,index=0,phase=base.phase,action:EnemyPose['action']=base.action;
-    const count=(r:number)=>art.rows[direction][r],part=(start:number,length:number,u:number)=>start+Math.min(length-1,Math.max(0,Math.floor(u*length)));
-    if(base.action==='death'){row=6;const first=Math.min(4,count(6)-3);index=part(first,count(6)-first,base.elapsed/1400);}
-    else if(arriving){row=6;index=part(0,4,u);phase='首领现身';action='idle';this.arrivalEffect(kind,body,u);}
-    else if(body.bossBattle&&now<body.bossBattle.transformUntil){row=6;index=part(0,4,1-(body.bossBattle.transformUntil-now)/1200);phase='阶段转换';action='idle';}
-    else if(parry){row=5;const first=Math.min(4,count(5)-3);index=part(first,count(5)-first,parry.progress);phase=parry.phase;action=parry.quality==='perfect'?'perfect':'parry';}
-    else if((body.staggerUntil??0)>now){row=5;const first=Math.min(4,count(5)-3);index=part(first,count(5)-first,base.elapsed/800);}
-    else if(attack&&!attack.cancelled&&now<attack.recoveryUntil){row=1+(attack.bossSkill??0);const sample=sampleEnemyAttack(attack,now,body),n=count(row);phase=sample.phase;action='attack';
-      index=sample.phase==='charge'?part(0,2,sample.progress):sample.phase==='commit'?2:sample.phase==='active'?part(3,Math.max(1,n-5),sample.progress):part(n-2,2,sample.progress);
-    }else if(base.action==='hurt'){row=5;index=part(0,4,base.elapsed/320);}
-    else if(base.action==='walk'){const first=Math.min(4,count(0)-2);index=part(first,count(0)-first,(entry.motion.distance%54)/54);}
-    else if(body.bossBattle?.phase===2){row=6;index=Math.floor(now/360)%Math.min(4,count(6));phase='第二阶段';}
-    else index=Math.floor(now/280)%Math.min(4,count(0));
-    const frame=direction*63+row*9+index,pose:EnemyPose={...base,action,phase,index,frame,provisional:false};entry.pose=pose;
-    const alpha=arriving?Math.min(1,u/.55):base.action==='death'?Math.max(0,1-Math.max(0,base.elapsed-2200)/500):1,size=art.frameSize*d.height/art.nativeHeight*(arriving?.85+.15*u:1);
-    // 后仰围绕已校准的脚底锚点；姿态偏移不进入导航、判定、阴影或存档。
-    sprite.setTexture(`camp-boss-${kind}`,frame).setOrigin(...(art.anchors as Record<number,readonly [number,number]>)[frame]).setDisplaySize(size*(parry?.scaleX??1),size*(parry?.scaleY??1)).setPosition(body.x+(parry?.x??0),body.y+(parry?.y??0)).setDepth(body.y).setRotation(parry?.rotation??0).setAlpha(alpha).setVisible(alpha>0).clearTint();Actor.mirror(sprite,base.facing===2);
+    let phase=base.phase,action:EnemyPose['action']=base.action;
+    const dir=direction===0?'down':direction===1?'up':'right';let frameName=`${dir}/idle`;
+    if(arriving){phase='首领现身';action='idle';this.arrivalEffect(kind,body,u);}
+    else if(body.bossBattle&&now<body.bossBattle.transformUntil){phase='阶段转换';action='idle';}
+    else if(parry){phase=parry.phase;action=parry.quality==='perfect'?'perfect':'parry';}
+    else if(attack&&!attack.cancelled&&now<attack.recoveryUntil){const sample=sampleEnemyAttack(attack,now,body);phase=sample.phase;action='attack';frameName=`${dir}/skill-${attack.bossSkill??0}/${sample.phase==='active'?'strike':sample.phase==='recovery'?'recover':'charge'}`;}
+    else if(body.bossBattle&&body.bossBattle.exposedUntil>now&&body.bossBattle.lastSkill!==undefined&&body.bossBattle.lastSkill>=0){phase='弱点暴露';action='attack';frameName=`${dir}/skill-${body.bossBattle.lastSkill}/recover`;}
+    else if(base.action==='walk')frameName=`${dir}/walk/${Math.floor(entry.motion.distance/13)%4}`;
+    const pose:EnemyPose={...base,action,phase,index:0,frame:0,provisional:!this.assets.ready(kind)};entry.pose=pose;
+    const art=this.assets.manifest?.frames[frameName],alpha=arriving?Math.min(1,u/.55):base.action==='death'?Math.max(0,1-Math.max(0,base.elapsed-1200)/500):1;
+    if(art&&this.assets.ready(kind)){const scale=d.height/art.nativeHeight*(arriving?.85+.15*u:1);
+      sprite.setTexture(this.assets.key(kind),frameName).setOrigin(art.foot[0]/art.width,art.foot[1]/art.height).setDisplaySize(art.width*scale*(parry?.scaleX??1),art.height*scale*(parry?.scaleY??1)).setPosition(body.x+(parry?.x??0),body.y+(parry?.y??0)).setDepth(body.y).setRotation(parry?.rotation??0).setAlpha(alpha).setVisible(alpha>0).clearTint();Actor.mirror(sprite,base.facing===2);
+    }else sprite.setVisible(false);
     this.effects.draw(body,attack,now,parry);
     if(body.bossBattle?.phase===2&&(body.hp??0)>0)this.ink.lineStyle(2,d.color,.25+Math.sin(now/260)*.1).strokeEllipse(body.x,body.y-3,64,23);
     if(showBar&&(body.hp??0)>0&&!arriving){const x=body.x-35,y=body.y-d.height-14;this.ink.fillStyle(0x18372d,.95).fillRoundedRect(x-2,y-2,74,10,2).fillStyle(0xdbb47c).fillRect(x,y,70*(body.hp??0)/d.hp,6);}
@@ -69,16 +66,20 @@ export class CampBossView{
   warning(root:EnemyBody,a:EnemyAttack,now:number){
     if(a.cancelled||now>=a.contactAt)return;
     const alpha=a.locked?.9:.55;
-    if(a.bossArea){const p=a.bossGeometry!.point;if(a.bossArea==='circle')this.geometry({kind:'circle',a:p,b:p,radius:a.bossGeometry!.radius},alpha);else this.geometry({kind:'ring',a:p,b:p,radius:a.bossGeometry!.radius,inner:BOSS_RULES.ringInner},alpha);}
+    // 地面预警由 ground 读取已创建的正式危险区，不能另画一份可能被预算或地形拒绝的落点。
+    if(a.bossArea)return;
     else if(a.bossShotAngles){const style=BOSS_PROJECTILES[a.boss as keyof typeof BOSS_PROJECTILES];for(const d of sporeDirections(a)){const p=sporeOrigin(root,d,true),x=p.x+d.x*SPORE.speed*SPORE.life/1000,y=p.y+d.y*SPORE.speed*SPORE.life/1000;this.ink.lineStyle(7,style.outline,alpha*.65).lineBetween(p.x,p.y,x,y).lineStyle(3,style.color,alpha*.85).lineBetween(p.x,p.y,x,y);}}
     else if(a.bossCocoon)this.ink.lineStyle(3,0x9ed5b6,alpha).strokeEllipse(root.x,root.y,86,36);
     else{this.geometry(sampleEnemyAttack(a,now,root).geometry,alpha);if((a.step??0)>30){const d=a.direction;this.ink.lineStyle(2,0xffdaa2,alpha).lineBetween(root.x,root.y,root.x+d.x*a.step!,root.y+d.y*a.step!);}}
   }
   ground(hazards:readonly BossHazard[],s:State,now:number){
     if(s.life.playerSpace!=='village')return;
+    s=s.windMemory.active?{...s,encounters:s.windMemory.active.encounters}:s;
     for(const h of hazards){this.effects.ground(h,now);this.geometry(bossHazardGeometry(h,now),now<h.activeAt?.5:.95);}
     for(const d of ENCOUNTERS){const b=s.encounters.groups[d.id].boss;if(!b||Math.hypot(s.player.x-d.x,s.player.y-d.y)>d.radius+80)continue;
       const kind=d.members.find(m=>m.boss)?.boss;if(!kind)continue;
+      if(b.stage==='battle'||b.stage==='warning')this.ink.lineStyle(3,CAMP_BOSSES[kind].color,.5).strokeCircle(d.x,d.y,d.radius+80);
+      if(b.stage==='defeated'||b.stage==='legacy'){this.reaction.setText('E · 风忆远征').setPosition(d.x,d.y-70).setAlpha(1).setVisible(true);}
       if(b.stage==='warning'){const u=1-b.warning/BOSS_RULES.entry;this.arrivalEffect(kind,d,u*.4,.65);this.ink.lineStyle(3,0xf0d7a1,.5+u*.4).strokeEllipse(d.x,d.y,100+u*45,45+u*18);}
       const remaining=b.combat?.battle.entryUntil??0;
       if(b.stage==='battle'&&remaining>0){const lines:Record<CampBossKind,string>={'spore-heart':'孢子在聚集……小心！','thorn-crown':'荆棘里有动静……来了！','crag-tusk':'地面在震……准备迎敌！','bound-branch':'风被缠住了……小心！'};this.reaction.setText('旅人：'+lines[kind]).setPosition(s.player.x,s.player.y-112).setAlpha(Math.min(1,remaining/250)).setVisible(true);}

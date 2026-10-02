@@ -9,7 +9,7 @@ import {
   type XiaobaoBattleClip,
   type XiaobaoTask,
 } from "../../data/xiaobaoCombat";
-import { zoneFor, inActivity } from "../../data/defenseZones";
+import { zoneFor, inActivity, inProtected } from "../../data/defenseZones";
 import { regionAt } from "../../data/village";
 import { RAID_GATES, type GateId } from "../../data/defense";
 import {
@@ -42,6 +42,7 @@ export type XiaobaoFront = {
   key: string;
   gate: GateId;
   major: boolean;
+  confirmed?: boolean;
   priority: number;
   point: Point;
   enemies: string[];
@@ -94,6 +95,9 @@ export type XiaobaoEnvironment = {
   takeoffClear?: (p: Point) => boolean;
   checkpoint?: (flightId: string) => void;
   message: (s: string) => void;
+  lifeMove?: (ms:number,budget:{queries:number})=>void;
+  lifeEmergency?: (active:boolean)=>void;
+  lifeHelp?: (id:string)=>void;
 };
 // 日常序列保持原实现。长期任务与短时动作分开，释放实例与施法者生命分开。
 export class XiaobaoCombat extends Xiaobao {
@@ -114,7 +118,7 @@ export class XiaobaoCombat extends Xiaobao {
   private regrouping = false;
   private guardPlayer = false;
   private get support() {
-    return this.guardPlayer ? null : this.data.support;
+    return this.guardPlayer && !this.data.life.emergency ? null : this.data.support;
   }
   events: XiaobaoEvent[] = [];
   visuals: XiaobaoEvent[] = [];
@@ -178,7 +182,7 @@ export class XiaobaoCombat extends Xiaobao {
         state.cast = null;
         state.recovery = Math.max(state.recovery, 300);
       }
-      if (!this.airborne && motionBlocked(this.x, this.y)) {
+      if (state.space==='village' && !this.airborne && motionBlocked(this.x, this.y)) {
         const safe = this.candidates(this).find(
           (p) => !motionBlocked(p.x, p.y),
         );
@@ -199,7 +203,7 @@ export class XiaobaoCombat extends Xiaobao {
     return !!this.data.flight && this.data.flight.stage !== "takeoff";
   }
   get available() {
-    return this.data.hp > 0 && !this.data.rest && !this.airborne;
+    return this.data.space === "village" && this.data.hp > 0 && !this.data.rest && !this.airborne;
   }
   get busy() {
     return (
@@ -247,6 +251,7 @@ export class XiaobaoCombat extends Xiaobao {
     kind: NonNullable<XiaobaoState["command"]>["kind"] | "wait" | "return",
     env: XiaobaoEnvironment,
   ) {
+    if(this.data.life.emergency)throw Error("村庄仍有危险，小宝正在优先护村。");
     if (this.data.task !== "follow") throw Error("请先委托小宝与你出征。");
     if (kind === "wait") {
       this.data.wait = { ...point(this), region: env.player.region };
@@ -465,6 +470,7 @@ export class XiaobaoCombat extends Xiaobao {
         old.amount = Math.max(old.amount, 120);
         old.remaining = Math.max(old.remaining, ms);
       } else this.data.shields.push({ id: a.id, amount: 120, remaining: ms });
+      if(a.threatAt!==null && (a.role==='resident'||a.role==='guard'))env.lifeHelp?.(a.id);
       this.emit({
         id: `${id}:${a.id}`,
         kind: "shield",
@@ -947,7 +953,7 @@ export class XiaobaoCombat extends Xiaobao {
     if (!f) return;
     f.age += dt;
     const front = this.fronts.find(
-      (t) => t.major && t.gate === f.gate && t.key === this.data.support?.key,
+      (t) => t.gate === f.gate && t.key === this.data.support?.key,
     );
     if (!front && f.active) {
       f.active = false;
@@ -1082,14 +1088,15 @@ export class XiaobaoCombat extends Xiaobao {
   }
   choose(env: XiaobaoEnvironment) {
     this.metrics.decisions++;
-    const following = this.data.task === "follow" && !this.data.wait &&
-      env.player.outside && env.player.hp > 0;
+    let following = this.data.task === "follow" && !this.data.wait &&
+      env.player.outside && env.player.hp > 0 && !this.data.life.emergency;
     const threatensPlayer = (e: EnemyBody) => e.targetId === "player" ||
       env.playerThreats?.includes(e.id) || (e.playerAggroUntil ?? 0) > env.now;
     this.guardPlayer = following && env.enemies.some(e =>
       this.valid(e, env, env.player, 320) && threatensPlayer(e));
     this.fronts = env
       .fronts()
+      .filter(f=>f.major||f.confirmed===true)
       .sort(
         (a, b) =>
           b.priority - a.priority ||
@@ -1097,7 +1104,18 @@ export class XiaobaoCombat extends Xiaobao {
           distance(this, a.point) - distance(this, b.point) ||
           a.key.localeCompare(b.key),
       );
-    const major = this.fronts.filter((f) => f.major);
+    const danger=this.fronts.length>0;
+    const life=this.data.life;
+    if(danger){
+      if(!life.emergency){life.emergency=true;env.lifeEmergency?.(true);if(this.data.cast&&!this.data.cast.released)this.cancel(0);}
+      life.clearSince=null;this.guardPlayer=false;following=false;this.demonstration=false;
+      this.data.wait=null;this.data.command=null;
+    }else if(life.emergency){
+      life.clearSince??=this.data.clock;
+      if(this.data.clock-life.clearSince>=10000){life.emergency=false;life.clearSince=null;life.aftercareUntil=env.minute+180;env.lifeEmergency?.(false);}
+    }
+    const major = this.fronts;
+    if(this.data.space!=='village')return;
     if (major.length && !this.data.alarmActive) {
       this.data.alarmActive = true;
       this.data.alarmCycle++;
@@ -1108,28 +1126,28 @@ export class XiaobaoCombat extends Xiaobao {
       .filter(
         (a) =>
           a.hp > 0 &&
+          (!life.emergency||a.role!=='player') &&
           a.threatAt !== null &&
           a.threatAt - env.now <= 600 &&
           distance(this, a) < 600,
       )
       .sort(
         (a, b) =>
+          (life.emergency ? Number(b.role==='resident')-Number(a.role==='resident') : 0) ||
           (following ? Number(b.role === "player") - Number(a.role === "player") : 0) ||
           a.threatAt! - b.threatAt! ||
           a.hp / a.maxHP - b.hp / b.maxHP ||
           a.id.localeCompare(b.id),
       )[0];
-    const protectPlayer =
+    const protectPlayer = !life.emergency && (
       this.guardPlayer || (env.player.hp < 30 &&
       env.allies.some(
         (a) =>
           a.id === "player" &&
           a.threatAt !== null &&
           a.threatAt - env.now <= 600,
-      ));
-    const front = major.find(
-      (f) => !this.data.responded.includes(`${this.data.alarmCycle}:${f.key}`),
-    );
+      )));
+    const front = major[0];
     if (this.data.flight) {
       const f = this.data.flight;
       if (
@@ -1172,18 +1190,23 @@ export class XiaobaoCombat extends Xiaobao {
     if (
       this.data.task === "follow" &&
       env.player.outside &&
-      env.player.hp <= 0
+      env.player.hp <= 0 && !life.emergency
     ) {
       if (this.data.cast && !this.data.cast.released) this.cancel();
       return;
     }
     if (
       front &&
-      (this.data.task !== "follow" || this.data.autoSupport) &&
       !protectPlayer
     ) {
-      if (distance(this, front.point) > 240 && this.beginFlight(front, env))
+      if (!this.data.responded.includes(`${this.data.alarmCycle}:${front.key}`) && distance(this, front.point) > 240 && this.beginFlight(front, env))
         return;
+      if(this.data.support&&this.data.support.gate!==front.gate){
+        const previous=this.data.support;
+        this.data.reports.push({event:previous.key,gate:previous.gate,hits:previous.hits,kills:previous.kills,injured:previous.injured,result:'转往更紧急的防线',time:env.minute});
+        this.data.reports=this.data.reports.slice(-10);this.data.support=null;this.targetId=null;
+        if(this.data.cast&&!this.data.cast.released)this.cancel(0);
+      }
       this.data.support ??= {
         key: front.key,
         gate: front.gate,
@@ -1210,7 +1233,7 @@ export class XiaobaoCombat extends Xiaobao {
     }
     if (protectPlayer) this.status = "先护住旅人";
     // 尚未释放的进攻可让位给主角遇险；已释放实例仍正常结算。
-    if (this.guardPlayer && this.data.cast && !this.data.cast.released &&
+    if (!life.emergency && this.guardPlayer && this.data.cast && !this.data.cast.released &&
       this.data.cast.target && !env.enemies.some(e =>
         e.id === this.data.cast!.target && threatensPlayer(e))) this.cancel(0);
     if (
@@ -1268,7 +1291,7 @@ export class XiaobaoCombat extends Xiaobao {
       (e) =>
         this.valid(e, env, this, 600) &&
         this.allowed(e, env, anchor, gate) &&
-        (this.data.task === "follow" && !support
+        (this.data.task === "follow" && !support && !life.emergency
           ? env.player.outside &&
             (e.targetId === "player" ||
               env.playerThreats?.includes(e.id) ||
@@ -1284,7 +1307,8 @@ export class XiaobaoCombat extends Xiaobao {
       env.allies.find((a) => a.id === e.targetId && a.threatAt !== null);
     candidates.sort(
       (a, b) =>
-        (following
+        (life.emergency ? Number(victim(b)?.role==='resident')-Number(victim(a)?.role==='resident') : 0) ||
+        (following && !life.emergency
           ? Number(!!b.attack && !b.attack.cancelled && !b.attack.resolved && b.targetId === "player") -
               Number(!!a.attack && !a.attack.cancelled && !a.attack.resolved && a.targetId === "player") ||
             Number(b.id === this.data.command?.target) - Number(a.id === this.data.command?.target) ||
@@ -1341,12 +1365,13 @@ export class XiaobaoCombat extends Xiaobao {
   }
   anchor(env: XiaobaoEnvironment): Point {
     if (this.support) return xiaobaoGatePoint(this.support.gate);
-    if (this.data.task === "follow") return this.data.wait ?? env.player;
+    if (this.data.task === "follow" && !this.data.life.emergency) return this.data.wait ?? env.player;
     if (this.data.task === "guard" && this.data.gate !== "all")
       return xiaobaoGatePoint(this.data.gate);
     return XIAOBAO.home;
   }
   allowed(p: Point, env: XiaobaoEnvironment, anchor: Point, gate?: GateId) {
+    if(this.data.life.emergency)return inProtected(p)||!!gate&&inActivity(gate,p);
     if (this.data.wait && !this.support)
       return distance(p, this.data.wait) <= 120;
     if (this.data.task === "follow" && !this.support)
@@ -1378,7 +1403,7 @@ export class XiaobaoCombat extends Xiaobao {
     } else if (this.support || (front && this.data.task !== "follow")) {
       destination = front?.point ?? anchor;
       speed = 420;
-    } else if (this.data.task === "follow") {
+    } else if (this.data.task === "follow" && !this.data.life.emergency) {
       this.status = this.data.wait ? "原地等候" : "留距巡护";
       if (this.data.wait) {
         destination = this.data.wait;
@@ -1457,7 +1482,7 @@ export class XiaobaoCombat extends Xiaobao {
       }
     }
   }
-  route(goal: Point, env: XiaobaoEnvironment) {
+  route(goal: Point, env: Pick<XiaobaoEnvironment,'clear'>) {
     if (
       distance(this, goal) < 430 ||
       (env.clear ?? clearMotionLine)(this, goal)
@@ -1507,6 +1532,7 @@ export class XiaobaoCombat extends Xiaobao {
   tick(dt: number, env: XiaobaoEnvironment, budget: { queries: number }) {
     if (!(dt > 0) || !Number.isFinite(dt)) return;
     let left = dt;
+    let lifeMoved=false;
     while (left > 1e-7) {
       const slice = Math.min(5, left),
         priorCast = this.data.cast,
@@ -1558,7 +1584,7 @@ export class XiaobaoCombat extends Xiaobao {
           this.data.hp = 320;
           this.data.qi = 50;
           this.data.recovery = 1000;
-          const safe = this.landingPoints(this, env)[0];
+          const safe = this.data.space==='village' ? this.landingPoints(this, env)[0] : undefined;
           if (safe) {
             this.x = safe.x;
             this.y = safe.y;
@@ -1575,6 +1601,14 @@ export class XiaobaoCombat extends Xiaobao {
       if (this.data.flight) {
         this.effectsTick(slice, env);
         if (this.data.flight === priorFlight) this.flightTick(slice, env);
+        continue;
+      }
+      if(this.demonstration&&!this.data.life.emergency){
+        super.update(slice,env.minute,env.clear??clearMotionLine);
+        continue;
+      }
+      if(this.data.space!=='village'){
+        if(!lifeMoved){env.lifeMove?.(dt,budget);lifeMoved=true;}
         continue;
       }
       const fighting =
@@ -1618,9 +1652,12 @@ export class XiaobaoCombat extends Xiaobao {
       }
       this.effectsTick(slice, env);
       if (this.data.recovery > 0) continue;
-      if (
+      if(env.lifeMove && this.data.task==='free' && !this.data.life.emergency && !this.targetId && !this.data.support && !this.demonstration && !this.data.effects.length){
+        if(!lifeMoved){env.lifeMove(dt,budget);lifeMoved=true;}
+      }else if (
         this.data.task === "free" &&
         !this.data.support &&
+        !this.data.life.emergency &&
         !this.targetId &&
         distance(this, XIAOBAO.home) < 180
       ) {
@@ -1708,6 +1745,8 @@ export class XiaobaoCombat extends Xiaobao {
   override snapshot() {
     return {
       ...super.snapshot(),
+      space:this.data.space,
+      life:this.data.life,
       state: structuredClone(this.data),
       status: this.status,
       airborne: this.airborne,

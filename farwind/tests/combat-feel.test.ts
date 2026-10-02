@@ -137,14 +137,14 @@ describe('近场威胁协调的作用域与释放',()=>{
   updateEnemy(b,p,20,0,{queries:2},'player',(e,id)=>playerAttackPermitted(e,id,p,[a,b],20));expect(b.attack).toBeUndefined();
   updateEnemy(b,p,20,0,{queries:2},'player',()=>true);expect(b.attack?.attackId).toBe('b:1');
  });
- for(const release of ['cancel','death','recovery','target','far'])it(`${release}立即释放近场许可，无持久锁`,()=>{
+ for(const release of ['cancel','death','recovery','far'])it(`${release}立即释放近场许可，无持久锁`,()=>{
   const a=body('a'),b=body('b'),p={x:3340,y:1500};a.attack=createEnemyAttack(a.id,1,a.type,0,a,p);expect(playerAttackPermitted(b,'player',p,[a,b],20)).toBe(false);
   let now=20;if(release==='cancel')a.attack.cancelled=true;if(release==='death')a.hp=0;if(release==='recovery')now=a.attack.activeUntil;if(release==='target')a.targetId='guard';if(release==='far')a.x=5000;
   expect(playerAttackPermitted(b,'player',p,[a,b],now)).toBe(true);
  });
- it('一个远程和一个近战共存，远处驻防和小宝目标不受全局名额限制',()=>{
+ it('一个远程和一个近战共存，近场守卫和小宝目标仍受统一预算限制',()=>{
   const a=body('a'),b=body('b','spore'),p={x:3340,y:1500};a.attack=createEnemyAttack(a.id,1,a.type,0,a,p);
-  expect(playerAttackPermitted(b,'player',p,[a,b],20)).toBe(true);expect(playerAttackPermitted(body('c'),'guard',p,[a],20)).toBe(true);expect(playerAttackPermitted(body('d'),'xiaobao',p,[a],20)).toBe(true);
+  expect(playerAttackPermitted(b,'player',p,[a,b],20)).toBe(true);expect(playerAttackPermitted(body('c'),'guard',p,[a],20)).toBe(false);expect(playerAttackPermitted(body('d'),'xiaobao',p,[a],20)).toBe(false);
   const far=body('far');far.x=5000;expect(playerAttackPermitted(far,'player',p,[a],20)).toBe(true);
  });
  it('屏外新来招受启动限制，已承诺来招由正式实例继续，不被协调撤销',()=>{

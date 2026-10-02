@@ -1,8 +1,12 @@
+import {showWindMemory} from './windMemory';
+import type {WildernessDirection} from '../../data/maps/windbell/encounters';
+import {showWindGifts} from './windGifts';
+import type {WindGiftId} from '../systems/windGifts';
+import {HOMES} from '../../data/npcLife';
 import {showCatCompanion} from './catCompanion';
 import {CAT_STAGES,catStage,type CatCare} from '../systems/catBond';
 import {legacyJournal,legacyTracked} from '../systems/windLegacy';
 import type {LegacyTrack} from '../systems/windLegacyState';
-import {migrationBackup} from '../systems/save';
 import {showRunes,updateRuneHud} from './runes';
 import {CAMP_BOSSES,type CampBossKind} from '../../data/maps/windbell/campBosses';
 import {RUNES,type RuneDefinition} from '../../data/runes';
@@ -39,7 +43,7 @@ import {
   VILLAGE_PORTALS,
   RESERVED_PARCELS,
 } from "../../data/village";
-import { count, discard, parseSave, type State } from "../systems/state";
+import { count, discard, parseSave, MAX_SAVE_BYTES, type State } from "../systems/state";
 import { region } from "../../data/world";
 import type { PracticeMode } from "../systems/parryTraining";
 import { dialoguePortraitFor } from "../../data/dialoguePortraits";
@@ -51,6 +55,10 @@ function journeyJournal(state: State) {
 }
 const campMapStatus=(s:State,id:string)=>{const g=s.encounters.groups[id];return g.cleared?'已清除':g.boss?.stage==='battle'?'首领交战':g.boss?.stage==='warning'?'首领待挑战':'驻守未清';};
 export type Actions = {
+  memoryStart?:(direction:WildernessDirection)=>Promise<void>;
+  memoryEnd?:()=>Promise<void>;
+  giftSaved?:(receipt:string)=>boolean;
+  giftChoose?:(receipt:string,id:WindGiftId,replace?:WindGiftId)=>Promise<void>;
   catCare?:(kind:CatCare)=>Promise<void>;
   catCareReason?:()=>string;
   catStatus?:()=>string;
@@ -147,6 +155,7 @@ export class Interface {
     this.root.addEventListener("focusin", (e) => {
       if ((e.target as Element).closest("#hud button, #hud input, #hud select"))
         this.actions?.pause();
+    this.giftJournalBind();
     });
     const hotbar = this.root.querySelector<HTMLElement>("#hotbar")!;
     for (const type of ["pointerover", "focusin"])
@@ -411,7 +420,9 @@ export class Interface {
     this.modal.hidden = false;
     this.modal.innerHTML = `<section class="panel${this.mode === "pause" ? " pause-panel" : ""}" role="dialog" aria-modal="true" aria-labelledby="panel-title"><header><small>远 风 之 地</small><h1 id="panel-title">${title}</h1></header>${body}</section>`;
     this.actions?.pause();
+    this.giftJournalBind();
   }
+  giftJournalBind(){this.button('journal-wind-gifts',()=>this.open('wind-gifts'));this.button('journal-wind-memory',()=>this.open('wind-memory'));}
   button(id: string, fn: () => void) {
     this.modal.querySelector("#" + id)?.addEventListener("click", fn);
   }
@@ -421,7 +432,7 @@ export class Interface {
     this.hud.hidden = true;
     this.shell(
       "远风之地",
-      `<p class="subtitle">沿着风，遇见属于你的故事。</p><p class="eyebrow">第一章 · 风铃村的来信</p><div class="menu"><button id="new">启程 · 新游戏</button><button id="continue" ${!this.available ? "disabled" : ""}>继续旅途</button><button id="settings">设置</button></div><p class="muted">${error || "本地存档可能随站点数据清理而丢失，请定期导出备份。"}</p><button id="import">导入存档</button><button id="migration-backup">导出迁移前备份</button>`,
+      `<p class="subtitle">沿着风，遇见属于你的故事。</p><p class="eyebrow">第一章 · 风铃村的来信</p><div class="menu"><button id="new">启程 · 新游戏</button><button id="continue" ${!this.available ? "disabled" : ""}>继续旅途</button><button id="settings">设置</button></div><p class="muted">${error || "本地存档可能随站点数据清理而丢失，请定期导出备份。"}</p><button id="import">导入存档</button>`,
     );
     this.button("new", () => {
       if (this.available) {
@@ -437,7 +448,6 @@ export class Interface {
     this.button("continue", () => this.actions.start(true));
     this.button("settings", () => this.open("settings"));
     this.button("import", () => this.import());
-    this.button('migration-backup',()=>void migrationBackup().then(raw=>{if(raw)this.download(raw,'farwind-before-combat-build.json');else this.message('没有迁移前备份。');}));
     this.focusPanel();
   }
   focusPanel(id = "") {
@@ -522,6 +532,8 @@ export class Interface {
   }
   open(mode: string, bagFeedback = "") {
     if (this.economyBusy) return;
+    if(mode==='wind-gifts'){showWindGifts(this,bagFeedback);return;}
+    if(mode==='wind-memory'){showWindMemory(this,bagFeedback);return;}
     if(this.mode==='victory')return;
     if (!this.state && mode !== "settings") return;
     if (this.mode !== mode) {
@@ -622,7 +634,7 @@ export class Interface {
     if (mode === "quest" && s)
       this.shell(
         "旅途手记",
-        `${journeyJournal(s)}<h2>远处的黑焰 · ${DEMON_KING.name}</h2><p>${demonKingSummary(s)}</p><p>${demonMalice(s.encounters)?'每完整清剿一处据点，恶意增加 1；同一据点只计一次。当地巡游与当地来袭来源停止；魔王会为每处陷落据点，从地图边缘派出一波 10 只精英裂枝镰灵向村庄总攻。第一波一阶，第二波二阶，此后每波升一阶；每只生命依次为94、115、137、158，伤害依次为22、26、30、34。已有战斗时依次接续，读档不会重复刷出。':'魔物最初为了果腹而捕猎，远处的存在尚未将人类视为敌人。清剿保护村庄，也会改变它对人类的判断。'}</p><p>恶意 1～9：原编队增加 5 只，单次 6～8 只；每逢 10 点升档，逐步加入更高阶精英，编队最多 10 只。常规骚扰首夜安静，恶意 0～4 的单夜来袭概率依次为 50%、60%、70%、80%、90%；单夜至多一次，仍受冷却与防线状态限制。报复总攻不受首夜、时段或常规冷却限制；已出发的编队保持原恶意档位。</p>${demonMalice(s.encounters)?`<p>当前新派遣：${demonFormation(demonMalice(s.encounters),1).count}～${demonFormation(demonMalice(s.encounters),3).count}只。${s.defense.raid?.order?.source==='demon-king'?`${s.defense.raid.order.retaliationCamp?`在途报复：${retaliationSummary(s.defense.raid.order)}`:`在途派遣按恶意 ${s.defense.raid.order.malice} 编队，共 ${s.defense.raid.members.length} 只`}；不会因清剿而临时升阶。`:''}</p>`:''}<h2>南路补给</h2><p>${southQuestObjective(s)}</p><p>从南门沿路过芦苇桥，药草洼地在西南岸，孢根巢地在洼地东南方。药师与公共委托簿均可办理。</p><h2>主线 · 失落的风</h2><p>${objectives[s.quest]}</p><ol class="journal">${objectives
+        `<p><button id="journal-wind-gifts">风赐：已持有 ${s.windGifts.held.length}/6 · 待选 ${s.windGifts.pending.length} 场</button></p><button id="journal-wind-memory">四方向进度与风忆远征</button>${journeyJournal(s)}<h2>远处的黑焰 · ${DEMON_KING.name}</h2><p>${demonKingSummary(s)}</p><p>${demonMalice(s.encounters)?'每完整清剿一处据点，恶意增加 1；同一据点只计一次。当地巡游与当地来袭来源停止；魔王会为每处陷落据点，从地图边缘派出一波 10 只精英裂枝镰灵向村庄总攻。第一波一阶，第二波二阶，此后每波升一阶；每只生命依次为94、115、137、158，伤害依次为22、26、30、34。已有战斗时依次接续，读档不会重复刷出。':'魔物最初为了果腹而捕猎，远处的存在尚未将人类视为敌人。清剿保护村庄，也会改变它对人类的判断。'}</p><p>恶意 1～9：原编队增加 5 只，单次 6～8 只；每逢 10 点升档，逐步加入更高阶精英，编队最多 10 只。常规骚扰首夜安静，恶意 0～4 的单夜来袭概率依次为 50%、60%、70%、80%、90%；单夜至多一次，仍受冷却与防线状态限制。报复总攻不受首夜、时段或常规冷却限制；已出发的编队保持原恶意档位。</p>${demonMalice(s.encounters)?`<p>当前新派遣：${demonFormation(demonMalice(s.encounters),1).count}～${demonFormation(demonMalice(s.encounters),3).count}只。${s.defense.raid?.order?.source==='demon-king'?`${s.defense.raid.order.retaliationCamp?`在途报复：${retaliationSummary(s.defense.raid.order)}`:`在途派遣按恶意 ${s.defense.raid.order.malice} 编队，共 ${s.defense.raid.members.length} 只`}；不会因清剿而临时升阶。`:''}</p>`:''}<h2>南路补给</h2><p>${southQuestObjective(s)}</p><p>从南门沿路过芦苇桥，药草洼地在西南岸，孢根巢地在洼地东南方。药师与公共委托簿均可办理。</p><h2>主线 · 失落的风</h2><p>${objectives[s.quest]}</p><ol class="journal">${objectives
           .slice(0, 7)
           .map(
             (q, i) =>
@@ -643,11 +655,10 @@ export class Interface {
     if (mode === "pause") {
       this.shell(
         "在风中歇一会儿",
-        `<p class="pause-note">世界与时间已暂停。</p><button id="close" class="resume" aria-label="继续旅途" aria-keyshortcuts="Escape">继续旅途 <kbd>Esc</kbd></button><div class="pause-grid"><button id="pause-cat" data-panel="cat">小黑 · 默契与能力</button><button id="pause-bag" data-panel="bag">行囊 <kbd>Tab</kbd></button><button id="pause-map" data-panel="map">完整地图 <kbd>M</kbd></button><button id="pause-quest" data-panel="quest">旅途手记 <kbd>Q</kbd></button><button id="pause-runes" data-panel="runes">符文与共鸣 <kbd>R</kbd></button><button id="pause-help" data-panel="help">操作说明 <span>查看操作</span></button></div><h2>存档与设置</h2><div class="pause-grid"><button id="save">保存旅途</button><button id="export">导出备份</button><button id="import">导入存档</button><button id="migration-backup">导出迁移前备份</button><button id="settings">设置</button><button id="title" class="wide">保存并返回标题</button></div><p class="backup-note">备份需下载到站点之外；清理站点数据会删除本地存档。</p>`,
+        `<p class="pause-note">世界与时间已暂停。</p><button id="close" class="resume" aria-label="继续旅途" aria-keyshortcuts="Escape">继续旅途 <kbd>Esc</kbd></button><div class="pause-grid"><button id="pause-cat" data-panel="cat">小黑 · 默契与能力</button><button id="pause-bag" data-panel="bag">行囊 <kbd>Tab</kbd></button><button id="pause-map" data-panel="map">完整地图 <kbd>M</kbd></button><button id="pause-quest" data-panel="quest">旅途手记 <kbd>Q</kbd></button><button id="pause-runes" data-panel="runes">符文与共鸣 <kbd>R</kbd></button><button id="pause-help" data-panel="help">操作说明 <span>查看操作</span></button></div><h2>存档与设置</h2><div class="pause-grid"><button id="save">保存旅途</button><button id="export">导出备份</button><button id="import">导入存档</button><button id="settings">设置</button><button id="title" class="wide">保存并返回标题</button></div><p class="backup-note">备份需下载到站点之外；清理站点数据会删除本地存档。</p>`,
       );
       this.button("save", () => void this.actions.save().catch(() => {}));
       this.button("export", () => this.export());
-      this.button('migration-backup',()=>void migrationBackup().then(raw=>{if(!raw){this.message('没有迁移前备份；当前新档可以使用导出备份。');return;}this.download(raw,'farwind-before-combat-build.json');}));
       this.button("import", () => this.import());
       this.button("settings", () => this.open("settings"));
       this.button("title", () => this.actions.title());
@@ -763,7 +774,7 @@ export class Interface {
       try {
         const f = input.files?.[0];
         if (!f) return;
-        if (f.size > 200000) throw Error("存档超过 200 KB");
+        if (f.size > MAX_SAVE_BYTES) throw Error("存档超过 2 MB 限制");
         const s = parseSave(await f.text());
         if (!confirm("导入将覆盖当前本地存档。是否继续？")) return;
         await this.actions.import(s);
@@ -986,7 +997,7 @@ export class Interface {
     ctx.strokeStyle = "#8d512e";
     ctx.lineWidth = 2;
     ctx.stroke();
-    const xb=s.xiaobao;ctx.fillStyle='#b7ffe0';ctx.strokeStyle='#315e4c';ctx.beginPath();ctx.arc(px(xb.x),py(xb.y),mini?3:5,0,Math.PI*2);ctx.fill();ctx.stroke();
+    const xb=s.xiaobao;const xbPoint=xb.space==='village'?xb:(HOMES.find(h=>h.id===xb.space)?.door??xb);ctx.fillStyle='#b7ffe0';ctx.strokeStyle='#315e4c';ctx.beginPath();ctx.arc(px(xbPoint.x),py(xbPoint.y),mini?3:5,0,Math.PI*2);ctx.fill();ctx.stroke();
     if(!mini){ctx.font='12px sans-serif';ctx.fillStyle='#174537';ctx.fillText(`小宝 · ${xb.flight?'飞援中':xb.rest?'调息中':xb.task==='guard'?'守村':xb.task==='follow'?'随行':'自由活动'}`,px(xb.x)+8,py(xb.y)-8);}
   }
 }

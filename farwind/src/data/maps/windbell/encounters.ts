@@ -55,5 +55,53 @@ const SOUTH_ADDITIONS:Record<string,EncounterDefinition['members']>={
 };
 export const ENCOUNTERS:readonly EncounterDefinition[]=[...BASE_ENCOUNTERS.map(d=>({...d,members:[...d.members.filter(m=>!m.boss),...SOUTH_ADDITIONS[d.id]??[],...d.members.filter(m=>m.boss)]})),...LEGACY_ENCOUNTERS];
 export const ENCOUNTER_UNITS=ENCOUNTERS.flatMap(group=>group.members.map(member=>({...member,group:group.id})));
-export const encounterUnit=(id:string)=>ENCOUNTER_UNITS.find(s=>s.id===id);
+export const encounterUnit=(id:string):(EncounterDefinition['members'][number]&{group:string})|undefined=>{
+ const support=/^(.+):唤巢:([0-3])$/.exec(id);if(support&&id.length<160){const owner=encounterUnit(support[1]);if(owner?.type==='bell')return {id,type:'slime',group:owner.group,x:owner.x,y:owner.y};}
+ const owned=/^(.+):(祭根|护猎):(\d+):(\d+)$/.exec(id);if(owned&&id.length<160){const owner=encounterUnit(owned[1]);if(owner?.boss)return {id,type:owned[2]==='护猎'?'wolf':'priest',group:owner.group,x:owner.x,y:owner.y};}
+ const instance=/^(memory:\d+)\|(.+)$/.exec(id);if(instance){const base=ENCOUNTER_UNITS.find(s=>s.id===instance[2])??dynamicEncounterUnit(instance[2]);return base?{...base,id}:undefined;}
+ return ENCOUNTER_UNITS.find(s=>s.id===id)??dynamicEncounterUnit(id);
+};
 export const ENCOUNTER_LIMITS={active:12,activateDistance:1250,respawnDistance:1350,dropLifetimeMs:600000} as const;
+
+// 同一地点承载完整波次；固定主线成员身份保留，新增成员由实例身份解析。
+export const ADVENTURE_ROUTES:Record<WildernessDirection,readonly string[]>={
+ south:['south-reed-patrol','south-herb-patrol','south-orchard-burrows','south-weir-watch','south-spore-camp'],
+ west:['west-track-pack','west-farm-reaper','west-cart-ambush','west-pack-clearing','west-wolf-den'],
+ north:['north-pass-charge','north-stone-watch','north-outpost-wings','north-rock-arena','north-boar-camp'],
+ east:['east-road-slimes','east-brook-reapers','east-brook-burrows','east-spore-ring','east-thorn-camp'],
+};
+export const adventureIndex=(id:string)=>Object.values(ADVENTURE_ROUTES).find(r=>r.includes(id))?.indexOf(id)??-1;
+export const COMBAT_TEMPLATES:Record<WildernessDirection,readonly (readonly EnemyKind[])[]>={
+ south:[['slime','leaf','archer','bell','slime','shade'],['slime','shade','archer','geomancer','leaf','slime'],['leaf','slime','bell','burrow','wolf','slime'],['wolf','leaf','spore','raven','slime','slime'],['slime','leaf','guardian','spore','wolf','slime'],['leaf','wolf','priest','slime','spore','slime']],
+ west:[['shade','leaf','archer','slime','geomancer','shade'],['leaf','wolf','bell','slime','raven','wolf'],['wolf','leaf','archer','burrow','slime','wolf'],['wolf','slime','guardian','raven','leaf','wolf'],['leaf','wolf','spore','slime','bell','wolf'],['wolf','leaf','raven','slime','boar','wolf']],
+ north:[['slime','leaf','geomancer','archer','shade','slime'],['shade','leaf','boar','bell','slime','slime'],['leaf','slime','raven','guardian','wolf','slime'],['wolf','leaf','archer','burrow','slime','wolf'],['slime','leaf','bell','boar','raven','slime'],['leaf','wolf','spore','guardian','slime','slime']],
+ east:[['leaf','slime','archer','geomancer','shade','slime'],['shade','leaf','bell','raven','slime','leaf'],['leaf','wolf','archer','burrow','slime','leaf'],['slime','leaf','guardian','raven','wolf','slime'],['leaf','wolf','bell','spore','slime','leaf'],['wolf','leaf','spore','boar','slime','leaf']],
+};
+export const combatRole=(type:EnemyKind):'melee'|'ranged'|'heavy'|'support'=>['priest','bell'].includes(type)?'support':['boar','burrow','guardian','bomber','geomancer'].includes(type)?'heavy':['spore','archer'].includes(type)?'ranged':'melee';
+export const COMPOSITION_LIMITS={ranged:2,heavy:3,support:1} as const;
+export type WaveMember=EncounterDefinition['members'][number]&{wave:number};
+export function waveMembers(d:EncounterDefinition,seed:number):WaveMember[]{
+ const node=adventureIndex(d.id);if(node<0)return d.members.map(m=>({...m,wave:0}));
+ let hash=seed>>>0;for(const c of d.id)hash=Math.imul(hash^c.charCodeAt(0),16777619)>>>0;
+ const sizes=node===0?[6,6]:node===1?[8,8]:node===2?[8,8,8]:node===3?[6,6]:[8,8];
+ const result:WaveMember[]=[];
+ for(const [wave,size] of sizes.entries()){
+  const pattern=COMBAT_TEMPLATES[d.direction][(hash+wave)%6];
+  const pinned=node===3?(wave===1?[d.members.find(m=>m.elite)??{id:`v2:${d.id}:1:0:spore`,type:'spore' as const,elite:'brood' as const,x:d.x,y:d.y}]:[]):wave===0?d.members.filter(m=>!m.boss):[];
+  const roles={melee:0,ranged:0,heavy:0,support:0};
+  for(let slot=0;slot<size;slot++){
+   const original=pinned[slot];let type=original?.type??(slot<6?pattern[slot]:pattern[slot%2]);
+   let role=combatRole(type);if(!original&&role!=='melee'&&roles[role]>=COMPOSITION_LIMITS[role]){type=slot%2===0?'leaf':'slime';role='melee';}roles[role]++;
+   const angle=slot*Math.PI*2/size,radius=210+(wave%2)*35;
+   result.push({...original,id:original?.id??`v2:${d.id}:${wave}:${slot}:${type}`,type,x:original?.x??d.x+Math.cos(angle)*radius,y:original?.y??d.y+Math.sin(angle)*radius,wave});
+  }
+ }
+ const boss=d.members.find(m=>m.boss);if(boss)result.push({...boss,wave:sizes.length});
+ return result;
+}
+export function dynamicEncounterUnit(id:string):(EncounterDefinition['members'][number]&{group:string})|undefined{
+ const match=/^v2:([a-z-]+):(\d):(\d):([a-z]+)$/.exec(id);if(!match)return;
+ const [,group,w,s,type]=match,d=ENCOUNTERS.find(d=>d.id===group);if(!d||adventureIndex(group)<0||Number(w)>2||Number(s)>9||!['slime','leaf','spore','boar','raven','wolf','burrow','guardian','priest','bomber','archer','bell','shade','geomancer'].includes(type))return;
+ const node=adventureIndex(group),size=node===0||node===3?6:8,angle=Number(s)*Math.PI*2/size,radius=210+(Number(w)%2)*35;
+ return {id,type:type as EnemyKind,group,x:d.x+Math.cos(angle)*radius,y:d.y+Math.sin(angle)*radius,...node===3&&w==='1'&&s==='0'&&type==='spore'?{elite:'brood' as const}:{}};
+}

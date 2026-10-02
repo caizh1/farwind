@@ -17,6 +17,14 @@ const setup = () => {
   return { s, l, healer };
 };
 describe("环境短句的认知、频率与读档", () => {
+  it("目击小宝护印时复述真实记录，不把小宝的帮助说成玩家救治", () => {
+    const { l, healer } = setup();
+    l.emit("help", healer.body!, "xiaobao", ["elder"], "小宝到场放出护印，保护即将受击的岚爷爷");
+    const line = chooseSpeech(l)?.text;
+    expect(line).toContain("小宝到场放出护印");
+    expect(line).not.toContain("玩家");
+    expect(line).not.toContain("照护了伤员");
+  });
   it("只有真实工作阶段才说配药，每天同类短句一次且不改资源和关系", () => {
     const { s, l, healer } = setup();
     healer.gear = "carried";
@@ -114,7 +122,7 @@ describe("环境短句的认知、频率与读档", () => {
     Object.assign(old.defense.guards[0], { hp: 0, dead: true, mode: "dead" });
     const next = validate(old),
       life = new NpcLife(next, new EastDefense(next.defense, 0));
-    expect(next.life.version).toBe(4);
+    expect(next.life.version).toBe(5);
     expect(next.life.stores).toEqual(s.life.stores);
     expect(next.defense.guards[0].dead).toBe(true);
     expect(chooseSpeech(life)).toBeNull();

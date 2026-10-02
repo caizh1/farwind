@@ -57,17 +57,17 @@ describe("居民生活 M1 基础与事务", () => {
     observer.known.player.x = NaN;
     expect(() => validate(s)).toThrow("人物状态或记忆无效");
   });
-  it("十五个稳定身份、独立床位和卫兵唯一权威状态", () => {
+  it("十六个稳定身份、独立床位和卫兵与小宝唯一权威状态", () => {
     const { s, l } = setup();
-    expect(PEOPLE).toHaveLength(15);
-    expect(new Set(PRIVATE_STORAGE.map((s) => s.owner)).size).toBe(15);
+    expect(PEOPLE).toHaveLength(16);
+    expect(new Set(PRIVATE_STORAGE.map((s) => s.owner)).size).toBe(16);
     expect(
       new Set(
         FACILITIES.filter((f) => f.kind === "bed" && f.owner).map(
           (f) => f.owner,
         ),
       ).size,
-    ).toBe(15);
+    ).toBe(16);
     expect(s.life.people.slice(3).every((n) => n.body === null)).toBe(true);
     s.defense.guards[0].x += 5;
     expect(l.body("east-watch")!.x).toBe(s.defense.guards[0].x);
@@ -991,7 +991,7 @@ describe("生活子版本2：私人取放与备用住宿", () => {
     Object.assign(old.defense.guards[0], { hp: 0, dead: true, mode: "dead" });
     old.life.stores.medicine = 1;
     const next = validate(old);
-    expect(next.life.version).toBe(4);
+    expect(next.life.version).toBe(5);
     expect(next.life.people[1].gear).toBe("carried");
     expect(next.life.stores.medicine).toBe(1);
     expect(next.defense.guards[0].dead).toBe(true);

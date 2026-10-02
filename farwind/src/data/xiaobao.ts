@@ -14,6 +14,10 @@ export const XIAOBAO = {
 
 const clip = (name: string, sheet: string, row: number, duration: number, loop = false) => ({ name, sheet, row, duration, loop, frames: 6 });
 export const XIAOBAO_CLIPS = {
+  eat: clip("端碗吃饭", "daily", 0, 1800, true),
+  gather: clip("俯身采药", "daily", 1, 1800, true),
+  carry: clip("提篮送物", "daily", 2, 1000, true),
+  write: clip("写风向笔记", "daily", 3, 2100, true),
   idle: clip("听风待机", "motion", 0, 2100, true),
   walkDown: clip("正面小步", "motion", 1, 1000, true),
   walkSide: clip("侧面小步", "motion", 2, 1000, true),
@@ -32,7 +36,7 @@ export type XiaobaoClip = keyof typeof XIAOBAO_CLIPS;
 // 预览和真实人物共用选帧，不另造一套看起来会动的预览动画。
 export function xiaobaoPose(action: XiaobaoClip, elapsed: number, distance = 0) {
   const clip = XIAOBAO_CLIPS[action];
-  const frameIndex = action.startsWith("walk")
+  const frameIndex = action.startsWith("walk") || action === "carry"
     ? Math.floor(Math.max(0, distance) / XIAOBAO.stride * 6) % 6
     : action === "sleep" && elapsed >= clip.duration
       ? 4 + Math.floor((elapsed - clip.duration) / 900) % 2

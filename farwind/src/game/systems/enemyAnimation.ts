@@ -6,7 +6,7 @@ import type { EnemyAttack } from './enemyAttack';
 import type {CampBossKind} from '../../data/maps/windbell/campBosses';
 import type {BossBattle} from './campBossState';
 export type EnemyPose = Omit<SlimePose,'action'|'provisional'> & {action:SlimePose['action']|'wall';provisional:boolean};
-export type AnimatedEnemy = SlimeBody & {type:string;passiveRoot?:{owner:string;index:number;attempt:number};hurtboxFacing?:Facing;boss?:CampBossKind;bossBattle?:BossBattle;maxHP?:number;eliteLevel?:number;elite?:EliteKind;face?:{x:number;y:number};wallHit?:{at:number;until:number}};
+export type AnimatedEnemy = SlimeBody & {type:string;passiveRoot?:{owner:string;index:number;attempt:number;kind?:'root'|'sac'|'rock'|'sigil'};hurtboxFacing?:Facing;boss?:CampBossKind;bossBattle?:BossBattle;maxHP?:number;eliteLevel?:number;elite?:EliteKind;face?:{x:number;y:number};wallHit?:{at:number;until:number}};
 export class EnemyAnimation {
   motion=new SlimeAnimation();
   sample(body:AnimatedEnemy,attack:EnemyAttack|null|undefined,now:number):EnemyPose {

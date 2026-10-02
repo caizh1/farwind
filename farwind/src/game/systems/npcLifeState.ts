@@ -1,3 +1,4 @@
+import {XIAOBAO_WISHES,type XiaobaoWish} from './xiaobaoLifeState';
 import {validOutdoorPoint} from "../../data/maps/windbell/bounds";
 import {VILLAGE_ANCHORS} from '../../data/maps/windbell/layout';
 import {
@@ -36,7 +37,8 @@ export type LifeEvent = {
     | "visit"
     | "access"
     | "company"
-    | "report";
+    | "report"
+    | "activity";
   place: Place;
   source: string;
   subjects: string[];
@@ -55,6 +57,7 @@ export type Memory = {
   expires: number;
 };
 export type Action = {
+  xiaobao?: {wish:XiaobaoWish;partner:ResidentId|null;material?:'wood'};
   social?: { partner: ResidentId; occasion: number } | null;
   id: number;
   kind: Activity;
@@ -129,7 +132,7 @@ export type LifeTask = {
   retryAt: number;
 };
 export type LifeState = {
-  version: 4;
+  version: 5;
   speechAt: number;
   speechUrgentAt: number;
   speechEventFloor: number;
@@ -163,7 +166,7 @@ export type LifeState = {
   defenseReceipts: string[];
 };
 export const initialLife = (time = 480): LifeState => ({
-  version: 4,
+  version: 5,
   speechAt: 0,
   speechUrgentAt: 0,
   speechEventFloor: 0,
@@ -305,6 +308,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
         "access",
         "company",
         "report",
+        "activity",
       ].includes(k as string);
   if (l) l.defenseReceipts ??= [];
   // 主存档6的生活子版本1→2：保留进行中的行动、伤情、账本与已有携带事实。
@@ -353,7 +357,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
   }
   // 子版本3→4：不重演旧社交经历，不增关系、不修改资源或已有伤情。
   if (l && (l as { version?: number }).version === 3) {
-    l.version = 4;
+    Object.assign(l,{version:4});
     for (const n of l.people ?? []) {
       n.social = {
         cooldownUntil: l.elapsed,
@@ -363,9 +367,14 @@ export function validateLife(raw: unknown, time: number): LifeState {
       if (n.action) n.action.social = null;
     }
   }
+  if(l && (l as {version?:number}).version===4){
+    const added=initialLife(time).people.find(n=>n.id==='xiaobao')!;
+    if(!l.people.some(n=>n.id==='xiaobao'))l.people.push(added);
+    Object.assign(l,{version:5});
+  }
   if (
     !l ||
-    l.version !== 4 ||
+    l.version !== 5 ||
     !num(l.speechAt, l.elapsed + LIFE.speechPersonMs) ||
     !num(l.speechUrgentAt, l.elapsed + LIFE.speechPersonMs) ||
     !integer(l.speechEventFloor, l.sequence) ||
@@ -417,7 +426,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
     const def = PEOPLE.find((p) => p.id === n.id);
     if (
       !def ||
-      (!def.id.includes("-")
+      (def.id !== "xiaobao" && !def.id.includes("-")
         ? !n.body ||
           !validPlace(n.body) ||
           !num(n.body.hp, 100) ||
@@ -448,7 +457,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
         n.supplies.medicine,
         n.id === "healer" ? LIFE.carriedMedicine : 0,
       ) ||
-      !integer(n.supplies.wood, n.id === "carpenter" ? LIFE.carriedWood : 0) ||
+      !integer(n.supplies.wood, n.id === "xiaobao" ? 1 : n.id === "carpenter" ? LIFE.carriedWood : 0) ||
       !n.speech ||
       !integer(n.speech.eventFloor, l.sequence) ||
       !num(n.speech.nextAt, l.elapsed + LIFE.speechPersonMs) ||
@@ -552,6 +561,13 @@ export function validateLife(raw: unknown, time: number): LifeState {
           ))
     )
       throw Error("同伴探访目标或事件凭据无效。");
+    if(a?.xiaobao && (n.id!=='xiaobao' || !Object.hasOwn(XIAOBAO_WISHES,a.xiaobao.wish) || !(a.xiaobao.partner===null || PEOPLE.some(p=>p.id===a.xiaobao!.partner && p.id!=='xiaobao'))))throw Error('小宝生活行动元数据无效。');
+    if(a?.xiaobao?.material!==undefined&&a.xiaobao.material!=='wood')throw Error('送物材料无效。');
+    if(a?.xiaobao){const m=a.xiaobao,partners={wind:'elder',wood:'carpenter',herb:'healer'};
+      if(['wind','wood','herb'].includes(m.wish)&&(a.kind!=='talk'||m.partner!==partners[m.wish as keyof typeof partners]))throw Error('学习活动缺少实际在场的对应朋友。');
+      if(m.material==='wood'&&(m.wish!=='deliver'||!(a.kind==='supply'&&(m.partner===null||m.partner==='carpenter'))))throw Error('木料取送活动无效。');
+      if(m.wish==='deliver'&&!m.material&&(a.kind!=='supply'||!(m.partner===null||m.partner==='healer')))throw Error('药草采送活动无效。');
+    }
     if (a?.phase === "stock") {
       const source = FACILITIES.find(
         (f) =>
@@ -675,7 +691,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
     l.stores.medicine +
       l.people.find((n) => n.id === "healer")!.supplies.medicine >
       LIFE.maxMedicine ||
-    l.stores.wood + l.people.find((n) => n.id === "carpenter")!.supplies.wood >
+    l.stores.wood + l.people.find((n) => n.id === "carpenter")!.supplies.wood + l.people.find(n=>n.id==='xiaobao')!.supplies.wood >
       LIFE.maxWood
   )
     throw Error("公共与随身物资合计超过上限。");
@@ -692,6 +708,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
       : null,
     action: n.action
       ? {
+          ...(n.action.xiaobao ? {xiaobao:{wish:n.action.xiaobao.wish,partner:n.action.xiaobao.partner,...(n.action.xiaobao.material?{material:n.action.xiaobao.material}:{})}} : {}),
           id: n.action.id,
           kind: n.action.kind,
           target: place(n.action.target),
@@ -771,7 +788,7 @@ export function validateLife(raw: unknown, time: number): LifeState {
     },
   }));
   return {
-    version: 4,
+    version: 5,
     speechAt: l.speechAt,
     speechUrgentAt: l.speechUrgentAt,
     speechEventFloor: l.speechEventFloor,

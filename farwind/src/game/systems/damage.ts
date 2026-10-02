@@ -1,6 +1,6 @@
 export type Faction = "village" | "hostile";
 export type UnitRef = { id: string; faction: Faction; hp: number; armor: number;
-  reduction?: number; hpFloor?:number; shield?: { amount: number; remaining: number } };
+  reduction?: number; flatReduction?:number; hpFloor?:number; shield?: { amount: number; remaining: number } };
 export type DamageEvent = {
   sourceId: string; targetId: string; attackId: string; amount: number;
   sourceType: "player-replay" | "player-rune" | "player-phantom" | "player-melee" | "player-wind" | "guard-melee" | "tower-arrow" | "enemy-melee" | "enemy-shot" | "enemy-blast" | "companion-melee" | "companion-shot" | "companion-element";
@@ -36,6 +36,7 @@ function damage(event:DamageEvent,source:Pick<UnitRef,'id'|'faction'>,target:Uni
     const absorbed = Math.min(target.shield.amount, damage);
     target.shield.amount -= absorbed; damage -= absorbed;
   }
+  if(damage>0&&target.flatReduction)damage=Math.max(1,damage-Math.max(0,target.flatReduction));
   const hp = Math.max(Math.min(target.hp,target.hpFloor??0), target.hp - damage);
   if(target.hpFloor!==undefined)damage=target.hp-hp;
   return { applied: true, damage, hp, killed: hp === 0 };

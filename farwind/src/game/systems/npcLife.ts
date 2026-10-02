@@ -1,3 +1,4 @@
+import {stepXiaobaoLife} from './xiaobaoLife';
 import {
   PEOPLE,
   person,
@@ -55,7 +56,9 @@ export class NpcLife {
   debugAlarmUntil = 0;
   navigation = new Map<string, LifeNav>();
   scores = new Map<string, Candidate[]>();
-  metrics = { steps: 0, decisions: 0, queries: 0, ms: 0, maxMs: 0 };
+  metrics = { steps: 0, decisions: 0, queries: 0, ms: 0, maxMs: 0, xiaobaoDecisionMs:0, xiaobaoDecisionMaxMs:0, xiaobaoMoveMs:0, xiaobaoMoveMaxMs:0 };
+  // 演武仍由小宝控制器执行，生活决策只读取这份暂态门禁。
+  xiaobaoDemonstrating = false;
   messages: string[] = [];
   speech: LifeSpeech | null = null;
   constructor(
@@ -73,24 +76,28 @@ export class NpcLife {
     this.speech = null;
   }
   body(id: string): Place | null {
+    if(id==='xiaobao')return {space:this.state.xiaobao.space,x:this.state.xiaobao.x,y:this.state.xiaobao.y};
     const n = this.data.people.find((n) => n.id === id);
     if (n?.body) return n.body;
     const g = this.state.defense.guards.find((g) => g.id === id);
     return g ? { space: g.space ?? "village", x: g.x, y: g.y } : null;
   }
   live(id: string) {
+    if(id==='xiaobao')return this.state.xiaobao.hp>0&&!this.state.xiaobao.rest;
     const g = this.state.defense.guards.find((g) => g.id === id);
     return g
       ? !g.dead
       : this.data.people.find((n) => n.id === id)?.body?.health !== "down";
   }
   health(id: string) {
+    if(id==='xiaobao')return this.state.xiaobao.hp/640*100;
     const n = this.data.people.find((n) => n.id === id);
     if (n?.body) return n.body.hp;
     const g = this.state.defense.guards.find((g) => g.id === id);
     return g ? (g.hp / GUARD_DEFS.find((d) => d.id === id)!.maxHP) * 100 : 100;
   }
   needsTreatment(id: string) {
+    if(id==='xiaobao')return false;
     const body = this.data.people.find((n) => n.id === id)?.body;
     return body
       ? body.health === "hurt" || body.health === "down"
@@ -109,6 +116,7 @@ export class NpcLife {
     return n.gear === "carried";
   }
   gearNeeded(n: PersonState, kind: Activity) {
+    if(n.id==='xiaobao')return false;
     return n.id === "healer"
       ? ["work", "supply", "shelter", "treat", "escort"].includes(kind)
       : n.id === "carpenter"
@@ -1274,7 +1282,7 @@ export class NpcLife {
         for (const id of here)
           if (id !== n.id) this.report(n.id, id, memory.eventId);
     }
-    if (a.kind === "talk") {
+    if (a.kind === "talk" && n.id!=='xiaobao') {
       if (a.social) finishSocial(this, n, a);
       const me = this.body(n.id)!;
       for (const other of l.people) {
@@ -1307,7 +1315,7 @@ export class NpcLife {
       l.stores.food = Math.min(LIFE.maxFood, l.stores.food + 6);
       l.stores.wood = Math.min(
         LIFE.maxWood -
-          l.people.find((n) => n.id === "carpenter")!.supplies.wood,
+          l.people.find((n) => n.id === "carpenter")!.supplies.wood - l.people.find(n=>n.id==='xiaobao')!.supplies.wood,
         l.stores.wood + 2,
       );
     }
@@ -1488,6 +1496,7 @@ export class NpcLife {
       }
       const aware = n.memories.at(-1);
       if (aware?.kind === "alarm" || aware?.kind === "clear") n.alarm = l.alarm;
+      if(n.id==='xiaobao'){const started=performance.now();stepXiaobaoLife(this,ms);const cost=performance.now()-started;this.metrics.xiaobaoDecisionMs+=cost;this.metrics.xiaobaoDecisionMaxMs=Math.max(this.metrics.xiaobaoDecisionMaxMs,cost);continue;}
       const dangerous = p.space === "village" && !this.safe(p, 130);
       if (
         dangerous &&
@@ -2165,6 +2174,7 @@ export class NpcLife {
   }
   entities(space = this.data.playerSpace) {
     return this.data.people
+      .filter(n=>n.id!=='xiaobao')
       .map((n) => {
         const p = this.body(n.id)!,
           d = person(n.id)!;

@@ -1,3 +1,6 @@
+import {initialWindMemory,validateWindMemory,type WindMemoryState} from './windMemory';
+import {initialWindGifts,validateWindGifts,type WindGiftState} from './windGifts';
+import {initialXiaobaoLife} from './xiaobaoLifeState';
 import {initialCatBond,migrateCatBond,validateCatBond,type CatBondState} from './catBond';
 import {initialWindLegacy,validateWindLegacy,type WindLegacyState} from './windLegacyState';
 import {migrateInteriorPosition} from '../../data/villageInteriors';
@@ -31,10 +34,13 @@ import {initialNight,migratedNight,validateNight,type NightState} from "./nightD
 import { JOURNEY_MAX_DISTANCE, playerVitals } from './journeyTraining';
 export type Slot = { id: ItemId; count: number } | null;
 export type State = {
+  content_version: 2;
+  windGifts: WindGiftState;
+  windMemory: WindMemoryState;
   runes: RuneState;
   skills: SkillState;
   windLegacy:WindLegacyState;
-  schema_version: 20;
+  schema_version: 21;
   catBond: CatBondState;
   physique: { runDistance: number };
   demonKing:DemonKingState;
@@ -69,10 +75,13 @@ export type State = {
   crafted: boolean;
 };
 export const initialState = (): State => ({
+  content_version: 2,
+  windGifts: initialWindGifts(),
+  windMemory: initialWindMemory(),
   runes: initialRunes(),
   skills: initialSkills(),
   windLegacy:initialWindLegacy(),
-  schema_version: 20,
+  schema_version: 21,
   catBond: initialCatBond(),
   physique: { runDistance: 0 },
   demonKing:initialDemonKing(),
@@ -250,7 +259,13 @@ export function validate(raw: unknown): State {
     s.physique={runDistance:0};(s as {schema_version:number}).schema_version=19;
   }
   if(s&&(s as {schema_version:number}).schema_version===19){s.catBond=migrateCatBond(s);(s as {schema_version:number}).schema_version=20;}
-  if(s&&s.schema_version===20){s.skills=validateSkills(s.skills);s.runes=validateRunes(s.runes);s.windLegacy=validateWindLegacy(s.windLegacy);}
+  if(s&&(s as {schema_version:number}).schema_version===20){
+    s.xiaobao.space='village';s.xiaobao.life=initialXiaobaoLife();s.xiaobao.autoSupport=true;
+    (s as {schema_version:number}).schema_version=21;
+  }
+  // 仅内部历史结构校验兼容；正式读取及导入在调用前拒绝旧内容版本。
+  if(s&&(s as {schema_version:number}).schema_version===21&&(s as {content_version:number}).content_version!==2){s.windGifts=initialWindGifts();s.windMemory=initialWindMemory();s.content_version=2;}
+  if(s&&s.schema_version===21){s.windGifts=validateWindGifts(s.windGifts);s.windMemory=validateWindMemory(s.windMemory);s.skills=validateSkills(s.skills);s.runes=validateRunes(s.runes);s.windLegacy=validateWindLegacy(s.windLegacy);}
   const num = (n: unknown, min: number, max: number) =>
     typeof n === "number" && Number.isFinite(n) && n >= min && n <= max;
   const strarr = (a: unknown) =>
@@ -262,7 +277,7 @@ export function validate(raw: unknown): State {
   const vitals = playerVitals(s);
   if (
     !s ||
-    s.schema_version !== 20 ||
+    s.schema_version !== 21 || s.content_version !== 2 ||
     !s.mapProgress || !["unknown","surveyed","open"].includes(s.mapProgress.westRoad) ||
     !Array.isArray(s.mapProgress.shortcuts) || s.mapProgress.shortcuts.length>3 || new Set(s.mapProgress.shortcuts).size!==s.mapProgress.shortcuts.length || !s.mapProgress.shortcuts.every(id=>SHORTCUT_IDS.includes(id)) ||
     (s.map_version !== undefined &&
@@ -356,9 +371,10 @@ export function validate(raw: unknown): State {
   if(s.fieldQuests["south-supply"]==="complete"&&!s.encounters.groups["south-spore-camp"].cleared)throw Error("南部委托与据点进度不一致。");
   s.defense = validateDefense(s.defense);
   if((s.defense.raid?.order?.malice??0)>demonMalice(s.encounters))throw Error('在途魔王派遣与清剿进度不一致。');
-  s.xiaobao=validateXiaobao(s.xiaobao,s.killed,s.defense.raid?.members.map(m=>m.id)??[],s.encounters);
+  s.xiaobao=validateXiaobao(s.xiaobao,s.killed,s.defense.raid?.members.map(m=>m.id)??[],s.windMemory.active?.encounters??s.encounters);
   s.night=validateNight(s);
   s.life=validateLife(s.life,s.time);
+  if(s.xiaobao.life.day>Math.floor(s.time/1440)||s.xiaobao.life.journal.some(e=>e.time>s.time))throw Error('小宝的经历时间不能晚于世界时间。');
   s.catBond=validateCatBond(s.catBond,s.time,vitals.maxHp);
   const validIds = (ids: string[], kind: string) =>
     new Set(ids).size === ids.length &&
@@ -407,9 +423,11 @@ export function validate(raw: unknown): State {
   if(s.map_version===7)s.map_version=CURRENT_MAP_VERSION;
   return structuredClone(Object.fromEntries(Object.keys(initialState()).map(key=>[key,s[key as keyof State]]))) as State;
 }
+export const MAX_SAVE_BYTES = 2_000_000;
 export function parseSave(text: string) {
-  if (text.length > 200000) throw Error("存档超过 200 KB 限制");
+  if (new TextEncoder().encode(text).byteLength > MAX_SAVE_BYTES) throw Error("存档超过 2 MB 限制");
   const raw = JSON.parse(text);
+  if(raw?.content_version!==2||raw?.schema_version!==21)throw Error('此备份属于旧战斗版本，请从全新旅途开始；旧备份未改动。');
   if(raw?.map_version !== CURRENT_MAP_VERSION)throw Error('第一张地图从全新旅途开始，此文件属于旧地图；原存档文件未改动。');
   return validate(raw);
 }

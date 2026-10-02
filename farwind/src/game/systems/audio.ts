@@ -3,6 +3,8 @@ import {feedbackAudio,audibleFeedback,isHitFeedback,type FeedbackEvent,type Feed
 import {synthSwordWindHowl} from './swordWindAudio';
 import type {XiaobaoEvent} from './xiaobaoCombat';
 import {synthCreature,type CreatureVoice} from './creatureAudio';
+import {synthBossArrival} from './bossArrivalAudio';
+import type {CampBossKind} from '../../data/maps/windbell/campBosses';
 export class Sound {
   context?: AudioContext;
   private level = 0.25;
@@ -18,6 +20,14 @@ export class Sound {
   private windBuffer?:AudioBuffer;
   private xiaobaoBuffers=new Map<string,AudioBuffer>();
   private creatureBuffers=new Map<string,AudioBuffer>();
+  bossArrival(kind:CampBossKind,sim:number){
+    const c=this.context;if(!c||c.state!=='running'||!this.volume)return;
+    const key=`首领现身:${kind}`,at=c.currentTime;if(at-(this.lastPlayed.get(key)??-Infinity)<.2)return;this.lastPlayed.set(key,at);
+    let buffer=this.creatureBuffers.get(key);if(!buffer){const samples=synthBossArrival(kind,c.sampleRate);buffer=c.createBuffer(1,samples.length,c.sampleRate);buffer.copyToChannel(samples,0);this.creatureBuffers.set(key,buffer);}
+    const source=c.createBufferSource(),gain=c.createGain();source.buffer=buffer;gain.gain.value=this.volume*.9;source.connect(gain);gain.connect(this.buses?.threat??this.output??c.destination);
+    if(this.voices.size>=12){const oldest=this.voices.values().next().value!;oldest.stop();this.voices.delete(oldest);}this.voices.add(source);source.onended=()=>{this.voices.delete(source);source.disconnect();gain.disconnect();};source.start();
+    this.audioEvents.push({id:`${key}:${sim}`,kind:key,sim,submitted:performance.now(),scheduled:at,latency:c.outputLatency??null,variant:0});if(this.audioEvents.length>96)this.audioEvents.shift();
+  }
   // 铜铃使用短促敲击与衰减的非整数泛音；远处降音量，静音与暂停沿用共享声部清理。
   chime(note:number,distance:number,sim:number){
     const c=this.context;if(!c||c.state!=='running'||!this.volume||distance>650)return;

@@ -2,7 +2,7 @@ import { validate, type State } from "./state";
 import { SaveQueue } from './saveQueue';
 // 第一张正式地图从新档开始，旧数据库保留供原版本读取或导出。
 export const SAVE_DATABASE = import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('combatSlice') ? 'farwind-combat-slice-isolated' : import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('runeLab') ? 'farwind-rune-lab-isolated' : import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('combatFeel')
-  ? 'farwind-combat-feel-isolated' : 'farwind-first-map';
+  ? 'farwind-combat-feel-isolated' : 'farwind-combat-v2';
 let fault = { delay: 0, failures: 0 };
 // 只在显式开发样板使用；生产构建无法启用故障注入。
 export function configureSaveFault(delay = 0, failures = 0) {
@@ -36,7 +36,7 @@ async function writeSave(s: State) {
     };
     try{
       const store=t.objectStore('states'),old=store.get('current');
-      old.onsuccess=()=>{if(old.result&&old.result.schema_version<15){const previous=store.get('before-combat-build');previous.onsuccess=()=>{if(!previous.result)store.put(old.result,'before-combat-build');};}if(old.result&&old.result.schema_version<16){const backup=store.get('before-aiming-scope');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-aiming-scope');};}if(old.result&&old.result.schema_version<20){const backup=store.get('before-cat-companion');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-cat-companion');};}store.put(clean,'current');};
+      old.onsuccess=()=>{if(old.result&&old.result.schema_version<15){const previous=store.get('before-combat-build');previous.onsuccess=()=>{if(!previous.result)store.put(old.result,'before-combat-build');};}if(old.result&&old.result.schema_version<16){const backup=store.get('before-aiming-scope');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-aiming-scope');};}if(old.result&&old.result.schema_version<20){const backup=store.get('before-cat-companion');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-cat-companion');};}if(old.result&&old.result.schema_version<21){const backup=store.get('before-xiaobao-life');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-xiaobao-life');};}store.put(clean,'current');};
     }
     catch(e){t.abort();d.close();no(e);}
   });
@@ -49,6 +49,7 @@ export async function load() {
       r = t.objectStore("states").get("current");
     r.onsuccess = () => {
       try {
+        if(r.result&&(r.result.content_version!==2||r.result.schema_version!==21))throw Error('当前战斗记录版本不匹配，请开启新旅途。');
         ok(r.result ? validate(r.result) : null);
       } catch (e) {
         no(e);

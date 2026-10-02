@@ -1,3 +1,4 @@
+import {xiaobaoThought} from './xiaobaoLife';
 import {
   LIFE,
   MAINTENANCE,
@@ -23,6 +24,7 @@ type Line = {
   routine?: Activity;
 };
 const routine = (n: PersonState): string | undefined => {
+  if(n.id==='xiaobao')return xiaobaoThought(n);
   const a = n.action;
   if (
     !a ||
@@ -115,7 +117,7 @@ const memoryLine = (n: PersonState, m: Memory): Line | null => {
       text:
         m.subjects.includes(n.id) && m.source !== "report"
           ? "谢谢你到场照护，我记住了。"
-          : `${heard}玩家到场帮忙照护了伤员。`,
+          : `${heard}${m.result}。`,
       priority: 90,
       memory: m,
     };

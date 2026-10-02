@@ -3,7 +3,6 @@ import {
   CAMP_BOSSES,
   type CampBossKind,
 } from "../../data/maps/windbell/campBosses";
-import { CAMP_BOSS_ART } from "../../data/campBossArt";
 import type { Facing } from "./locomotion";
 
 type Point = { x: number; y: number };
@@ -54,29 +53,38 @@ export const MELEE_BODIES = {
   ],
   priest: [[80,112,20,25],[80,112,20,25],[81,112,21,25]],
   bomber: [[80,119,29,20],[80,119,29,20],[82,119,31,20]],
+  archer:[[80,111,20,30],[80,111,20,30],[81,111,24,30]],
+  bell:[[80,112,20,25],[80,112,20,25],[81,112,21,25]],
+  shade:[[80,110,13,27],[80,110,14,27],[84,111,25,23]],
+  geomancer:[[80,112,27,25],[80,112,27,25],[81,112,25,25]],
 } as const satisfies Record<EnemyKind, Views>;
+// 高清主体的身体轮廓直接按世界高度标定；武器、尾巴、粒子不扩大受击面。
+// 参数为脚底相对中心与半径的高度比例，与图集裁切和源图像素完全独立。
 export const BOSS_MELEE_BODIES = {
-  "spore-heart": [
-    [80, 108, 39, 29],
-    [80, 108, 40, 29],
-    [80, 107, 44, 30],
-  ],
-  "thorn-crown": [
-    [80, 106, 17, 31],
-    [80, 106, 18, 31],
-    [84, 108, 30, 29],
-  ],
-  "crag-tusk": [
-    [80, 108, 26, 29],
-    [80, 108, 25, 29],
-    [82, 108, 32, 29],
-  ],
-  "bound-branch": [
-    [80, 108, 20, 29],
-    [80, 108, 20, 29],
-    [81, 108, 21, 29],
-  ],
+  "spore-heart": [[0,-.39,.34,.39],[0,-.39,.35,.39],[0,-.39,.36,.39]],
+  "thorn-crown": [[0,-.39,.23,.39],[0,-.39,.24,.39],[.20,-.36,.70,.36]],
+  "crag-tusk": [[0,-.38,.30,.38],[0,-.38,.30,.38],[.06,-.36,.48,.36]],
+  "bound-branch": [[0,-.40,.23,.40],[0,-.40,.24,.40],[0,-.40,.25,.40]],
 } as const satisfies Record<CampBossKind, Views>;
+type BossGroundTarget=Point&{boss?:string;hurtboxFacing?:Facing};
+function bossGroundProfile(boss:BossGroundTarget,padding=10){
+ const kind=boss.boss as CampBossKind,h=CAMP_BOSSES[kind].height,side=(boss.hurtboxFacing??0)>=2,mirror=boss.hurtboxFacing===2?-1:1;
+ return {x:boss.x+(side&&kind==='thorn-crown'?h*.16*mirror:side&&kind==='crag-tusk'?h*.05*mirror:0),y:boss.y,rx:h*(side&&kind==='thorn-crown'?.50:side&&kind==='crag-tusk'?.36:.22)+padding,ry:h*.12+padding};
+}
+export function bossGroundContains(boss:BossGroundTarget,p:Point,padding=10){
+  if(!boss.boss||!Object.hasOwn(CAMP_BOSSES,boss.boss))return false;
+  const shape=bossGroundProfile(boss,padding);
+  return ((p.x-shape.x)/shape.rx)**2+((p.y-shape.y)/shape.ry)**2<1;
+}
+
+// 首领移动挤入角色后，允许角色沿占位椭圆向外脱离，禁止进一步穿入。
+export function bossGroundBlocks(boss:BossGroundTarget,from:Point,to:Point){
+  if(!bossGroundContains(boss,to))return false;
+  if(!bossGroundContains(boss,from))return true;
+  const shape=bossGroundProfile(boss);
+  const distance=(p:Point)=>((p.x-shape.x)/shape.rx)**2+((p.y-shape.y)/shape.ry)**2;
+  return distance(to)<=distance(from);
+}
 
 // 沿用命中反馈的共同身体平面；攻击从脚底上移28px，墙体始终查地面根。
 export const MELEE_HEIGHT = 28;
@@ -91,21 +99,22 @@ export function meleeBody(target: MeleeBodyTarget): Point[] | null {
   if (target.kind === "trainingDummy") return null;
   const facing = target.hurtboxFacing ?? 0,
     view = facing === 0 ? 0 : facing === 1 ? 1 : 2;
-  let body: Body, scale: number;
+  let body: Body, scale: number;let anchor={x:80,y:137.5};
   if (target.boss && Object.hasOwn(BOSS_MELEE_BODIES, target.boss)) {
     const boss = target.boss as CampBossKind;
     body = BOSS_MELEE_BODIES[boss][view];
-    scale = CAMP_BOSSES[boss].height / CAMP_BOSS_ART[boss].nativeHeight;
+    scale = CAMP_BOSSES[boss].height;anchor={x:0,y:0};
   } else if (target.type && Object.hasOwn(MELEE_BODIES, target.type)) {
     const kind = target.type as EnemyKind;
     body = MELEE_BODIES[kind][view];
     scale = ENEMIES[kind].height / 60;
   } else return null;
   const [cx, cy, rx, ry] = body;
-  const anchor = { x: 80, y: 137.5 };
   const mirror = facing === 2 ? -1 : 1;
   // 八边凸轮廓切去透明角落；镜像与EnemyView相同，鸦妖lift和Boss后仰只属表现。
-  return [
+  const outline=target.boss?[
+    [-1,0],[-.7,-.7],[0,-1],[.7,-.7],[1,0],[.9,.9],[.7,1],[-.7,1],[-.9,.9],
+  ]:[
     [-1, 0],
     [-0.7, -0.7],
     [0, -1],
@@ -114,7 +123,7 @@ export function meleeBody(target: MeleeBodyTarget): Point[] | null {
     [0.7, 0.7],
     [0, 1],
     [-0.7, 0.7],
-  ].map(([x, y]) => ({
+  ];return outline.map(([x, y]) => ({
     x: target.x + (cx - anchor.x + x * rx) * scale * mirror,
     y: target.y + (cy - anchor.y + y * ry) * scale,
   }));

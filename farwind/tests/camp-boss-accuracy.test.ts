@@ -33,7 +33,7 @@ describe('静止玩家与首领真实起手距离',()=>{
   const contacts=shots.update(a.contactAt+SPORE.life,target,()=>true);samples.push({首领:CAMP_BOSSES[kind].name,目标距离:8,近身真实接触:contacts.length});expect(contacts.length).toBeGreaterThan(0);
  });
 });
-const damaging=Object.keys(CAMP_BOSSES).flatMap(kind=>[1,2].flatMap(phase=>[0,1,2,3].filter(move=>!(kind==='thorn-crown'&&move===2||kind==='bound-branch'&&move===3)).map(move=>[kind,phase,move] as [CampBossKind,1|2,number])));
+const damaging=Object.keys(CAMP_BOSSES).flatMap(kind=>[1,2].flatMap(phase=>[0,1,2,3].filter(move=>!(kind==='thorn-crown'&&move===2||kind==='bound-branch'&&(move===2||move===3))).map(move=>[kind,phase,move] as [CampBossKind,1|2,number])));
 describe('远处站桩、正式接近和两个阶段的技能接触',()=>{
  it.each(damaging)('%s 第%d阶段技能%d应从远处接近后真实命中静止目标', (kind,phase,move)=>{
   const e=body(kind),target={x:330,y:0},shots=new EnemyProjectiles(),hazards=new BossHazards();Object.assign(e.bossBattle!,{phase,move,nextAt:0});if(phase===2)e.hp=CAMP_BOSSES[kind].hp/2;

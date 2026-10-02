@@ -1,3 +1,6 @@
+import {isSpace,validPlace,} from './npcLifeState'
+import type {SpaceId} from '../../data/npcLife';
+import {initialXiaobaoLife,validateXiaobaoLife,type XiaobaoLifeState} from './xiaobaoLifeState';
 import {creatureMaxHP} from '../../data/maps/windbell/elites';
 import {historicalRaidMember} from '../../data/demonKing';
 import {ENCOUNTER_UNITS,encounterUnit} from "../../data/maps/windbell/encounters";
@@ -52,6 +55,8 @@ export type XiaobaoFlight = {
   imprint: boolean;
 };
 export type XiaobaoState = {
+  space: SpaceId;
+  life: XiaobaoLifeState;
   known: boolean;
   task: XiaobaoTask;
   gate: GateId | "all";
@@ -112,6 +117,8 @@ export type XiaobaoState = {
 };
 export function initialXiaobao(): XiaobaoState {
   return {
+    space: "village",
+    life: initialXiaobaoLife(),
     known: false,
     task: "free",
     gate: "all",
@@ -165,7 +172,7 @@ export function validateXiaobao(
     ["free", "guard", "follow"].includes(v as string);
   const enemy = (v: unknown) =>
     enemyDefs.some((e) => e.id === v) ||
-    ENCOUNTER_UNITS.some(e=>e.id===v) ||
+    (typeof v === "string" && !!encounterUnit(v) && !!encounters && !!unitState(encounters,v)) ||
     raidIds.includes(v as string) ||
     historicalRaidMember(v);
   const ally = (v: unknown) =>
@@ -183,7 +190,7 @@ export function validateXiaobao(
   const skills = Object.keys(XIAOBAO_SKILLS) as XiaobaoSkill[];
   if (
     !s ||
-    !point(s) ||
+    !isSpace(s.space) || !validPlace({...s,space:s.space}) ||
     !task(s.task) ||
     !(s.gate === "all" || gate(s.gate)) ||
     !["steady", "protect", "full"].includes(s.tactic) ||
@@ -335,12 +342,12 @@ export function validateXiaobao(
     !ids(
       s.affected.map((e) => e?.id),
       enemyDefs.length+ENCOUNTER_UNITS.length,
-      (id) => enemyDefs.some((e) => e.id === id)||ENCOUNTER_UNITS.some(e=>e.id===id),
+      (id) => typeof id === "string" && (enemyDefs.some(e=>e.id===id) || !!encounters && !!unitState(encounters,id)),
     ) ||
     !s.affected.every(
       (e) =>
         !killed.includes(e.id) &&
-        (!encounterUnit(e.id)||(!!encounters&&!unitState(encounters,e.id)!.defeated)) &&
+        (!encounterUnit(e.id)||(!!encounters&&unitState(encounters,e.id)?.defeated===false)) &&
         point(e) &&
         n(
           e.hp,
@@ -378,7 +385,7 @@ export function validateXiaobao(
     (s.wait !== null && typeof s.wait !== "object")
   )
     fail();
-  if ((!s.flight || s.flight.stage === "takeoff") && motionBlocked(s.x, s.y)) {
+  if (s.space === "village" && (!s.flight || s.flight.stage === "takeoff") && motionBlocked(s.x, s.y)) {
     const safe = [
       s,
       ...Array.from({ length: 15 }, (_, i) => ({
@@ -388,6 +395,8 @@ export function validateXiaobao(
     ].some((p) => point(p) && !motionBlocked(p.x, p.y));
     if (!safe) fail();
   }
+  s.life=validateXiaobaoLife(s.life);
+  if(s.space!=="village"&&(s.flight||s.cast||s.effects.length))fail();
   // 明确白名单；所有嵌套对象也从定义字段取值。
   const pick = <T extends object>(v: T, keys: readonly string[]): T =>
     Object.fromEntries(
@@ -472,5 +481,6 @@ export function validateXiaobao(
   if (s.command)
     s.command = pick(s.command, ["kind", "target", "center", "remaining"]);
   if (s.wait) s.wait = pick(s.wait, ["x", "y", "region"]);
+  s.autoSupport=true;
   return pick(s, Object.keys(initialXiaobao()));
 }

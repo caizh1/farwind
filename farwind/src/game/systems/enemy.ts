@@ -214,7 +214,8 @@ export function repairEnemyPoint(origin: Point, home: Point, radius = 420) {
 }
 export type EnemyBody = Point & {
   fungalShield?:EnemyBody;
-  passiveRoot?:{owner:string;index:number;attempt:number};
+  bossSummon?:{owner:string;attempt:number};
+  passiveRoot?:{owner:string;index:number;attempt:number;kind?:'root'|'sac'|'rock'|'sigil'};
   runeSlow?:number;
   eliteLevel?:number;
   maxHP?:number;
@@ -413,7 +414,7 @@ export function updateEnemy(
   // 镰灵远处侧向接近；近身仍走向真实目标，不改攻击方向与碰撞。
   if(tracking&&!e.boss&&e.type==='leaf'&&d>145){const sign=e.id.endsWith('2')?-1:1,dx=(e.x-player.x)/d,dy=(e.y-player.y)/d;
     const flank={x:player.x-dy*75*sign,y:player.y+dx*75*sign};if(!motionBlocked(flank.x,flank.y)&&distance(flank,home)<radius)target=flank;}
-  if(tracking&&!e.boss&&e.type==='wolf'&&d>165){const flank=wolfFlank(e,player);if(!motionBlocked(flank.x,flank.y)&&distance(flank,home)<radius)target=flank;}
+  if(tracking&&!e.boss&&['wolf','shade'].includes(e.type)&&d>165){const flank=wolfFlank(e,player);if(!motionBlocked(flank.x,flank.y)&&distance(flank,home)<radius)target=flank;}
   // 孢卫进入中距离后等待喷射冷却，玩家过近时只在合法空间后撤。
   if(tracking&&!e.boss&&e.type==='spore'&&d<155){const retreat={x:e.x+(e.x-player.x)/(d||1)*65,y:e.y+(e.y-player.y)/(d||1)*65};
     if(distance(retreat,home)<radius&&!motionBlocked(retreat.x,retreat.y)&&clearMotionLine(e,retreat))target=retreat;}

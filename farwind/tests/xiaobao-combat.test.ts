@@ -156,15 +156,15 @@ describe("随行护卫的距离与危险优先级", () => {
     f.step(900);
     expect(f.hits[0]?.id).toBe(threat.id);
   });
-  it("主角满血遇险也优先护卫，不启动远处村庄飞援", () => {
+  it("确认村庄遇险后覆盖主角护卫并启动飞援", () => {
     const e = enemy("主角攻击者", 1140), f = fixture([e]);
     f.c.data.task = "follow";
     f.env.player = { ...f.env.player, x: 1040, y: 725 };
     e.targetId = "player";
     f.setFronts([front()]);
     f.step(5);
-    expect(f.c.data.flight).toBeNull();
-    expect(f.c.targetId).toBe(e.id);
+    expect(f.c.data.life.emergency).toBe(true);
+    expect(f.c.data.flight?.gate).toBe('east-gate');
   });
   it("识别正式追击但尚未出手的敌人，不主动攻击附近的家园怪", () => {
     const chasing = enemy("正在追击", 1120), passive = enemy("家园旁观", 850), f = fixture([chasing, passive]);
@@ -182,7 +182,7 @@ describe("随行护卫的距离与危险优先级", () => {
     expect(idle.hits).toHaveLength(0);
     expect(idle.c.targetId).toBeNull();
   });
-  it("正在支援村庄时主角遇险，暂时转为护卫且不把援护伤害记到村庄战报", () => {
+  it("正在支援村庄时主角遇险，仍保持护村锚点", () => {
     const e = enemy("主角攻击者", 1140), f = fixture([e]);
     f.c.data.task = "follow";
     f.env.player = { ...f.env.player, x: 1040, y: 725 };
@@ -190,9 +190,8 @@ describe("随行护卫的距离与危险优先级", () => {
     f.c.data.support = { key: "村庄支援", gate: "east-gate", age: 0, hits: 0, kills: 0, injured: false };
     f.setFronts([front()]);
     f.step(1000);
-    expect(f.c.anchor(f.env)).toEqual({ x: 1040, y: 725, hp: 100, outside: true, region: "village" });
-    expect(f.hits.some(h => h.id === e.id)).toBe(true);
-    expect(f.c.data.support?.hits).toBe(0);
+    expect(f.c.anchor(f.env)).toEqual({x:2190,y:1100});
+    expect(f.c.data.life.emergency).toBe(true);
     expect(f.c.data.flight).toBeNull();
   });
   it("未释放的次要攻击让位给主角攻击者，取消不消耗真气和冷却", () => {
@@ -239,6 +238,32 @@ describe("随行护卫的距离与危险优先级", () => {
     f.c.command("return", f.env);
     f.step(5000);
     expect(Math.hypot(f.c.x - 1800, f.c.y - 725)).toBeLessThanOrEqual(220);
+  });
+});
+describe("自主生活的护村抢占与恢复", () => {
+  it("同时多处遇险按真实优先级选门，飞援冷却也能改变地面防线", () => {
+    const f=fixture();f.c.data.gate='south-gate';f.c.data.cooldowns.flight=30000;
+    const east=front('东门入侵','east-gate',2),north=front('村民即将受击','north-gate',5);
+    f.setFronts([east]);f.step(5);expect(f.c.data.support?.gate).toBe('east-gate');
+    f.setFronts([east,north]);f.step(150);expect(f.c.data.support?.gate).toBe('north-gate');
+    expect(f.c.data.cooldowns.flight).toBe(29845);expect(f.c.data.flight).toBeNull();
+  });
+  it("深入广场的入侵者仍可拦截，先处理村民攻击者", () => {
+    const resident=enemy('村民攻击者',930,780),other=enemy('普通入侵者',855,725),f=fixture([resident,other]);
+    resident.targetId='elder';f.c.data.cooldowns.flight=30000;
+    f.env.allies=[{id:'elder',x:960,y:780,hp:70,maxHP:100,role:'resident',threatAt:550}];
+    f.setFronts([{...front(),point:{x:960,y:780},enemies:[other.id,resident.id]}]);f.step(5);
+    expect(f.c.targetId).toBe(resident.id);f.step(1600);expect(f.hits.some(h=>h.id===resident.id)).toBe(true);
+  });
+  it("连续安全十秒才解除危机，中途重新入侵会重新计时", () => {
+    const f=fixture();f.c.data.cooldowns.flight=30000;f.setFronts([front()]);f.step(5);
+    f.setFronts([]);f.step(9000);expect(f.c.data.life.emergency).toBe(true);
+    f.setFronts([front()]);f.step(150);f.setFronts([]);f.step(9999);expect(f.c.data.life.emergency).toBe(true);
+    f.step(350);expect(f.c.data.life.emergency).toBe(false);expect(f.c.data.life.aftercareUntil).toBe(660);
+  });
+  it("已确认的小规模入侵触发响应，未发生的夜间计划不触发", () => {
+    const f=fixture();f.env.minute=1200;f.step(155);expect(f.c.data.life.emergency).toBe(false);
+    f.setFronts([{...front(),major:false,confirmed:true}]);f.step(150);expect(f.c.data.life.emergency).toBe(true);
   });
 });
 describe("小宗师正式技能结算", () => {
@@ -368,11 +393,8 @@ describe("小宗师正式技能结算", () => {
     normal.step(5);
     normal.setFronts([]);
     normal.step(2000);
-    expect(normal.c.data.reports.at(-1)).toMatchObject({
-      event: "真实来袭",
-      hits: 0,
-      gate: "east-gate",
-    });
+    expect(normal.c.data.reports).toEqual([]);
+    expect(normal.c.data.life.emergency).toBe(false);
     const a = fixture();
     a.setFronts([front()]);
     a.step(5);
@@ -733,7 +755,7 @@ describe("飞援、委托与结构8保存", () => {
     expect(f.c.data.flight).toBeNull();
     expect(f.c.data.shields).toHaveLength(0);
   });
-  it("随行关闭回援、调息与护主危急分别挡住自动起飞", () => {
+  it("调息不能起飞，旧关闭回援和护主危急不能挡住护村", () => {
     for (const mode of ["关闭", "调息", "护主"]) {
       const f = fixture();
       f.c.data.task = "follow";
@@ -758,7 +780,8 @@ describe("飞援、委托与结构8保存", () => {
         ];
       }
       f.step(200);
-      expect(f.c.data.flight).toBeNull();
+      if(mode==='调息')expect(f.c.data.flight).toBeNull();
+      else expect(f.c.data.flight?.gate).toBe('east-gate');
     }
   });
   it("飞行存档保持空中投影根、冷却和任务，零时步冻结全部状态", () => {
