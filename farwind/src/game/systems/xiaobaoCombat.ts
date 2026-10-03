@@ -9,7 +9,7 @@ import {
   type XiaobaoBattleClip,
   type XiaobaoTask,
 } from "../../data/xiaobaoCombat";
-import { zoneFor, inActivity, inProtected } from "../../data/defenseZones";
+import { zoneFor, inActivity, inAlert, inProtected } from "../../data/defenseZones";
 import { regionAt } from "../../data/village";
 import { RAID_GATES, type GateId } from "../../data/defense";
 import {
@@ -1300,6 +1300,7 @@ export class XiaobaoCombat extends Xiaobao {
               (env.recent?.id === e.id && env.now - env.recent.at <= 1500) ||
               this.data.command?.target === e.id)
           : this.fronts.some((f) => f.enemies.includes(e.id)) ||
+            (life.emergency && !!support && e.id === this.targetId) ||
             e.targetId === "xiaobao" ||
             env.allies.some((a) => a.threatAt !== null && e.targetId === a.id)),
     );
@@ -1371,7 +1372,8 @@ export class XiaobaoCombat extends Xiaobao {
     return XIAOBAO.home;
   }
   allowed(p: Point, env: XiaobaoEnvironment, anchor: Point, gate?: GateId) {
-    if(this.data.life.emergency)return inProtected(p)||!!gate&&inActivity(gate,p);
+    // 已确认的门外攻击也要拦截；沿警戒带赶赴，仍不追出防线进入荒野。
+    if(this.data.life.emergency)return inProtected(p)||!!gate&&(inActivity(gate,p)||inAlert(gate,p));
     if (this.data.wait && !this.support)
       return distance(p, this.data.wait) <= 120;
     if (this.data.task === "follow" && !this.support)
@@ -1629,7 +1631,7 @@ export class XiaobaoCombat extends Xiaobao {
         if (matching) {
           this.data.support.injured ||= matching.injured;
           this.data.support.age = 0;
-        } else if (this.data.support.age >= 1500) {
+        } else if (!this.data.life.emergency && this.data.support.age >= 1500) {
           const s = this.data.support;
           this.data.reports.push({
             event: s.key,

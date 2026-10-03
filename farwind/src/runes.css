@@ -110,7 +110,41 @@
 @media(max-width:1050px){.rune-layout{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}.rune-build{grid-column:1/-1;min-height:max-content;display:grid;grid-template-columns:minmax(180px,.8fr) minmax(0,2fr);gap:6px 18px;border:0;overflow:visible;padding:0 0 12px;border-bottom:1px solid #b39a6255}.rune-build>h2{grid-column:1}.rune-fixed{grid-column:1}.rune-slots{grid-column:2;grid-row:1/3;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.rune-slot{flex-wrap:wrap;gap:4px!important;min-height:50px!important}.rune-slot .rune-icon{width:30px;height:30px}.rune-slot-number{font-size:17px;flex-basis:14px}.rune-slot-copy b{font-size:12px}.rune-slot-copy small{font-size:11px}.rune-resonance,.rune-presets,.build-skills{grid-column:1/-1}.rune-resonance{grid-column:1;margin-top:0}.rune-presets{grid-column:2;margin:0}.rune-build .rune-resonance p{margin:3px 0}.rune-build .build-skills{padding:6px 0}.rune-build .build-skills>summary{font-size:12px}.rune-layout{overflow:auto;grid-template-rows:max-content minmax(420px,1fr)}.rune-grid{max-height:65vh}.rune-panel h1{font-size:28px}.rune-tabs button{font-size:17px}.rune-tabs{gap:14px}}
 @media(max-width:650px){#modal.rune-modal{padding:6px}.panel.rune-panel{height:calc(100dvh - 12px);border-width:12px;border-image-width:12px;padding:8px 4px}.rune-panel>header{gap:8px;margin-bottom:10px;padding-bottom:8px}.rune-panel h1{font-size:23px;letter-spacing:1px}.rune-close{padding:4px;font-size:12px}.rune-tabs{order:3;width:100%;justify-content:center}.rune-tabs button{padding:4px;font-size:16px}.rune-layout{display:flex;flex-direction:column;gap:16px;overflow:auto}.rune-layout>section{flex:none}.rune-build{display:block}.panel.rune-panel .rune-build h2{font-size:20px}.rune-fixed{margin-bottom:6px}.rune-slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.rune-panel .rune-slot{flex-wrap:nowrap;min-height:58px!important}.rune-slot-copy b{font-size:13px}.rune-resonance,.rune-presets{display:block}.rune-resonance{margin-top:10px}.rune-presets{margin:10px 0}.rune-presets>div{max-width:100%}.panel.rune-panel .rune-collection h2{font-size:22px}.rune-grid{max-height:380px;min-height:160px}.rune-panel .rune-card{gap:7px;grid-template-columns:40px minmax(0,1fr) auto;min-height:76px}.rune-card .rune-icon{width:40px;height:40px}.rune-card b{font-size:17px}.rune-card-meta{min-width:70px}.rune-card-meta small{font-size:10px}.rune-detail{border:0;border-top:1px solid #b39a6255;padding:14px 0 0}.rune-detail-body{overflow:visible;flex:none}.panel.rune-panel .rune-detail-heading h2{font-size:26px}.rune-detail-footer{padding-bottom:10px}}
 @media(max-height:560px) and (min-width:651px){.rune-panel>header{margin-bottom:8px;padding-bottom:8px}.rune-panel h1{font-size:24px}.rune-layout{overflow:auto;grid-template-rows:max-content minmax(280px,1fr)}.rune-panel{padding-top:6px}.rune-detail canvas{max-height:150px}.rune-panel .rune-description{font-size:13px}.rune-detail-heading .rune-icon{width:64px;height:64px}}
-.rune-hud{display:flex;gap:4px;align-items:center;flex-wrap:wrap;pointer-events:auto}.rune-hud-slot{display:flex!important;flex-direction:column;align-items:center;gap:1px;width:42px;flex-basis:42px;padding:3px!important;background:#243c34cc!important;color:#e8e5cc!important;border-color:#8a9a7d!important}.rune-hud-slot small{font-size:10px;line-height:12px}.rune-hud-slot>span{width:30px;height:30px;display:grid;place-items:center}.rune-hud-slot:last-child{margin-left:5px}.rune-cooldown{display:block;flex:none}.rune-icon{display:block;flex:none}.rune-hud .rune-icon{max-width:100%}.bottom:has(.rune-hud){display:flex;align-items:flex-end;justify-content:center;gap:14px;flex-wrap:wrap}.rune-shop{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.rune-shop button{display:inline-flex;align-items:center;gap:7px;font-size:13px}.rune-lab{position:fixed;right:12px;top:12px;z-index:13000;display:grid;gap:7px;width:260px;max-height:85vh;overflow:auto;background:#183c33ee;color:#efecd5;padding:12px;border:1px solid #c2b589;font-size:12px}.rune-lab label{display:grid;gap:3px}.rune-lab button{padding:5px}.rune-lab summary{cursor:pointer}.rune-lab output{display:block;white-space:pre-wrap;font-size:11px}
+.rune-shop{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.rune-shop button{display:inline-flex;align-items:center;gap:7px;font-size:13px}.rune-lab{position:fixed;right:12px;top:12px;z-index:13000;display:grid;gap:7px;width:260px;max-height:85vh;overflow:auto;background:#183c33ee;color:#efecd5;padding:12px;border:1px solid #c2b589;font-size:12px}.rune-lab label{display:grid;gap:3px}.rune-lab button{padding:5px}.rune-lab summary{cursor:pointer}.rune-lab output{display:block;white-space:pre-wrap;font-size:11px}
 
 /* 快捷栏延续原有尺寸，独立于书册响应式布局。 */
-@media(max-width:620px){.rune-hud{gap:2px}.rune-hud-slot{width:30px;flex-basis:30px}.rune-hud-slot .rune-icon{width:24px;height:24px}.rune-cooldown{width:24px}.bottom:has(.rune-hud){gap:4px}.rune-lab{width:220px}}
+@media(max-width:620px){.rune-lab{width:220px}}
+
+/* 十槽书册：编号、徽章和名称各占一行，不叠放图标。 */
+.rune-layout{grid-template-columns:minmax(260px,.95fr) minmax(350px,1.3fr) minmax(310px,1.1fr)}
+.rune-build>h2{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.rune-build>h2 small{font-family:system-ui;font-weight:400;letter-spacing:0}
+.rune-slots{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.rune-panel .rune-slot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:5px 2px;min-height:84px!important;border:1px solid #b39a6260;text-align:center;flex-wrap:nowrap}
+.rune-slot-number{font-family:system-ui;font-size:12px;flex:0 0 auto;line-height:14px}
+.rune-slot .rune-icon{width:34px;height:34px}
+.rune-slot-copy{gap:0;width:100%}
+.rune-slot-copy b{font-size:12px;line-height:16px;overflow-wrap:anywhere}
+.rune-panel .rune-slot[aria-pressed=true]{border-color:#ac8447;background:#e7cf8655}
+/* 原生详情控件在正常网格内展开，面板在入口上方，不使用绝对定位。 */
+.rune-hud{display:grid;grid-template-columns:44px;gap:8px;min-width:0;width:44px;justify-self:end;pointer-events:none;color:#efe7cf}
+.rune-hud>summary{grid-row:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:44px;min-height:50px;padding:3px;background:#243c34d9;border:1px solid #b19a63;border-radius:7px;cursor:pointer;pointer-events:auto;list-style:none}
+.rune-hud>summary::-webkit-details-marker{display:none}
+.rune-hud>summary small{font-size:10px;line-height:12px}
+.rune-hud>summary:focus-visible,.rune-hud button:focus-visible{outline:2px solid #ede0a5;outline-offset:2px}
+.rune-hud[open]>summary{border-color:#e9d39a;background:#385749ee}
+.rune-hud-panel{grid-row:1;justify-self:center;width:min(300px,calc(100vw - 24px));max-height:min(240px,55dvh);overflow:auto;pointer-events:auto;display:flex;flex-direction:column;gap:8px;padding:10px;background:#243c34ed;border:1px solid #b19a63;border-radius:8px;box-shadow:0 3px 12px #10271d66;box-sizing:border-box}
+.rune-hud:not([open])>.rune-hud-panel{display:none}
+.rune-hud-panel header,.rune-hud-panel footer{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+.rune-hud-panel header b{font-size:13px;font-weight:500}
+.rune-hud-panel button{display:inline-flex;align-items:center;justify-content:center;gap:3px;padding:4px 7px;background:#263f35;color:inherit;border:1px solid #9c956b;border-radius:4px;font-size:12px;min-width:0;box-shadow:none}
+.rune-hud-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.rune-hud-grid .rune-hud-slot{display:flex;flex-direction:column;gap:1px;min-height:40px;padding:3px;background:#18332ca8}
+.rune-hud-slot small{font-size:10px;line-height:11px}
+.rune-hud-panel footer{border-top:1px solid #b19a6355;padding-top:6px;font-size:11px}
+.rune-hud-panel footer>span{display:inline-flex;align-items:center;gap:4px;min-width:0}
+.rune-hud-panel kbd{font:inherit}
+@media(max-width:1050px){.rune-layout{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}}
+@media(max-width:650px){.rune-slot-copy b{font-size:11px}.rune-panel .rune-slot{min-height:78px!important}.rune-slot .rune-icon{width:30px;height:30px}}
+
+@media(max-width:980px){.rune-hud-panel{justify-self:end}}

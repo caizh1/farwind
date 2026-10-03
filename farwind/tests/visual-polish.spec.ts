@@ -64,7 +64,7 @@ test("village-polish-movement", async ({ page }) => {
     key: "fountain",
     position: [680, 890],
     origin: [0.5, 1],
-    display: [130, 130],
+    display: [140, 168],
     depth: 890,
   });
   // Phaser 通过XHR生成blob图片；对比实际加载像素，不能用blob URL推断资源路径。
@@ -270,7 +270,7 @@ test("village-polish-render-lifecycle", async ({ page }) => {
       池塘纹理: scene.textures.get("pond-water").getSourceImage().src,
     };
   });
-  expect(sampling.河道纹理.尺寸).toEqual([627, 627]);
+  expect(sampling.河道纹理.尺寸).toEqual([768, 768]);
   // 原水纹的逐像素加载核对在移动用例中执行。
   for (const edge of sampling.边界)
     expect(edge.相邻像素通道差中位数).toBeLessThan(4);

@@ -1,4 +1,4 @@
 type Body={hp:number;disabled?:boolean};
-type CombatWorld={enemies:readonly Body[];defense?:{enemies:readonly Body[]}};
+type CombatWorld={enemies:readonly Body[];defense?:{enemies:readonly Body[]};wilderness?:{pendingCount:number}};
 // 夜袭部队与荒野、召唤、机关共用十二个活动敌对单位名额；友军不占用。
-export const activeHostileCount=(w:CombatWorld)=>[...w.enemies,...w.defense?.enemies??[]].filter(e=>e.hp>0&&!e.disabled).length;
+export const activeHostileCount=(w:CombatWorld)=>[...w.enemies,...w.defense?.enemies??[]].filter(e=>e.hp>0&&!e.disabled).length+(w.wilderness?.pendingCount??0);

@@ -10,7 +10,7 @@ import {initialBossBattle,shiftBossBattle,shiftBossAttack,shiftBossHazard,shiftB
 const range=(a:Point,b:Point)=>Math.hypot(a.x-b.x,a.y-b.y);
 // 预警与实际危险区共用落点，真实障碍处不显示无法生效的攻击。
 export function bossHazardPoints(a:EnemyAttack){const p=a.bossGeometry!.point,d=a.direction;return (a.boss==='bound-branch'||a.type==='geomancer'?[-110,110].map(n=>({x:p.x-d.y*n,y:p.y+d.x*n})):[{...p}]).filter(p=>!motionBlocked(p.x,p.y));}
-const space=(e:EnemyBody)=>({blocked:(x:number,y:number)=>motionBlocked(x,y)||(e.bossBattle?.roots?.some(r=>r.kind==='rock'&&r.hp>0&&Math.hypot(x-r.x,y-r.y)<34)??false)||range({x,y},{x:e.homeX,y:e.homeY})>enemyLeashRadius(e),clear:clearMotionLine,melee:clearMeleeLine,wall:(a:Point,b:Point)=>motionBlocked(b.x,b.y)||!clearMotionLine(a,b)||(e.bossBattle?.roots?.some(r=>r.kind==='rock'&&r.hp>0&&Math.hypot(b.x-r.x,b.y-r.y)<34)??false)});
+export const bossAttackSpace=(e:EnemyBody)=>({blocked:(x:number,y:number)=>motionBlocked(x,y)||(e.bossBattle?.roots?.some(r=>r.kind==='rock'&&r.hp>0&&Math.hypot(x-r.x,y-r.y)<34)??false)||range({x,y},{x:e.homeX,y:e.homeY})>enemyLeashRadius(e),clear:clearMotionLine,melee:clearMeleeLine,wall:(a:Point,b:Point)=>motionBlocked(b.x,b.y)||!clearMotionLine(a,b)||(e.bossBattle?.roots?.some(r=>r.kind==='rock'&&r.hp>0&&Math.hypot(b.x-r.x,b.y-r.y)<34)??false)});
 export const bossMajor=(kind:CampBossKind,move:number)=>kind==='thorn-crown'?move>=4:kind==='bound-branch'?move===2||move===5:move===3||move===4||move===5;
 export function selectBossMove(e:EnemyBody,target:Point,now:number){const b=e.bossBattle!,distance=range(e,target),kind=e.boss!;b.cooldowns??=Array(6).fill(0);
  const nodes=b.roots??[],wolves=b.summons??[];
@@ -36,7 +36,7 @@ function bossMove(kind:CampBossKind,b:BossBattle){
     if(move===3){windup=1100;active=1600;reach=300;area='ring';radius=240;heavy=true;}
   }else if(kind==='thorn-crown'){
     if(move===0){windup=850;step=170;active=260;reach=300;radius=36;halfAngle=.8;heavy=part===2;}
-    if(move===1){active=200;offset=part?.55:-.55;halfAngle=.7;}
+    if(move===1){active=320;radius=260;reach=260;offset=part?.55:-.55;halfAngle=.7;}
     if(move===2){windup=750;radius=150;reach=170;rear=true;}
     if(move===3){windup=850;step=180;active=280;reach=300;radius=38;heavy=true;}
   }else if(kind==='crag-tusk'){
@@ -54,6 +54,8 @@ function bossMove(kind:CampBossKind,b:BossBattle){
   if(move===5){windup=1100;active=kind==='bound-branch'?2100:kind==='thorn-crown'?1100:300;reach=340;heavy=true;
     if(kind==='thorn-crown'||kind==='bound-branch'){area='circle';radius=kind==='thorn-crown'?62:44;}else if(kind==='crag-tusk')angles=phase===2?[-.7,.7]:[-.45,.45];else radius=0;}
   if(bossMajor(kind,move))windup=Math.max(1000,windup);else windup=Math.min(900,Math.max(700,windup));
+  // 二阶段提高连段密度，危险大招仍保留完整一秒预警；锁向后至少350毫秒可躲避。
+  if(phase===2&&!bossMajor(kind,move))windup=Math.max(700,windup-100);
   return {windup,active,recovery,step,reach,heavy,angles,area,cocoon,radius,halfAngle,offset,rear,sideStep:kind==='thorn-crown'&&move===3?64:0};
 }
 export function bossEngagementRange(kind:CampBossKind,b:BossBattle){
@@ -84,18 +86,18 @@ export function updateCampBoss(e:EnemyBody,target:Point,now:number,dtMs:number,t
   if(now<e.staggerUntil){e.ai='首领失衡';return null;}
   if(e.attack){const a=e.attack;
     // 侧跃有真实扫掠和独立蓄力，不瞬移、穿树或在锁向后追踪。
-    if(a.bossSideStep&&now<a.lockAt){const u=Math.min(1,(now-a.startedAt)/260),wanted=a.bossSideStep*u,delta=wanted-(a.bossSideMotion??0);if(delta>0){const p=space(e);sweepMove(e,-a.direction.y*delta,a.direction.x*delta,p.blocked,p.clear);a.bossSideMotion=wanted;}}
+    if(a.bossSideStep&&now<a.lockAt){const u=Math.min(1,(now-a.startedAt)/260),wanted=a.bossSideStep*u,delta=wanted-(a.bossSideMotion??0);if(delta>0){const p=bossAttackSpace(e);sweepMove(e,-a.direction.y*delta,a.direction.x*delta,p.blocked,p.clear);a.bossSideMotion=wanted;}}
     if(!a.locked&&a.bossArea==='circle')a.bossGeometry!.point={x:target.x,y:target.y};
-    const event=advanceEnemyAttack(a,e,target,now,space(e));e.windup=Math.max(0,a.contactAt-now);e.face={...a.direction};
+    const event=advanceEnemyAttack(a,e,target,now,bossAttackSpace(e));e.windup=Math.max(0,a.contactAt-now);e.face={...a.direction};
     e.ai=a.bossCocoon?'护心结茧':now<a.contactAt?'首领蓄力':now<a.activeUntil?'首领出手':'首领收招';
     if(a.wallAt!==undefined&&!a.bossStunned){a.bossStunned=true;e.wallHit={at:a.wallAt,until:a.wallAt+1800,direction:{...a.direction}};e.staggerSince=now;e.staggerUntil=now+1800;b.exposedUntil=Math.max(b.exposedUntil,now+1800);b.part=bossParts(kind,b.move,b.phase)-1;}
     if(now>=a.recoveryUntil||a.cancelled){
       e.attack=null;e.windup=0;
-      if(b.part+1<bossParts(kind,b.move,b.phase)){b.part++;b.nextAt=Math.max(now+180,e.staggerUntil,b.exposedUntil);}
+      if(b.part+1<bossParts(kind,b.move,b.phase)){b.part++;b.nextAt=Math.max(now+(b.phase===2?100:160),e.staggerUntil,b.exposedUntil);}
       else if(!a.cancelled&&b.phase===2&&(kind==='bound-branch'||(b.cooldowns?.[3]??0)<=now)&&(kind==='thorn-crown'&&b.move===1||kind==='crag-tusk'&&b.move===2||kind==='bound-branch'&&b.move===2||kind==='spore-heart'&&b.move===1)){b.move=kind==='bound-branch'?1:3;b.part=0;b.nextAt=Math.max(now+200,e.staggerUntil,b.exposedUntil);}
       else{
         // 撞墙、拆机关或弹反已经设置窗口；取消的攻击不能在失衡结束后再次延长。
-        if(!a.cancelled||!b.exposedUntil)b.exposedUntil=Math.max(b.exposedUntil,now+1800);
+        if(!a.cancelled||!b.exposedUntil)b.exposedUntil=Math.max(b.exposedUntil,now+(b.phase===2?1050:1400));
         b.move=-1;b.part=0;b.nextAt=Math.max(now,b.exposedUntil,e.staggerUntil);
       }
     }

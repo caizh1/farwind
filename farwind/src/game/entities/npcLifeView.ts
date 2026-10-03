@@ -16,6 +16,7 @@ import { TOWERS, GUARD_DEFS } from "../../data/defense";
 import { distance, spaceClear } from "../systems/npcNavigation";
 import { Actor } from "./actor";
 import { LIFE_ART, NPC_WALK, NpcMotion, residentPose } from "../systems/npcAnimation";
+import {groundShadows} from '../rendering/groundShadows';
 export class NpcLifeView {
   residents = new Map<
     string,
@@ -70,7 +71,8 @@ export class NpcLifeView {
           })
           .setOrigin(0.5, 0),
         tool = scene.add.graphics(),
-        shadow = scene.add.ellipse(0, 0, 28, 8, 0x193c32, 0.2);
+        shadow = scene.add.ellipse(0, 0, 52, 17, 0x193c32, 0.2);
+      groundShadows(scene).add(sprite,shadow,{label:d.name});
       this.residents.set(d.id, {
         sprite,
         label,
@@ -112,10 +114,12 @@ export class NpcLifeView {
           .setDepth(7500 + y)
           .setVisible(false),
       });
+      const furniture=this.furniture.at(-1)!.sprite;
+      groundShadows(scene).add(furniture,undefined,{label:'室内家具',width:Math.max(24,furniture.displayWidth*.8),height:16});
     };
     for(const f of INTERIOR_FURNITURE){
       addFurniture(f.space, `interior-${f.asset}`, f.x, f.y, f.width, f.height);
-      if(f.ground) this.furniture.at(-1)!.sprite.setDepth(7001);
+      if(f.ground){const sprite=this.furniture.at(-1)!.sprite;sprite.setDepth(7001);groundShadows(scene).entries.get(sprite)?.cleanup();}
     }
     for(const bed of INTERIOR_BEDS) addFurniture(bed.space,LIFE_ART.bed,bed.x,bed.y-15,64,110);
     for (const f of FACILITIES.filter((f) => f.place.space !== "village")) {
@@ -190,6 +194,8 @@ export class NpcLifeView {
           .setOrigin(0.5, 0)
           .setDepth(f.place.y + 3),
       });
+    const bell=MAINTENANCE.find(f=>f.id==='wind-bell');
+    if(bell)groundShadows(scene).add(this.maintenance.get(bell.id)!.mark,undefined,{label:'风铃挂架',width:56,height:15,projection:false,root:()=>({x:bell.place.x,y:bell.place.y-3,depth:bell.place.y-.5})});
   }
   drawRoom(space: SpaceId, life: NpcLife) {
     const g = this.ink.clear();

@@ -159,3 +159,33 @@ final result: passed
 详细报告：docs/hud-redesign/compact-design-qa.md。源图为 docs/hud-redesign/design/compact-hud-reference.png；当前页面最终截图为 docs/hud-redesign/after/compact-desktop.jpg；完整和左侧组合对照为 after/comparison-full.jpg、after/comparison-left.jpg，均已实际检查。
 
 左上摘要合并、训练横排、笔记底栏、临时消息右侧正常流已实现。五尺寸实测入口可点击、无横向溢出，实际命中前后训练顶部不变。480×420 双侧详情展开时底部与底栏保留 26 像素间隔。独立正式导入样本不是正常获取验收；不扩大为全游戏或其他并行玩法的发布结论。HUD 改动审查 VERDICT: PASS。
+
+# 商店书册方案二增补
+
+日期：2026-10-02。用户选择方案二并要求支持超过四件商品。
+
+final result: passed
+
+详细报告：[商店实现与验收](docs/shop-redesign/design-qa.md)。源图为`docs/shop-redesign/design-reference.png`；最终正式构建1440×900运行图为`docs/shop-redesign/shop-desktop.png`。完整、商品目录和交易区并列对照分别为`comparison-desktop.png`、`comparison-catalogue.png`、`comparison-checkout.png`，均已实际打开。
+
+左目录、右详情与结算、独立商品滚动、实际分类、总件数、快速选品及滚动位置保留已实现。五种视口（1440×900、1075×600、560×720、390×844、320×640）均可购买第六件商品、无横向溢出；最终正式构建8项Playwright自动化通过，包括购买保存刷新、材料出售、符文、调药门禁及休息服务。短屏按钮裁切和不可购买状态的假设负余额已修正并复验。用户已授权在浏览器工具限制后进行自动化复验。
+
+类型检查与构建通过。相关逻辑40项中38通过、2个旧迁移样本失败，未改动HEAD隔离基线同样失败；不声称完整游戏回归通过。P3饰纹和既有道具美术差异另列于详细报告。变更范围审查VERDICT: PASS；无成立的P0/P1阻塞问题。未提交、推送或公开部署。
+
+# 十槽符文、紧凑入口与鞋子增补
+
+日期：2026-10-02。
+
+final result: passed
+
+已落实十个自由槽、五槽旧结构迁移、两排五槽书册、默认收起的小符文入口与正常流布局；五款鞋子在铁匠铺、穿隙在杂货铺上架。196项专项、类型检查、最终生产构建与真实购买／穿戴／预设／刷新路径通过。全项目回归未完成，长期经济和设备性能未验证。详见 docs/rune-slots-ten/VALIDATION.md、design-qa.md、REVIEW.md；审查VERDICT: PASS，P0/P1阻塞为空。
+
+# 大陆世界地图增补
+
+日期：2026年10月3日。最初设计图九区已接入M世界地图，八区标记暂未开放；当前风铃村与周边保留实际坐标地图入口。
+
+源图：../design.png；最终1280×720运行图：docs/world-atlas/evidence/desktop-production.png；原图与实机并列对照：docs/world-atlas/evidence/comparison.png。已实际检查字体、间距、颜色、图像与文案；修正标记遮字与短屏关闭栏裁切后重新截图，五尺寸没有横向溢出且关闭按钮可见。
+
+20项地图逻辑测试、最终类型检查与固定生产构建通过。九区状态、八区门禁、区域地图切换、M关闭及暂停来源返回已通过实际浏览器操作。浏览器错误日志为空。完整自动化脚本、全项目回归与用户最终美术验收未完成。详见 docs/world-atlas/design-qa.md。
+
+审查结论：PASS；没有成立的P0/P1阻塞问题。最终结果：通过。未提交、推送或公开部署。

@@ -1,0 +1,224 @@
+--- 修改前/game/scenes/World.ts
+
++++ 当前/game/scenes/World.ts
+
+@@ -120,6 +120,7 @@
+
+ import Phaser from "phaser";
+ import { props, roads, enemyDefs, region, type Prop } from "../../data/world";
+ import { VILLAGE_HOUSE_ART } from "../../data/villageHouseArt";
++import {ART_QUALITY,appearanceFor} from '../../data/worldAppearance';
+ import { items, type ItemId } from "../../data/content";
+ import {
+   COMBAT_ACTION_ART,
+@@ -259,6 +260,9 @@
+
+     super(key);
+   }
+   preload() {
++    for(const name of ART_QUALITY.decorations)this.load.image(`quality-${name}`,`/assets/art-quality/${name}.webp`);
++    this.load.image('quality-plaque','/assets/art-quality/plaque.webp');
++    this.load.image('training-book','/assets/art-quality/training-book.webp');
+     Actor.preloadScope(this);
+     WindLessons.preload(this);
+     for(const id of INTERIOR_ASSETS) this.load.image(`interior-${id}`, `/assets/village-interiors/${id}.webp`);
+@@ -390,10 +394,11 @@
+
+     this.xiaobao = new XiaobaoView(this);
+     attachLifeUi(this);
+     props.forEach((p) => {
++      const key=VILLAGE_HOUSE_ART[p.id]??p.art,frame=this.textures.getFrame(key,p.frame??'__BASE'),appearance=appearanceFor(p,frame?{width:frame.cutWidth,height:frame.cutHeight}:undefined);
+       const im = this.add
+-        .image(p.displayAt?.x ?? p.x, p.displayAt?.y ?? p.y, VILLAGE_HOUSE_ART[p.id] ?? p.art, p.frame ?? 0)
++        .image(p.displayAt?.x ?? p.x, p.displayAt?.y ?? p.y, appearance.texture, p.art==='bush'?0:p.frame??0)
+         .setOrigin(0.5, 1)
+-        .setDisplaySize(p.w, p.h)
++        .setDisplaySize(appearance.width, appearance.height)
+         .setDepth(p.depth ?? p.y);
+       if(p.kind==="npc")im.setVisible(false);
+       this.propImages.set(p.id, im);
+
+--- 修改前/game/systems/terrain.ts
+
++++ 当前/game/systems/terrain.ts
+
+@@ -19,6 +19,8 @@
+
+   showLayoutLabels,
+ } from "../../data/world";
+ import type { World } from "../scenes/World";
++import {ART_QUALITY} from '../../data/worldAppearance';
++import {seamlessGround,makeGroundAppearance,paintGroundVariation} from '../rendering/worldAppearance';
+ 
+ export function makeTerrain(this: World) {
+   // 候选手绘门只在资源层切帧，柱脚与横梁各自排序，门洞不产生矩形碰撞。
+@@ -28,9 +30,10 @@
+
+   gate.add("beam", 0, 310, 0, 690, 420);
+   this.textures.get("fence").add("boundary",0,0,120,274,186);
+   this.textures.get("vertical-fence").add("trim",0,380,67,169,1446);
+-  const grass = this.textures.get("grass").getSourceImage() as HTMLImageElement,
+-    forest = this.textures.get("forest").getSourceImage() as HTMLImageElement,
+-    road = this.textures.get("road").getSourceImage() as HTMLImageElement,
++  const grass = seamlessGround(this.textures.get("grass").getSourceImage() as HTMLImageElement),
++    forest = seamlessGround(this.textures.get("forest").getSourceImage() as HTMLImageElement),
++    road = seamlessGround(this.textures.get("road").getSourceImage() as HTMLImageElement),
++    waterMaterial = seamlessGround(this.textures.get("water").getSourceImage() as HTMLImageElement),
+     earth = this.textures
+       .get("packed-earth")
+       .getSourceImage() as HTMLImageElement,
+@@ -69,15 +72,16 @@
+
+     {points:[[1430,343],[1540,337],[1700,339],[1876,340],[1882,450],[1879,590],[1883,715],[1770,729],[1660,723],[1540,730],[1422,717],[1416,600],[1423,470],[1418,367],[1430,343]] as TerrainPoint[],opacity:1,base:true},
+     {points:[[1060,406],[1130,420],[1179,467],[1188,540],[1166,604],[1120,650],[1070,622],[1034,570],[1019,509],[1024,444],[1060,406]] as TerrainPoint[],opacity:.42,base:false},
+   ].map(a=>({...a,bounds:terrainBounds(a.points,25),edges:terrainSegments(a.points,0)}));
++  const appearance=makeGroundAppearance(this);
+   let peak=0,created=0,released=0;
+   const drawTile=(cx:number,cy:number,key:string)=>{
+       const texture = this.textures.createCanvas(key, 600, 550)!;
+       const c = texture.context;
+       c.translate(-cx, -cy);
+       const gp = c.createPattern(grass, "repeat")!;
+-      gp.setTransform(new DOMMatrix().scale(0.6));
++      gp.setTransform(new DOMMatrix().scale(ART_QUALITY.groundScale.grass));
+       const rp = c.createPattern(road, "repeat")!;
+-      rp.setTransform(new DOMMatrix().scale(0.25));
++      rp.setTransform(new DOMMatrix().scale(ART_QUALITY.groundScale.road));
+       const intersects=(b:TerrainBounds,pad=0)=>cx+601>=b.left-pad&&cx-1<=b.right+pad&&cy+551>=b.top-pad&&cy-1<=b.bottom+pad;
+       // 共用区域遮罩和离屏画布，只采样与当前地面块相交的范围。
+       const paintBlend=(bounds:TerrainBounds,coverage:(x:number,y:number)=>number,paint:CanvasPattern|string,opacity=1,base?:string)=>{
+@@ -100,7 +104,7 @@
+
+       c.fillStyle = gp;
+       c.fillRect(cx, cy, 600, 550);
+       const fp = c.createPattern(forest, "repeat")!;
+-      fp.setTransform(new DOMMatrix().scale(0.6));
++      fp.setTransform(new DOMMatrix().scale(ART_QUALITY.groundScale.forest));
+       for(const region of regions){
+         // 起伏最大18像素，加上32像素羽化；远离边缘的块直接铺纹理。
+         const margin = blend + 18;
+@@ -128,7 +132,9 @@
+
+         }
+         layer.restore(); c.drawImage(surface,cx,cy);
+       }
+-      const water=c.createPattern(this.textures.get('water').getSourceImage() as HTMLImageElement,'repeat')!;
++      paintGroundVariation(c,cx,cy);
++      const water=c.createPattern(waterMaterial,'repeat')!;
++      water.setTransform(new DOMMatrix().scale(.55));
+       for(const p of WILD_WATERS){
+         paintBlend(ellipseBounds(p,31),(x,y)=>featherCoverage(ellipseDistance(x,y,p)+12+terrainJitter(x,y),14),'#aaa477');
+         paintBlend(ellipseBounds(p,13),(x,y)=>featherCoverage(ellipseDistance(x,y,p)+terrainJitter(x,y)*.6,10),water);
+@@ -146,7 +152,8 @@
+
+         },rp);
+       }
+       for(const b of WILD_BRIDGES){
+-        c.fillStyle="#76583b";c.fillRect(b.x,b.y,b.w,b.h);c.strokeStyle="#b99a66";c.lineWidth=3;for(let y=b.y+4;y<b.y+b.h;y+=18){c.beginPath();c.moveTo(b.x+3,y);c.lineTo(b.x+b.w-3,y);c.stroke();}
++        c.save();c.translate(b.x+b.w/2,b.y+b.h/2);c.rotate(Math.PI/2);
++        c.drawImage(this.textures.get('bridge').getSourceImage() as HTMLImageElement,-b.h/2,-b.w/2,b.h,b.w);c.restore();
+       }
+       const worn={x:TRAINING.x,y:TRAINING.y,rx:76,ry:52};
+       paintBlend(ellipseBounds(worn,19),(x,y)=>featherCoverage(ellipseDistance(x,y,worn)+terrainJitter(x,y),14),'#b2a16a',.53);
+@@ -184,6 +191,7 @@
+
+         c.ellipse(x, y, 7, 2, 0.4, 0, 7);
+         c.fill();
+       }
++      appearance.bake(c,cx,cy);
+       texture.refresh();
+       tiles.set(key,this.add.image(cx, cy, key).setOrigin(0).setDepth(WORLD.top-1000));
+       created++;peak=Math.max(peak,tiles.size);
+@@ -214,18 +222,10 @@
+
+   for(const sign of SERVICE_SIGNS){
+     const key=`plaque-${sign.id}`;signKeys.push(key);
+     const tex=this.textures.createCanvas(key,224,72)!,c=tex.context;
+-    c.fillStyle='#3e4d39';c.beginPath();c.roundRect(3,3,218,66,9);c.fill();
+-    c.fillStyle='#806747';c.beginPath();c.roundRect(6,7,212,58,7);c.fill();
+-    c.strokeStyle='#d4b880';c.lineWidth=2;c.strokeRect(13,13,198,46);
++    c.drawImage(this.textures.get('quality-plaque').getSourceImage() as HTMLImageElement,0,0,224,72);
+     c.fillStyle='#fff0c8';c.font='bold 31px "PingFang SC",serif';c.textAlign='center';c.textBaseline='middle';c.fillText(sign.name,112,36);
+     tex.refresh();
+   }
+-  const book=this.textures.createCanvas('training-book',144,128)!,bc=book.context;
+-  signKeys.push('training-book');
+-  bc.fillStyle='#6f5039';bc.fillRect(28,72,10,51);bc.fillRect(106,72,10,51);bc.fillRect(14,62,116,18);
+-  bc.fillStyle='#40584b';bc.beginPath();bc.moveTo(15,28);bc.lineTo(70,34);bc.lineTo(129,28);bc.lineTo(122,72);bc.lineTo(70,77);bc.lineTo(22,72);bc.closePath();bc.fill();
+-  bc.fillStyle='#eee1b8';bc.beginPath();bc.moveTo(20,18);bc.lineTo(71,28);bc.lineTo(124,18);bc.lineTo(118,62);bc.lineTo(71,70);bc.lineTo(26,61);bc.closePath();bc.fill();
+-  bc.strokeStyle='#aa936c';bc.lineWidth=2;for(let y=32;y<=53;y+=8){bc.beginPath();bc.moveTo(30,y);bc.lineTo(61,y+5);bc.moveTo(81,y+5);bc.lineTo(114,y);bc.stroke();}book.refresh();
+   this.events.once('shutdown',()=>signKeys.forEach(key=>this.textures.remove(key)));
+   const debug = showLayoutLabels(import.meta.env.DEV, window.location.search);
+   this.data.set("layoutLabelCount", debug ? villageAreas.length : 0);
+
+--- 修改前/game/entities/actor.ts
+
++++ 当前/game/entities/actor.ts
+
+@@ -41,11 +41,11 @@
+
+     this.shadow = scene.add.ellipse(
+       x,
+       y - 3,
+-      cat ? 27 : 34,
+-      12,
++      cat ? 30 : 42,
++      cat ? 10 : 13,
+       0x233c34,
+       0.22,
+-    );
++    ).setRotation(.22);
+     this.sprite = scene.add
+       .sprite(x, y, cat ? "cat-motion" : "hero", 0)
+       .setOrigin(0.5, 124 / 128);
+
+--- 修改前/game/entities/npcLifeView.ts
+
++++ 当前/game/entities/npcLifeView.ts
+
+@@ -70,7 +70,7 @@
+
+           })
+           .setOrigin(0.5, 0),
+         tool = scene.add.graphics(),
+-        shadow = scene.add.ellipse(0, 0, 28, 8, 0x193c32, 0.2);
++        shadow = scene.add.ellipse(0, 0, 36, 11, 0x193c32, 0.2).setRotation(.22);
+       this.residents.set(d.id, {
+         sprite,
+         label,
+
+--- 修改前/game/systems/waterEffects.ts
+
++++ 当前/game/systems/waterEffects.ts
+
+@@ -55,8 +55,9 @@
+
+       image.setVisible(visible);
+       this.lilies.push({ image, ...anchor, visible });
+     }
+-    // 裁切、角度、尺寸与旧地面中的桥完全相同；逻辑通道仍由BRIDGES独立提供。
+-    scene.textures.get("bridge").add(this.bridgeFrame, 0, 0, 92, 1983, 601);
++    // 新桥面使用完整透明素材；角度、位置和逻辑通道仍由BRIDGES提供。
++    const bridgeSource=scene.textures.get("bridge").getSourceImage() as HTMLImageElement;
++    scene.textures.get("bridge").add(this.bridgeFrame, 0, 0, 0, bridgeSource.width, bridgeSource.height);
+     for (const b of BRIDGES) this.keep(scene.add.image(b.x + b.w / 2, b.y + b.h / 2, "bridge", this.bridgeFrame)
+       .setDisplaySize(b.h, b.w + 8).setRotation(Math.PI / 2).setDepth(WATER.depth.bridge));
+ 
+@@ -98,10 +99,12 @@
+
+       c.strokeStyle = `rgba(176,204,163,${alpha})`; c.lineWidth = 5; c.stroke();
+     }
+     c.restore();
+-    for (const [i, a] of [0.1, 0.5, 0.9, 1.5, 2.1, 2.6, 3.6, 4.2, 4.65, 5.3, 5.85].entries()) {
+-      const x = POND.x + Math.cos(a) * (POND.rx + 7), y = POND.y + Math.sin(a) * (POND.ry + 7);
+-      if (!clearOfBridges(x, y, 12)) continue;
+-      c.drawImage(this.scene.textures.get(i % 2 ? "herb" : "rock").getSourceImage() as HTMLImageElement, x - 8, y - 10, 16, 15);
++    for (let i=0;i<19;i++) {
++      const a=i*2.39996,offset=4+(i*7)%12;
++      const x = POND.x + Math.cos(a) * (POND.rx + offset), y = POND.y + Math.sin(a) * (POND.ry + offset);
++      if (!clearOfBridges(x, y, 20)) continue;
++      const stone=i%3===0,width=stone?12+i%7:25+i%9,height=stone?9+i%5:20+i%7;
++      c.drawImage(this.scene.textures.get(stone?'rock':'herb').getSourceImage() as HTMLImageElement,x-width/2,y-height,width,height);
+     }
+     texture.refresh();
+     this.keep(this.scene.add.image(POND.x - POND.rx - pad, POND.y - POND.ry - pad, this.textureKeys[0]).setOrigin(0).setDepth(WATER.depth.shore));

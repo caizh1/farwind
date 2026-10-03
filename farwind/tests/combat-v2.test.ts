@@ -52,11 +52,14 @@ describe('第二版战斗存档与随机遭遇',()=>{
   const bodies:EnemyBody[]=[];
   const runtime=new WildernessEncounters({read:()=>data,bodies:()=>bodies,enabled:v=>v.id===id,busy:()=>false,release:()=>{},spawn:(definition,u)=>bodies.push({...definition,hp:u.hp,x:u.x,y:u.y,homeX:definition.x,homeY:definition.y,cool:0,windup:0,staggerUntil:0,nav:enemyNavigation(),ai:'家园',disabled:false,recovered:false})});
   runtime.update(16,16,{x:d.x,y:d.y},{left:d.x-600,right:d.x+600,top:d.y-600,bottom:d.y+600});
+  expect(bodies).toHaveLength(0);expect(runtime.pendingCount).toBe(6);
+  runtime.update(16,916,{x:d.x,y:d.y},{left:d.x-600,right:d.x+600,top:d.y-600,bottom:d.y+600});
   expect(bodies).toHaveLength(6);
   for(const e of bodies){expect(settleEncounterDeath(data,e.id,false)).toBe(true);e.hp=0;}
-  runtime.update(16,32,{x:d.x,y:d.y},{left:d.x-600,right:d.x+600,top:d.y-600,bottom:d.y+600});
+  runtime.update(16,932,{x:d.x,y:d.y},{left:d.x-600,right:d.x+600,top:d.y-600,bottom:d.y+600});
   expect(data.groups[id].wave).toBe(1);expect(data.groups[id].waveWarning).toBe(2000);
-  for(let i=0;i<8;i++)runtime.update(250,282+i*250,{x:d.x,y:d.y},{left:d.x-600,right:d.x+600,top:d.y-600,bottom:d.y+600});
+  for(let i=0;i<8;i++)runtime.update(250,1182+i*250,{x:d.x,y:d.y},{left:d.x-600,right:d.x+600,top:d.y-600,bottom:d.y+600});
+  runtime.update(16,3832,{x:d.x,y:d.y},{left:d.x-600,right:d.x+600,top:d.y-600,bottom:d.y+600});
   expect(bodies.filter(e=>e.hp>0)).toHaveLength(6);
   for(const e of bodies.filter(e=>e.hp>0)){expect(settleEncounterDeath(data,e.id,false)).toBe(true);e.hp=0;}
   expect(data.groups[id].rewarded).toBe(true);expect(data.groups[id].cleared).toBe(true);
@@ -111,9 +114,9 @@ describe('第二版战斗存档与随机遭遇',()=>{
  it('原任务敌人和结晶保底身份保留，旧备份拒绝导入',()=>{const s=initialState();const route=ADVENTURE_ROUTES.east;activateAdventure(s.encounters,route[0]);s.encounters.groups[route[0]].rewarded=true;activateAdventure(s.encounters,route[1]);expect(unitState(s.encounters,'leaf-1')).toBeDefined();expect(unitState(s.encounters,'leaf-2')).toBeDefined();const old={...s,content_version:1};expect(()=>parseSave(JSON.stringify(old))).toThrow('旧战斗');});
 });
 describe('长期风赐',()=>{
- it('保存候选，领取去重，升级和满六项替换',()=>{
+ it('保存候选，领取去重，超过六项继续获取与升级',()=>{
   const s=initialWindGifts();expect(offerWindGift(s,'首次:南一',42,false)).toBe(true);const candidates=[...s.pending[0].candidates];expect(candidates).not.toContain('gale');expect(new Set(candidates).size).toBe(3);expect(offerWindGift(s,'首次:南一',43,true)).toBe(false);expect(validateWindGifts(s).pending[0].candidates).toEqual(candidates);chooseWindGift(s,'首次:南一',candidates[0]);expect(()=>chooseWindGift(s,'首次:南一',candidates[0])).toThrow();
-  s.held=[{id:'blade',level:1},{id:'gale',level:2},{id:'stride',level:1},{id:'armor',level:2},{id:'spring',level:1},{id:'poise',level:2}];s.receipts.push('升级','替换');s.pending=[{receipt:'升级',candidates:['blade','shock','chain']},{receipt:'替换',candidates:['potion','shock','chain']}];chooseWindGift(s,'升级','blade');expect(s.held[0].level).toBe(2);expect(()=>chooseWindGift(s,'替换','potion')).toThrow('替换');chooseWindGift(s,'替换','potion','armor');expect(s.held).toHaveLength(6);expect(s.held.some(g=>g.id==='armor')).toBe(false);expect(validateWindGifts(s)).toEqual(s);
+  s.held=[{id:'blade',level:1},{id:'gale',level:2},{id:'stride',level:1},{id:'armor',level:2},{id:'spring',level:1},{id:'poise',level:2}];s.receipts.push('升级','替换');s.pending=[{receipt:'升级',candidates:['blade','shock','chain']},{receipt:'替换',candidates:['potion','shock','chain']}];chooseWindGift(s,'升级','blade');expect(s.held[0].level).toBe(2);chooseWindGift(s,'替换','potion');expect(s.held).toHaveLength(7);expect(s.held.some(g=>g.id==='armor')).toBe(true);expect(validateWindGifts(s)).toEqual(s);
  });
 });
 describe('六招与阶段时钟',()=>{
@@ -127,12 +130,21 @@ describe('六招与阶段时钟',()=>{
 });
 
 describe('正式实例边界与保存失败反证',()=>{
+ it('首波光圈完整位于镜头内，同时保留玩家距离与出口通道',()=>{
+  const d=ENCOUNTERS.find(d=>d.id==='south-reed-patrol')!,player={x:900,y:1850},view={left:260,right:1540,top:1340,bottom:2060},points:{x:number;y:number}[]=[];
+  for(let slot=0;slot<6;slot++){
+   const p=adventureSpawn(d,player,points,slot,view);expect(p).toBeDefined();if(!p)continue;points.push(p);
+   expect(p.x).toBeGreaterThanOrEqual(view.left+60);expect(p.x).toBeLessThanOrEqual(view.right-60);expect(p.y).toBeLessThanOrEqual(view.bottom-80);expect(Math.hypot(p.x-player.x,p.y-player.y)).toBeGreaterThanOrEqual(220);
+   expect(exitClearance(p,d,adventureExit(d,player)!)).toBeGreaterThanOrEqual(60);
+  }
+  expect(points).toHaveLength(6);expect(adventureSpawn(d,player,[],0,{left:0,right:50,top:0,bottom:50})).toBeUndefined();
+ });
  it('夜袭与新波次共用十二名额，名额不足延后而不删已保存成员',()=>{
   const state=initialState(),d=ENCOUNTERS.find(d=>d.id==='south-reed-patrol')!;activateAdventure(state.encounters,d.id);state.encounters.groups[d.id].waveWarning=0;
   const bodies:EnemyBody[]=[];let reserved=7;
   const runtime=new WildernessEncounters({read:()=>state.encounters,bodies:()=>bodies,reserved:()=>reserved,enabled:g=>g.id===d.id,busy:()=>false,release:()=>{},spawn:(m,u)=>bodies.push({...m,hp:u.hp,nav:enemyNavigation()} as EnemyBody)});
   const player={x:d.x,y:d.y+350},view={left:-5000,right:5000,top:-5000,bottom:5000};runtime.update(16,16,player,view);expect(bodies).toHaveLength(0);expect(state.encounters.groups[d.id].members.filter(u=>u.defeated)).toHaveLength(0);
-  reserved=6;runtime.update(16,32,player,view);expect(bodies).toHaveLength(6);expect(activeHostileCount({enemies:bodies,defense:{enemies:Array.from({length:reserved},()=>({hp:48}))}})).toBe(12);
+  reserved=6;runtime.update(16,32,player,view);expect(bodies).toHaveLength(0);expect(activeHostileCount({enemies:bodies,wilderness:runtime,defense:{enemies:Array.from({length:reserved},()=>({hp:48}))}})).toBe(12);runtime.update(16,932,player,view);expect(bodies).toHaveLength(6);expect(activeHostileCount({enemies:bodies,defense:{enemies:Array.from({length:reserved},()=>({hp:48}))}})).toBe(12);
   const defense=new EastDefense(state.defense,0);defense.hostileLimit=12;
   // 超额在常规健康／地形条件之前拒绝，正式导演仍保留原计划等待。
   expect(defense.canScheduleAtGate('east-gate',player,Array.from({length:10},()=>player),undefined,Array.from({length:3},()=>player))).toBe(false);

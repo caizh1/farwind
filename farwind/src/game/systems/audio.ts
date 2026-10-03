@@ -1,6 +1,6 @@
 import {synthFeedback,soundDuration,audioIdentity,FEEDBACK_AUDIO} from "./feedbackAudio";
 import {feedbackAudio,audibleFeedback,isHitFeedback,type FeedbackEvent,type FeedbackMode} from "./combatFeedback";
-import {synthSwordWindHowl} from './swordWindAudio';
+import {synthSwordWindCue,SWORD_WIND_AUDIO,type SwordWindCue} from './swordWindAudio';
 import type {XiaobaoEvent} from './xiaobaoCombat';
 import {synthCreature,type CreatureVoice} from './creatureAudio';
 import {synthBossArrival} from './bossArrivalAudio';
@@ -17,7 +17,8 @@ export class Sound {
   private voices=new Set<AudioBufferSourceNode>();
   private strikeVoices=new Map<string,AudioBufferSourceNode>();
   private variants=new Map<string,number>();
-  private windBuffer?:AudioBuffer;
+  private windBuffers=new Map<string,AudioBuffer>();
+  private windVariant=0;
   private xiaobaoBuffers=new Map<string,AudioBuffer>();
   private creatureBuffers=new Map<string,AudioBuffer>();
   bossArrival(kind:CampBossKind,sim:number){
@@ -83,8 +84,8 @@ export class Sound {
   }
   private silenceSwordWind(){for(const voice of this.windVoices.keys())voice.stop();this.windVoices.clear();}
   silenceFeedback(){for(const voice of this.runeVoices)voice.stop();this.runeVoices.clear();this.runeLast=this.runeFinishLast=-Infinity;this.xiaobaoFlight(false,0);this.silenceSwordWind();for(const voice of this.voices)voice.stop();this.voices.clear();this.strikeVoices.clear();if(this.buses&&this.context)for(const bus of Object.values(this.buses)){bus.gain.cancelScheduledValues(this.context.currentTime);bus.gain.setValueAtTime(1,this.context.currentTime);}}
-  clearFeedback(){this.silenceFeedback();this.audioEvents=[];this.variants.clear();}
-  diagnostic(){return {runeVoices:this.runeVoices.size,runeCached:this.runeBuffers.size,voices:this.voices.size,strikeVoices:this.strikeVoices.size,audioProfile:'双剑金属／同来招截停',windVoices:this.windVoices.size,windCached:!!this.windBuffer,xiaobaoFlightVoices:this.flightVoice?1:0,xiaobaoCached:this.xiaobaoBuffers.size,cached:this.feedbackBuffers.size,events:this.audioEvents,state:this.context?.state??'unstarted',outputLatency:this.context?.outputLatency??null,buses:this.buses?Object.fromEntries(Object.entries(this.buses).map(([k,v])=>[k,v.gain.value])):null};}
+  clearFeedback(){this.silenceFeedback();this.audioEvents=[];this.variants.clear();this.windVariant=0;}
+  diagnostic(){return {runeVoices:this.runeVoices.size,runeCached:this.runeBuffers.size,voices:this.voices.size,strikeVoices:this.strikeVoices.size,audioProfile:'双剑金属／同来招截停',windVoices:this.windVoices.size,windCached:this.windBuffers.has('wind-release:0'),windProfile:'短风呼啸／柔和风腔／无宽带噪声',windVariants:SWORD_WIND_AUDIO.variants,xiaobaoFlightVoices:this.flightVoice?1:0,xiaobaoCached:this.xiaobaoBuffers.size,cached:this.feedbackBuffers.size,events:this.audioEvents,state:this.context?.state??'unstarted',outputLatency:this.context?.outputLatency??null,buses:this.buses?Object.fromEntries(Object.entries(this.buses).map(([k,v])=>[k,v.gain.value])):null};}
   private route(kind:string){return this.buses?.[kind.startsWith('enemy-')?'threat':kind.startsWith('wind-')||['attack','attack-heavy','hit','finish','straw','straw-heavy'].includes(kind)?'battle':['guard','parry','parry-perfect','deflect','counter'].includes(kind)?'player':'noncritical']??this.output??this.context!.destination;}
   private xiaobaoBuffer(kind:string){
     const c=this.context!,old=this.xiaobaoBuffers.get(kind);if(old)return old;
@@ -128,7 +129,7 @@ export class Sound {
     }
     this.loops.forEach((l,i)=>{const target=active?this.volume*(i?night*.18:(1-night)*.15):0;if(target===0&&l.target!==0||Math.abs(target-l.target)>.0001){l.gain.gain.cancelScheduledValues(c.currentTime);l.gain.gain.setTargetAtTime(target,c.currentTime,.25);l.target=target;}});
   }
-  destroy(){this.runeBuffers.clear();this.clearFeedback();for(const bus of Object.values(this.buses??{}))bus.disconnect();this.buses=undefined;this.feedbackBuffers.clear();this.xiaobaoBuffers.clear();this.creatureBuffers.clear();this.windBuffer=undefined;for(const l of this.loops){l.source.stop();l.source.disconnect();l.filter.disconnect();l.gain.disconnect();}this.loops=[];void this.context?.close();this.context=undefined;this.output=undefined;}
+  destroy(){this.runeBuffers.clear();this.clearFeedback();for(const bus of Object.values(this.buses??{}))bus.disconnect();this.buses=undefined;this.feedbackBuffers.clear();this.xiaobaoBuffers.clear();this.creatureBuffers.clear();this.windBuffers.clear();this.windVariant=0;for(const l of this.loops){l.source.stop();l.source.disconnect();l.filter.disconnect();l.gain.disconnect();}this.loops=[];void this.context?.close();this.context=undefined;this.output=undefined;}
   private runeBuffers=new Map<string,AudioBuffer>();
   private runeVoices=new Set<AudioBufferSourceNode>();
   private runeLast=-Infinity;
@@ -146,7 +147,10 @@ export class Sound {
     if(!this.output){this.output=this.context.createDynamicsCompressor();this.output.threshold.value=-9;this.output.knee.value=6;this.output.ratio.value=8;this.output.attack.value=.003;this.output.release.value=.1;this.output.connect(this.context.destination);}
     if(!this.buses){this.buses={} as NonNullable<Sound['buses']>;for(const name of ['threat','player','battle','noncritical'] as const){const gain=this.context.createGain();gain.connect(this.output);this.buses[name]=gain;}}
     this.prepareFeedback();
-    if(!this.windBuffer){const samples=synthSwordWindHowl(this.context.sampleRate);this.windBuffer=this.context.createBuffer(2,samples[0].length,this.context.sampleRate);samples.forEach((channel,i)=>this.windBuffer!.copyToChannel(channel,i));}
+    if(!this.windBuffers.size)for(const kind of ['wind-release','wind-charge','wind-dissolve'] as const)for(let variant=0;variant<(kind==='wind-release'?SWORD_WIND_AUDIO.variants:1);variant++){
+      const samples=synthSwordWindCue(kind,this.context.sampleRate,variant),buffer=this.context.createBuffer(2,samples[0].length,this.context.sampleRate);
+      samples.forEach((channel,i)=>buffer.copyToChannel(channel,i));this.windBuffers.set(`${kind}:${variant}`,buffer);
+    }
     void this.context.resume();
   }
   play(kind = "pick") {
@@ -199,7 +203,7 @@ export class Sound {
     o.onended=()=>{o.disconnect();g.disconnect();};
   }
   private swordWindSound(kind:string){
-    if(kind==='wind-release'){this.swordWindHowl();return;}
+    if(kind==='wind-release'||kind==='wind-charge'||kind==='wind-dissolve'){this.swordWindHowl(kind);return;}
     const c=this.context!,at=c.currentTime,charge=kind==='wind-charge',hit=kind==='wind-hit',dissolve=kind==='wind-dissolve',duration=charge?.11:hit?.13:dissolve?.06:.14;
     const noise=c.createBuffer(1,Math.ceil(c.sampleRate*duration),c.sampleRate),samples=noise.getChannelData(0);let seed=hit?941:charge?307:1709;
     for(let i=0;i<samples.length;i++){seed=seed*16807%2147483647;samples[i]=seed/1073741824-1;}
@@ -208,11 +212,13 @@ export class Sound {
     gain.gain.setValueAtTime(.001,at);gain.gain.linearRampToValueAtTime(this.volume*(charge?.2:hit?.8:dissolve?.15:.75),at+(charge?.045:.006));gain.gain.exponentialRampToValueAtTime(.001,at+duration);
     source.connect(filter);filter.connect(gain);gain.connect(this.route(kind));source.start(at);source.stop(at+duration);source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect();};
   }
-  private swordWindHowl(){
-    const c=this.context!;if(c.state!=='running'||!this.windBuffer)return;
-    if(this.windVoices.size>=2){const oldest=this.windVoices.keys().next().value!;oldest.stop();this.windVoices.delete(oldest);}
-    const source=c.createBufferSource(),gain=c.createGain();source.buffer=this.windBuffer;gain.gain.value=this.volume;
-    source.connect(gain);gain.connect(this.route('wind-release'));this.windVoices.set(source,gain);
+  private swordWindHowl(kind:SwordWindCue){
+    const c=this.context!;if(c.state!=='running')return;
+    const variant=kind==='wind-release'?this.windVariant++%SWORD_WIND_AUDIO.variants:0;
+    const buffer=this.windBuffers.get(`${kind}:${variant}`);if(!buffer)return;
+    if(this.windVoices.size>=SWORD_WIND_AUDIO.voices){const oldest=this.windVoices.keys().next().value!;oldest.stop();this.windVoices.delete(oldest);}
+    const source=c.createBufferSource(),gain=c.createGain();source.buffer=buffer;gain.gain.value=this.volume;
+    source.connect(gain);gain.connect(this.route(kind));this.windVoices.set(source,gain);
     source.onended=()=>{this.windVoices.delete(source);source.disconnect();gain.disconnect();};source.start(c.currentTime);
   }
   private legacyMotionSound(kind:string) {

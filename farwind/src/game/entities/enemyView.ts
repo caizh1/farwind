@@ -1,21 +1,27 @@
 import type {BossAtlas} from './bossArtCache';
 import {FUNGAL,fungalShieldActive} from '../systems/fungalCombat';
-import type {EnemyBody} from '../systems/enemy';
+import {enemyAttackSpace,type EnemyBody} from '../systems/enemy';
 import {CampBossView} from './campBossView';
 import Phaser from 'phaser';
 import {creatureMaxHP} from '../../data/maps/windbell/elites';
 import {ENEMIES,enemyProfile,enemyKind,enemyArt} from '../../data/enemies';
 import {BOSS_PROJECTILES} from '../../data/maps/windbell/campBosses';
 import {EnemyAnimation,type AnimatedEnemy,type EnemyPose} from '../systems/enemyAnimation';
-import {sampleEnemyAttack,type EnemyAttack,SPORE,ENEMY_ATTACK,sporeDirections} from '../systems/enemyAttack';
+import {sampleEnemyAttack,type EnemyAttack,SPORE,sporeDirections,sporeOrigin} from '../systems/enemyAttack';
 import type {EnemyProjectiles} from '../systems/enemyProjectiles';
 import {Actor} from './actor';
+import {WARNING,drawDanger,previewWarning,projectileWarning,warningProgress} from './attackWarningView';
+import {drawSpawnCues} from './enemySpawnView';
+import type {SpawnCue} from '../systems/encounterRuntime';
+import {groundShadows} from '../rendering/groundShadows';
 type Entry={motion:EnemyAnimation;pose?:EnemyPose;hp:number;trail:number;trailStart:number;hitAt:number;eliteLabel?:Phaser.GameObjects.Text;mechanicLabel?:Phaser.GameObjects.Text};
 export class EnemyView {
   boss:CampBossView;
   entries=new WeakMap<Phaser.GameObjects.Sprite,Entry>();
   bars:Phaser.GameObjects.Graphics;
   shotTrails:Phaser.GameObjects.Graphics;
+  warningFill:Phaser.GameObjects.Graphics;
+  spawnInk:Phaser.GameObjects.Graphics;
   shots=new Map<string,Phaser.GameObjects.Image>();
   danger=new Map<string,Phaser.GameObjects.Graphics>();
   dangerUsed=new Set<string>();
@@ -34,7 +40,7 @@ export class EnemyView {
     scene.load.image('fungal-root','/assets/enemies-v1/fungal-root.png');
     scene.load.image('spore-projectile','/assets/enemies-v1/spore-projectile.png');scene.load.image('spore-burst','/assets/enemies-v1/spore-burst.png');
   }
-  constructor(public scene:Phaser.Scene){this.boss=new CampBossView(scene);this.bars=scene.add.graphics().setDepth(8997);this.shotTrails=scene.add.graphics().setDepth(8995);
+  constructor(public scene:Phaser.Scene){this.spawnInk=scene.add.graphics().setDepth(WARNING.floor+2);this.warningFill=scene.add.graphics().setDepth(WARNING.floor);this.boss=new CampBossView(scene);this.bars=scene.add.graphics().setDepth(8997);this.shotTrails=scene.add.graphics().setDepth(8995);
     // 纹理每场景只生成一次；拖尾共用画布，不在每帧新建粒子或图形对象。
     if(!scene.textures.exists('archer-projectile')){const ink=scene.add.graphics();ink.lineStyle(7,0x293b2c,1).lineBetween(8,24,40,24).lineStyle(3,0xede2ae,1).lineBetween(8,24,40,24).fillStyle(0xdaf5d4,1).fillTriangle(44,24,32,18,32,30).lineStyle(2,0x759466,1).lineBetween(7,18,16,24).lineBetween(7,30,16,24);ink.generateTexture('archer-projectile',48,48);ink.destroy();}
     for(const [kind,s] of Object.entries(BOSS_PROJECTILES)){const key='boss-projectile-'+kind;if(scene.textures.exists(key))continue;
@@ -44,45 +50,47 @@ export class EnemyView {
       ink.generateTexture(key,s.size,s.size);ink.destroy();
     }
   }
-  reset(){this.boss.reset();this.entries=new WeakMap();this.bars.clear();this.shotTrails.clear();for(const im of this.shots.values())im.destroy();this.shots.clear();for(const ink of this.danger.values())ink.destroy();this.danger.clear();for(const label of this.eliteLabels)label.destroy();this.eliteLabels.clear();}
-  begin(){this.boss.begin();this.bars.clear();this.dangerUsed.clear();for(const label of this.eliteLabels)label.setVisible(false);for(const ink of this.danger.values())ink.clear();}
+  reset(){this.spawnInk.clear();this.boss.reset();this.entries=new WeakMap();this.warningFill.clear();this.bars.clear();this.shotTrails.clear();for(const im of this.shots.values())im.destroy();this.shots.clear();for(const ink of this.danger.values())ink.destroy();this.danger.clear();for(const label of this.eliteLabels)label.destroy();this.eliteLabels.clear();}
+  spawn(cues:Iterable<SpawnCue>,now:number,visible:boolean){drawSpawnCues(this.spawnInk,cues,now);this.spawnInk.setVisible(visible);}
+  begin(){this.boss.begin();this.warningFill.clear();this.bars.clear();this.dangerUsed.clear();for(const label of this.eliteLabels)label.setVisible(false);for(const ink of this.danger.values())ink.clear();}
   warn(root:{x:number;y:number},attack:EnemyAttack,now:number){
-    if(attack.type==='geomancer'){this.boss.warning(root as EnemyBody,attack,now);return;}
-    if(attack.type==='bomber'&&!attack.cancelled&&attack.bombAt!==undefined&&now>=attack.activeUntil&&now<attack.recoveryUntil){
-      const id=attack.attackerId;this.dangerUsed.add(id);let ink=this.danger.get(id);if(!ink){ink=this.scene.add.graphics();this.danger.set(id,ink);}
-      const progress=Math.min(1,(now-attack.activeUntil)/(attack.bombAt-attack.activeUntil)),exploded=now>=attack.bombAt;
-      ink.setDepth(8995).fillStyle(0xc47d49,exploded?.28:.09).fillCircle(root.x,root.y,FUNGAL.blastRadius)
-        .lineStyle(3,exploded?0xffe9bb:0xe9ab69,.9).strokeCircle(root.x,root.y,FUNGAL.blastRadius)
-        .lineStyle(2,0xffe9bb,.8).strokeCircle(root.x,root.y,FUNGAL.blastRadius*(1-progress));return;
+    if(attack.type==='geomancer'||attack.cancelled||attack.damage<=0)return;
+    const bomb=attack.type==='bomber'&&attack.bombAt!==undefined&&now>=attack.activeUntil&&now<attack.bombAt;
+    if(!bomb&&(attack.emitted||now>=attack.contactAt))return;
+    const id=attack.attackerId;this.dangerUsed.add(id);let ink=this.danger.get(id);if(!ink){ink=this.scene.add.graphics().setDepth(WARNING.floor+1);this.danger.set(id,ink);}
+    if(bomb){drawDanger(ink,this.warningFill,{kind:'circle',a:root,b:root,radius:FUNGAL.blastRadius},warningProgress(attack.activeUntil,attack.bombAt!,now),true);return;}
+    const progress=warningProgress(attack.startedAt,attack.contactAt,now);
+    if(['spore','archer'].includes(attack.type)){
+      for(const d of sporeDirections(attack))drawDanger(ink,this.warningFill,projectileWarning(sporeOrigin(root,d),d,SPORE.speed*SPORE.life/1000),progress);
+      return;
     }
-    if(attack.emitted||attack.cancelled||now>=attack.contactAt)return;
-    const id=attack.attackerId;this.dangerUsed.add(id);let ink=this.danger.get(id);if(!ink){ink=this.scene.add.graphics();this.danger.set(id,ink);}
-    // 潜地预兆属于必要的环境信号；树冠淡出层也不能盖住它。
-    ink.setDepth(attack.type==='burrow'?8995:root.y-.6);const d=attack.direction,length=['spore','archer'].includes(attack.type)?SPORE.speed*SPORE.life/1000:(attack.step??ENEMY_ATTACK[attack.type].step);
-    ink.lineStyle(['spore','archer'].includes(attack.type)?8:attack.type==='boar'?40:24,0xc18c62,.14).lineBetween(root.x,root.y,root.x+d.x*length,root.y+d.y*length);
-    ink.lineStyle(1,0xffdbc0,.6).lineBetween(root.x,root.y,root.x+d.x*length,root.y+d.y*length);
-    if(attack.elite==='brood'||attack.shotAngles)for(const v of sporeDirections(attack)){ink.lineStyle(12,0xc18c62,.18).lineBetween(root.x,root.y,root.x+v.x*length,root.y+v.y*length);ink.lineStyle(2,0xffdbc0,.75).lineBetween(root.x,root.y,root.x+v.x*length,root.y+v.y*length);}
-    if(attack.type==='burrow'){
-      const u=Math.max(0,Math.min(1,(now-attack.startedAt)/(attack.contactAt-attack.startedAt))),x=root.x+d.x*length,y=root.y+d.y*length;
-      ink.lineStyle(5,0x3f3024,.7).strokeCircle(x,y,28+(1-u)*18);
-      ink.lineStyle(2.5,0xf1ca8a,.65+u*.3).strokeCircle(x,y,28+(1-u)*18);
-      for(let i=0;i<5;i++){const a=i*Math.PI*2/5;ink.lineStyle(2,0x79543e,.7).lineBetween(root.x+Math.cos(a)*12,root.y+Math.sin(a)*12,root.x+Math.cos(a)*(25+u*15),root.y+Math.sin(a)*(25+u*15));}
-    }
-    if(attack.type==='leaf'){const angle=Math.atan2(d.y,d.x),points=[{x:root.x,y:root.y},...Array.from({length:12},(_,i)=>({x:root.x+Math.cos(angle-.85+i/11*1.7)*72,y:root.y+Math.sin(angle-.85+i/11*1.7)*72}))];ink.fillStyle(0xc18c62,.12).fillPoints(points.map(p=>new Phaser.Math.Vector2(p.x,p.y)),true);}
+    const space='homeX' in root?enemyAttackSpace(root as EnemyBody):undefined;
+    const geometry=previewWarning(attack,root,space);
+    drawDanger(ink,this.warningFill,geometry,progress);
+    if(attack.type==='burrow')drawDanger(ink,this.warningFill,{kind:'circle',a:geometry.b,b:geometry.b,radius:geometry.radius},progress,true);
   }
   finishWarnings(){for(const [id,ink] of this.danger)if(!this.dangerUsed.has(id)){ink.destroy();this.danger.delete(id);}}
   draw(body:AnimatedEnemy,attack:EnemyAttack|null|undefined,sprite:Phaser.GameObjects.Sprite,now:number,showBar=false){
     if(body.boss){const pose=this.boss.draw(body,attack,sprite,now,showBar);body.hurtboxFacing=pose.facing;return pose;}
     const kind=enemyKind(body.type),profile=enemyProfile(kind),maxHP=body.maxHP??creatureMaxHP(kind,body.elite);
     let entry=this.entries.get(sprite);if(!entry){entry={motion:new EnemyAnimation(),hp:body.hp??maxHP,trail:body.hp??maxHP,trailStart:body.hp??maxHP,hitAt:-Infinity};this.entries.set(sprite,entry);}
-    if(kind==='bomber'&&attack)this.warn(body,attack,now);
     const pose=entry.motion.sample(body,attack,now);entry.pose=pose;body.hurtboxFacing=pose.facing;
     const lift=attack&&!attack.cancelled&&pose.action==='attack'?sampleEnemyAttack(attack,now,body).offset.y:0;
     const alpha=pose.action==='death'?Math.max(0,1-Math.max(0,pose.elapsed-2000)/400):1;
     const art=enemyArt(kind),scale=profile.height/art.nativeHeight;
     sprite.setTexture(['archer','bell','shade','geomancer'].includes(kind)?`enemy-hd-${kind}`:`enemy-${kind}`,['archer','bell','shade','geomancer'].includes(kind)?'down/idle':pose.frame).setOrigin(.5,art.originY).setDisplaySize(art.frameWidth*scale,art.frameHeight*scale)
       .setPosition(body.x,body.y+lift).setDepth(body.y).setRotation(0).setAlpha(alpha).setVisible(alpha>0).clearTint();
-    if(['archer','bell','shade','geomancer'].includes(kind)){const dir=pose.facing===0?'down':pose.facing===1?'up':'right',action=pose.action==='walk'?`walk/${pose.index%2}`:pose.action==='attack'?pose.phase==='active'?'strike':pose.phase==='recovery'?'recover':'charge':'idle',name=`${dir}/${action}`,atlas=this.scene.cache.json.get(`enemy-hd-index-${kind}`) as BossAtlas,frame=atlas?.frames[name];if(frame&&this.scene.textures.exists(`enemy-hd-${kind}`)){const k=profile.height/frame.nativeHeight;sprite.setTexture(`enemy-hd-${kind}`,name).setOrigin(frame.foot[0]/frame.width,frame.foot[1]/frame.height).setDisplaySize(frame.width*k,frame.height*k);}else sprite.setVisible(false);}
+    if(['archer','bell','shade','geomancer'].includes(kind)){
+      const dir=pose.facing===0?'down':pose.facing===1?'up':'right',action=pose.action==='walk'?`walk/${pose.index%2}`:pose.action==='attack'?pose.phase==='active'?'strike':pose.phase==='recovery'?'recover':'charge':'idle',name=`${dir}/${action}`,atlas=this.scene.cache.json.get(`enemy-hd-index-${kind}`) as BossAtlas,frame=atlas?.frames[name];
+      if(frame&&this.scene.textures.exists(`enemy-hd-${kind}`)){
+        const k=profile.height/frame.nativeHeight;sprite.setTexture(`enemy-hd-${kind}`,name).setOrigin(frame.foot[0]/frame.width,frame.foot[1]/frame.height).setDisplaySize(frame.width*k,frame.height*k);
+        if(pose.action==='death'){
+          // 高清图集没有阵亡格：沿正式死亡时钟连续倒地，脚根仍由战斗身体持有；倒地后沿共享时窗淡出。
+          const t=Math.min(1,pose.elapsed/650),fall=t*t*(3-2*t),side=pose.facing===2?-1:1;
+          sprite.setDisplaySize(frame.width*k*(1-.45*fall),frame.height*k*(1-.1*fall)).setRotation(side*1.35*fall).setPosition(body.x,body.y-profile.height*.2*fall);
+        }
+      }else sprite.setVisible(false);
+    }
     Actor.mirror(sprite,pose.facing===2);
     if(body.passiveRoot){const kind=body.passiveRoot.kind,atlas=this.scene.cache.json.get('combat-mechanism-index') as BossAtlas,frame=kind&&atlas?.frames[kind];if(frame){const h={root:90,sac:72,rock:115,sigil:108}[kind!],k=h/frame.nativeHeight;sprite.setTexture('combat-mechanisms',kind!).setOrigin(frame.foot[0]/frame.width,frame.foot[1]/frame.height).setDisplaySize(frame.width*k,frame.height*k);Actor.mirror(sprite,false);}else sprite.setTexture('fungal-root').setDisplaySize(160,160);sprite.setAlpha((body.hp??0)>0?1:0);}
     if(kind==='priest'||kind==='bomber'){
@@ -108,7 +116,7 @@ export class EnemyView {
   projectile(system:EnemyProjectiles,now:number,visible:boolean){
     this.shotTrails.clear();
     const ids=new Set(system.shots.map(s=>s.id));for(const [id,im] of this.shots)if(!ids.has(id)){im.destroy();this.shots.delete(id);}
-    for(const s of system.shots){let im=this.shots.get(s.id);if(!im){im=this.scene.add.image(s.x,s.y-28,'spore-projectile');this.shots.set(s.id,im);}
+    for(const s of system.shots){let im=this.shots.get(s.id);if(!im){im=this.scene.add.image(s.x,s.y-28,'spore-projectile');this.shots.set(s.id,im);const source=im;groundShadows(this.scene).add(source,undefined,{label:'飞行弹体',width:18,height:7,projection:false,root:()=>({x:source.x,y:source.y+28,depth:source.y+27.5}),visible:()=>source.visible&&source.texture.key!=='spore-burst'});}
       const burst=s.state==='burst',u=burst?Math.min(1,(now-(s.burstAt??now))/SPORE.burst):0;
       const needle=s.attack.type==='archer',style=BOSS_PROJECTILES[s.attack.boss as keyof typeof BOSS_PROJECTILES],size=style?style.size+u*30:burst?28+u*30:needle?36:20;
       im.setTexture(style?'boss-projectile-'+s.attack.boss:!burst&&needle?'archer-projectile':burst?'spore-burst':'spore-projectile').setPosition(s.x,s.y-28).setDepth(style?8995:s.y+1).setDisplaySize(size,size)
@@ -127,5 +135,5 @@ export class EnemyView {
       if(e.passiveRoot&&(!e.passiveRoot.kind||['root','sigil'].includes(e.passiveRoot.kind))&&!e.passiveRoot.owner.startsWith('event:')){const owner=peers.find(p=>p.id===e.passiveRoot!.owner&&p.hp>0);if(owner)this.bars.lineStyle(3,0xb4cf85,.85).lineBetween(e.x,e.y-32,owner.x,owner.y-42);}
     }
   }
-  debug(sprite:Phaser.GameObjects.Sprite){const boss=this.boss.debug(sprite);if(boss)return {pose:boss,parryReaction:this.boss.debugReaction(sprite),root:[sprite.x,sprite.y],rotation:sprite.rotation,frame:sprite.frame.name,origin:[sprite.originX,sprite.originY],scale:[sprite.scaleX,sprite.scaleY],flip:sprite.flipX,provisional:boss.provisional};const e=this.entries.get(sprite);return e?{pose:e.pose,root:[e.motion.motion.last?.x,e.motion.motion.last?.y],frame:sprite.frame.name,origin:[sprite.originX,sprite.originY],scale:[sprite.scaleX,sprite.scaleY],flip:sprite.flipX,provisional:true}:null;}
+  debug(sprite:Phaser.GameObjects.Sprite){const boss=this.boss.debug(sprite);if(boss)return {pose:boss,continuous:this.boss.debugMotion(sprite),parryReaction:this.boss.debugReaction(sprite),root:[sprite.x,sprite.y],rotation:sprite.rotation,frame:sprite.frame.name,origin:[sprite.originX,sprite.originY],scale:[sprite.scaleX,sprite.scaleY],flip:sprite.flipX,provisional:boss.provisional};const e=this.entries.get(sprite);return e?{pose:e.pose,root:[e.motion.motion.last?.x,e.motion.motion.last?.y],rotation:sprite.rotation,alpha:sprite.alpha,visible:sprite.visible,frame:sprite.frame.name,origin:[sprite.originX,sprite.originY],scale:[sprite.scaleX,sprite.scaleY],flip:sprite.flipX,provisional:true}:null;}
 }

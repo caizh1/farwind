@@ -1,4 +1,5 @@
 import {sampleAttackTiming} from './attackTiming';
+import {isWolfClaw,wolfClawRadius} from './wolfClaw';
 import {clearMotionLine,motionBlocked,clearMeleeLine,type Point} from "./obstacles";
 import {sweepMove,PARRY} from "./combat";
 import {enemyKind,type EnemyKind} from '../../data/enemies';
@@ -41,6 +42,7 @@ export function sampleEnemyAttack(a:EnemyAttack,now:number,root:Point) {
  const start=phase==="charge"?a.startedAt:phase==="commit"?a.lockAt:phase==="active"?a.contactAt:a.activeUntil,end=phase==="charge"?a.lockAt:phase==="commit"?a.contactAt:phase==="active"?a.activeUntil:a.recoveryUntil,progress=clamp((now-start)/(end-start)),active=clamp((now-a.contactAt)/(a.activeUntil-a.contactAt)),d=a.direction,angle=Math.atan2(d.y,d.x)+(a.type==="leaf"?-.85+active*1.7:0);
  const tip=a.type==='boar'?29:a.type==='raven'?21:a.type==='spore'?24:a.type==='wolf'?24:a.type==='guardian'?34:12;
  const geometry:AttackGeometry=a.bossGeometry?{kind:a.bossGeometry.kind,a:{x:root.x,y:root.y},b:{x:root.x,y:root.y},radius:a.bossGeometry.radius,halfAngle:a.bossGeometry.halfAngle,direction:{x:Math.cos(Math.atan2(d.y,d.x)+(a.bossGeometry.offset??0)+(a.bossGeometry.rear?Math.PI:0)),y:Math.sin(Math.atan2(d.y,d.x)+(a.bossGeometry.offset??0)+(a.bossGeometry.rear?Math.PI:0))}}:a.type==="leaf"?{a:{x:root.x+Math.cos(angle)*16,y:root.y+Math.sin(angle)*16},b:{x:root.x+Math.cos(angle)*59,y:root.y+Math.sin(angle)*59},radius:13}:{a:{x:root.x+d.x*tip,y:root.y+d.y*tip},b:{x:root.x+d.x*tip,y:root.y+d.y*tip},radius:a.type==='boar'?23:a.type==='raven'?24:a.type==='spore'?8:a.type==='wolf'?20:a.type==='guardian'?35:28};
+ if(isWolfClaw(a)){geometry.a={...a.bossGeometry!.point};geometry.b={...geometry.a};geometry.radius=wolfClawRadius(a,now);}
  const offset=a.type==="slime"?phase==="active"?{x:0,y:-Math.sin(progress*Math.PI)*13}:phase==="recovery"?{x:0,y:-Math.sin(progress*Math.PI*2)*(1-progress)*4}:{x:0,y:phase==="commit"?-progress*3:progress*3}:{x:phase==="commit"?-d.x*progress*5:0,y:phase==="commit"?-d.y*progress*5:phase==="recovery"?Math.sin(progress*Math.PI)*2:0};
  if(a.type==='raven')offset.y=phase==='active'?-Math.sin(progress*Math.PI)*20:0;
  return {phase,progress,direction:{...d},frame:phase==="charge"?1:phase==="commit"?2:phase==="active"?2:progress<.35?3:0,offset,motion:(a.step??m.step)*active,geometry,previousGeometry:a.previousGeometry??geometry,warningProgress:clamp((now-a.startedAt)/(a.contactAt-a.startedAt)),stage:timing.phase,active:timing.active&&!a.cancelled};

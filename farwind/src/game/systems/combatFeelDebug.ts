@@ -37,7 +37,7 @@ export function installCombatFeelDebug(world:World){
    if(field<HTMLInputElement>('combat-four').checked){s.skills.meleeFinisher=true;s.skills.buildLessons.push('melee');}
    const build=field<HTMLSelectElement>('combat-build').value;
    const slots=build==='wind'?['r31','r32']:build==='melee'?['r33','r12']:[];
-   s.runes.owned=[...slots];s.runes.slots=[...slots,...Array(5-slots.length).fill(null)];
+   s.runes.owned=[...slots];s.runes.slots=[...slots,...Array(s.runes.slots.length-slots.length).fill(null)];
    // 仅此隔离样板的初始成长：保留正式来源校验，不用它证明学习任务已通过。
    if(wind&&choice==='groupLine'){s.skills.discoveredLessons=[LESSON_IDS[0],LESSON_IDS[1]];s.skills.completedLessons=[LESSON_IDS[0],LESSON_IDS[1]];s.skills.devices.serialValve=1;}
    if(choice!=='world'){Object.assign(s.player,standing(choice==='dummy'?{x:850,y:835}:choice==='boarWall'?{x:3330,y:1160}:choice==='boar'?{x:3220,y:930}:origin));s.xiaobao.task='free';}

@@ -5,6 +5,8 @@ import { GUARD_DEFS, TOWERS } from "../../data/defense";
 import type { EastDefense, DefenseEnemy } from "../systems/defense";
 import type { NpcLife } from "../systems/npcLife";
 import { NPC_WALK, NpcMotion, npcWalkPose } from "../systems/npcAnimation";
+import {groundShadows} from '../rendering/groundShadows';
+import {enemyShadowSize} from '../rendering/shadowGeometry';
 type View = { sprite: Phaser.GameObjects.Sprite; shadow: Phaser.GameObjects.Ellipse; name?: Phaser.GameObjects.Text; body?:DefenseEnemy; deathAt?:number; motion?: NpcMotion };
 export class DefendersView {
   guards = new Map<string, View>();
@@ -29,9 +31,10 @@ export class DefendersView {
       if (!view) {
         view = { sprite: this.scene.add.sprite(g.x, g.y, `defender-${key}`, 0),
           motion: new NpcMotion(),
-          shadow: this.scene.add.ellipse(g.x, g.y - 3, 30, 10, 0x173b30, 0.22),
+          shadow: this.scene.add.ellipse(g.x, g.y - 3, 52, 17, 0x173b30, 0.22),
           name: this.scene.add.text(g.x, g.y + 14, "", {fontSize:"13px",color:"#fff4d5",stroke:"#355443",strokeThickness:3}).setOrigin(.5,0) };
         this.guards.set(g.id, view);
+        const source=view;groundShadows(this.scene).add(view.sprite,view.shadow,{label:d.name,surfaceDepth:()=>d.role==='archer'&&source.shadow.depth===tower!.y+.5?source.shadow.depth-.05:source.shadow.depth>7000?7200:this.scene.data.get('shadowSettings')?.().floor??source.shadow.depth-.04});
         view.motion!.direction = r.facing;
       }
       const motion = view.motion!;
@@ -78,12 +81,12 @@ export class DefendersView {
     for(const e of defense.enemies){
       let v=this.enemies.get(e.id);
       if(!v&&e.hp<=0)continue;
-      if(!v){v={sprite:this.scene.add.sprite(e.x,e.y,`enemy-${e.type}`,0).setOrigin(.5,1),shadow:this.scene.add.ellipse(e.x,e.y-3,40,12,0x173b30,.2)};this.enemies.set(e.id,v);}
+      if(!v){const [w,h]=enemyShadowSize(e.type);v={sprite:this.scene.add.sprite(e.x,e.y,`enemy-${e.type}`,0).setOrigin(.5,1),shadow:this.scene.add.ellipse(e.x,e.y-3,w,h,0x173b30,.2)};this.enemies.set(e.id,v);groundShadows(this.scene).add(v.sprite,v.shadow,{label:'袭村怪物 · '+e.id});}
       v.body=e;
     }
     for(const v of this.enemies.values())if(v.body){
       drawEnemy(v.body,v.sprite);v.sprite.setVisible(activeSpace==="village"&&v.sprite.alpha>0);
-      v.shadow.setVisible(v.sprite.visible).setAlpha(.2*v.sprite.alpha).setPosition(v.body.x,v.body.y-3).setDepth(v.body.y-.5);
+      v.shadow.setVisible(v.sprite.visible).setAlpha(v.sprite.alpha).setPosition(v.body.x,v.body.y-3).setDepth(v.body.y-.5);
     }
     this.arrows.clear();
     for (const a of defense.arrows) {

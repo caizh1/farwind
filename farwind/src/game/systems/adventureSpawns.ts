@@ -1,4 +1,4 @@
-import {clearMotionLine,motionBlocked,type Point} from './obstacles';
+import {clearMotionLine,motionBlocked,type Point,type Rect} from './obstacles';
 import type {EncounterDefinition} from '../../data/maps/windbell/encounters';
 export function adventureExit(d:Point,player:Point):Point|undefined{
  const angle=Math.atan2(player.y-d.y,player.x-d.x);
@@ -12,12 +12,14 @@ export function exitClearance(p:Point,a:Point,b:Point){
  return Math.hypot(p.x-a.x-t*dx,p.y-a.y-t*dy);
 }
 // 每次最多检查一百六十个候选；直线通路是可复核的可达路径，不在正式帧里同步寻全图。
-export function adventureSpawn(d:Pick<EncounterDefinition,'x'|'y'>,player:Point,occupied:readonly Point[],slot:number):Point|undefined{
+export function adventureSpawn(d:Pick<EncounterDefinition,'x'|'y'>,player:Point,occupied:readonly Point[],slot:number,view?:Rect):Point|undefined{
  // 出生时留出一条宽一百二十像素的真实地形通道，避免整波围住出口。
  const exit=adventureExit(d,player);if(!exit)return;
  for(let n=0;n<160;n++){
   const angle=(n+slot*11)*Math.PI/20,radius=120+Math.floor(n/40)*65;
   const p={x:d.x+Math.cos(angle)*radius,y:d.y+Math.sin(angle)*radius};
+  // 正式新波次的光圈必须完整落在镜头内，底部给快捷栏留出空间；位置不足就等玩家靠近。
+  if(view&&(p.x<view.left+60||p.x>view.right-60||p.y<view.top+40||p.y>view.bottom-80))continue;
   if(Math.hypot(p.x-player.x,p.y-player.y)<220||exitClearance(p,d,exit)<60||motionBlocked(p.x,p.y)||!clearMotionLine(p,d)||occupied.some(e=>Math.hypot(e.x-p.x,e.y-p.y)<65))continue;
   return p;
  }

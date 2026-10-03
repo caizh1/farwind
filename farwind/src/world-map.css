@@ -1,0 +1,55 @@
+/* 地图标记在网格文档流内，窄屏切换为区域列表。 */
+#modal:has(.atlas-panel), #modal:has(.local-map-panel) { padding: 16px; }
+.atlas-panel, .local-map-panel {
+  width: min(1180px, 100%); min-width: 0; max-width: 1180px;
+  max-height: calc(100dvh - 32px); padding: 18px 24px;
+  box-sizing: border-box; text-align: left;
+}
+.atlas-panel header { text-align: center; }
+.atlas-panel h1, .local-map-panel h1 { font-size: 30px; margin: 5px 0 12px; }
+.atlas-nav { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.atlas-nav button { padding: 8px 16px; margin: 0; font-size: 14px; }
+.atlas-nav [aria-current="page"] { opacity: 1; background: #34564c; color: #fff2d1; }
+.atlas-nav span { margin-left: auto; font-size: 13px; }
+.atlas-layout { display: grid; grid-template-columns: minmax(0, 1fr) 220px; align-items: center; gap: 18px; }
+.atlas-art {
+  display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); grid-template-rows: repeat(20, minmax(0, 1fr));
+  width: min(100%, calc((100dvh - 280px) * 1.486)); aspect-ratio: 844 / 568;
+  justify-self: center; background: url('/assets/world-map/continent.webp') center / 100% 100% no-repeat;
+  border: 2px solid #a88e64; border-radius: 8px; overflow: hidden;
+}
+.atlas-marker {
+  display: flex; align-items: center; justify-content: center; align-self: center; justify-self: center;
+  min-width: 0; max-width: 100%; padding: 4px 9px; margin: 0; border: 1px solid #e5dcc7;
+  border-radius: 5px; font-size: 11px; line-height: 1.3; background: #344b4ce8; color: #fff5d9;
+  box-shadow: 0 2px 5px #1c353b50;
+}
+.atlas-marker--open { background: #285644; color: #fff2b5; border-color: #f7d879; }
+.atlas-marker[aria-pressed="true"] { outline: 2px solid #ffe5a3; outline-offset: 3px; }
+.atlas-marker:hover { background: #536e61; }
+.atlas-detail { min-width: 0; padding: 18px; border: 1px solid #b09a6f; border-radius: 8px; background: #f8eed6; }
+.atlas-detail small { font-size: 11px; letter-spacing: 2px; color: #796841; }
+.atlas-detail h2 { font: bold 27px serif; margin: 14px 0 8px; }
+.atlas-detail p { font-size: 14px; line-height: 1.8; }
+#atlas-region-status { font-size: 13px; color: #80602f; border-bottom: 1px solid #d7c6a1; padding-bottom: 12px; }
+.atlas-detail button { margin: 12px 0 0; width: 100%; padding: 11px 8px; }
+.atlas-detail .atlas-hint { color: #776b53; font-size: 12px; margin-bottom: 0; }
+.atlas-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; position: sticky; bottom: 0; padding: 8px 0; background: #eee4c7; }
+.atlas-footer span { font-size: 12px; letter-spacing: 2px; color: #756345; }
+.atlas-footer button { margin: 0; padding: 8px 16px; display: inline-flex; align-items: center; gap: 12px; }
+.atlas-footer kbd { font-size: 11px; }
+.local-map-panel #world-map { display: block; width: min(100%, 840px); }
+@media (max-width: 780px) {
+  .atlas-panel, .local-map-panel { padding: 16px; }
+  .atlas-layout { grid-template-columns: minmax(0, 1fr); }
+  .atlas-art { width: 100%; }
+  .atlas-detail { padding: 14px; }
+  .atlas-detail h2 { font-size: 23px; }
+  .atlas-nav span { flex-basis: 100%; margin-left: 0; }
+}
+@media (max-width: 520px) {
+  .atlas-art { aspect-ratio: auto; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto; gap: 8px; padding: 12px; box-sizing: border-box; background-size: cover; }
+  .atlas-marker { grid-area: auto !important; width: 100%; box-sizing: border-box; min-height: 46px; font-size: 12px; padding: 8px; flex-direction: column; gap: 4px; }
+  .atlas-marker::before { content: attr(data-region-name); font-weight: bold; }
+  .atlas-footer { justify-content: center; }
+}

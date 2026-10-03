@@ -113,7 +113,7 @@ class SlimeSampleWorld extends World {
         const elapsed = this.samples.get(body.id)!.pose!.elapsed;
         const alpha = Math.max(0, 1 - Math.max(0, elapsed - 2000) / 400);
         body.sprite.setVisible(alpha > 0).setAlpha(alpha);
-        body.shadow.setVisible(alpha > 0).setAlpha(.2 * alpha);
+        body.shadow.setVisible(alpha > 0).setAlpha(alpha);
       }
       // 普通受击已有真实凹陷帧；样片不用原先红色闪烁覆盖形体。
       body.sprite.clearTint();

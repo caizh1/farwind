@@ -13,10 +13,10 @@ for (const [id, file, width, height, display, anchor, foot] of [
     [0.5, 1],
     null,
   ],
-  ["fountain", "plaza-fountain", 390, 390, [130, 130], [0.5, 1], [100, 45]],
+  ["fountain", "plaza-fountain", 390, 390, [140, 168], [0.5, 1], [35, 28]],
   ["pond-water", "pond-water", 1040, 920, [520, 460], [0.5, 0.5], null],
 ]) {
-  const source = `${root}/${file}-source.png`;
+  const source = id === 'fountain' ? 'docs/art-quality/fountain-source.png' : `${root}/${file}-source.png`;
   const meta = await sharp(source).metadata();
   let crop = { left: 0, top: 0, width: meta.width, height: meta.height };
   let transparent = 0,
@@ -34,7 +34,7 @@ for (const [id, file, width, height, display, anchor, foot] of [
     if (a === 0) transparent++;
     if (a > 0 && a < 255) partial++;
   }
-  if (id !== "pond-water") {
+  if (id !== "pond-water" && id !== 'fountain') {
     let l = info.width,
       t = info.height,
       r = 0,
@@ -100,7 +100,7 @@ for (const [id, file, width, height, display, anchor, foot] of [
     运行有效边界: { 左: l, 上: t, 右: r, 下: b },
     ID: id,
     文件: `village-polish/${file}.png`,
-    源文件: `village-polish/${file}-source.png`,
+    源文件: id === 'fountain' ? source : `village-polish/${file}-source.png`,
     用途:
       id === "pond-water" ? "池塘整片底图，独立于森林溪流" : "正式手绘场景物体",
     来源: "内置 imagegen，输入项目设计图、房屋、手绘桥梁；Sharp 可复现裁切缩放",

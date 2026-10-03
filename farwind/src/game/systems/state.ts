@@ -4,7 +4,7 @@ import {initialXiaobaoLife} from './xiaobaoLifeState';
 import {initialCatBond,migrateCatBond,validateCatBond,type CatBondState} from './catBond';
 import {initialWindLegacy,validateWindLegacy,type WindLegacyState} from './windLegacyState';
 import {migrateInteriorPosition} from '../../data/villageInteriors';
-import {initialRunes,migrateBuildRunes,validateRunes,type RuneState} from './runeState';
+import {initialRunes,migrateBuildRunes,type RuneState} from './runeState';
 import {initialSouthEvents,validateSouthEvents,type SouthEventState} from './southEvents';
 import {initialEncounters,validateEncounters,unitState,settleEncounterDeath,migrateCampBosses,type EncounterState} from "./encounterState";
 import {ENCOUNTERS} from '../../data/maps/windbell/encounters';
@@ -20,6 +20,7 @@ import {
   STARTER_COINS,
   MAX_COINS,
   initialStock,
+  footwearStock,
   stackLimit,
   isEquipment,
   equipment,
@@ -265,7 +266,9 @@ export function validate(raw: unknown): State {
   }
   // 仅内部历史结构校验兼容；正式读取及导入在调用前拒绝旧内容版本。
   if(s&&(s as {schema_version:number}).schema_version===21&&(s as {content_version:number}).content_version!==2){s.windGifts=initialWindGifts();s.windMemory=initialWindMemory();s.content_version=2;}
-  if(s&&s.schema_version===21){s.windGifts=validateWindGifts(s.windGifts);s.windMemory=validateWindMemory(s.windMemory);s.skills=validateSkills(s.skills);s.runes=validateRunes(s.runes);s.windLegacy=validateWindLegacy(s.windLegacy);}
+  // 当前战斗版本新增商品：只补缺失的四款鞋子库存，零库存不会被补回。
+  if(s&&s.schema_version===21&&s.shopStock)for(const [key,stock] of Object.entries(footwearStock))if(!Object.hasOwn(s.shopStock,key))s.shopStock[key]=stock;
+  if(s&&s.schema_version===21){s.windGifts=validateWindGifts(s.windGifts);s.windMemory=validateWindMemory(s.windMemory);s.skills=validateSkills(s.skills);s.runes=migrateBuildRunes(s.runes);s.windLegacy=validateWindLegacy(s.windLegacy);}
   const num = (n: unknown, min: number, max: number) =>
     typeof n === "number" && Number.isFinite(n) && n >= min && n <= max;
   const strarr = (a: unknown) =>

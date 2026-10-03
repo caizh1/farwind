@@ -1,3 +1,4 @@
+import { showWorldAtlas } from './worldAtlas';
 import {showWindMemory} from './windMemory';
 import type {WildernessDirection} from '../../data/maps/windbell/encounters';
 import {showWindGifts} from './windGifts';
@@ -58,7 +59,7 @@ export type Actions = {
   memoryStart?:(direction:WildernessDirection)=>Promise<void>;
   memoryEnd?:()=>Promise<void>;
   giftSaved?:(receipt:string)=>boolean;
-  giftChoose?:(receipt:string,id:WindGiftId,replace?:WindGiftId)=>Promise<void>;
+  giftChoose?:(receipt:string,id:WindGiftId)=>Promise<void>;
   catCare?:(kind:CatCare)=>Promise<void>;
   catCareReason?:()=>string;
   catStatus?:()=>string;
@@ -120,7 +121,7 @@ export class Interface {
     this.hud = this.root.querySelector("#hud")!;
     this.toastEl = this.root.querySelector("#toast")!;
     this.root.addEventListener("click", (e) => {
-      const b = (e.target as HTMLElement).closest<HTMLButtonElement>("button");
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>("button, summary");
       if (b?.dataset.panel) this.open(b.dataset.panel);
       if(b?.dataset.buildTraining)this.actions.trainBuild?.();
       if (b?.dataset.practiceMenu) this.open("practice");
@@ -149,11 +150,11 @@ export class Interface {
     this.syncFolds();
     const boss=document.createElement('section');boss.id='camp-boss-status';boss.className='camp-boss-status';boss.hidden=true;boss.setAttribute('aria-label','据点首领战');boss.innerHTML='<div class="boss-title"><b></b><span data-boss-health></span></div><progress max="1" value="1"></progress><span data-boss-state role="status"></span>';this.root.querySelector('.hud-info')!.before(boss);
     this.root.addEventListener("pointerdown", (e) => {
-      if ((e.target as Element).closest("button, .hud-details, #modal"))
+      if ((e.target as Element).closest("button, summary, .rune-hud-panel, .hud-details, #modal"))
         e.stopPropagation();
     });
     this.root.addEventListener("focusin", (e) => {
-      if ((e.target as Element).closest("#hud button, #hud input, #hud select"))
+      if ((e.target as Element).closest("#hud button, #hud summary, #hud input, #hud select"))
         this.actions?.pause();
     this.giftJournalBind();
     });
@@ -264,7 +265,7 @@ export class Interface {
   get controlFocused() {
     return (
       this.hud.contains(document.activeElement) &&
-      !!(document.activeElement as Element)?.closest("button, input, select")
+      !!(document.activeElement as Element)?.closest("button, summary, input, select")
     );
   }
   focusGame() {
@@ -634,7 +635,7 @@ export class Interface {
     if (mode === "quest" && s)
       this.shell(
         "旅途手记",
-        `<p><button id="journal-wind-gifts">风赐：已持有 ${s.windGifts.held.length}/6 · 待选 ${s.windGifts.pending.length} 场</button></p><button id="journal-wind-memory">四方向进度与风忆远征</button>${journeyJournal(s)}<h2>远处的黑焰 · ${DEMON_KING.name}</h2><p>${demonKingSummary(s)}</p><p>${demonMalice(s.encounters)?'每完整清剿一处据点，恶意增加 1；同一据点只计一次。当地巡游与当地来袭来源停止；魔王会为每处陷落据点，从地图边缘派出一波 10 只精英裂枝镰灵向村庄总攻。第一波一阶，第二波二阶，此后每波升一阶；每只生命依次为94、115、137、158，伤害依次为22、26、30、34。已有战斗时依次接续，读档不会重复刷出。':'魔物最初为了果腹而捕猎，远处的存在尚未将人类视为敌人。清剿保护村庄，也会改变它对人类的判断。'}</p><p>恶意 1～9：原编队增加 5 只，单次 6～8 只；每逢 10 点升档，逐步加入更高阶精英，编队最多 10 只。常规骚扰首夜安静，恶意 0～4 的单夜来袭概率依次为 50%、60%、70%、80%、90%；单夜至多一次，仍受冷却与防线状态限制。报复总攻不受首夜、时段或常规冷却限制；已出发的编队保持原恶意档位。</p>${demonMalice(s.encounters)?`<p>当前新派遣：${demonFormation(demonMalice(s.encounters),1).count}～${demonFormation(demonMalice(s.encounters),3).count}只。${s.defense.raid?.order?.source==='demon-king'?`${s.defense.raid.order.retaliationCamp?`在途报复：${retaliationSummary(s.defense.raid.order)}`:`在途派遣按恶意 ${s.defense.raid.order.malice} 编队，共 ${s.defense.raid.members.length} 只`}；不会因清剿而临时升阶。`:''}</p>`:''}<h2>南路补给</h2><p>${southQuestObjective(s)}</p><p>从南门沿路过芦苇桥，药草洼地在西南岸，孢根巢地在洼地东南方。药师与公共委托簿均可办理。</p><h2>主线 · 失落的风</h2><p>${objectives[s.quest]}</p><ol class="journal">${objectives
+        `<p><button id="journal-wind-gifts">风赐：已持有 ${s.windGifts.held.length} 种 · 待选 ${s.windGifts.pending.length} 场</button></p><button id="journal-wind-memory">四方向进度与风忆远征</button>${journeyJournal(s)}<h2>远处的黑焰 · ${DEMON_KING.name}</h2><p>${demonKingSummary(s)}</p><p>${demonMalice(s.encounters)?'每完整清剿一处据点，恶意增加 1；同一据点只计一次。当地巡游与当地来袭来源停止；魔王会为每处陷落据点，从地图边缘派出一波 10 只精英裂枝镰灵向村庄总攻。第一波一阶，第二波二阶，此后每波升一阶；每只生命依次为94、115、137、158，伤害依次为22、26、30、34。已有战斗时依次接续，读档不会重复刷出。':'魔物最初为了果腹而捕猎，远处的存在尚未将人类视为敌人。清剿保护村庄，也会改变它对人类的判断。'}</p><p>恶意 1～9：原编队增加 5 只，单次 6～8 只；每逢 10 点升档，逐步加入更高阶精英，编队最多 10 只。常规骚扰首夜安静，恶意 0～4 的单夜来袭概率依次为 50%、60%、70%、80%、90%；单夜至多一次，仍受冷却与防线状态限制。报复总攻不受首夜、时段或常规冷却限制；已出发的编队保持原恶意档位。</p>${demonMalice(s.encounters)?`<p>当前新派遣：${demonFormation(demonMalice(s.encounters),1).count}～${demonFormation(demonMalice(s.encounters),3).count}只。${s.defense.raid?.order?.source==='demon-king'?`${s.defense.raid.order.retaliationCamp?`在途报复：${retaliationSummary(s.defense.raid.order)}`:`在途派遣按恶意 ${s.defense.raid.order.malice} 编队，共 ${s.defense.raid.members.length} 只`}；不会因清剿而临时升阶。`:''}</p>`:''}<h2>南路补给</h2><p>${southQuestObjective(s)}</p><p>从南门沿路过芦苇桥，药草洼地在西南岸，孢根巢地在洼地东南方。药师与公共委托簿均可办理。</p><h2>主线 · 失落的风</h2><p>${objectives[s.quest]}</p><ol class="journal">${objectives
           .slice(0, 7)
           .map(
             (q, i) =>
@@ -645,13 +646,7 @@ export class Interface {
           )}</ol><h2>支线 · 木匠的托付</h2><p>${["与西南方的木匠阿禾交谈", "为阿禾收集 4 份木材", "已交付，收到浆果与谢意"][s.side]}</p>${legacyJournal(s)}${this.skillJournal(s)}<button id="close">合上手记</button>`,
       );
     if(mode==='quest'&&s)this.modal.querySelectorAll<HTMLButtonElement>('[data-legacy-track]').forEach(b=>b.onclick=async()=>{if(this.economyBusy)return;this.economyBusy=true;b.disabled=true;try{await this.actions.runeChange({kind:'track',target:(b.dataset.legacyTrack||null) as LegacyTrack});this.message('目标已追踪，M 查看实际地点。');this.open('quest');}catch(e){this.message((e as Error).message);b.disabled=false;}finally{this.economyBusy=false;}});
-    if (mode === "map" && s) {
-      this.shell(
-        "风的足迹",
-        `<p>风铃村 · 四向荒野 · 远端风之遗迹</p><canvas id="world-map" width="840" height="630"></canvas><ul class="camp-map-status" aria-label="据点清除状态">${ENCOUNTERS.filter(d=>d.kind==='camp').map(d=>`<li data-camp-status="${d.id}" data-cleared="${s.encounters.groups[d.id].cleared}"><i aria-hidden="true"></i><b>${d.name}</b><span>${campMapStatus(s,d.id)}</span></li>`).join('')}</ul><div class="map-guide">${villageAreas.map((a) => `<p><b>${showLayoutLabels(import.meta.env.DEV, window.location.search) ? `${a.id} ` : ""}${a.name}</b> · ${a.detail}</p>`).join("")}</div><div class="map-routes">${villageRoutes.map((r) => `<p><b>${r.name}</b> · 约 ${routeSeconds(r.points)} 秒（步行、不含停留）</p>`).join("")}</div><p class="muted">世界 6400 × 4800 · 金点是你的位置。临水木桥可步行，池水不可通行；遗迹南侧的归乡风径修复后开放。</p><button id="close">收起地图</button>`,
-      );
-      this.drawMap(this.modal.querySelector("canvas")!, s, "world-map");
-    }
+    if (mode === "map" && s) this.showMap("atlas");
     if (mode === "pause") {
       this.shell(
         "在风中歇一会儿",
@@ -689,7 +684,7 @@ export class Interface {
       });
       this.button("back", () => this.close());
     }
-    if(mode!=="runes")this.button("close", () => this.close());
+    if(mode!=="runes"&&mode!=="map")this.button("close", () => this.close());
     this.focusPanel();
   }
   skillJournal(s:State){
@@ -874,6 +869,22 @@ export class Interface {
     });
     if (this.hudPreferences.minimap)
       this.drawMap(this.root.querySelector("#minimap")!, s, "minimap");
+  }
+  showMap(view: "atlas" | "local") {
+    const s = this.state;
+    if (!s) return;
+    if (view === "atlas") showWorldAtlas(this, () => this.showMap("local"));
+    else {
+      this.shell(
+        "风铃村与周边",
+        `<nav class="atlas-nav" aria-label="地图层级"><button id="atlas-back">大陆全貌</button><button aria-current="page" disabled>风铃村与周边</button></nav><p>风铃村 · 四向荒野 · 远端风之遗迹</p><canvas id="world-map" width="840" height="630"></canvas><ul class="camp-map-status" aria-label="据点清除状态">${ENCOUNTERS.filter(d=>d.kind==='camp').map(d=>`<li data-camp-status="${d.id}" data-cleared="${s.encounters.groups[d.id].cleared}"><i aria-hidden="true"></i><b>${d.name}</b><span>${campMapStatus(s,d.id)}</span></li>`).join('')}</ul><div class="map-guide">${villageAreas.map((a) => `<p><b>${showLayoutLabels(import.meta.env.DEV, window.location.search) ? `${a.id} ` : ""}${a.name}</b> · ${a.detail}</p>`).join("")}</div><div class="map-routes">${villageRoutes.map((r) => `<p><b>${r.name}</b> · 约 ${routeSeconds(r.points)} 秒（步行、不含停留）</p>`).join("")}</div><p class="muted">世界 6400 × 4800 · 金点是你的位置。临水木桥可步行，池水不可通行；遗迹南侧的归乡风径修复后开放。</p><button id="close">收起地图</button>`,
+      );
+      this.drawMap(this.modal.querySelector("canvas")!, s, "world-map");
+      this.modal.querySelector(".panel")!.classList.add("local-map-panel");
+      this.button("atlas-back", () => this.showMap("atlas"));
+    }
+    this.button("close", () => this.close());
+    this.focusPanel(view === "atlas" ? "atlas-local" : "atlas-back");
   }
   drawMap(c: HTMLCanvasElement, s: State, mode: "minimap" | "world-map") {
     const mini = mode === "minimap";

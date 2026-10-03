@@ -1,47 +1,46 @@
-// 原创风呼啸：低频风压、变频共振风体、短刃缘气流；预生成，不在释放帧做滤波计算。
-export const SWORD_WIND_AUDIO = { rate: 48000, duration: .46, peak: .68 } as const;
+// 原创短风呼啸：连续相位的风腔共鸣，去掉宽带噪声和金属泛音；启动时缓存。
+export const SWORD_WIND_AUDIO = { rate: 48000, duration: .24, peak: .68, variants: 3, voices: 4 } as const;
+export type SwordWindCue = 'wind-release' | 'wind-charge' | 'wind-dissolve';
 
-function bandpass(rate: number) {
-  let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
-  return (x: number, frequency: number, q: number) => {
-    const w = 2 * Math.PI * frequency / rate, a = Math.sin(w) / (2 * q);
-    const y = (a * x - a * x2 + 2 * Math.cos(w) * y1 - (1 - a) * y2) / (1 + a);
-    x2 = x1; x1 = x; y2 = y1; y1 = y;
-    return y;
-  };
-}
-
-export function synthSwordWindHowl(rate: number = SWORD_WIND_AUDIO.rate): [Float32Array<ArrayBuffer>, Float32Array<ArrayBuffer>] {
+export function synthSwordWindCue(kind: SwordWindCue, rate: number = SWORD_WIND_AUDIO.rate, variant = 0): [Float32Array<ArrayBuffer>, Float32Array<ArrayBuffer>] {
   if (!Number.isFinite(rate) || rate < 8000) throw new RangeError('风呼啸采样率无效');
-  const length = Math.ceil(rate * SWORD_WIND_AUDIO.duration);
-  const left = new Float32Array(length), right = new Float32Array(length);
-  const howl = bandpass(rate), upper = bandpass(rate), pressure = bandpass(rate);
-  let seed = 3791, air = 0, bass = 0, brightBase = 0, side = 0, peak = 0;
-  const noise = () => { seed = seed * 16807 % 2147483647; return seed / 1073741824 - 1; };
-  const bassStep = 1 - Math.exp(-2 * Math.PI * 110 / rate);
-  const sideStep = 1 - Math.exp(-2 * Math.PI * 1900 / rate);
-  const delay = Math.round(rate * .0009);
+  const release = kind === 'wind-release', charge = kind === 'wind-charge';
+  const duration = release ? SWORD_WIND_AUDIO.duration : charge ? .11 : .09;
+  const length = Math.ceil(rate * duration), left = new Float32Array(length), right = new Float32Array(length);
+  const variation = ((Math.trunc(variant) % SWORD_WIND_AUDIO.variants) + SWORD_WIND_AUDIO.variants) % SWORD_WIND_AUDIO.variants;
+  // 相邻非整数频率形成柔和的风腔带宽；没有随机噪声，也不采用单一哨音。
+  const ratios = [.79, .88, .96, 1, 1.045, 1.115, 1.23];
+  const weights = [.07, .1, .18, .32, .19, .1, .06];
+  const offsets = [1.1, -.8, .6, 0, -.4, .9, -1.4];
+  let phase = 0, peak = 0;
+  const delayL = Math.round(rate * .006), delayR = Math.round(rate * .009);
   for (let i = 0; i < length; i++) {
-    const t = i / rate, u = t / SWORD_WIND_AUDIO.duration, n = noise();
-    // 先卷起再掠走的风腔滑音，保留噪声，不用单一正弦音冒充风声。
-    const centre = 330 + 1100 * Math.exp(-(((t - .085) / .09) ** 2));
-    const airStep = 1 - Math.exp(-2 * Math.PI * (3100 - 2000 * u) / rate);
-    air += airStep * (n - air); bass += bassStep * (n - bass);
-    brightBase += .16 * (n - brightBase); side += sideStep * (noise() - side);
-    const turbulence = .82 + .1 * Math.sin(2 * Math.PI * 19 * t) + .08 * Math.sin(2 * Math.PI * 47 * t + 1.7);
-    const body = Math.exp(-(((t - .085) / .155) ** 2));
-    const wind = (howl(n, centre, 4.2) * 3.2 + upper(n, centre * 2.07, 2.5) * .65 + (air - bass) * .72) * body * turbulence;
-    const push = pressure(n, 170 - 60 * u, .7) * 1.7 * Math.exp(-t / .1);
-    const edge = (n - brightBase) * .16 * Math.exp(-t / .024);
-    const envelope = Math.min(1, t / .006) * Math.min(1, (length - 1 - i) / (rate * .045));
-    left[i] = (wind + push + edge) * envelope;
-    // 风压留在中央，短延迟和少量独立气流提供宽度，单声道合并仍有风体。
-    right[i] = (i >= delay ? left[i - delay] * .94 : left[i] * .94) + side * .055 * body * envelope;
-    right[i] *= Math.min(1, (length - 1 - i) / (rate * .045));
+    const t = i / rate, u = t / duration;
+    const centre = release ? 340 + (700 + variation * 14) * Math.exp(-(((t - .032) / .052) ** 2))
+      : charge ? 280 + 340 * u : 430 - 150 * u;
+    phase += 2 * Math.PI * centre / rate;
+    let cavity = 0;
+    for (let band = 0; band < ratios.length; band++) {
+      // 缓慢、微小的相位漂移提供气流流动感，避开尖锐抖动与机械电子滑音。
+      const drift = .13 * Math.sin(2 * Math.PI * (7 + band * .7) * t + offsets[band]);
+      cavity += Math.sin(phase * ratios[band] + offsets[band] + drift) * weights[band];
+    }
+    const breath = Math.sin(phase * 1.91 + .3) * .023 + Math.sin(phase * 2.137 + 1.2) * .012;
+    const envelope = release ? (1 - Math.exp(-t / .009)) * Math.exp(-t / .055)
+      : charge ? Math.sin(Math.PI * u) ** 2 : (1 - Math.exp(-t / .008)) * Math.exp(-t / .018);
+    const fade = Math.min(1, (length - 1 - i) / (rate * .035));
+    const dry = (cavity + breath) * envelope * fade;
+    // 主体居中，轻微短反射增加空间感；不将整段呼啸错相扩宽。
+    left[i] = dry + (i >= delayL ? left[i - delayL] * .025 : 0) * fade;
+    right[i] = dry + (i >= delayR ? right[i - delayR] * .025 : 0) * fade;
     peak = Math.max(peak, Math.abs(left[i]), Math.abs(right[i]));
   }
-  const scale = SWORD_WIND_AUDIO.peak / Math.max(.001, peak);
+  const scale = (release ? SWORD_WIND_AUDIO.peak : charge ? .045 : .025) / Math.max(.001, peak);
   for (let i = 0; i < length; i++) { left[i] *= scale; right[i] *= scale; }
   left[0] = right[0] = left[length - 1] = right[length - 1] = 0;
   return [left, right];
+}
+
+export function synthSwordWindHowl(rate: number = SWORD_WIND_AUDIO.rate, variant = 0) {
+  return synthSwordWindCue('wind-release', rate, variant);
 }

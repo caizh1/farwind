@@ -5,7 +5,11 @@ export const equipment = {
   ironSword: { slot: "weapon", bonus: 4 },
   leatherCoat: { slot: "armor", bonus: 3 },
   windScope: { slot: "head", bonus: 0 },
+  brookShoes: { slot: "feet", bonus: 0, speedBonus: 0.08 },
+  deerBoots: { slot: "feet", bonus: 0, speedBonus: 0.15 },
   windBoots: { slot: "feet", bonus: 0, speedBonus: 0.25 },
+  mistBoots: { slot: "feet", bonus: 0, speedBonus: 0.35 },
+  starShoes: { slot: "feet", bonus: 0, speedBonus: 0.45 },
 } as const;
 export type EquipmentId = keyof typeof equipment;
 export type EquipmentSlot = "weapon" | "armor" | "head" | "feet";
@@ -36,8 +40,8 @@ export const shops = {
   smith: {
     name: "溪石铁匠铺",
     greeting:
-      "铁剑增伤、皮甲减伤，瞄准镜辅助剑风。轻风靴让行走与奔跑快25%；购买后在装备页或行囊穿戴。",
-    goods: { ironSword: 60, leatherCoat: 45, windScope: 80, windBoots: 180 },
+      "五款远行鞋，移速提升8%至45%。铁剑增伤、皮甲减伤，瞄准镜辅助剑风；购买后在装备页或行囊穿戴。",
+    goods: { ironSword: 60, leatherCoat: 45, windScope: 80, brookShoes: 30, deerBoots: 80, windBoots: 180, mistBoots: 420, starShoes: 900 },
   },
   inn: {
     name: "归风旅馆",
@@ -52,6 +56,12 @@ export const salePrices: Partial<Record<ItemId, number>> = {
   herb: 3,
   berry: 1,
 };
+// 新商品只补自己的历史库存，不重置旧商品售出记录。
+export const footwearStock = { "smith:brookShoes": 6, "smith:deerBoots": 4, "smith:mistBoots": 2, "smith:starShoes": 1 } as const;
+export function shoeSpeedBonus(id: EquipmentId | null) {
+  const item = id && equipment[id];
+  return item && "speedBonus" in item ? item.speedBonus : 0;
+}
 export const initialStock = (): Record<string, number> => ({
   "general:wood": 20,
   "general:stone": 20,
@@ -63,6 +73,7 @@ export const initialStock = (): Record<string, number> => ({
   "smith:leatherCoat": 8,
   "smith:windScope": 1,
   "smith:windBoots": 4,
+  ...footwearStock,
   "general:bread": 12,
   "healer:tea": 12,
   "inn:bread": 12,

@@ -1,0 +1,14 @@
+{
+  "说明": "第二轮设计对齐，截图为当前工作树隔离场真实 I 攻击的游戏画布原始输出，无后期补画。",
+  "专项测试": "五份专项共61项通过，覆盖即时伤害、冷却、递归隔离、端点、有限坐标、暂停稳定、降闪、简化及光晕启停。",
+  "实机样本": "闪链一级，三个史莱姆初始生命2000；真实 I 攻击原目标36，两名附伤目标各3.6。",
+  "截图": "gameplay-v2.png",
+  "截帧条件": "原受击后至少115毫秒，等待第二束电弧出现；按实际战斗时钟截取，不冻结或改写特效。",
+  "边界": "使用独立隔离存档与分散初始站位，敌人仍执行正式移动AI；不能替代用户当前存档或高密度战场性能验收。",
+  "源码校验": {
+    "src/game/entities/chainLightning.ts": "2e2fec2993b1df7d8ffcd030eae8f30bf6d16709118a54c0ad6e94e89d18d60a",
+    "src/game/entities/runeView.ts": "a9665fd0f0ed5a3ae4a97f7c7f3dfc0824dd69ac0b855d911fa69b2ae23509c6",
+    "src/game/systems/windGiftArena.ts": "0bad071c8e3e9ccbb4a52c4cf099e73ba4ced39bb8facf66e434afd8ebbd140b",
+    "tests/chain-lightning.test.ts": "d9b4fa0b5fbe92adfc7312cbe9ba785954a2867d2afe1e24b0676ef254f9fe9e"
+  }
+}

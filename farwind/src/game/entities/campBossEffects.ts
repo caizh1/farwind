@@ -5,9 +5,11 @@ import {bossHazardGeometry} from '../systems/campBossCombat';
 import type {BossHazard,BossBattle} from '../systems/campBossState';
 import type {Point} from '../systems/obstacles';
 import {sampleBossParry,type BossParryPose} from '../systems/bossParry';
+import {WARNING} from './attackWarningView';
+import {wolfClawTip,wolfClawWave,isWolfClaw} from '../systems/wolfClaw';
 
 type Body=Point&{hp?:number;boss?:CampBossKind;bossBattle?:BossBattle;wallHit?:{at:number;until:number;direction?:Point};parried?:{at:number;until:number;direction:Point;perfect:boolean}};
-type Effect={id:string;boss:CampBossKind;kind:string;phase:'蓄力'|'出手'|'消散';point:Point;radius:number;elapsed:number;direction?:Point;inner?:number;skill?:number};
+type Effect={id:string;boss:CampBossKind;kind:string;phase:'蓄力'|'出手'|'消散';point:Point;radius:number;elapsed:number;direction?:Point;inner?:number;skill?:number;origin?:Point;travel?:number};
 const PALETTE={
   'spore-heart':{edge:0xf0a94f,core:0xfff1bc,ink:0x574037},
   'thorn-crown':{edge:0xe8b46d,core:0xfff3d2,ink:0x49352e},
@@ -21,7 +23,7 @@ export class CampBossEffects{
   readonly groundInk:Phaser.GameObjects.Graphics;
   readonly strikeInk:Phaser.GameObjects.Graphics;
   private records:Effect[]=[];
-  constructor(scene:Phaser.Scene){this.groundInk=scene.add.graphics().setDepth(8992);this.strikeInk=scene.add.graphics().setDepth(8993);}
+  constructor(scene:Phaser.Scene){this.groundInk=scene.add.graphics().setDepth(WARNING.floor-1);this.strikeInk=scene.add.graphics().setDepth(8993);}
   begin(){this.groundInk.clear();this.strikeInk.clear();this.records=[];}
   snapshot(){return {objects:2,effects:this.records};}
   private record(boss:CampBossKind,id:string,kind:string,phase:Effect['phase'],point:Point,radius:number,elapsed:number,extra:Partial<Effect>={}){this.records.push({boss,id,kind,phase,point:{x:point.x,y:point.y},radius,elapsed,...extra});}
@@ -73,7 +75,24 @@ export class CampBossEffects{
     if(p.phase!=='impact'&&p.phase!=='recoil'&&alpha>0)for(const side of [-1,1])this.groundInk.fillStyle(palette.ink,alpha).fillEllipse(body.x+side*(13+dust*12),body.y-1,18+dust*20,5+dust*5);
     if(fade>0||alpha>0)this.record(kind,'弹反:'+body.parried!.at,p.debris,'消散',body,24*power,t,{direction:{...p.direction}});
   }
-  draw(body:Body,a:EnemyAttack|null|undefined,now:number,parry:BossParryPose|null=sampleBossParry(body,now)){
+  private wolfClaw(body:Body,a:EnemyAttack,now:number,view:string){
+    const palette=PALETTE['thorn-crown'],ink=this.strikeInk,t=now-a.contactAt,part=a.bossPart??0;
+    if(t<0){
+      // 蓄光跟随正在抬起的爪尖，尚未出手时没有攻击刃痕。
+      const p=wolfClawTip(a,now,body,view),u=unit((now-a.startedAt)/(a.contactAt-a.startedAt));this.glint(p,3+u*3,palette.core,u*.65);this.record('thorn-crown',a.attackId,'爪尖蓄光','蓄力',p,6,now-a.startedAt,{skill:1});return;
+    }
+    const g=sampleEnemyAttack(a,now,body).geometry,wave=wolfClawWave(a,now),{origin,travel,direction:d,point:center}=wave,fade=now<a.activeUntil?1:unit((a.recoveryUntil-now)/(a.recoveryUntil-a.activeUntil)),growth=.2+.8*unit(t/55);
+    // 三道短弧绕自身中心展开，再整体离开释放点，绝不绕脚底根画固定圆弧。
+    for(let claw=0;claw<3;claw++){
+      const points:Point[]=[],side=(claw-1)*12,reverse=part%2?-1:1;
+      for(let i=0;i<=18;i++){const u=i/18,v=(u-.5)*54*growth*reverse,bow=Math.sin(u*Math.PI)*9*growth;points.push({x:center.x+d.x*(bow+claw*1.5)-d.y*(v+side),y:center.y+d.y*(bow+claw*1.5)+d.x*(v+side)});}
+      ink.lineStyle(13,palette.edge,fade*.13);this.path(ink,points);ink.strokePath();
+      const edge=(sign:number)=>points.map((p,i)=>{const width=(.2+3*Math.sin(i/18*Math.PI))*growth*sign;return {x:p.x+d.x*width,y:p.y+d.y*width};});
+      ink.fillStyle(palette.edge,fade*.92).lineStyle(1.4,palette.ink,fade*.8);this.path(ink,[...edge(1),...edge(-1).reverse()],true);ink.fillPath().strokePath();ink.lineStyle(1.5,palette.core,fade);this.path(ink,points);ink.strokePath();
+    }
+    this.record('thorn-crown',a.attackId,'挥出爪风',now<a.activeUntil?'出手':'消散',center,g.radius,t,{skill:1,direction:{...d},origin,travel});
+  }
+  draw(body:Body,a:EnemyAttack|null|undefined,now:number,parry:BossParryPose|null=sampleBossParry(body,now),view?:string){
     const kind=body.boss,b=body.bossBattle;if(!kind||(body.hp??0)<=0||b&&(now<b.entryUntil||now<b.transformUntil))return;
     const palette=PALETTE[kind],ink=this.strikeInk;
     if(kind==='crag-tusk'&&body.wallHit&&now<body.wallHit.at+620){const t=now-body.wallHit.at,d=body.wallHit.direction??{x:0,y:1},p={x:body.x+d.x*30,y:body.y+d.y*30};this.debris(p,48,t,kind);this.record(kind,'撞墙:'+body.wallHit.at,'撞墙碎石','消散',p,48,t);}
@@ -85,6 +104,7 @@ export class CampBossEffects{
     }
     if(parry){this.parryDebris(body,parry);return;}
     if(!a||a.cancelled||now<a.startedAt||now>=a.recoveryUntil)return;
+    if(isWolfClaw(a)){this.wolfClaw(body,a,now,view??(Math.abs(a.direction.x)>.5?'right':a.direction.y>0?'down':'up'));return;}
     const pose=sampleEnemyAttack(a,now,body),t=now-a.contactAt,skill=a.bossSkill??0,d=a.direction,strong=b?.phase===2;
     if(t<0){
       const u=unit((now-a.startedAt)/(a.contactAt-a.startedAt)),p={x:body.x+d.x*24,y:body.y-CAMP_BOSSES[kind].height*.35+d.y*12};

@@ -4,8 +4,11 @@ import { clearMotionLine } from "../src/game/systems/obstacles";
 const read = (p: Page) => p.evaluate(() => (window as any).__farwind());
 // 只读取诊断状态，所有推进通过真实键盘输入；寻路使用正式地图碰撞。
 export async function move(page: Page, tx: number, ty: number) {
-  // 开发快进也使用正式异步保存锁；等待保存结束再开始键盘行程，避免输入在提交边界被清空。
-  await page.waitForFunction(() => !(window as any).__farwind().defenseSaving);
+  // 等待正式保存与会话初始化完成，再开始键盘行程，避免输入在提交边界被清空。
+  await page.waitForFunction(() => {
+    const s = (window as any).__farwind();
+    return !s.defenseSaving && !s.sessionStarting;
+  });
   await page.bringToFront();
   if (
     (await read(page)).state.life?.playerSpace !== undefined &&
@@ -139,13 +142,19 @@ export async function move(page: Page, tx: number, ty: number) {
             ({ axis, target, sign }) => {
               const s = (window as any).__farwind();
               return (
-                s.mode === "dialog" ||
+                s.mode === "dialog" || s.mode === "wind-gifts" ||
                 sign * (s.state.player[axis] - target) > -3
               );
             },
             { axis, target, sign },
             { timeout: 12000 },
           );
+        } catch (error) {
+          const diagnostic = await page.evaluate(() => {
+            const s = (window as any).__farwind();
+            return { 玩家:s.state.player,模式:s.mode,时间:s.state.time,页面焦点:document.hasFocus(),页面隐藏:document.hidden };
+          });
+          throw new Error(`键盘行走停住：${JSON.stringify({轴:axis,目标:target,按键:button,...diagnostic})}`, {cause:error});
         } finally {
           await page.keyboard.up(button);
         }
@@ -153,6 +162,9 @@ export async function move(page: Page, tx: number, ty: number) {
         reached = sign * (current.state.player[axis] - target) > -3;
         if (current.mode === "dialog")
           await page.getByRole("button", { name: "继续 · E" }).click();
+        // 新风赐会暂停世界；正常稍后领取并恢复键盘，不能把暂停误判成路径堵塞。
+        if (current.mode === "wind-gifts")
+          await page.locator('#gift-close').click();
       }
     }
 }

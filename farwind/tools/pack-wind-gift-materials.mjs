@@ -1,0 +1,14 @@
+import sharp from 'sharp';
+import {mkdir,writeFile,readFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+const root='docs/wind-gifts-vfx-redesign/runtime',out='public/assets/animation/wind-gifts/materials.webp';
+const source=await readFile(root+'/materials-source.png'),meta=await sharp(source).metadata();
+if(meta.width!==1536||meta.height!==1024||!meta.hasAlpha)throw Error('材质图集尺寸或透明通道不符');
+const cells=[];
+const blades=await readFile(root+'/blades-source.png');
+for(let i=0;i<24;i++)cells.push({input:await sharp(i<6?blades:source).extract(i<6?{left:i%3*512,top:Math.floor(i/3)*512,width:512,height:512}:{left:i%6*256,top:Math.floor(i/6)*256,width:256,height:256}).resize(220,220).extend({left:18,right:18,top:18,bottom:18,background:'#00000000'}).png().toBuffer(),left:i%6*256,top:Math.floor(i/6)*256});
+await mkdir('public/assets/animation/wind-gifts',{recursive:true});
+await sharp({create:{width:1536,height:1024,channels:4,background:'#00000000'}}).composite(cells).webp({lossless:true}).toFile(out);
+await sharp(out).flatten({background:'#1c3029'}).png().toFile(root+'/evidence/materials-contact.png');
+await writeFile(root+'/materials.json',JSON.stringify({说明:'二十四个独立材质组件，保留imagegen透明通道，仅逐格缩放与增加透明边；不作为动画帧切换。',图集:out,组件数:24,安全边:18,源图摘要:createHash('sha256').update(source).digest('hex')},null,2)+'\n');
+console.log('连续风赐材质已封装。');

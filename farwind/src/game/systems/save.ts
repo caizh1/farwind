@@ -1,7 +1,7 @@
 import { validate, type State } from "./state";
 import { SaveQueue } from './saveQueue';
 // 第一张正式地图从新档开始，旧数据库保留供原版本读取或导出。
-export const SAVE_DATABASE = import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('combatSlice') ? 'farwind-combat-slice-isolated' : import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('runeLab') ? 'farwind-rune-lab-isolated' : import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('combatFeel')
+export const SAVE_DATABASE = import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('windGiftArena') ? 'farwind-wind-gifts-isolated' : import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('blackHoleArena') ? 'farwind-black-hole-slash-isolated' : import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('combatSlice') ? 'farwind-combat-slice-isolated' : import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('runeLab') ? 'farwind-rune-lab-isolated' : import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('combatFeel')
   ? 'farwind-combat-feel-isolated' : 'farwind-combat-v2';
 let fault = { delay: 0, failures: 0 };
 // 只在显式开发样板使用；生产构建无法启用故障注入。

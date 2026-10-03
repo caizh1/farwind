@@ -7,6 +7,7 @@ import "./commission.css";
 import "./equipment.css";
 import "./shop.css";
 import "./hud.css";
+import "./world-map.css";
 const root = document.querySelector("#game")!;
 try {
   const probe = document.createElement("canvas");

@@ -13,6 +13,7 @@ import { pathSearch, advancePathSearch, enemyNavigation, type EnemyBody, type Na
 import {
   motionBlocked,
   clearMotionLine,
+  clearPhaseLine,
   rectInterval,
   type Point,
 } from "./obstacles";
@@ -56,6 +57,11 @@ export function spaceClear(space: SpaceId, a: Point, b: Point) {
 }
 export const spaceBlocked = (space: SpaceId, x: number, y: number) =>
   space === "village" ? motionBlocked(x, y) : roomBlocked(space, x, y);
+export function clearPhaseSpace(space:SpaceId,a:Point,b:Point) {
+  if(space==='village')return clearPhaseLine(a,b);
+  // 房间是凸矩形，两个端点在身体安全边界内即不会跨场景；家具仍检查落点。
+  return [a,b].every(p=>p.x>=ROOM.left+18&&p.x<=ROOM.right-18&&p.y>=ROOM.top+24&&p.y<=ROOM.bottom-18);
+}
 // ponytail: 静态家具与地图的有界缓存；改变碰撞布局时需统一失效。
 const blockedCache = new Map<string, boolean>(),
   lineCache = new Map<string, boolean>();

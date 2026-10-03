@@ -1,0 +1,337 @@
+{
+  "说明": "隔离场真实输入与战斗状态，不能替代正式存档或长期性能验收",
+  "流派": "伙伴同行",
+  "风赐": {
+    "held": [
+      {
+        "id": "sharedHeart",
+        "level": 1
+      },
+      {
+        "id": "protectCompanion",
+        "level": 1
+      },
+      {
+        "id": "relayEdge",
+        "level": 1
+      },
+      {
+        "id": "returningBreath",
+        "level": 1
+      },
+      {
+        "id": "sideBySide",
+        "level": 1
+      }
+    ],
+    "pending": [
+      {
+        "receipt": "wind-gift-arena-reward",
+        "candidates": [
+          "windBone",
+          "pierceCurtain",
+          "riposte"
+        ]
+      }
+    ],
+    "receipts": [
+      "wind-gift-arena-reward"
+    ],
+    "cooldowns": {
+      "shock": 0,
+      "chain": 0
+    }
+  },
+  "生命": 100,
+  "伙伴": {
+    "space": "village",
+    "life": {
+      "version": 1,
+      "seed": 1875050081,
+      "day": 0,
+      "basket": 0,
+      "main": "wood",
+      "optional": "herb",
+      "done": [],
+      "projects": {
+        "wind": {
+          "stage": 0,
+          "lastDay": -1
+        },
+        "wood": {
+          "stage": 0,
+          "lastDay": -1
+        },
+        "herb": {
+          "stage": 0,
+          "lastDay": -1
+        }
+      },
+      "interests": {
+        "wind": 65,
+        "wood": 55,
+        "herb": 50
+      },
+      "journal": [],
+      "promise": null,
+      "emergency": false,
+      "clearSince": null,
+      "aftercareUntil": 0,
+      "resumeTask": null,
+      "metrics": {
+        "attempts": 0,
+        "completed": 0,
+        "failed": 0,
+        "interrupted": 0
+      }
+    },
+    "known": true,
+    "task": "follow",
+    "gate": "all",
+    "tactic": "steady",
+    "autoSupport": true,
+    "x": 3154.8188044913463,
+    "y": 1305.0638012354414,
+    "hp": 640,
+    "qi": 80.4067800000001,
+    "clock": 1606.1300000000024,
+    "serial": 1,
+    "cooldowns": {
+      "palm": 0,
+      "triple": 0,
+      "star": 0,
+      "blade": 0,
+      "rock": 8098.8699999999935,
+      "fire": 0,
+      "thunder": 0,
+      "chain": 0,
+      "unity": 0,
+      "guard": 0,
+      "rescue": 0,
+      "flight": 0
+    },
+    "rest": 0,
+    "recovery": 0,
+    "peace": 0,
+    "reduction": 0,
+    "shields": [],
+    "cast": null,
+    "effects": [],
+    "flight": null,
+    "support": null,
+    "alarmCycle": 0,
+    "alarmActive": false,
+    "responded": [],
+    "command": null,
+    "wait": null,
+    "affected": [],
+    "reports": []
+  },
+  "战斗": {
+    "bands": [],
+    "traces": [],
+    "clock": 1606.1300000000024,
+    "duos": [],
+    "cooldowns": {},
+    "counts": {},
+    "statuses": {},
+    "fields": [],
+    "projectiles": [],
+    "effects": [],
+    "events": [
+      {
+        "eventId": "native:attack:1:slime-1:blade",
+        "rootEventId": "action:attack:1",
+        "parentEventId": null,
+        "attackInstanceId": "attack:1",
+        "sourceKind": "native",
+        "targetId": "slime-1",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 19.44,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3274.7728869068906,
+          "y": 1279.6436815790435
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 19.44
+      },
+      {
+        "eventId": "native:attack:1:leaf-1:blade",
+        "rootEventId": "action:attack:1",
+        "parentEventId": null,
+        "attackInstanceId": "attack:1",
+        "sourceKind": "native",
+        "targetId": "leaf-1",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 19.44,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3293.0520960160607,
+          "y": 1335.2942995476276
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 19.44
+      },
+      {
+        "eventId": "native:attack:1:leaf-2:blade",
+        "rootEventId": "action:attack:1",
+        "parentEventId": null,
+        "attackInstanceId": "attack:1",
+        "sourceKind": "native",
+        "targetId": "leaf-2",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 19.44,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3293.0520960160607,
+          "y": 1224.7057004523724
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 19.44
+      }
+    ],
+    "metrics": {
+      "native": 3,
+      "rune": 0,
+      "duo": 0,
+      "status": 0,
+      "damage": 58.32000000000001,
+      "critical": 0,
+      "phoenix": 0,
+      "prevented": 0
+    },
+    "temporary": {
+      "feathers": 0,
+      "immune": false,
+      "domain": 0,
+      "bossGuard": 0
+    },
+    "pending": 0,
+    "blackHole": {
+      "metrics": {
+        "rolls": 0,
+        "procs": 0,
+        "slashHits": 0,
+        "dotDamage": 0,
+        "pulled": 0
+      },
+      "blades": [],
+      "rifts": []
+    },
+    "windGifts": {
+      "metrics": {
+        "companionHits": 4,
+        "derived": 0,
+        "healed": 0,
+        "shielded": 0,
+        "pulled": 0,
+        "echoes": 0,
+        "resonances": 0
+      },
+      "shield": 0,
+      "companionShield": 0,
+      "slow": [],
+      "jobs": 0,
+      "zones": 0,
+      "echoes": [],
+      "resonances": [
+        {
+          "id": "relayTogether",
+          "name": "递锋同行",
+          "level": 1
+        },
+        {
+          "id": "guardedReturn",
+          "name": "护伴归息",
+          "level": 1
+        }
+      ]
+    },
+    "visual": {
+      "materials": 0,
+      "visible": 0,
+      "lightning": []
+    },
+    "lock": "交战中，需脱战八秒",
+    "destination": {
+      "id": "initial",
+      "point": {
+        "x": 670,
+        "y": 720
+      }
+    }
+  },
+  "敌人": [
+    {
+      "编号": "slime-1",
+      "生命": 0,
+      "位置": {
+        "x": 3279.1728388160905,
+        "y": 1279.623082364388
+      },
+      "减速": 0,
+      "失衡": 1155
+    },
+    {
+      "编号": "slime-2",
+      "生命": 0,
+      "位置": {
+        "x": 3298.0827624426884,
+        "y": 1280.1870242004102
+      },
+      "减速": 0,
+      "失衡": 1155
+    },
+    {
+      "编号": "leaf-1",
+      "生命": 0,
+      "位置": {
+        "x": 3270.695421881337,
+        "y": 1319.6063537907128
+      },
+      "减速": 0,
+      "失衡": 1155
+    },
+    {
+      "编号": "leaf-2",
+      "生命": 0,
+      "位置": {
+        "x": 3270.695421881337,
+        "y": 1240.3936462092872
+      },
+      "减速": 0,
+      "失衡": 1155
+    }
+  ]
+}

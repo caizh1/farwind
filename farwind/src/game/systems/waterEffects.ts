@@ -55,8 +55,9 @@ export class WaterEffects {
       image.setVisible(visible);
       this.lilies.push({ image, ...anchor, visible });
     }
-    // 裁切、角度、尺寸与旧地面中的桥完全相同；逻辑通道仍由BRIDGES独立提供。
-    scene.textures.get("bridge").add(this.bridgeFrame, 0, 0, 92, 1983, 601);
+    // 新桥面使用完整透明素材；角度、位置和逻辑通道仍由BRIDGES提供。
+    const bridgeSource=scene.textures.get("bridge").getSourceImage() as HTMLImageElement;
+    scene.textures.get("bridge").add(this.bridgeFrame, 0, 0, 0, bridgeSource.width, bridgeSource.height);
     for (const b of BRIDGES) this.keep(scene.add.image(b.x + b.w / 2, b.y + b.h / 2, "bridge", this.bridgeFrame)
       .setDisplaySize(b.h, b.w + 8).setRotation(Math.PI / 2).setDepth(WATER.depth.bridge));
 
@@ -98,10 +99,12 @@ export class WaterEffects {
       c.strokeStyle = `rgba(176,204,163,${alpha})`; c.lineWidth = 5; c.stroke();
     }
     c.restore();
-    for (const [i, a] of [0.1, 0.5, 0.9, 1.5, 2.1, 2.6, 3.6, 4.2, 4.65, 5.3, 5.85].entries()) {
-      const x = POND.x + Math.cos(a) * (POND.rx + 7), y = POND.y + Math.sin(a) * (POND.ry + 7);
-      if (!clearOfBridges(x, y, 12)) continue;
-      c.drawImage(this.scene.textures.get(i % 2 ? "herb" : "rock").getSourceImage() as HTMLImageElement, x - 8, y - 10, 16, 15);
+    for (let i=0;i<19;i++) {
+      const a=i*2.39996,offset=4+(i*7)%12;
+      const x = POND.x + Math.cos(a) * (POND.rx + offset), y = POND.y + Math.sin(a) * (POND.ry + offset);
+      if (!clearOfBridges(x, y, 20)) continue;
+      const stone=i%3===0,width=stone?12+i%7:25+i%9,height=stone?9+i%5:20+i%7;
+      c.drawImage(this.scene.textures.get(stone?'rock':'herb').getSourceImage() as HTMLImageElement,x-width/2,y-height,width,height);
     }
     texture.refresh();
     this.keep(this.scene.add.image(POND.x - POND.rx - pad, POND.y - POND.ry - pad, this.textureKeys[0]).setOrigin(0).setDepth(WATER.depth.shore));

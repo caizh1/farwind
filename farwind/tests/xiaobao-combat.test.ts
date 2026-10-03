@@ -23,6 +23,9 @@ import { enemyDefs } from "../src/data/world";
 import { prepareRaid } from "../src/game/systems/defense";
 import { EastDefense } from "../src/game/systems/defense";
 import { xiaobaoFronts } from "../src/game/systems/xiaobaoWorld";
+import { zoneFor, inActivity, inAlert } from "../src/data/defenseZones";
+import type { GateId } from "../src/data/defense";
+import { clearMeleeLine, clearMotionLine, motionBlocked } from "../src/game/systems/obstacles";
 import type { World } from "../src/game/scenes/World";
 function enemy(id: string, x = 870, y = 725): EnemyBody {
   return {
@@ -241,6 +244,49 @@ describe("随行护卫的距离与危险优先级", () => {
   });
 });
 describe("自主生活的护村抢占与恢复", () => {
+  it('录屏南门现场的真实几何允许赶赴警戒带攻击者',()=>{
+    const attacker=enemy('现场敌人',809.505,2107.708),f=fixture([attacker]);
+    const defense=new EastDefense(initialState().defense,0);
+    f.env.move=(...args)=>defense.move(...args);f.env.melee=clearMeleeLine;f.env.clear=clearMotionLine;f.env.blocked=p=>motionBlocked(p.x,p.y);
+    f.c.x=950;f.c.y=1900;f.c.data.cooldowns.flight=30000;
+    f.setFronts([{key:'现场南门',gate:'south-gate',major:false,confirmed:true,priority:2,point:{x:950,y:1900},enemies:[attacker.id],injured:false}]);
+    f.step(3000);expect(f.hits.some(h=>h.id===attacker.id)).toBe(true);
+  });
+  it('警戒带攻击短暂结束时仍在十秒确认期完成拦截，不在一秒半后丢弃已确认目标',()=>{
+    const attacker=enemy('门外施术者',809.505,2107.708),f=fixture([attacker]);
+    f.c.x=950;f.c.y=1900;f.c.data.cooldowns.flight=30000;
+    f.setFronts([{key:'南门真实攻击',gate:'south-gate',major:false,confirmed:true,priority:2,point:{x:950,y:1900},enemies:[attacker.id],injured:false}]);
+    f.step(150);expect(f.c.targetId).toBe(attacker.id);
+    f.setFronts([]);f.step(3000);
+    expect(f.c.data.life.emergency).toBe(true);
+    expect(f.c.data.support).not.toBeNull();
+    expect(f.hits.some(h=>h.id===attacker.id)).toBe(true);
+    // 已释放的攻击正常结束后再刷新索敌，不要求中断已释放实例。
+    attacker.x=400;attacker.y=2400;f.step(1500);
+    expect(f.c.targetId).toBeNull();
+  });
+  it.each([
+    ['south-gate', 809.505, 2107.708],
+    ['east-gate', 2450, 1100],
+    ['north-gate', 850, 90],
+    ['west-gate', -400, 1430],
+  ] as [GateId, number, number][])("%s 已确认的警戒带攻击者不能被平时巡护边界过滤", (gate, x, y) => {
+    const attacker=enemy('已确认攻击者',x,y),ordinary=enemy('未参与的普通野怪',x+20,y),f=fixture([attacker,ordinary]);
+    const intercept=zoneFor(gate).intercept;
+    expect(inActivity(gate,attacker)).toBe(false);expect(inAlert(gate,attacker)).toBe(true);
+    f.c.x=intercept.x;f.c.y=intercept.y;f.c.data.task='free';
+    f.c.data.cooldowns.flight=30000;
+    f.setFronts([{key:'真实攻击',gate,major:false,confirmed:true,priority:2,point:intercept,enemies:[attacker.id],injured:false}]);
+    f.step(150);
+    expect(f.c.data.life.emergency).toBe(true);
+    expect(f.c.targetId).toBe(attacker.id);
+    f.step(3000);
+    expect(f.hits.some(h=>h.id===attacker.id)).toBe(true);
+    expect(f.c.data.flight).toBeNull();
+    const calm=fixture([ordinary]);calm.c.x=intercept.x;calm.c.y=intercept.y;
+    calm.step(3150);
+    expect(calm.c.data.life.emergency).toBe(false);expect(calm.hits).toHaveLength(0);
+  });
   it("同时多处遇险按真实优先级选门，飞援冷却也能改变地面防线", () => {
     const f=fixture();f.c.data.gate='south-gate';f.c.data.cooldowns.flight=30000;
     const east=front('东门入侵','east-gate',2),north=front('村民即将受击','north-gate',5);

@@ -103,7 +103,7 @@ export const attackConfig = (a: Pick<Attack, "stage" | "counter" | "config">) =>
 export const strikeDuration = (m: StrikeConfig) => m.windup + m.active + m.recovery;
 export type ParryAction = {
   id: number; start: number; facing: Facing; actionUntil: number;
-  successAt?: number; quality?: CounterKind;
+  successAt?: number; quality?: CounterKind; precisionBonus?:number;
 };
 export type ActionKind = "attack" | "wind" | "parry" | "dash";
 export const actionPriority = { attack: 1, wind: 1, parry: 2, dash: 3 } as const;
@@ -123,6 +123,7 @@ export type Attack = {
   windDirection?:{x:number;y:number};
   id: number;
   comboId?: number;
+  chainGraceBonus?:number;
   stage: number;
   facing: Facing;
   // 连续瞄准在起手时锁定，四向素材仅负责显示；旧实例回退到原朝向。
@@ -235,6 +236,9 @@ export function enemyTint(now: number, flashUntil: number, windup: number) {
   return now < flashUntil ? 0xff8585 : windup > 0 ? 0xffce84 : null;
 }
 export class CombatController {
+  resolvePhaseDash?: (origin:{x:number;y:number},end:{x:number;y:number})=>{x:number;y:number}|null;
+  private dashPhaseChecked=false;
+  private dashPhaseResolved=false;
   dashCostMultiplier=1;
   recoveryCancelEnabled=false;
   swordWindEnabled=false;
@@ -290,6 +294,8 @@ export class CombatController {
   lastFacing: Facing = 0;
   pending = false;
   nextStage = 1;
+  chainGraceBonus = 0;
+  parryPrecisionBonus = 0;
   chainUntil = 0;
   dashStart = -1;
   dashArmed = false;
@@ -427,7 +433,7 @@ export class CombatController {
       if (now > request.until) {this.recordAction('parry',request.at,this.parryLegalAt(now),request.until,'缓冲到期');this.parryPending = null;}
       else if (now >= this.parryLegalAt(now) && p.stamina >= PARRY.cost) {
         this.cancelAttack();
-        this.parry = {id:++this.parrySerial,start:now,facing:request.facing,actionUntil:now+PARRY.recovery};
+        this.parry = {id:++this.parrySerial,start:now,facing:request.facing,actionUntil:now+PARRY.recovery,precisionBonus:this.parryPrecisionBonus};
         this.actionLockUntil=now+PARRY.recovery;
         this.lastParry = this.parry;
         this.parryCooldown = now+PARRY.cooldown;
@@ -444,7 +450,7 @@ export class CombatController {
   parryQuality(now: number): CounterKind | null {
     const a = this.parry;
     if (!a || a.successAt !== undefined || now < a.start || now >= a.start+PARRY.active) return null;
-    return now < a.start+PARRY.precise ? "perfect" : "normal";
+    return now < a.start+PARRY.precise+(a.precisionBonus??this.parryPrecisionBonus) ? "perfect" : "normal";
   }
   succeedParry(now: number, kind: CounterKind, p: {stamina:number;x?:number;y?:number},target="",origin?:{x:number;y:number},counter?:{delivery:Attack["delivery"];sourceContactId:string;direction?:{x:number;y:number}},maximum=100) {
     const a = this.parry;
@@ -480,7 +486,7 @@ export class CombatController {
     if(this.parryPending) boundaries.push(this.parryLegalAt(now),this.parryPending.until);
     if(this.pending) boundaries.push(this.requestedAt,this.bufferUntil);
     if(this.dashPending) boundaries.push(this.dashLegalAt(now),this.dashPending.until);
-    if(this.parry)boundaries.push(this.parry.actionUntil,this.parry.start+PARRY.precise,this.parry.start+PARRY.active);
+    if(this.parry)boundaries.push(this.parry.actionUntil,this.parry.start+PARRY.precise+(this.parry.precisionBonus??this.parryPrecisionBonus),this.parry.start+PARRY.active);
     boundaries.push(this.dashUntil,this.dashStart+COMBAT.dash.invulnStart,this.dashStart+COMBAT.dash.invulnEnd,this.regenUntil,
       this.hurtReaction?.until??0,this.hurtReaction?this.hurtReaction.start+PLAYER_HURT.knockDuration:0);
     return Math.min(...boundaries.filter(t=>t>now+1e-7));
@@ -617,6 +623,7 @@ export class CombatController {
     this.dashX = len ? axis.x / len : fx;
     this.dashY = len ? axis.y / len : fy;
     this.dashStart = now;
+    this.dashPhaseChecked=false;this.dashPhaseResolved=false;
     this.dashUntil = now + COMBAT.dash.duration;
     this.dashCooldown = now + COMBAT.dash.cooldown;
     if (this.dashArmed) {
@@ -746,7 +753,7 @@ export class CombatController {
         if (stop >= end) {
           this.attack = null;
           this.nextStage = a.kind!=='swordWind'&&a.stage < this.maxStage ? a.stage + 1 : 1;
-          this.chainUntil = a.kind!=='swordWind'&&a.stage < this.maxStage ? end + COMBAT.grace : 0;
+          this.chainUntil = a.kind!=='swordWind'&&a.stage < this.maxStage ? end + COMBAT.grace + (a.chainGraceBonus??this.chainGraceBonus) : 0;
           this.chainOwner=a.kind!=='swordWind'&&a.stage<this.maxStage?a.id:null;
           this.lastStage = a.stage;
           this.lastFacing = a.facing;
@@ -773,6 +780,7 @@ export class CombatController {
         const aim=windAim?.direction??auto?.direction??(auto?{x:ax,y:ay}:this.intentAim??{x:ax,y:ay});
         this.attack = {
           id: ++this.serial,
+          chainGraceBonus:this.chainGraceBonus,
           kind: counter?'counter':wind?'swordWind':'melee',
           rootActionId:this.serial,
           isFinisher:!counter&&!wind&&stage===this.maxStage,
@@ -819,7 +827,12 @@ export class CombatController {
       const fraction =
         (Math.min(now, this.dashUntil) - Math.max(prev, this.dashStart)) /
         COMBAT.dash.duration;
-      if (fraction > 0)
+      if(fraction>0&&!this.dashPhaseChecked){
+        this.dashPhaseChecked=true;
+        const end=this.resolvePhaseDash?.({...p},{x:p.x+this.dashX*COMBAT.dash.distance,y:p.y+this.dashY*COMBAT.dash.distance});
+        if(end){p.x=end.x;p.y=end.y;this.dashPhaseResolved=true;}
+      }
+      if (fraction > 0&&!this.dashPhaseResolved)
         sweepMove(
           p,
           this.dashX * COMBAT.dash.distance * fraction,

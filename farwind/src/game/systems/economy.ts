@@ -2,6 +2,7 @@ import {giftValue} from './windGifts';
 import {catCareGain} from './catBond';
 import {
   equipment,
+  shoeSpeedBonus,
   isEquipment,
   shops,
   salePrices,
@@ -159,7 +160,7 @@ export function incomingDamage(state: State, base: number) {
 
 // 鞋子只加速正常行走与奔跑；风步、架剑、受伤及攻击动作沿用各自速度。
 export function movementSpeed(state: State, base: number) {
-  return base * (1 + (state.equipment.feet === "windBoots" ? equipment.windBoots.speedBonus : 0));
+  return base * (1 + shoeSpeedBonus(state.equipment.feet));
 }
 
 // 预览上限与事务仍各自验证；交易后再次按权威状态校验，不信任界面数量。

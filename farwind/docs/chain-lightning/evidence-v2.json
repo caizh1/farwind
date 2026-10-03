@@ -1,0 +1,255 @@
+{
+  "说明": "隔离场真实输入与战斗状态，不能替代正式存档或长期性能验收",
+  "流派": "闪链电弧",
+  "风赐": {
+    "held": [
+      {
+        "id": "chain",
+        "level": 1
+      }
+    ],
+    "pending": [
+      {
+        "receipt": "wind-gift-arena-reward",
+        "candidates": [
+          "windBone",
+          "pierceCurtain",
+          "riposte"
+        ]
+      }
+    ],
+    "receipts": [
+      "wind-gift-arena-reward"
+    ],
+    "cooldowns": {
+      "shock": 0,
+      "chain": 0
+    }
+  },
+  "生命": 100,
+  "伙伴": {
+    "space": "village",
+    "life": {
+      "version": 1,
+      "seed": 1875050081,
+      "day": 0,
+      "basket": 0,
+      "main": "wood",
+      "optional": "herb",
+      "done": [],
+      "projects": {
+        "wind": {
+          "stage": 0,
+          "lastDay": -1
+        },
+        "wood": {
+          "stage": 0,
+          "lastDay": -1
+        },
+        "herb": {
+          "stage": 0,
+          "lastDay": -1
+        }
+      },
+      "interests": {
+        "wind": 65,
+        "wood": 55,
+        "herb": 50
+      },
+      "journal": [
+        {
+          "sequence": 1,
+          "time": 485.60159999999877,
+          "text": "听岚爷爷讲风与村庄的故事没完成：朋友已经离开或正在睡觉，稍后再来。"
+        }
+      ],
+      "promise": null,
+      "emergency": false,
+      "clearSince": null,
+      "aftercareUntil": 0,
+      "resumeTask": null,
+      "metrics": {
+        "attempts": 2,
+        "completed": 0,
+        "failed": 1,
+        "interrupted": 0
+      }
+    },
+    "known": false,
+    "task": "free",
+    "gate": "all",
+    "tactic": "steady",
+    "autoSupport": true,
+    "x": 975.7576594391545,
+    "y": 823.0685968236373,
+    "hp": 640,
+    "qi": 100,
+    "clock": 13184.470000000007,
+    "serial": 0,
+    "cooldowns": {
+      "palm": 0,
+      "triple": 0,
+      "star": 0,
+      "blade": 0,
+      "rock": 0,
+      "fire": 0,
+      "thunder": 0,
+      "chain": 0,
+      "unity": 0,
+      "guard": 0,
+      "rescue": 0,
+      "flight": 0
+    },
+    "rest": 0,
+    "recovery": 0,
+    "peace": 6000,
+    "reduction": 0,
+    "shields": [],
+    "cast": null,
+    "effects": [],
+    "flight": null,
+    "support": null,
+    "alarmCycle": 0,
+    "alarmActive": false,
+    "responded": [],
+    "command": null,
+    "wait": null,
+    "affected": [],
+    "reports": []
+  },
+  "战斗": {
+    "bands": [],
+    "traces": [],
+    "clock": 13184.470000000007,
+    "duos": [],
+    "cooldowns": {},
+    "counts": {},
+    "statuses": {},
+    "fields": [],
+    "projectiles": [],
+    "effects": [],
+    "events": [
+      {
+        "eventId": "native:attack:1:gift-preview-0:out",
+        "rootEventId": "action:attack:1",
+        "parentEventId": null,
+        "attackInstanceId": "attack:1",
+        "sourceKind": "native",
+        "targetId": "gift-preview-0",
+        "tags": [
+          "native",
+          "wind_hit",
+          "strike",
+          "wind_out"
+        ],
+        "procDepth": 0,
+        "amount": 36,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3269.7502760514253,
+          "y": 1279.7221645670113
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 36
+      }
+    ],
+    "metrics": {
+      "native": 1,
+      "rune": 0,
+      "duo": 0,
+      "status": 0,
+      "damage": 36,
+      "critical": 0,
+      "phoenix": 0,
+      "prevented": 0
+    },
+    "temporary": {
+      "feathers": 0,
+      "immune": false,
+      "domain": 0,
+      "bossGuard": 0
+    },
+    "pending": 0,
+    "blackHole": {
+      "metrics": {
+        "rolls": 0,
+        "procs": 0,
+        "slashHits": 0,
+        "dotDamage": 0,
+        "pulled": 0
+      },
+      "blades": [],
+      "rifts": []
+    },
+    "windGifts": {
+      "metrics": {
+        "companionHits": 0,
+        "derived": 0,
+        "healed": 0,
+        "shielded": 0,
+        "pulled": 0,
+        "echoes": 0,
+        "resonances": 0
+      },
+      "shield": 0,
+      "companionShield": 0,
+      "slow": [],
+      "jobs": 0,
+      "zones": 0,
+      "echoes": [],
+      "resonances": []
+    },
+    "visual": {
+      "materials": 0,
+      "visible": 0,
+      "giftMaterials": 0,
+      "giftVisible": 0,
+      "giftEffects": [],
+      "lightning": []
+    },
+    "lock": "交战中，需脱战八秒",
+    "destination": {
+      "id": "initial",
+      "point": {
+        "x": 670,
+        "y": 720
+      }
+    }
+  },
+  "敌人": [
+    {
+      "编号": "gift-preview-0",
+      "生命": 1964,
+      "位置": {
+        "x": 3277.8503037258065,
+        "y": 1279.736856722184
+      },
+      "减速": 0,
+      "失衡": 538.9800000000005
+    },
+    {
+      "编号": "gift-preview-1",
+      "生命": 1996.4,
+      "位置": {
+        "x": 3251.2780912415237,
+        "y": 1225.2301244921102
+      },
+      "减速": 0,
+      "失衡": 0
+    },
+    {
+      "编号": "gift-preview-2",
+      "生命": 1996.4,
+      "位置": {
+        "x": 3272.2292843326654,
+        "y": 1307.6067540132196
+      },
+      "减速": 0,
+      "失衡": 0
+    }
+  ]
+}

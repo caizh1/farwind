@@ -1,5 +1,5 @@
-import { equipment, RETURN_WIND_ORB, type EquipmentSlot } from "../../data/economy";
-import { items } from "../../data/content";
+import { equipment, shoeSpeedBonus, RETURN_WIND_ORB, type EquipmentSlot } from "../../data/economy";
+import { items, itemIcon } from "../../data/content";
 import { count, type State } from "../systems/state";
 import type { Interface } from "./interface";
 
@@ -19,8 +19,8 @@ export function equippedItem(state: State, slot: EquipmentViewSlot) {
   };
   const id = state.equipment[slot];
   if(slot === "feet")return {
-    name:id?items[id].name:"原有布鞋",icon:"/assets/equipment/wind-boots.webp",
-    summary:id?"行走与奔跑速度提升25%。":"攒够180金币，可到铁匠铺购买轻风靴。",
+    name:id?items[id].name:"原有布鞋",icon:id?itemIcon(id):itemIcon("brookShoes"),
+    summary:id?`行走与奔跑速度提升${Math.round(shoeSpeedBonus(id)*100)}%。`:"铁匠铺出售五款远行鞋，30金币起。",
     description:id?items[id].description:"舒适的旧布鞋，按基础速度行走与奔跑。",
     recovery:"",rules:id?"已穿戴 · 换下后放回行囊":"基础装备 · 无移速加成",
     quote:"脚下轻一点，远方近一点。",badge:id?"已穿戴":"基础装备",

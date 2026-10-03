@@ -1,6 +1,7 @@
 import {ARENA_STONES} from "./elites";
 import { SHORTCUTS } from "./shortcuts";
 import { ENCOUNTERS } from './encounters';
+import { CAMP_NESTS } from '../../campNests';
 import { MASTER_PLAN, PLANNED_POIS } from "./layout";
 import { planToWorld } from "./bounds";
 import type { Prop } from "../../world";
@@ -210,8 +211,7 @@ const rock = (id: string, x: number, y: number, w = 125, h = 100): Prop => ({
 });
 export const WILDERNESS_PROPS: Prop[] = [
  ...ARENA_STONES.map(p=>({...p,art:"rock",solid:[...p.solid] as [number,number],cover:"low" as const})),
-  {id:"south-camp-root",art:"bush",x:1250,y:2820,w:180,h:135,kind:"sign",ground:false,label:"孢根巢地"},
-  ...ENCOUNTERS.filter(d=>d.kind==='camp'&&d.direction!=='south').map((d):Prop=>({id:`camp-root-${d.id}`,art:'bush',x:d.x,y:d.y,w:180,h:135,kind:'sign',ground:false,label:d.name})),
+  ...ENCOUNTERS.filter(d=>d.kind==='camp').map((d):Prop=>({id:d.direction==='south'?'south-camp-root':`camp-root-${d.id}`,art:CAMP_NESTS[d.direction].texture,x:d.x,y:d.y,w:180,h:135,displayAt:{x:d.x,y:d.y-CAMP_NESTS[d.direction].lift},kind:'sign',ground:false,label:d.name})),
   ...SHORTCUTS.flatMap((s):Prop[]=>[
     {id:`repair-${s.id}`,art:"carpenter-workbench",x:s.x,y:s.y,w:85,h:75,kind:"sign",label:`修复 · ${s.name}`},
     {id:`barrier-${s.id}`,art:"wood",x:s.barrier.x,y:s.barrier.y,w:s.barrier.w+20,h:s.barrier.h+15,solid:[s.barrier.w,s.barrier.h],cover:"low"},

@@ -1,0 +1,1194 @@
+{
+  "说明": "隔离场真实输入与战斗状态，不能替代正式存档或长期性能验收",
+  "流派": "防御与风步",
+  "风赐": {
+    "held": [
+      {
+        "id": "firstVeil",
+        "level": 1
+      },
+      {
+        "id": "softenWound",
+        "level": 1
+      },
+      {
+        "id": "guardedBreath",
+        "level": 1
+      },
+      {
+        "id": "unyielding",
+        "level": 1
+      },
+      {
+        "id": "skimShadow",
+        "level": 1
+      },
+      {
+        "id": "residualWind",
+        "level": 1
+      },
+      {
+        "id": "escapeCircle",
+        "level": 1
+      },
+      {
+        "id": "returningTide",
+        "level": 1
+      },
+      {
+        "id": "stepEdge",
+        "level": 1
+      }
+    ],
+    "pending": [
+      {
+        "receipt": "wind-gift-arena-reward",
+        "candidates": [
+          "windBone",
+          "pierceCurtain",
+          "riposte"
+        ]
+      }
+    ],
+    "receipts": [
+      "wind-gift-arena-reward"
+    ],
+    "cooldowns": {
+      "shock": 0,
+      "chain": 0
+    }
+  },
+  "生命": 25.199999999999974,
+  "战斗": {
+    "bands": [],
+    "traces": [],
+    "clock": 11725.039999999919,
+    "duos": [],
+    "cooldowns": {},
+    "counts": {},
+    "statuses": {},
+    "fields": [],
+    "projectiles": [],
+    "effects": [
+      {
+        "id": 47,
+        "visual": "wind-band",
+        "rune": "r09",
+        "point": {
+          "x": 3302.398533733375,
+          "y": 1261.0220441593544
+        },
+        "radius": 36,
+        "born": 11689.664285684903,
+        "life": 300
+      },
+      {
+        "id": 50,
+        "visual": "wind-gift-hit",
+        "rune": "",
+        "point": {
+          "x": 3300.8452023735385,
+          "y": 1248.256684421879
+        },
+        "radius": 30,
+        "born": 11690,
+        "life": 300
+      },
+      {
+        "id": 53,
+        "visual": "wind-gift-hit",
+        "rune": "",
+        "point": {
+          "x": 3301.941825252293,
+          "y": 1258.7387083973626
+        },
+        "radius": 30,
+        "born": 11690,
+        "life": 300
+      },
+      {
+        "id": 56,
+        "visual": "wind-gift-hit",
+        "rune": "",
+        "point": {
+          "x": 3328.409073401638,
+          "y": 1259.8688500915528
+        },
+        "radius": 30,
+        "born": 11690,
+        "life": 300
+      },
+      {
+        "id": 59,
+        "visual": "wind-gift-hit",
+        "rune": "",
+        "point": {
+          "x": 3340,
+          "y": 1280
+        },
+        "radius": 30,
+        "born": 11708.42999999992,
+        "life": 300
+      }
+    ],
+    "events": [
+      {
+        "eventId": "native:attack:1:gift-preview-0:blade",
+        "rootEventId": "action:attack:1",
+        "parentEventId": null,
+        "attackInstanceId": "attack:1",
+        "sourceKind": "native",
+        "targetId": "gift-preview-0",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 20.160000000000004,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3269.973558857865,
+          "y": 1279.6653557476732
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 20.160000000000004
+      },
+      {
+        "eventId": "native:attack:1:gift-preview-2:blade",
+        "rootEventId": "action:attack:1",
+        "parentEventId": null,
+        "attackInstanceId": "attack:1",
+        "sourceKind": "native",
+        "targetId": "gift-preview-2",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 20.160000000000004,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3260.0593327117026,
+          "y": 1315.816116656315
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 20.160000000000004
+      },
+      {
+        "eventId": "native:attack:1:gift-preview-3:blade",
+        "rootEventId": "action:attack:1",
+        "parentEventId": null,
+        "attackInstanceId": "attack:1",
+        "sourceKind": "native",
+        "targetId": "gift-preview-3",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 20.160000000000004,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3260.0593327117026,
+          "y": 1244.183883343685
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 20.160000000000004
+      },
+      {
+        "eventId": "native:attack:2:gift-preview-0:blade",
+        "rootEventId": "action:attack:2",
+        "parentEventId": null,
+        "attackInstanceId": "attack:2",
+        "sourceKind": "native",
+        "targetId": "gift-preview-0",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 25.4,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3274.9735016795476,
+          "y": 1279.641443827877
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 25.4
+      },
+      {
+        "eventId": "native:attack:2:gift-preview-2:blade",
+        "rootEventId": "action:attack:2",
+        "parentEventId": null,
+        "attackInstanceId": "attack:2",
+        "sourceKind": "native",
+        "targetId": "gift-preview-2",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 25.4,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3264.353705418573,
+          "y": 1318.377046771427
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 25.4
+      },
+      {
+        "eventId": "native:attack:2:gift-preview-3:blade",
+        "rootEventId": "action:attack:2",
+        "parentEventId": null,
+        "attackInstanceId": "attack:2",
+        "sourceKind": "native",
+        "targetId": "gift-preview-3",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 25.4,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3264.353705418573,
+          "y": 1241.622953228573
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 25.4
+      },
+      {
+        "eventId": "native:attack:2:gift-preview-1:blade",
+        "rootEventId": "action:attack:2",
+        "parentEventId": null,
+        "attackInstanceId": "attack:2",
+        "sourceKind": "native",
+        "targetId": "gift-preview-1",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 25.4,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3339.5636854417558,
+          "y": 1280.2866275613933
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 25.4
+      },
+      {
+        "eventId": "native:attack:3:gift-preview-0:blade",
+        "rootEventId": "action:attack:3",
+        "parentEventId": null,
+        "attackInstanceId": "attack:3",
+        "sourceKind": "native",
+        "targetId": "gift-preview-0",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 38.1,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3281.973384524912,
+          "y": 1279.6009450480708
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 38.1
+      },
+      {
+        "eventId": "native:attack:3:gift-preview-1:blade",
+        "rootEventId": "action:attack:3",
+        "parentEventId": null,
+        "attackInstanceId": "attack:3",
+        "sourceKind": "native",
+        "targetId": "gift-preview-1",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 38.1,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3346.563666819524,
+          "y": 1280.3027741057738
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 38.1
+      },
+      {
+        "eventId": "native:attack:3:gift-preview-2:blade",
+        "rootEventId": "action:attack:3",
+        "parentEventId": null,
+        "attackInstanceId": "attack:3",
+        "sourceKind": "native",
+        "targetId": "gift-preview-2",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 38.1,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3269.960941911161,
+          "y": 1322.567380757661
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 38.1
+      },
+      {
+        "eventId": "native:attack:3:gift-preview-3:blade",
+        "rootEventId": "action:attack:3",
+        "parentEventId": null,
+        "attackInstanceId": "attack:3",
+        "sourceKind": "native",
+        "targetId": "gift-preview-3",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 38.1,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3269.960941911161,
+          "y": 1237.432619242339
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 38.1
+      },
+      {
+        "eventId": "native:attack:4:gift-preview-0:blade",
+        "rootEventId": "action:attack:4",
+        "parentEventId": null,
+        "attackInstanceId": "attack:4",
+        "sourceKind": "native",
+        "targetId": "gift-preview-0",
+        "tags": [
+          "native",
+          "melee_hit",
+          "finisher",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 58.8,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3308.9726184605643,
+          "y": 1279.3975565333112
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 58.8
+      },
+      {
+        "eventId": "rune:2",
+        "rootEventId": "action:attack:4",
+        "parentEventId": "native:attack:4:gift-preview-0:blade",
+        "attackInstanceId": "attack:4",
+        "sourceKind": "rune",
+        "targetId": "gift-preview-0",
+        "tags": [
+          "wind_gift",
+          "hundredCuts"
+        ],
+        "procDepth": 1,
+        "amount": 7.2,
+        "A": 18,
+        "point": {
+          "x": 3308.9726184605643,
+          "y": 1279.3975565333112
+        },
+        "origin": {
+          "x": 3308.9726184605643,
+          "y": 1279.3975565333112
+        },
+        "actual": 7.2
+      },
+      {
+        "eventId": "native:attack:4:gift-preview-1:blade",
+        "rootEventId": "action:attack:4",
+        "parentEventId": null,
+        "attackInstanceId": "attack:4",
+        "sourceKind": "native",
+        "targetId": "gift-preview-1",
+        "tags": [
+          "native",
+          "melee_hit",
+          "finisher",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 58.8,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3373.563577278342,
+          "y": 1280.3723098217506
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 58.8
+      },
+      {
+        "eventId": "native:attack:4:gift-preview-2:blade",
+        "rootEventId": "action:attack:4",
+        "parentEventId": null,
+        "attackInstanceId": "attack:4",
+        "sourceKind": "native",
+        "targetId": "gift-preview-2",
+        "tags": [
+          "native",
+          "melee_hit",
+          "finisher",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 58.8,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3286.9358523376545,
+          "y": 1339.2227873697366
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 58.8
+      },
+      {
+        "eventId": "native:attack:4:gift-preview-3:blade",
+        "rootEventId": "action:attack:4",
+        "parentEventId": null,
+        "attackInstanceId": "attack:4",
+        "sourceKind": "native",
+        "targetId": "gift-preview-3",
+        "tags": [
+          "native",
+          "melee_hit",
+          "finisher",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 58.8,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3286.9358523376545,
+          "y": 1220.7772126302634
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 58.8
+      },
+      {
+        "eventId": "rune:13",
+        "rootEventId": "action:attack:4",
+        "parentEventId": "native:attack:4:gift-preview-0:blade",
+        "attackInstanceId": "attack:4",
+        "sourceKind": "rune",
+        "targetId": "gift-preview-0",
+        "tags": [
+          "wind_gift",
+          "aftershock"
+        ],
+        "procDepth": 1,
+        "amount": 11.700000000000001,
+        "A": 18,
+        "point": {
+          "x": 3343.4708426739426,
+          "y": 1279.047350915885
+        },
+        "origin": {
+          "x": 3308.9726184605643,
+          "y": 1279.3975565333112
+        },
+        "actual": 11.700000000000001
+      },
+      {
+        "eventId": "rune:15",
+        "rootEventId": "action:attack:4",
+        "parentEventId": "native:attack:4:gift-preview-0:blade",
+        "attackInstanceId": "attack:4",
+        "sourceKind": "rune",
+        "targetId": "gift-preview-3",
+        "tags": [
+          "wind_gift",
+          "aftershock"
+        ],
+        "procDepth": 1,
+        "amount": 11.700000000000001,
+        "A": 18,
+        "point": {
+          "x": 3305.3267081589124,
+          "y": 1191.5781013884373
+        },
+        "origin": {
+          "x": 3308.9726184605643,
+          "y": 1279.3975565333112
+        },
+        "actual": 11.700000000000001
+      },
+      {
+        "eventId": "rune:17",
+        "rootEventId": "action:attack:4",
+        "parentEventId": "native:attack:4:gift-preview-0:blade",
+        "attackInstanceId": "attack:4",
+        "sourceKind": "rune",
+        "targetId": "gift-preview-2",
+        "tags": [
+          "wind_gift",
+          "aftershock"
+        ],
+        "procDepth": 1,
+        "amount": 11.700000000000001,
+        "A": 18,
+        "point": {
+          "x": 3305.3267081589124,
+          "y": 1368.4218986115627
+        },
+        "origin": {
+          "x": 3308.9726184605643,
+          "y": 1279.3975565333112
+        },
+        "actual": 11.700000000000001
+      },
+      {
+        "eventId": "rune:19",
+        "rootEventId": "action:attack:4",
+        "parentEventId": "native:attack:4:gift-preview-0:blade",
+        "attackInstanceId": "attack:4",
+        "sourceKind": "rune",
+        "targetId": "gift-preview-1",
+        "tags": [
+          "wind_gift",
+          "aftershock"
+        ],
+        "procDepth": 1,
+        "amount": 11.700000000000001,
+        "A": 18,
+        "point": {
+          "x": 3409.563413861208,
+          "y": 1280.4807810479529
+        },
+        "origin": {
+          "x": 3308.9726184605643,
+          "y": 1279.3975565333112
+        },
+        "actual": 11.700000000000001
+      },
+      {
+        "eventId": "native:attack:5:gift-preview-0:blade",
+        "rootEventId": "action:attack:5",
+        "parentEventId": null,
+        "attackInstanceId": "attack:5",
+        "sourceKind": "native",
+        "targetId": "gift-preview-0",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 24.660000000000004,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3331.771642458149,
+          "y": 1279.1841511747834
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 24.660000000000004
+      },
+      {
+        "eventId": "native:attack:5:gift-preview-2:blade",
+        "rootEventId": "action:attack:5",
+        "parentEventId": null,
+        "attackInstanceId": "attack:5",
+        "sourceKind": "native",
+        "targetId": "gift-preview-2",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 24.660000000000004,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3297.802450525384,
+          "y": 1353.066262933926
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 24.660000000000004
+      },
+      {
+        "eventId": "native:attack:5:gift-preview-3:blade",
+        "rootEventId": "action:attack:5",
+        "parentEventId": null,
+        "attackInstanceId": "attack:5",
+        "sourceKind": "native",
+        "targetId": "gift-preview-3",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 24.660000000000004,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3297.802450525384,
+          "y": 1206.933737066074
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 24.660000000000004
+      },
+      {
+        "eventId": "native:attack:6:gift-preview-0:blade",
+        "rootEventId": "action:attack:6",
+        "parentEventId": null,
+        "attackInstanceId": "attack:6",
+        "sourceKind": "native",
+        "targetId": "gift-preview-0",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 25.4,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3336.7713006700264,
+          "y": 1279.1256895256818
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 25.4
+      },
+      {
+        "eventId": "native:attack:6:gift-preview-3:blade",
+        "rootEventId": "action:attack:6",
+        "parentEventId": null,
+        "attackInstanceId": "attack:6",
+        "sourceKind": "native",
+        "targetId": "gift-preview-3",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 25.4,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3296.420231882304,
+          "y": 1213.383483096582
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 25.4
+      },
+      {
+        "eventId": "native:attack:6:gift-preview-1:blade",
+        "rootEventId": "action:attack:6",
+        "parentEventId": null,
+        "attackInstanceId": "attack:6",
+        "sourceKind": "native",
+        "targetId": "gift-preview-1",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 30.4,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3409.563413861208,
+          "y": 1280.4807810479529
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 30.4
+      },
+      {
+        "eventId": "native:attack:7:gift-preview-0:blade",
+        "rootEventId": "action:attack:7",
+        "parentEventId": null,
+        "attackInstanceId": "attack:7",
+        "sourceKind": "native",
+        "targetId": "gift-preview-0",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 38.1,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3343.7705996011805,
+          "y": 1279.026621507006
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 38.1
+      },
+      {
+        "eventId": "native:attack:7:gift-preview-1:blade",
+        "rootEventId": "action:attack:7",
+        "parentEventId": null,
+        "attackInstanceId": "attack:7",
+        "sourceKind": "native",
+        "targetId": "gift-preview-1",
+        "tags": [
+          "native",
+          "melee_hit",
+          "strike",
+          "blade"
+        ],
+        "procDepth": 0,
+        "amount": 38.1,
+        "critical": false,
+        "A": 18,
+        "point": {
+          "x": 3416.5633646722704,
+          "y": 1280.5070230506465
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "actual": 38.1
+      },
+      {
+        "eventId": "rune:24",
+        "rootEventId": "action:23",
+        "parentEventId": "action:23",
+        "attackInstanceId": "action:23",
+        "sourceKind": "rune",
+        "targetId": "gift-preview-0",
+        "tags": [
+          "wind_gift",
+          "residualWind"
+        ],
+        "procDepth": 1,
+        "amount": 3.6,
+        "A": 18,
+        "point": {
+          "x": 3269.9949999999985,
+          "y": 1280
+        },
+        "origin": {
+          "x": 3234.2289285886745,
+          "y": 1280
+        },
+        "actual": 3.6
+      },
+      {
+        "eventId": "rune:33",
+        "rootEventId": "action:27",
+        "parentEventId": "action:27",
+        "attackInstanceId": "action:27",
+        "sourceKind": "rune",
+        "targetId": "gift-preview-0",
+        "tags": [
+          "wind_gift",
+          "residualTide"
+        ],
+        "procDepth": 1,
+        "amount": 4.5,
+        "A": 18,
+        "point": {
+          "x": 3269.9949999999985,
+          "y": 1280
+        },
+        "origin": {
+          "x": 3289.999999999999,
+          "y": 1280
+        },
+        "actual": 4.5
+      },
+      {
+        "eventId": "rune:35",
+        "rootEventId": "action:27",
+        "parentEventId": "action:27",
+        "attackInstanceId": "action:27",
+        "sourceKind": "rune",
+        "targetId": "gift-preview-2",
+        "tags": [
+          "wind_gift",
+          "residualTide"
+        ],
+        "procDepth": 1,
+        "amount": 4.5,
+        "A": 18,
+        "point": {
+          "x": 3270.9917836210025,
+          "y": 1322.4653052184099
+        },
+        "origin": {
+          "x": 3289.999999999999,
+          "y": 1280
+        },
+        "actual": 4.5
+      },
+      {
+        "eventId": "rune:37",
+        "rootEventId": "action:27",
+        "parentEventId": "action:27",
+        "attackInstanceId": "action:27",
+        "sourceKind": "rune",
+        "targetId": "gift-preview-3",
+        "tags": [
+          "wind_gift",
+          "residualTide"
+        ],
+        "procDepth": 1,
+        "amount": 4.5,
+        "A": 18,
+        "point": {
+          "x": 3270.9917836210025,
+          "y": 1237.5346947815901
+        },
+        "origin": {
+          "x": 3289.999999999999,
+          "y": 1280
+        },
+        "actual": 4.5
+      },
+      {
+        "eventId": "rune:39",
+        "rootEventId": "action:27",
+        "parentEventId": "action:27",
+        "attackInstanceId": "action:27",
+        "sourceKind": "rune",
+        "targetId": "gift-preview-1",
+        "tags": [
+          "wind_gift",
+          "residualTide"
+        ],
+        "procDepth": 1,
+        "amount": 4.5,
+        "A": 18,
+        "point": {
+          "x": 3340,
+          "y": 1280
+        },
+        "origin": {
+          "x": 3289.999999999999,
+          "y": 1280
+        },
+        "actual": 4.5
+      },
+      {
+        "eventId": "rune:49",
+        "rootEventId": "action:48",
+        "parentEventId": "action:48",
+        "attackInstanceId": "action:48",
+        "sourceKind": "rune",
+        "targetId": "gift-preview-0",
+        "tags": [
+          "wind_gift",
+          "residualWind"
+        ],
+        "procDepth": 1,
+        "amount": 3.6,
+        "A": 18,
+        "point": {
+          "x": 3300.8452023735385,
+          "y": 1248.256684421879
+        },
+        "origin": {
+          "x": 3302.398533733375,
+          "y": 1261.0220441593544
+        },
+        "actual": 3.6
+      },
+      {
+        "eventId": "rune:52",
+        "rootEventId": "action:51",
+        "parentEventId": "action:51",
+        "attackInstanceId": "action:51",
+        "sourceKind": "rune",
+        "targetId": "gift-preview-2",
+        "tags": [
+          "wind_gift",
+          "residualWind"
+        ],
+        "procDepth": 1,
+        "amount": 3.6,
+        "A": 18,
+        "point": {
+          "x": 3301.941825252293,
+          "y": 1258.7387083973626
+        },
+        "origin": {
+          "x": 3302.398533733375,
+          "y": 1261.0220441593544
+        },
+        "actual": 3.6
+      },
+      {
+        "eventId": "rune:55",
+        "rootEventId": "action:54",
+        "parentEventId": "action:54",
+        "attackInstanceId": "action:54",
+        "sourceKind": "rune",
+        "targetId": "gift-preview-3",
+        "tags": [
+          "wind_gift",
+          "residualWind"
+        ],
+        "procDepth": 1,
+        "amount": 3.6,
+        "A": 18,
+        "point": {
+          "x": 3328.409073401638,
+          "y": 1259.8688500915528
+        },
+        "origin": {
+          "x": 3302.549605175169,
+          "y": 1261.0220441593544
+        },
+        "actual": 3.6
+      },
+      {
+        "eventId": "rune:58",
+        "rootEventId": "action:57",
+        "parentEventId": "action:57",
+        "attackInstanceId": "action:57",
+        "sourceKind": "rune",
+        "targetId": "gift-preview-1",
+        "tags": [
+          "wind_gift",
+          "residualWind"
+        ],
+        "procDepth": 1,
+        "amount": 3.6,
+        "A": 18,
+        "point": {
+          "x": 3340,
+          "y": 1280
+        },
+        "origin": {
+          "x": 3310.843105175133,
+          "y": 1261.0220441593544
+        },
+        "actual": 3.6
+      }
+    ],
+    "metrics": {
+      "native": 23,
+      "rune": 14,
+      "duo": 0,
+      "status": 0,
+      "damage": 871.0600000000002,
+      "critical": 0,
+      "phoenix": 0,
+      "prevented": 0
+    },
+    "temporary": {
+      "feathers": 0,
+      "immune": false,
+      "domain": 0,
+      "bossGuard": 0
+    },
+    "pending": 0,
+    "blackHole": {
+      "metrics": {
+        "rolls": 0,
+        "procs": 0,
+        "slashHits": 0,
+        "dotDamage": 0,
+        "pulled": 0
+      },
+      "blades": [],
+      "rifts": []
+    },
+    "windGifts": {
+      "metrics": {
+        "derived": 9,
+        "healed": 0,
+        "shielded": 8,
+        "pulled": 0,
+        "echoes": 0,
+        "resonances": 0
+      },
+      "shield": 0,
+      "companionShield": 0,
+      "slow": [],
+      "jobs": 0,
+      "zones": 0,
+      "echoes": [],
+      "resonances": 9
+    },
+    "visual": {
+      "materials": 0,
+      "visible": 0,
+      "lightning": []
+    },
+    "lock": "交战中，需脱战八秒",
+    "destination": {
+      "id": "initial",
+      "point": {
+        "x": 670,
+        "y": 720
+      }
+    }
+  },
+  "敌人": [
+    {
+      "编号": "gift-preview-0",
+      "生命": 1988.3000000000002,
+      "位置": {
+        "x": 3300.8452023735385,
+        "y": 1248.256684421879
+      },
+      "减速": 0,
+      "失衡": 0
+    },
+    {
+      "编号": "gift-preview-1",
+      "生命": 1991.9,
+      "位置": {
+        "x": 3340,
+        "y": 1280
+      },
+      "减速": 0,
+      "失衡": 0
+    },
+    {
+      "编号": "gift-preview-2",
+      "生命": 1991.9,
+      "位置": {
+        "x": 3301.6749063568013,
+        "y": 1260.7337574659327
+      },
+      "减速": 0,
+      "失衡": 0
+    },
+    {
+      "编号": "gift-preview-3",
+      "生命": 1991.9,
+      "位置": {
+        "x": 3328.409073401638,
+        "y": 1259.8688500915528
+      },
+      "减速": 0,
+      "失衡": 0
+    }
+  ]
+}

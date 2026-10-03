@@ -151,6 +151,11 @@ export function motionLineBlocker(a: Point, b: Point, ignore?: string) {
 }
 export const clearMotionLine = (a: Point, b: Point, ignore?: string) =>
   !motionLineBlocker(a, b, ignore);
+// 实体树石可穿；剧情门、未修捷径、建筑空间边界和水域仍逐段阻挡。
+export function clearPhaseLine(a: Point,b: Point) {
+  const hard=props.filter(p=>p.id.startsWith('barrier-')||p.id.endsWith('-seal')||p.id==='west-gate-barrier'||['house','shop','smith-building','inn-building','tower'].includes(p.art));
+  return !terrainLineBlocker(a,b,'motion')&&!propLineBlocker(a,b,'motion',undefined,hard);
+}
 export function meleeBlocker(a: Point, b: Point, targetId?: string) {
   // 仅训练靶攻击可豁免自身底座。敌人ID、普通物体ID不获得任意豁免。
   const ignore =

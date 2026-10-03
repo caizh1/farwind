@@ -2,24 +2,50 @@ import {describe,it,expect} from "vitest";
 import {ENCOUNTERS,ENCOUNTER_UNITS} from "../src/data/maps/windbell/encounters";
 import {initialEncounters,validateEncounters,settleEncounterDeath,advanceEncounters,resetEncounter,unitState} from "../src/game/systems/encounterState";
 import {regionalThreat,sourceAllowsRaid} from "../src/game/systems/wildThreat";
-import {WildernessEncounters} from "../src/game/systems/encounterRuntime";
+import {WildernessEncounters,SPAWN_CUE} from "../src/game/systems/encounterRuntime";
 import {ENEMY_PURSUIT,enemyLeashRadius,enemyNavigation,type EnemyBody} from "../src/game/systems/enemy";
 import {motionBlocked,clearMotionLine} from "../src/game/systems/obstacles";
 const outsideView={left:0,right:1600,top:0,bottom:1400};
 function harness(){const data=initialEncounters(42);delete data.seed;let bodies:EnemyBody[]=[];const busy=new Set<string>();const runtime=new WildernessEncounters({read:()=>data,bodies:()=>bodies,spawn:(d,s)=>{bodies.push({...d,hp:s.hp,x:s.x,y:s.y,homeX:d.x,homeY:d.y,cool:0,windup:0,staggerUntil:0,attackSerial:s.serial,nav:enemyNavigation(),ai:"家园",disabled:false,recovered:false});},release:id=>{bodies=bodies.filter(e=>e.id!==id);},busy:id=>busy.has(id)});return {data,runtime,bodies:()=>bodies,busy};}
 describe("首条荒野遭遇与据点闭环",()=>{
+ it('光圈先于身体、固定出生位置，重复更新与恢复不跳过预告',()=>{
+  const h=harness(),p={x:900,y:1000};h.runtime.update(20,20,p,outsideView);
+  const cues=[...h.runtime.arrivals.values()].map(c=>({...c}));expect(cues).toHaveLength(3);
+  expect(validateEncounters(h.data)).toEqual(h.data);h.runtime.restore(p,20);
+  h.runtime.update(0,20,p,outsideView);h.runtime.update(20,20+SPAWN_CUE.lead-1,p,outsideView);
+  expect(h.bodies()).toHaveLength(0);expect(h.runtime.pendingCount).toBe(3);
+  h.runtime.update(1,20+SPAWN_CUE.lead,p,outsideView);
+  for(const c of cues){const e=h.bodies().find(e=>e.id===c.id)!;expect({x:e.x,y:e.y}).toEqual({x:c.x,y:c.y});}
+  expect(h.runtime.pendingCount).toBe(0);h.runtime.update(SPAWN_CUE.fade,20+SPAWN_CUE.lead+SPAWN_CUE.fade,p,outsideView);
+  expect(h.runtime.arrivals.size).toBe(0);expect(h.bodies()).toHaveLength(3);
+ });
+ it('预告中保存后重建会重新预告，伤势与成员身份不丢失',()=>{
+  const h=harness(),p={x:900,y:1000};h.runtime.update(20,20,p,outsideView);
+  const saved=validateEncounters(JSON.parse(JSON.stringify(h.data))),ids=[...h.runtime.arrivals.keys()];let bodies:EnemyBody[]=[];
+  const restored=new WildernessEncounters({read:()=>saved,bodies:()=>bodies,busy:()=>false,release:()=>{},spawn:(m,u)=>bodies.push({...m,hp:u.hp,x:u.x,y:u.y,nav:enemyNavigation()} as EnemyBody)});
+  restored.restore(p,1000);expect([...restored.arrivals.keys()]).toEqual(ids);expect(bodies).toHaveLength(0);
+  restored.update(20,1899,p,outsideView);expect(bodies).toHaveLength(0);restored.update(1,1900,p,outsideView);
+  expect(bodies.map(e=>e.id)).toEqual(ids);expect(validateEncounters(saved)).toEqual(saved);
+ });
+ it('撤离取消未落地光圈，返回时重新预告且保存失败阻止生成',()=>{
+  const h=harness(),p={x:900,y:1000};h.runtime.update(20,20,p,outsideView);
+  h.runtime.update(20,40,{x:-1800,y:1000},outsideView);expect(h.runtime.arrivals.has('wild-reed-slime')).toBe(false);
+  h.runtime.update(20,60,p,outsideView);const cue=h.runtime.arrivals.get('wild-reed-slime')!;expect(cue.startedAt).toBe(60);
+  h.runtime.checkpointFailed=true;h.runtime.update(20,960,p,outsideView);expect(h.bodies()).toHaveLength(0);
+  h.runtime.confirmed();h.runtime.update(20,980,p,outsideView);expect(h.bodies().some(e=>e.id===cue.id)).toBe(true);
+ });
  it("固定组与成员身份唯一，出生和巡逻路径不穿越实际地形",()=>{
   expect(new Set(ENCOUNTERS.map(g=>g.id)).size).toBe(ENCOUNTERS.length);expect(new Set(ENCOUNTER_UNITS.map(u=>u.id)).size).toBe(ENCOUNTER_UNITS.length);
   for(const d of ENCOUNTERS)for(const m of d.members){expect(motionBlocked(m.x,m.y),m.id).toBe(false);for(const p of d.patrol){const target={x:m.x+p.x-d.patrol[0].x,y:m.y+p.y-d.patrol[0].y};expect(motionBlocked(target.x,target.y),m.id).toBe(false);expect(clearMotionLine(m,target),m.id).toBe(true);}}
  });
  it("初次出现遵守距离与视野，不反复生成同一身体",()=>{
   const h=harness();h.runtime.update(20,20,{x:900,y:1000},{left:-2110,right:4290,top:-1380,bottom:3420});expect(h.bodies()).toHaveLength(0);
-  h.runtime.update(20,40,{x:900,y:1000},outsideView);expect(h.bodies().map(e=>e.id)).toEqual(["wild-reed-slime","wild-reed-spore","wild-margin-slime"]);
-  h.runtime.restore({x:900,y:1000});h.runtime.update(20,60,{x:900,y:1000},outsideView);expect(h.bodies()).toHaveLength(3);expect(new Set(h.bodies().map(e=>e.id)).size).toBe(3);expect(validateEncounters(h.data)).toEqual(h.data);
+  h.runtime.update(20,40,{x:900,y:1000},outsideView);expect(h.bodies()).toHaveLength(0);expect(h.runtime.pendingCount).toBe(3);h.runtime.update(20,940,{x:900,y:1000},outsideView);expect(h.bodies().map(e=>e.id)).toEqual(["wild-reed-slime","wild-reed-spore","wild-margin-slime"]);
+  h.runtime.restore({x:900,y:1000});h.runtime.update(20,960,{x:900,y:1000},outsideView);expect(h.bodies()).toHaveLength(3);expect(new Set(h.bodies().map(e=>e.id)).size).toBe(3);expect(validateEncounters(h.data)).toEqual(h.data);
  });
  it("远处休眠保留伤势与身份，交战或在途事件不被卸载",()=>{
-  const h=harness(),reed=()=>h.bodies().filter(e=>e.id==='wild-reed-slime');h.runtime.update(20,20,{x:900,y:1000},outsideView);reed()[0].hp=19;h.busy.add("wild-reed-slime");h.runtime.update(20,40,{x:-1800,y:1000},outsideView);expect(reed()).toHaveLength(1);
-  h.busy.clear();h.runtime.update(20,60,{x:-1800,y:1000},outsideView);expect(reed()).toHaveLength(0);expect(unitState(h.data,"wild-reed-slime")!.hp).toBe(19);
+  const h=harness(),reed=()=>h.bodies().filter(e=>e.id==='wild-reed-slime');h.runtime.update(20,20,{x:900,y:1000},outsideView);h.runtime.update(20,920,{x:900,y:1000},outsideView);reed()[0].hp=19;h.busy.add("wild-reed-slime");h.runtime.update(20,940,{x:-1800,y:1000},outsideView);expect(reed()).toHaveLength(1);
+  h.busy.clear();h.runtime.update(20,960,{x:-1800,y:1000},outsideView);expect(reed()).toHaveLength(0);expect(unitState(h.data,"wild-reed-slime")!.hp).toBe(19);
   h.runtime.restore({x:900,y:1000});expect(reed()).toHaveLength(1);expect(reed()[0].hp).toBe(19);expect(validateEncounters(h.data)).toEqual(h.data);
  });
  it("多条死亡通知只结算一次，卫兵代杀不创建可刷取掉落",()=>{
@@ -68,7 +94,7 @@ describe("南路委托保存与来源调度",()=>{
 
 import {updateEnemy} from "../src/game/systems/enemy";
 it("巡逻不取消正常仇恨，脱离活动范围后按原家园返回",()=>{
- const h=harness();h.runtime.update(20,20,{x:900,y:1000},outsideView);const e=h.bodies()[0];e.patrolTarget={x:1170,y:2050};e.leashRadius=260;
+ const h=harness();h.runtime.update(20,20,{x:900,y:1000},outsideView);h.runtime.update(20,920,{x:900,y:1000},outsideView);const e=h.bodies()[0];e.patrolTarget={x:1170,y:2050};e.leashRadius=260;
  for(let now=20;now<1500;now+=20)updateEnemy(e,{x:900,y:1000},now,20,{queries:2});expect(e.x).toBeGreaterThan(1080);
  const target={x:e.x+140,y:e.y+25};updateEnemy(e,target,1520,20,{queries:2});expect(e.nav.mode).toBe("chase");
  updateEnemy(e,{x:3000,y:3000},1540,20,{queries:2});expect(e.nav.returning).toBe(false);
@@ -94,5 +120,5 @@ it("前庭增援以真实清剿触发，预警期间无身体，结束后只生�
  h.runtime.update(20,40,player,view);expect(g.warning).toBe(2500);expect(h.bodies().filter(e=>flank.members.some(m=>m.id===e.id))).toHaveLength(0);
  for(let i=1;i<=9;i++)h.runtime.update(250,40+i*250,player,view);expect(g.activated).toBe(false);
  h.runtime.update(250,2540,player,view);expect(g.activated).toBe(true);expect(g.warning).toBeNull();
- h.runtime.update(20,2560,player,view);expect(h.bodies().filter(e=>flank.members.some(m=>m.id===e.id))).toHaveLength(2);expect(validateEncounters(h.data)).toEqual(h.data);
+ h.runtime.update(20,3440,player,view);expect(h.bodies().filter(e=>flank.members.some(m=>m.id===e.id))).toHaveLength(2);expect(validateEncounters(h.data)).toEqual(h.data);
 });

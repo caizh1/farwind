@@ -1,0 +1,8 @@
+import {createServer} from 'vite';
+import {readFileSync,existsSync} from 'node:fs';
+import {fileURLToPath} from 'node:url';
+import {resolve} from 'node:path';
+const root=fileURLToPath(new URL('../',import.meta.url)),before=process.argv.includes('--before'),port=before?5308:5309;
+if(before&&(!existsSync(resolve(root,'.art-quality-local/baseline/index.html'))||!existsSync(resolve(root,'.art-quality-local/source-before/game/scenes/World.ts'))))throw Error('修改前冻结副本已清理，请查看docs/art-quality下的截图、帧时间和源码差异证据；不能把当前工作树冒充修改前画面。');
+const server=await createServer({root,server:{host:'127.0.0.1',port,strictPort:true,hmr:before?false:undefined,watch:before?{ignored:['**/src/**','**/public/**']}:undefined},plugins:before?[{name:'材质修改前冻结对照',enforce:'pre',transform(code,id){const path=id.split('?')[0],prefix=resolve(root,'src')+'/';if(path.startsWith(prefix)){const saved=resolve(root,'.art-quality-local/source-before',path.slice(prefix.length));if(existsSync(saved))return {code:readFileSync(saved,'utf8'),map:null};}},configureServer(server){server.middlewares.use((req,res,next)=>{if(!req.url?.startsWith('/assets/'))return next();const path=resolve(root,'.art-quality-local/baseline',decodeURIComponent(req.url.split('?')[0]).slice(1));if(!path.startsWith(resolve(root,'.art-quality-local/baseline')+'/')||!existsSync(path))return next();res.setHeader('Content-Type',path.endsWith('.webp')?'image/webp':path.endsWith('.png')?'image/png':'application/octet-stream');res.end(readFileSync(path));});}}]:[]});
+await server.listen();console.log(`材质${before?'修改前':'当前工作树'}验收：http://127.0.0.1:${port}/tools/art-quality-preview.html?site=plaza`);

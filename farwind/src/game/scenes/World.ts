@@ -1,11 +1,12 @@
 import {activeHostileCount} from '../systems/combatUnitBudget';
+import {CAMP_NESTS,CAMP_NEST_GROUND,campNestPresentation} from '../../data/campNests';
 import {observeCombat} from '../systems/combatObservation';
 import {bossGroundContains,bossGroundBlocks} from '../systems/meleeGeometry';
 import {updateSummonSupport} from '../systems/summonSupport';
 import {startWindMemory,endWindMemory,memoryGold} from '../systems/windMemory';
 import {ADVENTURE_ROUTES,adventureIndex,type WildernessDirection} from '../../data/maps/windbell/encounters';
 import {updateBossEnvironment,defeatBossSummon} from '../systems/bossEnvironment';
-import {giftValue,offerWindGift,giftChoiceSnapshot} from '../systems/windGifts';
+import {giftCappedValue,giftValue,offerWindGift,giftChoiceSnapshot} from '../systems/windGifts';
 const xiaobaoLifeCheck=typeof location!=='undefined'&&new URLSearchParams(location.search).has('xiaobaoLifeCheck');
 import {encounterDefinitions} from '../systems/encounterState';
 import {requestXiaobaoTask} from '../systems/xiaobaoLife';
@@ -24,6 +25,7 @@ import {refreshFungalShields,takeFungalBlast,fungalBlastContact,validFungalBlast
 import {RuneWorld} from '../systems/runeWorld';
 import type {RuneEvent} from '../systems/runeCombat';
 import {arenaImpact} from "../systems/eliteArena";
+import {consumables} from '../../data/content';
 import { RETURN_WIND_ORB } from "../../data/economy";
 import {ARENA_STONES,creatureMaxHP,type EliteKind} from "../../data/maps/windbell/elites";
 import {enemyProtection} from '../systems/enemyTraits';
@@ -48,7 +50,9 @@ import { WaterEffects } from "../systems/waterEffects";
 import {NpcLife} from '../systems/npcLife';
 import {NpcLifeView} from '../entities/npcLifeView';
 import {lifeTargets,attachLifeUi,showNotes,enterShop} from '../ui/npcLife';
-import {spaceBlocked,spaceClear} from '../systems/npcNavigation';
+import {spaceBlocked,spaceClear,clearPhaseSpace} from '../systems/npcNavigation';
+import {phaseStepDestination} from '../systems/phaseStep';
+import {clearBodyMotion} from '../systems/combat';
 import {CombatFeedback,feedbackVisual,feedbackAudio,hitFeedbackKind,feedbackContactDepth,parryContactPoint,deflectDirection,unit,type FeedbackKind,type FeedbackEvent} from "../systems/combatFeedback";
 import {CombatFeedbackView} from "../entities/combatFeedbackView";
 import { economySnapshot, outgoingDamage, incomingDamage, movementSpeed, type EconomyRequest } from "../systems/economy";
@@ -91,6 +95,7 @@ import { DayNightView } from "../rendering/dayNightView";
 import { lightAt } from "../systems/worldClock";
 import { advanceTime } from "../systems/worldClock";
 import { adjudicateContact, orderedContacts } from "../systems/contact";
+import {drawHeroDanger,hazardWarningAt} from '../entities/attackWarningView';
 import {sampleEnemyAttack,predictEnemyContact,warningQuality,type EnemyContact} from "../systems/enemyAttack";
 import { ParryTraining, type PracticeMode } from "../systems/parryTraining";
 import { WeaponTrail } from "../systems/weaponTrail";
@@ -117,6 +122,9 @@ import { makeTerrain } from "../systems/terrain";
 import Phaser from "phaser";
 import { props, roads, enemyDefs, region, type Prop } from "../../data/world";
 import { VILLAGE_HOUSE_ART } from "../../data/villageHouseArt";
+import {ART_QUALITY,appearanceFor} from '../../data/worldAppearance';
+import {groundShadows} from '../rendering/groundShadows';
+import {dynamicShadowProp,enemyShadowSize} from '../rendering/shadowGeometry';
 import { items, type ItemId } from "../../data/content";
 import {
   COMBAT_ACTION_ART,
@@ -256,6 +264,11 @@ export class World extends Phaser.Scene {
     super(key);
   }
   preload() {
+    for(const ground of Object.values(CAMP_NEST_GROUND))this.load.image(ground.texture,`/assets/camp-nests/${ground.texture}.webp`);
+    for(const nest of Object.values(CAMP_NESTS))this.load.image(nest.texture,`/assets/camp-nests/${nest.texture}.webp`);
+    for(const name of ART_QUALITY.decorations)this.load.image(`quality-${name}`,`/assets/art-quality/${name}.webp`);
+    this.load.image('quality-plaque','/assets/art-quality/plaque.webp');
+    this.load.image('training-book','/assets/art-quality/training-book.webp');
     Actor.preloadScope(this);
     WindLessons.preload(this);
     for(const id of INTERIOR_ASSETS) this.load.image(`interior-${id}`, `/assets/village-interiors/${id}.webp`);
@@ -381,19 +394,22 @@ export class World extends Phaser.Scene {
       return;
     }
     this.makeTerrain();
+    this.data.set('shadowSettings',()=>({time:this.state.time,indoor:this.state.life.playerSpace!=='village',floor:WORLD.top-950}));
     this.enemyView=new EnemyView(this);
     this.defenseView = new DefendersView(this);
     this.lifeView=new NpcLifeView(this);
     this.xiaobao = new XiaobaoView(this);
     attachLifeUi(this);
     props.forEach((p) => {
+      const key=VILLAGE_HOUSE_ART[p.id]??p.art,frame=this.textures.getFrame(key,p.frame??'__BASE'),appearance=appearanceFor(p,frame?{width:frame.cutWidth,height:frame.cutHeight}:undefined);
       const im = this.add
-        .image(p.displayAt?.x ?? p.x, p.displayAt?.y ?? p.y, VILLAGE_HOUSE_ART[p.id] ?? p.art, p.frame ?? 0)
+        .image(p.displayAt?.x ?? p.x, p.displayAt?.y ?? p.y, appearance.texture, p.art==='bush'?0:p.frame??0)
         .setOrigin(0.5, 1)
-        .setDisplaySize(p.w, p.h)
+        .setDisplaySize(appearance.width, appearance.height)
         .setDepth(p.depth ?? p.y);
       if(p.kind==="npc")im.setVisible(false);
       this.propImages.set(p.id, im);
+      if(dynamicShadowProp(p))groundShadows(this).add(im,undefined,{label:'场景物件 · '+p.id,width:Math.max(22,Math.min(140,appearance.width*.65)),height:Math.max(10,Math.min(25,appearance.width*.18))});
     });
     this.waterEffects = new WaterEffects(this, this.propImages.get("plaza-fountain")!);
     this.trainingView = new TrainingDummyView(this, this.training);
@@ -465,7 +481,7 @@ export class World extends Phaser.Scene {
       memoryStart:direction=>this.changeWindMemory(direction),
       memoryEnd:()=>this.changeWindMemory(),
       giftSaved:receipt=>!!this.loaded?.windGifts.pending.some(c=>c.receipt===receipt),
-      giftChoose:async(receipt,id,replace)=>{if(!this.loaded?.windGifts.pending.some(c=>c.receipt===receipt))throw Error('候选尚未保存，请先保存旅途。');await this.economy.run(()=>this.state,s=>giftChoiceSnapshot(s,receipt,id,replace),save,next=>this.publishState(next));},
+      giftChoose:async(receipt,id)=>{if(!this.loaded?.windGifts.pending.some(c=>c.receipt===receipt))throw Error('候选尚未保存，请先保存旅途。');await this.economy.run(()=>this.state,s=>giftChoiceSnapshot(s,receipt,id),save,next=>{this.publishState(next);this.runes?.gifts.visual(id);});},
       getIndicators:()=>this.practice.indicators,
       volume: (v) => (this.soundFx.volume = v),
       getVolume: () => this.soundFx.volume,
@@ -474,6 +490,8 @@ export class World extends Phaser.Scene {
     this.keys.enabled=()=>this.active&&!this.ui.paused&&!this.defenseSaving&&!this.sessionStarting&&!Boolean(this.economy.busy);
     this.combatNumbers=this.ui.hudPreferences.combatNumbers;this.combatShake=this.ui.hudPreferences.combatShake?.35:0;
     if(import.meta.env.DEV&&new URLSearchParams(location.search).has("dayNightDebug"))void import("../systems/dayNightDebug").then(m=>m.installClockDebug(this));
+    if(import.meta.env.DEV&&new URLSearchParams(location.search).has('windGiftArena'))void import('../systems/windGiftArena').then(m=>m.installWindGiftArena(this));
+    if(import.meta.env.DEV&&new URLSearchParams(location.search).has('blackHoleArena'))void import('../systems/blackHoleArena').then(m=>m.installBlackHoleArena(this));
     if(import.meta.env.DEV&&new URLSearchParams(location.search).has('runeLab'))void import('../systems/runeLab').then(m=>m.installRuneLab(this));
     if(import.meta.env.DEV&&(new URLSearchParams(location.search).has('combatFeel')||new URLSearchParams(location.search).has('combatSlice')))void import('../systems/combatFeelDebug').then(m=>m.installCombatFeelDebug(this));
     this.keys.uiKey=(e)=>Boolean(this.ui.handleKey(e));
@@ -502,16 +520,20 @@ export class World extends Phaser.Scene {
         structuredClone({
           windAim:{target:this.windAim.target,enabled:this.state.equipment.head==='windScope'},
           equipmentVisual:this.hero.debug(),
+          warningLayers:{ground:this.enemyView.warningFill.depth,enemyEdges:[...this.enemyView.danger.values()].map(g=>g.depth),bossGround:this.enemyView.boss.warningFill.depth,bossEdges:this.enemyView.boss.warningEdge.depth,bossGroundEffects:this.enemyView.boss.effects.groundInk.depth,hero:this.hero.sprite.depth,heroShadow:this.hero.shadow.depth,overlay:this.warningInk?.depth},
           state: this.state,
+          campNests:ENCOUNTERS.filter(d=>d.kind==='camp').map(d=>{const im=this.propImages.get(d.direction==='south'?'south-camp-root':`camp-root-${d.id}`)!;return {direction:d.direction,texture:im.texture.key,x:im.x,y:im.y,width:im.displayWidth,height:im.displayHeight,alpha:im.alpha,depth:im.depth,tint:im.tintTopLeft};}),
           catCompanion:{...this.catCompanion.snapshot(this.state),position:{x:this.cat.sprite.x,y:this.cat.sprite.y},blocked:this.blocked(this.cat.sprite.x,this.cat.sprite.y)},
           runes: this.runes?.snapshot(),
           ground: this.data.get('groundSnapshot')?.(),
+          ...(import.meta.env.DEV?{shadows:this.data.get('shadowSnapshot')?.()}:{}),
           defense: this.defense.snapshot(),
           npcLife: this.life.snapshot(),
           npcLifeView: this.lifeView.snapshot(),
           defendersView: this.defenseView.snapshot(),
           xiaobao: this.xiaobao?.snapshot(),
           defenseSaving: this.defenseSaving,
+          sessionStarting: this.sessionStarting,
           defenseCheckpointPending: this.defenseCheckpointPending,
           ...(import.meta.env.DEV?{dayNight:{phase:lightAt(this.state.time),lights:this.dayNight.visibleLights,draws:this.dayNight.draws,loops:this.soundFx.loops.length,loopGains:this.soundFx.loops.map(l=>l.gain.gain.value),objects:this.children.length,textures:this.textures.getTextureKeys().length}}:{}),
           attackSerial: this.attackSerial,
@@ -584,7 +606,7 @@ export class World extends Phaser.Scene {
           bossPresentation:{hero:this.hero.debug(),combatFacing:this.battleFacing(),reaction:{visible:this.enemyView.boss.reaction.visible,text:this.enemyView.boss.reaction.text,root:[this.enemyView.boss.reaction.x,this.enemyView.boss.reaction.y]},camera:{view:{x:this.cameras.main.worldView.x,y:this.cameras.main.worldView.y},zoom:this.cameras.main.zoom}},
           bossContacts:this.contactHistory.filter(c=>c.id.startsWith('boss-')),
           bossProjectiles:this.enemyProjectiles.shots.filter(s=>s.attack.boss).map(s=>{const glyph=this.enemyView.shots.get(s.id);return {id:s.id,x:s.x,y:s.y,state:s.state,skill:s.attack.bossSkill,part:s.attack.bossPart,visual:glyph?{texture:glyph.texture.key,width:glyph.displayWidth,height:glyph.displayHeight,depth:glyph.depth}:null};}),
-          wilderness:{active:this.enemies.filter(e=>encounterUnit(e.id)&&e.hp>0).length,south:regionalThreat(this.state.encounters,"south")},
+          wilderness:{active:this.enemies.filter(e=>encounterUnit(e.id)&&e.hp>0).length,south:regionalThreat(this.state.encounters,"south"),arrivals:[...this.wilderness?.arrivals.values()??[]],spawnDepth:this.enemyView.spawnInk.depth},
           enemies: this.enemies.map((e) => ({
             id: e.id,
             x: e.x,
@@ -726,7 +748,7 @@ export class World extends Phaser.Scene {
       bossReset:id=>this.clearBossEffects(id),
     });
     const restoredBoss=ENCOUNTERS.find(d=>this.combatEncounters.groups[d.id].boss?.stage==='battle');if(restoredBoss)await this.enemyView.boss.assets.ensure(restoredBoss.members.find(m=>m.boss)!.boss!);
-    this.wilderness.restore(this.state.life.playerSpace==="village"?this.state.player:this.state.life.outside);
+    this.wilderness.restore(this.state.life.playerSpace==="village"?this.state.player:this.state.life.outside,this.sim);
     for(const saved of this.state.xiaobao.affected){const enemy=this.enemies.find(e=>e.id===saved.id);if(enemy&&!enemy.boss){Object.assign(enemy,{hp:saved.hp,x:saved.x,y:saved.y,staggerUntil:this.sim+saved.control,staggerSince:this.sim,companionControlGrace:this.sim+saved.control+saved.controlGrace,companionControlLimit:this.sim+saved.controlLimit});validateEnemyPosition(enemy);}}
     this.syncDrops();
     this.ui.close(true);
@@ -763,7 +785,8 @@ export class World extends Phaser.Scene {
   }
   async trade(request: EconomyRequest) {
     if(request.kind==="equip" && request.slot==="head" && (this.state.life.playerSpace!=="village" || regionAt(this.state.player).id!=="village" || this.runes?.lock()))throw Error("请在安全村庄脱战8秒且攻击结束后更换头部装备。");
-    await this.economy.run(() => this.state,s=>economySnapshot(request.kind==="sleep"?{...s,dashCooldownRemaining:Math.max(0,this.combat.dashCooldown-this.sim)}:s,request,this.sleepSafety()),save,next => {
+    let potionOverflow=0,potionHealed=false;
+    await this.economy.run(() => this.state,s=>{const next=economySnapshot(request.kind==="sleep"?{...s,dashCooldownRemaining:Math.max(0,this.combat.dashCooldown-this.sim)}:s,request,this.sleepSafety());potionHealed=request.kind==='consume'&&request.item==='potion'&&next.player.hp>s.player.hp;potionOverflow=request.kind==='consume'&&request.item==='potion'?Math.max(0,s.player.hp+(consumables.potion?.hp??0)*(1+giftValue(s.windGifts,'potion'))-playerVitals(s).maxHp):0;return next;},save,next => {
       this.state = next;
       this.loaded = structuredClone(next);
       this.ui.available = true;
@@ -772,6 +795,7 @@ export class World extends Phaser.Scene {
       if(request.kind === "rest") this.sprint.reset(next.player.stamina);
       this.refresh();
       this.ui.update(next, "");
+      if(potionHealed&&giftValue(next.windGifts,'potion'))this.runes?.gifts.visual('potion');if(potionOverflow)this.runes?.gifts.potionOverflow(potionOverflow);
       if(request.kind==="sleep")this.afterSleep();
     });
   }
@@ -872,7 +896,7 @@ export class World extends Phaser.Scene {
   receiveXiaobao(contact:EnemyContact,source:EnemyBody){
     const c=this.xiaobao?.controller;if(!c||c.data.space!=='village')return false;
     return c.receive(contact,source,event=>{const target={id:'xiaobao',hp:c.data.hp,faction:'village' as const,armor:12,...c.protection('xiaobao')},shot=contact.projectileId?this.enemyProjectiles.shots.find(s=>s.id===contact.projectileId):undefined;
-      const adjusted={...event,sourceScale:this.runes?.engine.enemyScale(source.id)??1};return shot?resolveReleasedDamage(adjusted,shot.released,target):resolveDamage(adjusted,{id:source.id,hp:source.hp,faction:'hostile',armor:0},target);},this.sim);
+      const adjusted={...event,sourceScale:this.runes?.engine.enemyScale(source.id)??1};const hit=shot?resolveReleasedDamage(adjusted,shot.released,target):resolveDamage(adjusted,{id:source.id,hp:source.hp,faction:'hostile',armor:0},target);if(!hit.applied)return hit;const damage=this.runes?.gifts.absorbCompanion(hit.damage)??hit.damage;return {...hit,damage,hp:Math.max(0,c.data.hp-damage),killed:damage>=c.data.hp};},this.sim);
   }
   enemyVictim(e:EnemyBody){
     const outside=this.state.life.playerSpace==='village',player=outside?this.state.player:{x:-10000,y:-10000,hp:0},c=this.xiaobao?.controller;
@@ -904,6 +928,8 @@ export class World extends Phaser.Scene {
     data.affected=this.enemies.filter(e=>!e.passiveRoot&&tracked.has(e.id)&&e.hp>0&&!e.disabled).map(e=>({id:e.id,hp:e.hp,x:e.x,y:e.y,control:Math.min(800,Math.max(0,e.staggerUntil-this.sim)),controlGrace:Math.min(1000,Math.max(0,(e.companionControlGrace??0)-Math.max(this.sim,e.staggerUntil))),controlLimit:Math.min(800,Math.max(0,(e.companionControlLimit??this.sim)-this.sim)),space:'village' as const}));
   }
   xiaobaoHit(e:EnemyBody,event:DamageEvent,released:ReleasedAttack,control:number,knock:number,task:XiaobaoTask,at:number){
+    const bonus=task==='follow'?(this.runes?.gifts.companionBonus(e)??0):0;
+    if(bonus){event={...event,amount:event.amount*(1+bonus)};released={...released,amount:event.amount};}
     const before=e.hp,applied=this.defense.damageEnemy(e as typeof this.enemies[number],event,released),killed=applied&&e.hp===0;
     if(!applied)return {applied:false,killed:false,damage:0};
     const member=unitState(this.combatEncounters,e.id);if(member&&task==="follow"&&e.hp<before)member.participated=true;
@@ -917,6 +943,7 @@ export class World extends Phaser.Scene {
         data.affected=data.affected.filter(t=>t.id!==e.id);
       }else if(!e.passiveRoot&&!data.affected.some(t=>t.id===e.id))data.affected.push({id:e.id,hp:e.hp,x:e.x,y:e.y,control:Math.min(800,Math.max(0,e.staggerUntil-at)),controlGrace:1000,controlLimit:Math.min(800,Math.max(0,(e.companionControlLimit??at)-at)),space:'village'});
     }
+    if(task==='follow'&&before>e.hp)this.runes?.gifts.companionLanded(e);
     return {applied:true,killed,damage:before-e.hp};
   }
   async configureXiaobao(change:Partial<Pick<State['xiaobao'],'task'|'gate'|'tactic'>>){
@@ -939,7 +966,7 @@ export class World extends Phaser.Scene {
     this.nextNightAttempt=this.sim+RAID_TIMING.retry;
     try{
       const v=this.cameras.main.worldView;
-      await this.economy.run(()=>this.state,s=>{const occupied=this.enemies.filter(e=>e.hp>0&&!e.disabled),view={left:v.x,right:v.right,top:v.y,bottom:v.bottom};return (retaliation?retaliationWarningSnapshot:nightWarningSnapshot)(s,view,occupied,this.defense);},save,next=>this.publishState(next));
+      await this.economy.run(()=>this.state,s=>{const occupied=[...this.enemies.filter(e=>e.hp>0&&!e.disabled),...[...this.wilderness?.arrivals.values()??[]].filter(c=>!c.spawned)],view={left:v.x,right:v.right,top:v.y,bottom:v.bottom};return (retaliation?retaliationWarningSnapshot:nightWarningSnapshot)(s,view,occupied,this.defense);},save,next=>this.publishState(next));
       const raid=this.state.defense.raid!;
       this.ui.message(retaliation?`魔王为据点陷落发起报复！${retaliationSummary(raid.order!)}正在地图边缘集结，即将向村庄总攻。`:raid.order?.source==='demon-king'?`${DEMON_KING.name}的部队接近村门，共 ${raid.members.length} 只；防线可能需要支援。`:"村门外发现动静，卫队正在戒备；可以参与或继续旅行。");
     }catch(e){
@@ -1030,9 +1057,12 @@ export class World extends Phaser.Scene {
 
   renderCampRoots(){
     for(const d of ENCOUNTERS.filter(d=>d.kind==='camp')){
-      const g=this.state.encounters.groups[d.id],battle=g.boss?.stage==='battle',root=this.propImages.get(d.direction==='south'?'south-camp-root':`camp-root-${d.id}`);
-      // 巢根在战斗中伏低，保证首领和地面提示不被不可碰撞的装饰完全遮住。
-      root?.setTexture(g.cleared?'wood':'bush').setDisplaySize(g.cleared?115:180,g.cleared?65:135).setAlpha(battle?.35:g.cleared?.65:1).setDepth(battle?d.y-160:d.y);
+      const g=this.combatEncounters.groups[d.id],battle=g.boss?.stage==='battle',root=this.propImages.get(d.direction==='south'?'south-camp-root':`camp-root-${d.id}`);
+      const nest=CAMP_NESTS[d.direction],foot=d.y-nest.lift,p=this.state.player;
+      const covered=p.y<foot&&p.y>foot-nest.height&&Math.abs(p.x-d.x)<nest.width*.48;
+      const art=campNestPresentation(d.direction,g.cleared,battle,covered);
+      // 战斗中放到人物之后；清剿保留各自地标，风忆使用实际挑战状态。
+      root?.setAlpha(art.alpha).setTint(art.tint).setDepth(battle?foot-art.height:foot);
     }
   }
   refresh() {
@@ -1068,11 +1098,12 @@ export class World extends Phaser.Scene {
     if(direction){const safety=this.runes?.safety();if(this.state.life.playerSpace!=='village'||safety&&(safety.combat||safety.boss||safety.defense||safety.trial||safety.action))throw Error('请先离开交战并收招，再开启风忆远征。');}
     this.syncFungalRoots();this.wilderness?.capture(this.sim);
     await this.economy.run(()=>this.state,s=>direction?startWindMemory(s,direction):endWindMemory(s),save,next=>this.publishState(next));
-    this.clearSwordWind();this.bossHazards.clear();this.enemyProjectiles.reset();this.spawnEnemies();this.wilderness?.restore(this.state.player);this.enemyView.reset();this.refresh();this.ui.message(direction?'风忆已开启，沿原路线完成新的波次。':'已结束本次风忆，回到真实清剿进度。');
+    this.clearSwordWind();this.bossHazards.clear();this.enemyProjectiles.reset();this.spawnEnemies();this.wilderness?.arrivals.clear();this.wilderness?.restore(this.state.player,this.sim);this.enemyView.reset();this.refresh();this.ui.message(direction?'风忆已开启，沿原路线完成新的波次。':'已结束本次风忆，回到真实清剿进度。');
   }
   get combatEncounters(){return this.state.windMemory.active?.encounters??this.state.encounters;}
   makeEnemy(d:{id:string;type:string;elite?:EliteKind;boss?:CampBossKind;x:number;y:number}):Enemy {
-    return {
+    const [shadowWidth,shadowHeight]=enemyShadowSize(d.type,d.boss?CAMP_BOSSES[d.boss].height:undefined);
+    const enemy:Enemy={
         kind: "enemy" as const,
         id: d.id,
         x: d.x,
@@ -1093,8 +1124,10 @@ export class World extends Phaser.Scene {
           .sprite(d.x, d.y, ['archer','bell','shade','geomancer'].includes(d.type)?`enemy-hd-${d.type}`:`enemy-${d.type}`, ['archer','bell','shade','geomancer'].includes(d.type)?'down/idle':0)
           .setOrigin(0.5, 1)
           .setDisplaySize(75, 75),
-        shadow: this.add.ellipse(d.x, d.y, d.boss?CAMP_BOSSES[d.boss].height*.56:45, d.boss?CAMP_BOSSES[d.boss].height*.18:15, 0x18392d, 0.2),
+        shadow: this.add.ellipse(d.x, d.y-3, shadowWidth, shadowHeight, 0x18392d, 0.2),
     };
+    groundShadows(this).add(enemy.sprite,enemy.shadow,{label:(d.boss?'首领':'怪物')+' · '+d.id,visible:()=>this.enemyView.boss.visible(enemy.sprite)});
+    return enemy;
   }
   spawnEnemies() {
     this.enemies.forEach((e) => {
@@ -1160,7 +1193,7 @@ export class World extends Phaser.Scene {
       if(!wasRewarded&&group.rewarded){for(const u of group.summons??[]){u.hp=0;u.defeated=true;const body=this.enemies.find(e=>e.id===u.id);if(body){body.hp=0;body.sprite.setVisible(false);body.shadow.setVisible(false);if(body.attack)body.attack.cancelled=true;}}}
       if(!wasRewarded&&group.rewarded&&this.state.windMemory.active)memoryGold(this.state,definition.group,adventureIndex(definition.group)===3?8:4);
       if(!wasRewarded&&group.rewarded&&offerWindGift(this.state.windGifts,`${this.combatEncounters.instance??'首次'}:${definition.group}`,this.combatEncounters.seed??0,this.state.skills.swordWindStage>0)){
-        this.state.player.hp=Math.min(playerVitals(this.state).maxHp,this.state.player.hp+giftValue(this.state.windGifts,'spring'));
+        if(this.runes)this.runes.gifts.encounterHeal(giftValue(this.state.windGifts,'spring'));else this.state.player.hp=Math.min(playerVitals(this.state).maxHp,this.state.player.hp+giftValue(this.state.windGifts,'spring'));
         this.ui.mode='reward-saving';this.ui.shell('整场胜利','<p>正在保存波次与三选一候选……</p>');
         void this.persist(true).then(()=>this.ui.open('wind-gifts')).catch(()=>{this.ui.mode='';this.ui.open('pause');this.ui.message('奖励尚未保存，请点击保存后从手记继续领取；候选保持不变。');});
       }
@@ -1206,11 +1239,11 @@ export class World extends Phaser.Scene {
             .setOrigin(0.5)
             .setDepth(d.y + 1),
         );
-    for (const d of this.worldDrops())
-      this.dropImages
-        .get(d.enemyId)
-        ?.setPosition(d.x, d.y - 32)
-        .setDepth(d.y + 1);
+    for (const d of this.worldDrops()){
+      const image=this.dropImages.get(d.enemyId);
+      image?.setPosition(d.x,d.y-32).setDepth(d.y+1);
+      if(image)groundShadows(this).add(image,undefined,{label:'战利品',width:22,height:8,projection:false,root:()=>({x:image.x,y:image.y+32,depth:image.depth-1.5})});
+    }
   }
   claimDrop() {
     const p = this.state.player;
@@ -1328,7 +1361,7 @@ export class World extends Phaser.Scene {
       }
     }
     if(feedback?.runeEvent)this.runes?.engine.nativeLanded(target,feedback.runeEvent,result.damage);
-    if(feedback?.runeEvent&&result.damage>0)this.runes?.giftLanded(target,feedback.runeEvent,isMeleeFinisher(attack,this.combat.maxStage));
+    if(feedback?.runeEvent&&result.damage>0)this.runes?.giftLanded(target,feedback.runeEvent,isMeleeFinisher(attack,this.combat.maxStage),attack);
     const at=feedback?.at??this.sim,direction=attack.windDirection??unit({x:target.x-this.state.player.x,y:target.y-this.state.player.y}),point=feedback?.point??{x:target.x-direction.x*12,y:target.y-28-direction.y*6};
     this.hitFeedback(attack.stage,target.kind==='trainingDummy'?'straw':'enemy',feedback?.stop,!!attack.counter,attack.id);
     if(attack.counter&&!result.killed&&!result.guardBroken){this.counterHit(target,attack,result,target.kind==='trainingDummy'?'straw':'hit',feedback);return;}
@@ -1430,7 +1463,9 @@ export class World extends Phaser.Scene {
   }
   syncSwordWindAbility(){
     const config=this.lessons?.config()??null;
-    this.combat.swordWindConfig=config?{...config,damage:outgoingDamage(this.state,config.damage)}:null;
+    const formal=this.practice.mode==='off'&&!config?.trialLesson&&!this.lessons?.trial;
+    this.combat.swordWindConfig=config?{...config,distance:config.distance*(1+(formal?giftCappedValue(this.state.windGifts,'longEdge'):0)),width:config.width*(1+(formal?giftCappedValue(this.state.windGifts,'broadWind'):0)),lifetime:Math.ceil(config.lifetime*(1+(formal?giftCappedValue(this.state.windGifts,'longEdge'):0))),damage:outgoingDamage(this.state,config.damage)}:null;
+    this.combat.chainGraceBonus=formal?giftCappedValue(this.state.windGifts,'catchEdge'):0;this.combat.parryPrecisionBonus=formal?giftCappedValue(this.state.windGifts,'clearMirror'):0;
     this.combat.swordWindEnabled=!!config;
     this.combat.meleeFinisherEnabled=this.state.skills.meleeFinisher;
     const momentum=momentumConfig(this.state);this.combat.momentumWindow=momentum.window;this.combat.momentumChase=momentum.chase;
@@ -1439,12 +1474,19 @@ export class World extends Phaser.Scene {
   }
   tickAttack(prev:number,now:number) {
     this.syncSwordWindAbility();
+    this.combat.resolvePhaseDash=this.state.runes.slots.includes('r34')?(origin,end)=>{
+      const point=phaseStepDestination(origin,end,(x,y)=>this.playerBlocked(x,y),
+        (a,b)=>clearPhaseSpace(this.state.life.playerSpace,a,b)&&clearBodyMotion(a,b,this.combatTargets().filter(t=>t.kind!=='trainingDummy')),
+        (a,b)=>this.clearLine(a.x,a.y,b.x,b.y));
+      if(point&&Math.hypot(point.x-origin.x,point.y-origin.y)>1)this.runes?.engine.fx('phase-step',origin,28,'r34',420,{end:point});
+      return point;
+    }:undefined;
     this.combat.update(prev,now,this.battleFacing(),this.state.player,this.combatTargets(),
       (x,y)=>this.playerBlocked(x,y),(x,y,tx,ty,id)=>this.meleeLine(x,y,tx,ty,id),
       (target,stage,attack)=>this.strikeTarget(target,stage,attack),
       (stage,attack)=>{this.runes?.capture(attack);this.training.sync(this.combat.epoch);this.training.begin(attack);if(attack.counter){const m=attackConfig(attack);this.emitFeedback('counter-start',`counter-start:${attack.id}`,attack.start,undefined,attack,{until:attack.start+m.windup+m.active+m.recovery});}if(attack.kind==='swordWind'){attack.returnMode=returnMode(this.state);this.soundFx.play('wind-charge');}},
-      stage=>{const a=this.combat.attack!;if(a.counter){if(!feedbackAudio(this.feedback.mode))this.soundFx.play('counter');}else this.soundFx.play(a.kind==='swordWind'?'wind-release':a.isFinisher?'attack-heavy':'attack');},clearMotionLine,
-      (attack,root,at)=>{const wind=this.swordWind.launch(attack,root,at,attack.kind==='counter'?outgoingDamage(this.state,attackConfig(attack).damage):attack.swordWind!.damage);if(wind&&attack.kind==='swordWind')this.runes?.engine.windRelease(`attack:${attack.id}`,root,wind.direction,wind.config);});
+      stage=>{const a=this.combat.attack!;this.runes?.engine.releaseGiftAttack(`attack:${a.id}`,this.state.player,a.aim??{x:facingVector(a.facing)[0],y:facingVector(a.facing)[1]});this.runes?.gifts.releaseMelee(a);if(a.counter){if(!feedbackAudio(this.feedback.mode))this.soundFx.play('counter');}else this.soundFx.play(a.kind==='swordWind'?'wind-release':a.isFinisher?'attack-heavy':'attack');},(a,b)=>this.clearLine(a.x,a.y,b.x,b.y),
+      (attack,root,at)=>{const wind=this.swordWind.launch(attack,root,at,attack.kind==='counter'?outgoingDamage(this.state,attackConfig(attack).damage):attack.swordWind!.damage);if(wind&&attack.kind==='swordWind'){this.runes?.engine.windRelease(`attack:${attack.id}`,root,wind.direction,wind.config);this.runes?.releaseBlackHole(wind);this.runes?.gifts.release(wind);}});
   }
   clearSwordWind(){this.buildTraining.clear();this.runes?.clear();this.swordWind.clear();this.swordWindView?.clear();this.lessons?.endTrial();}
   resolveSwordWind(events:WindEvent[]){
@@ -1456,7 +1498,9 @@ export class World extends Phaser.Scene {
       else {const w=event.wind,point=w.contact??event.point;this.strikeTarget(event.target as CombatTarget,w.attack.stage,w.attack,{damage:w.config.damage,stop:w.config.hitStop,point:{x:point.x,y:point.y-w.config.art.bodyHeight},at:event.at});}
       if(!event.terminal)this.swordWindView?.hit(event.point,event.at,event.wind);
     }else this.soundFx.play('wind-dissolve');
-  }}
+  }
+    for(const event of events)if(event.terminal&&!this.swordWind.winds.some(w=>w.releaseId===event.wind.releaseId&&w.leg==='out'&&!w.terminated))this.runes?.gifts.finish(event.wind);
+  }
   windMotions():WindMotion[]{return [...this.combatTargets(),...(this.state.life.playerSpace==='village'?this.lessons?.targets??[]:[])].map(target=>({target,previous:{x:target.x,y:target.y},current:{x:target.x,y:target.y}}));}
 
   advanceBattle(prev:number,now:number,contacts:EnemyContact[],budget:{queries:number}) {
@@ -1478,9 +1522,9 @@ export class World extends Phaser.Scene {
     const dash=prev<this.combat.dashUntil;
     const hurt=this.combat.hurting(prev);
     const busy=!!this.combat.attack||guard||dash||this.combat.pending||hurt;
-    const movement=this.sprint.update(p.stamina,this.runIntent&&length>0&&!busy,dash?0:dt,prev>=this.combat.regenUntil,playerVitals(this.state).maxStamina,(this.catCompanion.aura?catBenefits(this.state.catBond.score).recovery:0)+giftValue(this.state.windGifts,'breath'));
+    const movement=this.sprint.update(p.stamina,this.runIntent&&length>0&&!busy,dash?0:dt,prev>=this.combat.regenUntil,playerVitals(this.state).maxStamina,(this.catCompanion.aura?catBenefits(this.state.catBond.score).recovery:0)+giftValue(this.state.windGifts,'breath')+(this.runes?.gifts.regen()??0));
     p.stamina=movement.stamina;
-    const speed=(hurt?0:guard?PARRY.speed:busy?this.combat.attack?55:0:movementSpeed(this.state,movement.speed))*(1+(this.runes?.engine.speedBonus()??0)+giftValue(this.state.windGifts,'stride'));
+    const speed=(hurt?0:guard?PARRY.speed:busy?this.combat.attack?55:0:movementSpeed(this.state,movement.speed))*(1+(this.runes?.engine.speedBonus()??0)+giftValue(this.state.windGifts,'stride')+(this.runes?.gifts.speed()??0));
     if(length&&speed){
       const origin={x:p.x,y:p.y};
       const bodies=this.combatTargets();
@@ -1510,7 +1554,7 @@ export class World extends Phaser.Scene {
     if(this.xiaobao)this.xiaobao.controller.tick(now-prev,xiaobaoEnvironment(this),budget);
     const view = this.cameras.main.worldView;
     contacts.push(...this.defense.update(now,now-prev,battlePlayer,budget,
-      outside?{left:view.x,right:view.right,top:view.y,bottom:view.bottom}:undefined,this.enemies.filter(e=>e.hp>0&&!e.disabled)));
+      outside?{left:view.x,right:view.right,top:view.y,bottom:view.bottom}:undefined,[...this.enemies.filter(e=>e.hp>0&&!e.disabled),...[...this.wilderness?.arrivals.values()??[]].filter(c=>!c.spawned)]));
     for(const e of this.defense.enemies)this.playEnemyAttack(e.attack,now,e);
     this.life.step(now-prev,budget);
     for(const e of [...this.enemies].sort((a,b)=>a.id.localeCompare(b.id))) {
@@ -1527,6 +1571,10 @@ export class World extends Phaser.Scene {
     this.advanceEnemyProjectiles(now,battlePlayer,contacts,outside);
     this.advanceBossHazards(prev,now,battlePlayer,hazardPrevious,companionPrevious,contacts,outside);
     for(const m of motion)m.current={x:m.target.x,y:m.target.y};
+    this.runes?.gifts.advance(prev,now,motion);
+    for(const m of motion)m.current={x:m.target.x,y:m.target.y};
+    this.runes?.advanceBlackHole(prev,now,motion);
+    for(const m of motion)m.current={x:m.target.x,y:m.target.y};
     this.resolveSwordWind(this.swordWind.advance(prev,now,motion));
     this.syncXiaobaoEnemies();this.wilderness?.capture(now);
   }
@@ -1535,12 +1583,14 @@ export class World extends Phaser.Scene {
     const p=this.state.player;
     if(this.state.life.playerSpace!=="village"){contacts.length=0;return;}
     for(const action of this.combat.flushActions(now,p)) {
-      if(action==="dash"){this.sprint.reset(p.stamina);this.runes?.engine.dashStart(`dash:${this.combat.dashStart}`);}
+      if(action==="dash"){this.sprint.reset(p.stamina);this.runes?.engine.dashStart(`dash:${this.combat.dashStart}`);this.runes?.gifts.startDash(this.combat.dashUntil);}
       else {this.sprint.update(p.stamina,false,0,true,playerVitals(this.state).maxStamina);this.practice.started(now);}
       if(action==='parry')this.emitFeedback('guard-start',`guard:${this.combat.parry!.id}`,now);else this.soundFx.play('dash');
     }
     refreshFungalShields([...this.enemies,...this.defense.enemies],now);
     this.tickAttack(now,now);
+    this.runes?.gifts.advance(now,now,this.windMotions());
+    this.runes?.advanceBlackHole(now,now,this.windMotions());
     this.resolveSwordWind(this.swordWind.advance(now,now,this.windMotions()));
     for(const e of [...this.enemies].sort((a,b)=>a.id.localeCompare(b.id))) {
       const victim=this.enemyVictim(e),event=this.defense.manages(e)?null:updateEnemy(e,victim.point,now,0,budget,victim.id,(enemy,target)=>this.attackPermit(enemy,target),[...this.enemies,...this.defense.enemies]);
@@ -1625,8 +1675,10 @@ export class World extends Phaser.Scene {
       let result=adjudicateContact(contact,this.combat,p,{valid,maxStamina:playerVitals(this.state).maxStamina,immune:now<this.invulnerable||now<this.respawnInvulnerable||!!this.runes?.engine.immune(),clear:(a,b,id)=>clearMeleeLine(a,b,id),attacker:owner&&owner.hp>0?owner:undefined});
       if(contact.training)this.practice.observe(contact,result,this.combat,p);
       if(contact.projectileId&&contact.attack.parryable&&e&&this.runes?.engine.dash&&valid&&this.runes.engine.reflect(e,contact.attack.attackId)){result='immune';this.runes.engine.fx('mirror-step',contact.origin,42,'r08',350,{end:e});}
+      if(result==='immune'&&!contact.training&&valid&&this.combat.invulnerable(contact.at))this.runes?.gifts.dodged();
       if(result==='hurt'&&!contact.training&&this.runes?.engine.protectHit(e,contact.attack.attackId))result='immune';
       if(result==="normal"||result==="perfect") {
+        if(!contact.training)this.runes?.engine.armGiftRiposte(result==='perfect');
         p.stamina=Math.min(playerVitals(this.state).maxStamina,p.stamina+giftValue(this.state.windGifts,'poise'));
         if(body) {
           if(contact.projectileId&&contact.training&&this.practice.attack)this.practice.attack.cancelled=true;
@@ -1642,6 +1694,7 @@ export class World extends Phaser.Scene {
           e.nav.path=[];
         }
         if(result==='perfect'&&e&&!contact.training&&this.practice.mode==='off'&&!this.lessons?.trial)this.catCompanion.requestClaw(this.state,this.cat.sprite,e,`parry:${contact.attack.attackId}`,clearMotionLine);
+        if(!contact.training)this.runes?.gifts.parry(result==='perfect',e);
         this.runes?.engine.block(result==='perfect',contact.attack.attackId,contact.origin);
         const guard=this.combat.parry!,w=parryWeapon(guard.facing,1),g=contact.geometry;
         const attackPoint=g?{x:(g.a.x+g.b.x)/2,y:(g.a.y+g.b.y)/2-28}:{x:contact.origin.x,y:contact.origin.y-28};
@@ -1659,10 +1712,12 @@ export class World extends Phaser.Scene {
         const damage=incomingDamage(this.state,contact.attack.damage)*(this.runes?.engine.incomingScale(contact.attack.attackerId,!!e?.boss)??1);
         const hit=resolveDamage({sourceId:contact.attack.attackerId,targetId:"player",attackId:contact.attack.attackId,
           amount:damage,sourceType:contact.blastId?"enemy-blast":"enemy-melee",eventId:e?.kind==="defense-enemy"?e.eventId:null},
-          {id:contact.attack.attackerId,hp:contact.projectileId?1:e?.hp??1,faction:"hostile",armor:0},{id:"player",hp:p.hp,faction:"village",armor:0,flatReduction:giftValue(this.state.windGifts,'armor'),...this.xiaobao?.controller.protection('player')});
+          {id:contact.attack.attackerId,hp:contact.projectileId?1:e?.hp??1,faction:"hostile",armor:0},{id:"player",hp:p.hp,faction:"village",armor:0,incomingScale:Math.max(0,1-giftValue(this.state.windGifts,'armor'))*(this.runes?.gifts.incoming(contact.attack.damage,this.combat.attack??undefined)??1),...this.xiaobao?.controller.protection('player')});
         if(hit.applied) {
-          const {damage:remaining,hp}=this.catCompanion.protect(this.state,hit);
+          const afterShield=this.runes?.gifts.absorb(hit.damage)??hit.damage,shieldHit={...hit,damage:afterShield,hp:Math.max(0,p.hp-afterShield)};
+          const beforeHp=p.hp,{damage:remaining,hp}=this.catCompanion.protect(this.state,shieldHit);
           p.hp=this.runes?.engine.damaged(e,hp,remaining)??hp;
+          this.runes?.gifts.hurt(Math.max(0,beforeHp-p.hp));
           if(remaining>0&&this.practice.mode==='off'&&!this.lessons?.trial)this.catCompanion.hurt(this.state);
           this.invulnerable=now+850;
           this.combat.takeHit(now,this.combat.effectiveFacing(now,this.hero.direction),contact.attack.direction,p);
@@ -1722,6 +1777,7 @@ export class World extends Phaser.Scene {
   drawEnemyPose(body:AnimatedEnemy&{id:string},attack:EnemyBody["attack"],sprite:Phaser.GameObjects.Sprite) {
     this.enemyView.draw(body,attack,sprite,this.sim,!body.id.startsWith('practice-')&&Math.hypot(body.x-this.state.player.x,body.y-this.state.player.y)<500);
     const impact=this.feedback.impact(body.id,this.sim);if(impact&&body.hp!>0)sprite.setPosition(sprite.x+impact.x,sprite.y+impact.y).setRotation(sprite.rotation+impact.rotation);
+    if(body.boss)this.enemyView.boss.syncImpact(sprite);
     const pose=attack&&!attack.cancelled?sampleEnemyAttack(attack,this.sim,body):null;
     if(!body.boss&&pose?.phase==="active"&&body.type==="leaf"){
       if(!this.enemyBlades.has(body.id))this.enemyBlades.set(body.id,this.add.graphics());
@@ -1736,19 +1792,23 @@ export class World extends Phaser.Scene {
     this.warnings=threats.map(({attack:a,root,predicted})=>({id:a.attackId,predicted,lead:predicted===null?null:predicted-this.sim,quality:warningQuality(predicted===null?null:predicted-this.sim),phase:sampleEnemyAttack(a,this.sim,root).phase}));
     this.enemyView.boss.ground(this.bossHazards.hazards,this.state,this.sim);
     for(const e of this.enemies)if(e.boss&&e.hp>0&&e.attack)this.enemyView.boss.warning(e,e.attack,this.sim);
-    for(const {root,attack} of sources)if(attack.type==='burrow')this.enemyView.warn(root,attack,this.sim);
+    for(const {root,attack} of sources)if(attack.type==='burrow'||attack.type==='bomber'&&this.sim>=attack.activeUntil)this.enemyView.warn(root,attack,this.sim);
     if(!this.practice.indicators){this.enemyView.finishWarnings();return;}
     for(let i=0;i<threats.length;i++){
       const {root,attack:a,predicted}=threats[i],hint=this.warnings[i];if(a.cancelled||a.emitted||this.sim>=a.activeUntil)continue;
       if(!a.boss&&a.type!=='burrow')this.enemyView.warn(root,a,this.sim);
       const pose=sampleEnemyAttack(a,this.sim,root),perfect=hint.quality==="perfect",normal=hint.quality==="normal",alpha=(i===0?1:.35)*(hint.quality==="none"?.25:1);
       const pause=Math.max(0,root.staggerUntil-this.sim),x=root.x+50,y=root.y-enemyProfile(a.type).height*.7-22,u=predicted===null?pose.warningProgress:Math.max(0,Math.min(1,1-(predicted-this.sim-pause)/(predicted-a.startedAt-pause))),r=10+(1-u)*20;
-      ink.lineStyle(1,0xc8d3b5,.4*alpha).strokeCircle(x,y,9);
-      ink.lineStyle(perfect?3:normal?2.5:1.2,perfect?0xfff4c7:normal?0xb9f7e5:0xdac49b,(perfect?.95:normal?.85:.45)*alpha).strokeCircle(x,y,r);
+      ink.lineStyle(5,0x17372d,.85*alpha).strokeCircle(x,y,r);
+      ink.lineStyle(1,0xc8d3b5,.65*alpha).strokeCircle(x,y,9);
+      ink.lineStyle(perfect?3:normal?2.5:1.2,perfect?0xe9fff8:normal?0xb9f7e5:0xbcd8ce,(perfect?.95:normal?.85:.45)*alpha).strokeCircle(x,y,r);
       ink.lineStyle(1,0xfff4c7,.6*alpha);for(const sign of [-1,1])ink.lineBetween(x+sign*8,y-3,x+sign*8,y+3);
       if(normal){ink.lineStyle(2,0xb9f7e5,.7*alpha).lineBetween(x-10,y+12,x+10,y+12);}
-      if(perfect){ink.lineStyle(1.5,0xffffff,alpha).strokeCircle(x,y,r+3);ink.fillStyle(0xfff5cc,.95*alpha).beginPath().moveTo(x,y-5).lineTo(x+5,y).lineTo(x,y+5).lineTo(x-5,y).closePath().fillPath();}
+      if(perfect){ink.lineStyle(1.5,0xffffff,alpha).strokeCircle(x,y,r+3);ink.fillStyle(0xe9fff8,.95*alpha).beginPath().moveTo(x,y-5).lineTo(x+5,y).lineTo(x,y+5).lineTo(x-5,y).closePath().fillPath();}
     }
+    const nearby:{at:number;origin:{x:number;y:number}}[]=threats.filter(t=>t.predicted!==null&&t.predicted>=this.sim&&t.predicted-this.sim<=700&&!t.attack.cancelled&&!t.attack.emitted&&t.attack.damage>0).map(t=>({at:t.predicted!,origin:t.root}));
+    for(const h of this.bossHazards.hazards){const at=hazardWarningAt(h,this.state.player,this.sim);if(at!==null&&at-this.sim<=700)nearby.push({at,origin:h.point});}
+    nearby.sort((a,b)=>a.at-b.at);if(nearby[0])drawHeroDanger(ink,this.enemyView.warningFill,this.state.player,nearby[0].origin,nearby[0].at-this.sim);
     this.enemyView.finishWarnings();
   }
   drawObstacleDebug() {
@@ -1846,7 +1906,7 @@ export class World extends Phaser.Scene {
     if(!this.combat.windAuto&&!this.windAim.manual||this.state.life.playerSpace!=="village"||this.state.equipment.head!=="windScope"||!this.state.skills.swordWindStage)this.windAim.clear();
     this.combat.resolveWindAim=(point,config)=>this.state.equipment.head==='windScope'&&this.state.life.playerSpace==='village'?this.windAim.select(point,config,[...this.enemies,...this.defense.enemies].filter(e=>!('passiveRoot' in e&&e.passiveRoot))):null;
     if(this.keys.take(this.ui.hudPreferences.cycleTarget)&&this.keys.held.has('i')&&this.state.equipment.head==='windScope'&&this.state.life.playerSpace==='village'&&this.state.skills.swordWindStage>0&&this.combat.swordWindConfig){this.windAim.cycle(p,this.combat.swordWindConfig,[...this.enemies,...this.defense.enemies].filter(e=>!('passiveRoot' in e&&e.passiveRoot)));}
-    this.combat.dashCostMultiplier=(this.runes?.engine.dashCost()??1)*(1-giftValue(this.state.windGifts,'thrift'));
+    this.combat.dashCostMultiplier=(this.runes?.engine.dashCost()??1)*Math.max(0,1-giftValue(this.state.windGifts,'thrift'));
     this.combat.recoveryCancelEnabled=this.runes?.engine.has('r09')??false;
     this.sim=this.timeline.frame(this.sim,performance.now(),delta,this.keys.drain(),this.combat,{
       beforeInput:(now)=>this.resolveContacts(now,contacts,true),
@@ -1871,7 +1931,7 @@ export class World extends Phaser.Scene {
     this.feedback.advance(this.sim,this.combat.attack?.counter?`player:${this.combat.attack.id}`:null,!!this.combat.autoCounter||this.combat.parry?.successAt!==undefined);
     const feedbackEvents=this.feedback.drain();
     this.soundFx.feedbackBatch(feedbackEvents,this.feedback.mode);
-    this.swordWindView?.draw(this.sim);this.lessons?.draw(this.sim);
+    this.swordWindView?.draw(this.sim);this.runes?.drawBlackHole(this.sim);this.lessons?.draw(this.sim);
     const aimed=[...this.enemies,...this.defense.enemies].find(e=>e.id===this.windAim.target&&e.hp>0&&!e.disabled);
     this.ui.windAimStatus(this.state.skills.swordWindStage===0?'瞄准镜 · 尚未学会剑风':aimed?`I 自动瞄准 · 已锁定 / ${this.ui.hudPreferences.cycleTarget.toUpperCase()} 切换 / 中键手动`:this.combat.windAuto?'无可锁定目标 · 手动剑风':'瞄准镜 · 按住 I 自动瞄准 / 中键手动',this.state.skills.swordWindStage===0?'I 未学习':aimed?'I 已锁定':this.combat.windAuto?'I 手动剑风':'I 自动瞄准',this.state.equipment.head==='windScope');
     if(!this.scopeMarker)this.scopeMarker=this.add.graphics();this.scopeMarker.clear();
@@ -2071,8 +2131,9 @@ export class World extends Phaser.Scene {
     }
     for(const ink of this.enemyBlades.values())ink.clear();
     this.enemyView.begin();
+    this.enemyView.spawn(this.wilderness?.arrivals.values()??[],this.sim,this.state.life.playerSpace==='village');
     for(const e of this.enemies){if(e.disabled)continue;this.drawEnemyPose(e,e.attack,e.sprite);
-      e.shadow.setPosition(e.x,e.y-3).setDepth(e.y-.5).setAlpha(.2*e.sprite.alpha).setVisible(e.sprite.visible);
+      e.shadow.setPosition(e.x,e.y-3).setDepth(e.y-.5).setAlpha(e.sprite.alpha).setVisible(this.enemyView.boss.visible(e.sprite));
     }
     this.defense.observerSpace=this.state.life.playerSpace;
     this.defenseView.update(this.defense,this.sim,(e,sprite)=>this.drawEnemyPose(e,e.attack,sprite),this.life);
@@ -2102,7 +2163,7 @@ export class World extends Phaser.Scene {
     }
     this.life.observePlayer();this.lifeView.update(this.life,this.sim);
     for(const message of this.life.messages.splice(0))this.ui.message(message);
-    this.practiceSprite??=this.add.sprite(0,0,"slime",0).setOrigin(.5,1);
+    if(!this.practiceSprite){this.practiceSprite=this.add.sprite(0,0,"slime",0).setOrigin(.5,1);const source=this.practiceSprite;groundShadows(this).add(source,undefined,{label:'练习投影',width:55,height:18,root:()=>({x:this.practice.projection?.x??source.x,y:(this.practice.projection?.y??source.y)-3,depth:source.depth-.5})});}
     this.practiceSprite.setVisible(!!this.practice.projection);
     if(this.practice.projection)this.drawEnemyPose(this.practice.projection,this.practice.attack,this.practiceSprite);
     this.practiceLabel??=this.add.text(0,0,"练习投影",{fontSize:"10px",color:"#a1adaf"}).setOrigin(.5,1);

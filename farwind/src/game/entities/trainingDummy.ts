@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { TrainingDummy, TRAINING } from "../systems/training";
 import { facingVector } from "../systems/combat";
+import {groundShadows} from '../rendering/groundShadows';
 export class TrainingDummyView {
   body: Phaser.GameObjects.Image;
   straw: Phaser.GameObjects.Graphics;
@@ -13,6 +14,7 @@ export class TrainingDummyView {
       .image(target.x, target.y - 20, "training-body")
       .setOrigin(0.5, 1)
       .setDepth(target.y);
+    groundShadows(scene).add(this.body,undefined,{label:'训练靶',width:64,height:18,root:()=>({x:target.x,y:target.y-3,depth:target.y-.5})});
     this.straw = scene.add.graphics().setDepth(target.y + 1);
     scene.add
       .text(target.x, target.y + 20, "训练稻草人", {

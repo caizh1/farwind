@@ -85,6 +85,7 @@ test("map-expansion-player-journey", async ({ page }) => {
   await page.screenshot({ path: `${dir}/village-gate.png` });
   expect((await read(page)).state.quest).toBe(1);
   await page.keyboard.press("m");
+  await page.getByRole("button", { name: "风铃村与周边", exact: true }).click();
   await expect(page.locator("#modal")).toContainText("东北练习场");
   await page.screenshot({ path: `${dir}/world-map.png` });
   await page.getByRole("button", { name: "收起地图" }).click();

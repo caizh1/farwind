@@ -7,9 +7,14 @@ import type {Point} from './obstacles';
 import type {SwordWindConfig} from '../../data/swordWind';
 import type {SwordWind} from './swordWind';
 import {sweptTargetContact} from './swordWindGeometry';
-export type RuneTarget=Point&{id:string;hp:number;boss?:unknown;disabled?:boolean;kind?:string;radius?:number};
+import {resonanceLevel} from './windGifts';
+import {giftLevel,giftValue,GIFT_RIPOSTE} from './windGifts';
+import {playGiftFx} from '../entities/windGiftVfx';
+import {inStrike,STRIKES} from './combat';
+import {MELEE_HEIGHT} from './meleeGeometry';
+export type RuneTarget=Point&{id:string;hp:number;boss?:string;disabled?:boolean;kind?:string;radius?:number};
 export type RuneEvent={eventId:string;rootEventId:string;parentEventId:string|null;attackInstanceId:string;sourceKind:'native'|'rune'|'duo'|'status'|'phantom'|'reflection';sourceRuneId?:string;sourceDuoId?:string;targetId:string;tags:string[];procDepth:number;amount:number;actual?:number;critical?:boolean;A:number;point:Point;origin?:Point;direction?:Point};
-export type RuneFx={id:number;visual:string;rune:string;duo?:string;point:Point;end?:Point;born:number;life:number;radius:number;direction?:Point;lead?:number;stacks?:number;critical?:boolean};
+export type RuneFx={id:number;visual:string;rune:string;duo?:string;point:Point;end?:Point;born:number;life:number;radius:number;direction?:Point;lead?:number;stacks?:number;critical?:boolean;giftAnchor?:string;giftPhase?:'charge'|'release'|'hit'|'return'|'gain'};
 export type RuneStatus={chill?:{stacks:number;until:number};poison?:{stacks:number;until:number;next:number;damage:number;A:number;parent:RuneEvent};weak?:{until:number};doom?:{at:number;amount:number;stacks:number;parent:RuneEvent};jolt?:{until:number;next:number;parent:RuneEvent};iceUntil?:number};
 export type RuneProjectile={id:string;kind:'seeking'|'wave'|'vortex'|'phantom';rune:string;duo?:string;parent:RuneEvent;point:Point;previous:Point;direction:Point;born:number;until:number;radius:number;speed:number;damage:number;hit:Map<string,number>;target?:string;distance:number;maxDistance:number;canCrit:boolean;maxTargets:number;reflection?:boolean;finish?:boolean;returning?:boolean;returnOrigin?:Point;impact?:{push:number;wall:number;immune:number;breaking:boolean}};
 export type RuneField={id:string;kind:'mist'|'void'|'cloud'|'crystal';rune:string;parent:RuneEvent;point:Point;born:number;until:number;radius:number;next:number;duoNext:Record<string,number>;round:number};
@@ -24,12 +29,13 @@ export class RuneCombat {
  domainUntil=0;time?:{until:number;point:Point;A:number;records:{target:string;damage:number;point:Point}[];parent:RuneEvent};
  phoenixUntil=0;feathers=0;featherGrace=0;bossGuardUntil=0;speedUntil=0;dash?:{until:number;parent:RuneEvent;previous:Point;hit:Set<string>};
  equipped='';activeDuos=new Set<string>();metrics={native:0,rune:0,duo:0,status:0,damage:0,critical:0,phoenix:0,prevented:0};
+ giftRiposteFanBonus=0;giftRiposteReady=false;giftRipostes=new Map<string,{bonus:number;fan:number;A:number;released:boolean;formation?:boolean}>();
  constructor(public ctx:RuneContext){this.rebind();}
  get state(){return this.ctx.state();}get now(){return this.state.runes.clock;}get player(){return this.state.player;}
  has(id:string){return this.state.runes.slots.includes(id);}cfg(id:string){return runeById(id)!.config;}duo(id:string){return this.activeDuos.has(id);}
  rebind(){const key=this.state.runes.slots.join('|')+':'+this.state.skills.swordWindStage+':'+JSON.stringify(this.state.runes.growth);if(key!==this.equipped){this.clear();this.equipped=key;this.activeDuos=new Set(resolveDuos(this.state.runes.slots,this.state.skills.swordWindStage>0).filter(d=>d.active).map(d=>d.id));}}
  // 临时效果无存档恢复入口；冷却、蓄积与收藏属于符文本身，清理绝不返还冷却。
- clear(){this.traces=[];this.bands=[];this.statuses.clear();this.projectiles=[];this.fields=[];this.jobs=[];this.effects=[];this.seen.clear();this.intervals.clear();this.domainUntil=this.phoenixUntil=this.bossGuardUntil=this.speedUntil=this.featherGrace=0;this.feathers=0;this.time=undefined;this.dash=undefined;}
+ clear(){this.traces=[];this.bands=[];this.statuses.clear();this.projectiles=[];this.fields=[];this.jobs=[];this.effects=[];this.seen.clear();this.intervals.clear();this.domainUntil=this.phoenixUntil=this.bossGuardUntil=this.speedUntil=this.featherGrace=0;this.feathers=0;this.time=undefined;this.dash=undefined;this.giftRiposteReady=false;this.giftRiposteFanBonus=0;this.giftRipostes.clear();}
  cooldown(id:string){return this.state.runes.cooldowns[id]??0;}
  startCooldown(id:string,duration:number){this.state.runes.cooldowns[id]=duration;this.state.runes.counts[id]=0;this.ctx.checkpoint();}
  gate(key:string,ms:number){if((this.intervals.get(key)??-Infinity)>this.now)return false;this.intervals.set(key,this.now+ms);return true;}
@@ -44,8 +50,25 @@ export class RuneCombat {
  speedBonus(){return (this.has('r18')?this.cfg('r18').speed:0)+(this.has('r09')&&this.now<this.speedUntil?this.cfg('r09').speed:0);}
  dashCost(){return this.has('r09')?this.cfg('r09').cost:1;}
  nativeBonus(e:RuneTarget){return (this.has('r18')?Math.min(this.cfg('r18').cap,this.speedBonus()*this.cfg('r18').convert):0)+(this.now<this.domainUntil?this.cfg('r26').bonus:0)+(this.has('r23')&&this.weak(e.id)?this.cfg('r23').bonus:0);}
+ armGiftRiposte(perfect=false){this.giftRiposteFanBonus=perfect?.3*resonanceLevel(this.state.windGifts,'riposteFormation'):0;if(!giftLevel(this.state.windGifts,'riposte'))return;this.giftRiposteReady=true;playGiftFx(this,'riposte',this.player);}
+ captureGiftAttack(instance:string,wind:boolean){
+  if(wind||!this.giftRiposteReady||this.giftRipostes.has(instance))return;
+  this.giftRiposteReady=false;const level=giftLevel(this.state.windGifts,'riposte');if(!level)return;
+  this.giftRipostes.set(instance,{bonus:giftValue(this.state.windGifts,'riposte'),fan:GIFT_RIPOSTE.fanDamage*level+this.giftRiposteFanBonus,A:this.ctx.A(),released:false,formation:this.giftRiposteFanBonus>0});
+  if(this.giftRipostes.size>64)this.giftRipostes.delete(this.giftRipostes.keys().next().value!);
+ }
+ releaseGiftAttack(instance:string,origin:Point,aim:Point){
+  const gift=this.giftRipostes.get(instance),length=Math.hypot(aim.x,aim.y);if(!gift||gift.released||this.player.hp<=0||length===0)return;
+  gift.released=true;const d={x:aim.x/length,y:aim.y/length},root={x:origin.x,y:origin.y},parent=this.parent('','wind_gift',root);parent.attackInstanceId=instance;parent.A=gift.A;
+  const attack={id:0,stage:1,facing:3 as const,aim:d,start:0,hit:new Set<string>(),config:{...STRIKES[0],range:GIFT_RIPOSTE.range,angle:GIFT_RIPOSTE.halfAngle}};
+  this.fx('wind-gift-fan',{x:root.x,y:root.y-MELEE_HEIGHT},GIFT_RIPOSTE.range,'',380,{direction:d});playGiftFx(this,gift.formation?'riposteFormation':'riposte',root,{radius:100,direction:d});this.ctx.sound('wind','release',this.now);
+  // 同一挥击只放出一次；追加剑气不进入原生命中链，禁止递归触发风赐。
+  for(const e of this.ctx.targets())if(e.kind!=='trainingProjection'&&this.legal(e)&&inStrike(root,e,attack,(_x,_y,_xx,_yy)=>this.ctx.clear(root,e))){
+   const ev=this.child(parent,e,gift.A*gift.fan,['wind_gift','riposte_fan'],'');ev.origin=root;ev.direction=d;this.apply(e,ev,'wind-gift-hit');
+  }
+ }
  native(instance:string,e:RuneTarget,base:number,stage:number,wind=false,finisher=!wind&&stage===3,leg='out',giftBonus=0):RuneEvent {
- const eventId=`native:${instance}:${e.id}:${wind?leg:'blade'}`,critical=this.random()<this.critRate(e),amount=base*(1+this.nativeBonus(e)+Math.min(.6,Math.max(0,giftBonus)))*(critical?this.critMultiplier(e):1);
+ const eventId=`native:${instance}:${e.id}:${wind?leg:'blade'}`,critical=this.random()<this.critRate(e),amount=base*(1+this.nativeBonus(e)+Math.max(0,giftBonus)+(wind?0:this.giftRipostes.get(instance)?.bonus??0))*(critical?this.critMultiplier(e):1);
  return {eventId,rootEventId:`action:${instance}`,parentEventId:null,attackInstanceId:instance,sourceKind:'native',targetId:e.id,tags:['native',wind?'wind_hit':'melee_hit',finisher?'finisher':'strike',wind?`wind_${leg}`:'blade'],procDepth:0,amount,critical,A:this.ctx.A(),point:{x:e.x,y:e.y}};
  }
  parent(rune:string,tag:string,point:Point):RuneEvent{const id=`action:${++this.serial}`;return {eventId:id,rootEventId:id,parentEventId:null,attackInstanceId:id,sourceKind:'rune',sourceRuneId:rune,targetId:'',tags:[tag],procDepth:0,amount:0,A:this.ctx.A(),point:{x:point.x,y:point.y}};}

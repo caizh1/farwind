@@ -15,7 +15,7 @@ async function observe(page:Page){
   (window as any).__windSoundStarts=[];
   const start=AudioBufferSourceNode.prototype.start;
   AudioBufferSourceNode.prototype.start=function(...args:Parameters<typeof start>){
-   if(this.buffer?.numberOfChannels===2&&Math.abs(this.buffer.duration-.46)<.001)(window as any).__windSoundStarts.push({时刻:this.context.currentTime,声道:this.buffer.numberOfChannels,帧数:this.buffer.length,采样率:this.buffer.sampleRate});
+   if(this.buffer?.numberOfChannels===2&&Math.abs(this.buffer.duration-.24)<.001)(window as any).__windSoundStarts.push({时刻:this.context.currentTime,声道:this.buffer.numberOfChannels,帧数:this.buffer.length,采样率:this.buffer.sampleRate});
    return start.apply(this,args);
   };
  });
@@ -32,7 +32,7 @@ test('WIND-AUDIO-01 真实第四击使用预生成呼啸，首靶结算及音轨
  await observe(page);expect((await read(page)).feedback.audio.windCached).toBe(true);
  await third(page);expect((await read(page)).feedback.audio.windVoices).toBe(0);
  await fourth(page);await page.waitForFunction(()=>(window as any).__farwind().feedback.audio.windVoices===1);
- const starts=await page.evaluate(()=>(window as any).__windSoundStarts);expect(starts).toHaveLength(1);expect(starts[0].帧数/starts[0].采样率).toBeCloseTo(.46,4);
+ const starts=await page.evaluate(()=>(window as any).__windSoundStarts);expect(starts).toHaveLength(1);expect(starts[0].帧数/starts[0].采样率).toBeCloseTo(.24,4);
  await expect.poll(async()=>(await read(page)).swordWind.events[0]?.target).toBe('wind-arena-A');
  const s=await read(page);expect(s.enemies.find((e:any)=>e.id==='wind-arena-A').hp).toBe(12);expect(s.enemies.find((e:any)=>e.id==='wind-arena-B').hp).toBe(48);
  await expect.poll(async()=>(await read(page)).feedback.audio.windVoices).toBe(0);expect(errors).toEqual([]);

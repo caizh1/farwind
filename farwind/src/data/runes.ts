@@ -38,6 +38,7 @@ export const RUNES:RuneDefinition[]=[
  {id:'r31',name:'回风',tier:'low',abilities:[],trigger:'原生剑风终点',description:'原生剑风抵达有效终点后沿原路折返一次；回程为原生基础伤害的60%，每目标各程最多一次，分束共享去重。保留已学阶段，障碍截断。',config:{damage:.6},visual:'return-wind',color:'#8be0ce',sound:'wind',acquisition:{kind:'training',key:'sword-wind',hint:'正式学会临水送风后领取，旧档可补领一次。'}},
  {id:'r32',name:'留痕',tier:'low',abilities:[],trigger:'原生去程命中／原生剑风经过',description:'原生去程命中留下4秒风痕，最多8个；后续去程或回程经过消耗一次，半径60扰流造成40%A。自身去程不消费，扰流不留痕、不复制。',config:{damage:.4,radius:60,duration:4000,max:8},visual:'wind-trace',color:'#d3e9a1',sound:'wind',acquisition:{kind:'training',key:'sword-wind',hint:'正式学会临水送风后领取。单独装备可由后续剑风利用。'}},
  {id:'r33',name:'续势',tier:'low',abilities:[],trigger:'完成有效挥击后的合法风步',description:'风步后700毫秒内接回下一段，不跳段；同连段只保留一次，连续风步、受击、死亡或超时清除。',config:{window:700,chase:32},visual:'wind-band',color:'#edd5a1',sound:'wind',acquisition:{kind:'training',key:'melee',hint:'村庄练习场教本：完成一组真实三连命中，学习四连并取得续势。'}},
+ {id:'r34',name:'穿隙',tier:'high',abilities:[],trigger:'瞬步（风步）穿障',description:'瞬步可穿过树木、岩石、栅栏和普通实体障碍，落点须可站立；无法穿出时停在障碍前。不可穿越水域、地图边界、建筑边界或剧情封印。不增加距离、无敌时间或体力消耗。',config:{},visual:'phase-step',color:'#b9f3e7',sound:'wind',acquisition:{kind:'shop',key:'general',price:360,hint:'风铃杂货铺的符文页出售，360金币；收藏后装入自由槽才生效。'}},
 ];
 export const RETURN_RUNE={id:'return-wind',name:'归风',description:'永久绑定。脱战 8 秒，长按 G 引导 1.2 秒回到最近激活且有效的安全风之路标；无路标回初始安全点。冷却 60 秒，不治疗、不无敌。移动、攻击、受击、模态界面及失焦中断。',config:{peace:8000,channel:1200,cooldown:60000},visual:'return-wind',color:'#9ddbd0'};
 export const RUNE_CODEX=[RETURN_RUNE,...RUNES];

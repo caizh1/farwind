@@ -1,0 +1,2036 @@
+{
+  "说明": "关闭开发授予的正式构建；全新独立浏览器存档，通过真实键盘步行至巢穴；不传送、不修改游戏状态。画面为当前真实运行截图。",
+  "方向": "west",
+  "快照": {
+    "玩家": {
+      "x": -1701.3924141934076,
+      "y": 1681.3258803772467,
+      "hp": 100,
+      "stamina": 100
+    },
+    "巢穴": [
+      {
+        "direction": "south",
+        "texture": "nest-south",
+        "x": 1250,
+        "y": 2765,
+        "width": 360,
+        "height": 287,
+        "alpha": 1,
+        "depth": 2765,
+        "tint": 16777215
+      },
+      {
+        "direction": "west",
+        "texture": "nest-west",
+        "x": -1700,
+        "y": 1435,
+        "width": 390,
+        "height": 253,
+        "alpha": 1,
+        "depth": 1435,
+        "tint": 16777215
+      },
+      {
+        "direction": "north",
+        "texture": "nest-north",
+        "x": 1480,
+        "y": -785,
+        "width": 380,
+        "height": 231,
+        "alpha": 1,
+        "depth": -785,
+        "tint": 16777215
+      },
+      {
+        "direction": "east",
+        "texture": "nest-east",
+        "x": 3710,
+        "y": 1045,
+        "width": 369.99999999999994,
+        "height": 299,
+        "alpha": 1,
+        "depth": 1045,
+        "tint": 16777215
+      }
+    ],
+    "地表": {
+      "resident": 20,
+      "peak": 30,
+      "created": 54,
+      "released": 34,
+      "heroDepth": 1681.3258803772467,
+      "floorDepth": -2380,
+      "limit": "当前视野加一圈，预取每帧一块",
+      "nestGround": [
+        {
+          "direction": "south",
+          "texture": "nest-ground-south",
+          "center": [
+            1250,
+            2755
+          ],
+          "bounds": {
+            "left": 879,
+            "right": 1621,
+            "top": 2489,
+            "bottom": 3021
+          },
+          "feather": 70
+        },
+        {
+          "direction": "west",
+          "texture": "nest-ground-west",
+          "center": [
+            -1700,
+            1425
+          ],
+          "bounds": {
+            "left": -2086,
+            "right": -1314,
+            "top": 1159,
+            "bottom": 1691
+          },
+          "feather": 65
+        },
+        {
+          "direction": "north",
+          "texture": "nest-ground-north",
+          "center": [
+            1480,
+            -795
+          ],
+          "bounds": {
+            "left": 1089,
+            "right": 1871,
+            "top": -1086,
+            "bottom": -504
+          },
+          "feather": 75
+        },
+        {
+          "direction": "east",
+          "texture": "nest-ground-east",
+          "center": [
+            3710,
+            1035
+          ],
+          "bounds": {
+            "left": 3334,
+            "right": 4086,
+            "top": 759,
+            "bottom": 1311
+          },
+          "feather": 70
+        }
+      ]
+    },
+    "据点": {
+      "south-reed-patrol": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-reed-slime",
+            "hp": 48,
+            "x": 1080,
+            "y": 2060,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-reed-spore",
+            "hp": 60,
+            "x": 1210,
+            "y": 2140,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "south-herb-patrol": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-herb-spore",
+            "hp": 60,
+            "x": 620,
+            "y": 2460,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-herb-slime",
+            "hp": 48,
+            "x": 810,
+            "y": 2510,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-herb-priest",
+            "hp": 96,
+            "x": 730,
+            "y": 2580,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "south-spore-camp": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-camp-spore",
+            "hp": 60,
+            "x": 1220,
+            "y": 2750,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-a",
+            "hp": 48,
+            "x": 1140,
+            "y": 2870,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-slime-b",
+            "hp": 48,
+            "x": 1390,
+            "y": 2850,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-camp-priest",
+            "hp": 96,
+            "x": 1190,
+            "y": 2820,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-spore-heart",
+            "hp": 2300,
+            "x": 1250,
+            "y": 2820,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ],
+        "boss": {
+          "stage": "guards",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        }
+      },
+      "south-orchard-burrows": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-orchard-worm-a",
+            "hp": 62,
+            "x": 1910,
+            "y": 2360,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-orchard-worm-b",
+            "hp": 62,
+            "x": 2030,
+            "y": 2490,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-orchard-bomber",
+            "hp": 112,
+            "x": 1810,
+            "y": 2400,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "west-track-pack": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-track-wolf-a",
+            "hp": 58,
+            "x": -600,
+            "y": 1380,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-track-wolf-b",
+            "hp": 58,
+            "x": -490,
+            "y": 1410,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:west-track-pack:0:2:archer",
+            "hp": 64,
+            "x": -645,
+            "y": 1511.865334794732,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:west-track-pack:0:3:burrow",
+            "hp": 62,
+            "x": -750,
+            "y": 1330,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:west-track-pack:0:4:slime",
+            "hp": 48,
+            "x": -645.0000000000001,
+            "y": 1148.134665205268,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:west-track-pack:0:5:wolf",
+            "hp": 58,
+            "x": -435,
+            "y": 1148.134665205268,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:west-track-pack:1:0:wolf",
+            "hp": 58,
+            "x": -295,
+            "y": 1330,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:west-track-pack:1:1:slime",
+            "hp": 48,
+            "x": -417.5,
+            "y": 1542.1762239271875,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:west-track-pack:1:2:guardian",
+            "hp": 84,
+            "x": -662.5,
+            "y": 1542.1762239271875,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:west-track-pack:1:3:raven",
+            "hp": 64,
+            "x": -785,
+            "y": 1330,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:west-track-pack:1:4:leaf",
+            "hp": 72,
+            "x": -662.5000000000001,
+            "y": 1117.8237760728125,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:west-track-pack:1:5:wolf",
+            "hp": 58,
+            "x": -417.5,
+            "y": 1117.8237760728125,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ],
+        "wave": 0,
+        "waveWarning": 0,
+        "rewarded": false
+      },
+      "north-stone-watch": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-pass-guardian",
+            "hp": 84,
+            "x": 1130,
+            "y": -400,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "west-wolf-den": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-den-wolf-a",
+            "hp": 58,
+            "x": -1760,
+            "y": 1430,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-den-wolf-b",
+            "hp": 58,
+            "x": -1610,
+            "y": 1530,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-den-reaper",
+            "hp": 72,
+            "x": -1680,
+            "y": 1350,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-thorn-crown",
+            "hp": 2800,
+            "x": -1700,
+            "y": 1490,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ],
+        "boss": {
+          "stage": "guards",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        }
+      },
+      "north-boar-camp": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-rock-boar",
+            "hp": 90,
+            "x": 1450,
+            "y": -760,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-rock-guardian",
+            "hp": 84,
+            "x": 1570,
+            "y": -690,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-crag-tusk",
+            "hp": 2500,
+            "x": 1480,
+            "y": -730,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ],
+        "boss": {
+          "stage": "guards",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        }
+      },
+      "east-thorn-camp": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-thorn-spore",
+            "hp": 60,
+            "x": 3780,
+            "y": 1000,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-thorn-reaper",
+            "hp": 72,
+            "x": 3670,
+            "y": 1200,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-thorn-guardian",
+            "hp": 84,
+            "x": 3850,
+            "y": 1180,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "boss-bound-branch",
+            "hp": 2500,
+            "x": 3710,
+            "y": 1100,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ],
+        "boss": {
+          "stage": "guards",
+          "warning": 0,
+          "attempt": 0,
+          "away": 0,
+          "combat": null
+        }
+      },
+      "south-reed-margin": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-margin-slime",
+            "hp": 48,
+            "x": 500,
+            "y": 2150,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "south-weir-watch": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-weir-guardian",
+            "hp": 84,
+            "x": 2160,
+            "y": 2870,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "west-farm-reaper": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-farm-reaper",
+            "hp": 72,
+            "x": -880,
+            "y": 1250,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "west-cart-ambush": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-cart-wolf",
+            "hp": 58,
+            "x": -1500,
+            "y": 970,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-cart-worm",
+            "hp": 62,
+            "x": -1620,
+            "y": 920,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "west-pack-clearing": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "elite-thorn-alpha",
+            "hp": 150,
+            "x": -1240,
+            "y": 1680,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "west-trade-scouts": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-trade-wolf-a",
+            "hp": 58,
+            "x": -1434.2149321033637,
+            "y": 13.256108634618874,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-trade-wolf-b",
+            "hp": 58,
+            "x": -1534.2149321033637,
+            "y": 113.25610863461884,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "north-pass-charge": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-bent-boar",
+            "hp": 90,
+            "x": 394.79652714904245,
+            "y": -403.9857474545593,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:north-pass-charge:0:1:leaf",
+            "hp": 72,
+            "x": -89.05526142360169,
+            "y": 234.6013088571363,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:north-pass-charge:0:2:boar",
+            "hp": 90,
+            "x": 289.91023038152406,
+            "y": -222.38242832763058,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:north-pass-charge:0:3:bell",
+            "hp": 88,
+            "x": 185.16648077109582,
+            "y": -403.8088306164188,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:north-pass-charge:0:4:slime",
+            "hp": 48,
+            "x": 281.36146971928315,
+            "y": -573.9253129714192,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:north-pass-charge:0:5:slime",
+            "hp": 48,
+            "x": 126.73798824783806,
+            "y": -83.36970839194116,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:north-pass-charge:1:0:leaf",
+            "hp": 72,
+            "x": 575,
+            "y": -330,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:north-pass-charge:1:1:slime",
+            "hp": 48,
+            "x": 452.5,
+            "y": -117.82377607281254,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:north-pass-charge:1:2:raven",
+            "hp": 64,
+            "x": 207.50000000000006,
+            "y": -117.8237760728125,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:north-pass-charge:1:3:guardian",
+            "hp": 84,
+            "x": 85,
+            "y": -329.99999999999994,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:north-pass-charge:1:4:wolf",
+            "hp": 58,
+            "x": 207.4999999999999,
+            "y": -542.1762239271874,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "v2:north-pass-charge:1:5:slime",
+            "hp": 48,
+            "x": 452.5,
+            "y": -542.1762239271875,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ],
+        "wave": 0,
+        "waveWarning": 0,
+        "rewarded": false
+      },
+      "north-outpost-wings": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-outpost-raven",
+            "hp": 64,
+            "x": 900,
+            "y": -740,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "north-rock-arena": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "elite-rock-ram",
+            "hp": 180,
+            "x": 1080,
+            "y": -990,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "north-lookout-tracks": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": true,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-lookout-wolf",
+            "hp": 58,
+            "x": -123.67384245898188,
+            "y": -788.9784726230544,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-lookout-slime",
+            "hp": 48,
+            "x": -31.933915126654448,
+            "y": -744.198254620037,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": true,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "east-road-slimes": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "slime-1",
+            "hp": 48,
+            "x": 2450,
+            "y": 1060,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "slime-2",
+            "hp": 48,
+            "x": 2670,
+            "y": 1230,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "east-brook-reapers": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "leaf-1",
+            "hp": 72,
+            "x": 2920,
+            "y": 1070,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "leaf-2",
+            "hp": 72,
+            "x": 3170,
+            "y": 930,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "east-mushroom-watch": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "spore-1",
+            "hp": 60,
+            "x": 2730,
+            "y": 1840,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "east-spring-boar": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "boar-1",
+            "hp": 90,
+            "x": 3150,
+            "y": 340,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "east-canopy-raven": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "raven-1",
+            "hp": 64,
+            "x": 3250,
+            "y": 1830,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "east-spore-ring": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "elite-ashen-brood",
+            "hp": 160,
+            "x": 3070,
+            "y": 2100,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "east-brook-burrows": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-brook-worm",
+            "hp": 62,
+            "x": 2840,
+            "y": 1450,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "ruins-gate-watch": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-ruins-gate",
+            "hp": 84,
+            "x": 2770,
+            "y": -100,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "ruins-court-front": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-court-guardian",
+            "hp": 84,
+            "x": 3220,
+            "y": -350,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-court-reaper",
+            "hp": 72,
+            "x": 3340,
+            "y": -320,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "ruins-court-flank": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-court-raven",
+            "hp": 64,
+            "x": 3500,
+            "y": -530,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-court-slime",
+            "hp": 48,
+            "x": 3600,
+            "y": -470,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "ruins-hall-watch": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-hall-spore",
+            "hp": 60,
+            "x": 3800,
+            "y": -720,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-hall-guardian",
+            "hp": 84,
+            "x": 3910,
+            "y": -640,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "ruins-exit-watch": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "wild-exit-worm",
+            "hp": 62,
+            "x": 4020,
+            "y": -140,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "wild-exit-guardian",
+            "hp": 84,
+            "x": 3900,
+            "y": -240,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "legacy-wind-device": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "legacy-device-leaf",
+            "hp": 72,
+            "x": 2320,
+            "y": 1650,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "legacy-device-slime",
+            "hp": 48,
+            "x": 2710,
+            "y": 1670,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "legacy-wind-passage": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "legacy-passage-guardian",
+            "hp": 84,
+            "x": 2500,
+            "y": 1900,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "legacy-passage-leaf",
+            "hp": 72,
+            "x": 2600,
+            "y": 2020,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "legacy-passage-slime",
+            "hp": 48,
+            "x": 2380,
+            "y": 2020,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "legacy-blade-post": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "legacy-post-guardian",
+            "hp": 84,
+            "x": 2950,
+            "y": 780,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "legacy-post-priest",
+            "hp": 96,
+            "x": 3130,
+            "y": 740,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      },
+      "legacy-blade-road": {
+        "composition": 2,
+        "cycle": 0,
+        "activated": false,
+        "cleared": false,
+        "cooldown": 0,
+        "warning": null,
+        "members": [
+          {
+            "id": "legacy-road-guardian",
+            "hp": 84,
+            "x": 3290,
+            "y": 600,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "legacy-road-priest",
+            "hp": 96,
+            "x": 3380,
+            "y": 580,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          },
+          {
+            "id": "legacy-road-leaf",
+            "hp": 72,
+            "x": 3470,
+            "y": 650,
+            "serial": 0,
+            "cooldown": 0,
+            "defeated": false,
+            "drop": false,
+            "dropRemaining": 0,
+            "participated": false,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0
+          }
+        ]
+      }
+    },
+    "镜头": {
+      "view": {
+        "x": -2110,
+        "y": 1137.8689127809648
+      },
+      "zoom": 1
+    }
+  },
+  "错误": []
+}

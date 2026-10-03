@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>闪链 · 电弧动画审阅</title>
+<style>
+body{margin:0;background:#152722;color:#e9f4ed;font:16px/1.7 system-ui,sans-serif}main{max-width:960px;margin:32px auto;padding:24px}h1{margin:0;font-size:30px}p{color:#b6d2c3}.controls{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:20px 0}button,select{font:inherit;color:inherit;background:#284c40;border:1px solid #689f89;border-radius:8px;padding:7px 15px}canvas{display:block;width:100%;height:auto;border:1px solid #477b65;border-radius:12px}input[type=range]{flex:1;min-width:120px}label{display:inline-flex;align-items:center;gap:8px}.frame{display:flex;gap:12px;align-items:center}output{min-width:100px}a{color:#8edaff}
+</style><main>
+<h1>闪链 · 电弧动画</h1><p>亮白电芯、蓝青辉光、尖锐分叉。两束放电错开70毫秒，落点炸出短电丝，随后断裂消散。</p>
+<div class="controls"><button id="replay">重播</button><button id="pause">暂停</button><label>速度<select id="speed"><option value="1">正常</option><option value="0.25">四分之一慢放</option></select></label><label><input id="simple" type="checkbox">简化</label><label><input id="low" type="checkbox">降低闪光</label></div>
+<canvas id="preview" width="900" height="360" aria-label="闪链实时动画"></canvas>
+<div class="frame"><label for="time">动画时刻</label><input id="time" type="range" min="0" max="390" step="1" value="0"><output id="elapsed">0毫秒</output></div>
+<p>与实战共用绘制函数；此页只展示动画。<a href="../../?windGiftArena">进入隔离试玩</a>，选择「闪链电弧」后按I攻击。</p>
+</main><script type="module">
+import {paintGiftPreview} from '/src/game/ui/windGiftPreview.ts';
+import {demoTimeline} from '/src/game/ui/windGiftDemo.ts';
+const canvas=document.querySelector('#preview'),context=canvas.getContext('2d'),time=document.querySelector('#time'),elapsed=document.querySelector('#elapsed'),speed=document.querySelector('#speed'),simple=document.querySelector('#simple'),low=document.querySelector('#low'),pause=document.querySelector('#pause');
+let playing=true,age=0,last=performance.now();
+document.querySelector('#replay').onclick=()=>{age=0;playing=true;pause.textContent='暂停';};
+pause.onclick=()=>{playing=!playing;pause.textContent=playing?'暂停':'播放';};
+time.oninput=()=>{age=Number(time.value);playing=false;pause.textContent='播放';};
+function draw(now){if(playing&&!document.hidden)age=(age+(now-last)*Number(speed.value))%1000;last=now;paintGiftPreview(context,'chain',demoTimeline('chain').effectAt+age*1.8,simple.checked,low.checked);time.value=String(Math.min(390,age));elapsed.textContent=Math.round(Math.min(390,age))+'毫秒';requestAnimationFrame(draw);}requestAnimationFrame(draw);
+</script></html>

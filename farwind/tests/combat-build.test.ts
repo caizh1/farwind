@@ -133,7 +133,7 @@ describe('回风的几何、来源与去重',()=>{
  });
 });
 describe('符文原生、派生、终结和迁移门禁',()=>{
- function runes(slots:string[]){const state=initialState();state.runes.owned=slots;state.runes.slots=[...slots,...Array(5-slots.length).fill(null)];const target={id:'靶',x:120,y:0,hp:10000},events:RuneEvent[]=[];
+ function runes(slots:string[]){const state=initialState();state.runes.owned=slots;state.runes.slots=[...slots,...Array(state.runes.slots.length-slots.length).fill(null)];const target={id:'靶',x:120,y:0,hp:10000},events:RuneEvent[]=[];
   const ctx:RuneContext={state:()=>state,targets:()=>[target],A:()=>18,clear:()=>true,blocker:()=>null,visible:()=>true,damage:(_,e)=>{events.push(e);return {applied:true,damage:e.amount,killed:false};},push:()=> 'immune',sound:()=>{},checkpoint:()=>{}};
   return {state,target,events,engine:new RuneCombat(ctx)};
  }
@@ -150,7 +150,7 @@ describe('符文原生、派生、终结和迁移门禁',()=>{
   for(let n=2;n<30;n++)a.engine.nativeLanded(a.target,a.engine.native('attack:'+n,a.target,36,1,true),36);expect(a.engine.traces).toHaveLength(8);a.engine.advance(4001);expect(a.engine.traces).toHaveLength(0);
  });
  it('旧档幂等迁移不发奖、不伪造四连，技能、五槽及进度原样保留；一次补领',()=>{
-  const original:any=completeWindLesson(initialState(),'windLessonResolved');original.schema_version=14;delete original.skills.meleeFinisher;delete original.skills.buildLessons;original.runes.version=1;delete original.runes.growth;original.runes.owned=['r01'];original.runes.slots[0]='r01';original.coins=123;
+  const original:any=completeWindLesson(initialState(),'windLessonResolved');original.schema_version=14;delete original.skills.meleeFinisher;delete original.skills.buildLessons;original.runes.slots=original.runes.slots.slice(0,5);for(const p of original.runes.presets)p.slots=p.slots.slice(0,5);original.runes.version=1;delete original.runes.growth;original.runes.owned=['r01'];original.runes.slots[0]='r01';original.coins=123;
   const s=validate(original);expect(s.skills.swordWindStage).toBe(1);expect(s.skills.meleeFinisher).toBe(false);expect(s.coins).toBe(123);expect(s.runes.owned).toEqual(['r01']);expect(validate(s)).toEqual(s);expect(original.schema_version).toBe(14);
   const claimed=runeSnapshot(s,{kind:'claim',id:'r31'},safe);expect(()=>runeSnapshot(claimed,{kind:'claim',id:'r31'},safe)).toThrow();expect(claimed.runes.growth.r31).toEqual({advanced:false,branch:null});
  });

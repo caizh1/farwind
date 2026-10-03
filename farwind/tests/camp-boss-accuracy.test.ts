@@ -12,7 +12,7 @@ vi.mock('../src/game/systems/obstacles',async original=>({...await original<obje
 const samples:object[]=[],stage=process.env.BOSS_ACCURACY_STAGE??'after',root='docs/camp-bosses/evidence/accuracy';
 afterAll(()=>{mkdirSync(root,{recursive:true});writeFileSync(`${root}/${stage}.json`,JSON.stringify({说明:'固定无障碍逻辑样本；玩家位置始终不变，读取正式起手、移动、弹丸和接触结果。修复前后使用同一断言，不以命中弹道上的人工目标替代瞄准目标。',样本:samples},null,2));});
 function body(kind:CampBossKind):EnemyBody{return {id:'boss-'+kind,type:CAMP_BOSSES[kind].type,boss:kind,bossAttempt:0,bossBattle:initialBossBattle(0),hp:CAMP_BOSSES[kind].hp,x:0,y:0,homeX:0,homeY:0,leashRadius:1000,cool:0,windup:0,staggerUntil:0,nav:enemyNavigation(),ai:'首领',disabled:false,recovered:false,face:{x:1,y:0}};}
-const tooFar:readonly [CampBossKind,number,number][]=[['spore-heart',2,130],['spore-heart',3,300],['thorn-crown',0,300],['thorn-crown',1,130],['thorn-crown',3,300],['crag-tusk',3,300]];
+const tooFar:readonly [CampBossKind,number,number][]=[['spore-heart',2,130],['spore-heart',3,300],['thorn-crown',0,300],['thorn-crown',1,280],['thorn-crown',3,300],['crag-tusk',3,300]];
 describe('静止玩家与首领真实起手距离',()=>{
  it.each(tooFar)('%s 技能%d：距离%d超出实际几何时应先接近', (kind,move,distance)=>{
   const e=body(kind),target={x:distance,y:0};Object.assign(e.bossBattle!,{move,nextAt:0});

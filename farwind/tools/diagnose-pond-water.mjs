@@ -42,9 +42,9 @@ await sharp({
     })),
   )
   .png()
-  .toFile(`${root}/old-water-tiled-3x3.png`);
-const source = await sharp("public/assets/ground-source.png")
-  .extract({ left: 0, top: 627, width: 627, height: 627 })
+  .toFile(`${root}/current-water-tiled-3x3.png`);
+const source = await sharp("public/assets/village-polish/pond-water.png")
+  .resize(768,768)
   .ensureAlpha()
   .raw()
   .toBuffer();
@@ -59,13 +59,13 @@ await writeFile(
           .reduce((a, b) => Math.min(a, b), 255),
         data.filter((_, i) => i % 4 === 3).reduce((a, b) => Math.max(a, b), 0),
       ],
-      裁切来源: "ground-source.png 左下象限，左=0，上=627，宽高=627",
+      裁切来源: "村湖手绘水面缩放到768×768；游戏端只羽化对边，不镜像整块纹样",
       与源裁切逐字节相同: source.equals(data),
       左右接缝: difference(true, true),
       上下接缝: difference(false, true),
       横向内部相邻列: difference(true, false),
       纵向内部相邻行: difference(false, false),
-      纹理重复边界: { 竖向: 1254, 横向: 1254 },
+      纹理重复边界: { 竖向: 768*.55, 横向: 768*.55 },
       地表分块边界: { 竖向: 1200, 横向: 1100 },
       说明: "颜色通道差为0至255量纲；平铺图用于直接检查颜色及波纹结构，提示词的可平铺声明不能代替验证。",
     },

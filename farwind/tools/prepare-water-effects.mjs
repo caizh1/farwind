@@ -15,10 +15,11 @@ const wet=(r,g,b)=>g>r+5&&b>r-5 || r>185&&g>r-5&&b>r-10;
 const flow=Buffer.alloc(f.length),pool=Buffer.alloc(f.length);
 for(let y=0;y<fi.height;y++)for(let x=0;x<fi.width;x++) {
   const i=(y*fi.width+x)*4,r=f[i],g=f[i+1],b=f[i+2];
-  const region=(x>=174&&x<=213&&y>=84&&y<=141)||(x>=110&&x<=139&&y>=133&&y<=246)||(x>=182&&x<=202&&y>=147&&y<=272)||(x>=245&&x<=274&&y>=131&&y<=247);
-  if(region&&wet(r,g,b)) {flow[i]=flow[i+1]=flow[i+2]=255;flow[i+3]=f[i+3];}
-  // 内池范围挖除石柱，再按原图水色排除池沿；不是几何喷泉主体。
-  if(((x-193)/139)**2+((y-249)/42)**2<1 && !(x>153&&x<230&&y<264) && wet(r,g,b)) {pool[i]=pool[i+1]=pool[i+2]=255;pool[i+3]=f[i+3];}
+  const jet=((x-195)/8)**2+((y-55)/35)**2<1;
+  const streams=[[128,132,244],[195,142,270],[262,128,244]].some(([center,top,bottom])=>y>=top&&y<=bottom&&Math.abs(x-center-Math.sin(y*.14)*.5)<(y>bottom-10?5:1.8));
+  if(f[i+3]>100&&(jet||streams)) {flow[i]=flow[i+1]=flow[i+2]=255;flow[i+3]=f[i+3];}
+  // 新重绘喷泉按真实青蓝水域排除石柱和池沿，与材质打包脚本一致。
+  if(y>166&&g-r>9&&b-r>12&&f[i+3]>100) {pool[i]=pool[i+1]=pool[i+2]=255;pool[i+3]=Math.min(f[i+3],Math.max(0,Math.min(g-r,b-r)-8)*16);}
 }
 await save("water-flow-mask",await sharp(flow,{raw:{width:fi.width,height:fi.height,channels:4}}).png().toBuffer(),"与原喷泉三个细水流及顶部出水重合的alpha遮罩",fountain);
 await save("water-basin-mask",await sharp(pool,{raw:{width:fi.width,height:fi.height,channels:4}}).png().toBuffer(),"按原图真实水色和alpha裁切内池，排除石柱及前池沿，不叠画主体或阴影",fountain);
@@ -67,7 +68,7 @@ for(const [id,w,h] of [["water-lily",80,48],["water-flower",32,24]]) {
   await save(id,await sharp(source).extract(crop).resize(w,h,{fit:"contain",background:"#00000000"}).png().toBuffer(),id==="water-lily"?"围绕原18个固定锚点微浮动的手绘荷叶":"随所属荷叶同步运动的手绘小荷花",`water-effects/${id}-source.png`,{源尺寸:[info.width,info.height],源有效裁切:crop,显示尺寸:id==="water-lily"?[20,12]:[8,6]});
 }
 const path="public/assets/manifest.json",m=JSON.parse(await readFile(path,"utf8"));
-const display={"water-flow-mask":[130,130],"water-basin-mask":[130,130],"water-flow":[130,130],"water-ripple":"喷泉基础19.5×7.8、池塘64×26，再乘0.45至1.5的扩散比例","water-splash":[8.45,8.45],"water-drop":[1.82,2.73],"water-waves":"反光42×18，共4处，错相渐隐；原12张漂移水纹已移除"};
+const display={"water-flow-mask":[140,168],"water-basin-mask":[140,168],"water-flow":[140,168],"water-ripple":"喷泉基础21×10.08、池塘64×26，再乘0.45至1.5的扩散比例","water-splash":[9.1,10.92],"water-drop":[1.96,3.528],"water-waves":"反光42×18，共4处，错相渐隐；原12张漂移水纹已移除"};
 for(const record of records)if(display[record.ID])record.显示尺寸=display[record.ID];
 for(const record of records){const previous=m.资源.find(r=>r.ID===record.ID);if(previous?.摘要===record.摘要){record.验证状态=previous.验证状态;}}
 m.资源=[...m.资源.filter(r=>!records.some(n=>n.ID===r.ID)),...records];await writeFile(path,JSON.stringify(m,null,2));

@@ -9,6 +9,7 @@ import {
 } from "../../data/animation";
 import type { Facing } from "../systems/locomotion";
 import {scopePlacement,scopeViews} from './scopeWear';
+import {groundShadows} from '../rendering/groundShadows';
 export class Actor {
   // 镜像集中在角色表现层，其他视图只提交方向决定。
   static mirror(sprite: Phaser.GameObjects.Sprite | Phaser.GameObjects.Image, flip: boolean) {
@@ -41,15 +42,16 @@ export class Actor {
     this.shadow = scene.add.ellipse(
       x,
       y - 3,
-      cat ? 27 : 34,
-      12,
+      cat ? 40 : 54,
+      cat ? 13 : 18,
       0x233c34,
       0.22,
-    );
+    ).setRotation(.22);
     this.sprite = scene.add
       .sprite(x, y, cat ? "cat-motion" : "hero", 0)
       .setOrigin(0.5, 124 / 128);
     this.sprite.setDisplaySize(cat ? 55 : 86, cat ? 54 : 92);
+    groundShadows(scene).add(this.sprite,this.shadow,{label:cat?'小黑':'主角'});
     this.carrySword = scene.add
       .image(x, y, "hero-carry-sword")
       .setVisible(false);

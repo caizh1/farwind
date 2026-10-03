@@ -1,6 +1,7 @@
 import {MAP_REGIONS} from "../../data/village";
 import {WILD_WATERS,WILD_BRIDGES} from "../../data/maps/windbell/wilderness";
 import {groundChunks} from './terrainChunks';
+import {campNestGroundAreas,campNestGroundCoverage,campNestGroundCleared} from './campNestGround';
 import {ellipseDistance,featherCoverage,polygonDistance,strokeCoverage,terrainBounds,terrainJitter,terrainSegments} from './terrainBlend';
 import type {TerrainBounds,TerrainPoint} from './terrainBlend';
 import {SERVICE_SIGNS,VILLAGE_ANCHORS} from '../../data/maps/windbell/layout';
@@ -19,6 +20,8 @@ import {
   showLayoutLabels,
 } from "../../data/world";
 import type { World } from "../scenes/World";
+import {ART_QUALITY} from '../../data/worldAppearance';
+import {seamlessGround,makeGroundAppearance,paintGroundVariation} from '../rendering/worldAppearance';
 
 export function makeTerrain(this: World) {
   // 候选手绘门只在资源层切帧，柱脚与横梁各自排序，门洞不产生矩形碰撞。
@@ -28,15 +31,17 @@ export function makeTerrain(this: World) {
   gate.add("beam", 0, 310, 0, 690, 420);
   this.textures.get("fence").add("boundary",0,0,120,274,186);
   this.textures.get("vertical-fence").add("trim",0,380,67,169,1446);
-  const grass = this.textures.get("grass").getSourceImage() as HTMLImageElement,
-    forest = this.textures.get("forest").getSourceImage() as HTMLImageElement,
-    road = this.textures.get("road").getSourceImage() as HTMLImageElement,
+  const grass = seamlessGround(this.textures.get("grass").getSourceImage() as HTMLImageElement),
+    forest = seamlessGround(this.textures.get("forest").getSourceImage() as HTMLImageElement),
+    road = seamlessGround(this.textures.get("road").getSourceImage() as HTMLImageElement),
+    waterMaterial = seamlessGround(this.textures.get("water").getSourceImage() as HTMLImageElement),
     earth = this.textures
       .get("packed-earth")
       .getSourceImage() as HTMLImageElement,
     herb = this.textures.get("herb").getSourceImage() as HTMLImageElement,
     flowerBed = this.textures.get("orchard-flower-bed").getSourceImage() as HTMLImageElement;
   const tiles=new Map<string,Phaser.GameObjects.Image>();
+  let cleared=campNestGroundAreas.map(a=>campNestGroundCleared(a,this.state));
   // 区域边缘只烘焙一次；世界坐标决定起伏，相邻块和淘汰后重建保持一致。
   const blend = 32;
   const surface = document.createElement('canvas'), mask = document.createElement('canvas');
@@ -69,15 +74,16 @@ export function makeTerrain(this: World) {
     {points:[[1430,343],[1540,337],[1700,339],[1876,340],[1882,450],[1879,590],[1883,715],[1770,729],[1660,723],[1540,730],[1422,717],[1416,600],[1423,470],[1418,367],[1430,343]] as TerrainPoint[],opacity:1,base:true},
     {points:[[1060,406],[1130,420],[1179,467],[1188,540],[1166,604],[1120,650],[1070,622],[1034,570],[1019,509],[1024,444],[1060,406]] as TerrainPoint[],opacity:.42,base:false},
   ].map(a=>({...a,bounds:terrainBounds(a.points,25),edges:terrainSegments(a.points,0)}));
+  const appearance=makeGroundAppearance(this);
   let peak=0,created=0,released=0;
   const drawTile=(cx:number,cy:number,key:string)=>{
       const texture = this.textures.createCanvas(key, 600, 550)!;
       const c = texture.context;
       c.translate(-cx, -cy);
       const gp = c.createPattern(grass, "repeat")!;
-      gp.setTransform(new DOMMatrix().scale(0.6));
+      gp.setTransform(new DOMMatrix().scale(ART_QUALITY.groundScale.grass));
       const rp = c.createPattern(road, "repeat")!;
-      rp.setTransform(new DOMMatrix().scale(0.25));
+      rp.setTransform(new DOMMatrix().scale(ART_QUALITY.groundScale.road));
       const intersects=(b:TerrainBounds,pad=0)=>cx+601>=b.left-pad&&cx-1<=b.right+pad&&cy+551>=b.top-pad&&cy-1<=b.bottom+pad;
       // 共用区域遮罩和离屏画布，只采样与当前地面块相交的范围。
       const paintBlend=(bounds:TerrainBounds,coverage:(x:number,y:number)=>number,paint:CanvasPattern|string,opacity=1,base?:string)=>{
@@ -100,7 +106,7 @@ export function makeTerrain(this: World) {
       c.fillStyle = gp;
       c.fillRect(cx, cy, 600, 550);
       const fp = c.createPattern(forest, "repeat")!;
-      fp.setTransform(new DOMMatrix().scale(0.6));
+      fp.setTransform(new DOMMatrix().scale(ART_QUALITY.groundScale.forest));
       for(const region of regions){
         // 起伏最大18像素，加上32像素羽化；远离边缘的块直接铺纹理。
         const margin = blend + 18;
@@ -128,7 +134,17 @@ export function makeTerrain(this: World) {
         }
         layer.restore(); c.drawImage(surface,cx,cy);
       }
-      const water=c.createPattern(this.textures.get('water').getSourceImage() as HTMLImageElement,'repeat')!;
+      paintGroundVariation(c,cx,cy);
+      // 地表先融入区域底图，水面、道路和桥面随后覆盖；战斗中不逐帧生成材质。
+      for(const area of campNestGroundAreas){
+        if(campNestGroundCleared(area,this.state)||!intersects(area.bounds))continue;
+        const source=this.textures.get(area.texture).getSourceImage() as HTMLImageElement;
+        const ground=c.createPattern(source,'repeat')!;
+        ground.setTransform(new DOMMatrix().translate(area.bounds.left,area.bounds.top).scale((area.bounds.right-area.bounds.left)/source.width,(area.bounds.bottom-area.bounds.top)/source.height));
+        paintBlend(area.bounds,(x,y)=>campNestGroundCoverage(x,y,area),ground,area.opacity);
+      }
+      const water=c.createPattern(waterMaterial,'repeat')!;
+      water.setTransform(new DOMMatrix().scale(.55));
       for(const p of WILD_WATERS){
         paintBlend(ellipseBounds(p,31),(x,y)=>featherCoverage(ellipseDistance(x,y,p)+12+terrainJitter(x,y),14),'#aaa477');
         paintBlend(ellipseBounds(p,13),(x,y)=>featherCoverage(ellipseDistance(x,y,p)+terrainJitter(x,y)*.6,10),water);
@@ -146,7 +162,8 @@ export function makeTerrain(this: World) {
         },rp);
       }
       for(const b of WILD_BRIDGES){
-        c.fillStyle="#76583b";c.fillRect(b.x,b.y,b.w,b.h);c.strokeStyle="#b99a66";c.lineWidth=3;for(let y=b.y+4;y<b.y+b.h;y+=18){c.beginPath();c.moveTo(b.x+3,y);c.lineTo(b.x+b.w-3,y);c.stroke();}
+        c.save();c.translate(b.x+b.w/2,b.y+b.h/2);c.rotate(Math.PI/2);
+        c.drawImage(this.textures.get('bridge').getSourceImage() as HTMLImageElement,-b.h/2,-b.w/2,b.h,b.w);c.restore();
       }
       const worn={x:TRAINING.x,y:TRAINING.y,rx:76,ry:52};
       paintBlend(ellipseBounds(worn,19),(x,y)=>featherCoverage(ellipseDistance(x,y,worn)+terrainJitter(x,y),14),'#b2a16a',.53);
@@ -184,11 +201,19 @@ export function makeTerrain(this: World) {
         c.ellipse(x, y, 7, 2, 0.4, 0, 7);
         c.fill();
       }
+      appearance.bake(c,cx,cy);
       texture.refresh();
       tiles.set(key,this.add.image(cx, cy, key).setOrigin(0).setDepth(WORLD.top-1000));
       created++;peak=Math.max(peak,tiles.size);
   };
   const refresh=()=>{
+    const next=campNestGroundAreas.map(a=>campNestGroundCleared(a,this.state));
+    const changed=campNestGroundAreas.filter((_,i)=>cleared[i]!==next[i]);
+    cleared=next;
+    // 清剿、读档、新游戏及风忆切换都在同一处刷新；只淘汰状态变化区域的缓存。
+    for(const [key,im] of tiles)if(changed.some(a=>im.x+601>=a.bounds.left&&im.x-1<=a.bounds.right&&im.y+551>=a.bounds.top&&im.y-1<=a.bounds.bottom)){
+      im.destroy();this.textures.remove(key);tiles.delete(key);released++;
+    }
     if(this.active&&this.state.life.playerSpace!=='village')return;
     const camera=this.cameras.main;
     // 相机的scroll以未缩放视窗为参照；按中心还原真实世界可视矩形。
@@ -208,24 +233,16 @@ export function makeTerrain(this: World) {
     this.events.off('prerender',refresh);
     for(const [key,im] of tiles){im.destroy();this.textures.remove(key);}tiles.clear();
   });
-  this.data.set('groundSnapshot',()=>({resident:tiles.size,peak,created,released,heroDepth:this.hero?.sprite.depth,floorDepth:WORLD.top-1000,limit:'当前视野加一圈，预取每帧一块'}));
+  this.data.set('groundSnapshot',()=>({resident:tiles.size,peak,created,released,heroDepth:this.hero?.sprite.depth,floorDepth:WORLD.top-1000,limit:'当前视野加一圈，预取每帧一块',nestGround:campNestGroundAreas.map(a=>({direction:a.direction,texture:a.texture,center:[a.x,a.y],bounds:a.bounds,feather:a.feather,cleared:campNestGroundCleared(a,this.state),applied:!campNestGroundCleared(a,this.state)}))}));
   // 店招与门前交互分离；纯表现纹理不参与地面碰撞。
   const signKeys:string[]=[];
   for(const sign of SERVICE_SIGNS){
     const key=`plaque-${sign.id}`;signKeys.push(key);
     const tex=this.textures.createCanvas(key,224,72)!,c=tex.context;
-    c.fillStyle='#3e4d39';c.beginPath();c.roundRect(3,3,218,66,9);c.fill();
-    c.fillStyle='#806747';c.beginPath();c.roundRect(6,7,212,58,7);c.fill();
-    c.strokeStyle='#d4b880';c.lineWidth=2;c.strokeRect(13,13,198,46);
+    c.drawImage(this.textures.get('quality-plaque').getSourceImage() as HTMLImageElement,0,0,224,72);
     c.fillStyle='#fff0c8';c.font='bold 31px "PingFang SC",serif';c.textAlign='center';c.textBaseline='middle';c.fillText(sign.name,112,36);
     tex.refresh();
   }
-  const book=this.textures.createCanvas('training-book',144,128)!,bc=book.context;
-  signKeys.push('training-book');
-  bc.fillStyle='#6f5039';bc.fillRect(28,72,10,51);bc.fillRect(106,72,10,51);bc.fillRect(14,62,116,18);
-  bc.fillStyle='#40584b';bc.beginPath();bc.moveTo(15,28);bc.lineTo(70,34);bc.lineTo(129,28);bc.lineTo(122,72);bc.lineTo(70,77);bc.lineTo(22,72);bc.closePath();bc.fill();
-  bc.fillStyle='#eee1b8';bc.beginPath();bc.moveTo(20,18);bc.lineTo(71,28);bc.lineTo(124,18);bc.lineTo(118,62);bc.lineTo(71,70);bc.lineTo(26,61);bc.closePath();bc.fill();
-  bc.strokeStyle='#aa936c';bc.lineWidth=2;for(let y=32;y<=53;y+=8){bc.beginPath();bc.moveTo(30,y);bc.lineTo(61,y+5);bc.moveTo(81,y+5);bc.lineTo(114,y);bc.stroke();}book.refresh();
   this.events.once('shutdown',()=>signKeys.forEach(key=>this.textures.remove(key)));
   const debug = showLayoutLabels(import.meta.env.DEV, window.location.search);
   this.data.set("layoutLabelCount", debug ? villageAreas.length : 0);

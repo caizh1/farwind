@@ -17,6 +17,10 @@ export const items = {
     description: "护甲 · 每次受击减少3点伤害，至少受到1点。需穿戴才生效。",
   },
   windScope: { name: "寻风瞄准镜", description: "头部 · 学会剑风并穿戴后，按住 I 自动瞄准射程内无遮挡的怪物。中键保留手动瞄准，不增加伤害、射程或速度。" },
+  brookShoes: { name: "溪行布鞋", description: "鞋子 · 行走与奔跑速度提升8%。亚麻鞋面与麻绳系带，轻便的第一双远行鞋。购买后需穿戴，不额外消耗体力。" },
+  deerBoots: { name: "鹿踪皮靴", description: "鞋子 · 行走与奔跑速度提升15%。柔韧鹿皮、交叉绑带与鹿角铜扣，为林间赶路而制。购买后需穿戴，不额外消耗体力。" },
+  mistBoots: { name: "踏岚长靴", description: "鞋子 · 行走与奔跑速度提升35%。银白云纹与羽形护片，让漫长旅途轻盈起来。购买后需穿戴，不额外消耗体力。" },
+  starShoes: { name: "星渡履", description: "鞋子 · 行走与奔跑速度提升45%。银线星图与月白宝石，将远方缝进脚下。购买后需穿戴，不额外消耗体力。" },
   windBoots: { name: "轻风靴", description: "鞋子 · 行走与奔跑速度提升25%。购买后需穿戴才生效，不额外消耗体力。" },
   charm: { name: "旅风护符", description: "黑猫发现的纪念品。" },
 } as const;
@@ -32,14 +36,18 @@ export const objectives = [
   "风重新吹向远方 · 主线已完成",
 ];
 
-// 沿用旧素材；皮甲以物品文字展示，避免错误图标。
+// 沿用已有物品素材，皮甲复用装备页的旅行皮衣。
 export const itemIcon = (id: ItemId) =>
-  id === "windBoots" ? "/assets/equipment/wind-boots.webp" :
+  id === "brookShoes" ? "/assets/equipment/brook-walk-shoes.webp" :
+  id === "deerBoots" ? "/assets/equipment/deer-trail-boots.webp" :
+  id === "mistBoots" ? "/assets/equipment/miststride-boots.webp" :
+  id === "starShoes" ? "/assets/equipment/starferry-slippers.webp" :
+  id === "windBoots" ? "/assets/equipment/lightwind-boots.webp" :
   id === "windScope" ? "/assets/equipment/wind-scope.webp" :
   ["bread", "tea", "soup"].includes(id)
     ? `/assets/village-interiors/${id}.webp`
     : id === "leatherCoat"
-    ? null
+    ? "/assets/equipment/traveler-coat.webp"
     : `/assets/icon-${id === "ironSword" ? "sword" : id}.png`;
 
 export const consumables: Partial<Record<ItemId, { hp: number; stamina: number }>> = {

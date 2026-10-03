@@ -113,7 +113,7 @@ describe('四据点首领清除与恢复',()=>{
   const h=harness('spore-heart');enter(h);const e=h.bodies()[0];e.bossBattle!.phase=2;e.bossBattle!.move=0;e.bossBattle!.next=6;e.attack=createBossAttack(e,10000,h.player,e.bossBattle!);h.shots.launch(e.attack,e,10900);
   const saved=captureBossCombat(e,11000,h.hazards,h.shots);h.g.boss!.combat=saved;h.g.members.at(-1)!.hp=e.hp;
   const serialized=parseSave(JSON.stringify(h.state)).encounters.groups[h.camp.id].boss!.combat!,copy=body('spore-heart'),hazards=new BossHazards(),shots=new EnemyProjectiles();restoreBossCombat(copy,serialized,500,hazards,shots);
-  expect(copy.bossBattle!.phase).toBe(2);expect(copy.bossBattle!.next).toBe(6);expect(copy.attack!.contactAt).toBe(400);expect(shots.shots).toHaveLength(3);expect(captureBossCombat(copy,500,hazards,shots)).toEqual(saved);
+  expect(copy.bossBattle!.phase).toBe(2);expect(copy.bossBattle!.next).toBe(6);expect(copy.attack!.contactAt).toBe(e.attack!.contactAt-11000+500);expect(shots.shots).toHaveLength(3);expect(captureBossCombat(copy,500,hazards,shots)).toEqual(saved);
   e.bossBattle!.move=1;e.attack=createBossAttack(e,12000,h.player,e.bossBattle!);h.hazards.launch(e,12000);h.runtime.capture(12100);expect(parseSave(JSON.stringify(h.state)).encounters.groups[h.camp.id].boss!.combat!.hazards).toHaveLength(1);
  });
  it('保存失败不发布清除副本，满包不改变首领死亡事实',async()=>{
@@ -198,7 +198,7 @@ describe('首领攻击、阶段与控制抗性',()=>{
  it('半血在完整招式结束后立即转换，不多等空档，转换不吞掉大招弱点时间',()=>{
   const e=body('spore-heart'),target={x:e.x+70,y:e.y};e.hp=CAMP_BOSSES['spore-heart'].hp*.5;e.bossBattle!.move=3;e.attack=createBossAttack(e,0,target,e.bossBattle!);const end=e.attack.recoveryUntil;
   updateEnemy(e,target,end-1,1);expect(e.bossBattle!.phase).toBe(1);
-  updateEnemy(e,target,end,1);updateEnemy(e,target,end,0);expect(e.bossBattle!.phase).toBe(2);expect(e.bossBattle!.transformUntil).toBe(end+BOSS_RULES.transform);expect(e.bossBattle!.exposedUntil).toBe(end+BOSS_RULES.transform+1800);expect(e.bossBattle!.nextAt).toBe(end+BOSS_RULES.transform+1800);
+  updateEnemy(e,target,end,1);updateEnemy(e,target,end,0);expect(e.bossBattle!.phase).toBe(2);expect(e.bossBattle!.transformUntil).toBe(end+BOSS_RULES.transform);expect(e.bossBattle!.exposedUntil).toBe(end+BOSS_RULES.transform+1400);expect(e.bossBattle!.nextAt).toBe(end+BOSS_RULES.transform+1400);
  });
  it('普通受击不打断首领，小宝控制至多400毫秒并有3秒抗性',()=>{
   const e=body('thorn-crown');e.bossBattle!.move=0;e.attack=createBossAttack(e,0,{x:e.x+100,y:e.y},e.bossBattle!);reactToEnemyHit(e,10,STRIKES[0],{x:1,y:0},false,true);expect(e.staggerUntil).toBe(0);expect(e.attack.cancelled).toBe(false);companionControl(e,100,800);expect(e.staggerUntil).toBe(500);companionControl(e,400,800);expect(e.staggerUntil).toBe(500);companionControl(e,3499,800);expect(e.staggerUntil).toBe(500);companionControl(e,3500,800);expect(e.staggerUntil).toBe(3900);
@@ -206,8 +206,8 @@ describe('首领攻击、阶段与控制抗性',()=>{
  it('弹反只截住当前连招段；普通与大招完整收招均提供1.8秒反击窗口',()=>{
   const e=body('thorn-crown'),target={x:e.x+80,y:e.y};e.bossBattle!.move=0;e.attack=createBossAttack(e,0,target,e.bossBattle!);e.attack.cancelled=true;e.bossBattle!.exposedUntil=1300;e.staggerUntil=1300;
   updateEnemy(e,target,1400,20);expect(e.bossBattle!.move).toBe(0);expect(e.bossBattle!.part).toBe(1);
-  const normal=body('spore-heart');normal.bossBattle!.move=2;normal.attack=createBossAttack(normal,0,{x:normal.x+70,y:normal.y},normal.bossBattle!);const normalEnd=normal.attack.recoveryUntil;updateEnemy(normal,{x:normal.x+70,y:normal.y},normalEnd,20);expect(normal.bossBattle!.exposedUntil).toBe(normalEnd+1800);
-  normal.bossBattle!.move=3;normal.attack=createBossAttack(normal,3000,target,normal.bossBattle!);const end=normal.attack.recoveryUntil;updateEnemy(normal,target,end,20);expect(normal.bossBattle!.exposedUntil).toBe(end+1800);
+  const normal=body('spore-heart');normal.bossBattle!.move=2;normal.attack=createBossAttack(normal,0,{x:normal.x+70,y:normal.y},normal.bossBattle!);const normalEnd=normal.attack.recoveryUntil;updateEnemy(normal,{x:normal.x+70,y:normal.y},normalEnd,20);expect(normal.bossBattle!.exposedUntil).toBe(normalEnd+1400);
+  normal.bossBattle!.move=3;normal.attack=createBossAttack(normal,3000,target,normal.bossBattle!);const end=normal.attack.recoveryUntil;updateEnemy(normal,target,end,20);expect(normal.bossBattle!.exposedUntil).toBe(end+1400);
  });
  it('护心茧正面减伤，重击或绕后可靠破茧，无通用常态护体',()=>{
   const e=body('bound-branch'),front={x:e.x+80,y:e.y};expect(enemyProtection(e,front,0).reduction).toBe(0);e.bossBattle!.move=3;e.attack=createBossAttack(e,0,front,e.bossBattle!);expect(enemyProtection(e,front,1000).reduction).toBe(.8);expect(enemyProtection(e,{x:e.x-80,y:e.y},1000).reduction).toBe(0);expect(e.attack.cancelled).toBe(true);expect(e.bossBattle!.exposedUntil).toBe(2500);

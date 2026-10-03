@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>风赐主角使用示例</title>
+<style>body{margin:0;padding:24px;background:#142f36;color:#e5e8d0;font-family:system-ui,sans-serif}main{max-width:980px;margin:auto}h1{font-size:24px}button{color:#e5e8d0;background:#3b5548;border:1px solid #839076;border-radius:8px;padding:10px;cursor:pointer}*{box-sizing:border-box}@media(max-width:480px){body{padding:10px}}</style>
+<main><h1>风赐 · 主角使用示例</h1><p>固定教学预览，独立于正式存档。</p><div id="demo"></div></main>
+<script type="module">
+import '../src/wind-gifts.css';
+import {giftPreviewMarkup,startGiftPreview} from '../src/game/ui/windGiftPreview';
+const root=document.querySelector('#demo');root.innerHTML=giftPreviewMarkup('riposte',true);startGiftPreview(root);
+</script></html>

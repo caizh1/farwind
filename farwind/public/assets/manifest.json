@@ -187,12 +187,12 @@
     {
       "ID": "forest",
       "文件": "forest.png",
-      "用途": "地表材质",
-      "来源": "内置图像生成，用户设计图作为风格参考；Sharp 裁切与透明图集处理",
+      "用途": "手绘地面底纹，运行时只羽化24像素对边，不镜像整块纹样",
+      "来源": "内置图像生成，设计图仅作材质风格参考；可复现切图见tools/pack-art-quality.mjs",
       "许可状态": "生成素材，尚未完成商业权利审查",
       "尺寸": [
-        627,
-        627
+        768,
+        768
       ],
       "透明通道": false,
       "锚点": [
@@ -200,17 +200,20 @@
         1
       ],
       "动画": null,
-      "是否临时": false
+      "是否临时": false,
+      "源文件": "docs/art-quality/forest-source.png",
+      "摘要": "bac3d28f534800cd6ef387b6e85306bd2092055a704e7618a0c6fa2c8d4462c4",
+      "验证状态": "当前运行截图待验收，最终美术待用户确认"
     },
     {
       "ID": "grass",
       "文件": "grass.png",
-      "用途": "地表材质",
-      "来源": "内置图像生成，用户设计图作为风格参考；Sharp 裁切与透明图集处理",
+      "用途": "手绘地面底纹，运行时只羽化24像素对边，不镜像整块纹样",
+      "来源": "内置图像生成，设计图仅作材质风格参考；可复现切图见tools/pack-art-quality.mjs",
       "许可状态": "生成素材，尚未完成商业权利审查",
       "尺寸": [
-        627,
-        627
+        768,
+        768
       ],
       "透明通道": false,
       "锚点": [
@@ -218,7 +221,10 @@
         1
       ],
       "动画": null,
-      "是否临时": false
+      "是否临时": false,
+      "源文件": "docs/art-quality/grass-source.png",
+      "摘要": "6fb6916fe562f0cdf250363c1fcc1e23c766ba1598f37cdfc93817c5e6cf7eef",
+      "验证状态": "当前运行截图待验收，最终美术待用户确认"
     },
     {
       "ID": "healer",
@@ -514,12 +520,12 @@
     {
       "ID": "road",
       "文件": "road.png",
-      "用途": "地表材质",
-      "来源": "内置图像生成，用户设计图作为风格参考；Sharp 裁切与透明图集处理",
+      "用途": "手绘地面底纹，运行时只羽化24像素对边，不镜像整块纹样",
+      "来源": "内置图像生成，设计图仅作材质风格参考；可复现切图见tools/pack-art-quality.mjs",
       "许可状态": "生成素材，尚未完成商业权利审查",
       "尺寸": [
-        627,
-        627
+        768,
+        768
       ],
       "透明通道": false,
       "锚点": [
@@ -527,7 +533,10 @@
         1
       ],
       "动画": null,
-      "是否临时": false
+      "是否临时": false,
+      "源文件": "docs/art-quality/road-source.png",
+      "摘要": "b597e077fd81f3bdcd0088fc02fd74ce647696a3b7547aa7083a0ea80e749835",
+      "验证状态": "当前运行截图待验收，最终美术待用户确认"
     },
     {
       "ID": "rock",
@@ -701,12 +710,12 @@
     {
       "ID": "water",
       "文件": "water.png",
-      "用途": "地表材质",
-      "来源": "内置图像生成，用户设计图作为风格参考；Sharp 裁切与透明图集处理",
+      "用途": "野外池塘和溪流复用村湖的手绘水纹，统一水景笔触",
+      "来源": "内置图像生成，设计图仅作材质风格参考；可复现切图见tools/pack-art-quality.mjs",
       "许可状态": "生成素材，尚未完成商业权利审查",
       "尺寸": [
-        627,
-        627
+        768,
+        768
       ],
       "透明通道": false,
       "锚点": [
@@ -714,7 +723,10 @@
         1
       ],
       "动画": null,
-      "是否临时": false
+      "是否临时": false,
+      "源文件": "public/assets/village-polish/pond-water.png",
+      "摘要": "73daa602825886760865a520f6aa5ec7f9033476be440f676d9a6d1bb80e1124",
+      "验证状态": "当前运行截图待验收，最终美术待用户确认"
     },
     {
       "ID": "well",
@@ -805,21 +817,11 @@
       "运行链路": "World.preload → 纹理key → world.ts props → World.create 脚底排序"
     },
     {
-      "运行透明度范围": [
-        0,
-        255
-      ],
-      "运行有效边界": {
-        "左": 3,
-        "上": 84,
-        "右": 386,
-        "下": 386
-      },
       "ID": "fountain",
       "文件": "village-polish/plaza-fountain.png",
-      "源文件": "village-polish/plaza-fountain-source.png",
-      "用途": "正式手绘场景物体",
-      "来源": "内置 imagegen，输入项目设计图、房屋、手绘桥梁；Sharp 可复现裁切缩放",
+      "源文件": "docs/art-quality/fountain-source.png",
+      "用途": "重绘喷泉主体，水域和流水遮罩按新原图重建",
+      "来源": "内置图像生成，设计图仅作材质风格参考；可复现切图见tools/pack-art-quality.mjs",
       "尺寸": [
         390,
         390
@@ -828,36 +830,25 @@
         1254,
         1254
       ],
-      "源有效裁切": {
-        "left": 76,
-        "top": 253,
-        "width": 1118,
-        "height": 883
-      },
       "透明通道": true,
-      "源透明度范围": [
-        0,
-        255
-      ],
-      "源透明像素": 951200,
-      "源半透明像素": 621035,
       "显示尺寸": [
-        130,
-        130
+        140,
+        168
       ],
       "锚点": [
         0.5,
         1
       ],
       "碰撞占地": [
-        100,
-        45
+        35,
+        28
       ],
-      "动画": "主体静态，池内两处轻微扩散涟漪",
+      "动画": "高柱细流水，内池涟漪和水滴遮罩",
       "是否临时": false,
       "透明处理": "保留源alpha，含水花和阴影",
-      "验证状态": "运行视觉验收通过，真实步行/暂停/重启检查通过；全库其他任务验证差异见docs/visual-polish/REPORT.md",
-      "运行链路": "World.preload → 纹理key → world.ts props → World.create 脚底排序"
+      "验证状态": "当前运行截图待验收，最终美术待用户确认",
+      "运行链路": "World.preload → 纹理key → world.ts props → World.create 脚底排序",
+      "摘要": "13c7d9eb593154a468c03019ab55480b9af98700c7f25c9877c1496db336e114"
     },
     {
       "运行透明度范围": [
@@ -1358,19 +1349,11 @@
         390
       ],
       "透明通道": true,
-      "透明像素": 146065,
-      "半透明像素": 5912,
-      "有效内容边界": {
-        "left": 110,
-        "top": 84,
-        "width": 165,
-        "height": 189
-      },
-      "用途": "与原喷泉三个细水流及顶部出水重合的alpha遮罩",
+      "用途": "从本轮重绘喷泉生成的真实流水或水域遮罩",
       "来源": "正式手绘素材的可复现局部裁切及透明分离；荷叶/荷花使用内置imagegen",
       "是否临时": false,
-      "摘要": "55cb20d3e57866d68aff811e205ea23dc57dd3447fe6a09511d8b123fca80072",
-      "验证状态": "已验证：正式加载、真实局部动画、遮挡与场景重启；1280×800和1365×853，DPR1/1.5",
+      "摘要": "2d60baf822a6d34c055950fd855359cf9f6d9f782c770b3749b1c90df1e24523",
+      "验证状态": "当前运行截图待验收",
       "锚点": [
         0,
         0
@@ -1390,19 +1373,11 @@
         390
       ],
       "透明通道": true,
-      "透明像素": 140220,
-      "半透明像素": 11880,
-      "有效内容边界": {
-        "left": 60,
-        "top": 209,
-        "width": 266,
-        "height": 82
-      },
-      "用途": "按原图真实水色和alpha裁切内池，排除石柱及前池沿，不叠画主体或阴影",
+      "用途": "从本轮重绘喷泉生成的真实流水或水域遮罩",
       "来源": "正式手绘素材的可复现局部裁切及透明分离；荷叶/荷花使用内置imagegen",
       "是否临时": false,
-      "摘要": "16475260e973a5802e97649ffe86ea1eb997813b6fb7b012048a9ca03f34b08e",
-      "验证状态": "已验证：正式加载、真实局部动画、遮挡与场景重启；1280×800和1365×853，DPR1/1.5",
+      "摘要": "85be2cfb196b85857058155d34ceeba393de19da7c3b01a20654e4a6c8db39a2",
+      "验证状态": "当前运行截图待验收",
       "锚点": [
         0,
         0
@@ -2170,6 +2145,261 @@
       },
       "来源": "内置图像生成，来源与加工见docs/xiaobao-life/art/manifest.json",
       "是否临时": true
+    },
+    {
+      "ID": "quality-flowers-white",
+      "文件": "art-quality/flowers-white.webp",
+      "源文件": "docs/art-quality/decor-source.png",
+      "用途": "墙脚、岸边与喷泉低矮花簇",
+      "来源": "内置图像生成，设计图仅作材质风格参考；可复现切图见tools/pack-art-quality.mjs",
+      "尺寸": [
+        160,
+        96
+      ],
+      "透明通道": true,
+      "摘要": "d4ad0ae0bc1bf1a5d52822955dfd8ecb10ad7492d6313962dfcf5e3e51fd8ddd",
+      "是否临时": false,
+      "验证状态": "当前运行截图待验收，最终美术待用户确认"
+    },
+    {
+      "ID": "quality-flowers-gold",
+      "文件": "art-quality/flowers-gold.webp",
+      "源文件": "docs/art-quality/decor-source.png",
+      "用途": "墙脚、岸边与喷泉低矮花簇",
+      "来源": "内置图像生成，设计图仅作材质风格参考；可复现切图见tools/pack-art-quality.mjs",
+      "尺寸": [
+        160,
+        96
+      ],
+      "透明通道": true,
+      "摘要": "caebb3182f2c71a722a300db0036e1f78b918cce1b39c01160f0cace910673e4",
+      "是否临时": false,
+      "验证状态": "当前运行截图待验收，最终美术待用户确认"
+    },
+    {
+      "ID": "quality-flowers-pink",
+      "文件": "art-quality/flowers-pink.webp",
+      "源文件": "docs/art-quality/decor-source.png",
+      "用途": "墙脚、岸边与喷泉低矮花簇",
+      "来源": "内置图像生成，设计图仅作材质风格参考；可复现切图见tools/pack-art-quality.mjs",
+      "尺寸": [
+        160,
+        96
+      ],
+      "透明通道": true,
+      "摘要": "c4636b47db37127e317687f088daf0627a28092f5ac07d617008a5cd9b906b3b",
+      "是否临时": false,
+      "验证状态": "当前运行截图待验收，最终美术待用户确认"
+    },
+    {
+      "ID": "quality-shrub-one",
+      "文件": "art-quality/shrub-one.webp",
+      "源文件": "docs/art-quality/decor-source.png",
+      "用途": "不规则树篱外观变体",
+      "来源": "内置图像生成，设计图仅作材质风格参考；可复现切图见tools/pack-art-quality.mjs",
+      "尺寸": [
+        192,
+        160
+      ],
+      "透明通道": true,
+      "摘要": "0f11421dfba1366d4c2288d9556a8033a4620c8b425ae0d7b8a374235c645065",
+      "是否临时": false,
+      "验证状态": "当前运行截图待验收，最终美术待用户确认"
+    },
+    {
+      "ID": "quality-shrub-two",
+      "文件": "art-quality/shrub-two.webp",
+      "源文件": "docs/art-quality/decor-source.png",
+      "用途": "不规则树篱外观变体",
+      "来源": "内置图像生成，设计图仅作材质风格参考；可复现切图见tools/pack-art-quality.mjs",
+      "尺寸": [
+        192,
+        160
+      ],
+      "透明通道": true,
+      "摘要": "e18d8aee4b7d69c8d1504607279b936be3ad299ac65bc7d3f3fc6176bcb48249",
+      "是否临时": false,
+      "验证状态": "当前运行截图待验收，最终美术待用户确认"
+    },
+    {
+      "ID": "quality-shrub-three",
+      "文件": "art-quality/shrub-three.webp",
+      "源文件": "docs/art-quality/decor-source.png",
+      "用途": "不规则树篱外观变体",
+      "来源": "内置图像生成，设计图仅作材质风格参考；可复现切图见tools/pack-art-quality.mjs",
+      "尺寸": [
+        192,
+        160
+      ],
+      "透明通道": true,
+      "摘要": "4df34a626f3bc46661a93c7522c019b61bc4cf4cb0a7ceb11a6ee8e0e209df6c",
+      "是否临时": false,
+      "验证状态": "当前运行截图待验收，最终美术待用户确认"
+    },
+    {
+      "ID": "quality-bridge",
+      "文件": "level-rework/bridge-candidate.png",
+      "源文件": "docs/art-quality/bridge-source.png",
+      "用途": "手绘木纹、磨损、钉头与边梁；桥位及通行尺寸保持原值",
+      "来源": "内置图像生成，设计图仅作材质风格参考；可复现切图见tools/pack-art-quality.mjs",
+      "尺寸": [
+        1152,
+        360
+      ],
+      "透明通道": true,
+      "摘要": "9f57c7fb9319ba13737bf113add5c9ab499a1227bdfd4107316bd081c0ddc66d",
+      "是否临时": false,
+      "验证状态": "当前运行截图待验收，最终美术待用户确认"
+    },
+    {
+      "ID": "quality-plaque",
+      "文件": "art-quality/plaque.webp",
+      "源文件": "docs/art-quality/props-source.png",
+      "用途": "手绘空白店招，中文店名仍由程序叠加",
+      "来源": "内置图像生成，设计图仅作材质风格参考；可复现切图见tools/pack-art-quality.mjs",
+      "尺寸": [
+        224,
+        72
+      ],
+      "透明通道": true,
+      "摘要": "cd1ea390f1dfb53c2383595954471214029a2e2a72e33981af721a35cad2fadb",
+      "是否临时": false,
+      "验证状态": "当前运行截图待验收，最终美术待用户确认"
+    },
+    {
+      "ID": "quality-training-book",
+      "文件": "art-quality/training-book.webp",
+      "源文件": "docs/art-quality/props-source.png",
+      "用途": "手绘羊皮纸训练书和雕刻木架",
+      "来源": "内置图像生成，设计图仅作材质风格参考；可复现切图见tools/pack-art-quality.mjs",
+      "尺寸": [
+        144,
+        128
+      ],
+      "透明通道": true,
+      "摘要": "fad001da183f68cd88d85f534d7ccae69d6623e71fc2be981e3ff6a1044f32a1",
+      "是否临时": false,
+      "验证状态": "当前运行截图待验收，最终美术待用户确认"
+    },
+    {
+      "ID": "nest-south",
+      "文件": "camp-nests/nest-south.webp",
+      "源文件": "docs/camp-nests/south-source.png",
+      "用途": "四向据点独立巢穴地标",
+      "来源": "内置图像生成；透明素材裁边缩放",
+      "尺寸": [
+        720,
+        573
+      ],
+      "透明通道": true,
+      "摘要": "80fa169a17d7c492f0ba702244c2f7297f57eab22afbed954ffb639842f4ae64",
+      "是否临时": false,
+      "验证状态": "当前正式构建步行截图与通关存档刷新回读通过；最终美术待用户确认，设备性能未测"
+    },
+    {
+      "ID": "nest-west",
+      "文件": "camp-nests/nest-west.webp",
+      "源文件": "docs/camp-nests/west-source.png",
+      "用途": "四向据点独立巢穴地标",
+      "来源": "内置图像生成；透明素材裁边缩放",
+      "尺寸": [
+        720,
+        467
+      ],
+      "透明通道": true,
+      "摘要": "59d77f898ff6a65f9184d0de8824a46078d27ea789c2ae96345b16778aa01e31",
+      "是否临时": false,
+      "验证状态": "当前正式构建步行截图与通关存档刷新回读通过；最终美术待用户确认，设备性能未测"
+    },
+    {
+      "ID": "nest-north",
+      "文件": "camp-nests/nest-north.webp",
+      "源文件": "docs/camp-nests/north-source.png",
+      "用途": "四向据点独立巢穴地标",
+      "来源": "内置图像生成；透明素材裁边缩放",
+      "尺寸": [
+        720,
+        438
+      ],
+      "透明通道": true,
+      "摘要": "87a3338bc907fcb9a136da3e9a20bd18f7e56942efe7efb1bcd05dfa2431d927",
+      "是否临时": false,
+      "验证状态": "当前正式构建步行截图与通关存档刷新回读通过；最终美术待用户确认，设备性能未测"
+    },
+    {
+      "ID": "nest-east",
+      "文件": "camp-nests/nest-east.webp",
+      "源文件": "docs/camp-nests/east-source.png",
+      "用途": "四向据点独立巢穴地标",
+      "来源": "内置图像生成；透明素材裁边缩放",
+      "尺寸": [
+        720,
+        582
+      ],
+      "透明通道": true,
+      "摘要": "8086499d7e22b246916ebb7eaff8a71777cdee7f571c754b26b574ea43c3836d",
+      "是否临时": false,
+      "验证状态": "当前正式构建步行截图与通关存档刷新回读通过；最终美术待用户确认，设备性能未测"
+    },
+    {
+      "ID": "nest-ground-south",
+      "文件": "camp-nests/nest-ground-south.webp",
+      "源文件": "docs/camp-nests/south-ground-source.png",
+      "用途": "巢穴脚下至原草地的不规则柔和材质过渡",
+      "来源": "内置图像生成；缩放打包，运行时按世界坐标羽化混合",
+      "尺寸": [
+        768,
+        768
+      ],
+      "透明通道": false,
+      "摘要": "482eb202216cba49f22caf1404b97997f34224c7244138692f40dd55cfe40b3a",
+      "是否临时": false,
+      "验证状态": "四方向正式构建真实键盘步行截图及清剿存档刷新回读通过；最终美术待用户确认，持续性能未测"
+    },
+    {
+      "ID": "nest-ground-west",
+      "文件": "camp-nests/nest-ground-west.webp",
+      "源文件": "docs/camp-nests/west-ground-source.png",
+      "用途": "巢穴脚下至原草地的不规则柔和材质过渡",
+      "来源": "内置图像生成；缩放打包，运行时按世界坐标羽化混合",
+      "尺寸": [
+        768,
+        768
+      ],
+      "透明通道": false,
+      "摘要": "cee168b8cb4e219787fd78b10f9f2579dfa01fa6d6391d74cb48db96b4c6f763",
+      "是否临时": false,
+      "验证状态": "四方向正式构建真实键盘步行截图及清剿存档刷新回读通过；最终美术待用户确认，持续性能未测"
+    },
+    {
+      "ID": "nest-ground-north",
+      "文件": "camp-nests/nest-ground-north.webp",
+      "源文件": "docs/camp-nests/north-ground-source.png",
+      "用途": "巢穴脚下至原草地的不规则柔和材质过渡",
+      "来源": "内置图像生成；缩放打包，运行时按世界坐标羽化混合",
+      "尺寸": [
+        768,
+        768
+      ],
+      "透明通道": false,
+      "摘要": "3253d22162ed995d03c0408c75c5abe1f9572fee2e982e7a29fe3a76212ab68e",
+      "是否临时": false,
+      "验证状态": "四方向正式构建真实键盘步行截图及清剿存档刷新回读通过；最终美术待用户确认，持续性能未测"
+    },
+    {
+      "ID": "nest-ground-east",
+      "文件": "camp-nests/nest-ground-east.webp",
+      "源文件": "docs/camp-nests/east-ground-source.png",
+      "用途": "巢穴脚下至原草地的不规则柔和材质过渡",
+      "来源": "内置图像生成；缩放打包，运行时按世界坐标羽化混合",
+      "尺寸": [
+        768,
+        768
+      ],
+      "透明通道": false,
+      "摘要": "7bac83fed57d40b893f2e9b0c805018627cfd969b70b9d67092741ad27bd7431",
+      "是否临时": false,
+      "验证状态": "四方向正式构建真实键盘步行截图及清剿存档刷新回读通过；最终美术待用户确认，持续性能未测"
     }
   ],
   "运行解码纹理估算": {

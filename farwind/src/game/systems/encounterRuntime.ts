@@ -7,24 +7,44 @@ import {CAMP_BOSSES,BOSS_RULES} from '../../data/maps/windbell/campBosses';
 import type {SavedBossCombat} from './campBossState';
 import {enemyLeashRadius} from '../../data/enemyPursuit';
 type Member=EncounterDefinition["members"][number];
+export const SPAWN_CUE={lead:900,fade:260} as const;
+export type SpawnCue=Point&{id:string;startedAt:number;readyAt:number;spawned:boolean};
 const distance=(a:Point,b:Point)=>Math.hypot(a.x-b.x,a.y-b.y);
 const inView=(p:Point,v:Rect,margin=140)=>p.x>=v.left-margin&&p.x<=v.right+margin&&p.y>=v.top-margin&&p.y<=v.bottom+margin;
 export type EncounterPort={reserved?:()=>number;bossReady?:(kind:NonNullable<Member['boss']>)=>boolean;checkpoint?:()=>Promise<void>;enabled?:(d:EncounterDefinition)=>boolean;read:()=>EncounterState;bodies:()=>EnemyBody[];spawn:(d:Member,s:EncounterMemberState)=>void;release:(id:string)=>void;busy:(id:string)=>boolean;signal?:(d:EncounterDefinition)=>void;bossEnter?:(d:Member)=>void;occupied?:()=>readonly Point[];bossCapture?:(e:EnemyBody,now:number)=>SavedBossCombat;bossReset?:(id:string)=>void;};
 // 本控制器只决定实例生灭；血量仍由 World 里唯一的 EnemyBody 和伤害系统结算。
 export class WildernessEncounters{
-  private live(){return this.port.bodies().filter(e=>e.hp>0&&!e.disabled).length+(this.port.reserved?.()??0);}
+  arrivals=new Map<string,SpawnCue>();
+  get pendingCount(){return [...this.arrivals.values()].filter(c=>!c.spawned).length;}
+  private live(){return this.port.bodies().filter(e=>e.hp>0&&!e.disabled).length+this.pendingCount+(this.port.reserved?.()??0);}
+  private existing(){return new Set([...this.port.bodies().map(e=>e.id),...this.arrivals.keys()]);}
+  private queue(m:Member,u:EncounterMemberState,now:number){this.arrivals.set(m.id,{id:m.id,x:u.x,y:u.y,startedAt:now,readyAt:now+SPAWN_CUE.lead,spawned:false});}
+  private advanceArrivals(now:number,player:Point){
+    const state=this.port.read();
+    for(const [id,cue] of this.arrivals){
+      const unit=encounterUnit(id),d=unit&&ENCOUNTERS.find(d=>d.id===unit.group),u=unitState(state,id);
+      if(!d||!u||u.defeated||this.port.enabled&&!this.port.enabled(d)||distance(d,player)>ENCOUNTER_LIMITS.activateDistance){this.arrivals.delete(id);continue;}
+      if(cue.spawned){if(now>=cue.readyAt+SPAWN_CUE.fade)this.arrivals.delete(id);continue;}
+      if(now<cue.readyAt)continue;
+      // 预告阶段没有战斗身体；落地仍复核总名额，夜袭或召唤不能挤出超额波次。
+      if(this.live()>ENCOUNTER_LIMITS.active)continue;
+      const m=encounterDefinitions(state,d).find(m=>m.id===id);if(!m){this.arrivals.delete(id);continue;}
+      if(!this.port.bodies().some(e=>e.id===id)){u.participated=true;this.port.spawn(m,u);}
+      cue.spawned=true;cue.readyAt=now;
+    }
+  }
   saving=false;
   checkpointFailed=false;
   constructor(private port:EncounterPort){}
   confirmed(){this.checkpointFailed=false;}
   private checkpoint(){if(!this.port.checkpoint)return;this.saving=true;void this.port.checkpoint().then(()=>{this.checkpointFailed=false;},()=>{this.checkpointFailed=true;}).finally(()=>{this.saving=false;});}
   private definitions(){const s=this.port.read();return ENCOUNTERS.map(d=>({...d,members:encounterDefinitions(s,d)}));}
-  restore(player:Point){
-    const state=this.port.read(),existing=new Set(this.port.bodies().map(e=>e.id));let count=this.live();
+  restore(player:Point,now=0){
+    const state=this.port.read(),existing=this.existing();let count=this.live();
     // 存档中的进行中首领优先恢复，防止邻近历史巡游占满预算后丢失战斗实例。
     for(const d of this.definitions()){const g=state.groups[d.id];if(g.boss?.stage!=='battle')continue;const i=d.members.findIndex(m=>m.boss),m=d.members[i];if((!this.port.bossReady||this.port.bossReady(m.boss!))&&!existing.has(m.id)&&!g.members[i].defeated&&count<ENCOUNTER_LIMITS.active){this.port.spawn(m,g.members[i]);existing.add(m.id);count++;}}
     for(const d of this.definitions().sort((a,b)=>distance(a,player)-distance(b,player))){const g=state.groups[d.id];if(!g.activated)continue;
-      for(const [i,m] of d.members.entries())if((!m.boss||g.boss?.stage==='battle'&&(!this.port.bossReady||this.port.bossReady(m.boss)))&&(g.wave===undefined||m.boss||'wave' in m&&m.wave===g.wave&&(g.waveWarning??0)===0)&&!existing.has(m.id)&&!g.members[i].defeated&&(m.boss||distance(g.members[i],player)<ENCOUNTER_LIMITS.activateDistance||this.port.busy(m.id))&&count<ENCOUNTER_LIMITS.active){this.port.spawn(m,g.members[i]);count++;}
+      for(const [i,m] of d.members.entries())if((!m.boss||g.boss?.stage==='battle'&&(!this.port.bossReady||this.port.bossReady(m.boss)))&&(g.wave===undefined||m.boss||'wave' in m&&m.wave===g.wave&&(g.waveWarning??0)===0)&&!existing.has(m.id)&&!g.members[i].defeated&&(m.boss||distance(g.members[i],player)<ENCOUNTER_LIMITS.activateDistance||this.port.busy(m.id))&&count<ENCOUNTER_LIMITS.active){if(!m.boss&&!g.members[i].participated)this.queue(m,g.members[i],now);else this.port.spawn(m,g.members[i]);count++;}
     }
   }
   capture(now:number){
@@ -67,7 +87,7 @@ export class WildernessEncounters{
     Object.assign(g.members[i],p);b.stage='battle';b.warning=0;b.away=0;b.combat=null;g.activated=true;this.port.spawn(m,g.members[i]);this.port.bossEnter?.(m);
   }
   update(delta:number,now:number,player:Point,view:Rect){
-    const state=this.port.read();if(this.saving||this.checkpointFailed)return;advanceEncounters(state,delta);this.capture(now);
+    const state=this.port.read();if(this.saving||this.checkpointFailed)return;advanceEncounters(state,delta);this.capture(now);this.advanceArrivals(now,player);
     // 仅休眠远处已结束交战的单位；伤势和当前批次留在固定记录内，不因出屏重置。
     for(const e of this.port.bodies()){
       const u=unitState(state,e.id);if(!u)continue;
@@ -97,7 +117,7 @@ export class WildernessEncounters{
         if(g.warning===null){g.warning=2500;this.port.signal?.(d);continue;}
         if(g.warning>0)continue;
       }
-      const existing=new Set(this.port.bodies().map(e=>e.id));
+      const existing=this.existing();
       const missing=d.members.filter((m,i)=>!m.boss&&!g.members[i].defeated&&!existing.has(m.id)&&(g.wave===undefined||'wave' in m&&m.wave===g.wave));
       if(g.wave!==undefined&&(g.waveWarning??0)>0)continue;
       if(!missing.length)continue;
@@ -110,18 +130,18 @@ export class WildernessEncounters{
         if(live+missing.length>ENCOUNTER_LIMITS.active)continue;
       }
       if(g.wave!==undefined){
-        const occupied=[...this.port.bodies().filter(e=>e.hp>0),...this.port.occupied?.()??[]];
+        const occupied=[...this.port.bodies().filter(e=>e.hp>0),...[...this.arrivals.values()].filter(c=>!c.spawned),...this.port.occupied?.()??[]];
         const selected:{u:EncounterMemberState;p:Point}[]=[];
         for(const m of missing){const u=unitState(state,m.id)!;
           if(u.participated){selected.push({u,p:{x:u.x,y:u.y}});continue;}
-          const p=adventureSpawn(d,player,[...occupied,...selected.map(e=>e.p)],d.members.indexOf(m));
+          const p=adventureSpawn(d,player,[...occupied,...selected.map(e=>e.p)],d.members.indexOf(m),view);
           if(!p){selected.length=0;break;}selected.push({u,p});
         }
         if(selected.length!==missing.length)continue;for(const {u,p} of selected)Object.assign(u,p);
       }
       // 初始点通过地形与其他敌人占地校验；不能重叠出生。
       if(missing.some(m=>this.port.bodies().some(e=>e.hp>0&&distance(g.members[d.members.indexOf(m)],e)<45)))continue;
-      for(const m of missing){const u=unitState(state,m.id)!;u.participated=true;this.port.spawn(m,u);}
+      for(const m of missing)this.queue(m,unitState(state,m.id)!,now);
       g.activated=true;g.warning=null;
     }
   }

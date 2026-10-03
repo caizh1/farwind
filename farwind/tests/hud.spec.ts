@@ -397,6 +397,7 @@ test("hud-responsive", async ({ browser }) => {
     expect(canvas.css).toBe(192);
     expect(canvas.pixel[3]).toBeLessThan(200);
     await p.keyboard.press("m");
+    await p.getByRole("button", { name: "风铃村与周边", exact: true }).click();
     const full = await p.locator("#world-map").evaluate((c: any) => ({
       width: c.width,
       pixel: [...c.getContext("2d").getImageData(c.width - 2, 2, 1, 1).data],

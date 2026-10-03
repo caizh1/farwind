@@ -1,9 +1,10 @@
 import type { State } from './state';
+import {giftValue} from './windGifts';
 
 // 里程存世界坐标单位；镜头缩放、显示舍入均不参与结算。
 export const JOURNEY_UNITS_PER_METER = 32;
 export const JOURNEY_MAX_DISTANCE = 347_500 * JOURNEY_UNITS_PER_METER;
-type JourneyState = Pick<State, 'physique'>;
+type JourneyState = Pick<State, 'physique'> & Partial<Pick<State,'windGifts'>>;
 
 export function journeyThreshold(gain: number, health = false) {
   const base = health ? 1000 : 500, increment = health ? 50 : 25;
@@ -21,8 +22,8 @@ function gainAt(distance: number, health = false) {
 }
 export function playerVitals(state: JourneyState) {
   return {
-    maxHp: 100 + gainAt(state.physique.runDistance, true),
-    maxStamina: 100 + gainAt(state.physique.runDistance),
+    maxHp: 100 + gainAt(state.physique.runDistance, true) + (state.windGifts?giftValue(state.windGifts,'windBone'):0),
+    maxStamina: 100 + gainAt(state.physique.runDistance) + (state.windGifts?giftValue(state.windGifts,'longBreath'):0),
   };
 }
 export function journeyProgress(state: JourneyState) {
@@ -30,10 +31,10 @@ export function journeyProgress(state: JourneyState) {
   return {
     ...vitals,
     meters: distance / JOURNEY_UNITS_PER_METER,
-    staminaRemaining: vitals.maxStamina === 200 ? null :
-      (journeyThreshold(vitals.maxStamina - 99) - distance) / JOURNEY_UNITS_PER_METER,
-    healthRemaining: vitals.maxHp === 200 ? null :
-      (journeyThreshold(vitals.maxHp - 99, true) - distance) / JOURNEY_UNITS_PER_METER,
+    staminaRemaining: gainAt(distance) === 100 ? null :
+      (journeyThreshold(gainAt(distance) + 1) - distance) / JOURNEY_UNITS_PER_METER,
+    healthRemaining: gainAt(distance,true) === 100 ? null :
+      (journeyThreshold(gainAt(distance,true) + 1, true) - distance) / JOURNEY_UNITS_PER_METER,
   };
 }
 export function recordRunDistance(state: JourneyState, from: {x:number;y:number}, to: {x:number;y:number}, running: boolean) {

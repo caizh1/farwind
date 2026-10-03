@@ -9,6 +9,7 @@ import { XiaobaoCombat } from "../systems/xiaobaoCombat";
 import { Actor } from "./actor";
 import { clearMotionLine } from "../systems/obstacles";
 import type { World } from "../scenes/World";
+import {groundShadows} from '../rendering/groundShadows';
 
 export class XiaobaoView {
   controller = new XiaobaoCombat();
@@ -25,8 +26,9 @@ export class XiaobaoView {
     for(const direction of ['front','side','back'])scene.load.spritesheet(`xiaobao-battle-${direction}`,`/assets/xiaobao/battle-${direction}.png`,{frameWidth:160,frameHeight:160});
   }
   constructor(scene: Phaser.Scene) {
-    this.shadow = scene.add.ellipse(0, 0, 27, 9, 0x254036, 0.2);
+    this.shadow = scene.add.ellipse(0, 0, 42, 14, 0x254036, 0.2);
     this.sprite = scene.add.sprite(0, 0, "xiaobao-motion", 0).setOrigin(0.5, XIAOBAO.footY / XIAOBAO.frameSize).setDisplaySize(XIAOBAO.displaySize, XIAOBAO.displaySize);
+    groundShadows(scene).add(this.sprite,this.shadow,{label:'小宝'});
     this.label = scene.add.text(0, 0, "", { fontSize: "10px", fontFamily: "sans-serif", color: "#334f43", stroke: "#fff7d8", strokeThickness: 3 }).setOrigin(0.5, 0);
     this.wind = scene.add.graphics();
     this.floor=scene.add.graphics().setDepth(2);this.effects=scene.add.graphics();
