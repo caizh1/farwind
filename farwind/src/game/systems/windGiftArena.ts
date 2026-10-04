@@ -7,6 +7,7 @@ import {enemyDefs} from '../../data/world';
 import {creatureMaxHP} from '../../data/maps/windbell/elites';
 import {LESSON_IDS} from '../../data/windLessons';
 import {motionBlocked} from './obstacles';
+import {encounterUnit} from '../../data/maps/windbell/encounters';
 
 // 固定初始样本与正式存档隔离；输入、敌人、伤害、三选一及保存均走游戏原有流程。
 export function installWindGiftArena(w:World){
@@ -21,22 +22,28 @@ export function installWindGiftArena(w:World){
   '防御与风步':['firstVeil','softenWound','guardedBreath','unyielding','skimShadow','residualWind','escapeCircle','returningTide','stepEdge'],
   '控场与混合':['holdWind','curledWind','suppressField','returningTide','delayedEdge','duet','storedTurn','guidingEdge','cyclicBreath','duality'],
   '伙伴同行':['sharedHeart','protectCompanion','relayEdge','returningBreath','sideBySide'],
+  '同心递锋与闪链':['sharedHeart','relayEdge','chain'],
+  '伙伴接力链':['relayEdge','sideBySide','returningBreath'],
   '完整目录':Object.keys(WIND_GIFTS) as WindGiftId[],
  };
  panel.innerHTML=`<summary>风赐全流派 · 隔离试玩</summary><div style="display:grid;gap:8px;margin-top:10px"><p style="margin:0">方向键移动；I剑风，J连段，K弹反，L风步。预设仅设置隔离初始条件。</p><label>流派 <select id="gift-profile">${Object.keys(profiles).map(p=>`<option>${p}</option>`).join('')}</select></label><label>等级 <select id="gift-level"><option>1</option><option>4</option></select></label><button id="gift-arena-reset">开始／重置此流派</button><button id="gift-arena-view">查看风赐与待选奖励</button><button id="gift-arena-capture">截取下一次风赐画面</button><button id="gift-arena-evidence">导出战斗证据</button><button id="gift-arena-record">录制八秒实战动画</button><output>准备开始。当前定义61种，其中48种为本批新增。</output><div id="gift-arena-exports" style="display:grid;gap:6px"></div></div>`;
  document.body.append(panel);const exports=panel.querySelector<HTMLDivElement>('#gift-arena-exports')!,exportUrls=new Map<string,string>();const download=(url:string,name:string,label:string)=>{if(!panel.isConnected)return;const prior=exportUrls.get(name);if(prior)URL.revokeObjectURL(prior);if(url.startsWith('blob:'))exportUrls.set(name,url);const link=document.createElement('a');link.href=url;link.download=name;link.textContent=label;link.style.color='#c8f7ef';exports.querySelector(`[download="${name}"]`)?.remove();exports.append(link);link.click();};const output=panel.querySelector<HTMLOutputElement>('output')!;let busy=false,capture=false;let recorder:MediaRecorder|undefined,recordTimer:ReturnType<typeof setTimeout>|undefined;
  const observe=()=>{if(!w.active||!w.runes)return;const g=w.runes.gifts,m=g.metrics;output.textContent=`原生命中 ${w.runes.engine.metrics.native} · 派生命中 ${m.derived} · 伙伴实击 ${m.companionHits} · 回声 ${m.echoes} · 自动治疗 ${m.healed.toFixed(2)} · 护盾 ${g.snapshot().shield.toFixed(1)} · 牵引 ${m.pulled.toFixed(1)} · 生命 ${w.state.player.hp.toFixed(1)} · 体力 ${w.state.player.stamina.toFixed(1)}`;const visual=w.runes.engine.effects.some(f=>f.rune===''&&w.runes!.engine.now-f.born>=(f.visual==='gift:chain'?115:70)&&w.runes!.engine.now-f.born<240);if(capture&&(visual||g.echoes.winds.some(b=>!b.terminated))){capture=false;w.game.renderer.snapshot(image=>{if(!(image instanceof HTMLImageElement))return;download(image.src,'wind-gifts-game.png','保存最新实战截图');});}};w.events.on('postupdate',observe);
  async function reset(){if(busy||w.economy.busy)return;busy=true;try{
-  const profile=panel.querySelector<HTMLSelectElement>('#gift-profile')!.value,level=Number(panel.querySelector<HTMLSelectElement>('#gift-level')!.value),s=initialState();
+  const profile=panel.querySelector<HTMLSelectElement>('#gift-profile')!.value,level=Number(panel.querySelector<HTMLSelectElement>('#gift-level')!.value),s=initialState(),companions=['伙伴同行','同心递锋与闪链','伙伴接力链'].includes(profile);
   s.skills.swordWindStage=3;s.skills.completedLessons=LESSON_IDS.slice(0,3);s.skills.discoveredLessons=LESSON_IDS.slice(0,3);s.skills.devices.serialValve=1;s.skills.devices.leakClosed=true;s.skills.meleeFinisher=true;s.skills.buildLessons=['melee'];s.player.x=3200;s.player.y=1280;s.player.stamina=65;if(profile==='弹反与治疗')s.player.hp=95;
   s.windGifts.held=profiles[profile]!.map(id=>({id,level}));add(s,'potion',5);
-  if(profile==='伙伴同行'){s.xiaobao.known=true;s.xiaobao.task='follow';s.xiaobao.hp=640;s.xiaobao.x=s.player.x-45;s.xiaobao.y=s.player.y+25;}
+  if(companions){
+   // 使用真实编号、合法生命与活动范围，伙伴战斗记录仍能通过正式存档校验。
+   s.player.x=2600;s.player.y=1150;s.xiaobao.known=true;s.xiaobao.task='follow';s.xiaobao.hp=640;s.xiaobao.x=s.player.x-45;s.xiaobao.y=s.player.y+25;
+   for(const e of enemyDefs.slice(0,4))s.encounters.groups[encounterUnit(e.id)!.group]!.activated=true;
+  }
   let seed=0;do{s.windGifts.pending=[];s.windGifts.receipts=[];offerWindGift(s.windGifts,'wind-gift-arena-reward',seed++,true);}while(!s.windGifts.pending[0]!.candidates.some(id=>Object.hasOwn(EXTRA_WIND_GIFTS,id)));
   validate(s);w.loaded=s;await w.start(true);const engine=w.runes!.engine;engine.events=[];for(const key of Object.keys(engine.metrics) as (keyof typeof engine.metrics)[])engine.metrics[key]=0;w.runes!.gifts.metrics={companionHits:0,derived:0,healed:0,shielded:0,pulled:0,echoes:0,resonances:0};
   if(w.wilderness)w.wilderness.update=(delta,now)=>{advanceEncounters(w.state.encounters,delta);w.wilderness?.capture(now);};
   for(const e of w.enemies){e.sprite.destroy();e.shadow.destroy();}w.enemies=[];
   const positions=profile==='闪链电弧'?[[0,90,0],[1,120,-140],[2,230,95]]:[[0,80,0],[1,140,0],[2,100,60],[3,100,-60]];
-  for(const [i,dx,dy] of positions){const x=s.player.x+dx,y=s.player.y+dy;if(motionBlocked(x,y))throw Error('预览站位被地形阻挡。');const definition=profile==='伙伴同行'?enemyDefs[i]!:{id:`gift-preview-${i}`,type:profile!=='闪链电弧'&&i===1?'archer':'slime',x,y};const e=w.makeEnemy({...definition,x,y});e.hp=e.maxHP=profile==='伙伴同行'?creatureMaxHP(definition.type):2000;e.cool=w.sim+(profile==='闪链电弧'||profile==='I贯通与节奏'||profile==='J连段与终结'||profile==='完整目录'?600000:1500+i*400);w.enemies.push(e);}
+  for(const [i,dx,dy] of positions){const x=s.player.x+dx,y=s.player.y+dy;if(motionBlocked(x,y))throw Error('预览站位被地形阻挡。');const definition=companions?enemyDefs[i]!:{id:`gift-preview-${i}`,type:profile!=='闪链电弧'&&i===1?'archer':'slime',x,y};const e=w.makeEnemy({...definition,x,y});e.hp=e.maxHP=companions?creatureMaxHP(definition.type):2000;e.cool=w.sim+(profile==='闪链电弧'||profile==='I贯通与节奏'||profile==='J连段与终结'||profile==='完整目录'?600000:1500+i*400);w.enemies.push(e);}
   w.combat.setIntent({x:1,y:0});w.ui.close(true);w.refresh();await w.persist();output.textContent=`${profile}已准备；等级${level}。`;w.ui.focusGame();
  }finally{busy=false;}}
  panel.querySelector<HTMLButtonElement>('#gift-arena-reset')!.onclick=()=>void reset().catch(e=>output.textContent=e.message);

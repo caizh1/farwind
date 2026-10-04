@@ -57,6 +57,9 @@ export const MELEE_BODIES = {
   bell:[[80,112,20,25],[80,112,20,25],[81,112,21,25]],
   shade:[[80,110,13,27],[80,110,14,27],[84,111,25,23]],
   geomancer:[[80,112,27,25],[80,112,27,25],[81,112,25,25]],
+  canyonHunter:[[80,137,24,20],[80,137,24,20],[80,137,28,20]],
+  cliffLancer:[[80,130,18,27],[80,130,18,27],[80,130,20,27]],
+  cragAxeman:[[80,130,28,30],[80,130,28,30],[80,130,28,30]],
 } as const satisfies Record<EnemyKind, Views>;
 // 高清主体的身体轮廓直接按世界高度标定；武器、尾巴、粒子不扩大受击面。
 // 参数为脚底相对中心与半径的高度比例，与图集裁切和源图像素完全独立。
@@ -107,7 +110,7 @@ export function meleeBody(target: MeleeBodyTarget): Point[] | null {
   } else if (target.type && Object.hasOwn(MELEE_BODIES, target.type)) {
     const kind = target.type as EnemyKind;
     body = MELEE_BODIES[kind][view];
-    scale = ENEMIES[kind].height / 60;
+    scale = ENEMIES[kind].height / (['canyonHunter','cliffLancer','cragAxeman'].includes(kind)?145:60);if(['canyonHunter','cliffLancer','cragAxeman'].includes(kind))anchor={x:80,y:160};
   } else return null;
   const [cx, cy, rx, ry] = body;
   const mirror = facing === 2 ? -1 : 1;

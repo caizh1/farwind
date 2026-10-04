@@ -1,4 +1,5 @@
 import {INTERIOR_FURNITURE,INTERIOR_BEDS} from '../../data/villageInteriors';
+import {isCitySpace} from '../../data/cityLayout';
 import Phaser from "phaser";
 import {
   PEOPLE,
@@ -344,15 +345,15 @@ export class NpcLifeView {
   }
   update(life: NpcLife, now: number) {
     const space = life.data.playerSpace,
-      indoor = space !== "village";
+      indoor = space !== "village" && !isCitySpace(space);
     this.room.setVisible(indoor);
     this.workInk.clear().setVisible(indoor);
     for (const f of this.furniture) f.sprite.setVisible(f.space === space);
     for (const f of MAINTENANCE) {
       const v = this.maintenance.get(f.id)!,
         hp = life.data.facilities[f.id],
-        show = !indoor && hp < 100;
-      v.mark.clear().setVisible(!indoor && (show || f.id === "wind-bell"));
+        show = space === "village" && hp < 100;
+      v.mark.clear().setVisible(space === "village" && (show || f.id === "wind-bell"));
       v.label.setVisible(show).setText(`${f.name} · 待维修 ${Math.round(hp)}%`);
       // 小型公共挂架沿用场景线绘，不更换人物素材；损坏不改变既有通行几何。
       if (f.id === "wind-bell") {
@@ -422,14 +423,14 @@ export class NpcLifeView {
           (n) => !(n.action?.kind === "sleep" && n.action.phase === "perform"),
         ),
         night = life.state.time % 1440 >= 1140 || life.state.time % 1440 < 360,
-        lamp = this.doorLights.get(id)!.clear().setVisible(!indoor);
+        lamp = this.doorLights.get(id)!.clear().setVisible(space === "village");
       if (awake && night)
         lamp
           .fillStyle(0xffd992, 0.14)
           .fillEllipse(h.door.x, h.door.y - 12, 90, 45)
           .fillStyle(0xf3c678, 0.7)
           .fillCircle(h.door.x + 32, h.door.y - 28, 5);
-      t.setVisible(!indoor).setText(
+      t.setVisible(space === "village").setText(
         `${h.name} · ${life.data.unavailable.homes[h.id] ? "通路暂不可用" : occupants.length ? (awake ? "有人活动" : "休息中") : h.owners.length ? "外出" : "开放"} · E`,
       );
     }

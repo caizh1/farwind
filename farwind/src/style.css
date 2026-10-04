@@ -1188,3 +1188,16 @@ kbd {
   .top:has(#camp-boss-status:not([hidden])[data-vitals-side="right"]) .vitals-stack {justify-self:end;}
 }
 @media(max-width:480px){.top:has(#camp-boss-status:not([hidden])) {grid-template-columns:minmax(0,1fr) minmax(0,1fr);}}
+
+/* 城市委托的步骤与办理按钮处于同一正常文档流。 */
+.panel:has(.city-quest-grid){width:min(920px,94vw);text-align:left;}
+.city-materials{font-size:14px;color:#42615b;}
+.city-quest-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px;}
+.city-quest-card{display:flex;flex-direction:column;gap:10px;padding:14px;border:1px solid #bcb28b;border-radius:10px;background:#fff7d95c;min-width:0;}
+.city-quest-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.city-quest-heading h2{margin:0;font-size:19px;}
+.city-quest-heading span{font-size:12px;color:#4b655c;}
+.city-quest-card p{margin:0;line-height:1.7;font-size:14px;}
+.city-quest-card small{margin-top:auto;color:#7b633c;}
+.city-quest-card button{width:100%;margin:0;}
+@media(max-width:480px){.panel:has(.city-quest-grid) h1{font-size:24px;}.city-quest-grid{grid-template-columns:1fr;}}

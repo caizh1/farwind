@@ -91,7 +91,7 @@ export class EnemyView {
         }
       }else sprite.setVisible(false);
     }
-    Actor.mirror(sprite,pose.facing===2);
+    Actor.mirror(sprite,['canyonHunter','cliffLancer','cragAxeman'].includes(kind)?pose.facing===3:pose.facing===2);
     if(body.passiveRoot){const kind=body.passiveRoot.kind,atlas=this.scene.cache.json.get('combat-mechanism-index') as BossAtlas,frame=kind&&atlas?.frames[kind];if(frame){const h={root:90,sac:72,rock:115,sigil:108}[kind!],k=h/frame.nativeHeight;sprite.setTexture('combat-mechanisms',kind!).setOrigin(frame.foot[0]/frame.width,frame.foot[1]/frame.height).setDisplaySize(frame.width*k,frame.height*k);Actor.mirror(sprite,false);}else sprite.setTexture('fungal-root').setDisplaySize(160,160);sprite.setAlpha((body.hp??0)>0?1:0);}
     if(kind==='priest'||kind==='bomber'){
       if(!entry.mechanicLabel){const label=this.scene.add.text(0,0,'',{fontFamily:'sans-serif',fontSize:'12px',color:'#f4e8bf',stroke:'#253e2d',strokeThickness:3}).setOrigin(.5,1);entry.mechanicLabel=label;this.eliteLabels.add(label);sprite.once('destroy',()=>{this.eliteLabels.delete(label);label.destroy();});}

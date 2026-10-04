@@ -12,6 +12,11 @@ export class EnemyAnimation {
   sample(body:AnimatedEnemy,attack:EnemyAttack|null|undefined,now:number):EnemyPose {
     const base=this.motion.sample(body,attack,now),kind=enemyKind(body.type);
     if(kind==='slime')return base;
+    if(['canyonHunter','cliffLancer','cragAxeman'].includes(kind)){
+      const row=base.action==='death'?5:base.action==='hurt'||base.action==='parry'||base.action==='perfect'?4:base.action==='attack'?3:base.facing===1?2:base.facing===0?0:1;
+      const index=base.action==='walk'?Math.floor(this.motion.distance/enemyProfile(kind).stride*8)%8:base.action==='attack'&&attack?Math.min(7,Math.floor(base.elapsed/(attack.recoveryUntil-attack.startedAt)*8)):base.action==='death'?Math.min(7,Math.floor(base.elapsed/130)):base.action==='idle'?0:Math.min(7,Math.floor(base.elapsed/65));
+      return {...base,index,frame:row*8+index,provisional:true};
+    }
     if(kind==='guardian'&&body.face&&!attack&&['idle','walk'].includes(base.action))base.facing=slimeFacing(body.face.x,body.face.y,base.facing);
     const profile=enemyProfile(kind),block=(base.facing===0?0:base.facing===1?1:2)*profile.frames;
     if(kind==='leaf'||kind==='spore') {

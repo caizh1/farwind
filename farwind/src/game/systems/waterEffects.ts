@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { BRIDGES, POND } from "../../data/world";
+import {TRADE_BRIDGE} from '../../data/maps/windwhisper';
 import { WATER, EnvironmentClock, fountainPoint, lilyAnchors, clearOfBridges, ripplePhase, fitWaterPatch } from "./waterMotion";
 import { createPondSurface } from "./pondSurface";
 
@@ -58,7 +59,7 @@ export class WaterEffects {
     // 新桥面使用完整透明素材；角度、位置和逻辑通道仍由BRIDGES提供。
     const bridgeSource=scene.textures.get("bridge").getSourceImage() as HTMLImageElement;
     scene.textures.get("bridge").add(this.bridgeFrame, 0, 0, 0, bridgeSource.width, bridgeSource.height);
-    for (const b of BRIDGES) this.keep(scene.add.image(b.x + b.w / 2, b.y + b.h / 2, "bridge", this.bridgeFrame)
+    for (const b of BRIDGES.filter(b=>b!==TRADE_BRIDGE)) this.keep(scene.add.image(b.x + b.w / 2, b.y + b.h / 2, "bridge", this.bridgeFrame)
       .setDisplaySize(b.h, b.w + 8).setRotation(Math.PI / 2).setDepth(WATER.depth.bridge));
 
     const corner = fountainPoint(fountain, 0, 0), w = fountain.displayWidth, h = fountain.displayHeight;

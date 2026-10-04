@@ -13,11 +13,13 @@ import {
   type EquipmentSlot,
 } from "../../data/economy";
 import { items, consumables, type ItemId } from "../../data/content";
-import { add, remove, craft, count, validate, type State } from "./state";
+import { add, remove, craft, count, discard, validate, type State } from "./state";
 import {sleepSnapshot,type SleepSafety} from "./sleep";
 import { playerVitals } from './journeyTraining';
 export type EconomyRequest = { sequence: number } & (
-  | { kind: "craft" }
+  | { kind: "craft"; quantity?: number }
+  | { kind: "discard"; item: ItemId }
+  | { kind: "bind"; item: ItemId; slot: number }
   | { kind: "restock" }
   | { kind: "consume"; item: ItemId }
   | { kind: "buy" | "sell"; shop: ShopId; item: ItemId; quantity: number }
@@ -40,7 +42,7 @@ export function economySnapshot(state: State, request: EconomyRequest, safety?:S
     if(request.shop!=="inn"||request.quantity!==1)fail("住宿服务无效。");
     return sleepSnapshot(state,request.sequence,safety!);
   }
-  if (!["craft", "buy", "sell", "exchange", "rest", "equip", "restock", "consume"].includes(request.kind))
+  if (!["craft", "buy", "sell", "exchange", "rest", "equip", "restock", "consume", "discard", "bind"].includes(request.kind))
     fail("交易类型无效。");
   const next = validate(state);
   const { maxHp, maxStamina } = playerVitals(next);
@@ -56,10 +58,19 @@ export function economySnapshot(state: State, request: EconomyRequest, safety?:S
     if (!remove(next, request.item, 1)) fail("行囊里没有这个物品。");
     next.player.hp = Math.min(maxHp, next.player.hp + effect.hp*(request.item==='potion'?1+giftValue(next.windGifts,'potion'):1));
     next.player.stamina = Math.min(maxStamina, next.player.stamina + effect.stamina);
+  } else if (request.kind === "discard") {
+    if (!discard(next, request.item)) fail("无法丢弃：物品不足或属于重要任务材料。");
+  } else if (request.kind === "bind") {
+    if (!Number.isSafeInteger(request.slot) || request.slot < 0 || request.slot > 7 || !consumables[request.item] || count(next, request.item) < 1)
+      fail("请选择持有的消耗品和有效快捷栏。");
+    next.hotbar[request.slot] = request.item;
   } else if (request.kind === "craft") {
-    if (count(next, "herb") < 2 || count(next, "berry") < 1)
-      fail("需要药草×2、浆果×1；未扣材料。");
-    if (!craft(next)) fail("行囊没有成品空间，请腾出一格；未扣材料。");
+    const quantity = request.quantity === undefined ? 1 : request.quantity;
+    if (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > 240)
+      fail("制作数量必须是1到240的整数。");
+    if (count(next, "herb") < 2 * quantity || count(next, "berry") < quantity)
+      fail(`需要药草×${2 * quantity}、浆果×${quantity}；未扣材料。`);
+    if (!craft(next, quantity)) fail("行囊没有成品空间，请腾出一格；未扣材料。");
   } else if (request.kind === "equip") {
     const { item, slot } = request;
     if (slot !== "weapon" && slot !== "armor" && slot !== "head" && slot !== "feet") fail("装备栏位无效。");

@@ -1,3 +1,4 @@
+import {CITY_PROPS,TRADE_RIVER,TRADE_BRIDGE} from './maps/windwhisper';
 import {LEGACY_PROPS} from './windLegacy';
 import {ARENA_STONES,type ArenaStoneId} from "./maps/windbell/elites";
 import {SHORTCUTS,type ShortcutId} from "./maps/windbell/shortcuts";
@@ -30,11 +31,11 @@ export const WORLD = {
   ruins: 3300,
 } as const;
 export const POND = { x: 1280, y: 1120, rx: 260, ry: 230 } as const;
-export const WATERS = [{id:"pond",...POND},...WILD_WATERS];
+export const WATERS = [{id:"pond",...POND},...WILD_WATERS,TRADE_RIVER];
 export const BRIDGES = [
   { x: 1030, y: 900, w: 120, h: 550 },
   { x: 1260, y: 1300, w: 100, h: 200 },
- ...WILD_BRIDGES,
+ ...WILD_BRIDGES, TRADE_BRIDGE,
 ];
 export const VILLAGE_GATE = { x: 1870, y: 1010, postOffset: 88 } as const;
 export const villageAreas = [
@@ -853,10 +854,10 @@ export const enemyDefs = [
   { id: "raven-1", x: 3250, y: 1830, type: "raven" },
 ] as const;
 export function region(x: number, y: number) {
-  const p={x,y},r=regionAt(p);return r.id!=="village"&&inProtected(p)?"巡逻近郊":r.name;
+  const p={x,y},r=regionAt(p);return r.id!=="village"&&r.id!=="wind-city"&&inProtected(p)?"巡逻近郊":r.name;
 }
 
-props.push(...WILDERNESS_PROPS,...LEGACY_PROPS);
+props.push(...WILDERNESS_PROPS,...LEGACY_PROPS,...CITY_PROPS);
 const westBarrier:Prop={id:'west-gate-barrier',art:'vertical-fence',frame:'trim',x:80,y:1557,w:38,h:254,solid:[22,254],owner:'village',role:'boundary',cover:'low'};
 props.push(westBarrier);
 let geometryKey="";
@@ -877,7 +878,7 @@ export function syncMapGeometry(open:boolean,shortcuts:readonly ShortcutId[]=[],
 props.forEach((p) => {
   if (p.kind === "chest") p.solid = [45, 28];
   if (p.ground !== false && (p.kind === "stone" || p.kind === "sign" || p.kind === "shortcut"))
-    p.solid = [35, 28];
+    p.solid = p.id.startsWith('city-')?(p.solid??[35,28]):[35,28];
 });
 
 // 24×20脚底占地；近战使用原实体矩形，二者均与树冠无关。
@@ -893,9 +894,40 @@ export function propBounds(p: Prop, motion = false) {
     bottom: p.y + y,
   };
 }
+const PROP_CELL = 128;
+const propCells = new Map<string, number[]>();
+let indexedRevision = -1, indexedLength = -1;
+// 先筛选附近实体，再沿用精确碰撞；动态门、石障和封锁共用地图几何修订。
+export function nearbySolidProps(a: {x:number;y:number}, b = a, marginX = 0, marginY = marginX): readonly Prop[] {
+  if (![a.x,a.y,b.x,b.y,marginX,marginY].every(Number.isFinite) || marginX < 0 || marginY < 0) return props;
+  // 包含精确裁剪的擦边容差，格子边界不能漏掉相邻格中的实体。
+  const tolerance = 1e-7 + Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y))*1e-8;
+  const left = Math.floor((Math.min(a.x,b.x)-marginX-tolerance)/PROP_CELL), right = Math.floor((Math.max(a.x,b.x)+marginX+tolerance)/PROP_CELL);
+  const top = Math.floor((Math.min(a.y,b.y)-marginY-tolerance)/PROP_CELL), bottom = Math.floor((Math.max(a.y,b.y)+marginY+tolerance)/PROP_CELL);
+  // 大跨度和异常坐标沿用原扫描，避免遍历整张地图的空格子。
+  if (![left,right,top,bottom].every(Number.isSafeInteger) || (right-left+1)*(bottom-top+1) > 64) return props;
+  if (indexedRevision !== mapGeometryRevision || indexedLength !== props.length) {
+    propCells.clear();
+    for (const [index,p] of props.entries()) {
+      if (!p.solid) continue;
+      const bounds = propBounds(p);
+      for (let x=Math.floor(bounds.left/PROP_CELL);x<=Math.floor(bounds.right/PROP_CELL);x++)
+        for (let y=Math.floor(bounds.top/PROP_CELL);y<=Math.floor(bounds.bottom/PROP_CELL);y++) {
+          const key = `${x}:${y}`, cell = propCells.get(key);
+          if (cell) cell.push(index); else propCells.set(key,[index]);
+        }
+    }
+    indexedRevision = mapGeometryRevision; indexedLength = props.length;
+  }
+  const indices = new Set<number>();
+  for (let x=left;x<=right;x++) for (let y=top;y<=bottom;y++)
+    for (const index of propCells.get(`${x}:${y}`) ?? []) indices.add(index);
+  // 保持全扫描顺序，包括同时撞到多个物件时返回的首个身份。
+  return [...indices].sort((a,b)=>a-b).map(index=>props[index]);
+}
 // 只允许忽略明确目标的本体占地；其他实体仍参与碰撞。
 export function solidPropAt(x: number, y: number, ignore?: string) {
-  return props.some(
+  return nearbySolidProps({x,y},undefined,FOOT.halfWidth,FOOT.halfHeight).some(
     (p) =>
       p.id !== ignore &&
       p.solid &&

@@ -1,16 +1,19 @@
 import Phaser from 'phaser';
 import {projectShadowPoint,shadowStrength} from './shadowGeometry';
+import {contactForFrame,paintContact} from './contactContour';
 
 type Source=Phaser.GameObjects.Image|Phaser.GameObjects.Sprite|Phaser.GameObjects.Graphics|Phaser.GameObjects.Text;
 type Root={x:number;y:number;depth:number};
-type Options={label?:string;width?:number;height?:number;projection?:boolean;root?:()=>Root;visible?:()=>boolean;surfaceDepth?:()=>number};
-type Entry={source:Source;contact:Phaser.GameObjects.Ellipse;soft:Phaser.GameObjects.Image;cast?:Phaser.GameObjects.Mesh2D;options:Options;alpha:number;managed:boolean;cleanup:()=>void};
+type Options={label?:string;width?:number;height?:number;projection?:boolean;footprint?:boolean;root?:()=>Root;visible?:()=>boolean;surfaceDepth?:()=>number};
+type ContactTexture={key:string;width:number;height:number};
+type Entry={source:Source;contact:Phaser.GameObjects.Ellipse;soft:Phaser.GameObjects.Image;cast?:Phaser.GameObjects.Mesh2D;footprint?:ContactTexture;options:Options;alpha:number;managed:boolean;cleanup:()=>void};
 const views=new WeakMap<Phaser.Scene,GroundShadows>();
 const SOFT='ground-shadow-soft';
 
 // 只复用当前帧的纹理与四个顶点，不复制高清图集、不逐帧读像素或上传画布。
 export class GroundShadows {
   entries=new Map<Source,Entry>();
+  private contacts=new Map<string,ContactTexture>();
   enabled=true;
   constructor(private scene:Phaser.Scene) {
     if(!scene.textures.exists(SOFT)){
@@ -25,6 +28,7 @@ export class GroundShadows {
     scene.events.once('shutdown',()=>{
       scene.events.off('prerender',this.draw,this);
       for(const e of [...this.entries.values()])e.cleanup();
+      for(const t of this.contacts.values())scene.textures.remove(t.key);this.contacts.clear();
       views.delete(scene);
     });
   }
@@ -37,9 +41,11 @@ export class GroundShadows {
       this.scene.add.mesh2d(0,0,source.texture.key,new Array(16).fill(0),[0,1,2,0,0,2,3,0]).setVisible(false):undefined;
     if(cast){const tint=cast as Phaser.GameObjects.Mesh2D&{tint:number;tintMode:Phaser.TintModes};tint.tint=0x122019;tint.tintMode=Phaser.TintModes.FILL;}
     cast?.buildOrderedIndices(0,true);
-    const e:Entry={source,contact,soft,cast,options,alpha:contact.alpha||1,managed,cleanup:()=>{}};
-    // 保留原阴影对象作为位置、显隐与飞行缩放的权威，硬边椭圆由柔边纹理替代。
-    contact.setFillStyle(0x122019,0);
+    const footprint=options.footprint&&'frame' in source?this.contactTexture(source):undefined;
+    if(footprint)soft.setTexture(footprint.key).setOrigin(.5,1);
+    const e:Entry={source,contact,soft,cast,footprint,options,alpha:contact.alpha||1,managed,cleanup:()=>{}};
+    // 占位椭圆仍管理脚根、显隐与飞行缩放；禁用填充，避免透明三角形打断贴图合批。
+    contact.setFillStyle();
     e.cleanup=()=>{
       source.off('destroy',e.cleanup);contact!.off('destroy',e.cleanup);
       this.entries.delete(source);soft.destroy();cast?.destroy();if(managed)contact!.destroy();
@@ -47,12 +53,23 @@ export class GroundShadows {
     source.once('destroy',e.cleanup);contact.once('destroy',e.cleanup);
     this.entries.set(source,e);return contact;
   }
+  private contactTexture(source:Phaser.GameObjects.Image|Phaser.GameObjects.Sprite|Phaser.GameObjects.Text):ContactTexture|undefined {
+    const id=`${source.texture.key}:${source.frame.name}:${source.displayWidth}:${source.displayHeight}`,known=this.contacts.get(id);if(known)return known;
+    const shape=contactForFrame(this.scene,source.texture.key,source.frame.name);if(!shape.paths.length)return undefined;
+    const size={key:`ground-contact-${this.contacts.size}`,width:Math.ceil(source.displayWidth+16),height:Math.ceil(source.displayHeight+16)};
+    const texture=this.scene.textures.createCanvas(size.key,size.width,size.height)!,c=texture.context;
+    c.translate(size.width/2,size.height-8);paintContact(c,shape,source.displayWidth,source.displayHeight);texture.refresh();this.contacts.set(id,size);return size;
+  }
   draw() {
     if(!this.enabled){for(const e of this.entries.values()){e.soft.setVisible(false);e.cast?.setVisible(false);}return;}
     const settings=this.scene.data.get('shadowSettings')?.()??{time:480,indoor:false};
     const strength=shadowStrength(settings.time,settings.indoor),view=this.scene.cameras.main.worldView;
     for(const e of this.entries.values()){
       const {source:s,contact:c,options:o,soft,cast}=e;
+      if(o.footprint&&'frame' in s){
+        const footprint=this.contactTexture(s);
+        if(footprint!==e.footprint){e.footprint=footprint;soft.setTexture(footprint?.key??SOFT).setOrigin(.5,footprint?1:.5);}
+      }
       if(e.managed){const root=o.root?.()??{x:s.x,y:s.y,depth:s.depth-.5};c.setPosition(root.x,root.y).setDepth(root.depth).setVisible(s.visible);}
       const visible=c.visible&&(o.visible?.()??s.visible)&&s.alpha>0&&c.alpha>0&&(!settings.indoor||c.depth>7000||!!o.surfaceDepth);
       // 静态建筑仍烘焙在地面；这里只更新可变化物件。视窗外不提交网格。
@@ -60,8 +77,12 @@ export class GroundShadows {
       soft.setVisible(onScreen);cast?.setVisible(onScreen);if(!onScreen)continue;
       const alpha=Math.min(s.alpha,c.alpha/e.alpha);
       const depth=o.surfaceDepth?.()??(settings.indoor?7200:settings.floor??c.depth-.04);
-      soft.setPosition(c.x,c.y+6).setDepth(depth+.01).setRotation(.12)
-        .setDisplaySize(c.width*1.45*Math.abs(c.scaleX),c.height*1.8*Math.abs(c.scaleY)).setAlpha(strength.contact*alpha);
+      if(e.footprint){
+        soft.setPosition(c.x,c.y+8).setDepth(depth+.01).setRotation(0).setDisplaySize(e.footprint.width,e.footprint.height).setAlpha(strength.contact*alpha);
+      }else{
+        soft.setPosition(c.x,c.y+6).setDepth(depth+.01).setRotation(.12)
+          .setDisplaySize(c.width*1.45*Math.abs(c.scaleX),c.height*1.8*Math.abs(c.scaleY)).setAlpha(strength.contact*alpha);
+      }
       if(!cast||!('frame' in s))continue;
       const f=s.frame,v=cast.vertices,coords=[[f.x,f.y],[f.x+f.cutWidth,f.y],[f.x+f.cutWidth,f.y+f.cutHeight],[f.x,f.y+f.cutHeight]];
       const uvs=[[f.u0,f.v0],[f.u1,f.v0],[f.u1,f.v1],[f.u0,f.v1]];

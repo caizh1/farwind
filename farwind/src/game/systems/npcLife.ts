@@ -1,3 +1,4 @@
+import {cityBuilding} from '../../data/cityLayout';
 import {stepXiaobaoLife} from './xiaobaoLife';
 import {
   PEOPLE,
@@ -441,7 +442,7 @@ export class NpcLife {
       const heard =
         ["alarm", "clear"].includes(kind) &&
         distance(
-          p.space === "village" ? p : HOMES.find((h) => h.id === p.space)!.door,
+          p.space === "village" ? p : (cityBuilding(p.space)??HOMES.find((h) => h.id === p.space))!.door,
           place,
         ) < 1400;
       const seen =

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>风语城素材验收</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#102d35;color:#f6ebce;font-family:system-ui,sans-serif}main{max-width:1160px;margin:auto;padding:20px}h1{font-size:24px;margin:0 0 8px}p{line-height:1.6;color:#c4d7d5}.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0}button,label,select{font:inherit}button,select{background:#244b55;border:1px solid #89aaa5;color:#fff0cd;border-radius:8px;padding:9px 14px;min-height:44px}button[aria-pressed=true]{background:#907c46}label{display:inline-flex;align-items:center;gap:8px}canvas{display:block;width:100%;height:auto;border:1px solid #83988c;border-radius:12px;background:#ddd1b4}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}.card{background:#1e4149;padding:12px;border-radius:10px;min-width:0}.card canvas{width:100%;border-radius:6px}.card p{font-size:13px;margin:8px 0}details{margin-top:20px}summary{cursor:pointer;padding:12px;background:#244b55;border-radius:8px}.note{font-size:14px;margin:10px 0}.status{min-height:24px}
+</style>
+<main>
+<h1>风语城 · 素材验收样板</h1>
+<p class="note">仅用于检查素材比例、透明边缘、脚底与前后遮挡。这里不是正式游戏，不写入游戏存档，也不代表城市玩法已完成。</p>
+<div class="controls">
+<button data-scene="gate" aria-pressed="true">西门与守备</button><button data-scene="market" aria-pressed="false">市集街</button><button data-scene="plaza" aria-pressed="false">风塔广场</button>
+<label><input type="checkbox" id="night">夜间</label><label><input type="checkbox" id="feet">显示脚底</label><button id="pause">暂停移动</button><button id="restart">重播路线</button>
+</div>
+<canvas id="stage" width="1100" height="720" aria-label="城市素材样板，角色沿固定路线实际移动并按脚底排序"></canvas>
+<p class="status" id="status">正在读取素材……</p>
+<details><summary>检查全部素材与动作</summary><div class="gallery" id="gallery"></div></details>
+</main>
+<script type="module">
+const base='/assets/windwhisper-city/completion/';
+const manifest=await fetch(base+'manifest.json').then(r=>{if(!r.ok)throw Error('素材清单读取失败');return r.json()});
+const images=new Map(),entries=new Map(manifest.assets.map(a=>[a.id,a]));
+await Promise.all(manifest.assets.map(async a=>{const im=new Image();im.src=base+a.file;await im.decode();images.set(a.id,im)}));
+const canvas=document.querySelector('#stage'),ctx=canvas.getContext('2d'),status=document.querySelector('#status');
+let scene='gate',paused=false,elapsed=0,last=performance.now(),feet=false,night=false;
+const objects={
+gate:[['gate-tower',260,510,185,430],['gate-tower',850,510,185,430],['gate-lintel',555,310,420,170],['check-booth',135,640,150,150],['cargo-cart',975,625,160,130],['city-flag',380,555,45,120],['city-flag',725,555,45,120]],
+market:[['inn-building',190,320,340,280],['market-building',575,300,340,290],['house-variant-b',940,305,280,270],['fruit-stall',190,590,190,170],['herb-stall',875,600,190,170],['cloth-stall',840,370,150,150],['notice-board',70,475,90,95],['cargo-crates',1025,650,80,85],['street-lamp',390,555,45,150],['street-lamp',720,550,45,150]],
+plaza:[['wind-tower',555,570,245,560],['house-variant-a',155,350,240,250],['archive-hall',925,370,300,265],['city-planter',365,525,115,110],['city-planter',750,525,115,110],['street-bench',195,625,130,80],['street-bench',915,625,130,80],['street-lamp',290,550,45,150],['street-lamp',830,550,45,150]]
+};
+const routes={gate:[[410,620],[555,400],[690,620],[555,660],[410,620]],market:[[405,650],[430,350],[690,350],[670,650],[405,650]],plaza:[[340,630],[420,500],[700,500],[735,640],[550,650],[340,630]]};
+function sample(points,distance){let total=0;const lengths=points.slice(1).map((p,i)=>{const a=points[i];const n=Math.hypot(p[0]-a[0],p[1]-a[1]);total+=n;return n});distance%=total;for(let i=0;i<lengths.length;i++){if(distance>lengths[i]){distance-=lengths[i];continue}const a=points[i],b=points[i+1],t=distance/lengths[i];return {x:a[0]+(b[0]-a[0])*t,y:a[1]+(b[1]-a[1])*t,dx:b[0]-a[0],dy:b[1]-a[1]}}}
+function image(id,x,y,w,h,frame=0,flip=false){const im=images.get(id),a=entries.get(id);if(!im||!a)return;ctx.save();ctx.translate(x,y);if(flip)ctx.scale(-1,1);if(a.kind==='animation'){const size=a.frameSize;ctx.drawImage(im,(frame%a.columns)*size,Math.floor(frame/a.columns)*size,size,size,-w/2,-h*.94,w,h)}else ctx.drawImage(im,-w/2,-h,w,h);ctx.restore();if(feet){ctx.strokeStyle='#ee7741';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,6,0,Math.PI*2);ctx.stroke()}}
+function draw(time){const dt=Math.min(100,time-last);last=time;if(!paused)elapsed+=dt;ctx.clearRect(0,0,1100,720);const tile=images.get(scene==='plaza'?'plaza-tile':'street-tile');const pattern=ctx.createPattern(tile,'repeat');pattern.setTransform(new DOMMatrix().scale(.4));ctx.fillStyle=pattern;ctx.fillRect(0,0,1100,720);const ordered=objects[scene].map(o=>({y:o[2],draw:()=>image(...o)}));
+const actorCount=scene==='gate'?6:14;
+for(let i=0;i<actorCount;i++){const d=elapsed*.075+i*97,p=sample(routes[scene],d),id=scene==='gate'?(i<4?'guard-walk':'archer-walk'):['merchant-walk','innkeeper-walk','citizen-walk','traveler-walk','artisan-walk','herbalist-walk','scholar-walk','apprentice-walk'][i%8];const moving=!paused,row=Math.abs(p.dx)>Math.abs(p.dy)?2:p.dy<0?1:0,frame=row*4+(moving?Math.floor(d/22)%4:0);const x=p.x+(i%3-1)*35,y=p.y+(i%2)*16;ordered.push({y,draw:()=>image(id,x,y,92,92,frame,p.dx<0&&row===2)})}
+ordered.sort((a,b)=>a.y-b.y).forEach(o=>o.draw());if(night){ctx.fillStyle='rgba(12,32,73,.56)';ctx.fillRect(0,0,1100,720);for(const o of objects[scene].filter(o=>o[0]==='street-lamp'||o[0]==='city-flag')){const g=ctx.createRadialGradient(o[1],o[2]-100,0,o[1],o[2]-100,90);g.addColorStop(0,'rgba(255,209,96,.3)');g.addColorStop(1,'rgba(255,209,96,0)');ctx.fillStyle=g;ctx.fillRect(o[1]-90,o[2]-190,180,180)}}status.textContent=`${scene==='gate'?'西门':scene==='market'?'市集':'风塔'}样板 · ${actorCount}名移动角色 · ${paused?'已暂停':'按真实路径位移驱动步态'} · ${night?'夜景':'日景'}`;requestAnimationFrame(draw)}
+for(const b of document.querySelectorAll('[data-scene]'))b.onclick=()=>{scene=b.dataset.scene;elapsed=0;document.querySelectorAll('[data-scene]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))};
+document.querySelector('#pause').onclick=()=>{paused=!paused;document.querySelector('#pause').textContent=paused?'继续移动':'暂停移动'};
+document.querySelector('#restart').onclick=()=>elapsed=0;document.querySelector('#feet').onchange=e=>feet=e.target.checked;document.querySelector('#night').onchange=e=>night=e.target.checked;
+for(const a of manifest.assets){const card=document.createElement('div');card.className='card';const c=document.createElement('canvas');c.width=256;c.height=220;const cx=c.getContext('2d');cx.fillStyle='#e8dcc0';cx.fillRect(0,0,256,220);const im=images.get(a.id);if(a.kind==='animation'){const size=a.frameSize;cx.drawImage(im,0,0,size,size,32,6,192,192)}else{const scale=Math.min(235/im.width,200/im.height);cx.drawImage(im,(256-im.width*scale)/2,(220-im.height*scale)/2,im.width*scale,im.height*scale)}const p=document.createElement('p');p.textContent=`${a.id} · 原生 ${a.sourceWidth??a.width}×${a.sourceHeight??a.height} · ${a.status}`;card.append(c,p);document.querySelector('#gallery').append(card)}
+requestAnimationFrame(draw);
+</script>
+</html>

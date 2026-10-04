@@ -1,3 +1,4 @@
+import {enemyBehavior} from '../../data/enemies';
 import {inProtected} from "../../data/defenseZones";
 import { enemyDefs, mapGeometryRevision } from "../../data/world";
 import { createEnemyAttack, advanceEnemyAttack, ENEMY_ATTACK, delayEnemyAttack, sampleEnemyAttack, creatureCooldown, type EnemyAttack, type EnemyContact } from "./enemyAttack";
@@ -213,6 +214,7 @@ export function repairEnemyPoint(origin: Point, home: Point, radius = 420) {
   return nearestStanding(origin, anchors, allowed);
 }
 export type EnemyBody = Point & {
+  damageScale?:number;
   fungalShield?:EnemyBody;
   bossSummon?:{owner:string;attempt:number};
   passiveRoot?:{owner:string;index:number;attempt:number;kind?:'root'|'sac'|'rock'|'sigil'};
@@ -350,7 +352,7 @@ export function updateEnemy(
     e.ai = "硬直";
     return null;
   }
-  if(e.type==='guardian'&&!e.attack&&d<380)e.face=turnToward(e.face??{x:0,y:1},{x:player.x-e.x,y:player.y-e.y},dt);
+  if(enemyBehavior(e.type)==='guardian'&&!e.attack&&d<380)e.face=turnToward(e.face??{x:0,y:1},{x:player.x-e.x,y:player.y-e.y},dt);
   // 从局部驻防交还给野怪AI时，不把未释放的守卫攻击转嫁给玩家。
   if(e.attack&&e.targetId&&e.targetId!==targetId){e.attack.cancelled=true;e.attack=null;e.cool=now+250;}
   if (e.attack) {
@@ -364,12 +366,13 @@ export function updateEnemy(
     return contact;
   }
   const profile=enemyProfile(e.type);
-  const aligned=e.type!=='guardian'||d<1||((player.x-e.x)*(e.face?.x??0)+(player.y-e.y)*(e.face?.y??1))/d>.94;
+  const aligned=enemyBehavior(e.type)!=='guardian'||d<1||((player.x-e.x)*(e.face?.x??0)+(player.y-e.y)*(e.face?.y??1))/d>.94;
   const permitted=permission(e,targetId);
   if (!e.boss && d < creatureReach(e.type,e.elite) && now > e.cool && safe && aligned && clearMeleeLine(e, player)&&permitted) {
     e.targetId=targetId;
     e.attack=createEnemyAttack(e.id,e.attackSerial=(e.attackSerial??0)+1,e.type,now,e,player,undefined,e.elite);
-    if(e.type==='guardian'){e.attack.direction={...e.face!};e.attack.locked=true;}
+    e.attack.damage*=e.damageScale??1;
+    if(enemyBehavior(e.type)==='guardian'){e.attack.direction={...e.face!};e.attack.locked=true;}
     e.cool=creatureCooldown(e.attack);
     e.windup = e.attack.contactAt-now;
     e.ai = "前摇";
@@ -388,14 +391,14 @@ export function updateEnemy(
   // 回撤可以被重新接近或挑衅打断；边界内留出余量，避免在同一条边缘来回切换。
   const reentry=homeDistance<radius-ENEMY_PURSUIT.returnInset&&targetHomeDistance<radius-ENEMY_PURSUIT.returnInset;
   const noticed=d<ENEMY_PURSUIT.alertDistance&&(!inProtected(player)||provoked)&&
-    (e.type==='wolf'?clearMeleeLine(e,player)||provoked:e.type!=='burrow'||provoked);
+    (enemyBehavior(e.type)==='wolf'?clearMeleeLine(e,player)||provoked:e.type!=='burrow'||provoked);
   if(e.nav.returning&&reentry&&(noticed||(provoked||e.boss)&&d<pursuit.chaseDistance))e.nav.returning=false;
   // 首领只在正式入场后有身体，入场即交战；普通怪仍需近距离感知或挑衅。
   const engaged=(!!e.boss||e.nav.mode==="chase")&&!e.nav.returning||provoked;
-  const senses=e.type==='wolf'?engaged||clearMeleeLine(e,player):e.type==='burrow'?engaged:false;
+  const senses=enemyBehavior(e.type)==='wolf'?engaged||clearMeleeLine(e,player):e.type==='burrow'?engaged:false;
   const canChase = d < (engaged?pursuit.chaseDistance:ENEMY_PURSUIT.alertDistance) && safe &&
     homeDistance<=radius&&targetHomeDistance<=radius &&
-    (!inProtected(player)||engaged) && (!['wolf','burrow'].includes(e.type)||senses);
+    (!inProtected(player)||engaged) && (!['wolf','burrow'].includes(enemyBehavior(e.type))||senses);
   let chase=canChase&&!e.nav.returning,tracking=chase;
   let target=player;
   if(chase){e.nav.lastSeen={...player};e.nav.lostAt=undefined;}
@@ -414,7 +417,7 @@ export function updateEnemy(
   // 镰灵远处侧向接近；近身仍走向真实目标，不改攻击方向与碰撞。
   if(tracking&&!e.boss&&e.type==='leaf'&&d>145){const sign=e.id.endsWith('2')?-1:1,dx=(e.x-player.x)/d,dy=(e.y-player.y)/d;
     const flank={x:player.x-dy*75*sign,y:player.y+dx*75*sign};if(!motionBlocked(flank.x,flank.y)&&distance(flank,home)<radius)target=flank;}
-  if(tracking&&!e.boss&&['wolf','shade'].includes(e.type)&&d>165){const flank=wolfFlank(e,player);if(!motionBlocked(flank.x,flank.y)&&distance(flank,home)<radius)target=flank;}
+  if(tracking&&!e.boss&&['wolf','shade'].includes(enemyBehavior(e.type))&&d>165){const flank=wolfFlank(e,player);if(!motionBlocked(flank.x,flank.y)&&distance(flank,home)<radius)target=flank;}
   // 孢卫进入中距离后等待喷射冷却，玩家过近时只在合法空间后撤。
   if(tracking&&!e.boss&&e.type==='spore'&&d<155){const retreat={x:e.x+(e.x-player.x)/(d||1)*65,y:e.y+(e.y-player.y)/(d||1)*65};
     if(distance(retreat,home)<radius&&!motionBlocked(retreat.x,retreat.y)&&clearMotionLine(e,retreat))target=retreat;}

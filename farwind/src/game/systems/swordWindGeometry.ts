@@ -1,7 +1,7 @@
 import {meleeBody,MELEE_HEIGHT,type MeleeBodyTarget} from './meleeGeometry';
 import {WORLD_PLAYABLE as B} from "../../data/maps/windbell/bounds";
 import {
-  props,
+  nearbySolidProps,
   propBounds,
   type Prop,
 } from "../../data/world";
@@ -53,7 +53,7 @@ export function sweptTargetContact(
   return t >= -EPS && t <= 1 + EPS ? Math.max(0, Math.min(1, t)) : null;
 }
 // 剑风在空气中越水，只检查实体障碍与世界边界；移动和近战仍使用原地形规则。
-export function firstSwordWindBlocker(a:Point,b:Point,radius:number,objects:readonly Prop[]=props) {
+export function firstSwordWindBlocker(a:Point,b:Point,radius:number,objects:readonly Prop[]=nearbySolidProps(a,b,radius)) {
   const candidates:{id:string;t:number}[]=[];
   for(const p of objects){
     if(!p.solid||p.id===TRAINING.id||FIELD_TARGETS.some(t=>t.id===p.id))continue;

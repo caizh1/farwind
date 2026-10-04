@@ -1,9 +1,9 @@
 import { showWorldAtlas } from './worldAtlas';
+import { Minimap } from './minimap';
 import {showWindMemory} from './windMemory';
 import type {WildernessDirection} from '../../data/maps/windbell/encounters';
 import {showWindGifts} from './windGifts';
 import type {WindGiftId} from '../systems/windGifts';
-import {HOMES} from '../../data/npcLife';
 import {showCatCompanion} from './catCompanion';
 import {CAT_STAGES,catStage,type CatCare} from '../systems/catBond';
 import {legacyJournal,legacyTracked} from '../systems/windLegacy';
@@ -14,47 +14,32 @@ import {RUNES,type RuneDefinition} from '../../data/runes';
 import type {RuneRequest} from '../systems/runeState';
 import type {RuneTier,Ability} from '../../data/runes';
 import {updateCampBossHud} from './campBossHud';
-import {ENCOUNTERS} from '../../data/maps/windbell/encounters';
 import {southQuestObjective} from "../systems/fieldQuest";
 import {DEMON_KING,demonFormation,retaliationSummary} from '../../data/demonKing';
 import {demonMalice,demonKingSummary} from '../systems/demonKingState';
-import {SHORTCUTS} from "../../data/maps/windbell/shortcuts";
 import {WIND_NAMES,WIND_EFFECTS,WIND_LESSONS} from '../../data/windLessons';
 import {windLearningSource,windLessonStatus} from '../systems/skills';
 import { showShop } from "./shop";
 import { showEquipment, type EquipmentViewSlot } from "./equipment";
+import { showBag, bagTrade } from "./bag";
 import { clockLabel } from "../systems/worldClock";
-import { equipment, isEquipment, RETURN_WIND_ORB, type ShopId, type EquipmentSlot } from "../../data/economy";
+import { type ShopId, type EquipmentSlot } from "../../data/economy";
 import type { EconomyRequest } from "../systems/economy";
-import {
-  WORLD,
-  BRIDGES,
-  WATERS,
-  roads,
-  villageAreas,
-  showLayoutLabels,
-  villageRoutes,
-  routeSeconds,
-} from "../../data/world";
 import { TRAINING, type TrainingDummy } from "../systems/training";
 import { items, itemIcon, objectives, type ItemId } from "../../data/content";
-import {
-  MAP_REGIONS,
-  VILLAGE_WALLS,
-  VILLAGE_PORTALS,
-  RESERVED_PARCELS,
-} from "../../data/village";
-import { count, discard, parseSave, MAX_SAVE_BYTES, type State } from "../systems/state";
+import { count, parseSave, MAX_SAVE_BYTES, type State } from "../systems/state";
 import { region } from "../../data/world";
+import {CITY_MAIN_HINTS,CITY_QUESTS,CITY_CITIZENS,cityBuilding,isCitySpace} from '../../data/cityLayout';
 import type { PracticeMode } from "../systems/parryTraining";
 import { dialoguePortraitFor } from "../../data/dialoguePortraits";
 import { journeyProgress, playerVitals } from '../systems/journeyTraining';
 function journeyJournal(state: State) {
   const progress=journeyProgress(state);
   const next=(distance:number|null)=>distance===null?'锻炼已满':`距下次上限 +1 还需 ${Math.ceil(distance).toLocaleString('zh-CN')} 米`;
-  return `<section id="journey-training" aria-label="旅途锻炼"><h2>旅途锻炼</h2><p>累计有效奔跑里程：${Math.floor(progress.meters).toLocaleString('zh-CN')} 米</p><p>体力上限 ${progress.maxStamina} / 200 · 永久 +${progress.maxStamina-100}；${next(progress.staminaRemaining)}</p><p>生命上限 ${progress.maxHp} / 200 · 永久 +${progress.maxHp-100}；${next(progress.healthRemaining)}</p><p>正常奔跑自动积累，每次上限 +1，后续所需里程逐次增加。永久生效，不占装备或符文槽。${progress.healthRemaining===null?'两项锻炼已满。':''}</p></section>`;
+  const city=state.city.progress;
+  const notes=state.city.visited?`<section aria-label="风语城行记"><h2>风语城 · 风塔异响</h2><p>${CITY_MAIN_HINTS[city.main]}。城防：${city.alarm==='battle'?'警报，居民避难':city.alarm==='recover'?'恢复日程':'正常轮值'}。</p>${CITY_QUESTS.map(d=>{const q=city.quests.find(q=>q.id===d.id)!;return `<p><b>${d.name}</b> · ${q.status==='unaccepted'?'到商旅行会登记':q.status==='complete'?'已完成':q.status==='pending'?'到行会领取奖励':q.steps.length+'/'+d.steps.length}<br>${d.steps.map(step=>(q.steps.includes(step)?'✓ ':'· ')+step).join('；')}</p>`;}).join('')}<details><summary>具名市民与当前场所</summary>${CITY_CITIZENS.map(c=>{const r=city.residents.find(r=>r.id===c.id)!;return `<p>${c.name} · ${r.space==='village'?'城内街道':cityBuilding(r.space)?.name??'街道'} · ${r.activity==='sleep'?'休息':r.activity==='work'?'工作':r.activity==='shelter'?'避难':'外出'}</p>`;}).join('')}</details></section>`:'';
+  return `${notes}<section id="journey-training" aria-label="旅途锻炼"><h2>旅途锻炼</h2><p>累计有效奔跑里程：${Math.floor(progress.meters).toLocaleString('zh-CN')} 米</p><p>体力上限 ${progress.maxStamina} / 200 · 永久 +${progress.maxStamina-100}；${next(progress.staminaRemaining)}</p><p>生命上限 ${progress.maxHp} / 200 · 永久 +${progress.maxHp-100}；${next(progress.healthRemaining)}</p><p>正常奔跑自动积累，每次上限 +1，后续所需里程逐次增加。永久生效，不占装备或符文槽。${progress.healthRemaining===null?'两项锻炼已满。':''}</p></section>`;
 }
-const campMapStatus=(s:State,id:string)=>{const g=s.encounters.groups[id];return g.cleared?'已清除':g.boss?.stage==='battle'?'首领交战':g.boss?.stage==='warning'?'首领待挑战':'驻守未清';};
 export type Actions = {
   memoryStart?:(direction:WildernessDirection)=>Promise<void>;
   memoryEnd?:()=>Promise<void>;
@@ -85,6 +70,8 @@ export type Actions = {
   getIndicators: ()=>boolean;
 };
 export class Interface {
+  minimap = new Minimap();
+  mapArea:'all'|'plains'|'road'|'city'='all';
   runeFeedback='';
   victory: {boss:CampBossKind;rewards:string[]}|null=null;
   selectedRune='return-wind';selectedRuneSlot=0;runeTier:RuneTier|''='';runeAbility:Ability|''='';runeOwned='all';previewCleanup?:()=>void;runeHudKey='';
@@ -94,6 +81,9 @@ export class Interface {
   available = false;
   selected: ItemId | null = null;
   selectedEquipment: EquipmentViewSlot = "orb";
+  bagFilter = "all";
+  bagSelectedSlot = -1;
+  potionQuantity = 1;
   hudPreferences = this.readPreferences();
   returnTo: "" | "pause" | "title" = "";
   returnFocus: HTMLElement | null = null;
@@ -114,7 +104,7 @@ export class Interface {
       <div class="combat-status-row"><span id="combat-status">L 风步 · 就绪</span><span id="parry-status" role="status">K 架剑就绪</span><small id="wind-aim-status" hidden></small></div>
       <section id="training-panel" hidden><div class="training-actions"><button id="training-details-toggle" data-hud-fold="training-details" aria-expanded="false" aria-controls="training-details"><img src="/assets/icon-sword.png" alt="">木桩练习</button><button data-practice-menu="true" aria-label="迎风架剑练习">迎风架剑</button><button data-build-training="true" aria-label="本领与构筑训练">构筑训练</button></div><span id="training-stats" hidden></span><div id="training-details" class="training-details" hidden><small>J / 左键：攻击；连按接三／四连；I／中键：剑风；L：风步</small><span id="training-stats-detail"></span><span id="parry-feedback" hidden></span></div></section>
       <section id="hud-status-details" class="hud-status-details" hidden><b>操作与本领</b><small id="sword-wind-status" hidden></small><span id="combat-status-detail">L 风步 · 就绪</span><span id="parry-status-detail">K 架剑就绪</span><span id="wind-aim-detail" hidden></span><span id="demon-king-detail" hidden></span><small>J / 左键：连斩；K / 右键：架剑；L：风步；I / 中键：剑风。</small></section></div>
-      <div class="hud-info"><section class="location"><button id="minimap-toggle" class="hud-summary" aria-expanded="false" aria-controls="minimap-details" aria-label="展开小地图"><b id="region">风铃村</b><span>·</span><span id="clock"></span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2Zm6-2v16m6-14v16"/></svg><span class="chevron" aria-hidden="true">▾</span></button><div id="minimap-details" class="hud-details map-details" hidden><small id="day"></small><canvas id="minimap" width="192" height="101" aria-label="位置小地图"></canvas><button class="text-button" data-panel="map">M 完整地图</button></div></section>
+      <div class="hud-info"><section class="location"><button id="minimap-toggle" class="hud-summary" aria-expanded="false" aria-controls="minimap-details" aria-label="展开小地图"><b id="region">风铃村</b><span>·</span><span id="clock"></span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2Zm6-2v16m6-14v16"/></svg><span class="chevron" aria-hidden="true">▾</span></button><div id="minimap-details" class="hud-details map-details" hidden><div class="minimap-heading"><img class="minimap-rule" src="/assets/minimap/painted/rule.webp" alt=""><span id="minimap-note">周边地形</span><img class="minimap-rule" src="/assets/minimap/painted/rule.webp" alt=""><span class="minimap-north" aria-label="上方为北">N<img src="/assets/minimap/painted/player.webp" alt=""></span></div><canvas id="minimap" width="320" height="160" aria-label="周边地形小地图"></canvas><small id="day" hidden></small><div class="minimap-footer"><span class="minimap-legend"><span><img src="/assets/minimap/painted/player.webp" alt="">主角</span><span title="青色服务地标，红色挑战，绿色已完成"><img src="/assets/minimap/painted/landmark.webp" alt="">地标</span></span><button class="text-button" data-panel="map" aria-label="M 完整地图">完整地图 <kbd>M</kbd></button></div></div></section>
       <section class="quest-tracker"><button id="quest-toggle" class="hud-summary" aria-expanded="false" aria-controls="quest-details"><span id="objective-summary" class="ellipsis"></span><span class="chevron" aria-hidden="true">▾</span></button><div id="quest-details" class="hud-details quest-details" hidden><small>主线 · 失落的风</small><p id="objective"></p><button class="text-button" data-panel="quest">Q 旅途手记</button></div></section></div></div>
       <div id="prompt"></div><div id="menu-hint" role="status" hidden>Esc 打开菜单 / 查看操作</div><div class="bottom"><span id="hotbar-info" role="tooltip" hidden></span><div id="hotbar" role="group" aria-label="快捷道具栏，1 至 8"></div></div></div><div id="toast" role="status"></div><div id="modal"></div>`;
     this.modal = this.root.querySelector("#modal")!;
@@ -226,7 +216,7 @@ export class Interface {
         );
     }
     if (this.hudPreferences.minimap && this.state)
-      this.drawMap(this.root.querySelector("#minimap")!, this.state, "minimap");
+      this.minimap.draw(this.root.querySelector("#minimap")!, this.state);
   }
   intro() {
     if (this.hudPreferences.menuHintSeen) return;
@@ -417,7 +407,7 @@ export class Interface {
     this.previewCleanup?.();this.previewCleanup=undefined;
     this.root.classList.remove("dialog-open");
     this.hud.inert = true;
-    this.modal.classList.remove("story-modal", "equipment-modal", "rune-modal");
+    this.modal.classList.remove("story-modal", "equipment-modal", "bag-modal", "rune-modal");
     this.modal.hidden = false;
     this.modal.innerHTML = `<section class="panel${this.mode === "pause" ? " pause-panel" : ""}" role="dialog" aria-modal="true" aria-labelledby="panel-title"><header><small>远 风 之 地</small><h1 id="panel-title">${title}</h1></header>${body}</section>`;
     this.actions?.pause();
@@ -477,7 +467,7 @@ export class Interface {
     this.returnTo = "";
     this.mode = "";
     this.modal.hidden = true;
-    this.modal.classList.remove("story-modal", "equipment-modal");
+    this.modal.classList.remove("story-modal", "equipment-modal", "bag-modal");
     this.root.classList.remove("dialog-open");
     this.hud.inert = false;
     if (this.modal.contains(document.activeElement))
@@ -509,27 +499,8 @@ export class Interface {
     if (page === "equipment") this.modal.querySelector<HTMLButtonElement>(`[data-equipment-slot="${this.selectedEquipment}"]`)?.focus({ preventScroll: true });
   }
   async makePotion() {
-    if (this.economyBusy || !this.state || !this.actions.canMutate()) return;
-    const feedback = this.modal.querySelector("#craft-feedback")!;
-    const herbs = count(this.state, "herb"), berries = count(this.state, "berry");
-    if (herbs < 2 || berries < 1) {
-      feedback.textContent = `材料不足：${[herbs < 2 ? `还缺药草 ×${2 - herbs}` : "", berries < 1 ? `还缺浆果 ×${1 - berries}` : ""].filter(Boolean).join("、")}；未扣材料。`;
-      return;
-    }
-    this.economyBusy = true;
-    this.modal.querySelectorAll<HTMLButtonElement | HTMLSelectElement>("button,select").forEach(button => { button.disabled = true; });
-    feedback.textContent = "正在制作并保存……";
-    let result: string;
-    try {
-      await this.actions.trade({ sequence: this.state.economyRevision + 1, kind: "craft" });
-      result = "制作成功：恢复药剂 ×1，已保存。";
-    } catch (error) {
-      result = `制作未完成：${(error as Error).message}`;
-    } finally {
-      this.economyBusy = false;
-    }
-    this.open("bag", result);
-    this.focusPanel("craft");
+    if (!this.state) return;
+    await bagTrade(this, { sequence: this.state.economyRevision + 1, kind: "craft", quantity: this.potionQuantity }, `制作成功：恢复药剂 ×${this.potionQuantity}，已保存。`, "craft");
   }
   open(mode: string, bagFeedback = "") {
     if (this.economyBusy) return;
@@ -571,67 +542,7 @@ export class Interface {
           }),
       );
     }
-    if (mode === "bag" && s) {
-      this.shell(
-        "旅人的行囊",
-        `<nav class="bag-equipment-nav" aria-label="旅人物品页"><button id="bag-equipment">装备</button><button data-panel="runes">符文</button><button aria-current="page" disabled>行囊</button></nav><p class="muted">金币 ${s.coins} · 24 格 · 材料20件/格，装备1件/格 · 选择物品后使用或穿戴</p><div class="bag">${s.bag.map((a, i) => `<button class="slot" data-slot="${i}">${a ? `${itemIcon(a.id) ? `<img class="item-icon" src="${itemIcon(a.id)}" alt="">` : ""}${items[a.id].name}<strong>×${a.count}</strong>` : "·"}</button>`).join("")}</div><p id="item-info">恢复药剂：药草 ×2 + 浆果 ×1，恢复 50 生命。</p><p>持有药草 ${count(s, "herb")}/2 · 浆果 ${count(s, "berry")}/1</p><p id="craft-feedback" role="status" aria-live="polite"></p><div class="row"><button id="craft">制作恢复药剂</button><button id="consume">使用选中物品</button><button id="equip">穿戴选中装备</button><button id="discard">丢弃一件</button><select id="bind" aria-label="快捷栏位置">${Array.from({ length: 8 }, (_, i) => `<option value="${i}">快捷栏 ${i + 1}</option>`).join("")}</select><button id="bind-button">绑定</button></div><p>武器：${s.equipment.weapon ? items[s.equipment.weapon].name : "原有佩剑"} · 头部：${s.equipment.head ? items[s.equipment.head].name : "未佩戴"} · 护甲：${s.equipment.armor ? items[s.equipment.armor].name : "原有衣物"} · 鞋子：${s.equipment.feet ? items[s.equipment.feet].name : "原有布鞋"} · 宝珠：${RETURN_WIND_ORB.name}（默认装备）</p><div class="row"><button id="unequip-weapon" ${!s.equipment.weapon ? "disabled" : ""}>卸下武器</button><button id="unequip-head" ${!s.equipment.head ? "disabled" : ""}>卸下头部装备</button><button id="unequip-armor" ${!s.equipment.armor ? "disabled" : ""}>卸下护甲</button><button id="unequip-feet" ${!s.equipment.feet ? "disabled" : ""}>卸下鞋子</button></div><button id="close">收好行囊</button>`,
-      );
-      this.modal.querySelectorAll<HTMLButtonElement>("[data-slot]").forEach(
-        (b) =>
-          (b.onclick = () => {
-            this.selected = s.bag[Number(b.dataset.slot)]?.id ?? null;
-            this.modal.querySelector("#item-info")!.textContent = this.selected
-              ? items[this.selected].description
-              : "空格";
-            this.modal
-              .querySelectorAll(".slot")
-              .forEach((a) => a.classList.remove("selected"));
-            b.classList.add("selected");
-          }),
-      );
-      this.button("bag-equipment", () => this.open("equipment"));
-      this.button("equip", () => {
-        if (!this.selected || !isEquipment(this.selected)) {
-          this.message("请先选择可穿戴的装备。");
-          return;
-        }
-        void this.changeEquipment(equipment[this.selected].slot, this.selected);
-      });
-      this.button("unequip-weapon", () => void this.changeEquipment("weapon", null));
-      this.button("unequip-head", () => void this.changeEquipment("head", null));
-      this.button("unequip-armor", () => void this.changeEquipment("armor", null));
-      this.button("unequip-feet", () => void this.changeEquipment("feet", null));
-      this.modal.querySelector("#craft-feedback")!.textContent = bagFeedback;
-      this.button("craft", () => void this.makePotion());
-      this.button("consume", () => {
-        if(!this.selected||this.economyBusy)return;
-        this.economyBusy=true;
-        void Promise.resolve(this.actions.use(this.selected)).finally(()=>{
-          this.economyBusy=false;
-          if(this.mode==="bag")this.open("bag");
-        });
-      });
-      this.button("discard", () => {
-        if (
-          this.selected &&
-          confirm("确定丢弃一件" + items[this.selected].name + "？")
-        ) {
-          if (!discard(s, this.selected))
-            this.message("风之结晶是重要任务材料，不能丢弃。");
-          this.open("bag");
-        }
-      });
-      this.button("bind-button", () => {
-        if (this.selected) {
-          s.hotbar[
-            Number(
-              (this.modal.querySelector("#bind") as HTMLSelectElement).value,
-            )
-          ] = this.selected;
-          this.message("快捷栏已绑定");
-        }
-      });
-    }
+    if (mode === "bag" && s) showBag(this, bagFeedback);
     if (mode === "quest" && s)
       this.shell(
         "旅途手记",
@@ -646,7 +557,7 @@ export class Interface {
           )}</ol><h2>支线 · 木匠的托付</h2><p>${["与西南方的木匠阿禾交谈", "为阿禾收集 4 份木材", "已交付，收到浆果与谢意"][s.side]}</p>${legacyJournal(s)}${this.skillJournal(s)}<button id="close">合上手记</button>`,
       );
     if(mode==='quest'&&s)this.modal.querySelectorAll<HTMLButtonElement>('[data-legacy-track]').forEach(b=>b.onclick=async()=>{if(this.economyBusy)return;this.economyBusy=true;b.disabled=true;try{await this.actions.runeChange({kind:'track',target:(b.dataset.legacyTrack||null) as LegacyTrack});this.message('目标已追踪，M 查看实际地点。');this.open('quest');}catch(e){this.message((e as Error).message);b.disabled=false;}finally{this.economyBusy=false;}});
-    if (mode === "map" && s) this.showMap("atlas");
+    if (mode === "map" && s) this.showMap();
     if (mode === "pause") {
       this.shell(
         "在风中歇一会儿",
@@ -810,15 +721,14 @@ export class Interface {
     const cat=this.root.querySelector<HTMLButtonElement>('#cat-summary')!;
     cat.querySelector('span')!.textContent=`小黑 · ${CAT_STAGES[catStage(s.catBond.score)].name}`;
     cat.title=`默契 ${s.catBond.score}/100 · ${this.actions.catStatus?.()??''}`;
-    this.root.querySelector("#region")!.textContent = region(
-      s.player.x,
-      s.player.y,
-    );
+    const place=cityBuilding(s.life.playerSpace)?.name??region(s.player.x,s.player.y);
+    this.root.querySelector("#region")!.textContent = place;
     const time = `${String(Math.floor(s.time / 60) % 24).padStart(2, "0")}:${String(Math.floor(s.time % 60)).padStart(2, "0")}`;
     this.root.querySelector("#clock")!.textContent = clockLabel(s.time);
     this.root.querySelector("#day")!.textContent =
-      `第 ${Math.floor(s.time / 1440) + 1} 日 · ${region(s.player.x, s.player.y)}`;
-    const tracked=legacyTracked(s);const objective=tracked?`${tracked.name}：${tracked.text}`:s.fieldQuests["south-supply"]==="active"?southQuestObjective(s):objectives[s.quest];
+      `第 ${Math.floor(s.time / 1440) + 1} 日 · ${place}`;
+    const tracked=legacyTracked(s),inCity=isCitySpace(s.life.playerSpace)||s.life.playerSpace==='village'&&s.player.x>9690;
+    const objective=inCity?`风塔异响：${CITY_MAIN_HINTS[s.city.progress.main]}`:tracked?`${tracked.name}：${tracked.text}`:s.fieldQuests["south-supply"]==="active"?southQuestObjective(s):objectives[s.quest];
     this.root.querySelector("#objective")!.textContent = objective;
     this.root.querySelector("#objective-summary")!.textContent =
       `任务 · ${objective}`;
@@ -868,147 +778,9 @@ export class Interface {
         this.root.querySelector("#hotbar-info")!.textContent = name;
     });
     if (this.hudPreferences.minimap)
-      this.drawMap(this.root.querySelector("#minimap")!, s, "minimap");
+      this.minimap.draw(this.root.querySelector("#minimap")!, s);
   }
-  showMap(view: "atlas" | "local") {
-    const s = this.state;
-    if (!s) return;
-    if (view === "atlas") showWorldAtlas(this, () => this.showMap("local"));
-    else {
-      this.shell(
-        "风铃村与周边",
-        `<nav class="atlas-nav" aria-label="地图层级"><button id="atlas-back">大陆全貌</button><button aria-current="page" disabled>风铃村与周边</button></nav><p>风铃村 · 四向荒野 · 远端风之遗迹</p><canvas id="world-map" width="840" height="630"></canvas><ul class="camp-map-status" aria-label="据点清除状态">${ENCOUNTERS.filter(d=>d.kind==='camp').map(d=>`<li data-camp-status="${d.id}" data-cleared="${s.encounters.groups[d.id].cleared}"><i aria-hidden="true"></i><b>${d.name}</b><span>${campMapStatus(s,d.id)}</span></li>`).join('')}</ul><div class="map-guide">${villageAreas.map((a) => `<p><b>${showLayoutLabels(import.meta.env.DEV, window.location.search) ? `${a.id} ` : ""}${a.name}</b> · ${a.detail}</p>`).join("")}</div><div class="map-routes">${villageRoutes.map((r) => `<p><b>${r.name}</b> · 约 ${routeSeconds(r.points)} 秒（步行、不含停留）</p>`).join("")}</div><p class="muted">世界 6400 × 4800 · 金点是你的位置。临水木桥可步行，池水不可通行；遗迹南侧的归乡风径修复后开放。</p><button id="close">收起地图</button>`,
-      );
-      this.drawMap(this.modal.querySelector("canvas")!, s, "world-map");
-      this.modal.querySelector(".panel")!.classList.add("local-map-panel");
-      this.button("atlas-back", () => this.showMap("atlas"));
-    }
-    this.button("close", () => this.close());
-    this.focusPanel(view === "atlas" ? "atlas-local" : "atlas-back");
-  }
-  drawMap(c: HTMLCanvasElement, s: State, mode: "minimap" | "world-map") {
-    const mini = mode === "minimap";
-    const w = mini ? 192 : 840,
-      h = mini ? 144 : 630;
-    const dpr = Math.min(window.devicePixelRatio || 1, 3);
-    if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) {
-      c.width = Math.round(w * dpr);
-      c.height = Math.round(h * dpr);
-    }
-    const ctx = c.getContext("2d")!;
-    ctx.setTransform(c.width / w, 0, 0, c.height / h, 0, 0);
-    ctx.clearRect(0, 0, w, h);
-    ctx.globalAlpha = 1;
-    const sx = w / WORLD.width,
-      sy = h / WORLD.height;
-    const px=(x:number)=>(x-WORLD.left)*sx,py=(y:number)=>(y-WORLD.top)*sy;
-    ctx.fillStyle = "#9cb67e";
-    ctx.fillRect(0, 0, w, h);
-    const regionColors:Record<string,string>={village:'#9cb67e',west:'#a5ae7d',south:'#b9ba76',north:'#83a29b',forest:'#477d66',ruins:'#aaa78a'};
-    for (const r of MAP_REGIONS) {
-      ctx.beginPath();
-      r.polygon.forEach((p,i)=>i?ctx.lineTo(px(p.x),py(p.y)):ctx.moveTo(px(p.x),py(p.y)));
-      ctx.closePath();ctx.fillStyle=regionColors[r.id];ctx.fill();
-    }
-    // 地形合成完成后统一降低底层alpha，避免重叠区域累计成实色。
-    if (mini) {
-      ctx.globalCompositeOperation = "destination-in";
-      ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-      ctx.fillRect(0, 0, w, h);
-      ctx.globalCompositeOperation = "source-over";
-    }
-    ctx.strokeStyle = "#e6ce9b";
-    ctx.lineWidth = mini ? 2 : 5;
-    roads.forEach((path) => {
-      ctx.beginPath();
-      path.forEach(([x, y], i) =>
-        i ? ctx.lineTo(px(x), py(y)) : ctx.moveTo(px(x), py(y)),
-      );
-      ctx.stroke();
-    });
-    ctx.fillStyle = "#4c9bad";
-    for(const POND of WATERS){
-    ctx.beginPath();
-    ctx.ellipse(
-      px(POND.x),
-      py(POND.y),
-      POND.rx * sx,
-      POND.ry * sy,
-      0,
-      0,
-      Math.PI * 2,
-    );
-    ctx.fill();
-    }
-    ctx.fillStyle = "#c49a62";
-    BRIDGES.forEach((b) =>
-      ctx.fillRect(px(b.x), py(b.y), b.w * sx, b.h * sy),
-    );
-    for(const d of SHORTCUTS){
-      const open=s.mapProgress.shortcuts.includes(d.id);
-      ctx.fillStyle=open?"#e9f5bd":"#ba6946";ctx.beginPath();ctx.arc(px(d.barrier.x),py(d.barrier.y),mini?2:5,0,Math.PI*2);ctx.fill();
-      if(!mini){ctx.font="12px serif";ctx.textAlign="left";ctx.fillText(`${d.name}${open?"":" · 待修复"}`,px(d.barrier.x)+8,py(d.barrier.y)-8);}
-    }
-    if (!mini) {
-      ctx.strokeStyle = "#805634";
-      ctx.lineWidth = 3;
-      VILLAGE_WALLS.forEach(({ a, b }) => {
-        ctx.beginPath();
-        ctx.moveTo(px(a.x), py(a.y));
-        ctx.lineTo(px(b.x), py(b.y));
-        ctx.stroke();
-      });
-      ctx.font = "12px serif";
-      ctx.textAlign = "center";
-      ctx.fillStyle = "#284b3b";
-      VILLAGE_PORTALS.forEach((p) =>
-        ctx.fillText(
-          p.open || s.mapProgress.westRoad === "open" ? p.name : "西门（待修复）",
-          px(p.x) + (p.axis === "x" ? -22 : 0),
-          py(p.y) - 12,
-        ),
-      );
-      ctx.strokeStyle = "#637347";
-      ctx.setLineDash([4, 3]);
-      RESERVED_PARCELS.forEach((p) =>
-        ctx.strokeRect(px(p.x), py(p.y), p.w * sx, p.h * sy),
-      );
-      ctx.setLineDash([]);
-      ctx.font = "bold 14px serif";
-      ctx.textAlign = "center";
-      if (showLayoutLabels(import.meta.env.DEV, window.location.search))
-        villageAreas.forEach((a) => {
-          ctx.fillStyle = "#284b3b";
-          ctx.fillRect(px(a.x) - 10, py(a.y) - 11, 20, 22);
-          ctx.fillStyle = "#fff4cf";
-          ctx.fillText(a.id, px(a.x), py(a.y) + 5);
-        });
-      ctx.font = "18px serif";
-      ctx.fillStyle = "#fff4cf";
-      for(const r of MAP_REGIONS){const x=r.polygon.reduce((n,p)=>n+p.x,0)/r.polygon.length,y=r.polygon.reduce((n,p)=>n+p.y,0)/r.polygon.length;ctx.fillText(r.name,px(x),py(y));}
-      ctx.textAlign = "start";
-    }
-    const tracked=legacyTracked(s);if(tracked){const x=px(tracked.point.x),y=py(tracked.point.y);ctx.strokeStyle='#ffeb94';ctx.lineWidth=mini?2:3;ctx.beginPath();ctx.arc(x,y,mini?5:11,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#ffeb94';ctx.beginPath();ctx.arc(x,y,mini?2:4,0,Math.PI*2);ctx.fill();if(!mini){ctx.font='bold 13px serif';ctx.textAlign='center';ctx.fillText(tracked.name,Math.max(100,Math.min(w-100,x)),y-18);}}
-    // 四据点的地图标记与清除结算共用固定记录，历史继承同样显示已清除。
-    for(const d of ENCOUNTERS.filter(d=>d.kind==='camp')){
-      const cleared=s.encounters.groups[d.id].cleared,x=px(d.x),y=py(d.y);ctx.fillStyle=cleared?'#56766a':'#a34f3d';ctx.beginPath();ctx.arc(x,y,mini?2.5:6,0,Math.PI*2);ctx.fill();
-      if(!mini){ctx.font='12px serif';ctx.textAlign='center';ctx.fillStyle='#163b2d';ctx.fillText(`${d.name} · ${campMapStatus(s,d.id)}`,Math.max(105,Math.min(w-105,x)),y-12);}
-    }
-    ctx.textAlign='start';
-    ctx.fillStyle = "#fff6ca";
-    ctx.beginPath();
-    ctx.arc(
-      px(s.player.x),
-      py(s.player.y),
-      mini ? 3 : 6,
-      0,
-      Math.PI * 2,
-    );
-    ctx.fill();
-    ctx.strokeStyle = "#8d512e";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    const xb=s.xiaobao;const xbPoint=xb.space==='village'?xb:(HOMES.find(h=>h.id===xb.space)?.door??xb);ctx.fillStyle='#b7ffe0';ctx.strokeStyle='#315e4c';ctx.beginPath();ctx.arc(px(xbPoint.x),py(xbPoint.y),mini?3:5,0,Math.PI*2);ctx.fill();ctx.stroke();
-    if(!mini){ctx.font='12px sans-serif';ctx.fillStyle='#174537';ctx.fillText(`小宝 · ${xb.flight?'飞援中':xb.rest?'调息中':xb.task==='guard'?'守村':xb.task==='follow'?'随行':'自由活动'}`,px(xb.x)+8,py(xb.y)-8);}
+  showMap() {
+    showWorldAtlas(this);
   }
 }

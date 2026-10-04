@@ -9,9 +9,9 @@ const priority=(id:GiftVisualId)=>Object.hasOwn(GIFT_RESONANCES,id)?3:/^(blade|g
 export function playGiftFx(engine:RuneCombat,id:GiftVisualId,point:Point,extra:Partial<RuneFx>={}){
  if(id==='blackHole')return;
  const visual='gift:'+id,live=engine.effects.filter(f=>giftVisualId(f.visual)&&engine.now>=f.born&&engine.now<f.born+f.life);
- if(live.some(f=>f.visual===visual&&f.giftPhase===extra.giftPhase&&engine.now-f.born<180&&Math.hypot(f.point.x-point.x,f.point.y-point.y)<(id==='chain'?1:55)&&(id!=='chain'||Math.hypot((f.end?.x??0)-(extra.end?.x??0),(f.end?.y??0)-(extra.end?.y??0))<1)))return;
+ if(live.some(f=>f.visual===visual&&f.giftPhase===extra.giftPhase&&f.giftAnchor===extra.giftAnchor&&engine.now-f.born<180&&Math.hypot(f.point.x-point.x,f.point.y-point.y)<(id==='chain'?1:55)&&(id!=='chain'||Math.hypot((f.end?.x??0)-(extra.end?.x??0),(f.end?.y??0)-(extra.end?.y??0))<1)))return;
  const recent=live.filter(f=>engine.now-f.born<100);
- if(recent.length>=4){const replace=recent.filter(f=>priority(giftVisualId(f.visual)!)<priority(id)).sort((a,b)=>priority(giftVisualId(a.visual)!)-priority(giftVisualId(b.visual)!))[0];if(!replace)return;engine.effects=engine.effects.filter(f=>f.id!==replace.id);}
+ if(recent.length>=4){const rank=(f:RuneFx)=>priority(giftVisualId(f.visual)!)+(f.giftPhase==='consume'?1:0);const replace=recent.filter(f=>rank(f)<priority(id)+(extra.giftPhase==='consume'?1:0)).sort((a,b)=>rank(a)-rank(b))[0];if(!replace)return;engine.effects=engine.effects.filter(f=>f.id!==replace.id);}
  if(live.length>=18){const oldest=live[0]!;engine.effects=engine.effects.filter(f=>f.id!==oldest.id);}
  const art=WIND_GIFT_ART[id];engine.fx(visual,point,art.size,'',art.life,extra);
 }

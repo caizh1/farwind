@@ -53,7 +53,7 @@ describe("四向地图与西侧旧道", () => {
     expect(WILDERNESS_PROPS.filter(p=>!ids.has(p.art)).map(p=>[p.id,p.art])).toEqual([]);
   });
   it("全图、区域、负坐标及区块使用一致边界", () => {
-    expect(B.width * B.height).toBe(6400 * 4800);
+    expect(B.width * B.height).toBe(16000 * 4800);
     for (const p of WILDERNESS_POIS) {
       expect(regionAt(p).id, p.id).toBe(p.region);
       expect(terrainBlocked(p.x, p.y), p.id).toBe(false);

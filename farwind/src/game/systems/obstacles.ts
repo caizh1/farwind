@@ -3,6 +3,8 @@ import {
   props,
   terrainBlocked,
   solidPropAt,
+  nearbySolidProps,
+  FOOT,
   WATERS,
   BRIDGES,
   propBounds,
@@ -43,7 +45,7 @@ export function propLineBlocker(
   b: Point,
   query: Query,
   ignore?: string,
-  objects: readonly Prop[] = props,
+  objects: readonly Prop[] = nearbySolidProps(a,b,query === "motion" ? FOOT.halfWidth : 0,query === "motion" ? FOOT.halfHeight : 0),
 ) {
   return objects.find(
     (p) =>
@@ -153,7 +155,7 @@ export const clearMotionLine = (a: Point, b: Point, ignore?: string) =>
   !motionLineBlocker(a, b, ignore);
 // 实体树石可穿；剧情门、未修捷径、建筑空间边界和水域仍逐段阻挡。
 export function clearPhaseLine(a: Point,b: Point) {
-  const hard=props.filter(p=>p.id.startsWith('barrier-')||p.id.endsWith('-seal')||p.id==='west-gate-barrier'||['house','shop','smith-building','inn-building','tower'].includes(p.art));
+  const hard=props.filter(p=>p.id.startsWith('barrier-')||p.id.endsWith('-seal')||p.id==='west-gate-barrier'||p.id.startsWith('city-')&&!!p.solid&&p.art.startsWith('city-')||['house','shop','smith-building','inn-building','tower'].includes(p.art));
   return !terrainLineBlocker(a,b,'motion')&&!propLineBlocker(a,b,'motion',undefined,hard);
 }
 export function meleeBlocker(a: Point, b: Point, targetId?: string) {

@@ -3,6 +3,7 @@ import { GUARD_DEFS, type GuardId } from "./defense";
 export type ResidentId = "elder" | "healer" | "carpenter" | "xiaobao" | GuardId;
 export const CIVILIAN_IDS = ["elder", "healer", "carpenter"] as const;
 export type SpaceId =
+  | import("./cityLayout").CitySpace
   | "village"
   | "elder-home"
   | "healer-home"

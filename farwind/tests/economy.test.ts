@@ -258,7 +258,7 @@ describe("装备和持久化迁移", () => {
       next.map_version,
       next.player.x,
       next.quest,
-    ]).toEqual([initialState().schema_version, 120, 8, 2900, 3]);
+    ]).toEqual([initialState().schema_version, 120, 9, 2900, 3]);
     next.coins = 17;
     expect(validate(next)).toEqual(next);
     expect(next.bag).toEqual(old.bag);

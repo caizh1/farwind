@@ -359,7 +359,16 @@ export class EastDefense {
       .sort((a,b)=>dist(e,a)-dist(e,b)||a.id.localeCompare(b.id)) : [];
     return ((e.playerAggroUntil ?? 0) > this.now && all.find(p => p.id === "player")) || all[0] || facilities[0];
   }
+  suspended=false;
+  suspend(now:number){
+    if(this.suspended)return;this.now=now;this.sync();this.suspended=true;this.arrows=[];
+    for(const e of this.enemies){e.disabled=true;if(e.attack)e.attack.cancelled=true;e.attack=null;cancelPath(e.nav);}
+    for(const r of this.runtime.values()){r.attack=null;cancelPath(r.nav);}
+  }
   update(now: number, dtMs: number, player: Point & { hp: number }, budget: { queries: number }, view?: Rect, occupied: readonly Point[] = []) {
+    if(this.suspended)this.suspended=false;
+    let resumeRoom=Math.max(0,this.hostileLimit-occupied.length-this.enemies.filter(e=>e.hp>0&&!e.disabled).length);
+    for(const e of this.enemies)if(e.hp>0&&e.disabled&&resumeRoom>0){resumeRoom--;e.disabled=false;e.cool=now+Math.max(800,this.state.raid?.members.find(m=>m.id===e.id)?.cooldownMs??0);}
     this.now = now; const dt = dtMs / 1000, contacts: EnemyContact[] = [];
     this.player=player;this.scanThreats();this.managedIds=new Set(this.external.filter(e=>this.ownsFixed(e)).map(e=>e.id));this.ownershipReady=true;
     this.schedule(dtMs, player, view, occupied);

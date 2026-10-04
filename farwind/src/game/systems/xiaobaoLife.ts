@@ -1,3 +1,4 @@
+import {cityBuilding,isCitySpace} from '../../data/cityLayout';
 import {
   FACILITIES,
   HOMES,
@@ -807,11 +808,12 @@ export function moveXiaobaoLife(
   if (x.space !== "village" && (urgent || x.task !== "free"))
     intent = {
       space: "village",
-      ...HOMES.find((h) => h.id === x.space)!.door,
+      ...(cityBuilding(x.space)??HOMES.find((h) => h.id === x.space))!.door,
       action: "idle",
       elapsed: 0,
       label: urgent ? "出门赶赴防线" : "出门与你会合",
     };
+  if(x.task==='follow'&&isCitySpace(life.state.life.playerSpace)&&!urgent)intent={space:life.state.life.playerSpace,x:life.state.player.x-45,y:life.state.player.y+18,action:'step',elapsed:0,label:'城内随行'};
   if (!intent) {
     c.action = "idle";
     return;

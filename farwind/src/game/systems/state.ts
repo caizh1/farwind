@@ -1,9 +1,11 @@
+import {initialTradeRoad,initialCity,validateTradeRoad,validateCity,type TradeRoadState,type CityState} from './tradeRoadState';
 import {initialWindMemory,validateWindMemory,type WindMemoryState} from './windMemory';
 import {initialWindGifts,validateWindGifts,type WindGiftState} from './windGifts';
 import {initialXiaobaoLife} from './xiaobaoLifeState';
 import {initialCatBond,migrateCatBond,validateCatBond,type CatBondState} from './catBond';
 import {initialWindLegacy,validateWindLegacy,type WindLegacyState} from './windLegacyState';
 import {migrateInteriorPosition} from '../../data/villageInteriors';
+import {isCitySpace} from '../../data/cityLayout';
 import {initialRunes,migrateBuildRunes,type RuneState} from './runeState';
 import {initialSouthEvents,validateSouthEvents,type SouthEventState} from './southEvents';
 import {initialEncounters,validateEncounters,unitState,settleEncounterDeath,migrateCampBosses,type EncounterState} from "./encounterState";
@@ -41,7 +43,9 @@ export type State = {
   runes: RuneState;
   skills: SkillState;
   windLegacy:WindLegacyState;
-  schema_version: 21;
+  tradeRoad:TradeRoadState;
+  city:CityState;
+  schema_version: 23;
   catBond: CatBondState;
   physique: { runDistance: number };
   demonKing:DemonKingState;
@@ -58,7 +62,7 @@ export type State = {
   shopStock: Record<string, number>;
   shopStockDay: number;
   economyRevision: number;
-  map_version?: 2 | 3 | 4 | 5 | 6 | 7 | 8;
+  map_version?: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
   player: { x: number; y: number; hp: number; stamina: number };
   bag: Slot[];
   hotbar: (ItemId | null)[];
@@ -82,7 +86,8 @@ export const initialState = (): State => ({
   runes: initialRunes(),
   skills: initialSkills(),
   windLegacy:initialWindLegacy(),
-  schema_version: 21,
+  tradeRoad:initialTradeRoad(), city:initialCity(),
+  schema_version: 23,
   catBond: initialCatBond(),
   physique: { runDistance: 0 },
   demonKing:initialDemonKing(),
@@ -157,18 +162,26 @@ export function remove(s: State, id: ItemId, n: number) {
   }
   return true;
 }
-export function craft(s: State) {
-  const next = structuredClone(s);
+export function craft(s: State, quantity = 1) {
+  if (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > 240) return false;
+  const next = { ...s, bag: structuredClone(s.bag) };
   if (
-    !remove(next, "herb", 2) ||
-    !remove(next, "berry", 1) ||
-    !add(next, "potion", 1)
+    !remove(next, "herb", 2 * quantity) ||
+    !remove(next, "berry", quantity) ||
+    !add(next, "potion", quantity)
   )
     return false;
   s.bag = next.bag;
   s.crafted = true;
   if (s.quest === 2) s.quest = 3;
   return true;
+}
+// 扣料释放的格子也可装成品；满包时小批量可能放不下，大批量却能放下。
+export function maxCraftQuantity(s: State) {
+  const upper = Math.min(240, Math.floor(count(s, "herb") / 2), count(s, "berry"));
+  for (let quantity = upper; quantity > 0; quantity--)
+    if (craft({ ...s }, quantity)) return quantity;
+  return 0;
 }
 export function reward(s: State) {
   if (s.reward || s.quest !== 6) return false;
@@ -267,8 +280,11 @@ export function validate(raw: unknown): State {
   // 仅内部历史结构校验兼容；正式读取及导入在调用前拒绝旧内容版本。
   if(s&&(s as {schema_version:number}).schema_version===21&&(s as {content_version:number}).content_version!==2){s.windGifts=initialWindGifts();s.windMemory=initialWindMemory();s.content_version=2;}
   // 当前战斗版本新增商品：只补缺失的四款鞋子库存，零库存不会被补回。
-  if(s&&s.schema_version===21&&s.shopStock)for(const [key,stock] of Object.entries(footwearStock))if(!Object.hasOwn(s.shopStock,key))s.shopStock[key]=stock;
-  if(s&&s.schema_version===21){s.windGifts=validateWindGifts(s.windGifts);s.windMemory=validateWindMemory(s.windMemory);s.skills=validateSkills(s.skills);s.runes=migrateBuildRunes(s.runes);s.windLegacy=validateWindLegacy(s.windLegacy);}
+  if(s&&(s as {schema_version:number}).schema_version>=21&&s.shopStock)for(const [key,stock] of Object.entries(footwearStock))if(!Object.hasOwn(s.shopStock,key))s.shopStock[key]=stock;
+  if(s&&(s as {schema_version:number}).schema_version>=21){s.windGifts=validateWindGifts(s.windGifts);s.windMemory=validateWindMemory(s.windMemory);s.skills=validateSkills(s.skills);s.runes=migrateBuildRunes(s.runes);s.windLegacy=validateWindLegacy(s.windLegacy);}
+  if(s&&(s as {schema_version:number}).schema_version===21){s.tradeRoad=initialTradeRoad();s.city=initialCity();(s as {schema_version:number}).schema_version=22;}
+  if(s&&(s as {schema_version:number}).schema_version===22){s.city=validateCity(s.city);(s as {schema_version:number}).schema_version=23;}
+  if(s?.map_version===8)s.map_version=CURRENT_MAP_VERSION;
   const num = (n: unknown, min: number, max: number) =>
     typeof n === "number" && Number.isFinite(n) && n >= min && n <= max;
   const strarr = (a: unknown) =>
@@ -280,7 +296,7 @@ export function validate(raw: unknown): State {
   const vitals = playerVitals(s);
   if (
     !s ||
-    s.schema_version !== 21 || s.content_version !== 2 ||
+    s.schema_version !== 23 || s.content_version !== 2 ||
     !s.mapProgress || !["unknown","surveyed","open"].includes(s.mapProgress.westRoad) ||
     !Array.isArray(s.mapProgress.shortcuts) || s.mapProgress.shortcuts.length>3 || new Set(s.mapProgress.shortcuts).size!==s.mapProgress.shortcuts.length || !s.mapProgress.shortcuts.every(id=>SHORTCUT_IDS.includes(id)) ||
     (s.map_version !== undefined &&
@@ -291,6 +307,7 @@ export function validate(raw: unknown): State {
       s.map_version !== 6 &&
       s.map_version !== 7 && s.map_version !== CURRENT_MAP_VERSION) ||
     !s.player ||
+    (isCitySpace(s.life?.playerSpace)&&(s.player.x<398||s.player.x>1002||s.player.y<444||s.player.y>942)) ||
     !num(
       s.player.x,
       s.map_version === CURRENT_MAP_VERSION ? B.left : 25,
@@ -372,9 +389,11 @@ export function validate(raw: unknown): State {
   for(const key of ['wind','blade'] as const){const phase=s.windLegacy[key];if(phase>=3&&!s.encounters.groups[key==='wind'?'legacy-wind-device':'legacy-blade-post'].cleared||phase===4&&!s.encounters.groups[key==='wind'?'legacy-wind-passage':'legacy-blade-road'].cleared)throw Error('传承节点与战斗记录不一致。');}
   if(s.windLegacy.ending&&(!s.encounters.groups['east-thorn-camp'].cleared||!s.mapProgress.shortcuts.includes('east-corridor')))throw Error('传承归途与据点或回廊记录不一致。');
   if(s.fieldQuests["south-supply"]==="complete"&&!s.encounters.groups["south-spore-camp"].cleared)throw Error("南部委托与据点进度不一致。");
+  s.tradeRoad=validateTradeRoad(s.tradeRoad);s.city=validateCity(s.city);
+  for(const [i,n]of s.tradeRoad.nodes.entries())if(n.rewarded!==s.windGifts.receipts.includes(`商路:${s.tradeRoad.serial}:${i}`))throw Error('商路节点与风赐凭据不一致。');
   s.defense = validateDefense(s.defense);
   if((s.defense.raid?.order?.malice??0)>demonMalice(s.encounters))throw Error('在途魔王派遣与清剿进度不一致。');
-  s.xiaobao=validateXiaobao(s.xiaobao,s.killed,s.defense.raid?.members.map(m=>m.id)??[],s.windMemory.active?.encounters??s.encounters);
+  s.xiaobao=validateXiaobao(s.xiaobao,s.killed,s.defense.raid?.members.map(m=>m.id)??[],s.windMemory.active?.encounters??s.encounters,s.tradeRoad);
   s.night=validateNight(s);
   s.life=validateLife(s.life,s.time);
   if(s.xiaobao.life.day>Math.floor(s.time/1440)||s.xiaobao.life.journal.some(e=>e.time>s.time))throw Error('小宝的经历时间不能晚于世界时间。');
@@ -430,8 +449,8 @@ export const MAX_SAVE_BYTES = 2_000_000;
 export function parseSave(text: string) {
   if (new TextEncoder().encode(text).byteLength > MAX_SAVE_BYTES) throw Error("存档超过 2 MB 限制");
   const raw = JSON.parse(text);
-  if(raw?.content_version!==2||raw?.schema_version!==21)throw Error('此备份属于旧战斗版本，请从全新旅途开始；旧备份未改动。');
-  if(raw?.map_version !== CURRENT_MAP_VERSION)throw Error('第一张地图从全新旅途开始，此文件属于旧地图；原存档文件未改动。');
+  if(raw?.content_version!==2||![21,22,23].includes(raw?.schema_version))throw Error('此备份属于旧战斗版本，请从全新旅途开始；旧备份未改动。');
+  if(![8,CURRENT_MAP_VERSION].includes(raw?.map_version))throw Error('第一张地图从全新旅途开始，此文件属于旧地图；原存档文件未改动。');
   return validate(raw);
 }
 

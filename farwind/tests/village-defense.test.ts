@@ -225,7 +225,7 @@ describe("版本迁移与正式敌人预算", () => {
       { enemyId: "leaf-1", item: "crystal", x: 2320, y: 1070 },
     ];
     const moved = validate(old);
-    expect(moved.map_version).toBe(8);
+    expect(moved.map_version).toBe(9);
     expect(moved.player.x).toBe(2900);
     expect(moved.pendingDrops[0].x).toBe(2920);
     expect(validate(moved)).toEqual(moved);
@@ -238,9 +238,9 @@ describe("版本迁移与正式敌人预算", () => {
     expect(next.quest).toBe(3);
     expect(next.bag).toEqual(v2.bag);
     expect(v2.map_version).toBe(2);
-    expect(() => validate({ ...next, map_version: 9 })).toThrow();
+    expect(() => validate({ ...next, map_version: 10 })).toThrow();
     expect(WORLD).toEqual({
-      left:-2110,top:-1380,right:4290,bottom:3420,width:6400,height:4800,
+      left:-2110,top:-1380,right:13890,bottom:3420,width:16000,height:4800,
       forest: 2050,
       ruins: 3300,
     });

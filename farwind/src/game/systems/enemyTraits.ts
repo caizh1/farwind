@@ -1,3 +1,4 @@
+import {enemyBehavior} from '../../data/enemies';
 import {fungalShieldActive,FUNGAL} from './fungalCombat';
 import type {Point} from './obstacles';
 import type {EnemyBody} from './enemy';
@@ -23,7 +24,7 @@ export function enemyProtection(e:Pick<EnemyBody,'type'|'x'|'y'|'face'|'guardOpe
   return {reduction:0,hpFloor};
  }
  if(fungalShieldActive(e,now))return {reduction:FUNGAL.reduction};
- if(e.type!=='guardian')return {reduction:0};
+ if(enemyBehavior(e.type)!=='guardian')return {reduction:0};
  if(breaksGuard){if(now>=(e.guardOpenUntil??0))e.guardOpenUntil=now+GUARDIAN.breakMs;return {reduction:0};}
  if(now<(e.guardOpenUntil??0)||now<e.staggerUntil||e.attack&&now>=e.attack.activeUntil&&now<e.attack.recoveryUntil)return {reduction:0};
  if(!origin)return {reduction:0};

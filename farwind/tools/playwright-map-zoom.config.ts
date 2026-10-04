@@ -1,0 +1,2 @@
+import {defineConfig} from '@playwright/test';
+export default defineConfig({testDir:'../tests',testMatch:'world-atlas.spec.ts',workers:1,retries:0,timeout:90000,outputDir:'../.map-zoom-local/results',reporter:[['list']],use:{baseURL:'http://127.0.0.1:5309',viewport:{width:1280,height:800},video:'on',trace:'retain-on-failure',launchOptions:{args:['--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']}},webServer:{command:'npm run preview -- --port 5309 --strictPort --outDir .map-zoom-local/production',url:'http://127.0.0.1:5309',reuseExistingServer:true}});

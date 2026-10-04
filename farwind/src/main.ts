@@ -5,6 +5,7 @@ import { World } from "./game/scenes/World";
 import "./style.css";
 import "./commission.css";
 import "./equipment.css";
+import "./bag.css";
 import "./shop.css";
 import "./hud.css";
 import "./world-map.css";

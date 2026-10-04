@@ -7,8 +7,9 @@ import {move} from './map-navigation';
 import {fight} from './field-combat';
 export const readBossGame=(p:Page)=>p.evaluate(()=>(window as any).__farwind());
 // 沿用正式路径：真实新游戏、补给与购买、装备、步行、清驻守。没有测试授予。
-export async function startBossFight(page:Page,kind:CampBossKind,combat=fight){
+export async function startBossFight(page:Page,kind:CampBossKind,combat=fight,prepare?:(page:Page)=>Promise<void>){
  await page.goto('/');await page.getByRole('button',{name:'启程 · 新游戏',exact:true}).click();await page.waitForFunction(()=>(window as any).__farwind?.().mode==='');
+ if(prepare)await prepare(page);
  await move(page,560,810);await page.keyboard.press('e');await page.getByRole('button',{name:'领取委托与启程补给',exact:true}).click();await page.getByRole('button',{name:'合上委托簿 Esc',exact:true}).click();
  for(const [shop,item,count] of [[VILLAGE_ANCHORS.general,'potion','3'],[VILLAGE_ANCHORS.smith,'ironSword','1']] as const){await move(page,shop.x,shop.y+65);await page.keyboard.press('e');await page.getByLabel('物品',{exact:true}).selectOption(item);await page.getByLabel('数量',{exact:true}).fill(count);await page.locator('#shop-review').click();await page.locator('#shop-confirm').click();await expect(page.locator('#shop-feedback')).toContainText('已完成');await page.keyboard.press('Escape');}
  await page.keyboard.press('Tab');await page.locator('.slot').filter({hasText:'铁剑'}).click();await page.locator('#equip').click();await page.waitForFunction(()=>(window as any).__farwind().state.equipment.weapon==='ironSword');await page.keyboard.press('Escape');

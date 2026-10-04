@@ -73,7 +73,7 @@ export function enterShop(world:World,id:ShopId){
   world.ui.close(true);
   lifeInteract(world,{id:`life-door:${h.id}`,art:'',w:0,h:0,...h.door,kind:'sign',label:h.name});
 }
-function transition(world: World) {
+export function transition(world: World, persist = true) {
   world.catCompanion.transition();world.catView?.clear();
   const companion=world.xiaobao?.controller;
   if(companion?.data.task==='follow'){companion.data.wait=null;companion.data.command=null;if(companion.data.cast&&!companion.data.cast.released)companion.cancel();}
@@ -89,8 +89,8 @@ function transition(world: World) {
   world.hero.place(world.state.player.x, world.state.player.y);
   world.cat.place(world.state.player.x - 25, world.state.player.y);
   world.follower.reset(world.state.player);
-  world.cameras.main.centerOn(world.state.player.x, world.state.player.y - 150);
-  void world.persist().catch(() => {});
+  world.cameras.main.centerOn(world.state.life.playerSpace==='village'?world.state.player.x:700,world.state.life.playerSpace==='village'?world.state.player.y-150:690);
+  if(persist)void world.persist().catch(() => {});
 }
 export function leaveRoom(world: World) {
   world.state.life.playerSpace = "village";

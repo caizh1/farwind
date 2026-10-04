@@ -19,6 +19,7 @@ export class SwordWindView {
     private scene: Phaser.Scene,
     private system: SwordWindSystem,
   ) {this.water=new SwordWindWaterView(scene);}
+  private base(){return this.scene.data.get('shadowSettings')?.().indoor?7500:0;}
   snapshot() {
     return [...this.ground].flatMap(([id, trail]) =>
       [...trail.images].map(([index, image]) => ({
@@ -34,7 +35,7 @@ export class SwordWindView {
     );
   }
   hit(point:{x:number;y:number},at:number,wind:SwordWind){
-    const image=this.scene.add.image(point.x,point.y-wind.config.art.bodyHeight,"sword-wind-hit",0).setDisplaySize(wind.config.art.hitSize,wind.config.art.hitSize).setRotation(Math.atan2(wind.direction.y,wind.direction.x)).setDepth(point.y+3);
+    const image=this.scene.add.image(point.x,point.y-wind.config.art.bodyHeight,"sword-wind-hit",0).setDisplaySize(wind.config.art.hitSize,wind.config.art.hitSize).setRotation(Math.atan2(wind.direction.y,wind.direction.x)).setDepth(this.base()+point.y+3);
     this.hits.push({image,born:at,duration:wind.config.art.hit});
     if(this.hits.length>64)this.hits.shift()!.image.destroy();
   }
@@ -80,7 +81,7 @@ export class SwordWindView {
           .setPosition(s.x, s.y)
           .setRotation(Math.atan2(dy, dx))
           .setAlpha(s.alpha)
-          .setDepth(-1);
+          .setDepth(this.base()?7502:-1);
       }
       // 弹体消失后只保留短暂地面残痕，模拟时间到期即释放对象。
       if (trail.wind.terminated && !samples.length) this.ground.delete(id);
@@ -130,7 +131,7 @@ export class SwordWindView {
         )
         .setPosition(point.x, point.y)
         .setRotation(Math.atan2(y, x))
-        .setDepth(w.position.y + 3);
+        .setDepth(this.base()+w.position.y + 3);
     }
   }
 }

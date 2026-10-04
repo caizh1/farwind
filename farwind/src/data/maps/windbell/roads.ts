@@ -1,3 +1,4 @@
+import {TRADE_ROADS} from '../windwhisper';
 import {WILDERNESS_ROADS} from "./wilderness";
 // M1道路布置：运行绘制、装饰净空和蓝图共用同一份线段与路宽。
 export const ROAD_DEFINITIONS = [
@@ -212,7 +213,7 @@ export const ROAD_DEFINITIONS = [
     ],
   },
 ];
-ROAD_DEFINITIONS.push(...WILDERNESS_ROADS);
+ROAD_DEFINITIONS.push(...WILDERNESS_ROADS, ...TRADE_ROADS.map(r=>({...r,points:r.points.map(p=>[...p])})));
 export const roads = ROAD_DEFINITIONS.map((r) => r.points);
 export const roadWidth = (index: number) => ROAD_DEFINITIONS[index].width;
 export const serviceRoads = ROAD_DEFINITIONS.filter((r) => r.service).map(

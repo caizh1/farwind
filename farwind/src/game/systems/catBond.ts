@@ -39,7 +39,7 @@ export function catBenefits(score: number) {
 
 // 经历使用有界的正式世界编号，重复清怪和来回走路不能无限刷默契。
 const memories = new Map<string, { points: number; name: string }>();
-for (let x = 0; x < 16; x++) for (let y = 0; y < 12; y++)
+for (let x = 0; x < Math.ceil(WORLD_BOUNDS.width/400); x++) for (let y = 0; y < 12; y++)
   memories.set(`trail:${x}:${y}`, { points: 2, name: '共同探索新的路段' });
 for (const group of ENCOUNTERS) for (const member of group.members)
   memories.set(`battle:${member.id}`, { points: member.boss ? 6 : member.elite ? 4 : 2, name: `并肩击退${group.name}的敌人` });
@@ -70,7 +70,7 @@ export function catCareGain(cat: CatBondState, kind: CatCare | 'rest', time: num
 }
 export function catTrailKey(p: { x: number; y: number }) {
   const x = Math.floor((p.x - WORLD_BOUNDS.left) / 400), y = Math.floor((p.y - WORLD_BOUNDS.top) / 400);
-  return x >= 0 && x < 16 && y >= 0 && y < 12 ? `trail:${x}:${y}` : '';
+  return x >= 0 && x < Math.ceil(WORLD_BOUNDS.width/400) && y >= 0 && y < 12 ? `trail:${x}:${y}` : '';
 }
 export function migrateCatBond(s: Pick<State, 'killed' | 'chests' | 'stones' | 'night' | 'encounters'>) {
   const cat = initialCatBond();

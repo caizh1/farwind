@@ -1,3 +1,4 @@
+import {TRADE_RIVER} from '../../data/maps/windwhisper';
 import {MAP_REGIONS} from "../../data/village";
 import {WILD_WATERS,WILD_BRIDGES} from "../../data/maps/windbell/wilderness";
 import {groundChunks} from './terrainChunks';
@@ -60,6 +61,8 @@ export function makeTerrain(this: World) {
     return {id:region.id, left, right, top, bottom};
   });
   const roadSegments = roads.flatMap((path,i)=>terrainSegments(path.map(([x,y])=>[x,y] as TerrainPoint),roadWidth(i)));
+  const cityStone=seamlessGround(this.textures.get('city-complete-street-tile').getSourceImage() as HTMLImageElement);
+  const cityPlaza={x:11790,y:1450,rx:300,ry:240};
   const plaza = {x:670,y:760,rx:245,ry:150};
   const ellipseBounds = (p:{x:number;y:number;rx:number;ry:number},pad:number):TerrainBounds =>
     ({left:p.x-p.rx-pad,right:p.x+p.rx+pad,top:p.y-p.ry-pad,bottom:p.y+p.ry+pad});
@@ -84,6 +87,7 @@ export function makeTerrain(this: World) {
       gp.setTransform(new DOMMatrix().scale(ART_QUALITY.groundScale.grass));
       const rp = c.createPattern(road, "repeat")!;
       rp.setTransform(new DOMMatrix().scale(ART_QUALITY.groundScale.road));
+      const stone=c.createPattern(cityStone,'repeat')!;stone.setTransform(new DOMMatrix().scale(.24));
       const intersects=(b:TerrainBounds,pad=0)=>cx+601>=b.left-pad&&cx-1<=b.right+pad&&cy+551>=b.top-pad&&cy-1<=b.bottom+pad;
       // 共用区域遮罩和离屏画布，只采样与当前地面块相交的范围。
       const paintBlend=(bounds:TerrainBounds,coverage:(x:number,y:number)=>number,paint:CanvasPattern|string,opacity=1,base?:string)=>{
@@ -113,7 +117,7 @@ export function makeTerrain(this: World) {
         if(cx + 600 <= region.left - margin || cx >= region.right + margin || cy + 550 <= region.top - margin || cy >= region.bottom + margin) continue;
         layer.clearRect(0, 0, 600, 550);
         layer.save(); layer.translate(-cx, -cy);
-        layer.fillStyle=region.id==='forest'||region.id==='north'?fp:region.id==='ruins'?rp:gp;layer.fillRect(cx,cy,600,550);
+        layer.fillStyle=region.id==='forest'||region.id==='north'||region.id==='trade-road'?fp:region.id==='ruins'||region.id==='wind-city'?rp:gp;layer.fillRect(cx,cy,600,550);
         layer.fillStyle=region.id==='north'?'#688c9235':region.id==='south'?'#baa15d35':region.id==='west'?'#877d5330':'#64817425';layer.fillRect(cx,cy,600,550);
         if(cx < region.left + margin || cx + 600 > region.right - margin || cy < region.top + margin || cy + 550 > region.bottom - margin){
           for(let column=0;column<mask.width;column++){
@@ -145,7 +149,7 @@ export function makeTerrain(this: World) {
       }
       const water=c.createPattern(waterMaterial,'repeat')!;
       water.setTransform(new DOMMatrix().scale(.55));
-      for(const p of WILD_WATERS){
+      for(const p of [...WILD_WATERS,TRADE_RIVER]){
         paintBlend(ellipseBounds(p,31),(x,y)=>featherCoverage(ellipseDistance(x,y,p)+12+terrainJitter(x,y),14),'#aaa477');
         paintBlend(ellipseBounds(p,13),(x,y)=>featherCoverage(ellipseDistance(x,y,p)+terrainJitter(x,y)*.6,10),water);
       }
@@ -160,6 +164,9 @@ export function makeTerrain(this: World) {
           const cover=strokeCoverage(x,y,nearbyRoads,14);
           return cover===1||!hasPlaza?cover:Math.max(cover,featherCoverage(ellipseDistance(x,y,plaza)+terrainJitter(x,y),14));
         },rp);
+      }
+      if(cx+600>9690&&cx<13860){const streets=roadSegments.filter(s=>s.right>9690&&intersects(s,19)),square=ellipseBounds(cityPlaza,19);
+       paintBlend({left:9690,right:13860,top:-200,bottom:2600},(x,y)=>{if(x<9690||x>13860)return 0;return Math.max(strokeCoverage(x,y,streets,12),featherCoverage(ellipseDistance(x,y,cityPlaza),16))*featherCoverage(9690-x,24);},stone,.94);
       }
       for(const b of WILD_BRIDGES){
         c.save();c.translate(b.x+b.w/2,b.y+b.h/2);c.rotate(Math.PI/2);

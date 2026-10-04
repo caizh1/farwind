@@ -1,0 +1,24 @@
+import {CITY_BUILDINGS,CITY_CITIZENS,CITY_QUESTS,isCitySpace,type CitySpace} from '../../data/cityLayout';
+import {validOutdoorPoint} from '../../data/maps/windbell/bounds';
+export type CityResident={id:string;space:'village'|CitySpace;x:number;y:number;route:number;activity:'work'|'walk'|'shop'|'eat'|'sleep'|'shelter'|'visit';journey:number;elapsed:number};
+export type CityQuest={id:string;status:'unaccepted'|'active'|'pending'|'complete';steps:string[];receipt:string|null};
+export type CityBossState={stage:'idle'|'battle'|'defeated'|'claimed';hp:number;age:number;serial:number;attack:'sweep'|'pressure'|'charge';target:{x:number;y:number};hit:boolean;attempt:number};
+export type CityProgress={version:1;main:number;evidence:string[];quests:CityQuest[];residents:CityResident[];invitations:Record<string,number>;alarm:'daily'|'attention'|'battle'|'recover';escort:{x:number;y:number;following:boolean;arrived:boolean};boss:CityBossState};
+export const CITY_EVIDENCE=['registered','market-evidence','archive-evidence','tower-evidence','valve-0','valve-1','valve-2','crate','stall','tools','tools-hint','tools-return','letter-a','letter-b','letter-return','lamp-west','lamp-market','lamp-plaza','wall-stair','wall-north','wall-south','supply','post-west','post-hall','forged','herbs','medicine','delivered-medicine','supplied','archived'] as const;
+export function initialCityProgress():CityProgress{return {version:1,main:0,evidence:[],quests:CITY_QUESTS.map(q=>({id:q.id,status:'unaccepted',steps:[],receipt:null})),residents:[...CITY_CITIZENS.map((c,i)=>{const b=CITY_BUILDINGS.find(b=>b.space===c.home)!;return {id:c.id,space:'village' as const,x:b.door.x+85,y:b.door.y+25,route:i%4,activity:'work' as const,journey:0,elapsed:0};}),...Array.from({length:16},(_,i)=>({id:`visitor-${i}`,space:'village' as const,x:9340+i%4*55,y:1500+Math.floor(i/4)*40,route:i%4,activity:'visit' as const,journey:0,elapsed:0}))],invitations:{},alarm:'daily',escort:{x:9340,y:1600,following:false,arrived:false},boss:{stage:'idle',hp:1100,age:0,serial:0,attack:'sweep',target:{x:700,y:800},hit:false,attempt:0}};}
+export function validateCityProgress(raw:unknown):CityProgress{
+ const p=structuredClone(raw) as CityProgress,fail=()=>{throw Error('风语城生活、委托或章节记录无效，上一份有效存档保留。');};
+ const num=(n:unknown,max:number)=>typeof n==='number'&&Number.isFinite(n)&&n>=0&&n<=max;
+ if(!p||p.version!==1||!Number.isInteger(p.main)||!num(p.main,7)||!Array.isArray(p.evidence)||p.evidence.length>CITY_EVIDENCE.length||new Set(p.evidence).size!==p.evidence.length||p.evidence.some(e=>!CITY_EVIDENCE.includes(e as typeof CITY_EVIDENCE[number]))||!['daily','attention','battle','recover'].includes(p.alarm))fail();
+ const fresh=initialCityProgress();
+ if(!Array.isArray(p.residents)||p.residents.length!==40||new Set(p.residents.map(r=>r?.id)).size!==40)fail();
+ for(const r of p.residents){if(!r||!fresh.residents.some(x=>x.id===r.id)||!(r.space==='village'?validOutdoorPoint(r):isCitySpace(r.space)&&num(r.x,1002)&&r.x>=398&&num(r.y,942)&&r.y>=444)||!['work','walk','shop','eat','sleep','shelter','visit'].includes(r.activity)||!Number.isInteger(r.route)||!num(r.route,100)||!num(r.elapsed,1e9)||!Number.isSafeInteger(r.journey)||!num(r.journey,1e9))fail();}
+ if(!p.invitations||Array.isArray(p.invitations)||Object.keys(p.invitations).length>12||Object.entries(p.invitations).some(([id,time])=>!CITY_BUILDINGS.some(b=>b.id===id&&b.private)||!num(time,1e9)))fail();
+ if(!Array.isArray(p.quests)||p.quests.length!==12||new Set(p.quests.map(q=>q?.id)).size!==12)fail();
+ for(const q of p.quests){const d=CITY_QUESTS.find(x=>x.id===q?.id);if(!d||!['unaccepted','active','pending','complete'].includes(q.status)||!Array.isArray(q.steps)||q.steps.length>d.steps.length||new Set(q.steps).size!==q.steps.length||q.steps.some(e=>!d.steps.includes(e))||q.status==='complete'&&q.receipt!==`city:${q.id}:1`||q.status!=='complete'&&q.receipt!==null||['pending','complete'].includes(q.status)&&q.steps.length!==d.steps.length||q.status==='unaccepted'&&q.steps.length)fail();}
+ if(!p.escort||!validOutdoorPoint(p.escort)||typeof p.escort.following!=='boolean'||typeof p.escort.arrived!=='boolean')fail();
+ const b=p.boss;if(!b||!['idle','battle','defeated','claimed'].includes(b.stage)||!num(b.hp,1100)||!num(b.age,5000)||!Number.isSafeInteger(b.serial)||!num(b.serial,1e9)||!Number.isSafeInteger(b.attempt)||!num(b.attempt,1e9)||!['sweep','pressure','charge'].includes(b.attack)||typeof b.hit!=='boolean'||!b.target||b.target.x<398||b.target.x>1002||b.target.y<444||b.target.y>942||!Number.isFinite(b.target.x)||!Number.isFinite(b.target.y)||['defeated','claimed'].includes(b.stage)!==(b.hp===0))fail();
+ if(b.stage==='claimed'&&p.main!==7||p.main===7&&b.stage!=='claimed')fail();
+ if(b.stage==='battle'&&(p.main!==5||b.attempt<1)||b.stage==='defeated'&&p.main!==6||p.main===6&&b.stage!=='defeated')fail();
+ return p;
+}

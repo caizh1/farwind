@@ -10,6 +10,10 @@ export function enemyShadowSize(type:string,height:number=enemyProfile(type).hei
 }
 
 export function bakedShadowProp(p:Prop) {
+  if(p.id.startsWith('city-bridge-'))return false;
+  if(p.id==='city-cargo'||p.id==='city-stall-fruit')return false;
+  // 封闭门等固定城市物件可没有碰撞体；任务可变物件由上面的分支单独管理。
+  if(p.art.startsWith('city-complete-')&&p.kind!=='npc'&&p.ground!==true)return true;
   return !['npc','stone','resource','chest','shortcut'].includes(p.kind??'')&&
     !!(p.solid||p.art==='fountain')&&!ARENA_STONES.some(stone=>stone.id===p.id)&&!['barrier','seal','seedbed'].some(word=>p.id.includes(word));
 }

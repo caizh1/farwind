@@ -1,5 +1,5 @@
 import {GUARD_DEFS,RAID_GATES,TOWERS} from "./defense";
-import {WORLD_BOUNDS as B} from "./maps/windbell/bounds";
+import {WIND_BELL_BOUNDS as B} from "./maps/windbell/bounds";
 export type Point = { x: number; y: number };
 export const VILLAGE_BOUNDS = {
   left: 80,
@@ -86,7 +86,7 @@ export const MAP_REGIONS = [
   },
   {
     id: "forest",
-    name: "翡翠森林",
+    name: "东部林地与溪谷",
     polygon: rectangle(2100,220,B.right,B.bottom),
     dangerous: true,
   },
@@ -96,6 +96,8 @@ export const MAP_REGIONS = [
     polygon: rectangle(2450,B.top,B.right,220),
     dangerous: true,
   },
+  { id: "trade-road", name: "林间商路", polygon: rectangle(4290,B.top,9690,B.bottom), dangerous: true },
+  { id: "wind-city", name: "风语城", polygon: rectangle(9690,B.top,13890,B.bottom), dangerous: false },
 ] as const;
 export function inPolygon(point: Point, polygon: readonly Point[]) {
   let inside = false;

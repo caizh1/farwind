@@ -1,3 +1,5 @@
+import {cityInteractionComplete} from '../ui/city';
+import {cityInteraction} from './cityServices';
 import {appendLegacyEntry,legacyInteract} from './windLegacy';
 import {appendSouthQuest} from "./fieldQuest";
 import {openCommissions} from "../ui/commissions";
@@ -16,6 +18,8 @@ import { add, remove, count, reward } from "./state";
 import type { World } from "../scenes/World";
 
 export function interact(this: World, p: Prop) {
+  if(cityInteractionComplete(this,p))return;
+  if(cityInteraction(this,p))return;
   if(legacyInteract(this,p))return;
   if (p.id === "plaza-fountain") { void this.drinkSpring(); return; }
   if(p.id.startsWith('camp-root-')){const d=ENCOUNTERS.find(d=>d.id===p.id.slice(10));if(d){const t=regionalThreat(this.state.encounters,d.direction),boss=d.members.find(m=>m.boss)!.boss!;this.ui.dialog(d.name,t.cleared?'营地已经清空。这个方向的巡游不再补充，据点不再组织袭村。':`足迹与巢穴通往附近道路。清理全部驻守后，${CAMP_BOSSES[boss].name}会在预警后入场。击败首领，才能切断巡游与当地袭村来源。可以撤战回村守卫。`);return;}}
@@ -108,6 +112,7 @@ export function interact(this: World, p: Prop) {
     }
     if (add(s, p.item!, p.item === "herb" ? 2 : 2)) {
       s.collected[p.id] = s.time;
+      if(p.item==='herb'&&s.city.progress.quests.find(q=>q.id==='medicine')?.status==='active'&&!s.city.progress.evidence.includes('herbs'))s.city.progress.evidence.push('herbs');
       this.soundFx.play("pick");
       this.gatherUntil = this.sim + 260;
       this.float(p.x, p.y, `${items[p.item!].name} +2`);

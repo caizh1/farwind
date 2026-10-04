@@ -8,6 +8,14 @@ import type {RuneInk} from '../src/game/entities/runeView';
 import {GIFT_CHOREOGRAPHY,giftEnvelope} from '../src/game/entities/windGiftChoreography';
 
 describe('完整风赐视觉与运行边界',()=>{
+ it('伙伴命中特效不随远端距离伸长；归息每帧只有局部短尾',()=>{
+  const paths:number[][][]=[],ink:RuneInk={line:(x,y,xx,yy)=>paths.push([[x,y],[xx,yy]]),path:p=>paths.push(p),solid:p=>paths.push(p),ellipse:(x,y)=>paths.push([[x,y]])};
+  for(const id of ['sharedHeart','relayEdge','sideBySide','relayTogether','returningBreath'] as const)for(const phase of ['mark','consume'] as const)for(const simple of [false,true])for(const fraction of [.05,.25,.5,.8,.99]){
+   paths.length=0;const art=WIND_GIFT_ART[id],f:RuneFx={id:1,visual:'gift:'+id,rune:'',point:{x:300,y:140},end:{x:10300,y:-5860},direction:{x:0,y:-1},radius:art.size,born:0,life:art.life,giftPhase:phase};paintWindGiftFx(ink,f,art.life*fraction,simple,true);
+   expect(paths.length).toBeGreaterThan(0);
+   for(const path of paths){expect(path.every(p=>p.every(Number.isFinite))).toBe(true);if(id==='returningBreath'){expect(Math.max(...path.map(p=>p[0]))-Math.min(...path.map(p=>p[0]))).toBeLessThan(36);expect(Math.max(...path.map(p=>p[1]))-Math.min(...path.map(p=>p[1]))).toBeLessThan(36);}else expect(path.every(p=>Math.hypot(p[0]-300,p[1]-140)<60)).toBe(true);}
+  }
+ });
  it('重做目录覆盖全部七十八项；旧六帧轮播不能进入演出，相邻时刻连续且重复渲染稳定',()=>{
   expect(Object.keys(GIFT_CHOREOGRAPHY).sort()).toEqual([...Object.keys(WIND_GIFTS).filter(id=>id!=='blackHole'),...Object.keys(GIFT_RESONANCES)].sort());
   for(const id of Object.keys(GIFT_CHOREOGRAPHY) as Exclude<GiftVisualId,'blackHole'>[]){

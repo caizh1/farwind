@@ -7,6 +7,7 @@ import {combatVisual,swordWindVisual,parryVisual,clipFor} from '../../data/anima
 import {resolveStrike} from '../systems/combat';
 import {DEMO_INTRO,DEMO_ACTION_TIME,DEMO_CONTACT,demoSample,demoTimeline,demoEffect,type DemoAction} from './windGiftDemo';
 import {CHAIN_LIGHTNING} from '../entities/chainLightning';
+import {paintWindGiftStatus} from '../entities/windGiftMotion';
 
 // 只播放独立教学时间轴，复用主角正式动作与材质，不创建或修改游戏状态。
 const images=new Map<string,HTMLImageElement>();
@@ -111,14 +112,23 @@ export function paintGiftPreview(g:CanvasRenderingContext2D,id:GiftVisualId,age:
  const ink=canvasInk(g);ink.giftMaterial=(material,px,py,width,height,alpha,rotation)=>{const image=imageFor(GIFT_MATERIAL_URL());if(!ready(image))return;g.save();g.globalAlpha=alpha;g.translate(px,py);g.rotate(rotation);g.drawImage(image,material%6*256,Math.floor(material/6)*256,256,256,-width/2,-height/2,width,height);g.restore();};
  const target=s.plan.target==='enemy'?positions[id==='oneLineArmy'?1:0]:s.plan.target==='companion'?{x:s.action==='小宝'?360+smooth(s.local/260)*145:345,y:y+24}:{x,y};
  const point={x:target.x,y:target.y-(art.ground?0:65)};
+ // 伙伴教学先显示真实标记阶段，最后一次动作才播放消费峰。
+ if(['relayEdge','sideBySide','relayTogether'].includes(id)&&age<s.effectAt){
+  const markedAt=DEMO_INTRO+DEMO_CONTACT,partnerAt=markedAt+DEMO_ACTION_TIME,second=id==='relayTogether'&&age>=partnerAt,markId:GiftVisualId=second?'relayTogether':id==='relayTogether'?'relayEdge':id,markAge=age-(second?partnerAt:markedAt),markedPoint={x:positions[0].x,y:y-65};
+  if(markAge>=0){
+   paintWindGiftFx(ink,{id:0,visual:'gift:'+markId,rune:'',point:markedPoint,radius:WIND_GIFT_ART[markId].size,born:0,life:240,giftPhase:'mark'},markAge/1.8,simple,lowFlash);
+   paintWindGiftStatus(ink,ink,markId,{x:markedPoint.x,y:markedPoint.y+20},age,1,1,simple,lowFlash);
+   if(second)paintWindGiftFx(ink,{id:1,visual:'gift:relayEdge',rune:'',point:markedPoint,radius:34,born:0,life:320,giftPhase:'consume',direction:{x:1,y:0}},markAge/1.8,simple,lowFlash);
+  }
+ }
  if(activated&&id==='blackHole'&&fxAge<2200){const frame=fxAge<240?Math.floor(fxAge/60):fxAge<1680?4+Math.floor((fxAge-240)/90)%8:12+Math.min(3,Math.floor((fxAge-1680)/80));if(!simple)stamp(g,'animation/black-hole-slash/suction.png',Math.floor(fxAge/80)%8,256,point.x,y,250,160,lowFlash?.2:.4);stamp(g,'animation/black-hole-slash/rift.png',frame,256,point.x,y-70,120,200,lowFlash?.5:.8);}
  else if(activated&&id==='chain'){
   const origin={x:positions[0].x,y:positions[0].y-45};
   for(let i=1;i<positions.length;i++){const p=positions[i],lead=(i-1)*CHAIN_LIGHTNING.jumpDelay;paintWindGiftFx(ink,{id:i,visual:'gift:chain',rune:'',point:{x:p.x,y:p.y-45},end:origin,radius:art.size,born:0,life:CHAIN_LIGHTNING.life+lead,lead},fxAge/1.8,simple,lowFlash);}
  }
  else if(activated&&id!=='blackHole'){
-  const end=id==='drinkDew'?{x:positions[0].x,y:y-65}:art.motion==='link'?{x:companion?345:x,y:companion?y+24-65:y-65}:undefined;
-  paintWindGiftFx(ink,{id:0,visual:'gift:'+id,rune:'',point,radius:Math.min(art.size*1.1,100),born:0,life:art.life,direction:{x:1,y:0},end},fxAge/1.8,simple,lowFlash);
+  const end=id==='drinkDew'||id==='returningBreath'?{x:positions[0].x,y:y-65}:undefined;
+  paintWindGiftFx(ink,{id:0,visual:'gift:'+id,rune:'',point,radius:Math.min(art.size*1.1,100),born:0,life:art.life,direction:{x:1,y:0},end,giftPhase:['relayEdge','sideBySide','relayTogether'].includes(id)?'consume':'hit'},fxAge/1.8,simple,lowFlash);
   if(id==='riposte'||id==='riposteFormation'){g.save();g.translate(x+38,y-65);g.scale(1,.4);paintRuneFx(ink,{id:1,visual:'wind-gift-fan',rune:'',point:{x:0,y:0},radius:335,born:0,life:800,direction:{x:1,y:0}},fxAge/1.8,simple,lowFlash);g.restore();}
  }
  g.globalAlpha=1;

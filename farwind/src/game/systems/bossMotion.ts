@@ -1,5 +1,6 @@
 import type {CampBossKind} from '../../data/maps/windbell/campBosses';
 import type {EnemyAttack} from './enemyAttack';
+import {isBossLaser} from './bossLaser';
 
 // 连续关节姿态只改变画面；攻击实例仍独占锁向、碰撞、伤害和位移。
 export type BossMotionPose={lean:number;compress:number;head:number;left:number;right:number;lift:number;stride:number;sway:number};
@@ -46,7 +47,7 @@ export function sampleBossMotion(kind:CampBossKind,a:EnemyAttack|null|undefined,
  const quadruped=kind==='thorn-crown'||kind==='crag-tusk',t=(a&&!a.cancelled?now-a.startedAt:now)/1000;
  const breath=Math.sin(t*(quadruped?2.6:2)),idle=pose({compress:breath*.009,head:Math.sin(t*1.8)*.018,sway:Math.sin(t*1.3)*.009,left:Math.sin(t*2-.6)*.025,right:Math.sin(t*2+.6)*.025});
  if(a&&!a.cancelled&&now>=a.startedAt&&now<a.recoveryUntil){
-  const [anticipate,strike]=attackPoses(kind,a),release=Math.min(100,(a.contactAt-a.startedAt)*.16),peak=a.contactAt+Math.min(90,(a.activeUntil-a.contactAt)*.4);
+  const [anticipate,strike]=isBossLaser(a)?[pose({compress:-.02,head:-.04}),pose({compress:-.035,head:.025})]:attackPoses(kind,a),release=Math.min(100,(a.contactAt-a.startedAt)*.16),peak=a.contactAt+Math.min(90,(a.activeUntil-a.contactAt)*.4);
   let result:BossMotionPose;
   if(now<a.contactAt-release)result=mix(idle,anticipate,smooth((now-a.startedAt)/(a.contactAt-release-a.startedAt)));
   else if(now<peak)result=mix(anticipate,strike,smooth((now-(a.contactAt-release))/(peak-(a.contactAt-release))));

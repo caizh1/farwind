@@ -119,10 +119,10 @@ describe('长期风赐',()=>{
   s.held=[{id:'blade',level:1},{id:'gale',level:2},{id:'stride',level:1},{id:'armor',level:2},{id:'spring',level:1},{id:'poise',level:2}];s.receipts.push('升级','替换');s.pending=[{receipt:'升级',candidates:['blade','shock','chain']},{receipt:'替换',candidates:['potion','shock','chain']}];chooseWindGift(s,'升级','blade');expect(s.held[0].level).toBe(2);chooseWindGift(s,'替换','potion');expect(s.held).toHaveLength(7);expect(s.held.some(g=>g.id==='armor')).toBe(true);expect(validateWindGifts(s)).toEqual(s);
  });
 });
-describe('六招与阶段时钟',()=>{
- it('四首领六招锁向均提前至少350毫秒，技能冷却保存后保持',()=>{
-  for(const [kind,info] of Object.entries(CAMP_BOSSES))for(const phase of [1,2] as const)for(let move=0;move<6;move++){
-   expect(info.skills).toHaveLength(6);const b=initialBossBattle(10000);b.phase=phase;b.move=move;const e={id:'boss-'+kind,type:info.type,boss:kind,hp:info.hp,x:info.camp==='south-spore-camp'?1250:info.camp==='west-wolf-den'?-1700:info.camp==='north-boar-camp'?1480:3710,y:info.camp==='south-spore-camp'?2820:info.camp==='west-wolf-den'?1490:info.camp==='north-boar-camp'?-730:1100,attackSerial:0,bossAttempt:0,bossBattle:b} as EnemyBody;
+describe('首领招式与阶段时钟',()=>{
+ it('四首领全部招式锁向均提前至少350毫秒，技能冷却保存后保持',()=>{
+  for(const [kind,info] of Object.entries(CAMP_BOSSES))for(const phase of [1,2] as const)for(let move=0;move<info.skills.length;move++){
+   expect(info.skills).toHaveLength(kind==='bound-branch'?7:6);const b=initialBossBattle(10000);b.phase=phase;b.move=move;const e={id:'boss-'+kind,type:info.type,boss:kind,hp:info.hp,x:info.camp==='south-spore-camp'?1250:info.camp==='west-wolf-den'?-1700:info.camp==='north-boar-camp'?1480:3710,y:info.camp==='south-spore-camp'?2820:info.camp==='west-wolf-den'?1490:info.camp==='north-boar-camp'?-730:1100,attackSerial:0,bossAttempt:0,bossBattle:b} as EnemyBody;
    for(let part=0;part<bossParts(e.boss!,move,phase);part++){b.part=part;const a=createBossAttack(e,10000,{x:e.x+100,y:e.y},b);expect(a.contactAt-a.lockAt).toBeGreaterThanOrEqual(350);expect(a.contactAt-a.startedAt).toBeGreaterThanOrEqual(700);validateCampBoss({stage:'battle',warning:0,attempt:0,away:0,combat:{battle:shiftBossBattle(b,-10000),attack:null,hazards:[],shots:[],stagger:0,parried:null}},e.id);}
    b.lastSkill=move;b.cooldowns=Array(6).fill(0);expect(selectBossMove(e,{x:e.x+100,y:e.y},10000)).not.toBe(move);
   }

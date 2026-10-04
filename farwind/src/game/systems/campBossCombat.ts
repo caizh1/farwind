@@ -7,17 +7,19 @@ import type {EnemyProjectiles} from './enemyProjectiles';
 import {enemyLeashRadius} from '../../data/enemyPursuit';
 import {initialBossBattle,shiftBossBattle,shiftBossAttack,shiftBossHazard,shiftBossShot,type BossBattle,type BossHazard,type SavedBossCombat} from './campBossState';
 
+import {BOSS_LASER,LASER_DURATION,isBossLaser,laserHazard,laserSample,laserGeometries,clipLaserRays} from './bossLaser';
+
 const range=(a:Point,b:Point)=>Math.hypot(a.x-b.x,a.y-b.y);
 // 预警与实际危险区共用落点，真实障碍处不显示无法生效的攻击。
 export function bossHazardPoints(a:EnemyAttack){const p=a.bossGeometry!.point,d=a.direction;return (a.boss==='bound-branch'||a.type==='geomancer'?[-110,110].map(n=>({x:p.x-d.y*n,y:p.y+d.x*n})):[{...p}]).filter(p=>!motionBlocked(p.x,p.y));}
 export const bossAttackSpace=(e:EnemyBody)=>({blocked:(x:number,y:number)=>motionBlocked(x,y)||(e.bossBattle?.roots?.some(r=>r.kind==='rock'&&r.hp>0&&Math.hypot(x-r.x,y-r.y)<34)??false)||range({x,y},{x:e.homeX,y:e.homeY})>enemyLeashRadius(e),clear:clearMotionLine,melee:clearMeleeLine,wall:(a:Point,b:Point)=>motionBlocked(b.x,b.y)||!clearMotionLine(a,b)||(e.bossBattle?.roots?.some(r=>r.kind==='rock'&&r.hp>0&&Math.hypot(b.x-r.x,b.y-r.y)<34)??false)});
-export const bossMajor=(kind:CampBossKind,move:number)=>kind==='thorn-crown'?move>=4:kind==='bound-branch'?move===2||move===5:move===3||move===4||move===5;
-export function selectBossMove(e:EnemyBody,target:Point,now:number){const b=e.bossBattle!,distance=range(e,target),kind=e.boss!;b.cooldowns??=Array(6).fill(0);
+export const bossMajor=(kind:CampBossKind,move:number)=>kind==='thorn-crown'?move>=4:kind==='bound-branch'?move===2||move===5||move===6:move===3||move===4||move===5;
+export function selectBossMove(e:EnemyBody,target:Point,now:number){const b=e.bossBattle!,distance=range(e,target),kind=e.boss!;const count=CAMP_BOSSES[kind].skills.length;b.cooldowns??=Array(count).fill(0);while(b.cooldowns.length<count)b.cooldowns.push(0);
  const nodes=b.roots??[],wolves=b.summons??[];
  const usable=(i:number)=>!(kind==='thorn-crown'&&i===4&&((b.summoned??0)>=4||wolves.filter(w=>w.hp>0).length>=2))&&!(kind==='crag-tusk'&&i===4&&nodes.filter(r=>r.kind==='rock'&&r.hp>0).length>=3)&&!(kind==='spore-heart'&&i===5&&nodes.filter(r=>r.kind==='sac'&&r.hp>0).length>=2);
- const candidates=Array.from({length:6},(_,i)=>i).filter(i=>i!==b.lastSkill&&b.cooldowns![i]<=now&&(!b.major||!bossMajor(kind,i))&&usable(i));
+ const candidates=Array.from({length:count},(_,i)=>i).filter(i=>i!==b.lastSkill&&b.cooldowns![i]<=now&&(!b.major||!bossMajor(kind,i))&&usable(i));
  const facing=e.face??{x:0,y:1},behind=distance>0&&((target.x-e.x)*facing.x+(target.y-e.y)*facing.y)/distance<-.25;
- const score=(i:number)=>(i===(distance>190?0:distance<105?2:1)?4:0)+(i>=4&&b.next%3===2?5:0)+(kind==='thorn-crown'&&behind&&i===2?5:0)+(kind==='crag-tusk'&&nodes.some(r=>r.kind==='rock'&&r.hp>0)&&i===0?2:0)+(kind==='spore-heart'&&nodes.some(r=>r.kind==='root'&&r.hp>0)&&i===4?2:0)+(kind==='bound-branch'&&i===3&&!behind&&e.hp<CAMP_BOSSES[kind].hp*.7?2:0)+(kind==='bound-branch'&&b.phase===2&&i===5&&nodes.filter(r=>r.kind==='sigil'&&r.hp>0).length<2?2:0)+(5-(i+b.next)%6)*.1;
+ const score=(i:number)=>(kind==='bound-branch'&&i===6&&b.next%3===2?8:0)+(i===(distance>190?0:distance<105?2:1)?4:0)+(i>=4&&b.next%3===2?5:0)+(kind==='thorn-crown'&&behind&&i===2?5:0)+(kind==='crag-tusk'&&nodes.some(r=>r.kind==='rock'&&r.hp>0)&&i===0?2:0)+(kind==='spore-heart'&&nodes.some(r=>r.kind==='root'&&r.hp>0)&&i===4?2:0)+(kind==='bound-branch'&&i===3&&!behind&&e.hp<CAMP_BOSSES[kind].hp*.7?2:0)+(kind==='bound-branch'&&b.phase===2&&i===5&&nodes.filter(r=>r.kind==='sigil'&&r.hp>0).length<2?2:0)+(count-1-(i+b.next)%count)*.1;
  return candidates.sort((a,c)=>score(c)-score(a)||a-c)[0]??-1;
 }
 export function bossParts(kind:CampBossKind,move:number,phase:1|2){
@@ -53,6 +55,7 @@ function bossMove(kind:CampBossKind,b:BossBattle){
   if(move===4){windup=1100;active=300;reach=340;if(kind==='spore-heart'){area='ring';radius=230;heavy=true;}else if(kind==='bound-branch'){step=100;windup=850;reach=260;radius=90;}else{radius=0;}}
   if(move===5){windup=1100;active=kind==='bound-branch'?2100:kind==='thorn-crown'?1100:300;reach=340;heavy=true;
     if(kind==='thorn-crown'||kind==='bound-branch'){area='circle';radius=kind==='thorn-crown'?62:44;}else if(kind==='crag-tusk')angles=phase===2?[-.7,.7]:[-.45,.45];else radius=0;}
+  if(kind==='bound-branch'&&move===6){windup=BOSS_LASER.windup;active=LASER_DURATION;recovery=BOSS_LASER.recovery;reach=BOSS_LASER.reach;radius=BOSS_LASER.radius;heavy=true;}
   if(bossMajor(kind,move))windup=Math.max(1000,windup);else windup=Math.min(900,Math.max(700,windup));
   // 二阶段提高连段密度，危险大招仍保留完整一秒预警；锁向后至少350毫秒可躲避。
   if(phase===2&&!bossMajor(kind,move))windup=Math.max(700,windup-100);
@@ -60,6 +63,7 @@ function bossMove(kind:CampBossKind,b:BossBattle){
 }
 export function bossEngagementRange(kind:CampBossKind,b:BossBattle){
   const m=bossMove(kind,b);
+  if(kind==='bound-branch'&&b.move===6)return 400;
   if(m.angles||m.area==='circle'||m.cocoon||m.radius===0)return Math.min(330,m.reach);
   // 起手与实际伤害共用规格；侧跃要留出横移距离，避免在打不到的位置空放。
   const reach=m.area==='ring'?m.radius:Math.sqrt(Math.max(0,(m.radius+m.step)**2-m.sideStep**2));
@@ -73,6 +77,7 @@ export function createBossAttack(e:EnemyBody,now:number,target:Point,b:BossBattl
   Object.assign(a,{boss:kind,bossSkill:move,bossPart:part,bossAttempt:e.bossAttempt??0,step,lockAt:now+windup-350,activeUntil:now+windup+active,recoveryUntil:now+windup+active+recovery,damage:((move===4&&(kind==='thorn-crown'||kind==='crag-tusk'))||(move===5&&kind==='spore-heart'))?0:heavy?BOSS_RULES.heavyDamage:BOSS_RULES.damage,range:reach,parryable:!area&&!cocoon&&radius>0,bossShotAngles:angles,bossArea:area,bossCocoon:cocoon,
     bossGeometry:{kind:area??'sector',point:area==='circle'?{x:target.x,y:target.y}:{x:e.x,y:e.y},radius,halfAngle,offset,rear},
     ...sideStep?{bossSideStep:sideStep,bossSideMotion:0}:{}});
+  if(kind==='bound-branch'&&move===6){a.bossLaser=true;a.parryable=false;a.bossGeometry!.kind='ring';}
   if(rear){a.direction={...e.face??a.direction};a.locked=true;a.lockAt=now;}
   return a;
 }
@@ -89,7 +94,7 @@ export function updateCampBoss(e:EnemyBody,target:Point,now:number,dtMs:number,t
     if(a.bossSideStep&&now<a.lockAt){const u=Math.min(1,(now-a.startedAt)/260),wanted=a.bossSideStep*u,delta=wanted-(a.bossSideMotion??0);if(delta>0){const p=bossAttackSpace(e);sweepMove(e,-a.direction.y*delta,a.direction.x*delta,p.blocked,p.clear);a.bossSideMotion=wanted;}}
     if(!a.locked&&a.bossArea==='circle')a.bossGeometry!.point={x:target.x,y:target.y};
     const event=advanceEnemyAttack(a,e,target,now,bossAttackSpace(e));e.windup=Math.max(0,a.contactAt-now);e.face={...a.direction};
-    e.ai=a.bossCocoon?'护心结茧':now<a.contactAt?'首领蓄力':now<a.activeUntil?'首领出手':'首领收招';
+    e.ai=isBossLaser(a)?({charge:'赤环蓄力',rays:'八向激光',pause:'赤环换式',etch:'环形刻线',delay:'灼痕蓄爆',echo:'地面追爆',recover:'首领收招'} as const)[laserSample(laserHazard(a),now).stage]:a.bossCocoon?'护心结茧':now<a.contactAt?'首领蓄力':now<a.activeUntil?'首领出手':'首领收招';
     if(a.wallAt!==undefined&&!a.bossStunned){a.bossStunned=true;e.wallHit={at:a.wallAt,until:a.wallAt+1800,direction:{...a.direction}};e.staggerSince=now;e.staggerUntil=now+1800;b.exposedUntil=Math.max(b.exposedUntil,now+1800);b.part=bossParts(kind,b.move,b.phase)-1;}
     if(now>=a.recoveryUntil||a.cancelled){
       e.attack=null;e.windup=0;
@@ -118,7 +123,7 @@ export function updateCampBoss(e:EnemyBody,target:Point,now:number,dtMs:number,t
   e.nav.mode='chase';e.nav.returning=false;e.nav.lastSeen={...target};e.nav.lostAt=undefined;e.ai='首领前摇';return null;
 }
 
-export function bossHazardGeometry(h:BossHazard,now:number):AttackGeometry{const active=now>=h.activeAt,radius=h.kind==='ring'&&active?Math.min(h.radius,BOSS_RULES.ringInner+BOSS_RULES.ringWidth+(now-h.activeAt)/1000*h.speed):h.radius;return {kind:h.kind,a:h.point,b:h.point,radius,inner:h.kind==='ring'?active?Math.max(BOSS_RULES.ringInner,radius-BOSS_RULES.ringWidth):BOSS_RULES.ringInner:undefined};}
+export function bossHazardGeometry(h:BossHazard,now:number):AttackGeometry{if(h.laser)return laserGeometries(h,now)[0]??{kind:'ring',a:h.point,b:h.point,radius:0,inner:1};const active=now>=h.activeAt,radius=h.kind==='ring'&&active?Math.min(h.radius,BOSS_RULES.ringInner+BOSS_RULES.ringWidth+(now-h.activeAt)/1000*h.speed):h.radius;return {kind:h.kind,a:h.point,b:h.point,radius,inner:h.kind==='ring'?active?Math.max(BOSS_RULES.ringInner,radius-BOSS_RULES.ringWidth):BOSS_RULES.ringInner:undefined};}
 
 // 转换清理尚未命中的弹丸与尚未生效的预警；其他来源和已生效地面区域继续结算。
 export function clearBossPendingAttacks(e:EnemyBody,prev:number,hazards:BossHazards,shots:EnemyProjectiles){
@@ -130,7 +135,32 @@ export function clearBossPendingAttacks(e:EnemyBody,prev:number,hazards:BossHaza
 export class BossHazards{
   hazards:BossHazard[]=[];
   clear(owner?:string){this.hazards=owner?this.hazards.filter(h=>h.owner!==owner):[];}
-  launch(e:EnemyBody,now:number){const a=e.attack;if(!e.boss&&e.type!=='geomancer'||!a?.bossArea||a.launched||a.cancelled)return;
+  private updateLaser(h:BossHazard,e:EnemyBody,prev:number,now:number,targets:readonly (Point&{id:string;previous:Point})[],contacts:EnemyContact[]){
+    const source=e.attack;
+    // 取消、死亡与换战斗清理整套连招；失衡期间时钟随正式攻击一起冻结。
+    if(!source||source.cancelled||h.id!==source.attackId+':赤环'){h.expires=now;return;}
+    h.born=source.startedAt;h.activeAt=source.contactAt;h.expires=source.activeUntil;
+    h.point={...source.bossGeometry!.point};h.laser!.angle=Math.atan2(source.direction.y,source.direction.x);if(source.locked)clipLaserRays(h,clearMeleeLine);
+    const start=Math.max(prev,h.activeAt),end=Math.min(now,h.expires);
+    for(const target of targets){
+      for(let t=start;t<=end;t=Math.min(end,t+5)){
+        const stage=laserSample(h,t).stage,key=stage+':'+target.id;
+        if(!h.used.includes(key)){
+          const u=now>prev?(t-prev)/(now-prev):1,p={x:target.previous.x+(target.x-target.previous.x)*u,y:target.previous.y+(target.y-target.previous.y)*u};
+          const g=laserGeometries(h,t).find(g=>geometryTouches(g,p));
+          if(g&&clearMeleeLine(h.point,p)){
+            h.used.push(key);
+            const a=shiftBossAttack(source,0);Object.assign(a,{attackId:`${h.id}:${key}`,bossPart:stage==='rays'?0:stage==='etch'?1:2,damage:stage==='echo'?BOSS_RULES.heavyDamage:BOSS_RULES.damage,geometry:g,emitted:true});
+            contacts.push({at:t,attack:a,origin:h.point,geometry:g,bossHazardId:h.id,targetId:target.id,sampledPoint:p});
+          }
+        }
+        if(t>=end)break;
+      }
+    }
+  }
+  launch(e:EnemyBody,now:number){const a=e.attack;
+    if(a&&isBossLaser(a)){if(a.launched||a.cancelled||now>=a.activeUntil||this.hazards.length>=BOSS_RULES.maxHazards)return;a.launched=true;this.hazards.push(laserHazard(a));return;}
+    if(!e.boss&&e.type!=='geomancer'||!a?.bossArea||a.launched||a.cancelled)return;
     const owned=this.hazards.filter(h=>h.owner===e.id);if(owned.length>=3||this.hazards.length>=3)return;
     a.launched=true;
     const geometry=a.bossGeometry!;
@@ -144,6 +174,7 @@ export class BossHazards{
     const contacts:EnemyContact[]=[];
     this.hazards=this.hazards.filter(h=>h.expires>prev&&bodies.some(e=>e.id===h.owner&&e.hp>0&&(e.bossAttempt??0)===h.attempt));
     for(const h of this.hazards){const e=bodies.find(e=>e.id===h.owner)!;
+      if(h.laser){this.updateLaser(h,e,prev,now,targets,contacts);continue;}
       if(!h.independent&&prev<h.activeAt&&(!e.attack||e.attack.cancelled||!h.id.startsWith(e.attack.attackId+':'))){h.expires=now;continue;}
       if(!h.independent&&prev<h.activeAt&&e.attack&&!e.attack.cancelled&&h.id.startsWith(e.attack.attackId+':')){const a=e.attack;h.born=a.startedAt;h.activeAt=a.contactAt;h.expires=a.activeUntil;if(a.bossGeometry){const i=Number(h.id.split('地面').at(-1)),side=e.boss==='bound-branch'||e.type==='geomancer'?(i===0?-110:110):0;h.point={x:a.bossGeometry.point.x-a.direction.y*side,y:a.bossGeometry.point.y+a.direction.x*side};}}
       for(const target of targets){if(h.used.includes(target.id))continue;

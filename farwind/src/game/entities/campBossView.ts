@@ -11,10 +11,12 @@ import type {AnimatedEnemy,EnemyPose} from '../systems/enemyAnimation';
 import type {State} from '../systems/state';
 import {ENCOUNTERS} from '../../data/maps/windbell/encounters';
 import {CampBossEffects} from './campBossEffects';
+import {BossLaserVfx} from './bossLaserVfx';
 import {WARNING,drawDanger,previewWarning,projectileWarning,warningProgress} from './attackWarningView';
 import {sampleBossParry,type BossParryPose} from '../systems/bossParry';
 import {BossMotion} from '../systems/bossMotion';
 import {BossRig} from './bossRig';
+import {isBossLaser} from '../systems/bossLaser';
 import {isWolfClaw,wolfClawView} from '../systems/wolfClaw';
 
 export class CampBossView{
@@ -26,14 +28,14 @@ export class CampBossView{
   reaction:Phaser.GameObjects.Text;
   effects:CampBossEffects;
   assets:BossArtCache;
-  static preload(_scene:Phaser.Scene){}
+  static preload(scene:Phaser.Scene){BossLaserVfx.preload(scene);}
   constructor(public scene:Phaser.Scene){this.warningFill=scene.add.graphics().setDepth(WARNING.floor);this.warningEdge=scene.add.graphics().setDepth(WARNING.floor+1);this.assets=new BossArtCache(scene);this.effects=new CampBossEffects(scene);this.ink=scene.add.graphics().setDepth(8994);this.reaction=scene.add.text(0,0,'',{fontFamily:'sans-serif',fontSize:'14px',color:'#fff0cc',backgroundColor:'#233c34e8',padding:{x:8,y:5}}).setOrigin(.5,1).setDepth(8996).setVisible(false);}
   reset(){for(const rig of this.rigs)rig.destroy();this.rigs.clear();this.entries=new WeakMap();this.ink.clear();this.warningFill.clear();this.warningEdge.clear();this.effects.begin();this.reaction.setVisible(false);}
   begin(){for(const rig of this.rigs)rig.setVisible(false);this.ink.clear();this.warningFill.clear();this.warningEdge.clear();this.effects.begin();this.reaction.setVisible(false);}
   draw(body:AnimatedEnemy&Pick<EnemyBody,'boss'|'bossBattle'>,attack:EnemyAttack|null|undefined,sprite:Phaser.GameObjects.Sprite,now:number,showBar:boolean):EnemyPose{
     const kind=body.boss!,d=CAMP_BOSSES[kind];
     let entry=this.entries.get(sprite);if(!entry){entry={motion:new SlimeAnimation(),continuous:new BossMotion(),parry:null};this.entries.set(sprite,entry);}
-    const base=entry.motion.sample(body,attack,now);if(base.action==='idle'&&body.face)base.facing=entry.motion.facing=slimeFacing(body.face.x,body.face.y,base.facing);if(isWolfClaw(attack)&&!attack!.cancelled){const view=wolfClawView(attack!);base.facing=entry.motion.facing=view==='down'?0:view==='up'?1:attack!.direction.x<0?2:3;}const direction=base.facing===0?0:base.facing===1?1:2;
+    const base=entry.motion.sample(body,attack,now);if(base.action==='idle'&&body.face)base.facing=entry.motion.facing=slimeFacing(body.face.x,body.face.y,base.facing);if(isWolfClaw(attack)&&!attack!.cancelled){const view=wolfClawView(attack!);base.facing=entry.motion.facing=view==='down'?0:view==='up'?1:attack!.direction.x<0?2:3;}if(isBossLaser(attack)&&!attack!.cancelled){base.facing=entry.motion.facing=0;}const direction=base.facing===0?0:base.facing===1?1:2;
     const arriving=(body.hp??0)>0&&!!body.bossBattle&&now<body.bossBattle.entryUntil,u=arriving?Math.max(0,Math.min(1,1-(body.bossBattle!.entryUntil-now)/BOSS_RULES.appearance)):1;
     const parry=sampleBossParry(body,now);entry.parry=parry;
     let phase=base.phase,action:EnemyPose['action']=base.action;
@@ -73,7 +75,7 @@ export class CampBossView{
     if(a.cancelled||a.emitted||a.damage<=0||now>=a.contactAt)return;
     const progress=warningProgress(a.startedAt,a.contactAt,now);
     // 地面预警只读取已创建的正式危险区，不能画预算或地形拒绝的落点。
-    if(a.bossArea)return;
+    if(a.bossLaser||a.bossArea)return;
     if(a.bossShotAngles){for(const d of sporeDirections(a))drawDanger(this.warningEdge,this.warningFill,projectileWarning(sporeOrigin(root,d,true),d,SPORE.speed*SPORE.life/1000),progress);}
     else if(a.bossCocoon)this.warningEdge.lineStyle(3,0x9ed5b6,.9).strokeEllipse(root.x,root.y,86,36);
     else drawDanger(this.warningEdge,this.warningFill,previewWarning(a,root,bossAttackSpace(root)),progress);
@@ -81,7 +83,7 @@ export class CampBossView{
   ground(hazards:readonly BossHazard[],s:State,now:number){
     if(s.life.playerSpace!=='village')return;
     s=s.windMemory.active?{...s,encounters:s.windMemory.active.encounters}:s;
-    for(const h of hazards){this.effects.ground(h,now);this.geometry(bossHazardGeometry(h,now),now<h.activeAt?warningProgress(h.born,h.activeAt,now):null,true);}
+    for(const h of hazards){this.effects.ground(h,now);if(h.laser)continue;this.geometry(bossHazardGeometry(h,now),now<h.activeAt?warningProgress(h.born,h.activeAt,now):null,true);}
     for(const d of ENCOUNTERS){const b=s.encounters.groups[d.id].boss;if(!b||Math.hypot(s.player.x-d.x,s.player.y-d.y)>d.radius+80)continue;
       const kind=d.members.find(m=>m.boss)?.boss;if(!kind)continue;
       if(b.stage==='battle'||b.stage==='warning')this.ink.lineStyle(3,CAMP_BOSSES[kind].color,.5).strokeCircle(d.x,d.y,d.radius+80);

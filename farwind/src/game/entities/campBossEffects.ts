@@ -7,6 +7,8 @@ import type {Point} from '../systems/obstacles';
 import {sampleBossParry,type BossParryPose} from '../systems/bossParry';
 import {WARNING} from './attackWarningView';
 import {wolfClawTip,wolfClawWave,isWolfClaw} from '../systems/wolfClaw';
+import {isBossLaser,laserSample,laserRays,laserPoint,laserHazard} from '../systems/bossLaser';
+import {BossLaserVfx} from './bossLaserVfx';
 
 type Body=Point&{hp?:number;boss?:CampBossKind;bossBattle?:BossBattle;wallHit?:{at:number;until:number;direction?:Point};parried?:{at:number;until:number;direction:Point;perfect:boolean}};
 type Effect={id:string;boss:CampBossKind;kind:string;phase:'蓄力'|'出手'|'消散';point:Point;radius:number;elapsed:number;direction?:Point;inner?:number;skill?:number;origin?:Point;travel?:number};
@@ -23,9 +25,10 @@ export class CampBossEffects{
   readonly groundInk:Phaser.GameObjects.Graphics;
   readonly strikeInk:Phaser.GameObjects.Graphics;
   private records:Effect[]=[];
-  constructor(scene:Phaser.Scene){this.groundInk=scene.add.graphics().setDepth(WARNING.floor-1);this.strikeInk=scene.add.graphics().setDepth(8993);}
-  begin(){this.groundInk.clear();this.strikeInk.clear();this.records=[];}
-  snapshot(){return {objects:2,effects:this.records};}
+  readonly laserVfx:BossLaserVfx;
+  constructor(scene:Phaser.Scene){this.groundInk=scene.add.graphics().setDepth(WARNING.floor-1);this.strikeInk=scene.add.graphics().setDepth(8993);this.laserVfx=new BossLaserVfx(scene);}
+  begin(){this.groundInk.clear();this.strikeInk.clear();this.laserVfx.begin();this.records=[];}
+  snapshot(){const materials=this.laserVfx.snapshot();return {objects:2+materials.objects,laserMaterials:materials,effects:this.records};}
   private record(boss:CampBossKind,id:string,kind:string,phase:Effect['phase'],point:Point,radius:number,elapsed:number,extra:Partial<Effect>={}){this.records.push({boss,id,kind,phase,point:{x:point.x,y:point.y},radius,elapsed,...extra});}
   private path(ink:Phaser.GameObjects.Graphics,points:Point[],close=false){ink.beginPath().moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)ink.lineTo(points[i].x,points[i].y);if(close)ink.closePath();}
   private glint(p:Point,r:number,color:number,alpha:number){const ink=this.strikeInk;ink.lineStyle(3,0x46382e,alpha*.6).lineBetween(p.x-r,p.y,p.x+r,p.y).lineBetween(p.x,p.y-r,p.x,p.y+r);ink.lineStyle(1.5,color,alpha).lineBetween(p.x-r,p.y,p.x+r,p.y).lineBetween(p.x,p.y-r,p.x,p.y+r);}
@@ -92,6 +95,26 @@ export class CampBossEffects{
     }
     this.record('thorn-crown',a.attackId,'挥出爪风',now<a.activeUntil?'出手':'消散',center,g.radius,t,{skill:1,direction:{...d},origin,travel});
   }
+  private laser(h:BossHazard,now:number){
+    const ink=this.groundInk,{stage,progress,start,angle}=laserSample(h,now),red=0xff303c,dark=0x391722;
+    if(stage==='charge'){
+      const alpha=.3+.5*unit((now-h.born)/(h.activeAt-h.born));
+      for(const g of laserRays(h)){if(g.radius<=0)continue;
+        ink.lineStyle(3,dark,.85);this.path(ink,[g.a,g.b]);ink.strokePath();
+        for(let i=0;i<14;i++){const point=(u:number)=>({x:g.a.x+(g.b.x-g.a.x)*u,y:g.a.y+(g.b.y-g.a.y)*u});ink.lineStyle(2,red,alpha);this.path(ink,[point(i/14),point((i+.65)/14)]);ink.strokePath();}
+      }
+    }else if(stage!=='rays'&&stage!=='recover'){
+      // 未扫过的圆周只有虚线预告；已经烧出的部分由透明地裂素材覆盖。
+      for(let i=0;i<48;i++){
+        if(stage==='etch'&&i/48<progress)continue;if(stage==='echo'||stage==='delay')break;
+        const a=start+i*Math.PI/24,p=laserPoint(h,a),q=laserPoint(h,a+.065);
+        ink.lineStyle(1.5,red,.3).lineBetween(p.x,p.y,q.x,q.y);
+      }
+    }
+    this.laserVfx.ground(h,now,ink);
+    const name={charge:'赤环八向预警',rays:'八向红色激光',pause:'环形扫射预备',etch:'环形激光刻线',delay:'圆形灼痕蓄爆',echo:'二段贴地追爆',recover:'赤环消散'}[stage];
+    this.record('bound-branch',h.id,name,stage==='charge'||stage==='pause'||stage==='delay'?'蓄力':'出手',h.point,h.radius,now-h.activeAt,{skill:6,direction:{x:Math.cos(angle),y:Math.sin(angle)},travel:progress*Math.PI*2*h.radius});
+  }
   draw(body:Body,a:EnemyAttack|null|undefined,now:number,parry:BossParryPose|null=sampleBossParry(body,now),view?:string){
     const kind=body.boss,b=body.bossBattle;if(!kind||(body.hp??0)<=0||b&&(now<b.entryUntil||now<b.transformUntil))return;
     const palette=PALETTE[kind],ink=this.strikeInk;
@@ -104,6 +127,12 @@ export class CampBossEffects{
     }
     if(parry){this.parryDebris(body,parry);return;}
     if(!a||a.cancelled||now<a.startedAt||now>=a.recoveryUntil)return;
+    if(isBossLaser(a)){
+      const h=laserHazard(a),stage=laserSample(h,now).stage,p={x:body.x,y:body.y-CAMP_BOSSES[kind].height*.64},charge=unit((now-a.startedAt)/(a.contactAt-a.startedAt)),fade=now<a.activeUntil?1:unit((a.recoveryUntil-now)/(a.recoveryUntil-a.activeUntil));
+      this.laserVfx.core(p,now-a.startedAt,charge,fade,ink.depth);
+      if(now>=a.activeUntil)this.laser({...h,expires:a.recoveryUntil},now);
+      this.record(kind,a.attackId,'双臂赤核蓄光',stage==='charge'?'蓄力':stage==='recover'?'消散':'出手',p,20,now-a.startedAt,{skill:6});return;
+    }
     if(isWolfClaw(a)){this.wolfClaw(body,a,now,view??(Math.abs(a.direction.x)>.5?'right':a.direction.y>0?'down':'up'));return;}
     const pose=sampleEnemyAttack(a,now,body),t=now-a.contactAt,skill=a.bossSkill??0,d=a.direction,strong=b?.phase===2;
     if(t<0){
@@ -138,6 +167,7 @@ export class CampBossEffects{
     }
   }
   ground(h:BossHazard,now:number){
+    if(h.laser){if(now>=h.born&&now<h.expires)this.laser(h,now);return;}
     const kind=h.owner.slice(5) as CampBossKind;if(!PALETTE[kind]||now<h.born||now>=h.expires)return;
     const palette=PALETTE[kind],ink=this.groundInk,t=now-h.activeAt,g=bossHazardGeometry(h,now);
     if(t<0){

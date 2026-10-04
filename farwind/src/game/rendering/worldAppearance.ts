@@ -3,6 +3,7 @@ import {ART_QUALITY,appearanceFor,appearanceSeed,buildingDecorations} from '../.
 import {props,WATERS,BRIDGES,canDecorate} from '../../data/world';
 import {regionAt} from '../../data/village';
 import {bakedShadowProp} from './shadowGeometry';
+import {contactForFrame,paintContact} from './contactContour';
 
 // 只在CPU侧羽化对边，不镜像整块图案；避免石路出现对称花纹。不逐帧加工图片。
 export function seamlessGround(source: CanvasImageSource) {
@@ -42,11 +43,17 @@ export function makeGroundAppearance(scene: Phaser.Scene) {
       const p=logical.displayAt?{...logical,...logical.displayAt}:logical;
       const base=scene.textures.get(appearanceFor(p).texture),frame=base.get(p.frame??'__BASE'),a=appearanceFor(p,{width:frame.cutWidth,height:frame.cutHeight}),tree=p.art==='tree'||p.art==='pink';
       const reach=a.height*ART_QUALITY.shadow.x;
-      if(p.x+a.width/2+reach<cx||p.x-a.width/2>cx+600||p.y+Math.max(22,a.height*ART_QUALITY.shadow.y)<cy||p.y-22>cy+550)continue;
-      const rx=Math.max(12,Math.min(a.width*.5,(p.solid?.[0]??a.width)*.65)),ry=Math.max(7,Math.min(24,(p.solid?.[1]??20)*.24));
-      c.save();c.translate(p.x,p.y+3);c.scale(1,ry/rx);
-      const contact=c.createRadialGradient(0,0,0,0,0,rx);contact.addColorStop(0,'#14271d80');contact.addColorStop(.4,'#14271d50');contact.addColorStop(1,'#14271d00');
-      c.fillStyle=contact;c.fillRect(-rx,-rx,rx*2,rx*2);c.restore();
+      const contact=a.texture.startsWith('city-complete-')?contactForFrame(scene,a.texture,p.frame):undefined;
+      const contactTop=contact?Math.min(-22,...contact.paths.flatMap(path=>path.map(([,y])=>(y-1)*a.height-8))):-22;
+      if(p.x+a.width/2+reach<cx||p.x-a.width/2>cx+600||p.y+Math.max(22,a.height*ART_QUALITY.shadow.y)<cy||p.y+contactTop>cy+550)continue;
+      if(contact?.paths.length){
+        c.save();c.translate(p.x,p.y);paintContact(c,contact,a.width,a.height);c.restore();
+      }else{
+        const rx=Math.max(12,Math.min(a.width*.5,(p.solid?.[0]??a.width)*.65)),ry=Math.max(7,Math.min(24,(p.solid?.[1]??20)*.24));
+        c.save();c.translate(p.x,p.y+3);c.scale(1,ry/rx);
+        const contact=c.createRadialGradient(0,0,0,0,0,rx);contact.addColorStop(0,'#14271d80');contact.addColorStop(.4,'#14271d50');contact.addColorStop(1,'#14271d00');
+        c.fillStyle=contact;c.fillRect(-rx,-rx,rx*2,rx*2);c.restore();
+      }
       const mask=shadowMask(a.texture,p.frame);if(!mask)continue;
       c.save();c.globalAlpha=tree?ART_QUALITY.shadow.tree:ART_QUALITY.shadow.building;c.translate(p.x,p.y+3);c.transform(1,0,-ART_QUALITY.shadow.x,-ART_QUALITY.shadow.y,0,0);c.filter='blur(1.5px)';c.drawImage(mask,-a.width/2,-a.height,a.width,a.height);c.restore();
     }

@@ -16,7 +16,7 @@ export const DEFENSE_ZONES = [
  {gateId:'west-gate',near:rect(-100,1350,80,1510),alert:rect(-500,1320,-100,1570),activity:rect(-180,1300,400,1560),inside:rect(80,1300,400,1560),intercept:{x:-30,y:1430},route:[{x:-460,y:1460},{x:-240,y:1430},{x:40,y:1430}],spawn:rect(-440,1300,-250,1620)},
 ] satisfies {gateId:GateId;near:Point[];alert:Point[];activity:Point[];inside:Point[];intercept:Point;route:Point[];spawn:Point[]}[];
 export const zoneFor=(id:GateId)=>DEFENSE_ZONES.find(z=>z.gateId===id)!;
-export const inProtected=(p:Point)=>regionAt(p).id==='village'||DEFENSE_ZONES.some(z=>inPolygon(p,z.near));
+export const inProtected=(p:Point)=>(regionAt(p).id==='village'||p.x>9770&&p.x<13600&&p.y>-220&&p.y<2600)||DEFENSE_ZONES.some(z=>inPolygon(p,z.near));
 export const locallyProtected=(id:GateId,p:Point)=>inPolygon(p,zoneFor(id).near)||inPolygon(p,zoneFor(id).inside);
 export const inAlert=(id:GateId,p:Point)=>inPolygon(p,zoneFor(id).alert);
 export const inActivity=(id:GateId,p:Point)=>inPolygon(p,zoneFor(id).activity);

@@ -1,3 +1,4 @@
+import {cityBuilding,cityFurniture,isCitySpace} from '../../data/cityLayout';
 import {INTERIOR_FURNITURE,INTERIOR_BEDS,interiorBounds} from '../../data/villageInteriors';
 import {mapGeometryRevision} from "../../data/world";
 import {
@@ -19,7 +20,7 @@ import {
 } from "./obstacles";
 export const distance = (a: Point, b: Point) =>
   Math.hypot(a.x - b.x, a.y - b.y);
-const roomFurniture = (space: SpaceId) => [
+const roomFurniture = (space: SpaceId) => isCitySpace(space)?cityFurniture(space).filter(f=>f.solid).map(f=>({left:f.x-f.solid![0]/2,right:f.x+f.solid![0]/2,top:f.y-f.solid![1],bottom:f.y})):[
   ...INTERIOR_BEDS.filter(b=>b.space===space).map(b=>({left:b.x-40,right:b.x+40,top:b.y-70,bottom:b.y-15})),
   ...INTERIOR_FURNITURE.filter(f=>f.space===space&&f.solid).map(interiorBounds),
   ...PRIVATE_STORAGE.filter((s) => s.space === space).map((s) => ({
@@ -57,6 +58,20 @@ export function spaceClear(space: SpaceId, a: Point, b: Point) {
 }
 export const spaceBlocked = (space: SpaceId, x: number, y: number) =>
   space === "village" ? motionBlocked(x, y) : roomBlocked(space, x, y);
+export function nearestRoomStanding(space:SpaceId,p:Point){
+ if(!spaceBlocked(space,p.x,p.y))return {...p};
+ for(let radius=12;radius<=720;radius+=12)for(let y=-radius;y<=radius;y+=12)for(let x=-radius;x<=radius;x+=12){if(Math.abs(x)!==radius&&Math.abs(y)!==radius)continue;const q={x:p.x+x,y:p.y+y};if(!spaceBlocked(space,q.x,q.y))return q;}
+ return {...ROOM.entry};
+}
+// 室内投射物与家具、房间边界精确求交，不能查询同坐标的室外村庄。
+export function roomProjectileBlocker(space:SpaceId,a:Point,b:Point,radius:number){
+ const bounds={left:ROOM.left+radius,right:ROOM.right-radius,top:ROOM.top+radius,bottom:ROOM.bottom-radius};
+ const hits:{id:string;t:number}[]=[];
+ if(a.x<bounds.left||a.x>bounds.right||a.y<bounds.top||a.y>bounds.bottom)return {id:'room-edge',t:0};
+ for(const [s,d,min,max] of [[a.x,b.x-a.x,bounds.left,bounds.right],[a.y,b.y-a.y,bounds.top,bounds.bottom]])if(Math.abs(d)>1e-8){const t=d>0?(max-s)/d:(min-s)/d;if(t>=0&&t<=1)hits.push({id:'room-edge',t});}
+ for(const [i,r]of roomFurniture(space).entries()){const t=rectInterval(a,b,{left:r.left-radius,right:r.right+radius,top:r.top-radius,bottom:r.bottom+radius})?.[0];if(t!==undefined)hits.push({id:`room-furniture-${i}`,t});}
+ return hits.sort((x,y)=>x.t-y.t)[0]??null;
+}
 export function clearPhaseSpace(space:SpaceId,a:Point,b:Point) {
   if(space==='village')return clearPhaseLine(a,b);
   // 房间是凸矩形，两个端点在身体安全边界内即不会跨场景；家具仍检查落点。
@@ -131,7 +146,7 @@ export function moveLife(
 ) {
   let goal: Place;
   if (body.space !== target.space) {
-    const h = HOMES.find(
+    const h = cityBuilding(body.space === "village" ? target.space : body.space) ?? HOMES.find(
       (h) => h.id === (body.space === "village" ? target.space : body.space),
     );
     if (!h) {

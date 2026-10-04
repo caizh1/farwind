@@ -1,3 +1,4 @@
+import {isCitySpace} from '../../data/cityLayout';
 import {XIAOBAO_WISHES,type XiaobaoWish} from './xiaobaoLifeState';
 import {validOutdoorPoint} from "../../data/maps/windbell/bounds";
 import {VILLAGE_ANCHORS} from '../../data/maps/windbell/layout';
@@ -246,7 +247,7 @@ export const initialLife = (time = 480): LifeState => ({
   defenseReceipts: [],
 });
 export function isSpace(v: unknown): v is SpaceId {
-  return v === "village" || HOMES.some((h) => h.id === v);
+  return v === "village" || HOMES.some((h) => h.id === v) || isCitySpace(v);
 }
 export function validPlace(p: unknown): p is Place {
   const q = p as Place;

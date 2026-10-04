@@ -1,5 +1,8 @@
 // 沿用旧敌人ID与掉落类别，新增物种不改变主线或存档结构。
 export const ENEMIES = {
+  canyonHunter:{name:'峡牙猎兽',art:'canyonHunter',hp:72,speed:125,reach:145,height:78,stride:46,frames:48,drop:'berry'},
+  cliffLancer:{name:'崖羽投矛者',art:'cliffLancer',hp:84,speed:68,reach:350,height:95,stride:40,frames:48,drop:'herb'},
+  cragAxeman:{name:'裂岩斧卫',art:'cragAxeman',hp:160,speed:57,reach:100,height:110,stride:38,frames:48,drop:'stone'},
   slime: { name: '苔团史莱姆', art: 'moss-slime', hp: 48, speed: 60, reach: 80, height: 44, stride: 32, frames: 48, drop: 'berry' },
   leaf: { name: '裂枝镰灵', art: 'branch-reaper', hp: 72, speed: 95, reach: 80, height: 78, stride: 46, frames: 48, drop: 'crystal' },
   spore: { name: '灰冠孢卫', art: 'ashen-spore', hp: 60, speed: 45, reach: 300, height: 72, stride: 38, frames: 48, drop: 'berry' },
@@ -20,7 +23,10 @@ export const enemyKind = (type: string): EnemyKind => Object.hasOwn(ENEMIES, typ
 export const enemyProfile = (type: string) => ENEMIES[enemyKind(type)];
 // 素材分辨率独立于屏幕高度；样片仍保留临时美术标记。
 export function enemyArt(type: string) {
+  if(['canyonHunter','cliffLancer','cragAxeman'].includes(type))return {path:`/assets/windwhisper-city/${type}.png`,frameWidth:160,frameHeight:160,nativeHeight:145,originY:1};
   const kind=enemyKind(type),sample=kind==='leaf'||kind==='spore';
   if(['archer','bell','shade','geomancer'].includes(kind))return {path:`/assets/enemies-combat-v2/${kind}/atlas.json`,frameWidth:480,frameHeight:480,nativeHeight:480,originY:1};
   return {path:`/assets/enemies-${sample?'v2':'v1'}/${ENEMIES[kind].art}.png`,frameWidth:sample?384:160,frameHeight:sample?256:160,nativeHeight:sample?160:60,originY:110/128};
 }
+
+export const enemyBehavior=(type:string):Exclude<EnemyKind,'canyonHunter'|'cliffLancer'|'cragAxeman'>=>({canyonHunter:'wolf',cliffLancer:'archer',cragAxeman:'guardian'} as Record<string,Exclude<EnemyKind,'canyonHunter'|'cliffLancer'|'cragAxeman'>>)[type]??enemyKind(type) as Exclude<EnemyKind,'canyonHunter'|'cliffLancer'|'cragAxeman'>;

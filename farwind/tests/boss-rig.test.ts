@@ -16,6 +16,14 @@ function surface(){
  const scene:any={add:{mesh2d:()=>{const s=object();meshes.push(s);return s;}}},owner=object();owner.scene=scene;return {scene,owner,meshes,listeners};
 }
 describe('前爪分层网格的真实图集与生命周期',()=>{
+ it('树首领双臂独立抬肘，三个网格切回普通招式后完整隐藏和销毁',()=>{
+  const s=surface(),rig=new BossRig(s.scene,'图集',s.owner,()=>{}),art=JSON.parse(readFileSync('public/assets/camp-bosses-v2/bound-branch/index.json','utf8')).frames['down/idle'],body={id:'双臂专项',boss:'bound-branch',type:'leaf',x:100,y:150,bossBattle:{...initialBossBattle(0),move:6}} as EnemyBody;
+  s.owner.frame.name='down/idle';const a=createBossAttack(body,0,{x:200,y:150},body.bossBattle!);
+  const positions:number[][]=[];
+  for(const now of [0,600,1200,3000,4600,6300]){s.owner.visible=true;rig.draw('bound-branch',s.owner,art,sampleBossMotion('bound-branch',a,now,0,false),a,now);expect(s.meshes).toHaveLength(3);expect(s.owner.visible).toBe(false);for(const m of s.meshes){expect(m.visible).toBe(true);expect(m.vertices.every(Number.isFinite)).toBe(true);}positions.push([...s.meshes[1].vertices]);}
+  expect(positions[0]).not.toEqual(positions[2]);rig.setVisible(false);expect(s.meshes.every(m=>!m.visible)).toBe(true);
+  s.owner.visible=true;rig.draw('bound-branch',s.owner,art,sampleBossMotion('bound-branch',null,6350,0,false),null,6350);expect(s.meshes.slice(1).every(m=>!m.visible)).toBe(true);rig.destroy();expect(s.meshes.every(m=>m.destroy.mock.calls.length===1)).toBe(true);
+ });
  it('两爪三方向切换只复用两个网格，纹理坐标和图集页正确，隐藏、受击、重置全部同步',()=>{
   const s=surface(),rig=new BossRig(s.scene,'图集',s.owner,()=>{}),body={id:'网格专项',boss:'thorn-crown',type:'wolf',x:100,y:150,bossBattle:{...initialBossBattle(0),move:1}} as EnemyBody;
   for(const view of ['right','down','up'])for(const part of [0,1]){

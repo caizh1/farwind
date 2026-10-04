@@ -5,13 +5,15 @@ import {deformBossPoint,type BossMotionPose} from '../systems/bossMotion';
 import {wolfClawSkin,deformWolfClaw,sampleWolfClaw,isWolfClaw,type WolfClawSkin} from '../systems/wolfClaw';
 import type {EnemyAttack} from '../systems/enemyAttack';
 import type {Point} from '../systems/obstacles';
+import {isBossLaser} from '../systems/bossLaser';
+import {BOSS_FLEX_ARMS,sampleBossFlex,deformBossFlex} from '../systems/bossFlex';
 
 // 直接复用高清图集；狼的挥爪单独蒙皮，不让大幅抬爪把躯干拉成橡皮。
 export class BossRig{
  mesh:Phaser.GameObjects.Mesh2D;
- private claw?:Phaser.GameObjects.Mesh2D;
- private clawPoints:Point[]=[];
- private skin?:WolfClawSkin;
+ private claws:Phaser.GameObjects.Mesh2D[]=[];
+ private clawPoints:Point[][]=[];
+ private skins:WolfClawSkin[]=[];
  clawTip?:Point;
  private frame='';
  private points:number[]=[];
@@ -19,12 +21,11 @@ export class BossRig{
  constructor(scene:Phaser.Scene,key:string,private owner:Phaser.GameObjects.Sprite,onDestroy:()=>void){this.mesh=scene.add.mesh2d(0,0,key,[],[]);this.cleanup=()=>{onDestroy();this.destroy();};owner.once('destroy',this.cleanup);}
  draw(kind:CampBossKind,sprite:Phaser.GameObjects.Sprite,art:BossFrame,p:BossMotionPose,attack?:EnemyAttack|null,now=0){
   const frame=sprite.frame,native=art.nativeHeight,columns=20,rows=20;
-  const clawing=isWolfClaw(attack)&&!attack!.cancelled&&now<attack!.recoveryUntil,view=String(frame.name).split('/')[0],skin=clawing?wolfClawSkin(view,attack!.bossPart):undefined,frameKey=String(frame.name)+(clawing?'/claw-'+((attack!.bossPart??0)%2):'');
+  const clawing=isWolfClaw(attack)&&!attack!.cancelled&&now<attack!.recoveryUntil,view=String(frame.name).split('/')[0],skin=clawing?wolfClawSkin(view,attack!.bossPart):undefined,flexing=isBossLaser(attack)&&!attack!.cancelled&&now<attack!.recoveryUntil,skins=flexing?BOSS_FLEX_ARMS:skin?[skin]:[],frameKey=String(frame.name)+(flexing?'/flex':clawing?'/claw-'+((attack!.bossPart??0)%2):'');
   if(this.frame!==frameKey){
-   this.frame=frameKey;this.skin=skin;this.points=[];const vertices:number[]=[],indices:number[]=[];
-   this.claw?.setVisible(false);this.clawPoints=[];
-   if(skin){
-    this.claw??=sprite.scene.add.mesh2d(0,0,sprite.texture.key,[],[]);
+   this.frame=frameKey;this.skins=skins;this.points=[];const vertices:number[]=[],indices:number[]=[];
+   this.claws.forEach(m=>m.setVisible(false));this.clawPoints=[];
+   if(skins.length){
     const border=[{x:-art.foot[0]/native,y:-art.foot[1]/native},{x:(art.width-art.foot[0])/native,y:-art.foot[1]/native},{x:(art.width-art.foot[0])/native,y:(art.height-art.foot[1])/native},{x:-art.foot[0]/native,y:(art.height-art.foot[1])/native}];
     const build=(points:Point[],holes:number[],mesh:Phaser.GameObjects.Mesh2D,rest:Point[])=>{
      const triangles=Phaser.Geom.Polygon.Earcut(points.flatMap(p=>[p.x,p.y]),holes),vs:number[]=[],is:number[]=[];
@@ -36,7 +37,8 @@ export class BossRig{
      for(let i=0;i<triangles.length;i+=3)triangle(points[triangles[i]],points[triangles[i+1]],points[triangles[i+2]],3);
      mesh.vertices=vs;mesh.indices=is;mesh.buildOrderedIndices(1,true);
     };
-     const body:Point[]=[];build([...border,...skin.outline],[4],this.mesh,body);this.points=body.flatMap(p=>[p.x,p.y]);build(skin.outline,[],this.claw,this.clawPoints);
+     const body:Point[]=[],holes:number[]=[];let offset=4;for(const limb of skins){holes.push(offset);offset+=limb.outline.length;}build([...border,...skins.flatMap(s=>s.outline)],holes,this.mesh,body);this.points=body.flatMap(p=>[p.x,p.y]);
+     skins.forEach((limb,i)=>{this.claws[i]??=sprite.scene.add.mesh2d(0,0,sprite.texture.key,[],[]);this.clawPoints[i]=[];build(limb.outline,[],this.claws[i],this.clawPoints[i]);});
    }else{
    for(let r=0;r<=rows;r++)for(let c=0;c<=columns;c++){
     const x=art.width*c/columns,y=art.height*r/rows;this.points.push((x-art.foot[0])/native,(y-art.foot[1])/native);
@@ -51,16 +53,16 @@ export class BossRig{
   // 镜像消费 Actor 的方向结果；网格锚点固定在真实脚底根，不能改变碰撞身体。
   this.mesh.setTexture(sprite.texture.key).setPosition(sprite.x,sprite.y).setScale(sprite.scaleX,sprite.scaleY).setRotation(sprite.rotation).setAlpha(sprite.alpha).setDepth(sprite.depth).setVisible(sprite.visible);
   this.clawTip=undefined;
-  if(this.skin&&this.claw){
-   const pose=sampleWolfClaw(attack,now,view),deform=(point:Point)=>{const q=deformWolfClaw(this.skin!,point,pose);return deformBossPoint(kind,view==='right',q.x,q.y,width,p);};
-   for(let i=0;i<this.clawPoints.length;i++){const [x,y]=deform(this.clawPoints[i]);this.claw.vertices[i*4]=x*native*sign;this.claw.vertices[i*4+1]=y*native;}
-   const [x,y]=deform(this.skin.tip);this.clawTip={x:sprite.x+x*native*sprite.scaleX*sign,y:sprite.y+y*native*sprite.scaleY};
-   this.claw.setTexture(sprite.texture.key).setPosition(sprite.x,sprite.y).setScale(sprite.scaleX,sprite.scaleY).setRotation(sprite.rotation).setAlpha(sprite.alpha).setDepth(sprite.depth+.01).setVisible(sprite.visible);
-  }
+  this.skins.forEach((skin,i)=>{
+   const mesh=this.claws[i],points=this.clawPoints[i],pose=flexing?sampleBossFlex(attack,now,i):sampleWolfClaw(attack,now,view),deform=(point:Point)=>{const q=flexing?deformBossFlex(skin,point,pose):deformWolfClaw(skin,point,pose);return deformBossPoint(kind,view==='right',q.x,q.y,width,p);};
+   for(let j=0;j<points.length;j++){const [x,y]=deform(points[j]);mesh.vertices[j*4]=x*native*sign;mesh.vertices[j*4+1]=y*native;}
+   if(clawing){const [x,y]=deform(skin.tip);this.clawTip={x:sprite.x+x*native*sprite.scaleX*sign,y:sprite.y+y*native*sprite.scaleY};}
+   mesh.setTexture(sprite.texture.key).setPosition(sprite.x,sprite.y).setScale(sprite.scaleX,sprite.scaleY).setRotation(sprite.rotation).setAlpha(sprite.alpha).setDepth(sprite.depth+.01+i*.001).setVisible(sprite.visible);
+  });
   sprite.setVisible(false);
  }
- setVisible(visible:boolean){this.mesh.setVisible(visible);this.claw?.setVisible(visible&&!!this.skin);}
- setScale(x:number,y:number){if(this.clawTip){this.clawTip.x=this.mesh.x+(this.clawTip.x-this.mesh.x)*x/this.mesh.scaleX;this.clawTip.y=this.mesh.y+(this.clawTip.y-this.mesh.y)*y/this.mesh.scaleY;}this.mesh.setScale(x,y);this.claw?.setScale(x,y);}
- syncImpact(sprite:Phaser.GameObjects.Sprite){for(const mesh of [this.mesh,this.claw])mesh?.setPosition(sprite.x,sprite.y).setRotation(sprite.rotation);}
- destroy(){this.owner.off('destroy',this.cleanup);this.mesh.destroy();this.claw?.destroy();}
+ setVisible(visible:boolean){this.mesh.setVisible(visible);this.claws.forEach((m,i)=>m.setVisible(visible&&i<this.skins.length));}
+ setScale(x:number,y:number){if(this.clawTip){this.clawTip.x=this.mesh.x+(this.clawTip.x-this.mesh.x)*x/this.mesh.scaleX;this.clawTip.y=this.mesh.y+(this.clawTip.y-this.mesh.y)*y/this.mesh.scaleY;}this.mesh.setScale(x,y);this.claws.forEach(m=>m.setScale(x,y));}
+ syncImpact(sprite:Phaser.GameObjects.Sprite){for(const mesh of [this.mesh,...this.claws])mesh?.setPosition(sprite.x,sprite.y).setRotation(sprite.rotation);}
+ destroy(){this.owner.off('destroy',this.cleanup);this.mesh.destroy();this.claws.forEach(m=>m.destroy());}
 }

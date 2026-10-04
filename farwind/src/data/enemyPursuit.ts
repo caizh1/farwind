@@ -11,7 +11,8 @@ export const BOSS_PURSUIT = {
   minimumRadius: 2000,
   lostDelay: 8000,
 } as const;
-export function enemyLeashRadius(e: {leashRadius?: number; boss?: unknown}) {
+export function enemyLeashRadius(e: {id?:string;leashRadius?: number; boss?: unknown}) {
   const radius=e.leashRadius??420;
+  if(e.id?.startsWith('road:'))return radius;
   return e.boss?Math.max(BOSS_PURSUIT.minimumRadius,radius):Math.max(ENEMY_PURSUIT.minimumRadius,radius*2);
 }

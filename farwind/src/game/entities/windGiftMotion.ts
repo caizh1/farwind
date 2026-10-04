@@ -22,6 +22,12 @@ function shard(g:RuneInk,x:number,y:number,size:number,angle:number,color:string
  const d=[Math.cos(angle),Math.sin(angle)],n=[-d[1],d[0]],p=[[x-d[0]*size,y-d[1]*size],[x+n[0]*size*.25,y+n[1]*size*.25],[x+d[0]*size*.7,y+d[1]*size*.7],[x-n[0]*size*.16,y-n[1]*size*.16]];
  g.solid(p,color,alpha*.34);g.solid([p[0],p[1],[x,y]],'#f5fcff',alpha*.62);g.path([p[0],p[1],p[2]],'#dff7ff',alpha,1);
 }
+// 伙伴标记使用局部刃结；风赐不能靠端点距离拉成贯穿战场的线。
+function bladeKnot(g:RuneInk,x:number,y:number,size:number,angle:number,color:string,alpha:number,simple:boolean){
+ const d=[Math.cos(angle),Math.sin(angle)],n=[-d[1],d[0]],p=[[x-d[0]*size,y-d[1]*size],[x+n[0]*size*.32,y+n[1]*size*.32],[x+d[0]*size,y+d[1]*size],[x-n[0]*size*.32,y-n[1]*size*.32]];
+ g.solid(p,color,alpha*.25);g.solid([p[0],p[1],p[2]],'#fff7e0',alpha*.45);g.path([...p,p[0]],color,alpha,1.2);
+ if(!simple)g.path([p[0],[x,y],p[2]],'#fffdf0',alpha*.85,1.3);
+}
 export function paintWindGiftFx(g:RuneInk,f:RuneFx,now:number,simple=false,lowFlash=false){
  const id=giftVisualId(f.visual);if(!id)return false;if(id==='blackHole')return true;
  if(id==='chain'){paintChainLightning(g,f,now,simple,lowFlash);return true;}
@@ -92,8 +98,29 @@ export function paintWindGiftFx(g:RuneInk,f:RuneFx,now:number,simple=false,lowFl
    for(let k=0;k<(simple?1:recipe.count);k++){const off=(k-(recipe.count-1)/2)*r*.12*recipe.spread,travel=recipe.inward?1-smooth(u):smooth(u),p=curve(v=>map(-r*(1-v)*(.55+travel*.5),off*Math.sin(v*Math.PI)+Math.sin(v*4+u*4+k)*r*.03),simple);flow(p,4*recipe.width,base);stamp(recipe.material,p[Math.floor(p.length*.5)],r,r*.4,base*.65,angle);}
    break;
   case 'link':{
-   const end=f.end?[f.end.x,f.end.y]:[x+r*.75,y-r*.2],dx=end[0]-x,dy=end[1]-y,travel=recipe.inward?1-smooth(u):smooth(u),swing=Math.sin(u*Math.PI)*Math.min(24,r*.3);
-   for(let k=0;k<(simple?1:recipe.count);k++){const p=curve(v=>[x+dx*v,y+dy*v+Math.sin(v*Math.PI)*(k%2?-swing:swing)],simple);flow(p,3*recipe.width,base,k%2?accent:c);stamp(recipe.material,[x+dx*travel,y+dy*travel+Math.sin(travel*Math.PI)*(k%2?-swing:swing)],26,18,base*.75,Math.atan2(dy,dx));}
+   if(id==='returningBreath'){
+    const source=f.end??{x:x-30,y},dx=x-source.x,dy=y-source.y,travel=smooth(u/.82),distance=Math.hypot(dx,dy),length=Math.min(28,distance),ux=distance?dx/distance:1,uy=distance?dy/distance:0,px=source.x+dx*travel,py=source.y+dy*travel;
+    // 只绘制风团后方的短尾迹，不描出完整返还路线。
+    for(let k=0;k<(simple?1:2);k++)flow(curve(v=>[px-ux*length*(1-v)-uy*Math.sin(v*Math.PI)*(k?3:-3),py-uy*length*(1-v)+ux*Math.sin(v*Math.PI)*(k?3:-3)],simple),2.5,base*.65,'#ffe2a3');
+    bladeKnot(g,px,py,5,Math.atan2(dy,dx),'#ffe2a3',base,simple);break;
+   }
+   const gold=id==='sideBySide'?'#ffc5a6':'#ffdf94',silver='#f2f9ff';
+   if(f.giftPhase==='mark'){
+    const shift=id==='sideBySide'?-23:23,size=11+smooth(u/.4)*3;
+    bladeKnot(g,x+shift,y, size,-Math.PI/2,gold,base,simple);
+    if(id==='relayTogether')bladeKnot(g,x+shift+7,y+2, size*.75,-Math.PI/2+.25,silver,base*.75,simple);
+    break;
+   }
+   const reach=Math.min(42,r),closing=smooth(u/.48),spread=1-closing*.55,rotation=id==='sharedHeart'?Math.PI/2:angle;
+   for(let k=0;k<(simple?1:2);k++){
+    const sign=k?1:-1,pts=curve(v=>{
+     const a=sign*reach*(1-v)*spread,b=sign*Math.sin(v*Math.PI)*reach*.42;
+     return [x+Math.cos(rotation)*a-Math.sin(rotation)*b,y+Math.sin(rotation)*a+Math.cos(rotation)*b];
+    },simple);
+    flow(pts,id==='relayTogether'?6:4,base,k?gold:silver);
+   }
+   bladeKnot(g,x,y,(id==='relayTogether'?8:5)*(1-closing*.25),rotation+Math.PI/2,gold,base,simple);
+   for(let k=0;k<(simple?1:4);k++){const a=angle+k*2.399,z=8+smooth(u)*24;shard(g,x+Math.cos(a)*z,y+Math.sin(a)*z*.7,2.5,a,gold,base*.75);}
    break;}
   case 'growth':
    for(let k=0;k<(simple?2:recipe.count);k++){const sign=k%2?-1:1,t=smooth(u/.65),p=curve(v=>[x+sign*(r*.22+Math.sin(v*Math.PI)*r*.22),y+r*.3-v*r*t],simple);flow(p,3*recipe.width,base,accent);stamp(recipe.material,p.at(-1)!,18,35,base*.7,u*sign);}
@@ -105,6 +132,12 @@ export function paintWindGiftFx(g:RuneInk,f:RuneFx,now:number,simple=false,lowFl
 export function paintWindGiftStatus(body:RuneInk,ground:RuneInk,id:GiftVisualId,p:Point,now:number,ratio:number,fade:number,simple=false,lowFlash=false){
  if(id==='blackHole')return;
  const recipe=GIFT_CHOREOGRAPHY[id],c=GIFT_MATERIALS[WIND_GIFT_ART[id].motion].color,a=clamp(fade)*(lowFlash?.24:.42),phase=now/900;
+ if(id==='relayEdge'||id==='sideBySide'||id==='relayTogether'){
+  const x=p.x+(id==='sideBySide'?-23:23),y=p.y-20,size=12+Math.sin(phase)*.7,color=id==='sideBySide'?'#ffc5a6':'#ffdf94';
+  bladeKnot(body,x,y,size,-Math.PI/2,color,a,simple);
+  if(id==='relayTogether')bladeKnot(body,x+7,y+2,size*.75,-Math.PI/2+.25,'#f2f9ff',a*.75,simple);
+  return;
+ }
  if(recipe.shape==='plates'||recipe.shape==='cushion'){
   for(const sign of [-1,1]){const x=p.x+sign*(24+Math.sin(phase)*1.5),y=p.y-18+Math.cos(phase+sign)*2;body.giftMaterial?.(recipe.material,x,y,24,43,a*(.45+clamp(ratio)*.55),sign*.12,false);ribbon(body,curve(t=>[x+sign*Math.sin(t*Math.PI)*4,y+(t-.5)*39],simple),1.7,c,a,simple);}
  }else{

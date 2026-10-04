@@ -64,6 +64,29 @@ describe('防御、治疗与弹反',()=>{
  it('余泽及春泉余泽仅使用真实溢出量，不计算药剂整份治疗',()=>{const a=arena(['lingeringGrace','spring']);a.gifts.potionOverflow(10);expect(a.gifts.snapshot().shield).toBe(5);a.state.player.hp=98;a.gifts.encounterHeal(6);expect(a.state.player.hp).toBe(100);expect(a.gifts.snapshot().shield).toBe(5);a.time(20001);a.gifts.encounterHeal(6);expect(a.gifts.snapshot().shield).toBe(3);a.time(60002);expect(a.gifts.snapshot().shield).toBe(0);});
 });
 describe('风步、控场与伙伴',()=>{
+ it('递锋建立局部标记，正确伙伴命中才消费；错误目标、过期与死亡不残留状态',()=>{
+  const a=arena(['relayEdge']);a.follow();a.land(a.begin(true));
+  const mark=a.engine.effects.find(f=>f.visual==='gift:relayEdge')!;expect(mark.giftPhase).toBe('mark');expect(mark.giftAnchor).toBe(a.enemies[0]!.id);expect(mark.end).toBeUndefined();
+  a.gifts.companionLanded(a.enemies[1]!);expect(a.engine.effects.some(f=>f.giftPhase==='consume')).toBe(false);expect(a.gifts.companionBonus(a.enemies[0]!)).toBe(.2);
+  a.gifts.companionLanded(a.enemies[0]!);expect(a.gifts.companionBonus(a.enemies[0]!)).toBe(0);expect(a.engine.effects.some(f=>f.giftPhase==='mark')).toBe(false);expect(a.engine.effects.filter(f=>f.visual==='gift:relayEdge'&&f.giftPhase==='consume')).toHaveLength(1);
+  a.time(500);a.land(a.begin());a.enemies[0]!.x=140;expect(a.gifts.statusVisuals()[0]!.point.x).toBe(140);a.advance(3500);a.gifts.companionLanded(a.enemies[0]!);expect(a.engine.effects.filter(f=>f.giftPhase==='consume')).toHaveLength(1);
+  a.time(4000);a.land(a.begin());a.enemies[0]!.hp=0;expect(a.gifts.statusVisuals()).toEqual([]);a.gifts.clear();expect(a.gifts.statusVisuals()).toEqual([]);
+ });
+ it('同心只在实际同行原生命中出现局部效果；连续I没有长线端点',()=>{
+  const a=arena(['sharedHeart','relayEdge']);a.land(a.begin(true));expect(a.engine.effects.some(f=>f.visual==='gift:sharedHeart')).toBe(false);a.follow();
+  for(let i=1;i<=8;i++){a.time(i*400);expect(a.land(a.begin(true))).toBe(.08);}
+  expect(a.engine.effects.some(f=>f.visual==='gift:sharedHeart')).toBe(true);expect(a.engine.effects.every(f=>f.end===undefined)).toBe(true);
+ });
+ it('递锋同行建立双刃结后，只有玩家同目标实际附伤才出现消费峰',()=>{
+  const a=arena(['relayEdge','sideBySide']);a.follow();a.land(a.begin());a.gifts.companionLanded(a.enemies[0]!);
+  expect(a.engine.effects.some(f=>f.visual==='gift:relayTogether'&&f.giftPhase==='mark')).toBe(true);expect(a.engine.effects.some(f=>f.visual==='gift:relayTogether'&&f.giftPhase==='consume')).toBe(false);
+  expect(a.gifts.statusVisuals()[0]!.id).toBe('relayTogether');a.time(500);a.land(a.begin(),a.enemies[1]!);expect(a.hits).toHaveLength(0);
+  a.time(1000);a.land(a.begin());expect(a.hits).toHaveLength(1);expect(a.hits[0]!.amount).toBe(30);expect(a.engine.effects.filter(f=>f.visual==='gift:relayTogether'&&f.giftPhase==='consume')).toHaveLength(1);expect(a.engine.effects.some(f=>f.visual==='gift:relayTogether'&&f.giftPhase==='mark')).toBe(false);
+ });
+ it('归息只有真实体力收益才发回流风团，来源为伙伴命中目标',()=>{
+  const a=arena(['returningBreath']);a.follow();a.gifts.companionLanded(a.enemies[0]!);expect(a.engine.effects).toHaveLength(0);a.time(1001);a.state.player.stamina=50;a.gifts.companionLanded(a.enemies[1]!);
+  expect(a.state.player.stamina).toBe(52);expect(a.engine.effects[0]!.giftPhase).toBe('return');expect(a.engine.effects[0]!.end).toEqual({x:160,y:0});
+ });
  it('掠影必须收到实际躲避事件，强化起手消费；踏影追刃只发一次剑气',()=>{const a=arena(['skimShadow','stepEdge']);expect(a.gifts.bonus(a.begin(),a.enemies[0]!)).toBe(0);a.gifts.startDash(180);a.gifts.dodged();const j=a.begin();expect(a.land(j)).toBeCloseTo(.45);a.land(j,a.enemies[1]!);expect(a.hits.every(h=>h.amount===30)).toBe(true);expect(a.hits).toHaveLength(2);expect(a.gifts.bonus(a.begin(),a.enemies[0]!)).toBe(0);});
  it('残风沿真实移动路径扫掠，每次每敌一次、最多五敌；回潮与残风成潮落地后生效',()=>{const a=arena(['residualWind','returningTide']);a.gifts.startDash(200);a.state.player.x=120;a.advance(100);expect(a.hits).toHaveLength(1);a.state.player.x=180;a.advance(200);expect(a.hits).toHaveLength(2);expect(a.hits.every(h=>h.amount===20)).toBe(true);a.advance(499);expect(a.hits).toHaveLength(2);a.advance(500);expect(a.hits.some(h=>h.amount===25)).toBe(true);expect(a.gifts.slow(a.enemies[1]!)).toBe(.25);a.advance(2201);expect(a.gifts.slow(a.enemies[1]!)).toBe(0);});
  it('脱围需要起点三个近敌，只在落地后加速；新增移速合计上限40%',()=>{const a=arena(['escapeCircle','roamEdge'],100);a.enemies.push({id:'第三敌',kind:'enemy',x:50,y:0,hp:10000});a.enemies[1]!.x=130;a.gifts.startDash(200);expect(a.gifts.speed()).toBe(0);a.advance(200);expect(a.gifts.speed()).toBe(.25);a.land(a.begin(true));expect(a.gifts.speed()).toBe(.4);a.time(2201);expect(a.gifts.speed()).toBe(0);});

@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import {CURRENT_MAP_VERSION} from "../src/data/maps/windbell/bounds";
 import {
   props,
   terrainBlocked,
@@ -108,6 +109,6 @@ describe("地图扩展的通行与兼容性", () => {
     const village = initialState();
     delete village.map_version;
     expect(validate(village).player).toEqual(village.player);
-    expect(() => validate({ ...old, map_version: 9 })).toThrow();
+    expect(() => validate({ ...old, map_version: CURRENT_MAP_VERSION + 1 })).toThrow();
   });
 });
