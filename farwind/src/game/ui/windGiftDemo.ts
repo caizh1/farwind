@@ -7,6 +7,7 @@ const demo=(setup:string,actions:DemoAction[],result:string,target:Demo['target'
 // 每项先演出真实前置条件，再演出收益；次数与顺序不能用通用粒子动画代替。
 export const GIFT_DEMOS = {
  blade:demo('面对近处敌人',['J'],'剑锋强化 · 近战伤害提高'),
+ rapidFire:demo('长按I；未获得800毫秒，一级600、二级480、三级400毫秒',['I','I','I','I'],'三级封顶 · 恢复每秒2.50次基础节奏'),
  gale:demo('面对远处敌人',['I'],'剑风命中 · 远程伤害提高'),
  blackHole:demo('I施放有概率触发；此处展示触发成功的情况',['I'],'裂缝牵引普通敌人并持续伤害','enemy',3),
  shock:demo('完成连段，准备终结',['J','J','终结'],'终结命中 · 周围敌人受到冲击','enemy',3),
@@ -26,7 +27,7 @@ export const GIFT_DEMOS = {
  broadWind:demo('两名敌人错开站位',['I'],'剑风变宽 · 覆盖两侧目标','enemy',2),
  pierceCurtain:demo('已解锁双穿，敌人排成一线',['I'],'穿过第一名敌人 · 后续目标伤害提高','enemy',2),
  clearPath:demo('瞄准远程或支援敌人',['I'],'剑风命中优先目标 · 额外增伤'),
- windRhythm:demo('连续I，间隔不超过1秒',['I','I','I'],'第三次I · 收招更快'),
+ windRhythm:demo('连续I，间隔不超过1秒',['I','I','I'],'第三次I · 收招和发射间隔缩短30／60毫秒'),
  echoWind:demo('连续施放四次I',['I','I','I','I'],'第四次I之后 · 追加回声剑风','enemy',1,160),
  stillWind:demo('至少1.2秒没有施放I',['等待','I'],'蓄势后的第一道剑风 · 伤害提高'),
  focusWind:demo('2秒内连续命中同一目标',['I','I','I'],'第三次命中 · 聚焦增伤'),

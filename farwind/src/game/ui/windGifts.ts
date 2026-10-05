@@ -1,6 +1,7 @@
 import {giftGlyphSvg,WIND_GIFT_ART,GIFT_MATERIALS,type GiftVisualId} from '../entities/windGiftArt';
 import {giftPreviewMarkup,startGiftPreview} from './windGiftPreview';
-import { WIND_GIFTS, EXTRA_WIND_GIFTS,GIFT_RESONANCES,resonanceLevel,giftDisplayValue, giftEffect, type WindGiftId } from "../systems/windGifts";
+import { WIND_GIFTS, EXTRA_WIND_GIFTS,GIFT_RESONANCES,resonanceLevel,giftDisplayValue, giftEffect,giftMaxed, type WindGiftId } from "../systems/windGifts";
+import {swordWindInterval} from '../../data/swordWind';
 import type { Interface } from "./interface";
 import "../../wind-gifts.css";
 
@@ -14,6 +15,7 @@ const GIFT_ART: Partial<Record<
     label: "近战伤害",
     path: "M21 43 43 21l-2 10-15 16M18 39l11 11M21 47l-6 6M34 22l8-8 8 8",
   },
+  rapidFire:{kind:"attack",label:"连续发射间隔",path:""},
   gale: {
     kind: "attack",
     label: "剑风伤害",
@@ -76,6 +78,7 @@ function giftIcon(id: WindGiftId) {
   return `<svg viewBox="0 0 64 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${giftArt(id).path}"/></svg>`;
 }
 function giftMetric(id: WindGiftId, level: number) {
+  if(id==='rapidFire')return `${swordWindInterval(level)}毫秒`;
   if(id==='blackHole')return `${Math.round(Math.min(.1,.05+.01*(level-1))*100)}%`;
   const extra=EXTRA_WIND_GIFTS[id as keyof typeof EXTRA_WIND_GIFTS];if(extra)return `+${Math.round(giftDisplayValue(id,level)*(extra.unit==='%'?100:1)*100)/100}${extra.unit}`;
   const value = Math.round(
@@ -102,16 +105,17 @@ export function showWindGifts(ui: Interface, feedback = "",selected?:GiftVisualI
      ? `<div class="gift-choices">${choice.candidates
          .map((id, index) => {
            const owned = gifts.held.find((g) => g.id === id),
-             level = (owned?.level ?? 0) + 1,
+             maxed=giftMaxed(gifts,id),
+             level = maxed?3:(owned?.level ?? 0) + 1,
              art = giftArt(id);
-           return `<article class="gift-card" data-kind="${art.kind}"><div class="gift-card-top"><span>${art.kind === "attack" ? "锋芒 · 进攻" : art.kind === "motion" ? "流风 · 身法" : "守护 · 生存"}</span><span class="gift-card-index">${String(index + 1).padStart(2, "0")}</span></div><div class="gift-emblem">${giftIcon(id)}</div><div class="gift-name"><h3>${WIND_GIFTS[id].name}</h3><span class="gift-level ${owned ? "gift-upgrade" : ""}">${owned ? `${owned.level} → ${level}级` : "1级 · 新风赐"}</span></div><div class="gift-stat"><strong>${giftMetric(id, level)}</strong><span>${art.label}${owned ? " · 升级后" : " · 获得后"}</span></div><p class="gift-effect">${giftEffect(id, level)}</p><p class="gift-growth">${owned ? `当前 ${giftMetric(id, owned.level)} → 升级后 ${giftMetric(id, level)}` : id === "blackHole" ? "每级增加 1 个百分点 · 最高 10%" : EXTRA_WIND_GIFTS[id as keyof typeof EXTRA_WIND_GIFTS]?.cap!==undefined?`每级 ${giftMetric(id,1)} · 数值受单项上限限制`:`可持续叠加 · 每级 ${giftMetric(id, 1)}`}</p><button type="button" data-gift="${id}" aria-label="${owned ? "升级" : "选择"}${WIND_GIFTS[id].name}"><span>${owned ? `升至${level}级` : "接受风赐"}</span><span aria-hidden="true">→</span></button></article>`;
+           return `<article class="gift-card" data-kind="${art.kind}"><div class="gift-card-top"><span>${art.kind === "attack" ? "锋芒 · 进攻" : art.kind === "motion" ? "流风 · 身法" : "守护 · 生存"}</span><span class="gift-card-index">${String(index + 1).padStart(2, "0")}</span></div><div class="gift-emblem">${giftIcon(id)}</div><div class="gift-name"><h3>${WIND_GIFTS[id].name}</h3><span class="gift-level ${owned ? "gift-upgrade" : ""}">${maxed?"3级 · 已满级":owned ? `${owned.level} → ${level}级` : "1级 · 新风赐"}</span></div><div class="gift-stat"><strong>${giftMetric(id, level)}</strong><span>${art.label}${maxed?" · 三级上限":owned ? " · 升级后" : " · 获得后"}</span></div><p class="gift-effect">${giftEffect(id, level)}</p><p class="gift-growth">${id==="rapidFire"?`当前 ${giftMetric(id,owned?.level??0)}${maxed?" · 已满级":` → 升级后 ${giftMetric(id,level)}`} · 三级上限400毫秒`:owned ? `当前 ${giftMetric(id, owned.level)} → 升级后 ${giftMetric(id, level)}` : id === "blackHole" ? "每级增加 1 个百分点 · 最高 10%" : EXTRA_WIND_GIFTS[id as keyof typeof EXTRA_WIND_GIFTS]?.cap!==undefined?`每级 ${giftMetric(id,1)} · 数值受单项上限限制`:`可持续叠加 · 每级 ${giftMetric(id, 1)}`}</p><button type="button" data-gift="${id}" ${maxed?"disabled":""} aria-label="${owned ? "升级" : "选择"}${WIND_GIFTS[id].name}"><span>${maxed?"已满级":owned ? `升至${level}级` : "接受风赐"}</span><span aria-hidden="true">→</span></button></article>`;
          })
          .join("")}</div>`
      : pending
        ? '<div class="gift-empty-state"><p>本场奖励已保留，保存成功后即可查看候选。</p><button id="gift-save">保存奖励并继续选择</button></div>'
        : '<div class="gift-empty-state"><p>清完整场遭遇，即可获得一次三选一风赐。</p><span>已获得的力量会一直伴随旅途。</span></div>'
  }</section>
- <details class="gift-owned" ${choice ? "" : "open"}><summary tabindex="0"><span class="gift-owned-title">随身风赐 <b>${gifts.held.length}<small> 种 · 累计 ${gifts.held.reduce((sum, g) => sum + g.level, 0)}级</small></b></span><span class="gift-sockets" aria-hidden="true">${gifts.held.map((g) => `<i class="filled">${giftIcon(g.id)}</i>`).join("")}</span><span class="gift-owned-hint">查看效果 <span aria-hidden="true">⌄</span></span></summary><div class="gift-held">${gifts.held.map((g) => `<article><span class="gift-held-icon" data-kind="${giftArt(g.id).kind}">${giftIcon(g.id)}</span><div><b>${WIND_GIFTS[g.id].name} · ${g.level}级</b><p>${giftEffect(g.id, g.level)}</p></div></article>`).join("") || '<p class="gift-empty">尚未持有风赐，选择第一份与你同行的力量。</p>'}</div><p class="gift-owned-rule">持有种类与等级均无上限 · 重复选择累加一级 · 不占符文槽</p></details>
+ <details class="gift-owned" ${choice ? "" : "open"}><summary tabindex="0"><span class="gift-owned-title">随身风赐 <b>${gifts.held.length}<small> 种 · 累计 ${gifts.held.reduce((sum, g) => sum + g.level, 0)}级</small></b></span><span class="gift-sockets" aria-hidden="true">${gifts.held.map((g) => `<i class="filled">${giftIcon(g.id)}</i>`).join("")}</span><span class="gift-owned-hint">查看效果 <span aria-hidden="true">⌄</span></span></summary><div class="gift-held">${gifts.held.map((g) => `<article><span class="gift-held-icon" data-kind="${giftArt(g.id).kind}">${giftIcon(g.id)}</span><div><b>${WIND_GIFTS[g.id].name} · ${g.level}级</b><p>${giftEffect(g.id, g.level)}</p></div></article>`).join("") || '<p class="gift-empty">尚未持有风赐，选择第一份与你同行的力量。</p>'}</div><p class="gift-owned-rule">持有种类无上限 · 疾风连发三级封顶，其他风赐沿用原成长规则 · 重复选择累加一级 · 不占符文槽</p></details>
  <section class="gift-resonances"><h2>流派共鸣 · 自动激活</h2><div class="gift-held">${Object.entries(GIFT_RESONANCES).map(([id,r])=>{const level=resonanceLevel(gifts,id as keyof typeof GIFT_RESONANCES);return `<article data-active="${level>0}"><span class="gift-held-icon" style="color:${GIFT_MATERIALS[WIND_GIFT_ART[id as GiftVisualId].motion].color}"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${giftGlyphSvg(id as GiftVisualId)}"/></svg></span><div><b>${r.name} · ${level?`${level}级已激活`:'未集齐'}</b><p>${r.components.map(c=>`${WIND_GIFTS[c].name}${gifts.held.some(g=>g.id===c)?' ✓':''}`).join(' + ')}</p><p>${r.effect}${level>1?`；共鸣数值 ×${level}`:''}</p></div></article>`;}).join('')}</div><p class="gift-owned-rule">共鸣等级取组件最低等级；不额外抽取，不占符文槽。新增走速、减伤、减速、治疗与护盾分别设上限。</p></section>
  <footer class="gift-footer"><div><p id="gift-feedback" role="status" aria-live="polite"></p><span>不必匆忙决定，可随时从旅途手记继续领取。</span></div><button type="button" id="gift-close">${pending ? "稍后再选 · 继续旅途" : "继续旅途"} <span aria-hidden="true">→</span></button></footer>`,
   );
@@ -142,7 +146,7 @@ export function showWindGifts(ui: Interface, feedback = "",selected?:GiftVisualI
     .querySelectorAll<HTMLButtonElement>("[data-gift]")
     .forEach((button) =>
       button.addEventListener("click", async () => {
-        if (ui.economyBusy || !choice || !ui.actions.giftChoose) return;
+        if (button.disabled || ui.economyBusy || !choice || !ui.actions.giftChoose) return;
         const id = button.dataset.gift as WindGiftId;
         ui.economyBusy = true;
         ui.modal

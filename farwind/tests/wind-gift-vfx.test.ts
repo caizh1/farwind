@@ -25,9 +25,9 @@ describe('完整风赐视觉与运行边界',()=>{
   }
   expect(giftEnvelope(0)).toBe(0);expect(giftEnvelope(1)).toBe(0);
  });
- it('六十一种风赐和十八组共鸣各有独立且可解析的纹样',()=>{
+ it('六十二种风赐和十八组共鸣各有独立且可解析的纹样',()=>{
   expect(Object.keys(WIND_GIFT_ART).sort()).toEqual([...Object.keys(WIND_GIFTS),...Object.keys(GIFT_RESONANCES)].sort());
-  expect(new Set(Object.keys(WIND_GIFT_ART).map(id=>giftGlyphSvg(id as GiftVisualId))).size).toBe(79);
+  expect(new Set(Object.keys(WIND_GIFT_ART).map(id=>giftGlyphSvg(id as GiftVisualId))).size).toBe(80);
   for(const art of Object.values(WIND_GIFT_ART)){expect(art.description).toMatch(/[\u4e00-\u9fff]/);expect(art.life).toBeGreaterThan(0);expect(GIFT_MATERIALS[art.motion]).toBeDefined();}
  });
  it('各动作从起势至消散都有有限坐标，降闪与简化模式有效，结束不残留',()=>{

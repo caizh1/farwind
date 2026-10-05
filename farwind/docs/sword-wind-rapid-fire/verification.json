@@ -1,0 +1,47 @@
+{
+  "基线提交": "dba06d44fda43c3cfad6716b0f61159d346266f1",
+  "主存档版本": 25,
+  "完整回归": {
+    "文件": 91,
+    "通过项": 1625,
+    "范围": "松开自动预约修复前的完整快照，修复后相关专项另复测",
+    "日志": "logs/regression.log"
+  },
+  "最终修复后复测": {
+    "文件": 3,
+    "通过项": 109,
+    "日志": "logs/focused-after-review.log"
+  },
+  "战斗对照": {
+    "样本": 12,
+    "策略": 2,
+    "版本": 3,
+    "战斗数": 72,
+    "三级逐场等于修改前": true,
+    "证据": "battle-comparison.json"
+  },
+  "最终生产键鼠": {
+    "通过项": 3,
+    "日志": "logs/production-browser.log",
+    "记录": [
+      "browser-cadence.json",
+      "browser-scope.json",
+      "browser-reward.json"
+    ]
+  },
+  "类型检查": true,
+  "最终构建": true,
+  "实际入口和资源指纹一致": true,
+  "P0P1审查": "REVIEW.md",
+  "尚未完成": "用户实际旅途备份及真人硬件与其余实机综合验收，详见VALIDATION.md",
+  "证据SHA256": {
+    "build-manifest.json": "1735ad31afa4b592ec824c2dc8862758a09ce2461c12da953826d5b8714a1303",
+    "browser-reward.json": "2967f1657b4e1834b1449758f5fbb553ed38d7dbf3d92cc3784c0d827d578401",
+    "battle-comparison.json": "8130a5fb61acb33df7883ae898cf63c92212ed3280f5aa2737318ee47f87f2c3",
+    "browser-scope.json": "bccc284bbae1bfa94ae4fa5c1fc6ef7d6576c647aa143d6b4492cb9e332088e7",
+    "served-entry-verification.json": "a65e172360372d80e78234cdde3659863f6efae0974a27d24cc76c352e9c6e5a",
+    "available-browser-save-backup.json": "61a19edf37e1ac3be3a4f98c231dbffe1fd40fc915db1a0ac838f8073d675385",
+    "browser-cadence.json": "2eb86832044d9a84d2cad7c13806a20425ae4f2c0c852e89fa1c0548af01fa34"
+  },
+  "交付范围": "用户后续授权将源码与验证记录提交并推送至origin/codex/initial-game；未公开部署"
+}

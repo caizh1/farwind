@@ -26,7 +26,8 @@ import {updateSummonSupport} from '../systems/summonSupport';
 import {startWindMemory,endWindMemory,memoryGold} from '../systems/windMemory';
 import {ADVENTURE_ROUTES,adventureIndex,type WildernessDirection} from '../../data/maps/windbell/encounters';
 import {updateBossEnvironment,defeatBossSummon} from '../systems/bossEnvironment';
-import {giftCappedValue,giftValue,offerWindGift,giftChoiceSnapshot} from '../systems/windGifts';
+import {swordWindInterval} from "../../data/swordWind";
+import {giftCappedValue,giftValue,giftLevel,offerWindGift,giftChoiceSnapshot} from '../systems/windGifts';
 const xiaobaoLifeCheck=typeof location!=='undefined'&&new URLSearchParams(location.search).has('xiaobaoLifeCheck');
 import {encounterDefinitions} from '../systems/encounterState';
 import {requestXiaobaoTask} from '../systems/xiaobaoLife';
@@ -577,6 +578,7 @@ export class World extends Phaser.Scene {
           defenseCheckpointPending: this.defenseCheckpointPending,
           ...(import.meta.env.DEV?{dayNight:{phase:lightAt(this.state.time),lights:this.dayNight.visibleLights,draws:this.dayNight.draws,loops:this.soundFx.loops.length,loopGains:this.soundFx.loops.map(l=>l.gain.gain.value),objects:this.children.length,textures:this.textures.getTextureKeys().length}}:{}),
           attackSerial: this.attackSerial,
+          windFire:{interval:this.combat.swordWindConfig?.fireInterval??800,remaining:Math.max(0,this.combat.windFireUntil-this.sim),reservation:this.combat.windReservation,releases:this.combat.windReleaseHistory},
           buildTraining:this.buildTraining.snapshot(),
           skillGrowth:{...this.lessons?.snapshot(),enemies:this.enemies.map(e=>({id:e.id,x:e.x,y:e.y,hp:e.hp,disabled:!!e.disabled})),contacts:this.swordWind.events.map(e=>({kind:e.kind,reason:e.reason,target:e.target?.id,at:e.at,point:e.point,release:e.wind.releaseId})),sim:this.sim,combatStage:this.combat.attack?.stage??0,ability:this.lessons?.config()?.name??null,water:this.swordWindView?.water.snapshot(),winds:this.swordWind.snapshot(),objects:this.children.length,textures:this.textures.getTextureKeys().length},
           ...(import.meta.env.DEV
@@ -1522,7 +1524,7 @@ export class World extends Phaser.Scene {
   syncSwordWindAbility(){
     const config=this.lessons?.config()??null;
     const formal=this.practice.mode==='off'&&!config?.trialLesson&&!this.lessons?.trial;
-    this.combat.swordWindConfig=config?{...config,distance:config.distance*(1+(formal?giftCappedValue(this.state.windGifts,'longEdge'):0)),width:config.width*(1+(formal?giftCappedValue(this.state.windGifts,'broadWind'):0)),lifetime:Math.ceil(config.lifetime*(1+(formal?giftCappedValue(this.state.windGifts,'longEdge'):0))),damage:outgoingDamage(this.state,config.damage)}:null;
+    this.combat.swordWindConfig=config?{...config,fireInterval:swordWindInterval(formal?giftLevel(this.state.windGifts,'rapidFire'):0),distance:config.distance*(1+(formal?giftCappedValue(this.state.windGifts,'longEdge'):0)),width:config.width*(1+(formal?giftCappedValue(this.state.windGifts,'broadWind'):0)),lifetime:Math.ceil(config.lifetime*(1+(formal?giftCappedValue(this.state.windGifts,'longEdge'):0))),damage:outgoingDamage(this.state,config.damage)}:null;
     this.combat.chainGraceBonus=formal?giftCappedValue(this.state.windGifts,'catchEdge'):0;this.combat.parryPrecisionBonus=formal?giftCappedValue(this.state.windGifts,'clearMirror'):0;
     this.combat.swordWindEnabled=!!config;
     this.combat.meleeFinisherEnabled=this.state.skills.meleeFinisher;

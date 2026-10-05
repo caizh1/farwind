@@ -1,9 +1,11 @@
 import {EXTRA_WIND_GIFTS,GIFT_RESONANCES,type ResonanceId} from "./windGiftCatalog";
 export {EXTRA_WIND_GIFTS,GIFT_RESONANCES};
+import {swordWindInterval,SWORD_WIND_RAPID_FIRE_MAX} from "../../data/swordWind";
 import type { State } from "./state";
 export const WIND_GIFTS = {
   ...EXTRA_WIND_GIFTS,
   blade: { name: "砺刃", effect: "原生近战伤害 +12%", value: 0.12 },
+  rapidFire: {name:"疾风连发",effect:"剑风连续发射间隔：800 → 600 → 480 → 400毫秒；重复选择升级，三级封顶",value:1},
   gale: { name: "聚风", effect: "原生剑风伤害 +12%", value: 0.12 },
   blackHole: {name:"裂界·黑洞斩",effect:"I攻击5%触发星云风刃与次元裂缝，每级增加1个百分点，最高10%；裂缝牵引周围敌人，并造成40%基础普通攻击伤害／秒",value:.05},
   riposte: {
@@ -70,7 +72,9 @@ export const giftValue = (s: WindGiftState, id: WindGiftId) =>
 export const giftCappedValue=(s:WindGiftState,id:WindGiftId)=>giftDisplayValue(id,giftLevel(s,id));
 export function giftDisplayValue(id:WindGiftId,level:number){const extra=EXTRA_WIND_GIFTS[id as keyof typeof EXTRA_WIND_GIFTS];return extra?Math.min(extra.cap??Infinity,extra.value*level):id==='blackHole'?(level>0?Math.min(10,4+level)/100:0):WIND_GIFTS[id].value*level;}
 export function resonanceLevel(s:WindGiftState,id:ResonanceId){return Math.min(...GIFT_RESONANCES[id].components.map(c=>giftLevel(s,c)));}
+export const giftMaxed = (s:WindGiftState,id:WindGiftId) => id==='rapidFire' && giftLevel(s,id)>=SWORD_WIND_RAPID_FIRE_MAX;
 export function giftEffect(id: WindGiftId, level: number) {
+  if(id==='rapidFire')return `连续剑风间隔 ${swordWindInterval(level)}毫秒（每秒 ${(1000/swordWindInterval(level)).toFixed(2)}次）；${level>=3?'已满级 · 三级上限，恢复原基础节奏':`下一级 ${swordWindInterval(level+1)}毫秒 · 三级上限400毫秒`}。未获得800毫秒；一级600、二级480、三级400毫秒。风律每第三次连续I仍缩短30／60毫秒。`;
   const extra=EXTRA_WIND_GIFTS[id as keyof typeof EXTRA_WIND_GIFTS];
   if(extra)return extra.effect.replace('{v}',String(Math.round(giftDisplayValue(id,level)*(extra.unit==='%'?100:1)*100)/100));
   if(id==='blackHole')return `I每次施放${Math.round(Math.min(.1,.05+.01*(level-1))*100)}%触发黑洞斩；风刃命中或抵达终点后撕开次元裂缝，牵引180范围内敌人1.44秒，持续造成40%基础普通攻击伤害／秒。首领与机关不被强制位移。每级触发率增加1个百分点，最高10%。`;
@@ -102,14 +106,14 @@ export function offerWindGift(
 ) {
   if (s.receipts.includes(receipt)) return false;
   const available = (Object.keys(WIND_GIFTS) as WindGiftId[]).filter(
-    (id) => windUnlocked || !['gale','blackHole',...Object.keys(EXTRA_WIND_GIFTS).filter(k=>EXTRA_WIND_GIFTS[k as keyof typeof EXTRA_WIND_GIFTS].group.startsWith('I')||['holdWind','curledWind','borrowWind','storedTurn','guidingEdge','duet','cyclicBreath','duality'].includes(k))].includes(id),
+    (id) => !giftMaxed(s,id) && (windUnlocked || !['rapidFire','gale','blackHole',...Object.keys(EXTRA_WIND_GIFTS).filter(k=>EXTRA_WIND_GIFTS[k as keyof typeof EXTRA_WIND_GIFTS].group.startsWith('I')||['holdWind','curledWind','borrowWind','storedTurn','guidingEdge','duet','cyclicBreath','duality'].includes(k))].includes(id)),
   );
   const sorted = available.sort(
     (a, b) =>
       seedHash(`${receipt}:${a}`, seed) - seedHash(`${receipt}:${b}`, seed) ||
       a.localeCompare(b),
   );
-  // 已持有项始终可以再次强化；候选和领取凭据在同一快照保存。
+  // 除已满级疾风连发外，已持有项可以再次强化；候选和领取凭据在同一快照保存。
   s.receipts.push(receipt);
   if (sorted.length >= 3)
     s.pending.push({ receipt, candidates: sorted.slice(0, 3) });
@@ -123,6 +127,7 @@ export function chooseWindGift(
   const choice = s.pending.find((c) => c.receipt === receipt);
   if (!choice?.candidates.includes(id))
     throw Error("此风赐候选已失效，请从手记查看待领奖励。");
+  if(giftMaxed(s,id))throw Error("疾风连发已满级（三级），请选择其他风赐。");
   const old = s.held.find((g) => g.id === id);
   if (old) {
     if (!Number.isSafeInteger(old.level + 1))
@@ -161,7 +166,7 @@ export function validateWindGifts(raw: unknown): WindGiftState {
     ) ||
     !Array.isArray(s.held) ||
     s.held.some(
-      (g) => !valid(g?.id) || !Number.isSafeInteger(g.level) || g.level < 1,
+      (g) => !valid(g?.id) || !Number.isSafeInteger(g.level) || g.level < 1 || (g.id==='rapidFire' && g.level>SWORD_WIND_RAPID_FIRE_MAX),
     ) ||
     new Set(s.held.map((g) => g.id)).size !== s.held.length ||
     !Array.isArray(s.receipts) ||

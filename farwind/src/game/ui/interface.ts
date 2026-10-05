@@ -5,7 +5,8 @@ import { Minimap } from './minimap';
 import {showWindMemory} from './windMemory';
 import type {WildernessDirection} from '../../data/maps/windbell/encounters';
 import {showWindGifts} from './windGifts';
-import type {WindGiftId} from '../systems/windGifts';
+import {giftLevel,type WindGiftId} from '../systems/windGifts';
+import {swordWindInterval} from '../../data/swordWind';
 import {showCatCompanion} from './catCompanion';
 import {CAT_STAGES,catStage,type CatCare} from '../systems/catBond';
 import {legacyJournal,legacyTracked} from '../systems/windLegacy';
@@ -613,7 +614,7 @@ export class Interface {
     const pending=WIND_LESSONS.find(l=>skills.completedLessons.includes(l.id)&&l.stage>stage);
     const next=WIND_LESSONS.find(l=>l.stage>stage&&!skills.completedLessons.includes(l.id)&&skills.discoveredLessons.includes(l.id));
     const records=WIND_LESSONS.filter(l=>skills.completedLessons.includes(l.id)).map(l=>`<li>${l.name} · ${l.source}${l.stage>stage?'（经历已保存，等待前置）':''}</li>`).join('');
-    return `<section class="skill-journal"><h2>旅人技艺</h2><h3>${WIND_NAMES[stage]}</h3><p>${WIND_EFFECTS[stage]}</p><p>学习来源：${windLearningSource(skills)}</p><p>永久近战：${skills.meleeFinisher?'四连终结':'三连（练习场教本可学四连）'}。J／左键即时连斩；I／中键独立剑风，按住连续施放；剑风可越过水面，实体障碍会截断。</p>${records?`<ul>${records}</ul>`:''}<p>${pending?windLessonStatus(skills,pending.id).replaceAll('\n','<br>'):next?`已发现的线索：${next.name} · ${next.hint}`:stage===5?'五段传承已掌握。能力永久保留，不占技法位置。':'尚未发现新的传承线索，可观察旅途中的教本与风敏装置。'}</p></section>`;
+    return `<section class="skill-journal"><h2>旅人技艺</h2><h3>${WIND_NAMES[stage]}</h3><p>${WIND_EFFECTS[stage]}</p><p>学习来源：${windLearningSource(skills)}</p>${stage?`<p>连续发射间隔：${swordWindInterval(giftLevel(s.windGifts,'rapidFire'))}毫秒 · 疾风连发 ${giftLevel(s.windGifts,'rapidFire')}／3级；未获得800、一级600、二级480、三级400毫秒。教学试用固定800毫秒。</p>`:''}<p>永久近战：${skills.meleeFinisher?'四连终结':'三连（练习场教本可学四连）'}。J／左键即时连斩；I／中键独立剑风，按住连续施放；剑风可越过水面，实体障碍会截断。</p>${records?`<ul>${records}</ul>`:''}<p>${pending?windLessonStatus(skills,pending.id).replaceAll('\n','<br>'):next?`已发现的线索：${next.name} · ${next.hint}`:stage===5?'五段传承已掌握。能力永久保留，不占技法位置。':'尚未发现新的传承线索，可观察旅途中的教本与风敏装置。'}</p></section>`;
   }
   offerShop(id: ShopId) {
     const button = document.createElement("button");

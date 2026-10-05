@@ -4,6 +4,7 @@ export type GiftRecipe={shape:GiftShape;count:number;width:number;spread:number;
 // 每项编排对应重设计图的形体；组件是材质，运动由连续时间决定。
 const r=(shape:GiftShape,count=2,width=1,spread=1,turn=1,material=0,delay=0,reach=1,inward=false):GiftRecipe=>({shape,count,width,spread,turn,material,delay,reach,inward});
 export const GIFT_CHOREOGRAPHY={
+ rapidFire:r('echo',3,.65,.8,.3,0,.18),
  gale:r('crescent',3,.8,.85,.7,0),longEdge:r('spear',3,.45,.45,.2,1,0,1.65),broadWind:r('wing',3,1.2,1.45,.6,5),pierceCurtain:r('curtain',4,.7,1,.5,8),clearPath:r('spear',2,.6,.8,.2,22,0,1.3),focusWind:r('focus',3,.65,1,1,6,0,1,true),
  windRhythm:r('echo',3,.5,.6,.3,22,.13),echoWind:r('echo',2,.85,.8,.5,0,.24),stillWind:r('charge',3,1.1,.8,.5,1,0,1.2,true),roamEdge:r('trail',2,.6,.55,.8,18),borrowWind:r('echo',2,.8,1,-.7,8,.18),delayedEdge:r('curtain',3,.65,.7,-.5,6),
  blade:r('crescent',2,1,.8,1.3,2),chainedEdge:r('combo',2,.85,1,1.15,2,.14),catchEdge:r('combo',3,.6,.85,1.4,3,.1),guardStance:r('plates',2,.65,.8,-.4,9),stepEdge:r('combo',2,.9,.85,1.5,2,.15,1.25),heavyEdge:r('pressure',2,1.5,.6,.25,7),

@@ -13,6 +13,7 @@ type Art={motion:GiftMotion;glyph:string;description:string;life:number;size:num
 const art=(motion:GiftMotion,glyph:string,description:string,size=motion==='ray'||motion==='slash'||motion==='dance'?68:motion==='mirror'?58:motion==='shield'?56:motion==='breath'?38:48,life=600,ground=false):Art=>({motion,glyph,description,size,life,ground});
 export const WIND_GIFT_ART:Record<GiftVisualId,Art>={
  blade:art('slash','-14,14 14,-14 8,-1 -5,12;-16,9 -7,18','近战剑锋外包一层朱金透明锐刃，挥击弧有明确厚薄和切面，末端有少量金属光屑。'),
+ rapidFire:art('ray','-20,-12 9,-12 17,-17;-15,0 16,0 23,-5;-10,12 20,12 26,7','三道前后错开的青银风刃，按等级提高连续发射节奏，三级封顶。'),
  gale:art('ray','-18,-8 14,-8 18,-13;-18,0 20,0;-10,8 14,8 18,13','半透明青蓝琉璃剑风，有银白锋脊与层层空气压缩纹，细碎亮晶沿尖端喷出。'),
  shock:art('quake','0,-18 0,0;-8,-6 0,2 8,-6;-18,7 0,17 18,7','近战终结触地，一层琥珀透明冲击盘爆开，细密地纹和小石屑向外扇散，核心有强烈压缩感。',90,500,true),
  chain:art('ray','-18,-12 -5,-12 -9,0 5,0 1,12 18,12','命中后向附近最多两名附伤目标依次放电：尖锐折线电弧包裹亮白电芯与蓝青辉光，分叉电丝沿主弧探出，落点爆闪后断成短促残弧。',68,CHAIN_LIGHTNING.life),

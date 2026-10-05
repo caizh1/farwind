@@ -1,3 +1,4 @@
+import {swordWindInterval,SWORD_WIND} from '../../data/swordWind';
 import {WIND_GIFTS,GIFT_RESONANCES} from '../systems/windGifts';
 import {WIND_GIFT_ART,GIFT_MATERIALS,type GiftVisualId} from '../entities/windGiftArt';
 import {paintWindGiftFx} from '../entities/windGiftVfx';
@@ -60,7 +61,22 @@ const staminaIds=new Set<GiftVisualId>(['breath','poise','longBreath','finalBrea
 const shieldIds=new Set<GiftVisualId>(['firstVeil','lingeringGrace','springGrace','armoredVeil','protectCompanion','guardedReturn','dualityFlow']);
 const pullIds=new Set<GiftVisualId>(['curledWind','windHunt','blackHole']);
 
-export function paintGiftPreview(g:CanvasRenderingContext2D,id:GiftVisualId,age:number,simple=false,lowFlash=false){
+function paintFireRhythm(g:CanvasRenderingContext2D,age:number,level:number){
+ const current=Math.min(3,Math.max(0,level)),next=Math.min(3,current+1),elapsed=Math.max(0,age-DEMO_INTRO);
+ g.save();g.fillStyle='#17343c';g.fillRect(0,0,900,360);g.fillStyle='#e7dcc1';g.font='bold 18px sans-serif';g.textAlign='left';
+ g.fillText('疾风连发 · 连续发射节奏（实际毫秒）',28,32);
+ const lanes=[{level:0,label:'未获得'},{level:current,label:'当前'},{level:next,label:current===3?'三级上限 · 已满级':'升级后'}];
+ lanes.forEach((lane,row)=>{const y=110+row*85,interval=swordWindInterval(lane.level),local=elapsed%interval;
+  g.fillStyle='#a9dcff';g.font='16px sans-serif';g.fillText(`${lane.label} · ${lane.level}级 · ${interval}毫秒`,28,y-33);
+  shadow(g,450,y+20,14);
+  if(local<400){const pose=swordWindVisual(3,local,{...SWORD_WIND.strike});sprite(g,'hero-sword-wind',pose.frame,450,y+20,1,.3,.3);}else sprite(g,'hero-motion',clipFor(false,3,'idle').frames[Math.floor(age/85)%clipFor(false,3,'idle').frames.length],450,y+20,1,.5,.5);
+  for(let n=0;n<=Math.floor(elapsed/interval);n++){const flight=elapsed-n*interval-SWORD_WIND.strike.windup;if(flight>=0&&flight<500)stamp(g,'animation/sword-wind/sword-wind-flight.png',Math.floor(flight/60)%8,128,495+flight*SWORD_WIND.speed/1000,y-25,90,72);}
+  g.fillStyle='#a9dcff';g.fillRect(520,y+18,310*local/interval,3);
+ });
+ g.fillStyle='#e7dcc1';g.font='14px sans-serif';g.fillText('800 → 600 → 480 → 400毫秒 · 三级封顶 · 风律第三次另减30／60毫秒',28,347);g.restore();
+}
+export function paintGiftPreview(g:CanvasRenderingContext2D,id:GiftVisualId,age:number,simple=false,lowFlash=false,level=1){
+ if(id==='rapidFire'){paintFireRhythm(g,age,level);return demoSample(id,age);}
  const s=demoSample(id,age),x=heroX(s),y=258,art=WIND_GIFT_ART[id],color=GIFT_MATERIALS[art.motion].color;
  const fxAge=age-s.effectAt,activated=fxAge>=0,benefit=smooth(fxAge/350),companion=companionIds.has(id);
  g.save();g.globalAlpha=1;
@@ -147,10 +163,10 @@ export function startGiftPreview(root:HTMLElement,simple=false,lowFlash=false,le
  const condition=document.createElement('p');condition.className='gift-demo-condition';canvas.before(condition);
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  let elapsed=0,last=0,frame=0,paused=reduced,stopped=false;const controller=new AbortController();
- const render=()=>{const id=select.value as GiftVisualId,s=paintGiftPreview(context,id,elapsed,simple,lowFlash);range.max=String(s.total);range.value=String(elapsed);clock.textContent=`${(elapsed/1000).toFixed(1)} / ${(s.total/1000).toFixed(1)}秒`;caption.textContent=s.caption;canvas.setAttribute('aria-label',`${giftVisualName(id)}使用示例：${s.caption}`);root.querySelectorAll<HTMLElement>('[data-demo-step]').forEach(e=>{if(e.dataset.demoStep===s.phase)e.setAttribute('aria-current','step');else e.removeAttribute('aria-current');});};
+ const render=()=>{const id=select.value as GiftVisualId,s=paintGiftPreview(context,id,elapsed,simple,lowFlash,levels[id]??(id==='rapidFire'?0:1));range.max=String(s.total);range.value=String(elapsed);clock.textContent=`${(elapsed/1000).toFixed(1)} / ${(s.total/1000).toFixed(1)}秒`;caption.textContent=s.caption;canvas.setAttribute('aria-label',`${giftVisualName(id)}使用示例：${s.caption}`);root.querySelectorAll<HTMLElement>('[data-demo-step]').forEach(e=>{if(e.dataset.demoStep===s.phase)e.setAttribute('aria-current','step');else e.removeAttribute('aria-current');});};
  const draw=(now:number)=>{frame=0;if(stopped||!canvas.isConnected)return;if(!details.open||document.hidden||paused){last=0;return;}if(last)elapsed=(elapsed+Math.min(100,now-last))%demoTimeline(select.value as GiftVisualId).total;last=now;render();frame=requestAnimationFrame(draw);};
  const schedule=()=>{cancelAnimationFrame(frame);frame=0;last=0;if(!stopped&&details.open&&!document.hidden&&!paused)frame=requestAnimationFrame(draw);};
- const update=()=>{const id=select.value as GiftVisualId,level=levels[id]??1,plan=demoSample(id,0).plan;elapsed=reduced?demoTimeline(id).effectAt+300:0;title.textContent=`${giftVisualName(id)} · ${Object.hasOwn(GIFT_RESONANCES,id)?'共鸣效果':`${level}级效果`}`;condition.textContent=`触发条件：${plan.setup}`;title.nextElementSibling!.textContent=`操作：${plan.actions.map(a=>a==='I'?'I 剑风':a==='J'?'J 挥剑':a==='K'?'K 弹反':a==='L'?'L 风步':a==='小宝'?'小宝攻击':a==='清场'?'整场结束':a).join(' → ')}`;description.textContent=demoEffect(id,level);render();schedule();};
+ const update=()=>{const id=select.value as GiftVisualId,level=levels[id]??(id==='rapidFire'?0:1),plan=demoSample(id,0).plan;elapsed=reduced?demoTimeline(id).effectAt+300:0;title.textContent=`${giftVisualName(id)} · ${Object.hasOwn(GIFT_RESONANCES,id)?'共鸣效果':`${level}级效果`}`;condition.textContent=`触发条件：${plan.setup}`;title.nextElementSibling!.textContent=`操作：${plan.actions.map(a=>a==='I'?'I 剑风':a==='J'?'J 挥剑':a==='K'?'K 弹反':a==='L'?'L 风步':a==='小宝'?'小宝攻击':a==='清场'?'整场结束':a).join(' → ')}`;description.textContent=demoEffect(id,level);render();schedule();};
  select.addEventListener('change',update,{signal:controller.signal});replay.addEventListener('click',()=>{paused=reduced;pause.textContent=paused?'播放示例':'暂停';pause.setAttribute('aria-pressed',String(paused));update();},{signal:controller.signal});
  range.addEventListener('input',()=>{elapsed=Number(range.value);paused=true;pause.textContent='继续播放';pause.setAttribute('aria-pressed','true');render();schedule();},{signal:controller.signal});
  pause.textContent=paused?'播放示例':'暂停';pause.setAttribute('aria-pressed',String(paused));

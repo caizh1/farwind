@@ -1,6 +1,12 @@
 // 五阶段为永久本领；执行参数只从程序定义读取。
 export type SwordWindStage = 0 | 1 | 2 | 3 | 4 | 5;
+export const SWORD_WIND_INTERVALS = [800, 600, 480, 400] as const;
+export const SWORD_WIND_RAPID_FIRE_MAX = 3;
+export function swordWindInterval(level=0) {
+  return SWORD_WIND_INTERVALS[Math.min(SWORD_WIND_RAPID_FIRE_MAX, Math.max(0, Math.floor(level)))];
+}
 export const SWORD_WIND = {
+  fireInterval: 800 as number,
   name: "剑风·一线斩",
   strike: {
     windup: 110,
@@ -47,10 +53,10 @@ export type SwordWindConfig = Omit<typeof SWORD_WIND, 'name' | 'distance' | 'wid
   name:string; stage:Exclude<SwordWindStage,0>; distance:number; width:number; lifetime:number;
   damage:number; hitStop:number; angles:readonly number[]; trialLesson?:string;
 };
-export function resolveSwordWindConfig(stage:Exclude<SwordWindStage,0>=1):SwordWindConfig {
+export function resolveSwordWindConfig(stage:Exclude<SwordWindStage,0>=1,rapidFireLevel=0):SwordWindConfig {
   if(!Number.isInteger(stage)||stage<1||stage>5)throw Error('剑风阶段无效');
   const distance=stage>=4?420:300;
-  return {...structuredClone(SWORD_WIND),stage,name:['一线斩','一线斩·双穿','一线斩·贯通','疾风斩','三向疾风斩'][stage-1],
+  return {...structuredClone(SWORD_WIND),fireInterval:swordWindInterval(rapidFireLevel),stage,name:['一线斩','一线斩·双穿','一线斩·贯通','疾风斩','三向疾风斩'][stage-1],
     distance,width:stage>=4?64:28,lifetime:Math.max(450,Math.ceil(distance/SWORD_WIND.speed*1000)+100),
     damage:SWORD_WIND.strike.damage,maxTargets:stage===1?1:stage===2?2:'all',angles:stage===5?[-Math.PI/6,0,Math.PI/6]:[0]};
 }

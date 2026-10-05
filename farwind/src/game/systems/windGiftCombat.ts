@@ -1,3 +1,4 @@
+import {SWORD_WIND} from '../../data/swordWind';
 import {GIFT_RESONANCES,giftCappedValue,resonanceLevel,type WindGiftId,type WindGiftState} from './windGifts';
 import type {ResonanceId} from './windGiftCatalog';
 import {attackConfig,attackVector,isMeleeFinisher,inStrike,STRIKES,type Attack} from './combat';
@@ -61,12 +62,11 @@ export class WindGiftCombat {
   const [dx,dy]=attackVector(a),charge=wind?'stillWind':'blade';if(v(charge))this.visual(charge,this.player,{direction:{x:dx,y:dy},giftPhase:'charge',life:Math.max(60,attackConfig(a).windup),radius:24});
   let bonus=0,still=false,borrowed=false,perfectBorrow=false,step=false,dodged=false;
   if(wind){
-   this.rhythm=this.now-this.lastI>1000?1:this.rhythm+1;
-   still=this.now-this.lastI>=1200;
+   const rhythm=a.start-this.lastI>1000?1:this.rhythm+1;
+   still=a.start-this.lastI>=1200;
    if(still)bonus+=v('stillWind');
-   if(this.rhythm%3===0&&v('windRhythm')){a.config={...attackConfig(a),recovery:Math.max(0,attackConfig(a).recovery-v('windRhythm'))};this.visual('windRhythm');}
+   if(rhythm%3===0&&v('windRhythm')){a.fireInterval=(a.fireInterval??a.swordWind?.fireInterval??SWORD_WIND.fireInterval)-v('windRhythm');a.config={...attackConfig(a),recovery:Math.max(0,attackConfig(a).recovery-v('windRhythm'))};this.visual('windRhythm');}
    const borrow=this.take('borrow');borrowed=borrow>0;perfectBorrow=borrowed&&this.take('perfectBorrow')>0;bonus+=borrow+this.take('stored')+this.take('unbroken');
-   this.lastI=this.now;
   }else{const b=this.take('step');step=b>0;bonus+=b;}
   const dodge=this.take('dodge');dodged=dodge>0;bonus+=dodge;
   this.casts.set(a.id,{levels,A:this.engine.ctx.A(),wind,finisher,bonus,still,borrowed,perfectBorrow,dodged,step,targets:new Set(),outTargets:new Set(),finished:false,events:new Set(),protecting:new Set(),visuals:new Map()});
@@ -146,6 +146,7 @@ export class WindGiftCombat {
  release(wind:SwordWind){
   const c=this.casts.get(wind.attack.id);if(!c||!this.port.active()||this.released.has(wind.releaseId)||wind.leg!=='out')return;
   this.released.add(wind.releaseId);if(this.released.size>128)this.released.delete(this.released.values().next().value!);
+  this.rhythm=wind.attack.start-this.lastI>1000?1:this.rhythm+1;this.lastI=wind.attack.start;
   this.releasedOrdinal++;let ratio=this.releasedOrdinal%4===0?this.value('echoWind',c.levels):0;
   for(const id of ['longEdge','broadWind'] as const)if(this.value(id,c.levels))this.visual(id,wind.origin,{direction:wind.direction,giftPhase:'release'});
   if(c.perfectBorrow&&this.combo('borrowedBlade',c.levels))ratio+=.4*this.combo('borrowedBlade',c.levels);

@@ -119,6 +119,7 @@ export type Attack = {
   delivery?: "blade" | "wind";
   sourceContactId?: string;
   released?:boolean;
+  fireInterval?:number;
   swordWind?:SwordWindConfig;
   windDirection?:{x:number;y:number};
   id: number;
@@ -248,6 +249,10 @@ export class CombatController {
   windHeld=false;
   windAuto=false;
   pendingWindAuto=false;
+  // 发射等待不占动作预约；任何动作清理都不能清除此截止时间。
+  windFireUntil=0;
+  windReleaseHistory:{id:number;at:number;interval:number}[]=[];
+  windReservation:{at:number;automatic:boolean;held?:boolean}|null=null;
   resolveWindAim?: (p:{x:number;y:number},config:SwordWindConfig)=>{direction:{x:number;y:number};facing:Facing;target:string}|null;
   pendingKind: "attack" | "wind" = "attack";
   momentumWindow=0;
@@ -311,6 +316,7 @@ export class CombatController {
     if(this.actionHistory.length>96)this.actionHistory.shift();
   }
   clearInputs(reason?:string,now=0) {
+    this.windReservation=null;
     this.windHeld=false;this.windAuto=false;
     if(reason){
       if(this.pending)this.recordAction('attack',this.requestedAt,now,this.bufferUntil,`已清理：${reason}`,undefined,now);
@@ -485,6 +491,7 @@ export class CombatController {
     if(this.autoCounter)boundaries.push(this.autoCounter.at);
     if(this.parryPending) boundaries.push(this.parryLegalAt(now),this.parryPending.until);
     if(this.pending) boundaries.push(this.requestedAt,this.bufferUntil);
+    if(this.windReservation||this.windHeld)boundaries.push(this.windFireUntil-SWORD_WIND.strike.windup);
     if(this.dashPending) boundaries.push(this.dashLegalAt(now),this.dashPending.until);
     if(this.parry)boundaries.push(this.parry.actionUntil,this.parry.start+PARRY.precise+(this.parry.precisionBonus??this.parryPrecisionBonus),this.parry.start+PARRY.active);
     boundaries.push(this.dashUntil,this.dashStart+COMBAT.dash.invulnStart,this.dashStart+COMBAT.dash.invulnEnd,this.regenUntil,
@@ -492,6 +499,7 @@ export class CombatController {
     return Math.min(...boundaries.filter(t=>t>now+1e-7));
   }
   reset(cooldown = 0) {
+    this.windFireUntil=0;this.windReservation=null;this.windReleaseHistory=[];
     this.chainOwner=null;
     this.windHeld=false;this.windAuto=false;this.momentum=null;this.momentumUsedCombo=-1;
     this.parry = null;
@@ -530,13 +538,12 @@ export class CombatController {
   requestSwordWind(now:number,automatic=this.windAuto) {
     if(!this.swordWindEnabled||this.hurting(now)||this.pending)return false;
     if(this.dashUntil-now>COMBAT.dashAttackTail)return false;
-    const legal=this.attack?this.attack.start+strikeDuration(attackConfig(this.attack)):now;
-    // 单个预约在当前动作结束时消费，按住只生成下一次，不累计补发。
-    this.pending=true;this.pendingKind='wind';this.pendingWindAuto=automatic;this.requestedAt=now;
-    this.reservationOwner=null;this.bufferUntil=Math.max(now,legal,this.actionLockUntil,this.dashUntil)+COMBAT.buffer;
+    if(this.windReservation)return false;
+    this.windReservation={at:now,automatic};
     return true;
   }
   requestAttack(now: number) {
+    this.windReservation=null;
     if(this.hurting(now)){this.lastRejection="受击恢复中";this.recordAction('attack',now,this.actionLockUntil,now+COMBAT.buffer,this.lastRejection);return;}
     if (this.pending && now > this.bufferUntil) this.clearAttackReservation('缓冲到期',now);
     if(this.pending){this.lastRejection='已有同实例预约';this.recordAction('attack',now,now,now,this.lastRejection);return;}
@@ -696,22 +703,28 @@ export class CombatController {
   ) {
     // 按事件时刻推进：请求到达、可衔接、结束、到期，等于到期仍合法。
     let cursor = prev;
+    let windStarted=false;
     for (let guard = 0; guard < 8; guard++) {
       if(this.momentum&&cursor>this.momentum.until)this.momentum=null;
-      if(this.windHeld&&!this.attack&&!this.pending&&!this.parryPending&&!this.dashPending&&!this.autoCounter&&cursor>=this.dashUntil&&cursor>=this.actionLockUntil)this.requestSwordWind(cursor);
+      if(!this.windHeld&&this.windReservation?.held)this.windReservation=null;
+      if(!windStarted&&this.windHeld&&!this.windReservation&&!this.attack&&!this.pending&&!this.parryPending&&!this.dashPending&&!this.autoCounter&&cursor>=this.dashUntil&&cursor>=this.actionLockUntil){if(this.requestSwordWind(cursor))this.windReservation!.held=true;}
       const a = this.attack;
       if(this.pending && this.reservationOwner!==null && this.reservationOwner!==(a?.id??this.chainOwner))this.clearAttackReservation('所属攻击已失效',cursor);
       if(this.pending && !a && this.reservationOwner!==null && cursor>this.chainUntil)this.clearAttackReservation('连段窗口到期',cursor);
       const end = a ? a.start + this.total(a.stage) : Infinity;
       const legal = a ? end - (this.pendingKind==='attack'&&a.kind!=='swordWind'&&a.stage < this.maxStage ? COMBAT.chainWindow : 0) : cursor;
       const auto = this.autoCounter;
+      const reservation=!windStarted?this.windReservation:null;
+      const windStart=this.swordWindEnabled && !this.hurting(cursor) && reservation && !this.pending && !auto && !this.parryPending && !this.dashPending
+        ? Math.max(cursor,reservation.at,a?end:cursor,this.actionLockUntil,this.dashUntil,this.windFireUntil-SWORD_WIND.strike.windup)
+        : Infinity;
       const startAt = auto && !this.parryPending && !this.dashPending
         ? Math.max(cursor,auto.at,this.actionLockUntil,this.dashUntil)
         : this.pending && !this.parryPending && !this.dashPending
         ? Math.max(cursor, this.requestedAt, legal, this.actionLockUntil, this.dashUntil)
         : Infinity;
-      const consumeAt = auto || startAt <= this.bufferUntil ? startAt : Infinity;
-      const stop = Math.min(now, end, consumeAt);
+      const consumeAt = Math.min(auto || startAt <= this.bufferUntil ? startAt : Infinity,windStart);
+      const stop = Math.min(now, end, consumeAt, a && isWindAttack(a) && !a.released ? a.start+attackConfig(a).windup : Infinity);
       if (a) {
         const m = attackConfig(a);
         const timing=sampleAttackTiming(cursor,a.start,m.windup,m.active,m.recovery);
@@ -731,7 +744,16 @@ export class CombatController {
             }
         };
         if (stop >= from && cursor < until) {
-          if(isWindAttack(a) && !a.released) {a.released=true;released(a,{...p},from);}
+          if(isWindAttack(a) && !a.released) {
+            a.released=true;
+            if(a.kind==='swordWind'){
+              const interval=a.fireInterval??a.swordWind?.fireInterval??SWORD_WIND.fireInterval;
+              this.windFireUntil=from+interval;
+              this.windReleaseHistory.push({id:a.id,at:from,interval});
+              if(this.windReleaseHistory.length>32)this.windReleaseHistory.shift();
+            }
+            released(a,{...p},from);
+          }
           if (!a.sounded) {
             a.sounded = true;
             swung(a.stage);
@@ -761,9 +783,10 @@ export class CombatController {
           this.settleUntil = this.readyUntil + COMBAT.settle;
         }
       }
-      if (consumeAt <= now && consumeAt <= end) {
+      if (consumeAt <= stop && consumeAt <= end) {
         const counter = auto?.kind;
-        const wind=!counter&&this.pendingKind==='wind';
+        const wind=!counter&&consumeAt===windStart;
+        if(wind){this.pendingWindAuto=reservation!.automatic;this.windReservation=null;windStarted=true;}
         const retained=!counter&&!wind&&this.momentum&&consumeAt<=this.momentum.until?this.momentum:null;
         const stage = counter||wind ? 1 : retained?retained.stage : a
           ? a.kind!=='swordWind'&&a.stage < this.maxStage
@@ -773,7 +796,8 @@ export class CombatController {
             ? this.nextStage
             : 1;
         if(!auto)this.pending = false;
-        if(!auto)this.recordAction('attack',this.requestedAt,consumeAt,this.bufferUntil,'已执行',consumeAt);
+        if(wind)this.recordAction('wind',reservation!.at,consumeAt,consumeAt,'已执行',consumeAt);
+        else if(!auto)this.recordAction('attack',this.requestedAt,consumeAt,this.bufferUntil,'已执行',consumeAt);
         const windAim=wind&&this.pendingWindAuto?this.resolveWindAim?.(p,this.swordWindConfig??resolveSwordWindConfig()):null;
         const attackFacing=windAim?.facing??auto?.facing??(this.intentAim?this.intentFacing:facing);
         const [ax,ay]=facingVector(attackFacing);
@@ -800,6 +824,7 @@ export class CombatController {
           counter,
           config: wind?{...SWORD_WIND.strike}:resolveStrike(stage, counter),
           swordWind:wind?structuredClone(this.swordWindConfig??resolveSwordWindConfig()):undefined,
+          fireInterval:wind?(this.swordWindConfig?.fireInterval??SWORD_WIND.fireInterval):undefined,
         };
         if(retained?.chase){
           const [x,y]=attackVector(this.attack);
@@ -853,6 +878,10 @@ export class CombatController {
   diagnostic(now: number) {
     const m = this.attack ? attackConfig(this.attack) : null;
     return {
+      windFireInterval:this.swordWindConfig?.fireInterval??SWORD_WIND.fireInterval,
+      windFireRemaining:Math.max(0,this.windFireUntil-now),
+      windReservation:this.windReservation,
+      windReleases:this.windReleaseHistory,
       windHeld:this.windHeld,meleeFinisherEnabled:this.meleeFinisherEnabled,
       momentum:this.momentum&&now<=this.momentum.until?{...this.momentum,remaining:this.momentum.until-now}:null,
       actionKind:this.attack?.kind??null,isFinisher:!!this.attack?.isFinisher,

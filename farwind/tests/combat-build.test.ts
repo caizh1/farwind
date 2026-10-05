@@ -68,7 +68,7 @@ describe('无槽永久本领与动作来源',()=>{
  });
  it('剑风在第一输入独立发射，无近战充能、无体力消耗，可持续单体施放',()=>{
   const a=arena();a.c.windHeld=true;a.c.requestSwordWind(0);for(let t=0;t<10000;t+=5)a.tick(t,t+5);
-  expect(a.releases.length).toBe(25);expect(a.hits).toHaveLength(0);expect(a.p.stamina).toBe(100);expect(a.starts.every(x=>x.kind==='swordWind'&&!x.isFinisher)).toBe(true);
+  expect(a.releases.length).toBe(13);expect(a.hits).toHaveLength(0);expect(a.p.stamina).toBe(100);expect(a.starts.every(x=>x.kind==='swordWind'&&!x.isFinisher)).toBe(true);
   expect(swordWindVisual(3,110,attackConfig(a.starts[0])).texture).toBe('hero-sword-wind');
  });
  it('松开、失焦或界面清理不累积补发，受击清理，取消不重复释放',()=>{
@@ -84,7 +84,7 @@ describe('无槽永久本领与动作来源',()=>{
   i.request('wind');expect(i.drain()[0].kind).toBe('wind');i.keyDown('i');i.clear();expect(i.windHeld()).toBe(false);
  });
  it.each([5,16,33,50])('同时间线步长%s的独立施放次数和释放时间一致',step=>{
-  const a=arena();a.c.windHeld=true;for(let t=0;t<2400;t+=step)a.tick(t,Math.min(2400,t+step));expect(a.releases.map(x=>x.start)).toEqual([0,400,800,1200,1600,2000]);
+  const a=arena();a.c.windHeld=true;for(let t=0;t<2400;t+=step)a.tick(t,Math.min(2400,t+step));expect(a.releases.map(x=>x.start)).toEqual([0,800,1600]);
  });
 });
 describe('续势的有限连段保留',()=>{
