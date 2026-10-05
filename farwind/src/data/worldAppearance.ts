@@ -9,6 +9,10 @@ export const ART_QUALITY = {
   shadow: {x: .48, y: .27, building: .26, tree: .28, contact: .32},
   decorations: ['flowers-white','flowers-gold','flowers-pink','shrub-one','shrub-two','shrub-three'],
 } as const;
+// 低矮叶丛和花坛贴地生长，只画根部接触影，不能按建筑高度拉出悬空投影。
+export function lowPlantTexture(texture:string) {
+  return ['bush','herb','berry','herb-bed','orchard-flower-bed'].includes(texture)||/^quality-(shrub-|flowers-)/.test(texture);
+}
 export function appearanceSeed(value: string) {
   let seed=2166136261;
   for(const letter of value)seed=Math.imul(seed^letter.charCodeAt(0),16777619)>>>0;
@@ -21,7 +25,7 @@ export function appearanceFor(p: Prop, natural?: {width:number;height:number}) {
     height=Math.max(p.h*.88,Math.min(p.h*1.28,p.w*natural.height/natural.width));
   if(p.art==='bush'){
     texture=`quality-shrub-${['one','two','three'][seed%3]}`;
-    width=p.w*(.92+(seed%9)*.02);height=p.h*(.9+(seed%7)*.035);
+    width=p.w*(.92+(seed%9)*.02);height=Math.min(p.h*(.9+(seed%7)*.035),width*.55);
   }
   if(p.id==='plaza-fountain'){width=140;height=168;}
   const nest=Object.values(CAMP_NESTS).find(n=>n.texture===p.art);

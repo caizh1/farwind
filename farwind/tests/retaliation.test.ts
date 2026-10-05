@@ -1,7 +1,7 @@
 import {afterEach,beforeEach,describe,expect,it} from 'vitest';
 import {mkdirSync,writeFileSync} from 'node:fs';
 import {ENCOUNTERS} from '../src/data/maps/windbell/encounters';
-import {RETALIATION_ROUTES,harassmentChance,raidUnitProfile} from '../src/data/demonKing';
+import {RETALIATION_ROUTES,RETALIATION_COMPOSITIONS,harassmentChance,raidUnitProfile} from '../src/data/demonKing';
 import {RAID_GATES,RAID_TIMING,GUARD_ARMOR} from '../src/data/defense';
 import {validOutdoorPoint} from '../src/data/maps/windbell/bounds';
 import {syncMapGeometry} from '../src/data/world';
@@ -20,11 +20,11 @@ function clear(s:State,id=camps[0].id){
 }
 beforeEach(()=>syncMapGeometry(true));afterEach(()=>syncMapGeometry(false));
 describe('据点陷落与魔王报复闭环',()=>{
- it('第一处陷落立刻派出十名一阶镰灵，第二处派出十名更强的二阶镰灵',()=>{
+ it('两次陷落派出固定十人混合编队，阶数按物种成长',()=>{
   let s=initialState();clear(s);s=validate(retaliationWarningSnapshot(s));
   const first=structuredClone(s.defense.raid!);
   expect(first.order).toMatchObject({retaliationLevel:1});
-  expect(first.members.every(m=>m.type==='leaf'&&m.eliteLevel===1&&m.hp===94)).toBe(true);
+  expect(first.members.map(m=>m.type)).toEqual(RETALIATION_COMPOSITIONS[0]);expect(first.members.every(m=>m.eliteLevel===1&&m.hp===raidUnitProfile(m.type,1,2).maxHP)).toBe(true);
   expect(raidUnitProfile('leaf',1).damage).toBe(22);
   clear(s,camps[1].id);expect(s.defense.raid).toEqual(first);
   new EastDefense(s.defense,0).finish();expect(s.defense.cooldownMs).toBeGreaterThan(0);
@@ -32,7 +32,7 @@ describe('据点陷落与魔王报复闭环',()=>{
    writeFileSync('.retaliation-local/second-wave-save.json',JSON.stringify({...s,player:{...s.player,x:1920,y:1080},demonKing:{...s.demonKing,introduced:true},说明:'固定验收样本：两处据点已完整清剿，第一波报复已结算，第二波尚未出发。通过正式导入验证新版二阶镰灵，不代表从新游戏实际清剿。'},null,2));}
   expect(mayStartRetaliation(s)).toBe(true);s=validate(retaliationWarningSnapshot(s));
   expect(s.defense.raid!.order).toMatchObject({retaliationLevel:2});
-  expect(s.defense.raid!.members.every(m=>m.type==='leaf'&&m.eliteLevel===2&&m.hp===115)).toBe(true);
+  expect(s.defense.raid!.members.map(m=>m.type)).toEqual(RETALIATION_COMPOSITIONS[1]);expect(s.defense.raid!.members.every(m=>m.eliteLevel===2&&m.hp===raidUnitProfile(m.type,2,2).maxHP)).toBe(true);
   expect(raidUnitProfile('leaf',2).damage).toBe(26);
  });
  it('仅完整据点触发，首夜白天和初始冷却均不阻止报复',()=>{
@@ -57,7 +57,7 @@ describe('据点陷落与魔王报复闭环',()=>{
    s=validate(retaliationWarningSnapshot(s));expect(s.defense.raid!.sequence).toBe(i+2);
    expect(s.defense.raid!.order!.retaliationCamp).toBe(camps[i].id);
    expect(s.defense.raid!.order!.retaliationLevel).toBe(i+1);
-   expect(s.defense.raid!.members.every(m=>m.type==='leaf'&&m.eliteLevel===i+1)).toBe(true);
+   expect(s.defense.raid!.members.map(m=>m.type)).toEqual(RETALIATION_COMPOSITIONS[i]);expect(s.defense.raid!.members.every(m=>m.eliteLevel===i+1)).toBe(true);
    const frozen=structuredClone(s.defense.raid);expect(()=>retaliationWarningSnapshot(s)).toThrow();expect(s.defense.raid).toEqual(frozen);
    new EastDefense(s.defense,0).finish();s=parseSave(JSON.stringify(s));
   }
@@ -98,12 +98,12 @@ describe('据点陷落与魔王报复闭环',()=>{
  });
  it.each(['warning','approach'] as const)('旧十只史莱姆的%s存档保持伤亡，后续第二波使用新版精英',phase=>{
   let s=initialState();clear(s);s=retaliationWarningSnapshot(s);const old=s.defense.raid!;
-  delete old.order!.retaliationLevel;old.phase=phase;
+  delete old.order!.retaliationLevel;old.order!.profileVersion=1;old.phase=phase;
   old.members.forEach((m,i)=>Object.assign(m,{type:'slime',eliteLevel:0,hp:i===0?13:i===1?0:48}));
   s=parseSave(JSON.stringify(s));expect(s.defense.raid).toEqual(old);
   const d=new EastDefense(s.defense,0);if(phase==='approach')expect(d.enemies.map(e=>[e.type,e.hp,e.maxHP])).toEqual(old.members.map(m=>['slime',m.hp,48]));
   d.finish();clear(s,camps[1].id);s=validate(retaliationWarningSnapshot(s));
-  expect(s.defense.raid!.members.every(m=>m.type==='leaf'&&m.eliteLevel===2&&m.hp===115)).toBe(true);
+  expect(s.defense.raid!.members.map(m=>m.type)).toEqual(RETALIATION_COMPOSITIONS[1]);expect(s.defense.raid!.members.every(m=>m.eliteLevel===2&&m.hp===raidUnitProfile(m.type,2,2).maxHP)).toBe(true);
  });
  it.each([1,2])('第%s波的实际攻击伤害与血条、保存恢复共用同一精英配置',level=>{
   let s=initialState();clear(s);s=retaliationWarningSnapshot(s);

@@ -1,18 +1,43 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
+import {mkdirSync,writeFileSync} from 'node:fs';
 import sharp from "sharp";
 import { dialoguePortraitFor, dialoguePortraits } from "../src/data/dialoguePortraits";
+import additions from '../src/data/dialoguePortraitExpansion.json';
+import {GUARD_DEFS} from '../src/data/defense';
+import {CITY_CITIZENS} from '../src/data/cityLayout';
+import {MERCHANTS} from '../src/data/merchantRoad';
+import {cityInteractionComplete} from '../src/game/ui/city';
 import { props } from "../src/data/world";
 import { interact } from "../src/game/systems/interactions";
-import { add, count, initialState } from "../src/game/systems/state";
+import { add, count, initialState, validate } from "../src/game/systems/state";
 import type { World } from "../src/game/scenes/World";
 
 describe("独立立绘与资源边界", () => {
   it("已登记身份各用独立立绘，文本和未知标识不借用别人的脸", () => {
     expect(new Set(Object.values(dialoguePortraits).map(p => p.src)).size).toBe(Object.keys(dialoguePortraits).length);
-    for (const id of ["sign", "rune", "cat", "unknown", "__proto__", "constructor", "小满", ""])
+    for (const id of ["sign", "rune", "unknown", "__proto__", "constructor", "小满", ""])
       expect(dialoguePortraitFor(id)).toBeUndefined();
+  });
+  it('正式人物名册全部覆盖，非人物内容不借用职业脸',()=>{
+    const ids=[...GUARD_DEFS.map(g=>g.id),...CITY_CITIZENS.map(c=>c.id==='captain'?'captain':'city-'+c.id),...MERCHANTS.map(m=>m.id),'road-guard','city-visitor','demon-king','cat'];
+    for(const id of ids)expect(dialoguePortraitFor(id),id).toBeDefined();
+    for(const id of ['road-nest-marker','road-parcel','guard-memorial','city-board'])expect(dialoguePortraitFor(id)).toBeUndefined();
+    expect(new Set(additions.map(p=>p.id)).size).toBe(additions.length);
+  });
+  it('所有新增立绘具有透明安全边、实体像素及完整资源登记',async()=>{
+    const manifest=JSON.parse(await readFile('public/assets/manifest.json','utf8'));
+    for(const p of additions){
+      const portrait=dialoguePortraitFor(p.id)!;
+      const metadata=await sharp('public'+portrait.src).metadata();
+      expect([metadata.width,metadata.height,metadata.hasAlpha],p.id).toEqual([768,1152,true]);
+      const {data,info}=await sharp('public'+portrait.src).ensureAlpha().raw().toBuffer({resolveWithObject:true});
+      let clear=0,opaque=0;for(let i=3;i<data.length;i+=4){if(data[i]===0)clear++;if(data[i]>250)opaque++;}
+      expect(clear/(info.width*info.height),p.id).toBeGreaterThan(.1);expect(opaque/(info.width*info.height),p.id).toBeGreaterThan(.15);
+      for(let x=0;x<info.width;x++)expect(data[x*4+3],p.id).toBe(0);
+      expect(manifest.资源.find((e:any)=>e.ID===`dialogue-${p.id}-neutral`),p.id).toMatchObject({文件:`portraits/${p.id}-neutral.webp`,尺寸:[768,1152],透明通道:true,动画:null});
+    }
   });
   for (const id of ["healer", "elder", "carpenter"] as const) {
     it(`${id}：运行素材尺寸、透明通道与登记一致`, async () => {
@@ -57,6 +82,28 @@ function talk(world: ReturnType<typeof fixture>, id: string) {
 describe("立绘展示参数不增加任务副作用", () => {
   beforeEach(() => vi.stubGlobal("document", { createElement: () => ({ textContent: "", onclick: null }) }));
   afterEach(() => vi.unstubAllGlobals());
+  it('实机立绘固定样本通过正式存档校验',()=>{
+    const folder='docs/dialogue-portraits/expansion/fixtures';mkdirSync(folder,{recursive:true});
+    for(const id of ['herbalist','apprentice-a']){
+      const s=initialState(),c=CITY_CITIZENS.find(c=>c.id===id)!;
+      const post=id==='herbalist'?{x:810,y:660}:{x:650,y:700};
+      s.life.playerSpace=c.home;Object.assign(s.player,{x:post.x,y:post.y+50});
+      Object.assign(s.city.progress.residents.find(r=>r.id===id)!,{space:c.home,...post});
+      const valid=validate(s);expect(valid.life.playerSpace).toBe(c.home);
+      writeFileSync(`${folder}/city-${id}.json`,JSON.stringify({说明:'固定初始能力样本，仅将主角与对应居民定位到其真实室内。用于正式导入后按E交谈与立绘校对，不作为自然进城证据。',...valid},null,2));
+    }
+    const s=initialState();Object.assign(s.player,{x:280,y:1490});writeFileSync(`${folder}/village-guard.json`,JSON.stringify({说明:'初始能力固定样本，仅将主角定位到西门巡卫鹿宁附近。用于真实E交谈，不改变守军生命或任务。',...validate(s)},null,2));
+  });
+  it('城市具名居民与赶集访客传递真实身份，只交谈不推进委托',()=>{
+    for(const c of CITY_CITIZENS.filter(c=>c.id!=='captain')){
+      const w=fixture(),before=structuredClone(w.state),target={id:'city-resident:'+c.id,art:'',x:0,y:0,w:0,h:0,kind:'npc' as const};
+      cityInteractionComplete(w as unknown as World,target);
+      expect(w.ui.dialog).toHaveBeenCalledWith(c.name,expect.any(String),'city-'+c.id,undefined,expect.objectContaining({choices:[]}));
+      expect(w.state).toEqual(before);
+    }
+    const w=fixture();cityInteractionComplete(w as unknown as World,{id:'city-resident:visitor-9',art:'',x:0,y:0,w:0,h:0,kind:'npc'});
+    expect(w.ui.dialog.mock.calls.at(-1)?.[2]).toBe('city-visitor');
+  });
   it("药师只交谈不自动兑换，保留立绘来源与明确服务入口", () => {
     const w = fixture();
     w.state.quest = 2;

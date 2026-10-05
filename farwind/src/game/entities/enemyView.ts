@@ -4,10 +4,10 @@ import {enemyAttackSpace,type EnemyBody} from '../systems/enemy';
 import {CampBossView} from './campBossView';
 import Phaser from 'phaser';
 import {creatureMaxHP} from '../../data/maps/windbell/elites';
-import {ENEMIES,enemyProfile,enemyKind,enemyArt} from '../../data/enemies';
+import {ENEMIES,enemyProfile,enemyKind,enemyArt,enemyFootOrigin,enemyFrameBottom} from '../../data/enemies';
 import {BOSS_PROJECTILES} from '../../data/maps/windbell/campBosses';
 import {EnemyAnimation,type AnimatedEnemy,type EnemyPose} from '../systems/enemyAnimation';
-import {sampleEnemyAttack,type EnemyAttack,SPORE,sporeDirections,sporeOrigin} from '../systems/enemyAttack';
+import {sampleEnemyAttack,type EnemyAttack,SPORE,projectileProfile,sporeDirections,sporeOrigin} from '../systems/enemyAttack';
 import type {EnemyProjectiles} from '../systems/enemyProjectiles';
 import {Actor} from './actor';
 import {WARNING,drawDanger,previewWarning,projectileWarning,warningProgress} from './attackWarningView';
@@ -42,7 +42,10 @@ export class EnemyView {
   }
   constructor(public scene:Phaser.Scene){this.spawnInk=scene.add.graphics().setDepth(WARNING.floor+2);this.warningFill=scene.add.graphics().setDepth(WARNING.floor);this.boss=new CampBossView(scene);this.bars=scene.add.graphics().setDepth(8997);this.shotTrails=scene.add.graphics().setDepth(8995);
     // 纹理每场景只生成一次；拖尾共用画布，不在每帧新建粒子或图形对象。
-    if(!scene.textures.exists('archer-projectile')){const ink=scene.add.graphics();ink.lineStyle(7,0x293b2c,1).lineBetween(8,24,40,24).lineStyle(3,0xede2ae,1).lineBetween(8,24,40,24).fillStyle(0xdaf5d4,1).fillTriangle(44,24,32,18,32,30).lineStyle(2,0x759466,1).lineBetween(7,18,16,24).lineBetween(7,30,16,24);ink.generateTexture('archer-projectile',48,48);ink.destroy();}
+    const spore=scene.textures.get('spore-projectile');if(!spore.has('core'))spore.add('core',0,76,8,52,52);
+    for(const stronger of [false,true]){const key=stronger?'archer-projectile-strong':'archer-projectile';if(scene.textures.exists(key))continue;
+      const ink=scene.add.graphics();ink.lineStyle(stronger?22:7,0x293b2c,1).lineBetween(8,24,40,24).lineStyle(stronger?14:3,0xede2ae,1).lineBetween(8,24,40,24).fillStyle(0xdaf5d4,1).fillTriangle(44,24,stronger?26:32,stronger?6:18,stronger?26:32,stronger?42:30).lineStyle(2,0x759466,1).lineBetween(7,18,16,24).lineBetween(7,30,16,24);ink.generateTexture(key,48,48);ink.destroy();
+    }
     for(const [kind,s] of Object.entries(BOSS_PROJECTILES)){const key='boss-projectile-'+kind;if(scene.textures.exists(key))continue;
       const ink=scene.add.graphics(),c=s.size/2;ink.fillStyle(s.color,.23).fillCircle(c,c,c);
       if(kind==='spore-heart')ink.fillStyle(s.outline,1).fillCircle(c,c,SPORE.radius).fillStyle(s.color,1).fillCircle(c,c,11.5).lineStyle(1,s.core,.9).strokeCircle(c,c,10).fillStyle(s.core,1).fillCircle(c+2,c-2,5);
@@ -61,7 +64,7 @@ export class EnemyView {
     if(bomb){drawDanger(ink,this.warningFill,{kind:'circle',a:root,b:root,radius:FUNGAL.blastRadius},warningProgress(attack.activeUntil,attack.bombAt!,now),true);return;}
     const progress=warningProgress(attack.startedAt,attack.contactAt,now);
     if(['spore','archer'].includes(attack.type)){
-      for(const d of sporeDirections(attack))drawDanger(ink,this.warningFill,projectileWarning(sporeOrigin(root,d),d,SPORE.speed*SPORE.life/1000),progress);
+      const profile=projectileProfile(attack);for(const d of sporeDirections(attack))drawDanger(ink,this.warningFill,projectileWarning(sporeOrigin(root,d),d,profile.distance,profile.radius),progress);
       return;
     }
     const space='homeX' in root?enemyAttackSpace(root as EnemyBody):undefined;
@@ -78,8 +81,10 @@ export class EnemyView {
     const lift=attack&&!attack.cancelled&&pose.action==='attack'?sampleEnemyAttack(attack,now,body).offset.y:0;
     const alpha=pose.action==='death'?Math.max(0,1-Math.max(0,pose.elapsed-2000)/400):1;
     const art=enemyArt(kind),scale=profile.height/art.nativeHeight;
-    sprite.setTexture(['archer','bell','shade','geomancer'].includes(kind)?`enemy-hd-${kind}`:`enemy-${kind}`,['archer','bell','shade','geomancer'].includes(kind)?'down/idle':pose.frame).setOrigin(.5,art.originY).setDisplaySize(art.frameWidth*scale,art.frameHeight*scale)
+    sprite.setTexture(['archer','bell','shade','geomancer'].includes(kind)?`enemy-hd-${kind}`:`enemy-${kind}`,['archer','bell','shade','geomancer'].includes(kind)?'down/idle':pose.frame).setOrigin(.5,enemyFootOrigin(kind,pose.frame)).setDisplaySize(art.frameWidth*scale,art.frameHeight*scale)
       .setPosition(body.x,body.y+lift).setDepth(body.y).setRotation(0).setAlpha(alpha).setVisible(alpha>0).clearTint();
+    const bottom=enemyFrameBottom(kind,pose.frame);
+    if(bottom!==undefined)sprite.setCrop(0,0,art.frameWidth,bottom);else sprite.setCrop();
     if(['archer','bell','shade','geomancer'].includes(kind)){
       const dir=pose.facing===0?'down':pose.facing===1?'up':'right',action=pose.action==='walk'?`walk/${pose.index%2}`:pose.action==='attack'?pose.phase==='active'?'strike':pose.phase==='recovery'?'recover':'charge':'idle',name=`${dir}/${action}`,atlas=this.scene.cache.json.get(`enemy-hd-index-${kind}`) as BossAtlas,frame=atlas?.frames[name];
       if(frame&&this.scene.textures.exists(`enemy-hd-${kind}`)){
@@ -116,14 +121,14 @@ export class EnemyView {
   projectile(system:EnemyProjectiles,now:number,visible:boolean){
     this.shotTrails.clear();
     const ids=new Set(system.shots.map(s=>s.id));for(const [id,im] of this.shots)if(!ids.has(id)){im.destroy();this.shots.delete(id);}
-    for(const s of system.shots){let im=this.shots.get(s.id);if(!im){im=this.scene.add.image(s.x,s.y-28,'spore-projectile');this.shots.set(s.id,im);const source=im;groundShadows(this.scene).add(source,undefined,{label:'飞行弹体',width:18,height:7,projection:false,root:()=>({x:source.x,y:source.y+28,depth:source.y+27.5}),visible:()=>source.visible&&source.texture.key!=='spore-burst'});}
+    for(const s of system.shots){let im=this.shots.get(s.id);if(!im){im=this.scene.add.image(s.x,s.y-28,'spore-projectile');this.shots.set(s.id,im);const source=im;groundShadows(this.scene).add(source,undefined,{label:'飞行弹体',width:s.attack.combatTier?projectileProfile(s.attack).radius*1.7:18,height:7,projection:false,root:()=>({x:source.x,y:source.y+28,depth:source.y+27.5}),visible:()=>source.visible&&source.texture.key!=='spore-burst'});}
       const burst=s.state==='burst',u=burst?Math.min(1,(now-(s.burstAt??now))/SPORE.burst):0;
-      const needle=s.attack.type==='archer',style=BOSS_PROJECTILES[s.attack.boss as keyof typeof BOSS_PROJECTILES],size=style?style.size+u*30:burst?28+u*30:needle?36:20;
-      im.setTexture(style?'boss-projectile-'+s.attack.boss:!burst&&needle?'archer-projectile':burst?'spore-burst':'spore-projectile').setPosition(s.x,s.y-28).setDepth(style?8995:s.y+1).setDisplaySize(size,size)
+      const profile=projectileProfile(s.attack),needle=s.attack.type==='archer',style=BOSS_PROJECTILES[s.attack.boss as keyof typeof BOSS_PROJECTILES],size=style?style.size+u*30:burst?28+u*30:needle?profile.needleSize:profile.size;
+      im.setTexture(style?'boss-projectile-'+s.attack.boss:!burst&&needle?(s.attack.combatTier?'archer-projectile-strong':'archer-projectile'):burst?'spore-burst':'spore-projectile',!style&&!burst&&!needle&&s.attack.combatTier?'core':undefined).setPosition(s.x,s.y-28).setDepth(style?8995:s.y+1).setDisplaySize(size,size)
         .setRotation(burst?0:Math.atan2(s.attack.direction.y,s.attack.direction.x)).setAlpha(1-u).setVisible(visible);
       if(s.deflected)im.setTint(0xc8fff2);else im.clearTint();
-      if(style&&visible&&!burst){const d=s.attack.direction,p={x:s.x-d.x*27,y:s.y-28-d.y*27},color=s.deflected?0xc8fff2:style.color;
-        this.shotTrails.lineStyle(8,style.outline,.7).lineBetween(p.x,p.y,s.x,s.y-28).lineStyle(4,color,.9).lineBetween(p.x,p.y,s.x,s.y-28).lineStyle(1.5,style.core,.9).lineBetween(p.x,p.y,s.x,s.y-28);
+      if(visible&&!burst){const palette=style??{outline:0x293b2c,color:0xb6d689,core:0xffefb2},d=s.attack.direction,p={x:s.x-d.x*27,y:s.y-28-d.y*27},color=s.deflected?0xc8fff2:palette.color;
+        this.shotTrails.lineStyle(8,palette.outline,.7).lineBetween(p.x,p.y,s.x,s.y-28).lineStyle(4,color,.9).lineBetween(p.x,p.y,s.x,s.y-28).lineStyle(1.5,palette.core,.9).lineBetween(p.x,p.y,s.x,s.y-28);
       }
     }
   }

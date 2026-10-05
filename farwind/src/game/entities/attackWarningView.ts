@@ -1,3 +1,4 @@
+import {projectilePathClear} from '../systems/projectileGeometry';
 import type Phaser from 'phaser';
 import {WORLD} from '../../data/world';
 import {BOSS_RULES} from '../../data/maps/windbell/campBosses';
@@ -12,11 +13,11 @@ type Shape=AttackGeometry&{outline?:Point[]};
 const unit=(n:number)=>Math.max(0,Math.min(1,n));
 export const warningProgress=(start:number,contact:number,now:number)=>unit((now-start)/Math.max(1,contact-start));
 
-export function projectileWarning(root:Point,d:Point,length:number):Shape{
+export function projectileWarning(root:Point,d:Point,length:number,radius:number=SPORE.radius):Shape{
   const end=(u:number)=>({x:root.x+d.x*length*u,y:root.y+d.y*length*u});
   let reach=1;
-  if(!clearMeleeLine(root,end(1))){let lo=0,hi=1;for(let i=0;i<18;i++){const mid=(lo+hi)/2;if(clearMeleeLine(root,end(mid)))lo=mid;else hi=mid;}reach=lo;}
-  return {a:{...root},b:end(reach),radius:SPORE.radius};
+  if(!projectilePathClear(root,end(1),radius)){let lo=0,hi=1;for(let i=0;i<18;i++){const mid=(lo+hi)/2;if(projectilePathClear(root,end(mid),radius))lo=mid;else hi=mid;}reach=lo;}
+  return {a:{...root},b:end(reach),radius};
 }
 
 // 只推进副本，沿用正式冲撞的地形、家园边界与岩柱约束，不改攻击或敌人位置。

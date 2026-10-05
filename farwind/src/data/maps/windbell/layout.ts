@@ -396,8 +396,8 @@ export const SERVICE_SIGNS = [
   {
     id: "barracks-sign",
     building: "barracks-building",
-    name: "风铃营房",
-    point: buildingLot("barracks-building").door,
+    name: "风铃营房 · 卫队事务",
+    point: { x: buildingLot("barracks-building").door.x + 70, y: buildingLot("barracks-building").door.y + 55 },
   },
 ] as const;
 
@@ -620,3 +620,6 @@ export const PLANNED_POIS = [
     purpose: "两阶段章节首领、明确重试入口与胜后返村结算",
   },
 ] as const;
+
+// 营房西南纪念碑，保留南侧可达的交互站位。
+export const GUARD_MEMORIAL = { x: 1880, y: 780 } as const;

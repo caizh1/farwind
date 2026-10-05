@@ -1,10 +1,11 @@
 import Phaser from 'phaser';
-import {projectShadowPoint,shadowStrength} from './shadowGeometry';
+import {projectShadowPoint,shadowStrength,citySoleContact} from './shadowGeometry';
 import {contactForFrame,paintContact} from './contactContour';
+import {lowPlantTexture} from '../../data/worldAppearance';
 
 type Source=Phaser.GameObjects.Image|Phaser.GameObjects.Sprite|Phaser.GameObjects.Graphics|Phaser.GameObjects.Text;
 type Root={x:number;y:number;depth:number};
-type Options={label?:string;width?:number;height?:number;projection?:boolean;footprint?:boolean;root?:()=>Root;visible?:()=>boolean;surfaceDepth?:()=>number};
+type Options={label?:string;width?:number;height?:number;projection?:boolean;footprint?:boolean;person?:boolean;root?:()=>Root;visible?:()=>boolean;surfaceDepth?:()=>number};
 type ContactTexture={key:string;width:number;height:number};
 type Entry={source:Source;contact:Phaser.GameObjects.Ellipse;soft:Phaser.GameObjects.Image;cast?:Phaser.GameObjects.Mesh2D;footprint?:ContactTexture;options:Options;alpha:number;managed:boolean;cleanup:()=>void};
 const views=new WeakMap<Phaser.Scene,GroundShadows>();
@@ -37,11 +38,13 @@ export class GroundShadows {
     const managed=!contact;
     contact??=this.scene.add.ellipse(source.x,source.y,options.width??48,options.height??16,0x122019,1);
     const soft=this.scene.add.image(0,0,SOFT).setVisible(false);
-    const cast=options.projection!==false&&'frame' in source?
+    const plant='frame' in source&&lowPlantTexture(source.texture.key);
+    // 默认只画柔边接地影；整幅立面斜压会使脚根脱离物体，只供显式对照使用。
+    const cast=options.projection===true&&!plant&&'frame' in source?
       this.scene.add.mesh2d(0,0,source.texture.key,new Array(16).fill(0),[0,1,2,0,0,2,3,0]).setVisible(false):undefined;
     if(cast){const tint=cast as Phaser.GameObjects.Mesh2D&{tint:number;tintMode:Phaser.TintModes};tint.tint=0x122019;tint.tintMode=Phaser.TintModes.FILL;}
     cast?.buildOrderedIndices(0,true);
-    const footprint=options.footprint&&'frame' in source?this.contactTexture(source):undefined;
+    const footprint=(options.footprint||plant)&&'frame' in source?this.contactTexture(source):undefined;
     if(footprint)soft.setTexture(footprint.key).setOrigin(.5,1);
     const e:Entry={source,contact,soft,cast,footprint,options,alpha:contact.alpha||1,managed,cleanup:()=>{}};
     // 占位椭圆仍管理脚根、显隐与飞行缩放；禁用填充，避免透明三角形打断贴图合批。
@@ -58,7 +61,7 @@ export class GroundShadows {
     const shape=contactForFrame(this.scene,source.texture.key,source.frame.name);if(!shape.paths.length)return undefined;
     const size={key:`ground-contact-${this.contacts.size}`,width:Math.ceil(source.displayWidth+16),height:Math.ceil(source.displayHeight+16)};
     const texture=this.scene.textures.createCanvas(size.key,size.width,size.height)!,c=texture.context;
-    c.translate(size.width/2,size.height-8);paintContact(c,shape,source.displayWidth,source.displayHeight);texture.refresh();this.contacts.set(id,size);return size;
+    c.translate(size.width/2,size.height-8);paintContact(c,shape,source.displayWidth,source.displayHeight,lowPlantTexture(source.texture.key));texture.refresh();this.contacts.set(id,size);return size;
   }
   draw() {
     if(!this.enabled){for(const e of this.entries.values()){e.soft.setVisible(false);e.cast?.setVisible(false);}return;}
@@ -66,7 +69,8 @@ export class GroundShadows {
     const strength=shadowStrength(settings.time,settings.indoor),view=this.scene.cameras.main.worldView;
     for(const e of this.entries.values()){
       const {source:s,contact:c,options:o,soft,cast}=e;
-      if(o.footprint&&'frame' in s){
+      const plant='frame' in s&&lowPlantTexture(s.texture.key);
+      if((o.footprint||plant)&&'frame' in s){
         const footprint=this.contactTexture(s);
         if(footprint!==e.footprint){e.footprint=footprint;soft.setTexture(footprint?.key??SOFT).setOrigin(.5,footprint?1:.5);}
       }
@@ -74,31 +78,36 @@ export class GroundShadows {
       const visible=c.visible&&(o.visible?.()??s.visible)&&s.alpha>0&&c.alpha>0&&(!settings.indoor||c.depth>7000||!!o.surfaceDepth);
       // 静态建筑仍烘焙在地面；这里只更新可变化物件。视窗外不提交网格。
       const onScreen=visible&&c.x>=view.x-350&&c.x<=view.right+350&&c.y>=view.y-350&&c.y<=view.bottom+350;
-      soft.setVisible(onScreen);cast?.setVisible(onScreen);if(!onScreen)continue;
+      soft.setVisible(onScreen);cast?.setVisible(onScreen&&!plant);if(!onScreen)continue;
       const alpha=Math.min(s.alpha,c.alpha/e.alpha);
       const depth=o.surfaceDepth?.()??(settings.indoor?7200:settings.floor??c.depth-.04);
       if(e.footprint){
-        soft.setPosition(c.x,c.y+8).setDepth(depth+.01).setRotation(0).setDisplaySize(e.footprint.width,e.footprint.height).setAlpha(strength.contact*alpha);
+        // 画布底部留有八像素；让接触轮廓与叶丛一起绕脚根摆动，镜像不留反向残影。
+        soft.setPosition(c.x-8*Math.sin(s.rotation),c.y+8*Math.cos(s.rotation)).setDepth(depth+.01).setRotation(s.rotation)
+          .setFlipX('flipX' in s&&s.flipX).setDisplaySize(e.footprint.width,e.footprint.height).setAlpha(strength.contact*alpha);
       }else{
-        soft.setPosition(c.x,c.y+6).setDepth(depth+.01).setRotation(.12)
-          .setDisplaySize(c.width*1.45*Math.abs(c.scaleX),c.height*1.8*Math.abs(c.scaleY)).setAlpha(strength.contact*alpha);
+        // 人物接触影压在鞋底，不能沿用物件向前偏移的宽软影；飞行仍由独立地面脚根控制。
+        const sole=o.person&&'frame' in s?citySoleContact(s.texture.key,s.frame.name,s.displayWidth,s.displayHeight,s.flipX):undefined;
+        soft.setPosition(c.x+(sole?.x??0),c.y+(sole?.y??(o.person?0:3))).setDepth(depth+.01).setRotation(0)
+          .setDisplaySize((sole?.width??(o.person?Math.min(34,c.width):c.width*1.15))*Math.abs(c.scaleX),(o.person?Math.min(8,c.height):c.height*.8)*Math.abs(c.scaleY)).setAlpha(strength.contact*alpha);
       }
-      if(!cast||!('frame' in s))continue;
+      if(!cast||plant||!('frame' in s))continue;
       const f=s.frame,v=cast.vertices,coords=[[f.x,f.y],[f.x+f.cutWidth,f.y],[f.x+f.cutWidth,f.y+f.cutHeight],[f.x,f.y+f.cutHeight]];
       const uvs=[[f.u0,f.v0],[f.u1,f.v0],[f.u1,f.v1],[f.u0,f.v1]];
+      const lift=o.person?projectShadowPoint(s.x-c.x,s.y-c.y):{x:0,y:0};
       for(let i=0;i<4;i++){
         const p=projectShadowPoint((coords[i][0]-s.displayOriginX)*s.scaleX,(coords[i][1]-s.displayOriginY)*s.scaleY,s.flipX,s.rotation);
-        v[i*4]=p.x;v[i*4+1]=p.y;v[i*4+2]=uvs[i][0];v[i*4+3]=uvs[i][1];
+        v[i*4]=p.x+lift.x;v[i*4+1]=p.y+lift.y;v[i*4+2]=uvs[i][0];v[i*4+3]=uvs[i][1];
       }
       // 多页图集必须跟随当前帧的页号，避免首领和高清小怪投影串图。
       if(cast.indices[3]!==f.sourceIndex){cast.indices[3]=cast.indices[7]=f.sourceIndex;cast.buildOrderedIndices(0,true);}
-      cast.setTexture(s.texture.key).setPosition(c.x,c.y+3).setDepth(depth).setAlpha(strength.cast*alpha);
+      cast.setTexture(s.texture.key).setPosition(c.x,c.y+(o.person||o.footprint?0:3)).setDepth(depth).setAlpha(strength.cast*alpha);
     }
     // Phaser在prerender前已排序；新建或跨室内层级的阴影需要当帧重排。
     this.scene.children.depthSort();
   }
   snapshot() {
-    return {说明:'柔边接地影与当前帧轮廓投影；阴影只改变表现，不写入存档或碰撞。',数量:this.entries.size,
+    return {说明:'默认柔边接地影，立面投影仅显式启用；阴影不写入存档或碰撞。',数量:this.entries.size,
       实体:[...this.entries.values()].map(e=>({名称:e.options.label??('texture' in e.source?e.source.texture.key:'公共设施'),位置:[e.contact.x,e.contact.y],尺寸:[e.contact.width,e.contact.height],可见:e.soft.visible,透明度:e.soft.alpha,层级:e.soft.depth,投影:e.cast?.visible??false,投影层级:e.cast?.depth,投影透明度:e.cast?.alpha,顶点:e.cast?.vertices.slice(),页号:e.cast?.indices[3],源位置:[e.source.x,e.source.y],源层级:e.source.depth,源透明度:e.source.alpha,素材:'texture' in e.source?e.source.texture.key:null,帧:'frame' in e.source?e.source.frame.name:null}))};
   }
 }

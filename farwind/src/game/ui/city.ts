@@ -1,3 +1,4 @@
+import {merchantDefinition} from '../../data/merchantRoad';
 import {CITY_BUILDINGS,CITY_CITIZENS,CITY_QUESTS,CITY_LAMPS,CITY_OUTDOOR_USES,CITY_MAIN_HINTS,cityBuilding,cityFurniture,isCitySpace} from '../../data/cityLayout';
 import {CITY_STOCK,CITY_PRICES} from '../../data/maps/windwhisper';
 import {items} from '../../data/content';
@@ -12,7 +13,7 @@ const mainHints=CITY_MAIN_HINTS;
 const outdoor=(id:string,label:string,x:number,y:number):Prop=>({id,label,x,y,art:'',w:0,h:0,kind:'sign'});
 export function cityTargets(w:World):Prop[]{
  const s=w.state,space=s.life.playerSpace,p=s.city.progress;
- const residents=p.residents.filter(r=>r.space===space).map(r=>({id:`city-resident:${r.id}`,label:CITY_CITIZENS.find(c=>c.id===r.id)?.name??'来访行商',x:r.x,y:r.y,kind:'npc' as const,art:'',w:0,h:0}));
+ const residents=p.residents.filter(r=>r.space===space&&r.id!=='captain'&&!merchantDefinition(r.id)).map(r=>({id:`city-resident:${r.id}`,label:CITY_CITIZENS.find(c=>c.id===r.id)?.name??'来访旅客',x:r.x,y:r.y,kind:'npc' as const,art:'',w:0,h:0}));
  if(space==='village')return [...residents,...CITY_BUILDINGS.map(b=>outdoor(`city-door:${b.id}`,`${b.name} · ${b.private?'敲门／拜访':'进入'}`,b.door.x,b.door.y)),...CITY_OUTDOOR_USES.map(p=>outdoor(`city-use:${p.id}`,p.label,p.x,p.y)),...(p.quests.find(q=>q.id==='escort')?.status==='active'&&!p.escort.arrived?[outdoor('city-use:escort','迟到行商 · 集合',p.escort.x,p.escort.y)]:[])];
  if(!isCitySpace(space))return [];
  return [...residents,...cityFurniture(space).map(f=>outdoor(`city-room:${f.id}`,`${f.text} · 查看／操作`,f.x,f.y+25)),outdoor('city-exit',space==='city:wall'?'沿梯道返回街道':'离开房屋',700,910)];
@@ -43,8 +44,7 @@ export function cityInteractionComplete(w:World,target:Prop){
  }
  if(target.id.startsWith('city-use:')){const id=target.id.slice(9);if(id.startsWith('closed-')){shell(target.label!,'城防封闭的预留城门。外部区域尚未开放，请从西门往返已建成的商路与原野。');return true;}if(id==='board'){shell('城市公示板',`${mainHints[w.state.city.progress.main]}。<br>本城十二项委托在西北商旅行会登记和领取；街灯、货箱及岗哨交接需到实物旁完成。`);return true;}shell(target.label!,id.startsWith('lamp')?'维修需要木材一份；修好后夜间灯光会增强。':id==='escort'?'与行商保持三百四十步以内；掉队后回去集合，同行到西门内才算完成。':'到实物旁执行，任务证据随旅途保存。',[[`use-${id}`,'执行并保存',()=>action(id)]]);return true;}
  if(target.id.startsWith('city-resident:')){const c=CITY_CITIZENS.find(c=>c.id===target.id.slice(14)),r=w.state.city.progress.residents.find(r=>r.id===target.id.slice(14))!;
-  shell(c?.name??'来访行商',`${w.state.city.progress.main===7?'风塔重新平稳了，今晚大家会聚在广场庆祝。':mainHints[w.state.city.progress.main]+'。'} ${c?cityBuilding(c.home)!.name:'我从西门入城，打算去市集和广场看看'}。${r.activity==='shelter'?'警报期间先到驿站避难。':''}`,
-  c?.id==='apprentice-a'&&space==='city:house-6'?[['hint','询问遗失工具',()=>action('tools-hint')]]:[]);return true;
+  w.ui.dialog(c?.name??'来访旅客',`${w.state.city.progress.main===7?'风塔重新平稳了，今晚大家会聚在广场庆祝。':mainHints[w.state.city.progress.main]+'。'} ${c?cityBuilding(c.home)!.name:'我从西门入城，打算去市集和广场看看'}。${r.activity==='shelter'?'警报期间先到驿站避难。':''}`,c?c.id==='captain'?'captain':'city-'+c.id:'city-visitor',undefined,{context:'风语城 · '+(c?cityBuilding(c.home)!.name:'赶集旅客'),choices:c?.id==='apprentice-a'&&space==='city:house-6'?[{id:'hint',label:'询问遗失工具',select:()=>action('tools-hint')}]:[]});return true;
  }
  const f=cityFurniture(space).find(f=>f.id===target.id.slice(10));if(!f)return false;
  const use=f.use;

@@ -61,7 +61,7 @@ describe('魔王派遣与夜间调度',()=>{
  it('同一随机夜计划在恶意1时精确增加5只，首夜仍然安静',()=>{
   const s=initialState();for(let night=1;night<=30;night++){
    const before=makeNightPlan(s,night),angered=structuredClone(s);clear(angered);const after=makeNightPlan(angered,night);
-   expect(after.count).toBe(before.count+5);expect(after.at).toBe(before.at);expect(after.order).toEqual(order(1));if(night===1)expect(after.outcome).toBe('quiet');
+   expect(after.count).toBe(before.count+5);expect(after.at).toBe(before.at);expect(after.order).toEqual({...order(1),profileVersion:2});if(night===1)expect(after.outcome).toBe('quiet');
   }
  });
  it.each([[0,0,1,3,0,0],[1,1,6,8,0,0],[9,1,6,8,0,0],[10,2,7,9,1,1],[19,2,7,9,1,1],[20,3,8,10,2,2],[30,4,9,10,3,2],[40,5,10,10,4,3],[60,7,10,10,6,4]])('恶意%s对应档位、总量与精英', (malice,tier,min,max,level,elites)=>{
@@ -70,7 +70,7 @@ describe('魔王派遣与夜间调度',()=>{
  it('全部当地据点清剿后王令仍可计划，单夜单事件且在途编队冻结',()=>{
   const s=planned();for(const d of camps)clear(s,d.id);expect(RAID_GATES.every(g=>!sourceAllowsRaid(s.encounters,g.id))).toBe(true);
   expect(mayStartNight(s)).toBe(true);expect(advanceNight(s,s.time-.1)).toBe(false);
-  const next=validate(nightWarningSnapshot(s));expect(next.defense.raid!.order).toEqual(order(1));expect(next.defense.raid!.members).toHaveLength(s.night.plan!.count);
+  const next=validate(nightWarningSnapshot(s));expect(next.defense.raid!.order).toEqual({...order(1),profileVersion:2});expect(next.defense.raid!.members).toHaveLength(s.night.plan!.count);
   expect(mayStartNight(next)).toBe(false);expect(()=>nightWarningSnapshot(next)).toThrow();
   expect(demonMalice(next.encounters)).toBe(camps.length);expect(parseSave(JSON.stringify(next)).defense.raid).toEqual(next.defense.raid);
  });
@@ -79,7 +79,7 @@ describe('魔王派遣与夜间调度',()=>{
   await expect(commit.run(()=>s,nightWarningSnapshot,async()=>{throw Error('预警保存失败样本');},next=>s=next)).rejects.toThrow();expect(s).toEqual(before);
   s=nightWarningSnapshot(s);const d=new EastDefense(s.defense,0);d.awaitingCheckpoint=true;d.update(4000,4000,s.player,{queries:2});expect(d.enemies).toHaveLength(0);
   d.acknowledged(s.defense.sequence);d.update(7000,3000,s.player,{queries:2});expect(d.enemies).toHaveLength(s.night.plan!.count);
-  expect(d.enemies.every(e=>e.maxHP===48&&e.hp===48)).toBe(true);
+  expect(d.enemies.every(e=>e.maxHP===raidUnitProfile(e.type as any,e.eliteLevel??0,2).maxHP&&e.hp===e.maxHP)).toBe(true);
  });
  it('安全门禁、路口、人口、视口仍可延期，预警被近身打断不补刷',()=>{
   const s=planned();expect(()=>nightWarningSnapshot(s,{left:-2110,right:4290,top:-1380,bottom:3420})).toThrow();

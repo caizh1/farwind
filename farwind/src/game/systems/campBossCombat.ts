@@ -11,7 +11,7 @@ import {BOSS_LASER,LASER_DURATION,isBossLaser,laserHazard,laserSample,laserGeome
 
 const range=(a:Point,b:Point)=>Math.hypot(a.x-b.x,a.y-b.y);
 // 预警与实际危险区共用落点，真实障碍处不显示无法生效的攻击。
-export function bossHazardPoints(a:EnemyAttack){const p=a.bossGeometry!.point,d=a.direction;return (a.boss==='bound-branch'||a.type==='geomancer'?[-110,110].map(n=>({x:p.x-d.y*n,y:p.y+d.x*n})):[{...p}]).filter(p=>!motionBlocked(p.x,p.y));}
+export function bossHazardPoints(a:EnemyAttack){const p=a.bossGeometry!.point,d=a.direction;return (a.boss==='bound-branch'||a.type==='geomancer'&&a.areaPattern!=='center'?[-110,110].map(n=>({x:p.x-d.y*n,y:p.y+d.x*n})):[{...p}]).filter(p=>!motionBlocked(p.x,p.y));}
 export const bossAttackSpace=(e:EnemyBody)=>({blocked:(x:number,y:number)=>motionBlocked(x,y)||(e.bossBattle?.roots?.some(r=>r.kind==='rock'&&r.hp>0&&Math.hypot(x-r.x,y-r.y)<34)??false)||range({x,y},{x:e.homeX,y:e.homeY})>enemyLeashRadius(e),clear:clearMotionLine,melee:clearMeleeLine,wall:(a:Point,b:Point)=>motionBlocked(b.x,b.y)||!clearMotionLine(a,b)||(e.bossBattle?.roots?.some(r=>r.kind==='rock'&&r.hp>0&&Math.hypot(b.x-r.x,b.y-r.y)<34)??false)});
 export const bossMajor=(kind:CampBossKind,move:number)=>kind==='thorn-crown'?move>=4:kind==='bound-branch'?move===2||move===5||move===6:move===3||move===4||move===5;
 export function selectBossMove(e:EnemyBody,target:Point,now:number){const b=e.bossBattle!,distance=range(e,target),kind=e.boss!;const count=CAMP_BOSSES[kind].skills.length;b.cooldowns??=Array(count).fill(0);while(b.cooldowns.length<count)b.cooldowns.push(0);
@@ -135,7 +135,7 @@ export function clearBossPendingAttacks(e:EnemyBody,prev:number,hazards:BossHaza
 export class BossHazards{
   hazards:BossHazard[]=[];
   clear(owner?:string){this.hazards=owner?this.hazards.filter(h=>h.owner!==owner):[];}
-  private updateLaser(h:BossHazard,e:EnemyBody,prev:number,now:number,targets:readonly (Point&{id:string;previous:Point})[],contacts:EnemyContact[]){
+  private updateLaser(h:BossHazard,e:EnemyBody,prev:number,now:number,targets:readonly (Point&{id:string;previous:Point;ordinaryOnly?:boolean})[],contacts:EnemyContact[]){
     const source=e.attack;
     // 取消、死亡与换战斗清理整套连招；失衡期间时钟随正式攻击一起冻结。
     if(!source||source.cancelled||h.id!==source.attackId+':赤环'){h.expires=now;return;}
@@ -143,6 +143,7 @@ export class BossHazards{
     h.point={...source.bossGeometry!.point};h.laser!.angle=Math.atan2(source.direction.y,source.direction.x);if(source.locked)clipLaserRays(h,clearMeleeLine);
     const start=Math.max(prev,h.activeAt),end=Math.min(now,h.expires);
     for(const target of targets){
+      if(target.ordinaryOnly)continue;
       for(let t=start;t<=end;t=Math.min(end,t+5)){
         const stage=laserSample(h,t).stage,key=stage+':'+target.id;
         if(!h.used.includes(key)){
@@ -166,18 +167,18 @@ export class BossHazards{
     const geometry=a.bossGeometry!;
     const points=bossHazardPoints(a);
     for(const p of points)if(this.hazards.length<3&&this.hazards.filter(h=>h.owner===e.id).length<3){
-      const split=e.boss==='bound-branch'||e.type==='geomancer',i=split&&((p.x-geometry.point.x)*-a.direction.y+(p.y-geometry.point.y)*a.direction.x)>0?1:0;
+      const split=e.boss==='bound-branch'||e.type==='geomancer'&&a.areaPattern!=='center',i=split&&((p.x-geometry.point.x)*-a.direction.y+(p.y-geometry.point.y)*a.direction.x)>0?1:0;
       this.hazards.push({id:`${a.attackId}:地面${i}`,owner:e.id,attempt:e.bossAttempt??0,kind:a.bossArea,point:p,born:a.startedAt,activeAt:a.contactAt,expires:a.activeUntil,radius:geometry.radius,speed:a.bossArea==='ring'?165:0,damage:a.damage,used:[]});
     }
   }
-  update(prev:number,now:number,bodies:readonly EnemyBody[],targets:readonly (Point&{id:string;previous:Point})[]):EnemyContact[]{
+  update(prev:number,now:number,bodies:readonly EnemyBody[],targets:readonly (Point&{id:string;previous:Point;ordinaryOnly?:boolean})[]):EnemyContact[]{
     const contacts:EnemyContact[]=[];
     this.hazards=this.hazards.filter(h=>h.expires>prev&&bodies.some(e=>e.id===h.owner&&e.hp>0&&(e.bossAttempt??0)===h.attempt));
     for(const h of this.hazards){const e=bodies.find(e=>e.id===h.owner)!;
       if(h.laser){this.updateLaser(h,e,prev,now,targets,contacts);continue;}
       if(!h.independent&&prev<h.activeAt&&(!e.attack||e.attack.cancelled||!h.id.startsWith(e.attack.attackId+':'))){h.expires=now;continue;}
-      if(!h.independent&&prev<h.activeAt&&e.attack&&!e.attack.cancelled&&h.id.startsWith(e.attack.attackId+':')){const a=e.attack;h.born=a.startedAt;h.activeAt=a.contactAt;h.expires=a.activeUntil;if(a.bossGeometry){const i=Number(h.id.split('地面').at(-1)),side=e.boss==='bound-branch'||e.type==='geomancer'?(i===0?-110:110):0;h.point={x:a.bossGeometry.point.x-a.direction.y*side,y:a.bossGeometry.point.y+a.direction.x*side};}}
-      for(const target of targets){if(h.used.includes(target.id))continue;
+      if(!h.independent&&prev<h.activeAt&&e.attack&&!e.attack.cancelled&&h.id.startsWith(e.attack.attackId+':')){const a=e.attack;h.born=a.startedAt;h.activeAt=a.contactAt;h.expires=a.activeUntil;if(a.bossGeometry){const i=Number(h.id.split('地面').at(-1)),side=e.boss==='bound-branch'||e.type==='geomancer'&&a.areaPattern!=='center'?(i===0?-110:110):0;h.point={x:a.bossGeometry.point.x-a.direction.y*side,y:a.bossGeometry.point.y+a.direction.x*side};}}
+      for(const target of targets){if(e.boss&&target.ordinaryOnly||h.used.includes(target.id))continue;
         let at:number|null=null,p:Point|undefined,g:AttackGeometry|undefined;
         const end=Math.min(now,h.expires),start=Math.max(prev,h.activeAt);
         for(let t=start;t<=end&&t>=h.activeAt;t=Math.min(end,t+5)){
@@ -187,7 +188,7 @@ export class BossHazards{
         }
         if(at===null)continue;
         h.used.push(target.id);
-        const a=createEnemyAttack(e.id,0,e.type,h.born,h.point,p!,h.activeAt-h.born);
+        const a=createEnemyAttack(e.id,0,e.type,h.born,h.point,p!,h.activeAt-h.born);a.eventId=e.attack?.eventId??null;
         Object.assign(a,{attackId:`${h.id}:${target.id}`,boss:e.boss,bossAttempt:h.attempt,bossSkill:e.bossBattle?.move,locked:true,parryable:false,damage:h.damage,activeUntil:h.expires,recoveryUntil:h.expires,geometry:g,emitted:true});
         contacts.push({at,attack:a,origin:h.point,geometry:g,bossHazardId:h.id,targetId:target.id,sampledPoint:p});
       }

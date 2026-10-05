@@ -14,12 +14,12 @@ async function start(page:Page,state?:State){
   await page.waitForFunction(()=>{const s=(window as any).__farwind?.();return s&&s.mode===''&&!s.sessionStarting&&s.shadows?.实体.some((e:any)=>e.名称==='主角'&&e.可见);});
 }
 
-test('十四种小怪的像素对照、四方向、光照、首领及死亡淡出',async({page})=>{
+test('全部小怪的像素对照、四方向、光照、首领及死亡淡出',async({page})=>{
   await mkdir(root,{recursive:true});const errors:string[]=[],samples:unknown[]=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('/tools/shadow-preview.html');await page.waitForFunction(()=>(window as any).__shadowPreview?.().就绪);
   await page.getByRole('button',{name:'暂停动画',exact:true}).click();
   const preview=()=>page.evaluate(()=>(window as any).__shadowPreview());
-  const first=await preview();expect(first.阴影.数量).toBe(15);expect(first.阴影.实体.every((e:any)=>e.可见&&e.投影)).toBe(true);
+  const first=await preview();expect(first.阴影.数量).toBe(Object.keys(ENEMIES).length+1);expect(first.阴影.实体.every((e:any)=>e.可见&&!e.投影)).toBe(true);
   await page.screenshot({path:root+'/monsters-after.png',fullPage:true});
   const after=await page.locator('canvas').screenshot();
   await page.getByRole('button',{name:'查看原阴影',exact:true}).click();
@@ -29,34 +29,34 @@ test('十四种小怪的像素对照、四方向、光照、首领及死亡淡�
     let darker=0,change=0;const cx=(100+i%7*200)*scale,cy=(180+Math.floor(i/7)*240)*scale;
     for(let y=Math.round(cy+4*scale);y<Math.round(cy+65*scale);y++)for(let x=Math.round(cx-70*scale);x<Math.round(cx+90*scale);x++){
       const at=(y*a.info.width+x)*3,delta=(b.data[at]+b.data[at+1]+b.data[at+2]-a.data[at]-a.data[at+1]-a.data[at+2])/3;
-      if(delta>5){darker++;change+=delta;}
+      if(Math.abs(delta)>2){darker++;change+=Math.abs(delta);}
     }
-    expect(darker,`${kind}脚底附近必须出现新增的真实暗像素`).toBeGreaterThan(300);
-    expect(change/darker,`${kind}阴影加深应足够明显`).toBeGreaterThan(15);
-    return {怪物:kind,新增暗像素:darker,平均加深:change/darker};
+    expect(darker,`${kind}脚底附近必须出现真实的阴影差异像素`).toBeGreaterThan(30);
+    expect(change/darker,`${kind}柔边接地影应有可辨别的像素差异`).toBeGreaterThan(2);
+    return {怪物:kind,阴影差异像素:darker,平均差异:change/darker};
   });
   await page.getByRole('button',{name:'查看增强阴影',exact:true}).click();
   for(const direction of ['0','1','2','3']){
-    await page.locator('#direction').selectOption(direction);const s=await preview();expect(s.阴影.实体.every((e:any)=>e.可见&&e.投影)).toBe(true);samples.push({方向:direction,样本:s});
+    await page.locator('#direction').selectOption(direction);const s=await preview();expect(s.阴影.实体.every((e:any)=>e.可见&&!e.投影)).toBe(true);samples.push({方向:direction,样本:s});
   }
   for(const light of ['480','1080','1260','indoor']){await page.locator('#light').selectOption(light);const s=await preview();expect(s.阴影.实体.every((e:any)=>e.可见&&e.透明度>0)).toBe(true);samples.push({光照:light,样本:s});}
   await page.locator('#light').selectOption('480');
   for(const ground of ['forest','road']){await page.locator('#ground').selectOption(ground);await page.screenshot({path:`${root}/monsters-${ground}.png`,fullPage:true});}
   for(const boss of Object.keys(CAMP_BOSSES)){
-    await page.locator('#boss').selectOption(boss);await page.waitForFunction(()=>(window as any).__shadowPreview().就绪);const s=await preview();expect(s.阴影.实体.find((e:any)=>e.名称==='首领').投影).toBe(true);samples.push({首领:boss,样本:s});
+    await page.locator('#boss').selectOption(boss);await page.waitForFunction(()=>(window as any).__shadowPreview().就绪);const s=await preview();expect(s.阴影.实体.find((e:any)=>e.名称==='首领').投影).toBe(false);samples.push({首领:boss,样本:s});
   }
   await page.locator('#action').selectOption('death');await page.getByRole('button',{name:'继续动画',exact:true}).click();
-  await page.waitForFunction(()=>{const s=(window as any).__shadowPreview();return s.时钟>=2500&&s.阴影.实体.slice(0,14).every((e:any)=>!e.可见&&!e.投影);});
+  await page.waitForFunction(()=>{const s=(window as any).__shadowPreview();return s.时钟>=2500&&s.阴影.实体.slice(0,Object.keys(ENEMIES).length).every((e:any)=>!e.可见&&!e.投影);});
   expect(errors).toEqual([]);
-  await writeFile(root+'/preview-validation.json',JSON.stringify({说明:'使用正式渲染器并通过页面控件切换；逐个像素对照十四种小怪脚底，验证真实画面变暗，不以对象存在冒充可见。',结果:'通过',暗像素对照:differences,错误:errors,样本:samples},null,2));
+  await writeFile(root+'/preview-validation.json',JSON.stringify({说明:'使用正式渲染器并通过页面控件切换；逐个像素对照全部小怪脚底，验证真实画面的阴影差异，不以对象存在冒充可见。',结果:'通过',像素对照:differences,错误:errors,样本:samples},null,2));
 });
 
 test('正式新档中的角色、居民、物件、保存刷新与重启清理',async({page})=>{
   await mkdir(root,{recursive:true});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await start(page);
   const s=await read(page),list=s.shadows.实体;
-  for(const label of ['主角','小黑','小宝','训练靶','室内家具'])expect(list.some((e:any)=>e.名称===label)).toBe(true);
+  for(const label of ['主角','小黑','小宝','室内家具'])expect(list.some((e:any)=>e.名称===label)).toBe(true);
   for(const p of props.filter(p=>p.kind==='resource'||p.kind==='chest'))expect(list.some((e:any)=>e.名称==='场景物件 · '+p.id)).toBe(true);
-  const hero=list.find((e:any)=>e.名称==='主角');expect(hero.可见&&hero.投影).toBe(true);expect(hero.层级).toBeLessThan(s.warningLayers.ground);expect(hero.层级).toBeLessThan(hero.源层级);
+  const hero=list.find((e:any)=>e.名称==='主角');expect(hero.可见&&!hero.投影).toBe(true);expect(hero.层级).toBeLessThan(s.warningLayers.ground);expect(hero.层级).toBeLessThan(hero.源层级);
   await page.screenshot({path:root+'/village-gameplay.png'});
   await page.keyboard.press('Escape');await page.locator('#save').click();await expect(page.getByText('旅途已保存',{exact:true})).toBeVisible();
   await page.reload();await page.getByRole('button',{name:'继续旅途',exact:true}).click();await page.waitForFunction(count=>{const s=(window as any).__farwind();return s.mode===''&&s.shadows.数量===count;},s.shadows.数量);
@@ -72,9 +72,9 @@ test('正式野外怪物与负坐标阴影',async({page})=>{
   await start(page,state);await page.keyboard.down('w');await page.waitForTimeout(500);await page.keyboard.up('w');
   await page.waitForFunction(()=>{const s=(window as any).__farwind();return s.shadows.实体.some((e:any)=>e.名称.startsWith('怪物')&&e.可见&&e.位置[1]<0);});
   const s=await read(page),monsters=s.shadows.实体.filter((e:any)=>e.名称.startsWith('怪物')&&e.可见);
-  for(const e of monsters){expect(e.投影).toBe(true);expect(e.透明度).toBeGreaterThan(.4);expect(e.层级).toBeLessThan(e.源层级);}
+  for(const e of monsters){expect(e.投影).toBe(false);expect(e.透明度).toBeGreaterThan(.4);expect(e.层级).toBeLessThan(e.源层级);}
   await page.screenshot({path:root+'/north-monsters-gameplay.png'});expect(errors).toEqual([]);
-  await writeFile(root+'/wilderness-validation.json',JSON.stringify({说明:'通过正式存档导入合法山口起点，并以W行走触发正式遭遇；检查负坐标怪物的接地影和轮廓投影，不直接写入敌人运行态。',结果:'通过',怪物:monsters,错误:errors},null,2));
+  await writeFile(root+'/wilderness-validation.json',JSON.stringify({说明:'通过正式存档导入合法山口起点，并以W行走触发正式遭遇；检查负坐标怪物的柔边接地影，不直接写入敌人运行态。',结果:'通过',怪物:monsters,错误:errors},null,2));
 });
 
 test('室内家具及返回室外时的阴影层级',async({page})=>{

@@ -1,4 +1,5 @@
 import {cityBuilding} from '../../data/cityLayout';
+import {guardName} from './guardAftermath';
 import {stepXiaobaoLife} from './xiaobaoLife';
 import {
   PEOPLE,
@@ -33,7 +34,7 @@ import {
   spaceBlocked,
   type LifeNav,
 } from "./npcNavigation";
-import { resolveDamage } from "./damage";
+import { resolveReleasedDamage, type ReleasedAttack, resolveDamage } from "./damage";
 import { attackTouches, type EnemyContact } from "./enemyAttack";
 import {validFungalBlastContact} from './fungalCombat';
 import { clearMeleeLine } from "./obstacles";
@@ -214,6 +215,8 @@ export class NpcLife {
       : null;
   }
   restore() {
+    this.defense.worldMinute = () => this.state.time;
+    this.defense.guardReplaced = id => { this.navigation.delete(id); if(this.speech?.speaker===id)this.speech=null; };
     this.defense.eventTime = () => this.data.elapsed;
     this.defense.civilianTargets = () =>
       this.data.people.flatMap((n) =>
@@ -224,8 +227,8 @@ export class NpcLife {
           ? [{ id: n.id, x: n.body.x, y: n.body.y, hp: n.body.hp }]
           : [],
       );
-    this.defense.civilianContact = (id, source, contact) =>
-      this.receiveHostileContact(id, source, contact);
+    this.defense.civilianContact = (id, source, contact, released) =>
+      this.receiveHostileContact(id, source, contact, released);
     this.defense.facilityTargets = () =>
       MAINTENANCE.flatMap((f) =>
         this.data.facilities[f.id] > 0
@@ -547,7 +550,7 @@ export class NpcLife {
         }
       }
       if (e.kind === "death") {
-        this.emit("death", p, e.sourceId ?? "enemy", [g.id], "守卫阵亡");
+        this.emit("death", p, e.sourceId ?? "enemy", [g.id], `${guardName(g)}阵亡`);
         this.data.tasks = this.data.tasks.filter((t) => t.subject !== g.id);
       }
     }
@@ -1849,39 +1852,41 @@ export class NpcLife {
     id: string,
     source: DefenseHostile,
     contact: EnemyContact,
+    released?:ReleasedAttack,
   ) {
     const n = this.data.people.find((n) => n.id === id),
       facility = MAINTENANCE.find((f) => f.id === id),
       body =
         n?.body ??
-        (facility ? { ...facility.place, hp: this.data.facilities[id] } : null),
+        (facility ? { ...facility.place, space:"village", hp: this.data.facilities[id] } : null),
       attack = contact.attack;
     if (
       !body ||
       body.space !== "village" ||
       body.hp <= 0 ||
       n?.body?.health === "down" ||
-      source.hp <= 0 ||
+      (!released&&source.hp <= 0) ||
       source.disabled ||
-      !this.defense.allHostiles().includes(source) ||
-      (!validFungalBlastContact(contact,source,id)&&(source.targetId !== id || source.attack !== attack)) ||
+      (!released&&!this.defense.allHostiles().includes(source)) ||
+      (!released&&!contact.bossHazardId&&!validFungalBlastContact(contact,source,id)&&(source.targetId !== id || source.attack !== attack)) ||
       attack.attackerId !== source.id ||
       attack.cancelled ||
       attack.resolved ||
       !attack.emitted ||
       !attackTouches(contact, body) ||
-      !clearMeleeLine(contact.origin, body, source.id)
+      !clearMeleeLine(contact.origin, contact.sampledPoint??body, source.id)
     )
       return false;
-    const hit = resolveDamage(
+    const apply = released?(event:import("./damage").DamageEvent,_source:unknown,target:import("./damage").UnitRef)=>resolveReleasedDamage(event,released,target):resolveDamage;
+    const hit = apply(
       {
         sourceId: source.id,
         targetId: id,
         attackId: attack.attackId,
         amount: attack.damage,
         sourceScale: this.defense.runeEnemyScale(source.id),
-        sourceType: contact.blastId ? "enemy-blast" : "enemy-melee",
-        eventId: source.eventId ?? null,
+        sourceType: released?"enemy-shot":contact.blastId ? "enemy-blast" : "enemy-melee",
+        eventId: released?.eventId??source.eventId ?? null,
       },
       { id: source.id, faction: "hostile", hp: source.hp, armor: 0 },
       { id, faction: "village", hp: body.hp, armor: 0,...this.defense.protection?.(id) },
@@ -2031,6 +2036,10 @@ export class NpcLife {
     const speech = chooseSpeech(this);
     if (speech) this.speech = speech;
   }
+  name(id: ResidentId) {
+    const guard=this.state.defense.guards.find(g=>g.id===id);
+    return guard?guardName(guard):person(id)!.name;
+  }
   dialogue(id: ResidentId) {
     const n = this.data.people.find((n) => n.id === id)!,
       d = person(id)!,
@@ -2141,7 +2150,7 @@ export class NpcLife {
         : n.id === "carpenter"
           ? `工具包内木料 ${n.supplies.wood}/${LIFE.carriedWood}。`
           : "";
-    return `${box.item}：${this.carrying(n) ? "主人已取出携带" : "存放在箱中"}。${supplies}\n这是${person(n.id)!.name}的私人物品，来访许可不包含取用权。药房与工坊的公共补给需要到场领取；不会消耗玩家背包。`;
+    return `${box.item}：${this.carrying(n) ? "主人已取出携带" : "存放在箱中"}。${supplies}\n这是${this.name(n.id)}的私人物品，来访许可不包含取用权。药房与工坊的公共补给需要到场领取；不会消耗玩家背包。`;
   }
   debugAccess(id: ResidentId, bed = false) {
     const p = person(id)!,
@@ -2182,7 +2191,7 @@ export class NpcLife {
         return {
           id: n.id,
           ...p,
-          label: `${d.job} · ${d.name}`,
+          label: `${d.job} · ${this.state.defense.guards.find(g=>g.id===d.id) ? guardName(this.state.defense.guards.find(g=>g.id===d.id)!) : d.name}`,
           art: d.art,
           w: 76,
           h: 90,

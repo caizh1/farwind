@@ -1,3 +1,5 @@
+import {ROAD_NEST,ROAD_POSTS} from '../../data/merchantRoad';
+import {roadTracked,roadRouteStatus} from '../systems/merchantRoadState';
 import {loadCityMapArt} from './cityMapArt';
 import {CITY_BUILDINGS} from '../../data/cityLayout';
 import type {Interface} from './interface';
@@ -63,6 +65,9 @@ export function showWorldAtlas(ui:Interface){
  const select=(r:AtlasRegion,zoom=true)=>{selected=r;updateSelection();if(zoom&&available(r))animateTo(fitMap(r.bounds,size),r.bounds);redraw();};
  const zoom=(factor:number,anchor:MapPoint={x:size.width/2,y:size.height/2})=>{cancelMotion();focusBounds=null;camera=zoomMap(camera,factor,anchor,size);redraw();};
  const landmarks:{name:string;detail:string;point:MapPoint;color:string;campId?:string;below?:boolean}[]=[];
+ landmarks.push({name:'裂牙巢穴',detail:s.merchantRoad.nest.wave===3?'已永久清剿':`守巢战斗 ${s.merchantRoad.nest.wave}/3 阶段`,point:ROAD_NEST,color:s.merchantRoad.nest.wave===3?'#87caae':'#df826e'});
+ landmarks.push({name:'林间商路通商',detail:roadRouteStatus(s),point:{x:9560,y:1750},color:'#8de2df'});
+ if(s.merchantRoad.opened)for(const [i,p]of ROAD_POSTS.entries())landmarks.push({name:p.name,detail:s.merchantRoad.guards.filter(g=>g.post===i&&g.arrived).length===2?'已驻守':'守备接岗途中',point:p,color:'#8de2df'});
  for(const d of ENCOUNTERS.filter(d=>d.kind==='camp')){
   const g=s.encounters.groups[d.id],status=g.cleared?'已清除':g.boss?.stage==='battle'?'首领交战':g.boss?.stage==='warning'?'首领待挑战':'驻守未清';
   landmarks.push({name:d.name,detail:status,point:{x:d.x,y:d.y},color:g.cleared?'#87caae':'#df826e',campId:d.id});
@@ -70,7 +75,7 @@ export function showWorldAtlas(ui:Interface){
  for(const sign of SERVICE_SIGNS)landmarks.push({name:sign.name,detail:'风铃村服务点',point:sign.point,color:'#8de2df'});
  for(const p of CITY_PROPS.filter(p=>p.id.startsWith('road-rest-')))landmarks.push({name:p.label!.split(' · ')[0],detail:'休整商路 · 保留已获及待领风赐',point:p,color:'#8de2df'});
  for(const b of CITY_BUILDINGS)landmarks.push({name:b.name,detail:b.private?'具名住宅 · 门口敲门拜访':'城市场所 · 门口进入',point:b.door,color:'#8de2df',below:true});
- for(const [i,n]of TRADE_ROAD_NODES.entries()){const progress=s.tradeRoad.nodes[i];landmarks.push({name:`${i+1} · ${n.name}`,detail:progress?.cleared?'三波已清除':progress?.active?`第 ${progress.wave+1} / 3 波 · 已击退 ${progress.units.filter(u=>u.defeated).length} / 18`:'尚未触发 · 三波遭遇',point:n,color:progress?.cleared?'#87caae':'#df826e'});}
+ for(const [i,n]of TRADE_ROAD_NODES.entries()){const progress=s.tradeRoad.nodes[i];landmarks.push({name:`${i+1} · ${n.name}`,detail:s.merchantRoad.opened?(progress?.cleared?'支路已清剿':'怪物退居支路 · 主路恢复通行'):progress?.cleared?'三波已清除':progress?.active?`第 ${progress.wave+1} / 3 波 · 已击退 ${progress.units.filter(u=>u.defeated).length} / 18`:'尚未触发 · 三波遭遇',point:n,color:progress?.cleared?'#87caae':'#df826e'});}
  for(const [name,x,y]of [['西门驿站与集市',10500,2260],['风塔与中央广场',11790,1690],['东南住宅区',12820,2380],['议事与档案区',12900,660]] as const)landmarks.push({name,detail:'风语城街区',point:{x,y},color:'#c8c0a3'});
   for(const n of SHORTCUTS)landmarks.push({name:n.name,detail:s.mapProgress.shortcuts.includes(n.id)?'已修复':'待修复',point:n.barrier,color:'#e6c29b'});
  function updateLandmarks(){
@@ -78,7 +83,7 @@ export function showWorldAtlas(ui:Interface){
   element('map-landmark-list').innerHTML=local.map((l,i)=>`<button data-map-landmark="${i}"${l.campId?` data-camp-status="${l.campId}" data-cleared="${s.encounters.groups[l.campId].cleared}"`:''}><b>${l.name}</b><span>${l.detail}</span></button>`).join('')||'<p>此区域暂未开放。</p>';
   ui.modal.querySelectorAll<HTMLButtonElement>('[data-map-landmark]').forEach(b=>b.addEventListener('click',()=>{const l=local[Number(b.dataset.mapLandmark)];showInfo(l.name,l.detail,'地点已在地图中定位。');element<HTMLButtonElement>('atlas-enter').disabled=true;animateTo({...camera,...l.point,scale:Math.max(camera.scale,size.width/3000)});},{signal}));
  }
- const tracked=legacyTracked(s);
+ const tracked=roadTracked(s)??legacyTracked(s);
  function draw(){
   if(closed||size.width<2||size.height<2)return;
   const begin=performance.now(),dpr=Math.min(window.devicePixelRatio||1,2);

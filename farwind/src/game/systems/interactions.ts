@@ -1,3 +1,6 @@
+import {guardName} from './guardAftermath';
+import {openGuardCare} from '../ui/guardAftermath';
+import {merchantRoadInteraction} from '../ui/merchantRoad';
 import {cityInteractionComplete} from '../ui/city';
 import {cityInteraction} from './cityServices';
 import {appendLegacyEntry,legacyInteract} from './windLegacy';
@@ -18,9 +21,11 @@ import { add, remove, count, reward } from "./state";
 import type { World } from "../scenes/World";
 
 export function interact(this: World, p: Prop) {
+  if(merchantRoadInteraction(this,p))return;
   if(cityInteractionComplete(this,p))return;
   if(cityInteraction(this,p))return;
   if(legacyInteract(this,p))return;
+  if (p.id === 'guard-memorial') { openGuardCare(this,true); return; }
   if (p.id === "plaza-fountain") { void this.drinkSpring(); return; }
   if(p.id.startsWith('camp-root-')){const d=ENCOUNTERS.find(d=>d.id===p.id.slice(10));if(d){const t=regionalThreat(this.state.encounters,d.direction),boss=d.members.find(m=>m.boss)!.boss!;this.ui.dialog(d.name,t.cleared?'营地已经清空。这个方向的巡游不再补充，据点不再组织袭村。':`足迹与巢穴通往附近道路。清理全部驻守后，${CAMP_BOSSES[boss].name}会在预警后入场。击败首领，才能切断巡游与当地袭村来源。可以撤战回村守卫。`);return;}}
   if(p.id.startsWith("repair-")&&SHORTCUT_IDS.includes(p.id.slice(7) as ShortcutId)){openShortcut(this,p.id.slice(7) as ShortcutId);return;}
@@ -50,16 +55,10 @@ export function interact(this: World, p: Prop) {
     } else this.ui.shop(p.id.slice(8) as ShopId);
     return;
   }
-  if (p.id === "barracks-sign") {
-    this.ui.dialog(
-      "风铃营房",
-      "这里是卫队驻地。十二名卫兵分守东、北、南、西门，各有床位和轮休安排。遇到普通来袭会自行拦截；目前没有招募或复活服务。",
-    );
-    return;
-  }
+  if (p.id === "barracks-sign") { openGuardCare(this); return; }
   if(p.id === "east-gate-sign") { this.openDefenseDrill(); return; }
   if (p.id === "north-gate-sign" || p.id === "south-gate-sign") {
-    this.ui.dialog(p.label!,p.id === "north-gate-sign" ? "松岚、石泉与林弦守望山路。门外道路属于巡逻近郊，远处才是荒野。卫队会拦截逼近者，威胁退出后归岗，不会追进深林。" : "麦川、望禾与晴羽照看门外巡逻近郊，远处才是荒野。夜间少量来袭由卫队拦截，虚弱或缺员时延期，门洞保持开放。");return;
+    this.ui.dialog(p.label!,p.id === "north-gate-sign" ? `北门驻防：${this.state.defense.guards.filter(g=>g.id.startsWith('north-')&&!g.dead).map(guardName).join('、')||'暂缺，请到营房补岗'}。门外道路属于巡逻近郊，远处才是荒野。卫队会拦截逼近者，威胁退出后归岗，不会追进深林。` : `南门驻防：${this.state.defense.guards.filter(g=>g.id.startsWith('south-')&&!g.dead).map(guardName).join('、')||'暂缺，请到营房补岗'}。门外是巡逻近郊。夜间来袭由卫队拦截，虚弱或缺员时延期，门洞保持开放。`);return;
   }
   if (p.kind === "npc") {
     const talk = (text: string) => {this.ui.dialog(p.label!, `${text}\n${this.life.dialogue(p.id as ResidentId)}`, p.id);offerHelp(this,p.id as ResidentId);};

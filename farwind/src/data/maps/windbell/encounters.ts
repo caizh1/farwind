@@ -80,13 +80,20 @@ export const COMBAT_TEMPLATES:Record<WildernessDirection,readonly (readonly Enem
 export const combatRole=(type:EnemyKind):'melee'|'ranged'|'heavy'|'support'=>['priest','bell'].includes(type)?'support':['boar','burrow','guardian','bomber','geomancer'].includes(type)?'heavy':['spore','archer'].includes(type)?'ranged':'melee';
 export const COMPOSITION_LIMITS={ranged:2,heavy:3,support:1} as const;
 export type WaveMember=EncounterDefinition['members'][number]&{wave:number};
-export function waveMembers(d:EncounterDefinition,seed:number):WaveMember[]{
+// 连续波次换战术，角色预算仍统一约束；任务固定成员优先保留。
+export const TACTICAL_TEMPLATES:readonly (readonly EnemyKind[])[]=[
+ ['leaf','wolf','spore','guardian','slime','leaf'],
+ ['shade','wolf','archer','spore','slime','leaf'],
+ ['guardian','leaf','priest','archer','wolf','slime'],
+ ['wolf','leaf','geomancer','archer','guardian','slime'],
+];
+export function waveMembers(d:EncounterDefinition,seed:number,rulesVersion:1|2=2):WaveMember[]{
  const node=adventureIndex(d.id);if(node<0)return d.members.map(m=>({...m,wave:0}));
  let hash=seed>>>0;for(const c of d.id)hash=Math.imul(hash^c.charCodeAt(0),16777619)>>>0;
  const sizes=node===0?[6,6]:node===1?[8,8]:node===2?[8,8,8]:node===3?[6,6]:[8,8];
  const result:WaveMember[]=[];
  for(const [wave,size] of sizes.entries()){
-  const pattern=COMBAT_TEMPLATES[d.direction][(hash+wave)%6];
+  const pattern=rulesVersion===1?COMBAT_TEMPLATES[d.direction][(hash+wave)%6]:node===0&&wave===0?['slime','leaf','spore','wolf','slime','leaf'] as const:TACTICAL_TEMPLATES[(hash+wave+node)%4];
   const pinned=node===3?(wave===1?[d.members.find(m=>m.elite)??{id:`v2:${d.id}:1:0:spore`,type:'spore' as const,elite:'brood' as const,x:d.x,y:d.y}]:[]):wave===0?d.members.filter(m=>!m.boss):[];
   const roles={melee:0,ranged:0,heavy:0,support:0};
   for(let slot=0;slot<size;slot++){

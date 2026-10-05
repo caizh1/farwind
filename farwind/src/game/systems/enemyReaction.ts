@@ -1,3 +1,4 @@
+import {attackResistsLightHit} from './enemyAttack';
 import type {EnemyBody} from './enemy';
 import {sweepMove,type StrikeConfig} from './combat';
 import {motionBlocked,clearMotionLine,type Point} from './obstacles';
@@ -15,8 +16,9 @@ export function reactToEnemyHit(e:EnemyBody,now:number,move:StrikeConfig,directi
   return {guarded,interrupted:!!broken,guardBroken:!!broken};
  }
  const a=e.attack,interruptible=heavy||['priest','bell','geomancer'].includes(e.type)||e.type==='slime'&&!!a&&now<a.contactAt;
- const interrupted=interruptible&&!!a&&!a.cancelled&&!a.emitted&&!a.launched;
+ const interrupted=interruptible&&!!a&&!a.cancelled&&(!a.emitted||heavy&&a.chainPart===1)&&(!a.launched||a.type==='geomancer'&&now<a.contactAt);
  if(interrupted){a!.cancelled=true;e.windup=0;e.cool=Math.max(e.cool,now+(heavy?ENEMY_REACTION.interruptRecovery:ENEMY_REACTION.slimeRecovery));}
+ if(!heavy&&!guardBroken&&attackResistsLightHit(a,now)){e.recoil=undefined;return {guarded,interrupted:false,guardBroken:false};}
  const stagger=guardBroken?GUARDIAN.breakMs:guarded?0:move.stagger;
  e.staggerUntil=Math.max(e.staggerUntil,now+stagger);e.staggerSince=now;
  if(guardBroken)e.parried={at:now,until:now+GUARDIAN.breakMs,direction:{...direction},perfect:false};

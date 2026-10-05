@@ -28,7 +28,7 @@ export class XiaobaoView {
   constructor(scene: Phaser.Scene) {
     this.shadow = scene.add.ellipse(0, 0, 42, 14, 0x254036, 0.2);
     this.sprite = scene.add.sprite(0, 0, "xiaobao-motion", 0).setOrigin(0.5, XIAOBAO.footY / XIAOBAO.frameSize).setDisplaySize(XIAOBAO.displaySize, XIAOBAO.displaySize);
-    groundShadows(scene).add(this.sprite,this.shadow,{label:'小宝'});
+    groundShadows(scene).add(this.sprite,this.shadow,{label:'小宝',person:true});
     this.label = scene.add.text(0, 0, "", { fontSize: "10px", fontFamily: "sans-serif", color: "#334f43", stroke: "#fff7d8", strokeThickness: 3 }).setOrigin(0.5, 0);
     this.wind = scene.add.graphics();
     this.floor=scene.add.graphics().setDepth(2);this.effects=scene.add.graphics();
@@ -44,7 +44,7 @@ export class XiaobaoView {
     const c = this.controller, pose = c.pose, base=c.data.space==='village'?0:7500;
     this.sprite.setTexture(pose.texture, pose.frame).setPosition(c.x, c.y - pose.lift).setDepth(c.airborne?8800:base+c.y).setVisible(visible);
     Actor.mirror(this.sprite, c.flip);
-    this.shadow.setPosition(c.x, c.y - 2).setDepth(base+c.y - 0.5).setScale(Math.max(.4,1-pose.lift/180)).setVisible(visible);
+    this.shadow.setPosition(c.x, c.y).setDepth(base+c.y - 0.5).setScale(Math.max(.4,1-pose.lift/180)).setVisible(visible);
     this.label.setPosition(c.x, c.y + 7).setDepth(c.airborne?8803:base+c.y+2).setText(`小宝 · ${c.data.rest?'护风调息':c.data.flight?'飞援中':c.demonstration?XIAOBAO_CLIPS[c.action].name:XIAOBAO.title}`).setVisible(visible);
     this.wind.clear().setVisible(visible).setDepth(base+c.y + 1);
     if (!c.battleAction&&["palm", "guard", "step"].includes(c.action)) {

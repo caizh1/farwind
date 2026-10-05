@@ -1,3 +1,4 @@
+import additions from './dialoguePortraitExpansion.json';
 export type DialoguePortrait = {
   src: string;
   alt: string;
@@ -6,6 +7,7 @@ export type DialoguePortrait = {
 
 // 对话专属独立立绘；世界图集继续由场景加载，未知标识不替换成其他人的脸。
 export const dialoguePortraits = {
+  ...Object.fromEntries(additions.map(p=>[p.id,{src:`/assets/portraits/${p.id}-neutral.webp`,alt:p.姓名+'，'+p.描述,objectPosition:'50% 0%'}])),
   xiaobao: {
     src: "/assets/xiaobao/portrait.webp",
     alt: "小宝，短黑发、笑眼圆脸与小门牙，穿星星练功服和青绿披肩",

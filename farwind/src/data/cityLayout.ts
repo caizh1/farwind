@@ -1,3 +1,4 @@
+import {FORTRESS_STAIR} from './cityFortress';
 import type {Prop} from './world';
 
 // 城市楼址沿用世界规划；视觉脚底、实体占地与可达门点分别登记。
@@ -5,7 +6,7 @@ export type CitySpace = `city:${string}`;
 export type CityBuilding = {id:string;name:string;art:string;x:number;y:number;w:number;h:number;door:{x:number;y:number};space:CitySpace;owner:string;private:boolean};
 const building=(id:string,name:string,art:string,x:number,y:number,w:number,h:number,owner:string,privateRoom=false):CityBuilding=>({id,name,art,x,y,w,h,door:{x,y:y+55},space:`city:${id}`,owner,private:privateRoom});
 export const CITY_BUILDINGS:CityBuilding[]=[
- building('inn','候风驿站','inn-building',10220,2010,380,325,'innkeeper'),
+ building('inn','候风驿站','inn-building',10580,1050,380,325,'innkeeper'),
  building('market','市场商馆','market-building',10730,2010,340,290,'merchant'),
  building('guild','商旅行会','guild-hall',10350,570,440,340,'guildmaster'),
  building('forge','锻造坊','smith-building',10170,1050,330,280,'smith'),
@@ -19,7 +20,7 @@ export const CITY_BUILDINGS:CityBuilding[]=[
  ...Array.from({length:12},(_,i)=>building(`house-${i}`,['周婶的家','陆伯的家','沐禾的家','青萝的家','砚生的家','南音的家','阿铎的家','小栎的家','绫月的家','桑实的家','麦叔的家','闻溪的家'][i],`house-variant-${['a','b','c'][i%3]}`,i===5?12800:i<6?11000+(i%3)*800:12250+(i%3)*430,i<3?310:i<6?960:i<9?2110:2460,270,260,['zhou','lu','mu','qing','yan','nan','apprentice-a','apprentice-b','cloth','fruit','cook','storyteller'][i],true)),
 ];
 // 城墙步道使用独立空间，入口是已登记的梯道；不开放城外区域。
-export const CITY_WALL:CityBuilding={...building('wall','西城墙巡检步道','wall-stairs',10020,1190,140,140,'captain'),door:{x:10020,y:1225}};
+export const CITY_WALL:CityBuilding={...building('wall','西城墙巡检步道','wall-stairs',10230,1625,300,380,'captain'),door:FORTRESS_STAIR.bottom};
 export const cityBuilding=(space:unknown)=>space===CITY_WALL.space?CITY_WALL:CITY_BUILDINGS.find(b=>b.space===space);
 export const isCitySpace=(space:unknown):space is CitySpace=>!!cityBuilding(space);
 export const CITY_BUILDING_PROPS:Prop[]=CITY_BUILDINGS.map(b=>({id:`city-building-${b.id}`,art:`city-complete-${b.art}`,x:b.x,y:b.y,w:b.w,h:b.h,solid:[b.id==='tower'?150:b.w*.58,b.id==='underground'?60:90],cover:'high'}));
@@ -46,32 +47,31 @@ export function cityFurniture(space:unknown):CityFurniture[]{
  };
  return [...(b.id==='underground'?[]:common),...specific[b.id]??[]];
 }
-export const CITY_LAMPS=[{id:'lamp-west',x:10040,y:1690},{id:'lamp-market',x:11000,y:1760},{id:'lamp-plaza',x:12140,y:1710}] as const;
+export const CITY_LAMPS=[{id:'lamp-west',x:10580,y:1670},{id:'lamp-market',x:11000,y:1760},{id:'lamp-plaza',x:12140,y:1710}] as const;
 export const CITY_OUTDOOR_USES=[
  {id:'closed-north',label:'北门 · 山路整备中',x:11790,y:-80},
  {id:'closed-east',label:'东门 · 湖区通路整备中',x:13520,y:1600},
  {id:'closed-south',label:'南门 · 沙路整备中',x:11790,y:2570},
  {id:'board',label:'城市公示板 · 城案与委托',x:10590,y:685},
  ...CITY_LAMPS.map(l=>({id:l.id,label:'街灯 · 维修',x:l.x,y:l.y+25})),
- {id:'crate',label:'误放货箱 · 调查',x:10490,y:2220},{id:'stall',label:'市场摊位 · 布置',x:10500,y:1845},
- {id:'wall-stair',label:'内侧梯道 · 登上城墙',...CITY_WALL.door},
- {id:'post-west',label:'西门岗位 · 交接补给',x:9920,y:1650},{id:'post-hall',label:'行政岗 · 交接补给',x:12800,y:635},
+ {id:'crate',label:'误放货箱 · 调查',x:10680,y:2220},{id:'stall',label:'市场摊位 · 布置',x:10680,y:1845},
+ {id:'wall-stair',label:'北侧登墙梯道 · 城墙巡检',...CITY_WALL.door},
+ {id:'post-west',label:'西门岗位 · 交接补给',x:10490,y:1510},{id:'post-hall',label:'行政岗 · 交接补给',x:12800,y:635},
 ];
 export const CITY_STREET_PROPS:Prop[]=[
- {id:'city-check-booth',art:'city-complete-check-booth',x:10120,y:1440,w:155,h:150,solid:[95,40],cover:'high'},
- {id:'city-market-cart',art:'city-complete-cargo-cart',x:10420,y:2380,w:160,h:150,solid:[105,40],cover:'high'},
- ...[{x:10040,y:1370},{x:12600,y:670}].map((p,i)=>({...p,id:`city-flag-${i}`,art:'city-complete-city-flag',w:65,h:165,solid:[12,12] as [number,number],cover:'high' as const})),
+ {id:'city-check-booth',art:'city-complete-check-booth',x:10500,y:1360,w:155,h:150,solid:[95,40],cover:'high'},
+ {id:'city-market-cart',art:'city-complete-cargo-cart',x:10680,y:2500,w:160,h:150,solid:[105,40],cover:'high'},
+ ...[{x:10720,y:1360},{x:12600,y:670}].map((p,i)=>({...p,id:`city-flag-${i}`,art:'city-complete-city-flag',w:65,h:165,solid:[12,12] as [number,number],cover:'high' as const})),
  ...[{id:'north',x:11790,y:-220},{id:'east',x:13680,y:1600},{id:'south',x:11790,y:2680}].map(p=>({...p,id:`city-closed-${p.id}`,art:'city-complete-room-door',w:115,h:145,cover:'high' as const})),
  ...CITY_LAMPS.map(p=>({...p,art:'city-complete-street-lamp',w:58,h:150,solid:[22,18] as [number,number]})),
- ...[{id:'fruit',art:'fruit-stall',x:10500,y:1800},{id:'herb',art:'herb-stall',x:10920,y:1830},{id:'cloth',art:'cloth-stall',x:11230,y:1820}].map(p=>({...p,id:`city-stall-${p.id}`,art:`city-complete-${p.art}`,w:150,h:145,solid:[110,50] as [number,number],cover:'high' as const})),
- {id:'city-cargo',art:'city-complete-cargo-crates',x:10490,y:2190,w:85,h:90},
+ ...[{id:'fruit',art:'fruit-stall',x:10680,y:1800},{id:'herb',art:'herb-stall',x:10920,y:1830},{id:'cloth',art:'cloth-stall',x:11230,y:1820}].map(p=>({...p,id:`city-stall-${p.id}`,art:`city-complete-${p.art}`,w:150,h:145,solid:[110,50] as [number,number],cover:'high' as const})),
+ {id:'city-cargo',art:'city-complete-cargo-crates',x:10680,y:2190,w:85,h:90},
  {id:'city-board',art:'city-complete-notice-board',x:10590,y:660,w:100,h:145,solid:[50,20]},
  {id:'city-herbs-a',art:'herb',x:10770,y:2240,w:72,h:62,kind:'resource',item:'herb',label:'药坊种植药草'},
  {id:'city-herbs-b',art:'herb',x:10880,y:2240,w:72,h:62,kind:'resource',item:'herb',label:'药坊种植药草'},
  {id:'city-berries',art:'bush',x:10760,y:2350,w:85,h:75,kind:'resource',item:'berry',label:'药坊浆果丛'},
  ...[{x:11400,y:1570},{x:12200,y:1570}].map((p,i)=>({...p,id:`city-bench-${i}`,art:'city-complete-street-bench',w:120,h:75,solid:[95,35] as [number,number]})),
  ...[{x:11490,y:1300},{x:12100,y:1300},{x:12800,y:570}].map((p,i)=>({...p,id:`city-planter-${i}`,art:'city-complete-city-planter',w:145,h:100,solid:[105,55] as [number,number]})),
- {id:'city-wall-stairs',art:'city-complete-wall-stairs',x:10020,y:1190,w:140,h:140,solid:[55,45]},
 ];
 export const CITY_CITIZENS=[
  ['captain','岚铎','captain','barracks'],['merchant','芦锦','merchant','market'],['innkeeper','林姨','innkeeper','inn'],['keeper','望岚','keeper','tower'],

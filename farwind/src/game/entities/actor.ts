@@ -51,7 +51,7 @@ export class Actor {
       .sprite(x, y, cat ? "cat-motion" : "hero", 0)
       .setOrigin(0.5, 124 / 128);
     this.sprite.setDisplaySize(cat ? 55 : 86, cat ? 54 : 92);
-    groundShadows(scene).add(this.sprite,this.shadow,{label:cat?'小黑':'主角'});
+    groundShadows(scene).add(this.sprite,this.shadow,{label:cat?'小黑':'主角',person:true});
     this.carrySword = scene.add
       .image(x, y, "hero-carry-sword")
       .setVisible(false);
@@ -177,7 +177,7 @@ export class Actor {
         Actor.mirror(this.scopeImage,pose.flip);
       }
     }
-    this.shadow.setPosition(x, y - 3).setDepth(y - 0.5);
+    this.shadow.setPosition(x, y).setDepth(y - 0.5);
   }
   debug() {
     return {

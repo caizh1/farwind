@@ -1,0 +1,10 @@
+<!doctype html><html lang="zh-CN"><meta charset="UTF-8"><title>城防构件检查</title><style>body{margin:0;background:#60705a;color:#fff;font:16px sans-serif}header{padding:12px;display:flex;gap:16px}main{display:flex;align-items:flex-start;gap:15px}canvas{border:1px solid #ccb;background:repeating-conic-gradient(#bdc0a6 0% 25%,#e4e0c9 0% 50%) 0/24px 24px}h2{font-size:16px}</style><header>城防前后层透明开口检查（直接调用正式构件绘制函数）</header><main id="views"></main><script type="module">
+import {makeContinuousCityWall} from '/src/game/rendering/cityWalls.ts';
+import {CITY_PROPS} from '/src/data/maps/windwhisper.ts';
+const textures=new Map();
+for(const [key,url] of [['city-wall-materials','/assets/windwhisper-city/completion/wall-materials-v2.png'],['city-gate-crown','/assets/windwhisper-city/completion/gate-crown-v3.png']]){const image=new Image();image.src=url;await image.decode();textures.set(key,{getSourceImage:()=>image});}
+const scene={textures:{exists:k=>textures.has(k),get:k=>textures.get(k),addCanvas:(k,c)=>textures.set(k,{getSourceImage:()=>c}),createCanvas:(k,w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;const t={context:c.getContext('2d'),getSourceImage:()=>c,refresh:()=>{}};textures.set(k,t);return t;}},data:{get:()=>()=>({indoor:false})},events:{on:()=>{},once:()=>{}},add:{image:()=>base}};
+const base={x:0,y:0,visible:true,alpha:1,setTexture:()=>base,setOrigin:()=>base,setDisplaySize:()=>base,setDepth:()=>base,setData:()=>base};
+makeContinuousCityWall(scene,CITY_PROPS.find(p=>p.id==='city-gate-beam'),base);
+for(const [key,label] of [['fortress-v3-gate','门洞后层'],['fortress-v3-gate-front','门洞前层']]){const div=document.createElement('section');const h=document.createElement('h2');h.textContent=label;div.append(h,textures.get(key).getSourceImage());document.querySelector('#views').append(div);}
+</script></html>

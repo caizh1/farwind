@@ -10,13 +10,13 @@ export const campNestGroundAreas=ENCOUNTERS.filter(d=>d.kind==='camp').map(d=>{
   return {...material,id:d.id,direction:d.direction,x,y,bounds:{left:x-material.rx-pad,right:x+material.rx+pad,top:y-material.ry-pad,bottom:y+material.ry+pad}};
 });
 
-export function campNestGroundCleared(area:typeof campNestGroundAreas[number],state:Pick<State,'encounters'|'windMemory'>) {
+export function campNestGroundCleared(area:Pick<typeof campNestGroundAreas[number],'id'|'direction'>,state:Pick<State,'encounters'|'windMemory'>) {
   const memory=state.windMemory.active;
   const encounters=memory?.direction===area.direction?memory.encounters:state.encounters;
   return encounters.groups[area.id].cleared;
 }
 
-export function campNestGroundCoverage(x:number,y:number,area:typeof campNestGroundAreas[number]) {
+export function campNestGroundCoverage(x:number,y:number,area:{x:number;y:number;rx:number;ry:number;feather:number}) {
   const dx=x-area.x,dy=y-area.y;
   const edge=terrainJitter(x,y)*2+Math.sin(dx/47+dy/61)*10+Math.sin(dx/23-dy/37)*5;
   return featherCoverage(ellipseDistance(x,y,area)+edge,area.feather);

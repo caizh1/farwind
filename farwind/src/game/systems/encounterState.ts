@@ -6,10 +6,10 @@ import {type CampBossKind} from '../../data/maps/windbell/campBosses';
 import {initialCampBoss,validateCampBoss,type CampBossState} from './campBossState';
 import {enemyLeashRadius} from '../../data/enemyPursuit';
 export type EncounterMemberState={id:string;hp:number;x:number;y:number;serial:number;cooldown:number;defeated:boolean;drop:boolean;dropRemaining:number;participated:boolean;face:{x:number;y:number};guardOpen:number};
-export type EncounterGroupState={composition:number;cycle:number;activated:boolean;cleared:boolean;cooldown:number;members:EncounterMemberState[];warning:number|null;summons?:EncounterMemberState[];wave?:number;waveWarning?:number;rewarded?:boolean;boss?:CampBossState};
+export type EncounterGroupState={rulesVersion?:1|2;composition:number;cycle:number;activated:boolean;cleared:boolean;cooldown:number;members:EncounterMemberState[];warning:number|null;summons?:EncounterMemberState[];wave?:number;waveWarning?:number;rewarded?:boolean;boss?:CampBossState};
 export type EncounterState={elapsed:number;seed?:number;instance?:string;broken:ArenaStoneId[];groups:Record<string,EncounterGroupState>};
 const member=(m:{id:string;type:string;elite?:EliteKind;boss?:CampBossKind;x:number;y:number}):EncounterMemberState=>({id:m.id,hp:creatureMaxHP(m.type,m.elite,m.boss),x:m.x,y:m.y,serial:0,cooldown:0,defeated:false,drop:false,dropRemaining:0,participated:false,face:{x:0,y:1},guardOpen:0});
-export const initialEncounters=(seed=randomSeed(),instance?:string):EncounterState=>({elapsed:0,seed,...instance?{instance}:{},broken:[],groups:Object.fromEntries(ENCOUNTERS.map(d=>[d.id,{composition:ENCOUNTER_COMPOSITION_VERSION,cycle:0,activated:false,cleared:false,cooldown:0,warning:null,members:d.members.map(m=>member({...m,id:instance?`${instance}|${m.id}`:m.id})),...d.kind==='camp'?{boss:initialCampBoss()}: {}}]))});
+export const initialEncounters=(seed=randomSeed(),instance?:string):EncounterState=>({elapsed:0,seed,...instance?{instance}:{},broken:[],groups:Object.fromEntries(ENCOUNTERS.map(d=>[d.id,{rulesVersion:2,composition:ENCOUNTER_COMPOSITION_VERSION,cycle:0,activated:false,cleared:false,cooldown:0,warning:null,members:d.members.map(m=>member({...m,id:instance?`${instance}|${m.id}`:m.id})),...d.kind==='camp'?{boss:initialCampBoss()}: {}}]))});
 export const campGuardsDefeated=(d:typeof ENCOUNTERS[number],g:EncounterGroupState)=>g.members.every(m=>!!encounterUnit(m.id)?.boss||m.defeated);
 
 // 未击败的首领只封锁自己的场地；撤离后的待登场记录不能锁住其他方向或村庄。
@@ -59,7 +59,7 @@ export function validateEncounters(raw:unknown):EncounterState{
  if(s.seed!==undefined&&(!Number.isSafeInteger(s.seed)||s.seed<0||s.seed>0xffffffff))fail();
  for(const d of ENCOUNTERS){const g=s.groups[d.id],defs=encounterDefinitions(s,d);
   if(g?.wave!==undefined&&(s.seed===undefined||adventureIndex(d.id)<0||!Number.isSafeInteger(g.wave)||g.wave<0||g.wave>3||!n(g.waveWarning,2000)||typeof g.rewarded!=="boolean"))fail();
-  if(!g||g.composition!==ENCOUNTER_COMPOSITION_VERSION||!Number.isSafeInteger(g.cycle)||!n(g.cycle,1e9)||typeof g.activated!=="boolean"||typeof g.cleared!=="boolean"||!n(g.cooldown,d.cooldownMs)||!Array.isArray(g.members)||g.members.length!==defs.length)fail();
+  if(!g||g.rulesVersion!==undefined&&![1,2].includes(g.rulesVersion)||g.composition!==ENCOUNTER_COMPOSITION_VERSION||!Number.isSafeInteger(g.cycle)||!n(g.cycle,1e9)||typeof g.activated!=="boolean"||typeof g.cleared!=="boolean"||!n(g.cooldown,d.cooldownMs)||!Array.isArray(g.members)||g.members.length!==defs.length)fail();
   if(g.summons!==undefined&&(!Array.isArray(g.summons)||g.summons.length>4||g.summons.filter(u=>!u.defeated).length>2||new Set(g.summons.map(u=>u.id)).size!==g.summons.length||g.summons.some(u=>{const owner=encounterUnit(u.id);return !owner||owner.group!==d.id||!u.id.includes(':唤巢:')||!n(u.hp,48)||u.defeated!==(u.hp===0)||!validOutdoorPoint(u)||u.drop||u.dropRemaining!==0||!n(u.serial,1e9)||!n(u.cooldown,10000)||!u.face||Math.abs(Math.hypot(u.face.x,u.face.y)-1)>.001;})))fail();
   if(g.warning!==null&&(!d.after&&!d.id.startsWith('legacy-')||g.activated||!n(g.warning,2500)||!!d.after&&!s.groups[d.after]?.cleared))fail();
   if(d.kind==='camp'){
@@ -76,7 +76,7 @@ export function validateEncounters(raw:unknown):EncounterState{
  }
  if(Object.values(s.groups).filter(g=>g.boss?.stage==='battle').length>1)fail();
  if(s.broken.length&&!s.groups["north-rock-arena"].activated)fail();
- return {elapsed:s.elapsed,...s.seed===undefined?{}:{seed:s.seed},...s.instance?{instance:s.instance}:{},broken:[...s.broken],groups:Object.fromEntries(ENCOUNTERS.map(d=>{const g=s.groups[d.id];return [d.id,{composition:g.composition,cycle:g.cycle,activated:g.activated,cleared:g.cleared,cooldown:g.cooldown,warning:g.warning,...g.summons?{summons:structuredClone(g.summons)}:{},...g.wave===undefined?{}:{wave:g.wave,waveWarning:g.waveWarning,rewarded:g.rewarded},...g.boss?{boss:g.boss}:{},members:g.members.map(u=>({id:u.id,hp:u.hp,x:u.x,y:u.y,serial:u.serial,cooldown:u.cooldown,defeated:u.defeated,drop:u.drop,dropRemaining:u.dropRemaining,participated:u.participated,face:{...u.face},guardOpen:u.guardOpen}))}];}))};
+ return {elapsed:s.elapsed,...s.seed===undefined?{}:{seed:s.seed},...s.instance?{instance:s.instance}:{},broken:[...s.broken],groups:Object.fromEntries(ENCOUNTERS.map(d=>{const g=s.groups[d.id];return [d.id,{rulesVersion:g.rulesVersion??1,composition:g.composition,cycle:g.cycle,activated:g.activated,cleared:g.cleared,cooldown:g.cooldown,warning:g.warning,...g.summons?{summons:structuredClone(g.summons)}:{},...g.wave===undefined?{}:{wave:g.wave,waveWarning:g.waveWarning,rewarded:g.rewarded},...g.boss?{boss:g.boss}:{},members:g.members.map(u=>({id:u.id,hp:u.hp,x:u.x,y:u.y,serial:u.serial,cooldown:u.cooldown,defeated:u.defeated,drop:u.drop,dropRemaining:u.dropRemaining,participated:u.participated,face:{...u.face},guardOpen:u.guardOpen}))}];}))};
 }
 export function unitState(s:EncounterState,id:string):EncounterMemberState|undefined{const d=encounterUnit(id);if(!d)return;if(s.instance&&!id.startsWith(s.instance+'|'))return;const group=s.groups[d.group],u=group?.members.find(m=>m.id===id);if(u)return u;const summon=group?.summons?.find(m=>m.id===id);if(summon)return summon;
  const owned=/^(.+):(祭根|护猎):(\d+):(\d+)$/.exec(id);if(!owned||group?.boss?.attempt!==Number(owned[3]))return;
@@ -108,14 +108,14 @@ export function resetEncounter(s:EncounterState,id:string){
  const d=ENCOUNTERS.find(g=>g.id===id)!,g=s.groups[id];
  if(s.seed!==undefined||g?.wave!==undefined)return false;
  if(!d||!g||g.cycle>=1e9||d.kind!=="patrol"||!g.cleared||g.cooldown>0||g.members.some(m=>m.drop)||campCleared(s,d.source))return false;
- g.members=d.members.map((m,i)=>({...member(m),serial:g.members[i].serial}));g.cycle++;g.cleared=false;g.activated=true;return true;
+ g.rulesVersion=2;g.members=d.members.map((m,i)=>({...member(m),serial:g.members[i].serial}));g.cycle++;g.cleared=false;g.activated=true;return true;
 }
 
-export function encounterDefinitions(s:EncounterState,d:typeof ENCOUNTERS[number]){const defs=s.groups[d.id]?.wave===undefined?d.members:waveMembers(d,s.seed!);return s.instance?defs.map(m=>({...m,id:`${s.instance}|${m.id}`})):defs;}
+export function encounterDefinitions(s:EncounterState,d:typeof ENCOUNTERS[number]){const defs=s.groups[d.id]?.wave===undefined?d.members:waveMembers(d,s.seed!,s.groups[d.id].rulesVersion??1);return s.instance?defs.map(m=>({...m,id:`${s.instance}|${m.id}`})):defs;}
 export function activateAdventure(s:EncounterState,id:string){
  const d=ENCOUNTERS.find(d=>d.id===id)!,g=s.groups[id],node=adventureIndex(id);if(node<0||g.activated||s.seed===undefined)return false;
  const route=ADVENTURE_ROUTES[d.direction];if(node>0&&!s.groups[route[node-1]].rewarded)return false;
- g.members=waveMembers(d,s.seed).map(m=>member({...m,id:s.instance?`${s.instance}|${m.id}`:m.id}));g.wave=0;g.waveWarning=2000;g.rewarded=false;g.activated=true;g.warning=null;return true;
+ g.members=waveMembers(d,s.seed,g.rulesVersion??1).map(m=>member({...m,id:s.instance?`${s.instance}|${m.id}`:m.id}));g.wave=0;g.waveWarning=2000;g.rewarded=false;g.activated=true;g.warning=null;return true;
 }
 export function advanceAdventureWave(s:EncounterState,d:typeof ENCOUNTERS[number],delta:number){
  const g=s.groups[d.id];if(g.wave===undefined||g.rewarded)return;

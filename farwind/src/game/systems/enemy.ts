@@ -1,7 +1,8 @@
+import {tacticalDestination} from './enemyTactics';
 import {enemyBehavior} from '../../data/enemies';
 import {inProtected} from "../../data/defenseZones";
 import { enemyDefs, mapGeometryRevision } from "../../data/world";
-import { createEnemyAttack, advanceEnemyAttack, ENEMY_ATTACK, delayEnemyAttack, sampleEnemyAttack, creatureCooldown, type EnemyAttack, type EnemyContact } from "./enemyAttack";
+import { createEnemyAttack,enemyFollowup, advanceEnemyAttack, ENEMY_ATTACK, delayEnemyAttack, sampleEnemyAttack, creatureCooldown, type EnemyAttack, type EnemyContact } from "./enemyAttack";
 import { enemyKind, enemyProfile } from '../../data/enemies';
 import {creatureReach,type EliteKind} from '../../data/maps/windbell/elites';
 import {turnToward,wolfFlank} from './enemyTraits';
@@ -214,6 +215,10 @@ export function repairEnemyPoint(origin: Point, home: Point, radius = 420) {
   return nearestStanding(origin, anchors, allowed);
 }
 export type EnemyBody = Point & {
+  lastAttackStarted?:number;
+  combatTier?:import('./enemyAttack').CombatTier;
+  tacticalPoint?:Point;
+  tacticalNext?:number;
   damageScale?:number;
   fungalShield?:EnemyBody;
   bossSummon?:{owner:string;attempt:number};
@@ -333,7 +338,7 @@ export function updateEnemy(
   validateEnemyPosition(e);
   if (e.disabled) return null;
   if(e.passiveRoot){e.ai='祭根护心';return null;}
-  if(e.type==='priest')return updateFungalPriest(e,peers,player,now,dtMs,targetId,permission);
+  const support=e.type==='priest';if(support){updateFungalPriest(e,peers,player,now,dtMs,targetId,permission);if(e.attack||!e.combatTier)return null;}
   const d = distance(e, player),
     home = { x: e.homeX, y: e.homeY };
   const safe = enemyAttackPermitted(e,player);
@@ -362,16 +367,16 @@ export function updateEnemy(
     e.ai=attack.cancelled?"攻击取消":({charge:"蓄力",commit:"锁向承诺",active:"真正出手",recovery:"收招"}[sampleEnemyAttack(attack,now,e).phase]);
     if(contact)e.cool=Math.max(e.cool,creatureCooldown(attack));
     if(attack.wallAt!==undefined){e.wallHit={at:attack.wallAt,until:attack.wallAt+850,direction:{...attack.direction}};staggerEnemy(e,attack.wallAt,850);e.cool=attack.wallAt+1400;e.ai='撞墙失衡';}
-    if(now>=attack.recoveryUntil||attack.cancelled)e.attack=null;
+    if(now>=attack.recoveryUntil||attack.cancelled){const next=enemyFollowup(e,player,now,targetId,permission(e,targetId));e.attack=next;if(next){e.lastAttackStarted=now;e.cool=creatureCooldown(next);e.ai='连斩前摇';}}
     return contact;
   }
   const profile=enemyProfile(e.type);
   const aligned=enemyBehavior(e.type)!=='guardian'||d<1||((player.x-e.x)*(e.face?.x??0)+(player.y-e.y)*(e.face?.y??1))/d>.94;
   const permitted=permission(e,targetId);
-  if (!e.boss && d < creatureReach(e.type,e.elite) && now > e.cool && safe && aligned && clearMeleeLine(e, player)&&permitted) {
+  if (!support && !e.boss && d < creatureReach(e.type,e.elite) && now > e.cool && safe && aligned && clearMeleeLine(e, player)&&permitted) {
     e.targetId=targetId;
-    e.attack=createEnemyAttack(e.id,e.attackSerial=(e.attackSerial??0)+1,e.type,now,e,player,undefined,e.elite);
-    e.attack.damage*=e.damageScale??1;
+    e.attack=createEnemyAttack(e.id,e.attackSerial=(e.attackSerial??0)+1,e.type,now,e,player,undefined,e.elite,e.combatTier??0);
+    e.lastAttackStarted=now;e.attack.damage*=e.damageScale??1;
     if(enemyBehavior(e.type)==='guardian'){e.attack.direction={...e.face!};e.attack.locked=true;}
     e.cool=creatureCooldown(e.attack);
     e.windup = e.attack.contactAt-now;
@@ -421,11 +426,12 @@ export function updateEnemy(
   // 孢卫进入中距离后等待喷射冷却，玩家过近时只在合法空间后撤。
   if(tracking&&!e.boss&&e.type==='spore'&&d<155){const retreat={x:e.x+(e.x-player.x)/(d||1)*65,y:e.y+(e.y-player.y)/(d||1)*65};
     if(distance(retreat,home)<radius&&!motionBlocked(retreat.x,retreat.y)&&clearMotionLine(e,retreat))target=retreat;}
+  if(tracking&&e.combatTier)target=tacticalDestination(e,player,peers,now,allowedFlank);
   const
     mode = chase ? "chase" : "return";
   const reached = (p: Point,aim=player,destination=target) =>
     tracking
-      ? (e.boss?distance(p,aim)<100:!permitted&&e.type!=='spore'?distance(p,destination)<12:e.type==='spore'?distance(p,aim)>=155&&distance(p,aim)<270:distance(p,aim) < Math.max(70,creatureReach(e.type,e.elite)-10)) && clearMeleeLine(p,aim)
+      ? (support||e.combatTier&&['archer','spore'].includes(enemyBehavior(e.type))?distance(p,destination)<12:(e.boss?distance(p,aim)<100:!permitted&&e.type!=='spore'?distance(p,destination)<12:e.type==='spore'?distance(p,aim)>=155&&distance(p,aim)<270:distance(p,aim) < Math.max(70,creatureReach(e.type,e.elite)-10)) && clearMeleeLine(p,aim))
       : distance(p,destination) <= 8;
   if (reached(e)) {
     e.ai = chase ? tracking?"等待冷却":"搜索目标" : "家园";

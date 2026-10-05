@@ -1,4 +1,4 @@
-import {roadUnit,type TradeRoadState} from './tradeRoadState';
+import {roadUnit,type TradeRoadState,type RoadUnit} from './tradeRoadState';
 import {isSpace,validPlace,} from './npcLifeState'
 import type {SpaceId} from '../../data/npcLife';
 import {initialXiaobaoLife,validateXiaobaoLife,type XiaobaoLifeState} from './xiaobaoLifeState';
@@ -158,8 +158,10 @@ export function validateXiaobao(
   raidIds: readonly string[],
   encounters?:EncounterState,
   road?:TradeRoadState,
+  nest:readonly RoadUnit[]=[],
 ): XiaobaoState {
   const s = structuredClone(raw) as XiaobaoState;
+  const savedRoad=(id:string)=>road&&roadUnit(road,id)||nest.find(u=>u.id===id);
   const fail = () => {
     throw Error("小宝存档状态无效，上一份有效存档仍保留。");
   };
@@ -175,7 +177,7 @@ export function validateXiaobao(
   const enemy = (v: unknown) =>
     enemyDefs.some((e) => e.id === v) ||
     (typeof v === "string" && !!encounterUnit(v) && !!encounters && !!unitState(encounters,v)) ||
-    (typeof v==='string'&&!!road&&!!roadUnit(road,v)) ||
+    (typeof v==='string'&&!!road&&!!savedRoad(v)) ||
     raidIds.includes(v as string) ||
     historicalRaidMember(v);
   const ally = (v: unknown) =>
@@ -344,18 +346,18 @@ export function validateXiaobao(
     !Array.isArray(s.affected) ||
     !ids(
       s.affected.map((e) => e?.id),
-      enemyDefs.length+ENCOUNTER_UNITS.length+108,
-      (id) => typeof id === "string" && (enemyDefs.some(e=>e.id===id) || !!encounters && !!unitState(encounters,id) || !!road&&!!roadUnit(road,id)),
+      enemyDefs.length+ENCOUNTER_UNITS.length+116,
+      (id) => typeof id === "string" && (enemyDefs.some(e=>e.id===id) || !!encounters && !!unitState(encounters,id) || !!road&&!!savedRoad(id)),
     ) ||
     !s.affected.every(
       (e) =>
         !killed.includes(e.id) &&
         (!encounterUnit(e.id)||(!!encounters&&unitState(encounters,e.id)?.defeated===false)) &&
-        (!e.id.startsWith('road:')||!!road&&roadUnit(road,e.id)?.defeated===false) &&
+        (!(e.id.startsWith('road:')||e.id.startsWith('road-nest:'))||!!road&&savedRoad(e.id)?.defeated===false) &&
         point(e) &&
         n(
           e.hp,
-          (road&&roadUnit(road,e.id)?.maxHP)??creatureMaxHP((enemyDefs.find((d) => d.id === e.id)??encounterUnit(e.id))!.type,encounterUnit(e.id)?.elite,encounterUnit(e.id)?.boss),
+          (road&&savedRoad(e.id)?.maxHP)??creatureMaxHP((enemyDefs.find((d) => d.id === e.id)??encounterUnit(e.id))!.type,encounterUnit(e.id)?.elite,encounterUnit(e.id)?.boss),
           0.001,
         ) &&
         n(e.control, 800) &&

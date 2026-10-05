@@ -1,3 +1,5 @@
+import {initialMerchantRoad,validateMerchantRoad,type MerchantRoadState} from './merchantRoadState';
+import {validateGuardMemorials} from './guardAftermath';
 import {initialTradeRoad,initialCity,validateTradeRoad,validateCity,type TradeRoadState,type CityState} from './tradeRoadState';
 import {initialWindMemory,validateWindMemory,type WindMemoryState} from './windMemory';
 import {initialWindGifts,validateWindGifts,type WindGiftState} from './windGifts';
@@ -45,7 +47,8 @@ export type State = {
   windLegacy:WindLegacyState;
   tradeRoad:TradeRoadState;
   city:CityState;
-  schema_version: 23;
+  schema_version: 25;
+  merchantRoad:MerchantRoadState;
   catBond: CatBondState;
   physique: { runDistance: number };
   demonKing:DemonKingState;
@@ -87,7 +90,8 @@ export const initialState = (): State => ({
   skills: initialSkills(),
   windLegacy:initialWindLegacy(),
   tradeRoad:initialTradeRoad(), city:initialCity(),
-  schema_version: 23,
+  schema_version: 25,
+  merchantRoad:initialMerchantRoad(8 * 60),
   catBond: initialCatBond(),
   physique: { runDistance: 0 },
   demonKing:initialDemonKing(),
@@ -284,6 +288,8 @@ export function validate(raw: unknown): State {
   if(s&&(s as {schema_version:number}).schema_version>=21){s.windGifts=validateWindGifts(s.windGifts);s.windMemory=validateWindMemory(s.windMemory);s.skills=validateSkills(s.skills);s.runes=migrateBuildRunes(s.runes);s.windLegacy=validateWindLegacy(s.windLegacy);}
   if(s&&(s as {schema_version:number}).schema_version===21){s.tradeRoad=initialTradeRoad();s.city=initialCity();(s as {schema_version:number}).schema_version=22;}
   if(s&&(s as {schema_version:number}).schema_version===22){s.city=validateCity(s.city);(s as {schema_version:number}).schema_version=23;}
+  if(s&&(s as {schema_version:number}).schema_version===23){s.city=validateCity(s.city);s.tradeRoad=validateTradeRoad(s.tradeRoad);s.merchantRoad=initialMerchantRoad(s.time);(s as {schema_version:number}).schema_version=24;}
+  if(s&&(s as {schema_version:number}).schema_version===24){for(const g of Object.values(s.encounters?.groups??{}))g.rulesVersion??=g.activated?1:2;s.tradeRoad.rulesVersion??=s.tradeRoad.seed===null?2:1;s.merchantRoad.nest.rulesVersion??=s.merchantRoad.nest.units.some(u=>u.spawned)?1:2;(s as {schema_version:number}).schema_version=25;}
   if(s?.map_version===8)s.map_version=CURRENT_MAP_VERSION;
   const num = (n: unknown, min: number, max: number) =>
     typeof n === "number" && Number.isFinite(n) && n >= min && n <= max;
@@ -296,7 +302,7 @@ export function validate(raw: unknown): State {
   const vitals = playerVitals(s);
   if (
     !s ||
-    s.schema_version !== 23 || s.content_version !== 2 ||
+    s.schema_version !== 25 || s.content_version !== 2 ||
     !s.mapProgress || !["unknown","surveyed","open"].includes(s.mapProgress.westRoad) ||
     !Array.isArray(s.mapProgress.shortcuts) || s.mapProgress.shortcuts.length>3 || new Set(s.mapProgress.shortcuts).size!==s.mapProgress.shortcuts.length || !s.mapProgress.shortcuts.every(id=>SHORTCUT_IDS.includes(id)) ||
     (s.map_version !== undefined &&
@@ -389,11 +395,12 @@ export function validate(raw: unknown): State {
   for(const key of ['wind','blade'] as const){const phase=s.windLegacy[key];if(phase>=3&&!s.encounters.groups[key==='wind'?'legacy-wind-device':'legacy-blade-post'].cleared||phase===4&&!s.encounters.groups[key==='wind'?'legacy-wind-passage':'legacy-blade-road'].cleared)throw Error('传承节点与战斗记录不一致。');}
   if(s.windLegacy.ending&&(!s.encounters.groups['east-thorn-camp'].cleared||!s.mapProgress.shortcuts.includes('east-corridor')))throw Error('传承归途与据点或回廊记录不一致。');
   if(s.fieldQuests["south-supply"]==="complete"&&!s.encounters.groups["south-spore-camp"].cleared)throw Error("南部委托与据点进度不一致。");
-  s.tradeRoad=validateTradeRoad(s.tradeRoad);s.city=validateCity(s.city);
+  s.tradeRoad=validateTradeRoad(s.tradeRoad);s.city=validateCity(s.city);s.merchantRoad=validateMerchantRoad(s.merchantRoad);
   for(const [i,n]of s.tradeRoad.nodes.entries())if(n.rewarded!==s.windGifts.receipts.includes(`商路:${s.tradeRoad.serial}:${i}`))throw Error('商路节点与风赐凭据不一致。');
   s.defense = validateDefense(s.defense);
+  validateGuardMemorials(s.defense,s.time);
   if((s.defense.raid?.order?.malice??0)>demonMalice(s.encounters))throw Error('在途魔王派遣与清剿进度不一致。');
-  s.xiaobao=validateXiaobao(s.xiaobao,s.killed,s.defense.raid?.members.map(m=>m.id)??[],s.windMemory.active?.encounters??s.encounters,s.tradeRoad);
+  s.xiaobao=validateXiaobao(s.xiaobao,s.killed,s.defense.raid?.members.map(m=>m.id)??[],s.windMemory.active?.encounters??s.encounters,s.tradeRoad,s.merchantRoad.nest.units);
   s.night=validateNight(s);
   s.life=validateLife(s.life,s.time);
   if(s.xiaobao.life.day>Math.floor(s.time/1440)||s.xiaobao.life.journal.some(e=>e.time>s.time))throw Error('小宝的经历时间不能晚于世界时间。');
@@ -449,7 +456,7 @@ export const MAX_SAVE_BYTES = 2_000_000;
 export function parseSave(text: string) {
   if (new TextEncoder().encode(text).byteLength > MAX_SAVE_BYTES) throw Error("存档超过 2 MB 限制");
   const raw = JSON.parse(text);
-  if(raw?.content_version!==2||![21,22,23].includes(raw?.schema_version))throw Error('此备份属于旧战斗版本，请从全新旅途开始；旧备份未改动。');
+  if(raw?.content_version!==2||![21,22,23,24,25].includes(raw?.schema_version))throw Error('此备份属于旧战斗版本，请从全新旅途开始；旧备份未改动。');
   if(![8,CURRENT_MAP_VERSION].includes(raw?.map_version))throw Error('第一张地图从全新旅途开始，此文件属于旧地图；原存档文件未改动。');
   return validate(raw);
 }

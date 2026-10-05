@@ -1,8 +1,10 @@
+import {ROAD_NEST} from '../../data/merchantRoad';
+import {CAMP_NEST_GROUND} from '../../data/campNests';
 import {TRADE_RIVER} from '../../data/maps/windwhisper';
 import {MAP_REGIONS} from "../../data/village";
 import {WILD_WATERS,WILD_BRIDGES} from "../../data/maps/windbell/wilderness";
 import {groundChunks} from './terrainChunks';
-import {campNestGroundAreas,campNestGroundCoverage,campNestGroundCleared} from './campNestGround';
+import {campNestGroundAreas as existingNestGroundAreas,campNestGroundCoverage,campNestGroundCleared as existingNestGroundCleared} from './campNestGround';
 import {ellipseDistance,featherCoverage,polygonDistance,strokeCoverage,terrainBounds,terrainJitter,terrainSegments} from './terrainBlend';
 import type {TerrainBounds,TerrainPoint} from './terrainBlend';
 import {SERVICE_SIGNS,VILLAGE_ANCHORS} from '../../data/maps/windbell/layout';
@@ -25,6 +27,10 @@ import {ART_QUALITY} from '../../data/worldAppearance';
 import {seamlessGround,makeGroundAppearance,paintGroundVariation} from '../rendering/worldAppearance';
 
 export function makeTerrain(this: World) {
+  // 商路巢穴复用正式巢口材质、轮廓羽化与分块失效，不直接贴矩形地面。
+  const roadGround={...CAMP_NEST_GROUND.north,id:'road-nest-den',direction:'north' as const,x:ROAD_NEST.x,y:ROAD_NEST.y+60,rx:220,ry:125,feather:55,bounds:{left:ROAD_NEST.x-310,right:ROAD_NEST.x+310,top:ROAD_NEST.y-165,bottom:ROAD_NEST.y+285}};
+  const campNestGroundAreas=[...existingNestGroundAreas,roadGround];
+  const campNestGroundCleared=(area:typeof campNestGroundAreas[number],state:World['state'])=>area.id===roadGround.id?!!state.windMemory.active||state.merchantRoad.nest.wave===3:existingNestGroundCleared(area,state);
   // 候选手绘门只在资源层切帧，柱脚与横梁各自排序，门洞不产生矩形碰撞。
   const gate = this.textures.get("village-gate");
   gate.add("west", 0, 0, 0, 310, 1211);

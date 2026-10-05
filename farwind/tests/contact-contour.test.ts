@@ -25,6 +25,23 @@ describe('物件接地轮廓',()=>{
   const alpha=new Uint8Array(12*100);for(let x=2;x<10;x++)alpha[50*12+x]=255;
   expect(contactContours(alpha,12,100).paths).toEqual([]);
  });
+ it('原野灌木、符文石、树木与栅栏的接触影沿实体底缘，包含裁切帧',async()=>{
+  const files=['art-quality/shrub-one.webp','art-quality/shrub-two.webp','art-quality/shrub-three.webp','rune.png','tree.png','pink.png','fence.png','sign.png','chest.png','herb.png','art-quality/training-book.webp'];
+  for(const file of files){
+   for(const crop of file==='fence.png'?[undefined,{left:0,top:120,width:274,height:186}]:[undefined]){
+    const input=sharp(`public/assets/${file}`);if(crop)input.extract(crop);
+    const {data,info}=await input.ensureAlpha().raw().toBuffer({resolveWithObject:true});
+    const alpha=new Uint8Array(info.width*info.height);for(let i=0;i<alpha.length;i++)alpha[i]=data[i*4+3];
+    const paths=contactContours(alpha,info.width,info.height).paths;
+    expect(paths.length,`${file} 缺少接地轮廓`).toBeGreaterThan(0);
+    for(const path of paths)for(const [x,y] of path){
+     const col=Math.floor(x*info.width),row=Math.floor(y*info.height);
+     expect(alpha[row*info.width+col]).toBeGreaterThanOrEqual(160);
+     for(let next=row+1;next<info.height;next++)expect(alpha[next*info.width+col]).toBeLessThan(160);
+    }
+   }
+  }
+ });
  it('静态落地物可无碰撞体，任务可变货箱与摊位不能留下烘焙残影',()=>{
   const p={id:'city-closed-north',art:'city-complete-room-door',x:1,y:1,w:85,h:90};
   expect(bakedShadowProp(p)).toBe(true);expect(dynamicShadowProp(p)).toBe(false);

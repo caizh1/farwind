@@ -83,7 +83,7 @@ it('居民轮休、正式夜间许可与健康准入共同调度40场，四门�
   minimum={};distance={};const waitStart=d.now;
   while(!s.defense.raid&&d.now-waitStart<4800000)advance(1000);
   expect(s.defense.raid,`第${n+1}场夜间调度可达`).not.toBeNull();const event=structuredClone(s.defense.raid!),start=d.now;
-  expect(event.gateId).toBe(RAID_GATES[n%RAID_GATES.length].id);expect(event.members).toHaveLength(1+Math.floor(n/RAID_GATES.length)%3);expect(event.members.every(e=>e.type==='slime')).toBe(true);
+  expect(event.gateId).toBe(RAID_GATES[n%RAID_GATES.length].id);expect(event.members).toHaveLength(1+Math.floor(n/RAID_GATES.length)%3);expect(event.members.filter(e=>e.type==='wolf')).toHaveLength(event.members.length===3?1:0);expect(event.members.every(e=>['slime','wolf'].includes(e.type))).toBe(true);
   const admission=s.defense.guards.map(g=>({id:g.id,hp:g.hp,离岗:!!g.offDuty,空间:g.space??'village'}));
   for(const def of GUARD_DEFS.filter(g=>g.id.startsWith(event.gateId.split('-')[0])))expect(admission.find(g=>g.id===def.id)!.hp).toBeGreaterThanOrEqual(def.maxHP*.8);
   while(s.defense.raid&&d.now-start<130000)advance(20);
@@ -113,5 +113,5 @@ it('固定怪准备攻击近郊玩家立即识别，交还野怪AI不转嫁旧�
 it('历史已出生四怪的夜间存档保持四人，未出生旧计划采用新上限且版本不降级',()=>{
  const s=initialState();s.time=2460;advanceNight(s,2459);s.night.plan!.outcome='pending';s.night.plan!.count=4;s.time=s.night.plan!.at;s.defense.protectionMs=s.defense.cooldownMs=0;
  const next=nightWarningSnapshot(s);expect(next.defense.raid!.members).toHaveLength(3);expect(next.night.plan!.count).toBe(3);validate(next);
- const old=legacyDefense(s.defense,'east-gate');s.defense=old;Object.assign(s.night.plan!,{gate:'east-gate',count:4,outcome:'started',raidSequence:old.sequence});expect(validate(s).defense.raid!.members).toHaveLength(4);expect(validate(s).schema_version).toBe(initialState().schema_version);
+ const old=legacyDefense(s.defense,'east-gate');s.defense=old;Object.assign(s.night.plan!,{gate:'east-gate',count:4,outcome:'started',raidSequence:old.sequence,order:undefined});expect(validate(s).defense.raid!.members).toHaveLength(4);expect(validate(s).schema_version).toBe(initialState().schema_version);
 });

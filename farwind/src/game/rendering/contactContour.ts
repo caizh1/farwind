@@ -45,13 +45,13 @@ export function contactForFrame(scene:Phaser.Scene,key:string,frameName:string|n
 }
 
 // 接触暗边始终贴住可见底部，不修改素材像素、坐标、碰撞或交互范围。
-export function paintContact(c:CanvasRenderingContext2D,contact:GroundContact,width:number,height:number) {
-  c.save();c.translate(0,1);c.lineJoin='round';c.lineCap='round';
+export function paintContact(c:CanvasRenderingContext2D,contact:GroundContact,width:number,height:number,plant=false) {
+  c.save();c.translate(0,plant?0:1);c.lineJoin='round';c.lineCap='round';
   for(const path of contact.paths){
     c.beginPath();path.forEach(([x,y],i)=>{const px=(x-.5)*width,py=(y-1)*height;if(i)c.lineTo(px,py);else c.moveTo(px,py);});
     if(contact.closed)c.closePath();
-    c.filter='blur(3px)';c.fillStyle='#332c2380';c.strokeStyle='#332c2370';c.lineWidth=7;if(contact.closed)c.fill();c.stroke();
-    c.filter='none';c.fillStyle='#29261fd0';c.strokeStyle='#29261fb0';c.lineWidth=2.5;if(contact.closed)c.fill();c.stroke();
+    c.filter=plant?'blur(1.5px)':'blur(3px)';c.fillStyle='#332c2380';c.strokeStyle=plant?'#24351f45':'#332c2370';c.lineWidth=plant?3:7;if(contact.closed)c.fill();c.stroke();
+    c.filter='none';c.fillStyle='#29261fd0';c.strokeStyle=plant?'#24351f60':'#29261fb0';c.lineWidth=plant?1:2.5;if(contact.closed)c.fill();c.stroke();
   }
   c.restore();
 }

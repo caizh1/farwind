@@ -1,3 +1,5 @@
+import {tacticalDestination} from './enemyTactics';
+import {recordGuardDeath} from './guardAftermath';
 import {creatureReach} from '../../data/maps/windbell/elites';
 import { GUARD_LANDINGS, type Place } from '../../data/npcLife';
 import type {GuardId} from '../../data/defense';
@@ -7,7 +9,7 @@ import {validOutdoorPoint} from '../../data/maps/windbell/bounds';
 import { regionAt, inPolygon } from "../../data/village";
 import { localPath, pathSearch, planPath, pathPending, cancelPath, nearestStanding, enemyNavigation, enemyAttackSpace, type EnemyBody, type NavigationBudget, NAV } from "./enemy";
 import { motionBlocked, clearMotionLine, clearMeleeLine, shotLineBlocker, shotLineImpact, type Point, type Rect, type FiringPort } from "./obstacles";
-import { createEnemyAttack, creatureCooldown, advanceEnemyAttack, delayEnemyAttack, type EnemyContact } from "./enemyAttack";
+import { createEnemyAttack,enemyFollowup, creatureCooldown, advanceEnemyAttack, delayEnemyAttack, type EnemyContact } from "./enemyAttack";
 import {advanceEnemyRecoil} from './enemyReaction';
 import { resolveDamage, resolveReleasedDamage, type ReleasedAttack, type DamageEvent } from "./damage";
 import type { DefenseState, GuardState } from "./defenseState";
@@ -15,7 +17,7 @@ import { movementFacing } from "./locomotion";
 import {updateFungalPriest} from './fungalCombat';
 import {enemyProtection,turnToward} from './enemyTraits';
 import {enemyProfile} from '../../data/enemies';
-import {DEMON_KING,RETALIATION_ROUTES,validRaidOrder,raidFormation,raidUnitProfile,type RaidOrder} from '../../data/demonKing';
+import {DEMON_KING,RETALIATION_ROUTES,validRaidOrder,raidFormation,raidUnitProfile,raidMembers,type RaidOrder} from '../../data/demonKing';
 import {DEFENSE_ZONES,zoneFor,inProtected,locallyProtected,inAlert,inActivity,routeRemaining} from '../../data/defenseZones';
 const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 export type DefenseEnemy = EnemyBody & { kind: "defense-enemy"; eventId: string; flashUntil: number;
@@ -84,13 +86,15 @@ export function prepareRaid(s: DefenseState, player: Point, gateId: GateId, coun
   next.raid = { id, sequence, gateId, spawns, phase: warning ? "warning" : "approach", ageMs: 0,
     ...(order?{order:{...order}}:{}),
     members: spawns.map((p, i) => {
-      const eliteLevel=formation&&i<formation.elites?formation.eliteLevel:0,type=eliteLevel?'leaf':'slime';
-      return {id:`${id}:${i+1}`,type,...p,hp:raidUnitProfile(type,eliteLevel).maxHP,cooldownMs:0,targetId:null,...(order?{eliteLevel}:{}),...(order?.retaliationCamp?{marchIndex:0}:{})};
+      const {eliteLevel,type}=raidMembers(order,count)[i];
+      return {id:`${id}:${i+1}`,type,...p,hp:raidUnitProfile(type,eliteLevel,order?.profileVersion??1).maxHP,cooldownMs:0,targetId:null,...(order?{eliteLevel}:{}),...(order?.retaliationCamp?{marchIndex:0}:{})};
     }) };
   return next;
 }
 export function prepareEastRaid(s: DefenseState, player: Point) { return prepareRaid(s, player, "east-gate"); }
 export class EastDefense {
+  worldMinute?: () => number;
+  guardReplaced?: (id: GuardId) => void;
   hostileLimit=Infinity;
   runeEnemyScale:(id:string)=>number=()=>1;
   playerAttackPermit?: (enemy:EnemyBody,targetId:string)=>boolean;
@@ -101,9 +105,9 @@ export class EastDefense {
   lifeMove?: (guard:GuardState,target:Place,ms:number,budget:{queries:number})=>number;
   civilianTargets?: () => CivilianTarget[];
   facilityTargets?: () => CivilianTarget[];
-  civilianContact?: (id:string, source:DefenseHostile, contact:EnemyContact) => boolean;
+  civilianContact?: (id:string, source:DefenseHostile, contact:EnemyContact, released?:ReleasedAttack) => boolean;
   companionTarget?: () => CivilianTarget | undefined;
-  companionContact?: (source:DefenseHostile, contact:EnemyContact) => boolean;
+  companionContact?: (source:DefenseHostile, contact:EnemyContact, released?:ReleasedAttack) => boolean;
   protection?: (id:string) => Pick<import('./damage').UnitRef,'shield'|'reduction'>;
   // 报告时钟沿存档推进，重建后的攻击序号复用不能吞掉新的伤情。
   eventTime?: () => number;
@@ -149,8 +153,9 @@ export class EastDefense {
       const retaliation=this.state.raid!.order?.retaliationCamp;
       const safe = m.hp > 0 && (motionBlocked(m.x, m.y) || !retaliation&&dist(m,gate) >= 700)
         ? nearestStanding(m, [home, gate.entry], p => retaliation?validOutdoorPoint(p):dist(p, gate) < 700) : m;
-      return { ...m, ...(safe ?? home), kind: "defense-enemy", maxHP: raidUnitProfile(m.type,m.eliteLevel??0).maxHP,
+      return { ...m, ...(safe ?? home), kind: "defense-enemy", maxHP: raidUnitProfile(m.type,m.eliteLevel??0,this.state.raid?.order?.profileVersion??1).maxHP,
         homeX: home.x, homeY: home.y, eventId: this.state.raid!.id,
+        combatTier:this.state.raid?.order?.profileVersion===2?(this.state.raid.order.retaliationLevel!==undefined?(this.state.raid.order.retaliationLevel>=3?2:1):1):0,
         cool: now + m.cooldownMs, windup: 0, staggerUntil: 0, nav: enemyNavigation(),
         ai: m.hp > 0 ? `接近${gate.name}` : "死亡", disabled: false, recovered: false, flashUntil: 0, playerAggroUntil: 0 };
     });
@@ -270,11 +275,11 @@ export class EastDefense {
     this.notices.push(event); this.history.push(event);
     if (this.history.length > 80) this.history.shift();
   }
-  damageGuard(event: DamageEvent, source: { id: string; hp: number }) {
+  damageGuard(event: DamageEvent, source: { id: string; hp: number }, released?:ReleasedAttack) {
     const g = this.state.guards.find(g => g.id === event.targetId);
     if (!g) return false;
-    const hit = resolveDamage(event, { ...source, faction: "hostile", armor: 0 },
-      { id: g.id, faction: "village", hp: g.hp, armor: GUARD_ARMOR[g.armorId],...this.protection?.(g.id) });
+    const target={ id: g.id, faction: "village" as const, hp: g.hp, armor: GUARD_ARMOR[g.armorId],...this.protection?.(g.id) };
+    const hit = released?resolveReleasedDamage(event,released,target):resolveDamage(event, { ...source, faction: "hostile", armor: 0 },target);
     if (!hit.applied) return false;
     g.hp = hit.hp; g.peaceMs = 0;
     this.runtime.get(g.id)!.flashUntil = this.now + 130;
@@ -282,6 +287,7 @@ export class EastDefense {
     this.note({ kind: "hit", id: g.id, eventKey:`${receipt}:hit`, sourceId: source.id, at: this.now, damage: hit.damage, x: g.x, y: g.y });
     if (hit.killed) {
       g.dead = true; g.mode = "dead"; g.cooldownMs = 0;
+      if (this.worldMinute) recordGuardDeath(this.state,g,this.worldMinute());
       const r = this.runtime.get(g.id)!; r.attack = null; cancelPath(r.nav);r.nav.path = [];
       this.critical = true;
       this.note({ kind: "death", id: g.id, eventKey:`${receipt}:death`, sourceId: source.id, at: this.now, x: g.x, y: g.y });
@@ -395,7 +401,12 @@ export class EastDefense {
       const fixed = this.external.includes(e);
       if(e.passiveRoot)continue;
       if (e.hp <= 0 || e.disabled) {cancelPath(e.nav);continue;}
-      if(e.type==='priest'){updateFungalPriest(e,this.allHostiles(),player,now,dtMs,'player',(enemy,id)=>this.playerAttackPermit?.(enemy,id)??true);continue;}
+      if(e.type==='priest'){
+        if(!fixed&&raid?.phase==='retreat'){e.attack=null;this.move(e,e.nav,{x:e.homeX,y:e.homeY},enemyProfile(e.type).speed,dt,budget,validOutdoorPoint,this.hostiles());continue;}
+        const victim=this.target(e,player),threat=victim??player;
+        if(e.combatTier&&!e.attack){const allowed=(p:Point)=>raid?.order?.retaliationCamp?validOutdoorPoint(p):dist(p,fixed?{x:e.homeX,y:e.homeY}:this.gate())<(fixed?(e.leashRadius??420):700),point=tacticalDestination(e,threat,this.allHostiles(),now,allowed);this.move(e,e.nav,point,enemyProfile(e.type).speed,dt,budget,allowed,this.hostiles().filter(p=>p!==e));}
+        updateFungalPriest(e,this.allHostiles(),threat,now,dtMs,victim?.id??'player',(enemy,id)=>this.playerAttackPermit?.(enemy,id)??true);continue;
+      }
       if(e.attack&&!e.attack.cancelled){
         const frozen=Math.max(0,Math.min(now,e.staggerUntil)-Math.max(now-dtMs,e.staggerSince??now-dtMs));
         delayEnemyAttack(e.attack,frozen);
@@ -421,28 +432,32 @@ export class EastDefense {
           event.attack.resolved = true;
         }
         if(e.attack.wallAt!==undefined){e.wallHit={at:e.attack.wallAt,until:e.attack.wallAt+850,direction:{...e.attack.direction}};e.staggerSince=e.attack.wallAt;e.staggerUntil=e.attack.wallAt+850;e.cool=e.attack.wallAt+1400;}
-        if (now >= e.attack.recoveryUntil || e.attack.cancelled) e.attack = null;
+        if (now >= e.attack.recoveryUntil || e.attack.cancelled){const next=enemyFollowup(e,target,now,target.id,this.playerAttackPermit?.(e,target.id)??true);e.attack=next;if(next){e.lastAttackStarted=now;e.cool=creatureCooldown(next);e.ai='连斩前摇';}}
         continue;
       }
       e.targetId = target?.id ?? null;
       const route=!fixed&&raid?.order?.retaliationCamp?RETALIATION_ROUTES[raid.gateId]:undefined;
       if(route&&raid?.phase!=='retreat')while((e.marchIndex??0)<route.length&&dist(e,route[e.marchIndex??0])<60)e.marchIndex=(e.marchIndex??0)+1;
-      const destination = !fixed && raid?.phase === "retreat" ? { x: e.homeX, y: e.homeY } : target ?? route?.[e.marchIndex??0] ??
+      let destination = !fixed && raid?.phase === "retreat" ? { x: e.homeX, y: e.homeY } : target ?? route?.[e.marchIndex??0] ??
         (fixed ? {x:e.homeX,y:e.homeY} : locallyProtected(this.gate().id,e)?this.gate().inside:this.gate().entry);
       const aligned=e.type!=='guardian'||!target||dist(e,target)<1||((target.x-e.x)*(e.face?.x??0)+(target.y-e.y)*(e.face?.y??1))/dist(e,target)>.94;
-      const added=['wolf','burrow','guardian','priest','bomber'].includes(e.type),reach=e.elite?creatureReach(e.type,e.elite):added?enemyProfile(e.type).reach:73;
+      const added=!!e.combatTier||['wolf','burrow','guardian','priest','bomber'].includes(e.type),reach=e.elite?creatureReach(e.type,e.elite):added?enemyProfile(e.type).reach:73;
       if (target && (fixed || raid?.phase !== "retreat") && dist(e, target) < reach && clearMeleeLine(e, target) && now >= e.cool && aligned&&(this.playerAttackPermit?.(e,target.id)??true)) {
         cancelPath(e.nav);e.nav.path=[];
-        e.attack = createEnemyAttack(e.id, e.attackSerial = (e.attackSerial ?? 0) + 1, e.type, now, e, target,undefined,e.elite);
-        if(!fixed)e.attack.damage=raidUnitProfile(e.type,e.eliteLevel??0).damage;
+        e.lastAttackStarted=now;
+        e.attack = createEnemyAttack(e.id, e.attackSerial = (e.attackSerial ?? 0) + 1, e.type, now, e, target,undefined,e.elite,e.combatTier??0);
+        e.attack.eventId=e.eventId??null;
+        if(!fixed)e.attack.damage=raidUnitProfile(e.type,e.eliteLevel??0,raid?.order?.profileVersion??1).damage;
         if(e.type==='guardian'){e.attack.direction={...e.face!};e.attack.locked=true;}
-        e.cool = e.elite?creatureCooldown(e.attack):e.attack.recoveryUntil + 850; e.ai = "前摇";
+        e.cool = e.elite||e.combatTier?creatureCooldown(e.attack):e.attack.recoveryUntil + 850; e.ai = "前摇";
         if (raid && !fixed) raid.phase = "fighting";
-      } else if (dist(e, destination) > (target ? 43 : 8)) {
+      } else {
+        if(target&&e.combatTier)destination=tacticalDestination(e,target,this.allHostiles(),now,p=>route?validOutdoorPoint(p):dist(p,fixed?{x:e.homeX,y:e.homeY}:this.gate())<(fixed?(e.leashRadius??420):700));
+        if(dist(e,destination)<(e.combatTier?12:target?43:8)){e.ai="等待冷却";continue;}
         this.move(e, e.nav, destination, added||!fixed&&raid?.order?.retaliationLevel!==undefined?enemyProfile(e.type).speed:DEFENSE.enemySpeed, dt*(1-(e.runeSlow??0)), budget,
           p => fixed ? dist(p,{x:e.homeX,y:e.homeY}) <= (e.leashRadius??420) : route?validOutdoorPoint(p):dist(p,this.gate()) < 700, this.hostiles().filter(p => p.hp > 0 && p !== e));
         e.ai = raid?.phase === "retreat" ? "撤离" : "接近目标";
-      } else e.ai = "等待冷却";
+      }
     }
     for(const record of this.threats.values())record.assigned=[];
     for (const g of this.state.guards) {

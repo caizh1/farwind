@@ -1,3 +1,5 @@
+import {roadTracked,roadQuestText} from '../systems/merchantRoadState';
+import {guardMemorialJournal} from './guardAftermath';
 import { showWorldAtlas } from './worldAtlas';
 import { Minimap } from './minimap';
 import {showWindMemory} from './windMemory';
@@ -40,6 +42,12 @@ function journeyJournal(state: State) {
   const notes=state.city.visited?`<section aria-label="风语城行记"><h2>风语城 · 风塔异响</h2><p>${CITY_MAIN_HINTS[city.main]}。城防：${city.alarm==='battle'?'警报，居民避难':city.alarm==='recover'?'恢复日程':'正常轮值'}。</p>${CITY_QUESTS.map(d=>{const q=city.quests.find(q=>q.id===d.id)!;return `<p><b>${d.name}</b> · ${q.status==='unaccepted'?'到商旅行会登记':q.status==='complete'?'已完成':q.status==='pending'?'到行会领取奖励':q.steps.length+'/'+d.steps.length}<br>${d.steps.map(step=>(q.steps.includes(step)?'✓ ':'· ')+step).join('；')}</p>`;}).join('')}<details><summary>具名市民与当前场所</summary>${CITY_CITIZENS.map(c=>{const r=city.residents.find(r=>r.id===c.id)!;return `<p>${c.name} · ${r.space==='village'?'城内街道':cityBuilding(r.space)?.name??'街道'} · ${r.activity==='sleep'?'休息':r.activity==='work'?'工作':r.activity==='shelter'?'避难':'外出'}</p>`;}).join('')}</details></section>`:'';
   return `${notes}<section id="journey-training" aria-label="旅途锻炼"><h2>旅途锻炼</h2><p>累计有效奔跑里程：${Math.floor(progress.meters).toLocaleString('zh-CN')} 米</p><p>体力上限 ${progress.maxStamina} / 200 · 永久 +${progress.maxStamina-100}；${next(progress.staminaRemaining)}</p><p>生命上限 ${progress.maxHp} / 200 · 永久 +${progress.maxHp-100}；${next(progress.healthRemaining)}</p><p>正常奔跑自动积累，每次上限 +1，后续所需里程逐次增加。永久生效，不占装备或符文槽。${progress.healthRemaining===null?'两项锻炼已满。':''}</p></section>`;
 }
+export type DialogueOptions = {
+  context: string;
+  choices: {id: string; label: string; detail?: string; select: () => void}[];
+  note?: string;
+  closeLabel?: string;
+};
 export type Actions = {
   memoryStart?:(direction:WildernessDirection)=>Promise<void>;
   memoryEnd?:()=>Promise<void>;
@@ -364,6 +372,8 @@ export class Interface {
   }
   swordWind(source:string,name="剑风",trial=false){const badge=this.root.querySelector<HTMLElement>('#sword-wind-status')!;badge.hidden=source==='未学习'&&!trial;badge.textContent=`${name}：${trial?'教学试用':source}`;}
   message(s: string) {
+    const feedback=this.mode==='dialog'?this.modal.querySelector<HTMLElement>('.dialog-feedback'):null;
+    if(feedback){feedback.textContent=s;feedback.hidden=false;return;}
     const host = this.hud.hidden ? this.root : this.root.querySelector<HTMLElement>(".hud-info")!;
     if (this.toastEl.parentElement !== host) host.append(this.toastEl);
     this.toastEl.textContent = s;
@@ -546,7 +556,7 @@ export class Interface {
     if (mode === "quest" && s)
       this.shell(
         "旅途手记",
-        `<p><button id="journal-wind-gifts">风赐：已持有 ${s.windGifts.held.length} 种 · 待选 ${s.windGifts.pending.length} 场</button></p><button id="journal-wind-memory">四方向进度与风忆远征</button>${journeyJournal(s)}<h2>远处的黑焰 · ${DEMON_KING.name}</h2><p>${demonKingSummary(s)}</p><p>${demonMalice(s.encounters)?'每完整清剿一处据点，恶意增加 1；同一据点只计一次。当地巡游与当地来袭来源停止；魔王会为每处陷落据点，从地图边缘派出一波 10 只精英裂枝镰灵向村庄总攻。第一波一阶，第二波二阶，此后每波升一阶；每只生命依次为94、115、137、158，伤害依次为22、26、30、34。已有战斗时依次接续，读档不会重复刷出。':'魔物最初为了果腹而捕猎，远处的存在尚未将人类视为敌人。清剿保护村庄，也会改变它对人类的判断。'}</p><p>恶意 1～9：原编队增加 5 只，单次 6～8 只；每逢 10 点升档，逐步加入更高阶精英，编队最多 10 只。常规骚扰首夜安静，恶意 0～4 的单夜来袭概率依次为 50%、60%、70%、80%、90%；单夜至多一次，仍受冷却与防线状态限制。报复总攻不受首夜、时段或常规冷却限制；已出发的编队保持原恶意档位。</p>${demonMalice(s.encounters)?`<p>当前新派遣：${demonFormation(demonMalice(s.encounters),1).count}～${demonFormation(demonMalice(s.encounters),3).count}只。${s.defense.raid?.order?.source==='demon-king'?`${s.defense.raid.order.retaliationCamp?`在途报复：${retaliationSummary(s.defense.raid.order)}`:`在途派遣按恶意 ${s.defense.raid.order.malice} 编队，共 ${s.defense.raid.members.length} 只`}；不会因清剿而临时升阶。`:''}</p>`:''}<h2>南路补给</h2><p>${southQuestObjective(s)}</p><p>从南门沿路过芦苇桥，药草洼地在西南岸，孢根巢地在洼地东南方。药师与公共委托簿均可办理。</p><h2>主线 · 失落的风</h2><p>${objectives[s.quest]}</p><ol class="journal">${objectives
+        `<p><button id="journal-wind-gifts">风赐：已持有 ${s.windGifts.held.length} 种 · 待选 ${s.windGifts.pending.length} 场</button></p><button id="journal-wind-memory">四方向进度与风忆远征</button>${journeyJournal(s)}${guardMemorialJournal(s)}<h2>远处的黑焰 · ${DEMON_KING.name}</h2><p>${demonKingSummary(s)}</p><p>${demonMalice(s.encounters)?'每完整清剿一处据点，恶意增加 1；同一据点只计一次。当地巡游与当地来袭来源停止；魔王会为每处陷落据点，从地图边缘派出一波 10 只精英裂枝镰灵向村庄总攻。第一波一阶，第二波二阶，此后每波升一阶；每只生命依次为94、115、137、158，伤害依次为22、26、30、34。已有战斗时依次接续，读档不会重复刷出。':'魔物最初为了果腹而捕猎，远处的存在尚未将人类视为敌人。清剿保护村庄，也会改变它对人类的判断。'}</p><p>恶意 1～9：原编队增加 5 只，单次 6～8 只；每逢 10 点升档，逐步加入更高阶精英，编队最多 10 只。常规骚扰首夜安静，恶意 0～4 的单夜来袭概率依次为 50%、60%、70%、80%、90%；单夜至多一次，仍受冷却与防线状态限制。报复总攻不受首夜、时段或常规冷却限制；已出发的编队保持原恶意档位。</p>${demonMalice(s.encounters)?`<p>当前新派遣：${demonFormation(demonMalice(s.encounters),1).count}～${demonFormation(demonMalice(s.encounters),3).count}只。${s.defense.raid?.order?.source==='demon-king'?`${s.defense.raid.order.retaliationCamp?`在途报复：${retaliationSummary(s.defense.raid.order)}`:`在途派遣按恶意 ${s.defense.raid.order.malice} 编队，共 ${s.defense.raid.members.length} 只`}；不会因清剿而临时升阶。`:''}</p>`:''}<h2>重开商路</h2><p>${roadQuestText(s)}</p><p>西门外与守城将军岚铎交谈；裂牙巢穴在桥前密林北侧短支路。清剿只需三场守巢战斗，与六处普通遭遇独立。开通后主路有守军，支路保留冒险。${s.merchantRoad.parcel?'商旅包裹待交付，独立保管，不占行囊。':''}${s.merchantRoad.escort?'当前支路护送：'+roadTracked(s)?.name+'。':''}</p><h2>南路补给</h2><p>${southQuestObjective(s)}</p><p>从南门沿路过芦苇桥，药草洼地在西南岸，孢根巢地在洼地东南方。药师与公共委托簿均可办理。</p><h2>主线 · 失落的风</h2><p>${objectives[s.quest]}</p><ol class="journal">${objectives
           .slice(0, 7)
           .map(
             (q, i) =>
@@ -611,7 +621,7 @@ export class Interface {
     button.onclick = () => this.shop(id);
     this.modal.querySelector(".dialog-copy")?.append(button);
   }
-  dialog(name: string, text: string, source: string = "sign", closed?:()=>void) {
+  dialog(name: string, text: string, source: string = "sign", closed?:()=>void, options?:DialogueOptions) {
     this.dialogClosed=closed;
     this.returnTo = "";
     this.returnFocus = null;
@@ -625,10 +635,12 @@ export class Interface {
           ? "路牌"
           : "交谈";
     this.modal.hidden = false;
+    this.modal.classList.remove("equipment-modal", "bag-modal", "rune-modal");
     this.modal.classList.add("story-modal");
     this.root.classList.add("dialog-open");
     this.hud.inert = true;
-    this.modal.innerHTML = `<section class="dialog-panel${portrait ? " dialog-panel--portrait" : ""}" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-text">${portrait ? '<div class="dialogue-portrait"><img></div>' : ""}<div class="dialog-copy"><header><small id="dialog-context"></small><h1 id="dialog-title"></h1></header><p id="dialog-text" class="dialog-text" tabindex="0" aria-label="对话正文，可滚动阅读"></p></div><button id="close" class="dialog-continue" aria-label="继续 · E"><kbd aria-hidden="true">E</kbd><span>继续</span></button></section>`;
+    const closeButton='<button id="close" class="dialog-continue" aria-label="继续 · E"><kbd aria-hidden="true">E</kbd><span>继续</span></button>';
+    this.modal.innerHTML = `<section class="dialog-panel${portrait ? " dialog-panel--portrait" : ""}${options ? " dialog-panel--choices" : ""}" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-text">${portrait ? '<div class="dialogue-portrait"><img></div>' : ""}<div class="dialog-copy"><header><small id="dialog-context"></small><h1 id="dialog-title"></h1></header><p id="dialog-text" class="dialog-text" tabindex="0" aria-label="对话正文，可滚动阅读"></p>${options?.note?'<p class="dialog-note" role="status"></p>':''}</div>${options?`<div class="dialog-actions">${options.choices.length?'<p class="dialog-response">你的回应</p><div class="dialog-options"></div>':''}<p class="dialog-feedback" role="status" aria-live="polite" hidden></p>${closeButton}</div>`:closeButton}</section>`;
     const portraitImage = this.modal.querySelector<HTMLImageElement>(
       ".dialogue-portrait img",
     );
@@ -648,12 +660,27 @@ export class Interface {
       portraitImage.src = portrait.src;
     }
     this.modal.querySelector("#dialog-context")!.textContent =
-      `${this.state ? region(this.state.player.x, this.state.player.y) : "远风之地"} · ${category}`;
+      options?.context ?? `${this.state ? region(this.state.player.x, this.state.player.y) : "远风之地"} · ${category}`;
     this.modal.querySelector("#dialog-title")!.textContent = name;
     this.modal.querySelector("#dialog-text")!.textContent = text;
+    if(options){
+      const choices=this.modal.querySelector('.dialog-options');
+      options.choices.forEach((choice,i)=>{
+        const button=document.createElement('button');button.type='button';button.id=choice.id;button.className='dialog-option';
+        button.innerHTML='<span class="dialog-option-mark" aria-hidden="true"></span><span class="dialog-option-copy"><span class="dialog-option-label"></span></span>';
+        button.querySelector('.dialog-option-mark')!.textContent=String(i+1).padStart(2,'0');
+        button.querySelector('.dialog-option-label')!.textContent=choice.label;
+        if(choice.detail){const detail=document.createElement('span');detail.className='dialog-option-detail';detail.textContent=choice.detail;button.querySelector('.dialog-option-copy')!.append(detail);}
+        button.setAttribute('aria-label',choice.label+(choice.detail?' · '+choice.detail:''));
+        button.addEventListener('click',choice.select);choices?.append(button);
+      });
+      const close=this.modal.querySelector<HTMLButtonElement>('#close')!;
+      close.querySelector('kbd')!.textContent='Esc';close.querySelector('span')!.textContent=options.closeLabel??'先告辞';close.setAttribute('aria-label',(options.closeLabel??'先告辞')+' · Esc');
+      if(options.note)this.modal.querySelector('.dialog-note')!.textContent=options.note;
+    }
     this.button("close", () => this.close());
     this.modal
-      .querySelector<HTMLButtonElement>("#close")!
+      .querySelector<HTMLButtonElement>(options?.choices.length?'.dialog-option':"#close")!
       .focus({ preventScroll: true });
     this.actions.pause();
   }
@@ -676,6 +703,10 @@ export class Interface {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".json,application/json";
+    // 保持文件控件挂在文档中，选择文件期间不能成为失效的游离节点。
+    input.hidden = true;
+    document.body.append(input);
+    input.oncancel = () => input.remove();
     input.onchange = async () => {
       try {
         const f = input.files?.[0];
@@ -686,6 +717,8 @@ export class Interface {
         await this.actions.import(s);
       } catch (e) {
         this.message((e as Error).message);
+      } finally {
+        input.remove();
       }
     };
     input.click();
@@ -728,7 +761,8 @@ export class Interface {
     this.root.querySelector("#day")!.textContent =
       `第 ${Math.floor(s.time / 1440) + 1} 日 · ${place}`;
     const tracked=legacyTracked(s),inCity=isCitySpace(s.life.playerSpace)||s.life.playerSpace==='village'&&s.player.x>9690;
-    const objective=inCity?`风塔异响：${CITY_MAIN_HINTS[s.city.progress.main]}`:tracked?`${tracked.name}：${tracked.text}`:s.fieldQuests["south-supply"]==="active"?southQuestObjective(s):objectives[s.quest];
+    const roadTask=roadTracked(s);
+    const objective=roadTask?roadQuestText(s)+(roadTask.name==='清剿裂牙巢穴'?' · 桥前密林北侧支路':' · '+roadTask.name):inCity?`风塔异响：${CITY_MAIN_HINTS[s.city.progress.main]}`:tracked?`${tracked.name}：${tracked.text}`:s.fieldQuests["south-supply"]==="active"?southQuestObjective(s):objectives[s.quest];
     this.root.querySelector("#objective")!.textContent = objective;
     this.root.querySelector("#objective-summary")!.textContent =
       `任务 · ${objective}`;

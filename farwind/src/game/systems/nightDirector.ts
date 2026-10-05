@@ -36,7 +36,7 @@ export function validateNight(s:State){
 }
 export function makeNightPlan(s:State,night:number):NightPlan{
   const seed=nextRandom((s.defense.seed^Math.imul(night,2654435761))>>>0||1729),r=nextRandom(seed);
-  const malice=demonMalice(s.encounters),order:RaidOrder=malice?{source:'demon-king',malice,profileVersion:1}:wildOrder();
+  const malice=demonMalice(s.encounters),order:RaidOrder=malice?{source:'demon-king',malice,profileVersion:2}:wildOrder(2);
   return {night,at:(night-1)*C.day+C.raidStart+r%210,gate:RAID_GATES[seed%RAID_GATES.length].id,count:demonFormation(malice,1+r%DEFENSE.unitLimit).count,order,
     outcome:night===1||!malice&&!sourceAllowsRaid(s.encounters,RAID_GATES[seed%RAID_GATES.length].id)||nextRandom(r)%100>=harassmentChance(malice)?"quiet":"pending",raidSequence:null};
 }
@@ -60,7 +60,7 @@ export const mayStartRetaliation=(s:State)=>!s.defense.raid&&!s.defense.retryMs&
 export function retaliationWarningSnapshot(s:State,view?:Rect,occupied:readonly Point[]=[],defense?:EastDefense){
   if(!mayStartRetaliation(s))throw Error('当前没有可启动的据点报复。');
   const camp=pendingRetaliations(s)[0],direction=ENCOUNTERS.find(d=>d.id===camp)!.direction;
-  const order:RaidOrder={source:'demon-king',malice:demonMalice(s.encounters),profileVersion:1,retaliationCamp:camp,retaliationLevel:(s.demonKing.retaliatedCamps?.length??0)+1};
+  const order:RaidOrder={source:'demon-king',malice:demonMalice(s.encounters),profileVersion:2,retaliationCamp:camp,retaliationLevel:(s.demonKing.retaliatedCamps?.length??0)+1};
   const admission=defense??new EastDefense(structuredClone(s.defense),0);
   const player=s.life.playerSpace==='village'?s.player:{x:-10000,y:-10000},visible=s.life.playerSpace==='village'?view:undefined;
   const first=RAID_GATES.findIndex(g=>g.id===`${direction}-gate`);

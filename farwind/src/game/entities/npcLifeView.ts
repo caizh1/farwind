@@ -73,7 +73,7 @@ export class NpcLifeView {
           .setOrigin(0.5, 0),
         tool = scene.add.graphics(),
         shadow = scene.add.ellipse(0, 0, 52, 17, 0x193c32, 0.2);
-      groundShadows(scene).add(sprite,shadow,{label:d.name});
+      groundShadows(scene).add(sprite,shadow,{label:d.name,person:true});
       this.residents.set(d.id, {
         sprite,
         label,
@@ -116,7 +116,7 @@ export class NpcLifeView {
           .setVisible(false),
       });
       const furniture=this.furniture.at(-1)!.sprite;
-      groundShadows(scene).add(furniture,undefined,{label:'室内家具',width:Math.max(24,furniture.displayWidth*.8),height:16});
+      groundShadows(scene).add(furniture,undefined,{label:'室内家具',footprint:true,width:Math.max(24,furniture.displayWidth*.8),height:16});
     };
     for(const f of INTERIOR_FURNITURE){
       addFurniture(f.space, `interior-${f.asset}`, f.x, f.y, f.width, f.height);
@@ -258,7 +258,7 @@ export class NpcLifeView {
       this.furnitureLabels
         .get(box.id)!
         .setText(
-          `${person(box.owner)!.name} · ${stored ? box.item : "已取出"}`,
+          `${life.name(box.owner)} · ${stored ? box.item : "已取出"}`,
         );
     }
     const work = this.workInk;
@@ -459,7 +459,7 @@ export class NpcLifeView {
       // 职业四帧按真实进度推进；睡眠仅露出原角色头部，身体由被褥遮挡。
       v.sprite
         .setTexture(pose.texture, bed ? 1 : pose.frame)
-        .setOrigin(0.5, walkingArt ? NPC_WALK.footY / NPC_WALK.frameSize : 1)
+        .setOrigin(0.5, walkingArt ? NPC_WALK.footY / NPC_WALK.frameSize : 124 / 128)
         .setDisplaySize(walkingArt ? NPC_WALK.frameSize * 78 / NPC_WALK.bodyHeight : 76,
           walkingArt ? NPC_WALK.frameSize * 78 / NPC_WALK.bodyHeight : 92)
         .setCrop()
@@ -474,7 +474,7 @@ export class NpcLifeView {
       else v.sprite.clearTint();
       v.shadow
         .setVisible(visible && !bed)
-        .setPosition(p.x, p.y - 3)
+        .setPosition(p.x, p.y)
         .setDepth(depth - 0.5);
       v.label
         .setVisible(visible && !bed)

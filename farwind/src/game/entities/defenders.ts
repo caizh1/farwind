@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import {guardName,currentMemorial} from '../systems/guardAftermath';
 import {Actor} from "./actor";
 import art from "../../data/defense-art.json";
 import { GUARD_DEFS, TOWERS } from "../../data/defense";
@@ -34,7 +35,7 @@ export class DefendersView {
           shadow: this.scene.add.ellipse(g.x, g.y - 3, 52, 17, 0x173b30, 0.22),
           name: this.scene.add.text(g.x, g.y + 14, "", {fontSize:"13px",color:"#fff4d5",stroke:"#355443",strokeThickness:3}).setOrigin(.5,0) };
         this.guards.set(g.id, view);
-        const source=view;groundShadows(this.scene).add(view.sprite,view.shadow,{label:d.name,surfaceDepth:()=>d.role==='archer'&&source.shadow.depth===tower!.y+.5?source.shadow.depth-.05:source.shadow.depth>7000?7200:this.scene.data.get('shadowSettings')?.().floor??source.shadow.depth-.04});
+        const source=view;groundShadows(this.scene).add(view.sprite,view.shadow,{label:d.name,person:true,surfaceDepth:()=>d.role==='archer'&&source.shadow.depth===tower!.y+.5?source.shadow.depth-.05:source.shadow.depth>7000?7200:this.scene.data.get('shadowSettings')?.().floor??source.shadow.depth-.04});
         view.motion!.direction = r.facing;
       }
       const motion = view.motion!;
@@ -63,12 +64,12 @@ export class DefendersView {
         .setPosition(point.x,point.y).setDepth(d.role === "archer" && !g.offDuty ? tower!.y+1 : g.y)
         .setAlpha(g.dead ? .65 : 1).setRotation(g.dead && key === "guard" ? Math.PI/2 : sleeping ? .5 : 0);
       if (now < r.flashUntil) view.sprite.setTint(0xffaaaa); else view.sprite.clearTint();
-      view.shadow.setPosition(point.x,point.y-3).setDepth(d.role === "archer" && !g.offDuty ? tower!.y+.5 : g.y-.5).setVisible(!g.dead);
+      view.shadow.setPosition(point.x,point.y).setDepth(d.role === "archer" && !g.offDuty ? tower!.y+.5 : g.y-.5).setVisible(!g.dead);
       view.name!.setPosition(point.x,point.y+14).setDepth(d.role === "archer" && !g.offDuty ? tower!.y+2 : g.y+2)
-        .setText(`${d.name}${g.dead ? " · 已阵亡" : sleeping ? " · 睡眠" : g.offDuty ? " · 轮休途中" : ""}`);
+        .setText(`${guardName(g)}${g.dead ? " · 已阵亡" : sleeping ? " · 睡眠" : g.offDuty ? " · 轮休途中" : ""}`);
     }
     const activeSpace=(defense as EastDefense & {observerSpace?:string}).observerSpace??"village";
-    for(const g of defense.state.guards){const v=this.guards.get(g.id)!,visible=(g.space??"village")===activeSpace,base=activeSpace==="village"?0:7500;
+    for(const g of defense.state.guards){const v=this.guards.get(g.id)!,visible=(g.space??"village")===activeSpace&&!(g.dead&&currentMemorial(defense.state,g)?.collectedAt!=null),base=activeSpace==="village"?0:7500;
       v.sprite.setVisible(visible);v.shadow.setVisible(visible&&!g.dead);v.name?.setVisible(visible);
       if(base){v.sprite.setDepth(base+g.y);v.shadow.setDepth(base+g.y-.5);v.name?.setDepth(base+g.y+1);}
     }

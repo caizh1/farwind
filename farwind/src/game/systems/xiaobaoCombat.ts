@@ -354,7 +354,7 @@ export class XiaobaoCombat extends Xiaobao {
       contact.attack.cancelled ||
       contact.attack.resolved ||
       !attackTouches(contact, this) ||
-      !clearMeleeLine(contact.origin, this)
+      !clearMeleeLine(contact.origin, contact.sampledPoint??this)
     )
       return false;
     const hit = damage({
@@ -364,7 +364,7 @@ export class XiaobaoCombat extends Xiaobao {
       amount: contact.attack.damage,
       sourceType: contact.projectileId ? "enemy-shot" : contact.blastId ? "enemy-blast" : "enemy-melee",
       eventId: contact.projectileId
-        ? null
+        ? (contact.attack.eventId??null)
         : ((source as EnemyBody & { eventId?: string }).eventId ?? null),
     });
     if (!hit.applied) return false;

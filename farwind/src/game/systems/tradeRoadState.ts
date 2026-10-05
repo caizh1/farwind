@@ -7,14 +7,14 @@ export const ROAD_KINDS=['canyonHunter','cliffLancer','cragAxeman'] as const;
 export type RoadKind=typeof ROAD_KINDS[number];
 export type RoadUnit={id:string;type:RoadKind;x:number;y:number;homeX:number;homeY:number;hp:number;maxHP:number;wave:number;elite:boolean;participated:boolean;spawned:boolean;defeated:boolean;cue:number;cooldown:number;drop:boolean;dropRemaining:number;serial:number};
 export type RoadNode={wave:number;active:boolean;cleared:boolean;rewarded:boolean;units:RoadUnit[]};
-export type TradeRoadState={version:1;serial:number;seed:number|null;nodes:RoadNode[]};
-export type CityGuardState={slot:string;serial:number;x:number;y:number;hp:number;mode:'post'|'intercept'|'retreat'|'recover'|'down'|'replacement';replacement:number;cooldown:number;peace:number};
-export type CityState={version:2;progress:CityProgress;visited:boolean;stock:Record<keyof typeof CITY_STOCK,number>;guards:CityGuardState[]};
-export const initialTradeRoad=():TradeRoadState=>({version:1,serial:0,seed:null,nodes:[]});
-export const initialCity=():CityState=>({version:2,progress:initialCityProgress(),visited:false,stock:{...CITY_STOCK},guards:CITY_GUARD_POSTS.map((p,i)=>({slot:p.slot,serial:1,x:p.x,y:p.y,hp:p.maxHP,mode:'post',replacement:0,cooldown:(i%10)*140,peace:0}))});
+export type TradeRoadState={rulesVersion?:1|2;version:1;serial:number;seed:number|null;nodes:RoadNode[]};
+export type CityGuardState={slot:string;serial:number;x:number;y:number;hp:number;mode:'post'|'intercept'|'retreat'|'recover'|'down'|'replacement';replacement:number;cooldown:number;peace:number;stair?:0|1|2};
+export type CityState={fortress?:4;version:2;progress:CityProgress;visited:boolean;stock:Record<keyof typeof CITY_STOCK,number>;guards:CityGuardState[]};
+export const initialTradeRoad=():TradeRoadState=>({rulesVersion:2,version:1,serial:0,seed:null,nodes:[]});
+export const initialCity=():CityState=>({fortress:4,version:2,progress:initialCityProgress(),visited:false,stock:{...CITY_STOCK},guards:CITY_GUARD_POSTS.map((p,i)=>({slot:p.slot,serial:1,x:p.x,y:p.y,hp:p.maxHP,mode:'post',replacement:0,cooldown:(i%10)*140,peace:0}))});
 export function roadMaxHP(type:RoadKind,elite=false){return ({canyonHunter:72,cliffLancer:84,cragAxeman:160}[type])*(elite?1.8:1);}
 export function createTradeRoad(serial:number,seed:number):TradeRoadState{
-  return {version:1,serial,seed,nodes:TRADE_ROAD_NODES.map((n,node)=>({wave:0,active:false,cleared:false,rewarded:false,units:[0,1,2].flatMap(wave=>Array.from({length:5+wave},(_,slot)=>{
+  return {rulesVersion:2,version:1,serial,seed,nodes:TRADE_ROAD_NODES.map((n,node)=>({wave:0,active:false,cleared:false,rewarded:false,units:[0,1,2].flatMap(wave=>Array.from({length:5+wave},(_,slot)=>{
     const hash=seedHash(`${node}:${wave}:${slot}`,seed),elite=(node===3||node===5)&&wave===2&&slot===0;
     // 每波只有两个远程槽，其余在扑击和重甲之间随机；首段先教会处理猎兽。
     const type:RoadKind=elite?'cragAxeman':slot<2&&hash%3===0?'cliffLancer':node===0||hash%3?'canyonHunter':'cragAxeman';
@@ -30,7 +30,7 @@ export function validateTradeRoad(raw:unknown):TradeRoadState{
   const integer=(v:number,max:number)=>Number.isSafeInteger(v)&&v>=0&&v<=max;
   const finite=(v:number,min:number,max:number)=>Number.isFinite(v)&&v>=min&&v<=max;
   const fail=()=>{throw Error('商路旅途记录无效，上一份有效存档仍保留。');};
-  if(!s||s.version!==1||!integer(s.serial,1e9)||!Array.isArray(s.nodes))fail();
+  if(!s||s.rulesVersion!==undefined&&![1,2].includes(s.rulesVersion)||s.version!==1||!integer(s.serial,1e9)||!Array.isArray(s.nodes))fail();
   if(s.seed===null){if(s.serial!==0||s.nodes.length)fail();return s;}
   if(!integer(s.seed,0xffffffff)||s.serial<1||s.nodes.length!==6)fail();
   const expected=createTradeRoad(s.serial,s.seed);
@@ -49,9 +49,12 @@ export function validateCity(raw:unknown):CityState{
   const stockKeys=legacy?['potion','bread','tea']:Object.keys(CITY_STOCK),posts=legacy?CITY_GUARD_POSTS.slice(0,10):CITY_GUARD_POSTS;
   if(!s||(!legacy&&s.version!==2)||typeof s.visited!=='boolean'||!s.stock||Object.keys(s.stock).length!==stockKeys.length||stockKeys.some(k=>!Number.isSafeInteger(s.stock[k as keyof typeof CITY_STOCK])||s.stock[k as keyof typeof CITY_STOCK]<0||s.stock[k as keyof typeof CITY_STOCK]>CITY_STOCK[k as keyof typeof CITY_STOCK])||!Array.isArray(s.guards)||s.guards.length!==posts.length||new Set(s.guards.map(g=>g.slot)).size!==posts.length)throw Error('风语城记录无效。');
   for(const g of s.guards){const p=posts.find(p=>p.slot===g.slot);
-    if(!p||!Number.isSafeInteger(g.serial)||g.serial<1||g.serial>1e9||!Number.isFinite(g.x)||g.x<9220||g.x>13780||!Number.isFinite(g.y)||g.y< -180||g.y>2650||!Number.isFinite(g.hp)||g.hp<0||g.hp>p.maxHP||!['post','intercept','retreat','recover','down','replacement'].includes(g.mode)||g.mode==='down'!==(g.hp===0)||!Number.isFinite(g.replacement)||g.replacement<0||g.replacement>20000||!Number.isFinite(g.cooldown)||g.cooldown<0||g.cooldown>2000||!Number.isFinite(g.peace)||g.peace<0||g.peace>8000)throw Error('风语城守备记录无效。');
+    if(!p||!Number.isSafeInteger(g.serial)||g.serial<1||g.serial>1e9||!Number.isFinite(g.x)||g.x<8800||g.x>13780||!Number.isFinite(g.y)||g.y< -180||g.y>2650||!Number.isFinite(g.hp)||g.hp<0||g.hp>p.maxHP||!['post','intercept','retreat','recover','down','replacement'].includes(g.mode)||g.mode==='down'!==(g.hp===0)||!Number.isFinite(g.replacement)||g.replacement<0||g.replacement>20000||!Number.isFinite(g.cooldown)||g.cooldown<0||g.cooldown>2000||!Number.isFinite(g.peace)||g.peace<0||g.peace>8000)throw Error('风语城守备记录无效。');
   }
   if(legacy){const fresh=initialCity();s.version=2;s.progress=fresh.progress;s.guards.push(...fresh.guards.slice(10));s.stock={...fresh.stock,...s.stock};}
+  if(s.fortress!==undefined&&s.fortress!==4)throw Error('城防布局版本无效。');
+  for(const g of s.guards)if(g.stair!==undefined&&![0,1,2].includes(g.stair))throw Error('守卫梯道阶段无效。');
+  if(s.fortress===undefined){for(const g of s.guards){const p=CITY_GUARD_POSTS.find(p=>p.slot===g.slot)!;if(p.role==='archer'){g.x=p.x;g.y=p.y;if(g.hp>0)g.mode='post';g.peace=0;g.stair=0;}}s.fortress=4;}
   s.progress=validateCityProgress(s.progress);return s;
 }
 

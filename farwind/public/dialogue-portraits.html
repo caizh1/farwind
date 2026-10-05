@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>人物对话立绘校对 · 远风之地</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#183b30;color:#f7edcf;font:16px/1.6 system-ui}header{padding:20px 24px;border-bottom:1px solid #bca06c;background:#244b3c}h1{margin:0;font-family:serif;font-size:28px}p{margin:6px 0}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:18px;padding:24px}article{min-width:0;background:#254c40;border:1px solid #bca06c;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px}h2{font-size:18px;margin:0}article img{display:block;object-fit:contain;width:100%;height:360px;background:#183a30}small{color:#d9c592;overflow-wrap:anywhere}a{color:#e6cea2}button{font:inherit;color:#f7edcf;background:#365a48;border:1px solid #bca06c;border-radius:5px;padding:8px;cursor:pointer}dialog{max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px);background:#254c40;color:#f7edcf;border:2px solid #bca06c;padding:16px}dialog::backdrop{background:#10271acc}dialog img{display:block;max-width:100%;max-height:76dvh;object-fit:contain}dialog form{display:flex;justify-content:flex-end;margin-top:10px}#status{margin:0;padding:0 24px 24px}
+</style>
+<header><h1>人物对话立绘校对</h1><p>独立透明半身图，按真实角色身份登记。此页是素材校对页，实际对话截图另行记录。</p></header>
+<main id="gallery"></main><p id="status" role="status">正在加载角色清单。</p>
+<dialog><h2 id="detail-name"></h2><img id="detail-image" alt=""><form method="dialog"><button>关闭大图</button></form></dialog>
+<script type="module">
+const list=await(await fetch('/assets/portraits/index.json')).json();
+const gallery=document.querySelector('#gallery'),detail=document.querySelector('dialog');
+for(const p of list.角色){
+ const card=document.createElement('article'),name=document.createElement('h2'),image=document.createElement('img'),text=document.createElement('small'),button=document.createElement('button');
+ name.textContent=p.姓名;image.src=p.src;image.alt=p.描述;text.textContent=p.描述;button.textContent='查看'+p.姓名+'大图';
+ button.onclick=()=>{document.querySelector('#detail-name').textContent=p.姓名;const target=document.querySelector('#detail-image');target.src=p.src;target.alt=p.描述;detail.showModal();};
+ card.append(name,image,text,button);gallery.append(card);
+}
+document.querySelector('#status').textContent='已登记'+list.角色.length+'个说话者。最终人物面貌与画风待用户美术确认。';
+</script>
+</html>

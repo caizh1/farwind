@@ -1,6 +1,15 @@
 import {enemyProfile} from '../../data/enemies';
 import type {Prop} from '../../data/world';
 import {ARENA_STONES} from '../../data/maps/windbell/elites';
+import cityFeet from '../../data/cityFootContacts.json';
+
+// 高分辨率城民帧按整个身体居中，鞋底在侧身／持盾／拉弓时会偏离中心；只校准接触影。
+export function citySoleContact(texture:string,frame:string|number,width:number,height:number,flip=false) {
+  const feet=(cityFeet as Record<string,number[][]>)[texture]?.[Number(frame)];
+  if(!feet)return undefined;
+  const [left,right,bottom]=feet;
+  return {x:((left+right)/512-.5)*width*(flip?-1:1),y:(bottom/256-.94)*height,width:(right-left)/256*width+8};
+}
 
 // 脚底影必须露出身体边缘；四足和滚兽的横向占地更宽。
 export function enemyShadowSize(type:string,height:number=enemyProfile(type).height):[number,number] {
@@ -10,6 +19,8 @@ export function enemyShadowSize(type:string,height:number=enemyProfile(type).hei
 }
 
 export function bakedShadowProp(p:Prop) {
+  if(p.id.startsWith('city-fortress-foot-'))return false;
+  if(p.id.startsWith('city-west-wall-')||p.id.startsWith('city-east-wall-')||p.id.startsWith('city-edge-')||p.id.startsWith('city-gate-')||p.id.startsWith('city-corner-')||p.id.startsWith('city-guard-stairs-'))return false;
   if(p.id.startsWith('city-bridge-'))return false;
   if(p.id==='city-cargo'||p.id==='city-stall-fruit')return false;
   // 封闭门等固定城市物件可没有碰撞体；任务可变物件由上面的分支单独管理。
@@ -19,6 +30,8 @@ export function bakedShadowProp(p:Prop) {
 }
 
 export function dynamicShadowProp(p:Prop) {
+  if(p.id.startsWith('city-fortress-foot-'))return false;
+  if(p.id.startsWith('city-west-wall-')||p.id.startsWith('city-east-wall-')||p.id.startsWith('city-edge-')||p.id.startsWith('city-gate-')||p.id.startsWith('city-corner-')||p.id.startsWith('city-guard-stairs-'))return false;
   return p.kind!=='npc'&&p.ground!==true&&!p.id.includes('seedbed')&&!bakedShadowProp(p);
 }
 

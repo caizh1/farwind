@@ -14,7 +14,7 @@ import {
   serviceClearance,
 } from "./village-economy";
 import { TOWERS } from "./defense";
-import { BUILDING_LOTS, FIELD_TARGET_ANCHORS as FIELD_TARGETS, VILLAGE_ANCHORS, RESOURCE_ANCHORS, ORCHARD_TREES } from './maps/windbell/layout';
+import { GUARD_MEMORIAL, BUILDING_LOTS, FIELD_TARGET_ANCHORS as FIELD_TARGETS, VILLAGE_ANCHORS, RESOURCE_ANCHORS, ORCHARD_TREES } from './maps/windbell/layout';
 const TRAINING = VILLAGE_ANCHORS.training;
 import type { ItemId } from "./content";
 import {
@@ -284,6 +284,9 @@ export const props: Prop[] = [
     h: 62,
     kind: "chest",
     label: "藤蔓下的宝箱",
+  },
+  {
+    id: "guard-memorial", art: "rune", ...GUARD_MEMORIAL, w: 62, h: 86, kind: "sign", label: "卫队纪念碑 · 献花",
   },
   {
     id: "clue",

@@ -59,7 +59,7 @@ class ShadowPreview extends Phaser.Scene {
     groundShadows(this).enabled=this.enhanced;groundShadows(this).draw();
     document.querySelector('#toggle')!.textContent=this.enhanced?'查看原阴影':'查看增强阴影';
     document.querySelector('#pause')!.textContent=this.paused?'继续动画':'暂停动画';
-    document.querySelector('#status')!.textContent=(this.enhanced?'增强阴影：柔边接地影与轮廓投影':'原阴影：统一小椭圆')+' · 十四种小怪与'+CAMP_BOSSES[this.samples.at(-1)!.body.boss!].name+' · '+Math.round(this.elapsed)+'毫秒';
+    document.querySelector('#status')!.textContent=(this.enhanced?'增强阴影：柔边接地影，无立面硬剪影':'原阴影：统一小椭圆')+' · 全部小怪与'+CAMP_BOSSES[this.samples.at(-1)!.body.boss!].name+' · '+Math.round(this.elapsed)+'毫秒';
   }
   update(_time:number,dt:number){if(!this.ready)return;if(!this.paused&&!document.hidden)this.elapsed+=Math.min(50,dt);this.paint();}
 }

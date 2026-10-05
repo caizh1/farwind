@@ -26,9 +26,9 @@ export function updateFungalPriest(e:EnemyBody,peers:readonly EnemyBody[],threat
   }
   e.ai='寻找护盾同伴';
   if(now<e.staggerUntil||now<e.cool||distance(e,threat)>600||!permit(e,targetId))return null;
-  const ally=peers.filter(p=>validAlly(e,p)&&!p.fungalShield).sort((a,b)=>distance(a,threat)-distance(b,threat)||a.id.localeCompare(b.id))[0];if(!ally)return null;
-  const a=createEnemyAttack(e.id,e.attackSerial=(e.attackSerial??0)+1,e.type,now,e,ally);
-  a.supportTarget=ally.id;e.attack=a;e.targetId=targetId;e.cool=now+FUNGAL.cooldown;e.windup=FUNGAL.channel;e.nav.path=[];return null;
+  const ally=peers.filter(p=>validAlly(e,p)&&!p.fungalShield).sort((a,b)=>(e.combatTier?Number(!a.attack&&a.type!=='guardian')-Number(!b.attack&&b.type!=='guardian'):0)||distance(a,threat)-distance(b,threat)||a.id.localeCompare(b.id))[0];if(!ally)return null;
+  const a=createEnemyAttack(e.id,e.attackSerial=(e.attackSerial??0)+1,e.type,now,e,ally,undefined,undefined,e.combatTier??0);
+  a.eventId=(e as EnemyBody&{eventId?:string}).eventId??null;e.lastAttackStarted=now;a.supportTarget=ally.id;e.attack=a;e.targetId=targetId;e.cool=now+FUNGAL.cooldown;e.windup=FUNGAL.channel;e.nav.path=[];return null;
 }
 export function fungalShieldActive(e:Pick<EnemyBody,'fungalShield'|'x'|'y'>,now:number){
   const source=e.fungalShield,a=source?.attack;

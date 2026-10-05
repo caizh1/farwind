@@ -2,24 +2,27 @@ import {validOutdoorPoint} from "../../data/maps/windbell/bounds";
 import {isSpace,validPlace} from './npcLifeState';
 import { CIVILIAN_IDS, MAINTENANCE, type SpaceId } from '../../data/npcLife';
 import { GUARD_DEFS, RAID_GATES, RAID_TIMING, raidInterval, type GateId, type GuardId } from "../../data/defense";
-import {DEMON_KING,RETALIATION_ROUTES,validRaidOrder,raidFormation,raidUnitProfile,type RaidOrder} from '../../data/demonKing';
+import {DEMON_KING,RETALIATION_ROUTES,validRaidOrder,raidFormation,raidUnitProfile,type RaidOrder,type RaidKind,RAID_KINDS,raidMembers} from '../../data/demonKing';
+import {validateGuardMemorials,type GuardMemorial} from './guardAftermath';
 export type GuardMode = "post" | "patrol" | "intercept" | "attack" | "retreat" | "recover" | "dead" | "life" | "return";
 export type GuardState = {
   id: GuardId; x: number; y: number; hp: number; dead: boolean;
+  generation?: number;
   weaponId: "watch-blade" | "watch-bow"; armorId: "watch-mail" | "watch-leather";
   space?: SpaceId; offDuty?: boolean; towerTransitMs?: number;
   postId: string; mode: GuardMode; peaceMs: number; cooldownMs: number;
 };
-export type RaidMember = { participated?:boolean; id: string; type: "slime" | "leaf"; x: number; y: number;
+export type RaidMember = { participated?:boolean; id: string; type: RaidKind; x: number; y: number;
   hp: number; cooldownMs: number; targetId: string | null; eliteLevel?:number; marchIndex?:number };
 export type RaidState = { id: string; sequence: number; gateId: GateId; spawns: { x: number; y: number }[]; phase: "warning" | "approach" | "fighting" | "retreat";
   ageMs: number; members: RaidMember[]; order?:RaidOrder };
 export type DefenseState = { guards: GuardState[]; sequence: number; completedSequence: number;
+  memorials?: GuardMemorial[];
   raid: RaidState | null; protectionMs: number; cooldownMs: number; retryMs: number; seed: number };
 export function initialDefense(): DefenseState {
   return { guards: GUARD_DEFS.map(d => ({ id: d.id, ...d.post, hp: d.maxHP, dead: false,
     weaponId: d.weaponId, armorId: d.armorId, postId: d.postId, mode: "post", peaceMs: 0, cooldownMs: 0 })),
-    sequence: 0, completedSequence: 0, raid: null, protectionMs: RAID_TIMING.protection, cooldownMs: raidInterval(1729), retryMs: 0, seed: 1729 };
+    memorials: [], sequence: 0, completedSequence: 0, raid: null, protectionMs: RAID_TIMING.protection, cooldownMs: raidInterval(1729), retryMs: 0, seed: 1729 };
 }
 export function validateDefense(raw: unknown): DefenseState {
   const s = raw as DefenseState;
@@ -45,20 +48,22 @@ export function validateDefense(raw: unknown): DefenseState {
     !num(r.ageMs, 120000) || !Array.isArray(r.members) || r.members.length < 1 || r.members.length > (r.order?.source==='demon-king'?DEMON_KING.maxUnits:4) ||
     !Array.isArray(r.spawns) || r.spawns.length !== r.members.length || !r.spawns.every(point) ||
     new Set(r.members.map(m => m?.id)).size !== r.members.length || !r.members.every((m, i) =>
-      m && (m.participated===undefined||typeof m.participated==="boolean") && m.id === `${r.id}:${i + 1}` && ["slime", "leaf"].includes(m.type) && point(m) &&
+      m && (m.participated===undefined||typeof m.participated==="boolean") && m.id === `${r.id}:${i + 1}` && (r.order?.profileVersion===2?RAID_KINDS:['slime','leaf']).includes(m.type) && point(m) &&
       Number.isSafeInteger(m.eliteLevel??0) && num(m.eliteLevel??0, r.order?.source==='demon-king'?raidFormation(r.order,1).eliteLevel:0) &&
       (r.order?.retaliationCamp?Number.isSafeInteger(m.marchIndex)&&num(m.marchIndex,RETALIATION_ROUTES[r.gateId].length):m.marchIndex===undefined) &&
-      num(m.hp, raidUnitProfile(m.type,m.eliteLevel??0).maxHP) && num(m.cooldownMs, 5000) &&
+      num(m.hp, raidUnitProfile(m.type,m.eliteLevel??0,r.order?.profileVersion??1).maxHP) && num(m.cooldownMs, 5000) &&
       (m.targetId === null || m.targetId === "player" || m.targetId === "xiaobao" || GUARD_DEFS.some(g => g.id === m.targetId) || CIVILIAN_IDS.some(id => id === m.targetId) || MAINTENANCE.some(f=>f.id===m.targetId)))))
     throw Error("来袭存档损坏，请使用有效备份。");
   if(r?.order?.source==='demon-king'){
     const f=raidFormation(r.order,1), last=raidFormation(r.order,3);
     if(r.members.length<f.count||r.members.length>last.count||r.members.some((m,i)=>
-      (m.eliteLevel??0)!==(i<f.elites?f.eliteLevel:0)||m.type!==(i<f.elites?'leaf':'slime'))||
+      (m.eliteLevel??0)!==raidMembers(r.order,r.members.length)[i].eliteLevel||m.type!==raidMembers(r.order,r.members.length)[i].type)||
       r.spawns.some((p,i)=>r.spawns.slice(0,i).some(q=>Math.hypot(p.x-q.x,p.y-q.y)<DEMON_KING.spawnGap)))
       throw Error('魔王派遣编队或生成间距无效。');
   }
+  if(r?.order?.profileVersion===2&&r.members.some((m,i)=>m.type!==raidMembers(r.order,r.members.length)[i].type||(m.eliteLevel??0)!==raidMembers(r.order,r.members.length)[i].eliteLevel))throw Error('来袭编队与派遣规则不一致。');
   if (r === null && s.completedSequence !== s.sequence) throw Error("来袭结算序号不一致。");
+  validateGuardMemorials(s);
   return structuredClone(s);
 }
 

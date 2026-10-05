@@ -1,0 +1,47 @@
+import type {World} from '../scenes/World';
+import type {Prop} from '../../data/world';
+import {items,type ItemId} from '../../data/content';
+import {MERCHANTS,MERCHANT_PATH,ROAD_NEST,ROAD_POSTS,ROAD_BRANCHES,merchantDefinition} from '../../data/merchantRoad';
+import {merchantResident,merchantTrade,merchantBuyCost,merchantSaleValue,roadAction,roadAt,roadQuestText,roadRouteStatus} from '../systems/merchantRoadState';
+import {save} from '../systems/save';
+export function merchantRoadTargets(w:World):Prop[]{const s=w.state,r=s.merchantRoad;if(s.life.playerSpace!=='village')return [];const target=(id:string,label:string,p:{x:number;y:number}):Prop=>({...p,id,label,art:'',w:0,h:0,kind:'npc'});return [
+ target('road-general','守城将军 · 岚铎',merchantResident(s,'captain')),
+ ...MERCHANTS.filter(d=>merchantResident(s,d.id).space==='village').map(d=>target(`road-merchant:${d.id}`,`${d.name} · ${d.specialty}${r.merchants.find(m=>m.id===d.id)!.hp===0?' · 倒地待救':''}`,merchantResident(s,d.id))),
+ ...r.guards.filter(g=>g.hp>0).map(g=>target(g.id,g.mode==='deploy'?'商路守备 · 接岗途中':'商路守备 · 路况',g)),
+ ...(r.parcel?[target('road-parcel','商旅包裹 · 交付',MERCHANT_PATH[r.parcel.destination?MERCHANT_PATH.length-1:0])]:[]),
+ ];}
+export function merchantRoadInteraction(w:World,p:Prop){
+ if(!['road-general','road-parcel','road-nest-marker'].includes(p.id)&&!p.id.startsWith('road-merchant:')&&!p.id.startsWith('road-guard:')&&!p.id.startsWith('road-branch-'))return false;
+ const shell=(title:string,text:string,buttons:[string,string,()=>void][]=[],extra='')=>{
+  const speaker=p.id.startsWith('road-merchant:')?p.id.slice(14):p.id.startsWith('road-guard:')?'road-guard':undefined;
+  if(speaker){w.ui.dialog(title,text.replaceAll('<br>','\n'),speaker,undefined,{context:speaker==='road-guard'?'林间商路 · 岗哨':'商旅往来',choices:buttons.map(([id,label,select])=>({id,label,select}))});if(extra){const controls=document.createElement('div');controls.className='merchant-trade-controls';controls.innerHTML=extra;w.ui.modal.querySelector('.dialog-copy')!.append(controls);}return;}
+  w.ui.mode='city-service';w.ui.shell(title,`<p>${text}</p>${extra}<div class="merchant-actions">${buttons.map(([id,label])=>`<button id="${id}">${label}</button>`).join('')}</div><button id="close">先告辞</button>`);for(const [id,,fn]of buttons)w.ui.button(id,fn);w.ui.button('close',()=>w.ui.close(true));};
+ const commit=(build:Parameters<typeof w.economy.run>[1],after:()=>void=()=>w.ui.close(true))=>{const revision=w.state.economyRevision;void w.economy.run(()=>{w.tradeRoad?.capture();return w.state;},s=>{if(s.economyRevision!==revision)throw Error('操作已过期，请重新交谈。');roadAt(s,p);if(!w.clearLine(s.player.x,s.player.y,p.x,p.y))throw Error('通路受阻，请走到人物旁。');return build(s);},save,s=>w.publishState(s)).then(()=>{after();w.ui.message('商旅记录已保存。');}).catch(e=>w.ui.message(e.message));};
+ const action=(name:string,id?:string,branch?:number,after?:()=>void)=>commit(s=>roadAction(s,name,id,branch),after);
+ const conversation=(context:string,text:string,buttons:[string,string,()=>void][]=[],note='')=>w.ui.dialog(p.id==='road-general'?'守城将军 · 岚铎':'裂牙巢穴路牌',text.replaceAll('<br>','\n\n'),p.id==='road-general'?'captain':'sign',undefined,{context:`${p.id==='road-general'?'风语城西门':'林间商路'} · ${context}`,note,closeLabel:'先告辞',choices:buttons.map(([id,label,select])=>{const [title,...detail]=label.split(' · ');return {id,label:title,detail:detail.join(' · ')||undefined,select};})});
+ const showGeneral=()=>{const s=w.state,r=s.merchantRoad;
+  if(r.opened){conversation('重开商路',`“通知兵营，抽调商路守备队。林缘立岗，桥头驻守，城外接应。再通知商旅行会——风铃村到风语城，恢复通商！”\n\n“哨岗守住主路，深入支路仍需留意怪物。”`,r.rewarded?[]:[['road-reward','领取清剿谢礼 · 100金币／药剂3瓶',()=>action('reward',undefined,undefined,showGeneral)]],roadRouteStatus(s)+(r.rewarded?' · 清剿谢礼已领取':' · 清剿谢礼待领取'));return;}
+  if(r.accepted){conversation('重开商路',r.nest.wave===3?'“裂牙巢穴已经清了？好……那条路终于有机会重新活过来了。”':'“先准备好补给。桥前密林的裂牙巢穴还有守巢者，拔掉它，我才能派人立岗。”',r.nest.wave===3?[['road-report','报告清剿完成，恢复通商',()=>action('report',undefined,undefined,showGeneral)]]:[['road-location','再告诉我巢穴的位置',location]]);return;}
+  if(r.dialogue===0){const companion=s.xiaobao.task==='follow'?'只带着这几位伙伴':'没有卫队护送';conversation('重开商路',r.nest.wave===3?'“你已经拔掉了那处巢穴？先让我确认一下你的来意。”':`岚铎望向你身后的林间道路：“你是从风铃村来的？${companion}，就穿过了那条商路？”<br>“我们最后收到的消息，是商车弃在林中，赶车人徒步逃回村里……你竟走到了这里。”`,[['road-answer-detour','我绕开了大部分怪物',()=>action('talk',undefined,undefined,showGeneral)],['road-answer-fight','路上确实有不少怪物',()=>action('talk',undefined,undefined,showGeneral)]]);return;}
+  if(r.dialogue===1){conversation('商路为什么停运',`“旅人能绕过伏击，装满货物的车队却做不到。桥前密林里有一处裂牙巢穴，猎兽和投矛者不断从那里出来。”<br>“我的兵必须守住城门。巢穴还在，派出去的巡逻队就只能疲于奔命，立不住哨岗。”`,[['road-listen','继续听将军的委托',()=>action('talk',undefined,undefined,showGeneral)]]);return;}
+  conversation('重开商路',r.nest.wave===3?'“既然巢穴已经拔除，就把这次清剿正式登记下来，我会立即派兵。”':'“你已经走过那条路，比我们更清楚沿途的地形。如果你愿意回去清掉巢穴，我便能派人守住桥头与路口，让风铃村的商车重新进城。”',[['road-accept',r.nest.wave===3?'登记已有清剿，接下委托':'我去清掉巢穴',()=>action('accept',undefined,undefined,showGeneral)],['road-location','再告诉我巢穴的位置',location],['road-prepare','我先准备一下',()=>w.ui.close(true)]]);
+ };
+ const location=()=>conversation('裂牙巢穴的位置',`沿商路往西，石桥前的密林北侧有一条短支路。路牌、地图和手记都标着“裂牙巢穴”。<br>${roadQuestText(w.state)}。`,[['road-map','展开地图查看巢穴',()=>w.ui.open('map')]]);
+ if(p.id==='road-general'){showGeneral();return true;}
+ if(p.id==='road-nest-marker'){location();return true;}
+ if(p.id==='road-parcel'){const r=w.state.merchantRoad,m=r.merchants.find(m=>m.id===r.parcel?.merchant),reward=m&&m.relation>=5?22:20;shell('商旅包裹交接',`货单与包裹独立保管，不占行囊。核对交付后领取${reward}金币${reward===22?'，含老朋友加成':''}。`,[['road-deliver',`交付包裹 · ${reward}金币`,()=>action('deliver')]]);return true;}
+ if(p.id.startsWith('road-guard:')){shell('商路守备',`${roadRouteStatus(w.state)}。<br>“我们守住主路和桥头。你若要去支路取回旧货，先备好药剂，回来可以在哨岗交接。”`);return true;}
+ if(p.id.startsWith('road-branch-')){const i=Number(p.id.split('-').at(-1)),e=w.state.merchantRoad.escort;shell(ROAD_BRANCHES[i].name,e?.branch===i?'请让同行行商与主角一起靠近货箱，取货后返回对应哨岗。':'旧货需要行商同行核对。先与一位行商登记此段护送。');return true;}
+ const id=p.id.slice(14),d=merchantDefinition(id);if(!d)return false;
+ const show=()=>{const s=w.state,r=s.merchantRoad,m=r.merchants.find(m=>m.id===id)!,e=r.escort?.merchant===id?r.escort:null,buttons:[string,string,()=>void][]=[];
+  if(m.hp<180){buttons.push(['merchant-heal','使用药剂救援 · 恢复50生命',()=>action('heal',id,undefined,show)]);if(m.hp===0)buttons.push(['merchant-rescue','安全包扎 · 保持靠近10秒',()=>action('rescue',id)]);}
+  if(e){buttons.push(['merchant-follow','跟随／继续',()=>action('follow',id)],['merchant-wait','原地等待',()=>action('wait',id)],['merchant-cancel','放弃本段护送',()=>action('cancel-escort',id)]);if(e.status==='pending')buttons.unshift(['merchant-claim','领取护送报酬',()=>action('claim-escort',id,undefined,show)]);shell(`${d.name} · ${d.specialty}`,`生命 ${Math.ceil(m.hp)}/180 · 货物完整度 ${m.cargo}%<br>${e.status==='pending'?'已安全交接':e.status==='failed'?'货物损毁，本段失败':e.status==='paused'?'同行已暂停，返回后可以继续':e.picked?'已取货，请返回'+ROAD_POSTS[e.branch].name:'前往'+ROAD_BRANCHES[e.branch].name}。落后超过340步时会停下。`,buttons);return;}
+  if(m.hp>0){if(r.parcel?.merchant===id)buttons.push(['merchant-cancel-parcel','归还包裹货单，不领奖',()=>action('abandon-parcel',id,undefined,show)]);if(r.opened){if(!r.parcel&&!m.parcelDone)buttons.push(['merchant-parcel','接取顺路包裹 · 基础20金币',()=>action('parcel',id,undefined,show)]);for(const [i,b]of ROAD_BRANCHES.entries())if(!(m.escorted&(1<<i)))buttons.push([`merchant-escort-${i}`,`护送取货：${b.name} · 基础${b.reward}金币`,()=>action('escort',id,i)]);}
+   for(const item of Object.keys(d.goods) as ItemId[])buttons.push([`merchant-buy-${item}`,`购买${items[item].name}`,()=>trade(item,false)]);
+   for(const item of ['wood','stone','herb','berry'] as ItemId[])buttons.push([`merchant-sell-${item}`,`出售${items[item].name}`,()=>trade(item,true)]);
+  }
+  const history=r.arrivals.filter(a=>a.merchant===id).at(-1);shell(`${d.name} · ${d.specialty}`,`${r.opened?'“商路已经开通。主路有守卫，支路仍有怪物，取货可以请你搭把手。”':'“商车还过不了裂牙巢穴。岚铎将军正在西门寻找能清掉巢穴的旅人。”'}<br>关系 ${m.relation}/5 · ${m.relation>=5?'老朋友':m.relation>=2?'熟客':'初识'} · 本趟优惠剩余 ${m.discount} 件。<br>${Object.entries(d.goods).map(([item,g])=>`${items[item as ItemId].name}：${g.price}金币 · 库存${m.stock[item as ItemId]}`).join('<br>')}${history?'<br>最近到货：'+Object.entries(history.goods).map(([item,n])=>items[item as ItemId].name+' '+n+'份').join('、'):''}`,buttons,`<label>交易数量 <input id="merchant-quantity" type="number" min="1" max="99" value="1"></label><p id="merchant-preview" role="status"></p>`);
+  const input=w.ui.modal.querySelector<HTMLInputElement>('#merchant-quantity')!,preview=w.ui.modal.querySelector('#merchant-preview')!;const update=()=>{const q=Number(input.value);if(!Number.isSafeInteger(q)||q<1||q>99){preview.textContent='请输入1至99的整数；非法数量不会扣款。';return;}preview.textContent=Object.keys(d.goods).map(item=>`${items[item as ItemId].name}合计${merchantBuyCost(m,item as ItemId,q)}金币`).join(' · ')+`；出售预览：${(['wood','stone','herb','berry'] as ItemId[]).map(item=>items[item].name+'收入'+merchantSaleValue(m,item,q)+'金币（余量'+Math.max(0,(d.demand[item]?28:20)-(m.sold[item]??0))+'）').join(' · ')}；当前金币${s.coins}。木材／石材／药草／浆果持有${['wood','stone','herb','berry'].map(item=>s.bag.filter(a=>a?.id===item).reduce((n,a)=>n+(a?.count??0),0)).join('／')}。`;};input.addEventListener('input',update);update();
+ };
+ const trade=(item:ItemId,selling:boolean)=>{const q=Number(w.ui.modal.querySelector<HTMLInputElement>('#merchant-quantity')!.value);commit(s=>merchantTrade(s,id,item,q,selling),show);};show();return true;
+}

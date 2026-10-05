@@ -96,7 +96,7 @@ export function createMinimapTerrain(art: MinimapArt) {
     c.restore();
     c.lineCap = 'round'; c.lineWidth = 25; c.strokeStyle = texture(3, 170);
     for (const wall of VILLAGE_WALLS) { path(c, [[wall.a.x, wall.a.y], [wall.b.x, wall.b.y]]); c.stroke(); }
-    for (const p of CITY_PROPS.filter(p => p.solid && (p.id.includes('wall') || p.id.includes('edge')))) {
+    for (const p of CITY_PROPS.filter(p => p.solid && (p.id.includes('wall') || p.id.includes('edge') || p.id.startsWith('city-fortress-foot-')))) {
       const [width, height] = p.solid!;
       if (visible(p.x - width / 2, p.y - height, width, height)) { c.fillStyle = texture(3, 180); c.fillRect(p.x - width / 2, p.y - height, width, height); }
     }

@@ -1,3 +1,5 @@
+import {ROAD_NEST,ROAD_POSTS} from '../../data/merchantRoad';
+import {roadTracked,roadRouteStatus} from '../systems/merchantRoadState';
 import {CITY_BUILDINGS} from '../../data/cityLayout';
 import {cityBuilding} from '../../data/cityLayout';
 import { BRIDGES, WORLD, WATERS, roads, region } from '../../data/world';
@@ -87,7 +89,7 @@ export class Minimap {
       c.textAlign = 'center'; c.lineJoin = 'round'; c.strokeStyle = '#18392deb'; c.lineWidth = 3;
       c.strokeText(name, lx, ly); c.fillStyle = color; c.fillText(name, lx, ly);
     };
-    const tracked = legacyTracked(s);
+    const tracked = roadTracked(s)??legacyTracked(s);
     if (tracked && visible(tracked.point)) { marker(tracked.point, '#ffe398', 5); label(tracked.point, tracked.name, '#fff0b4'); }
     for (const b of BRIDGES) {
       const point = { x: b.x + b.w / 2, y: b.y + b.h / 2 + 110 };
@@ -96,6 +98,8 @@ export class Minimap {
     for (const p of landmarks.filter(visible).sort((a, b) => Math.hypot(a.x - player.x, a.y - player.y) - Math.hypot(b.x - player.x, b.y - player.y)).slice(0, 3)) {
       marker(p, '#91e5db'); label(p, p.name, '#bff8eb');
     }
+    if(visible(ROAD_NEST)){marker(ROAD_NEST,s.merchantRoad.nest.wave===3?'#a7d5aa':'#e48c6e');label(ROAD_NEST,s.merchantRoad.nest.wave===3?'巢穴已清剿':'裂牙巢穴','#ffe0bf');}
+    if(s.merchantRoad.opened)for(const p of ROAD_POSTS)if(visible(p)){marker(p,'#91e5db');label(p,p.name,'#bff8eb');}
     for (const [i, p] of TRADE_ROAD_NODES.entries()) if (visible(p)) {
       const cleared = s.tradeRoad.nodes[i]?.cleared;
       marker(p, cleared ? '#a7d5aa' : '#e48c6e'); label(p, p.name, cleared ? '#d1edcb' : '#ffe0bf');

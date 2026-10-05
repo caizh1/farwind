@@ -1,6 +1,6 @@
 {
   "说明": "正式advanceNight、mayStartNight、nightWarningSnapshot、canScheduleAtGate、预警二次检查与居民生活共同运行。黄昏使用记录的确定随机序列；不调用prepareRaid直接准备40场，不补血。等待1000毫秒，战斗20毫秒；模拟关键提交仅在validate成功后确认。轮休步行不算交战离岗，战斗每步仍受固定岗位和活动域约束。非数小时实等及性能测量。",
-  "有效模拟总毫秒": 38917480,
+  "有效模拟总毫秒": 38917980,
   "门别分布": {
     "东门": 10,
     "北门": 10,
@@ -262,7 +262,7 @@
       "门": "east-gate",
       "数量": 1,
       "等待毫秒": 1482000,
-      "预警与击退毫秒": 7500,
+      "预警与击退毫秒": 7940,
       "准入生命": [
         {
           "id": "east-watch",
@@ -339,7 +339,7 @@
       ],
       "最低生命": {
         "east-watch": 180,
-        "east-patrol": 172,
+        "east-patrol": 176,
         "east-archer": 100,
         "north-watch": 180,
         "north-patrol": 180,
@@ -352,7 +352,7 @@
         "west-archer": 100
       },
       "最大在岗离岗距离": {
-        "east-patrol": 141.85217035533424,
+        "east-patrol": 128.5030794093913,
         "east-archer": 0,
         "north-patrol": 161.55494421403515,
         "north-archer": 0,
@@ -361,8 +361,8 @@
         "west-patrol": 78.10249675906655,
         "west-archer": 0,
         "west-watch": 0,
-        "north-watch": 0,
         "south-watch": 0,
+        "north-watch": 0,
         "east-watch": 0.023252670426305827
       },
       "结束生命": [
@@ -373,7 +373,7 @@
         },
         {
           "id": "east-patrol",
-          "hp": 172,
+          "hp": 176,
           "模式": "attack"
         },
         {
@@ -436,7 +436,7 @@
       "门": "north-gate",
       "数量": 1,
       "等待毫秒": 959000,
-      "预警与击退毫秒": 6440,
+      "预警与击退毫秒": 7180,
       "准入生命": [
         {
           "id": "east-watch",
@@ -513,7 +513,7 @@
       ],
       "最低生命": {
         "east-watch": 180,
-        "east-patrol": 172,
+        "east-patrol": 176,
         "east-archer": 100,
         "north-watch": 180,
         "north-patrol": 180,
@@ -530,7 +530,7 @@
         "east-patrol": 72.80109889280519,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 5.892851112980476,
+        "south-watch": 2.649699173590551,
         "south-patrol": 98.48857801796105,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
@@ -558,7 +558,7 @@
         {
           "id": "north-watch",
           "hp": 180,
-          "模式": "attack"
+          "模式": "post"
         },
         {
           "id": "north-patrol",
@@ -609,8 +609,8 @@
       "夜次": 4,
       "门": "south-gate",
       "数量": 1,
-      "等待毫秒": 950000,
-      "预警与击退毫秒": 6960,
+      "等待毫秒": 948000,
+      "预警与击退毫秒": 7940,
       "准入生命": [
         {
           "id": "east-watch",
@@ -704,13 +704,13 @@
         "east-patrol": 72.80109889280519,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 0,
-        "south-patrol": 158.2373176866757,
+        "south-watch": 2.649699173590551,
+        "south-patrol": 182.91055257809106,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
         "north-archer": 0,
-        "south-archer": 0,
         "east-archer": 0,
+        "south-archer": 0,
         "west-archer": 0
       },
       "结束生命": [
@@ -783,8 +783,8 @@
       "夜次": 5,
       "门": "west-gate",
       "数量": 1,
-      "等待毫秒": 981000,
-      "预警与击退毫秒": 10980,
+      "等待毫秒": 980000,
+      "预警与击退毫秒": 11640,
       "准入生命": [
         {
           "id": "east-watch",
@@ -869,7 +869,7 @@
         "south-watch": 180,
         "south-patrol": 176,
         "south-archer": 100,
-        "west-watch": 176,
+        "west-watch": 180,
         "west-patrol": 180,
         "west-archer": 100
       },
@@ -881,8 +881,8 @@
         "north-patrol": 161.55494421403515,
         "south-watch": 5.892851112980476,
         "south-patrol": 98.48857801796105,
-        "west-watch": 23.999999999999897,
-        "west-patrol": 117.89080007931469,
+        "west-watch": 26.000000000000114,
+        "west-patrol": 139.50705968098063,
         "south-archer": 0,
         "north-archer": 0,
         "west-archer": 0
@@ -935,7 +935,7 @@
         },
         {
           "id": "west-watch",
-          "hp": 176,
+          "hp": 180,
           "模式": "attack"
         },
         {
@@ -958,7 +958,7 @@
       "门": "east-gate",
       "数量": 2,
       "等待毫秒": 1011000,
-      "预警与击退毫秒": 10700,
+      "预警与击退毫秒": 10680,
       "准入生命": [
         {
           "id": "east-watch",
@@ -1035,7 +1035,7 @@
       ],
       "最低生命": {
         "east-watch": 180,
-        "east-patrol": 164,
+        "east-patrol": 168,
         "east-archer": 100,
         "north-watch": 180,
         "north-patrol": 180,
@@ -1043,16 +1043,16 @@
         "south-watch": 180,
         "south-patrol": 180,
         "south-archer": 100,
-        "west-watch": 176,
+        "west-watch": 180,
         "west-patrol": 180,
         "west-archer": 100
       },
       "最大在岗离岗距离": {
-        "east-watch": 81.66696489169473,
-        "east-patrol": 128.76272730211153,
+        "east-watch": 0.023252670426305827,
+        "east-patrol": 144.84525096447464,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 2.649699173590551,
+        "south-watch": 0,
         "south-patrol": 98.48857801796105,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
@@ -1065,11 +1065,11 @@
         {
           "id": "east-watch",
           "hp": 180,
-          "模式": "attack"
+          "模式": "post"
         },
         {
           "id": "east-patrol",
-          "hp": 164,
+          "hp": 168,
           "模式": "attack"
         },
         {
@@ -1132,7 +1132,7 @@
       "门": "north-gate",
       "数量": 2,
       "等待毫秒": 884000,
-      "预警与击退毫秒": 7680,
+      "预警与击退毫秒": 9680,
       "准入生命": [
         {
           "id": "east-watch",
@@ -1209,10 +1209,10 @@
       ],
       "最低生命": {
         "east-watch": 180,
-        "east-patrol": 164,
+        "east-patrol": 168,
         "east-archer": 100,
-        "north-watch": 176,
-        "north-patrol": 176,
+        "north-watch": 180,
+        "north-patrol": 168,
         "north-archer": 100,
         "south-watch": 180,
         "south-patrol": 180,
@@ -1222,7 +1222,7 @@
         "west-archer": 100
       },
       "最大在岗离岗距离": {
-        "east-watch": 66.92397506814778,
+        "east-watch": 0.023252670426305827,
         "east-patrol": 72.80109889280519,
         "east-archer": 0,
         "north-watch": 0,
@@ -1253,12 +1253,12 @@
         },
         {
           "id": "north-watch",
-          "hp": 176,
-          "模式": "attack"
+          "hp": 180,
+          "模式": "post"
         },
         {
           "id": "north-patrol",
-          "hp": 176,
+          "hp": 168,
           "模式": "attack"
         },
         {
@@ -1305,8 +1305,8 @@
       "夜次": 8,
       "门": "south-gate",
       "数量": 2,
-      "等待毫秒": 944000,
-      "预警与击退毫秒": 9140,
+      "等待毫秒": 942000,
+      "预警与击退毫秒": 9240,
       "准入生命": [
         {
           "id": "east-watch",
@@ -1342,7 +1342,7 @@
           "id": "north-archer",
           "hp": 100,
           "离岗": true,
-          "空间": "barracks"
+          "空间": "village"
         },
         {
           "id": "south-watch",
@@ -1385,11 +1385,11 @@
         "east-watch": 180,
         "east-patrol": 180,
         "east-archer": 100,
-        "north-watch": 176,
-        "north-patrol": 176,
+        "north-watch": 180,
+        "north-patrol": 168,
         "north-archer": 100,
         "south-watch": 180,
-        "south-patrol": 164,
+        "south-patrol": 172,
         "south-archer": 100,
         "west-watch": 180,
         "west-patrol": 180,
@@ -1400,13 +1400,13 @@
         "east-patrol": 72.80109889280519,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 0,
-        "south-patrol": 153.18819703577958,
+        "north-archer": 0,
+        "south-watch": 2.649699173590551,
+        "south-patrol": 160.80100805377776,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
-        "north-archer": 0,
-        "south-archer": 0,
         "east-archer": 0,
+        "south-archer": 0,
         "west-archer": 0
       },
       "结束生命": [
@@ -1438,7 +1438,7 @@
         {
           "id": "north-archer",
           "hp": 100,
-          "模式": "return"
+          "模式": "life"
         },
         {
           "id": "south-watch",
@@ -1447,7 +1447,7 @@
         },
         {
           "id": "south-patrol",
-          "hp": 164,
+          "hp": 172,
           "模式": "attack"
         },
         {
@@ -1480,7 +1480,7 @@
       "门": "west-gate",
       "数量": 2,
       "等待毫秒": 995000,
-      "预警与击退毫秒": 12220,
+      "预警与击退毫秒": 12660,
       "准入生命": [
         {
           "id": "east-watch",
@@ -1563,9 +1563,9 @@
         "north-patrol": 180,
         "north-archer": 100,
         "south-watch": 180,
-        "south-patrol": 164,
+        "south-patrol": 172,
         "south-archer": 100,
-        "west-watch": 172,
+        "west-watch": 180,
         "west-patrol": 180,
         "west-archer": 100
       },
@@ -1575,10 +1575,10 @@
         "east-archer": 0,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 0,
+        "south-watch": 2.649699173590551,
         "south-patrol": 98.48857801796105,
-        "west-watch": 23.999606373691023,
-        "west-patrol": 135.29358048748264,
+        "west-watch": 23.9997029307869,
+        "west-patrol": 139.0905101005712,
         "south-archer": 0,
         "north-archer": 0,
         "west-archer": 0
@@ -1631,13 +1631,13 @@
         },
         {
           "id": "west-watch",
-          "hp": 172,
+          "hp": 180,
           "模式": "attack"
         },
         {
           "id": "west-patrol",
           "hp": 180,
-          "模式": "attack"
+          "模式": "return"
         },
         {
           "id": "west-archer",
@@ -1654,7 +1654,7 @@
       "门": "east-gate",
       "数量": 3,
       "等待毫秒": 950000,
-      "预警与击退毫秒": 12420,
+      "预警与击退毫秒": 14500,
       "准入生命": [
         {
           "id": "east-watch",
@@ -1731,7 +1731,7 @@
       ],
       "最低生命": {
         "east-watch": 180,
-        "east-patrol": 140,
+        "east-patrol": 112,
         "east-archer": 100,
         "north-watch": 180,
         "north-patrol": 180,
@@ -1739,17 +1739,17 @@
         "south-watch": 180,
         "south-patrol": 180,
         "south-archer": 100,
-        "west-watch": 172,
+        "west-watch": 180,
         "west-patrol": 180,
         "west-archer": 100
       },
       "最大在岗离岗距离": {
-        "east-watch": 0.023252670426305827,
-        "east-patrol": 144.74264971098776,
+        "east-watch": 76.68710181729203,
+        "east-patrol": 153.5962655646783,
         "east-archer": 0,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 0,
+        "south-watch": 2.649699173590551,
         "south-patrol": 98.48857801796105,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
@@ -1765,7 +1765,7 @@
         },
         {
           "id": "east-patrol",
-          "hp": 140,
+          "hp": 112,
           "模式": "attack"
         },
         {
@@ -1801,7 +1801,7 @@
         {
           "id": "south-archer",
           "hp": 100,
-          "模式": "return"
+          "模式": "post"
         },
         {
           "id": "west-watch",
@@ -1827,8 +1827,8 @@
       "夜次": 11,
       "门": "north-gate",
       "数量": 3,
-      "等待毫秒": 882000,
-      "预警与击退毫秒": 9160,
+      "等待毫秒": 879000,
+      "预警与击退毫秒": 12140,
       "准入生命": [
         {
           "id": "east-watch",
@@ -1905,10 +1905,10 @@
       ],
       "最低生命": {
         "east-watch": 180,
-        "east-patrol": 140,
+        "east-patrol": 112,
         "east-archer": 100,
-        "north-watch": 176,
-        "north-patrol": 168,
+        "north-watch": 180,
+        "north-patrol": 133,
         "north-archer": 100,
         "south-watch": 180,
         "south-patrol": 180,
@@ -1918,12 +1918,12 @@
         "west-archer": 100
       },
       "最大在岗离岗距离": {
-        "east-watch": 0.023252670426305827,
+        "east-watch": 1.2833208047349332,
         "east-patrol": 72.80109889280519,
         "east-archer": 0,
-        "north-watch": 0,
+        "north-watch": 41.897561483828866,
         "north-patrol": 161.55494421403515,
-        "south-watch": 5.892851112980476,
+        "south-watch": 2.649699173590551,
         "south-patrol": 98.48857801796105,
         "south-archer": 0,
         "west-watch": 0,
@@ -1949,12 +1949,12 @@
         },
         {
           "id": "north-watch",
-          "hp": 176,
+          "hp": 180,
           "模式": "post"
         },
         {
           "id": "north-patrol",
-          "hp": 168,
+          "hp": 133,
           "模式": "attack"
         },
         {
@@ -2001,8 +2001,8 @@
       "夜次": 12,
       "门": "south-gate",
       "数量": 3,
-      "等待毫秒": 993000,
-      "预警与击退毫秒": 12120,
+      "等待毫秒": 990000,
+      "预警与击退毫秒": 14000,
       "准入生命": [
         {
           "id": "east-watch",
@@ -2081,11 +2081,11 @@
         "east-watch": 180,
         "east-patrol": 180,
         "east-archer": 100,
-        "north-watch": 176,
-        "north-patrol": 168,
+        "north-watch": 180,
+        "north-patrol": 133,
         "north-archer": 100,
         "south-watch": 180,
-        "south-patrol": 152,
+        "south-patrol": 124,
         "south-archer": 100,
         "west-watch": 180,
         "west-patrol": 180,
@@ -2094,10 +2094,10 @@
       "最大在岗离岗距离": {
         "east-watch": 0.023252670426305827,
         "east-patrol": 72.80109889280519,
-        "north-watch": 0,
+        "north-watch": 1.5436277500133047,
         "north-patrol": 161.55494421403515,
-        "south-watch": 0,
-        "south-patrol": 152.03667348173647,
+        "south-watch": 88.86612272986102,
+        "south-patrol": 159.5669930122328,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
         "north-archer": 0,
@@ -2143,7 +2143,7 @@
         },
         {
           "id": "south-patrol",
-          "hp": 152,
+          "hp": 124,
           "模式": "attack"
         },
         {
@@ -2175,8 +2175,8 @@
       "夜次": 13,
       "门": "west-gate",
       "数量": 3,
-      "等待毫秒": 976000,
-      "预警与击退毫秒": 14820,
+      "等待毫秒": 974000,
+      "预警与击退毫秒": 12080,
       "准入生命": [
         {
           "id": "east-watch",
@@ -2259,9 +2259,9 @@
         "north-patrol": 180,
         "north-archer": 100,
         "south-watch": 180,
-        "south-patrol": 152,
+        "south-patrol": 124,
         "south-archer": 100,
-        "west-watch": 156,
+        "west-watch": 162,
         "west-patrol": 180,
         "west-archer": 100
       },
@@ -2271,11 +2271,11 @@
         "east-archer": 0,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 2.649699173590551,
+        "south-watch": 2.8661227298616794,
         "south-patrol": 98.48857801796105,
         "south-archer": 0,
-        "west-watch": 23.999714419272806,
-        "west-patrol": 138.8453656782799,
+        "west-watch": 25.956879971595157,
+        "west-patrol": 174.22025502908923,
         "west-archer": 0,
         "north-archer": 0
       },
@@ -2327,7 +2327,7 @@
         },
         {
           "id": "west-watch",
-          "hp": 156,
+          "hp": 162,
           "模式": "attack"
         },
         {
@@ -2349,8 +2349,8 @@
       "夜次": 14,
       "门": "east-gate",
       "数量": 1,
-      "等待毫秒": 921000,
-      "预警与击退毫秒": 7700,
+      "等待毫秒": 925000,
+      "预警与击退毫秒": 7940,
       "准入生命": [
         {
           "id": "east-watch",
@@ -2421,7 +2421,7 @@
         {
           "id": "west-archer",
           "hp": 100,
-          "离岗": false,
+          "离岗": true,
           "空间": "village"
         }
       ],
@@ -2435,22 +2435,22 @@
         "south-watch": 180,
         "south-patrol": 180,
         "south-archer": 100,
-        "west-watch": 156,
+        "west-watch": 162,
         "west-patrol": 180,
         "west-archer": 100
       },
       "最大在岗离岗距离": {
         "east-watch": 0.023252670426305827,
-        "east-patrol": 127.98143115851788,
+        "east-patrol": 128.5030794093913,
         "east-archer": 0,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "north-archer": 0,
         "south-watch": 2.649699173590551,
         "south-patrol": 98.48857801796105,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
         "west-archer": 0,
+        "north-archer": 0,
         "south-archer": 0
       },
       "结束生命": [
@@ -2512,7 +2512,7 @@
         {
           "id": "west-archer",
           "hp": 100,
-          "模式": "post"
+          "模式": "return"
         }
       ],
       "后续冷却": 519176
@@ -2523,8 +2523,8 @@
       "夜次": 15,
       "门": "north-gate",
       "数量": 1,
-      "等待毫秒": 905000,
-      "预警与击退毫秒": 6340,
+      "等待毫秒": 904000,
+      "预警与击退毫秒": 6520,
       "准入生命": [
         {
           "id": "east-watch",
@@ -2541,8 +2541,8 @@
         {
           "id": "east-archer",
           "hp": 100,
-          "离岗": false,
-          "空间": "village"
+          "离岗": true,
+          "空间": "barracks"
         },
         {
           "id": "north-watch",
@@ -2604,7 +2604,7 @@
         "east-patrol": 176,
         "east-archer": 100,
         "north-watch": 180,
-        "north-patrol": 176,
+        "north-patrol": 180,
         "north-archer": 100,
         "south-watch": 180,
         "south-patrol": 180,
@@ -2618,13 +2618,13 @@
         "east-patrol": 72.80109889280519,
         "east-archer": 0,
         "north-watch": 0,
-        "north-patrol": 161.55494421403515,
+        "north-patrol": 168.4330233034795,
         "south-watch": 2.649699173590551,
         "south-patrol": 98.48857801796105,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
-        "west-archer": 0,
         "south-archer": 0,
+        "west-archer": 0,
         "north-archer": 0
       },
       "结束生命": [
@@ -2641,7 +2641,7 @@
         {
           "id": "east-archer",
           "hp": 100,
-          "模式": "post"
+          "模式": "life"
         },
         {
           "id": "north-watch",
@@ -2650,7 +2650,7 @@
         },
         {
           "id": "north-patrol",
-          "hp": 176,
+          "hp": 180,
           "模式": "attack"
         },
         {
@@ -2698,7 +2698,7 @@
       "门": "south-gate",
       "数量": 1,
       "等待毫秒": 1013000,
-      "预警与击退毫秒": 8120,
+      "预警与击退毫秒": 7000,
       "准入生命": [
         {
           "id": "east-watch",
@@ -2778,10 +2778,10 @@
         "east-patrol": 180,
         "east-archer": 100,
         "north-watch": 180,
-        "north-patrol": 176,
+        "north-patrol": 180,
         "north-archer": 100,
         "south-watch": 180,
-        "south-patrol": 176,
+        "south-patrol": 180,
         "south-archer": 100,
         "west-watch": 180,
         "west-patrol": 180,
@@ -2790,14 +2790,14 @@
       "最大在岗离岗距离": {
         "east-watch": 0.023252670426305827,
         "east-patrol": 72.80109889280519,
-        "east-archer": 0,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 0,
-        "south-patrol": 152.03667348173647,
+        "south-watch": 2.649699173590551,
+        "south-patrol": 174.9982420220731,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
         "north-archer": 0,
+        "east-archer": 0,
         "south-archer": 0,
         "west-archer": 0
       },
@@ -2839,7 +2839,7 @@
         },
         {
           "id": "south-patrol",
-          "hp": 176,
+          "hp": 180,
           "模式": "attack"
         },
         {
@@ -2871,8 +2871,8 @@
       "夜次": 17,
       "门": "west-gate",
       "数量": 1,
-      "等待毫秒": 890000,
-      "预警与击退毫秒": 10980,
+      "等待毫秒": 891000,
+      "预警与击退毫秒": 11640,
       "准入生命": [
         {
           "id": "east-watch",
@@ -2955,9 +2955,9 @@
         "north-patrol": 180,
         "north-archer": 100,
         "south-watch": 180,
-        "south-patrol": 176,
+        "south-patrol": 180,
         "south-archer": 100,
-        "west-watch": 176,
+        "west-watch": 180,
         "west-patrol": 180,
         "west-archer": 100
       },
@@ -2967,11 +2967,11 @@
         "east-archer": 0,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 2.649699173590551,
-        "south-patrol": 98.48857801796105,
+        "south-watch": 0,
+        "south-patrol": 155.30970489888085,
         "south-archer": 0,
-        "west-watch": 23.999999999999897,
-        "west-patrol": 142.04028526887848,
+        "west-watch": 26.000000000000114,
+        "west-patrol": 139.50705968098063,
         "west-archer": 0,
         "north-archer": 0
       },
@@ -3019,11 +3019,11 @@
         {
           "id": "south-archer",
           "hp": 100,
-          "模式": "return"
+          "模式": "life"
         },
         {
           "id": "west-watch",
-          "hp": 176,
+          "hp": 180,
           "模式": "attack"
         },
         {
@@ -3045,8 +3045,8 @@
       "夜次": 18,
       "门": "east-gate",
       "数量": 2,
-      "等待毫秒": 1022000,
-      "预警与击退毫秒": 10420,
+      "等待毫秒": 1021000,
+      "预警与击退毫秒": 10780,
       "准入生命": [
         {
           "id": "east-watch",
@@ -3117,13 +3117,13 @@
         {
           "id": "west-archer",
           "hp": 100,
-          "离岗": false,
+          "离岗": true,
           "空间": "village"
         }
       ],
       "最低生命": {
         "east-watch": 180,
-        "east-patrol": 160,
+        "east-patrol": 168,
         "east-archer": 100,
         "north-watch": 180,
         "north-patrol": 180,
@@ -3131,23 +3131,23 @@
         "south-watch": 180,
         "south-patrol": 180,
         "south-archer": 100,
-        "west-watch": 176,
+        "west-watch": 180,
         "west-patrol": 180,
         "west-archer": 100
       },
       "最大在岗离岗距离": {
         "east-watch": 0.023252670426305827,
-        "east-patrol": 144.74264971098776,
+        "east-patrol": 136.95677281083272,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 2.649699173590551,
+        "south-watch": 5.892851112980476,
         "south-patrol": 98.48857801796105,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
         "west-archer": 0,
-        "south-archer": 0,
         "east-archer": 0,
-        "north-archer": 0
+        "north-archer": 0,
+        "south-archer": 0
       },
       "结束生命": [
         {
@@ -3157,7 +3157,7 @@
         },
         {
           "id": "east-patrol",
-          "hp": 160,
+          "hp": 168,
           "模式": "attack"
         },
         {
@@ -3193,7 +3193,7 @@
         {
           "id": "south-archer",
           "hp": 100,
-          "模式": "return"
+          "模式": "post"
         },
         {
           "id": "west-watch",
@@ -3208,7 +3208,7 @@
         {
           "id": "west-archer",
           "hp": 100,
-          "模式": "post"
+          "模式": "return"
         }
       ],
       "后续冷却": 485157
@@ -3219,8 +3219,8 @@
       "夜次": 19,
       "门": "north-gate",
       "数量": 2,
-      "等待毫秒": 895000,
-      "预警与击退毫秒": 9300,
+      "等待毫秒": 896000,
+      "预警与击退毫秒": 9240,
       "准入生命": [
         {
           "id": "east-watch",
@@ -3237,7 +3237,7 @@
         {
           "id": "east-archer",
           "hp": 100,
-          "离岗": false,
+          "离岗": true,
           "空间": "village"
         },
         {
@@ -3297,7 +3297,7 @@
       ],
       "最低生命": {
         "east-watch": 180,
-        "east-patrol": 160,
+        "east-patrol": 168,
         "east-archer": 100,
         "north-watch": 180,
         "north-patrol": 168,
@@ -3317,10 +3317,10 @@
         "north-patrol": 161.55494421403515,
         "south-watch": 2.649699173590551,
         "south-patrol": 98.48857801796105,
+        "south-archer": 0,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
         "west-archer": 0,
-        "south-archer": 0,
         "north-archer": 0
       },
       "结束生命": [
@@ -3337,7 +3337,7 @@
         {
           "id": "east-archer",
           "hp": 100,
-          "模式": "post"
+          "模式": "life"
         },
         {
           "id": "north-watch",
@@ -3393,8 +3393,8 @@
       "夜次": 20,
       "门": "south-gate",
       "数量": 2,
-      "等待毫秒": 969000,
-      "预警与击退毫秒": 8980,
+      "等待毫秒": 968000,
+      "预警与击退毫秒": 9000,
       "准入生命": [
         {
           "id": "east-watch",
@@ -3430,7 +3430,7 @@
           "id": "north-archer",
           "hp": 100,
           "离岗": true,
-          "空间": "village"
+          "空间": "barracks"
         },
         {
           "id": "south-watch",
@@ -3477,7 +3477,7 @@
         "north-patrol": 168,
         "north-archer": 100,
         "south-watch": 180,
-        "south-patrol": 168,
+        "south-patrol": 176,
         "south-archer": 100,
         "west-watch": 180,
         "west-patrol": 180,
@@ -3486,15 +3486,15 @@
       "最大在岗离岗距离": {
         "east-watch": 0.023252670426305827,
         "east-patrol": 72.80109889280519,
-        "east-archer": 0,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 0,
-        "south-patrol": 156.38651864753174,
+        "south-watch": 2.649699173590551,
+        "south-patrol": 174.9982420220731,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
         "north-archer": 0,
         "south-archer": 0,
+        "east-archer": 0,
         "west-archer": 0
       },
       "结束生命": [
@@ -3535,7 +3535,7 @@
         },
         {
           "id": "south-patrol",
-          "hp": 168,
+          "hp": 176,
           "模式": "attack"
         },
         {
@@ -3568,7 +3568,7 @@
       "门": "west-gate",
       "数量": 2,
       "等待毫秒": 887000,
-      "预警与击退毫秒": 12220,
+      "预警与击退毫秒": 12660,
       "准入生命": [
         {
           "id": "east-watch",
@@ -3651,355 +3651,7 @@
         "north-patrol": 180,
         "north-archer": 100,
         "south-watch": 180,
-        "south-patrol": 168,
-        "south-archer": 100,
-        "west-watch": 172,
-        "west-patrol": 180,
-        "west-archer": 100
-      },
-      "最大在岗离岗距离": {
-        "east-watch": 0.023252670426305827,
-        "east-patrol": 72.80109889280519,
-        "north-watch": 0,
-        "north-patrol": 161.55494421403515,
-        "south-watch": 2.649699173590551,
-        "south-patrol": 98.48857801796105,
-        "south-archer": 0,
-        "west-watch": 23.999606373691023,
-        "west-patrol": 135.66534134324883,
-        "east-archer": 0,
-        "west-archer": 0,
-        "north-archer": 0
-      },
-      "结束生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "模式": "life"
-        },
-        {
-          "id": "north-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "模式": "life"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "模式": "life"
-        },
-        {
-          "id": "west-watch",
-          "hp": 172,
-          "模式": "attack"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "模式": "attack"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "模式": "post"
-        }
-      ],
-      "后续冷却": 852459
-    },
-    {
-      "场次": 21,
-      "事件序号": 21,
-      "夜次": 22,
-      "门": "east-gate",
-      "数量": 3,
-      "等待毫秒": 987000,
-      "预警与击退毫秒": 12420,
-      "准入生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "barracks"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "离岗": false,
-          "空间": "village"
-        }
-      ],
-      "最低生命": {
-        "east-watch": 180,
-        "east-patrol": 140,
-        "east-archer": 100,
-        "north-watch": 180,
-        "north-patrol": 180,
-        "north-archer": 100,
-        "south-watch": 180,
-        "south-patrol": 180,
-        "south-archer": 100,
-        "west-watch": 172,
-        "west-patrol": 180,
-        "west-archer": 100
-      },
-      "最大在岗离岗距离": {
-        "east-watch": 0.023252670426305827,
-        "east-patrol": 145.60172666971678,
-        "north-watch": 0,
-        "north-patrol": 161.55494421403515,
-        "south-watch": 2.649699173590551,
-        "south-patrol": 98.48857801796105,
-        "west-watch": 0,
-        "west-patrol": 78.10249675906655,
-        "west-archer": 0,
-        "east-archer": 0,
-        "north-archer": 0,
-        "south-archer": 0
-      },
-      "结束生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 140,
-          "模式": "attack"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "模式": "post"
-        },
-        {
-          "id": "north-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "模式": "life"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "模式": "life"
-        },
-        {
-          "id": "west-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "模式": "post"
-        }
-      ],
-      "后续冷却": 540818
-    },
-    {
-      "场次": 22,
-      "事件序号": 22,
-      "夜次": 23,
-      "门": "north-gate",
-      "数量": 3,
-      "等待毫秒": 1029000,
-      "预警与击退毫秒": 9120,
-      "准入生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "village"
-        },
-        {
-          "id": "west-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "离岗": false,
-          "空间": "village"
-        }
-      ],
-      "最低生命": {
-        "east-watch": 180,
-        "east-patrol": 140,
-        "east-archer": 100,
-        "north-watch": 176,
-        "north-patrol": 160,
-        "north-archer": 100,
-        "south-watch": 180,
-        "south-patrol": 180,
+        "south-patrol": 176,
         "south-archer": 100,
         "west-watch": 180,
         "west-patrol": 180,
@@ -4010,187 +3662,13 @@
         "east-patrol": 72.80109889280519,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 2.649699173590551,
-        "south-patrol": 98.48857801796105,
-        "west-watch": 0,
-        "west-patrol": 78.10249675906655,
-        "west-archer": 0,
-        "east-archer": 0,
+        "south-watch": 0,
+        "south-patrol": 155.30970489888085,
         "south-archer": 0,
-        "north-archer": 0
-      },
-      "结束生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "模式": "post"
-        },
-        {
-          "id": "north-watch",
-          "hp": 176,
-          "模式": "post"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 160,
-          "模式": "attack"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "模式": "post"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "模式": "post"
-        },
-        {
-          "id": "west-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "模式": "post"
-        }
-      ],
-      "后续冷却": 598476
-    },
-    {
-      "场次": 23,
-      "事件序号": 23,
-      "夜次": 24,
-      "门": "south-gate",
-      "数量": 3,
-      "等待毫秒": 835000,
-      "预警与击退毫秒": 12140,
-      "准入生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "barracks"
-        },
-        {
-          "id": "north-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "village"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "village"
-        }
-      ],
-      "最低生命": {
-        "east-watch": 180,
-        "east-patrol": 180,
-        "east-archer": 100,
-        "north-watch": 176,
-        "north-patrol": 160,
-        "north-archer": 100,
-        "south-watch": 180,
-        "south-patrol": 152,
-        "south-archer": 100,
-        "west-watch": 180,
-        "west-patrol": 180,
-        "west-archer": 100
-      },
-      "最大在岗离岗距离": {
-        "east-watch": 0.023252670426305827,
-        "east-patrol": 72.80109889280519,
+        "west-watch": 23.9997029307869,
+        "west-patrol": 139.0905101005712,
         "east-archer": 0,
-        "north-watch": 0,
-        "north-patrol": 161.55494421403515,
         "north-archer": 0,
-        "south-watch": 2.649699173590551,
-        "south-patrol": 152.2495691668496,
-        "south-archer": 0,
-        "west-watch": 0,
-        "west-patrol": 78.10249675906655,
         "west-archer": 0
       },
       "结束生命": [
@@ -4231,7 +3709,529 @@
         },
         {
           "id": "south-patrol",
-          "hp": 152,
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "模式": "life"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "模式": "attack"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "模式": "return"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "模式": "post"
+        }
+      ],
+      "后续冷却": 852459
+    },
+    {
+      "场次": 21,
+      "事件序号": 21,
+      "夜次": 22,
+      "门": "east-gate",
+      "数量": 3,
+      "等待毫秒": 986000,
+      "预警与击退毫秒": 13780,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "village"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "village"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "village"
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 116,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 180,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100,
+        "west-watch": 180,
+        "west-patrol": 180,
+        "west-archer": 100
+      },
+      "最大在岗离岗距离": {
+        "east-watch": 88.004777948824,
+        "east-patrol": 136.95677281083272,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "south-watch": 2.649699173590551,
+        "south-patrol": 98.48857801796105,
+        "west-watch": 0,
+        "west-patrol": 78.10249675906655,
+        "west-archer": 0,
+        "east-archer": 0,
+        "north-archer": 0,
+        "south-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "模式": "return"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 116,
+          "模式": "attack"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "模式": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "模式": "life"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "模式": "life"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "模式": "life"
+        }
+      ],
+      "后续冷却": 540818
+    },
+    {
+      "场次": 22,
+      "事件序号": 22,
+      "夜次": 23,
+      "门": "north-gate",
+      "数量": 3,
+      "等待毫秒": 1029000,
+      "预警与击退毫秒": 9240,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "village"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "village"
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 116,
+        "east-archer": 100,
+        "north-watch": 171,
+        "north-patrol": 168,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100,
+        "west-watch": 180,
+        "west-patrol": 180,
+        "west-archer": 100
+      },
+      "最大在岗离岗距离": {
+        "east-watch": 0.023252670426305827,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "south-watch": 5.892851112980476,
+        "south-patrol": 98.48857801796105,
+        "west-watch": 0,
+        "west-patrol": 78.10249675906655,
+        "south-archer": 0,
+        "north-archer": 0,
+        "west-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "模式": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 171,
+          "模式": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 168,
+          "模式": "attack"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "模式": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "模式": "return"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "模式": "return"
+        }
+      ],
+      "后续冷却": 598476
+    },
+    {
+      "场次": 23,
+      "事件序号": 23,
+      "夜次": 24,
+      "门": "south-gate",
+      "数量": 3,
+      "等待毫秒": 834000,
+      "预警与击退毫秒": 14100,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "barracks"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "village"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "village"
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 180,
+        "east-archer": 100,
+        "north-watch": 171,
+        "north-patrol": 168,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 124,
+        "south-archer": 100,
+        "west-watch": 180,
+        "west-patrol": 180,
+        "west-archer": 100
+      },
+      "最大在岗离岗距离": {
+        "east-watch": 0.023252670426305827,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "north-archer": 0,
+        "south-watch": 87.49846042128671,
+        "south-patrol": 156.07872578970182,
+        "west-watch": 0,
+        "west-patrol": 78.10249675906655,
+        "south-archer": 0,
+        "west-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "模式": "life"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "模式": "life"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 124,
           "模式": "attack"
         },
         {
@@ -4263,8 +4263,8 @@
       "夜次": 25,
       "门": "west-gate",
       "数量": 3,
-      "等待毫秒": 962000,
-      "预警与击退毫秒": 14040,
+      "等待毫秒": 960000,
+      "预警与击退毫秒": 12080,
       "准入生命": [
         {
           "id": "east-watch",
@@ -4347,9 +4347,9 @@
         "north-patrol": 180,
         "north-archer": 100,
         "south-watch": 180,
-        "south-patrol": 152,
+        "south-patrol": 124,
         "south-archer": 100,
-        "west-watch": 160,
+        "west-watch": 162,
         "west-patrol": 180,
         "west-archer": 100
       },
@@ -4358,10 +4358,10 @@
         "east-patrol": 72.80109889280519,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 5.892851112980476,
+        "south-watch": 2.649699173590551,
         "south-patrol": 98.48857801796105,
-        "west-watch": 23.999714419272806,
-        "west-patrol": 131.91215655596793,
+        "west-watch": 25.956879971595157,
+        "west-patrol": 174.22025502908923,
         "east-archer": 0,
         "south-archer": 0,
         "north-archer": 0,
@@ -4415,7 +4415,7 @@
         },
         {
           "id": "west-watch",
-          "hp": 160,
+          "hp": 162,
           "模式": "attack"
         },
         {
@@ -4437,8 +4437,8 @@
       "夜次": 26,
       "门": "east-gate",
       "数量": 1,
-      "等待毫秒": 1029000,
-      "预警与击退毫秒": 7700,
+      "等待毫秒": 1031000,
+      "预警与击退毫秒": 7680,
       "准入生命": [
         {
           "id": "east-watch",
@@ -4515,7 +4515,7 @@
       ],
       "最低生命": {
         "east-watch": 180,
-        "east-patrol": 172,
+        "east-patrol": 176,
         "east-archer": 100,
         "north-watch": 180,
         "north-patrol": 180,
@@ -4523,23 +4523,23 @@
         "south-watch": 180,
         "south-patrol": 180,
         "south-archer": 100,
-        "west-watch": 160,
+        "west-watch": 162,
         "west-patrol": 180,
         "west-archer": 100
       },
       "最大在岗离岗距离": {
         "east-watch": 0.023252670426305827,
-        "east-patrol": 128.76272730211153,
+        "east-patrol": 144.84525096447464,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 0,
+        "south-watch": 2.649699173590551,
         "south-patrol": 98.48857801796105,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
         "west-archer": 0,
         "east-archer": 0,
-        "north-archer": 0,
-        "south-archer": 0
+        "south-archer": 0,
+        "north-archer": 0
       },
       "结束生命": [
         {
@@ -4549,7 +4549,7 @@
         },
         {
           "id": "east-patrol",
-          "hp": 172,
+          "hp": 176,
           "模式": "attack"
         },
         {
@@ -4612,7 +4612,7 @@
       "门": "north-gate",
       "数量": 1,
       "等待毫秒": 882000,
-      "预警与击退毫秒": 6440,
+      "预警与击退毫秒": 6540,
       "准入生命": [
         {
           "id": "east-watch",
@@ -4689,10 +4689,706 @@
       ],
       "最低生命": {
         "east-watch": 180,
-        "east-patrol": 172,
+        "east-patrol": 176,
         "east-archer": 100,
         "north-watch": 180,
         "north-patrol": 180,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100,
+        "west-watch": 180,
+        "west-patrol": 180,
+        "west-archer": 100
+      },
+      "最大在岗离岗距离": {
+        "east-watch": 0.023252670426305827,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "south-watch": 5.892851112980476,
+        "south-patrol": 98.48857801796105,
+        "south-archer": 0,
+        "west-watch": 0,
+        "west-patrol": 78.10249675906655,
+        "west-archer": 0,
+        "north-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "模式": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "模式": "attack"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "模式": "post"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "模式": "return"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "模式": "life"
+        }
+      ],
+      "后续冷却": 608821
+    },
+    {
+      "场次": 27,
+      "事件序号": 27,
+      "夜次": 28,
+      "门": "south-gate",
+      "数量": 1,
+      "等待毫秒": 916000,
+      "预警与击退毫秒": 7100,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "barracks"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "village"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "village"
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 180,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 180,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100,
+        "west-watch": 180,
+        "west-patrol": 180,
+        "west-archer": 100
+      },
+      "最大在岗离岗距离": {
+        "east-watch": 0.023252670426305827,
+        "east-patrol": 72.80109889280519,
+        "east-archer": 0,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "south-watch": 0,
+        "south-patrol": 164.06930732460089,
+        "west-watch": 0,
+        "west-patrol": 78.10249675906655,
+        "north-archer": 0,
+        "south-archer": 0,
+        "west-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "模式": "life"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "模式": "life"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "模式": "attack"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "模式": "post"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "模式": "life"
+        }
+      ],
+      "后续冷却": 789611
+    },
+    {
+      "场次": 28,
+      "事件序号": 28,
+      "夜次": 29,
+      "门": "west-gate",
+      "数量": 1,
+      "等待毫秒": 1003000,
+      "预警与击退毫秒": 11640,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "barracks"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "barracks"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "离岗": false,
+          "空间": "village"
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 180,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 180,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100,
+        "west-watch": 180,
+        "west-patrol": 180,
+        "west-archer": 100
+      },
+      "最大在岗离岗距离": {
+        "east-watch": 0.023252670426305827,
+        "east-patrol": 72.80109889280519,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "south-watch": 5.892851112980476,
+        "south-patrol": 144.37097107036368,
+        "west-watch": 26.000000000000114,
+        "west-patrol": 141.8210332428914,
+        "east-archer": 0,
+        "south-archer": 0,
+        "north-archer": 0,
+        "west-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "模式": "life"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "模式": "life"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "模式": "life"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "模式": "attack"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "模式": "return"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "模式": "post"
+        }
+      ],
+      "后续冷却": 485157
+    },
+    {
+      "场次": 29,
+      "事件序号": 29,
+      "夜次": 30,
+      "门": "east-gate",
+      "数量": 2,
+      "等待毫秒": 1005000,
+      "预警与击退毫秒": 10780,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "village"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "village"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "离岗": false,
+          "空间": "village"
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 168,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 180,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100,
+        "west-watch": 180,
+        "west-patrol": 180,
+        "west-archer": 100
+      },
+      "最大在岗离岗距离": {
+        "east-watch": 0.023252670426305827,
+        "east-patrol": 136.95677281083272,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "south-watch": 5.892851112980476,
+        "south-patrol": 98.48857801796105,
+        "west-watch": 0,
+        "west-patrol": 78.10249675906655,
+        "west-archer": 0,
+        "east-archer": 0,
+        "south-archer": 0,
+        "north-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 168,
+          "模式": "attack"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "模式": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "模式": "return"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "模式": "return"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "模式": "post"
+        }
+      ],
+      "后续冷却": 750369
+    },
+    {
+      "场次": 30,
+      "事件序号": 30,
+      "夜次": 31,
+      "门": "north-gate",
+      "数量": 2,
+      "等待毫秒": 917000,
+      "预警与击退毫秒": 9240,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "village"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "village"
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 168,
+        "east-archer": 100,
+        "north-watch": 180,
+        "north-patrol": 168,
         "north-archer": 100,
         "south-watch": 180,
         "south-patrol": 180,
@@ -4734,707 +5430,11 @@
         {
           "id": "north-watch",
           "hp": 180,
-          "模式": "attack"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 180,
-          "模式": "attack"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "模式": "post"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "模式": "life"
-        },
-        {
-          "id": "west-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "模式": "life"
-        }
-      ],
-      "后续冷却": 608821
-    },
-    {
-      "场次": 27,
-      "事件序号": 27,
-      "夜次": 28,
-      "门": "south-gate",
-      "数量": 1,
-      "等待毫秒": 915000,
-      "预警与击退毫秒": 8140,
-      "准入生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "barracks"
-        },
-        {
-          "id": "north-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "village"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "village"
-        }
-      ],
-      "最低生命": {
-        "east-watch": 180,
-        "east-patrol": 180,
-        "east-archer": 100,
-        "north-watch": 180,
-        "north-patrol": 180,
-        "north-archer": 100,
-        "south-watch": 180,
-        "south-patrol": 176,
-        "south-archer": 100,
-        "west-watch": 180,
-        "west-patrol": 180,
-        "west-archer": 100
-      },
-      "最大在岗离岗距离": {
-        "east-watch": 0.023252670426305827,
-        "east-patrol": 72.80109889280519,
-        "east-archer": 0,
-        "north-watch": 0,
-        "north-patrol": 161.55494421403515,
-        "south-watch": 2.649699173590551,
-        "south-patrol": 152.2495691668496,
-        "west-watch": 0,
-        "west-patrol": 78.10249675906655,
-        "north-archer": 0,
-        "south-archer": 0,
-        "west-archer": 0
-      },
-      "结束生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "模式": "life"
-        },
-        {
-          "id": "north-watch",
-          "hp": 180,
           "模式": "post"
         },
         {
           "id": "north-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "模式": "life"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 176,
-          "模式": "attack"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "模式": "post"
-        },
-        {
-          "id": "west-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "模式": "life"
-        }
-      ],
-      "后续冷却": 789611
-    },
-    {
-      "场次": 28,
-      "事件序号": 28,
-      "夜次": 29,
-      "门": "west-gate",
-      "数量": 1,
-      "等待毫秒": 1002000,
-      "预警与击退毫秒": 10980,
-      "准入生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "barracks"
-        },
-        {
-          "id": "north-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "barracks"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "barracks"
-        },
-        {
-          "id": "west-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "离岗": false,
-          "空间": "village"
-        }
-      ],
-      "最低生命": {
-        "east-watch": 180,
-        "east-patrol": 180,
-        "east-archer": 100,
-        "north-watch": 180,
-        "north-patrol": 180,
-        "north-archer": 100,
-        "south-watch": 180,
-        "south-patrol": 176,
-        "south-archer": 100,
-        "west-watch": 176,
-        "west-patrol": 180,
-        "west-archer": 100
-      },
-      "最大在岗离岗距离": {
-        "east-watch": 0.023252670426305827,
-        "east-patrol": 72.80109889280519,
-        "north-watch": 0,
-        "north-patrol": 161.55494421403515,
-        "south-watch": 2.649699173590551,
-        "south-patrol": 98.48857801796105,
-        "west-watch": 23.999999999999897,
-        "west-patrol": 117.89080007931469,
-        "east-archer": 0,
-        "south-archer": 0,
-        "north-archer": 0,
-        "west-archer": 0
-      },
-      "结束生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "模式": "life"
-        },
-        {
-          "id": "north-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "模式": "life"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "模式": "life"
-        },
-        {
-          "id": "west-watch",
-          "hp": 176,
-          "模式": "attack"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "模式": "return"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "模式": "post"
-        }
-      ],
-      "后续冷却": 485157
-    },
-    {
-      "场次": 29,
-      "事件序号": 29,
-      "夜次": 30,
-      "门": "east-gate",
-      "数量": 2,
-      "等待毫秒": 1006000,
-      "预警与击退毫秒": 10420,
-      "准入生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "village"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "village"
-        },
-        {
-          "id": "west-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "village"
-        }
-      ],
-      "最低生命": {
-        "east-watch": 180,
-        "east-patrol": 160,
-        "east-archer": 100,
-        "north-watch": 180,
-        "north-patrol": 180,
-        "north-archer": 100,
-        "south-watch": 180,
-        "south-patrol": 180,
-        "south-archer": 100,
-        "west-watch": 176,
-        "west-patrol": 180,
-        "west-archer": 100
-      },
-      "最大在岗离岗距离": {
-        "east-watch": 0.023252670426305827,
-        "east-patrol": 144.74264971098776,
-        "north-watch": 0,
-        "north-patrol": 161.55494421403515,
-        "south-watch": 2.649699173590551,
-        "south-patrol": 98.48857801796105,
-        "west-watch": 0,
-        "west-patrol": 78.10249675906655,
-        "west-archer": 0,
-        "east-archer": 0,
-        "north-archer": 0,
-        "south-archer": 0
-      },
-      "结束生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 160,
-          "模式": "attack"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "模式": "post"
-        },
-        {
-          "id": "north-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "模式": "return"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "模式": "post"
-        },
-        {
-          "id": "west-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "模式": "return"
-        }
-      ],
-      "后续冷却": 750369
-    },
-    {
-      "场次": 30,
-      "事件序号": 30,
-      "夜次": 31,
-      "门": "north-gate",
-      "数量": 2,
-      "等待毫秒": 918000,
-      "预警与击退毫秒": 8000,
-      "准入生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "village"
-        },
-        {
-          "id": "west-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "village"
-        }
-      ],
-      "最低生命": {
-        "east-watch": 180,
-        "east-patrol": 160,
-        "east-archer": 100,
-        "north-watch": 176,
-        "north-patrol": 176,
-        "north-archer": 100,
-        "south-watch": 180,
-        "south-patrol": 180,
-        "south-archer": 100,
-        "west-watch": 180,
-        "west-patrol": 180,
-        "west-archer": 100
-      },
-      "最大在岗离岗距离": {
-        "east-watch": 0.023252670426305827,
-        "east-patrol": 72.80109889280519,
-        "east-archer": 0,
-        "north-watch": 0,
-        "north-patrol": 161.55494421403515,
-        "south-watch": 5.892851112980476,
-        "south-patrol": 98.48857801796105,
-        "south-archer": 0,
-        "west-watch": 0,
-        "west-patrol": 78.10249675906655,
-        "west-archer": 0,
-        "north-archer": 0
-      },
-      "结束生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "模式": "post"
-        },
-        {
-          "id": "north-watch",
-          "hp": 176,
-          "模式": "post"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 176,
+          "hp": 168,
           "模式": "attack"
         },
         {
@@ -5481,8 +5481,8 @@
       "夜次": 32,
       "门": "south-gate",
       "数量": 2,
-      "等待毫秒": 944000,
-      "预警与击退毫秒": 8880,
+      "等待毫秒": 943000,
+      "预警与击退毫秒": 9240,
       "准入生命": [
         {
           "id": "east-watch",
@@ -5561,11 +5561,11 @@
         "east-watch": 180,
         "east-patrol": 180,
         "east-archer": 100,
-        "north-watch": 176,
-        "north-patrol": 176,
+        "north-watch": 180,
+        "north-patrol": 168,
         "north-archer": 100,
         "south-watch": 180,
-        "south-patrol": 164,
+        "south-patrol": 172,
         "south-archer": 100,
         "west-watch": 180,
         "west-patrol": 180,
@@ -5579,7 +5579,7 @@
         "north-patrol": 161.55494421403515,
         "north-archer": 0,
         "south-watch": 0,
-        "south-patrol": 163.9083479973197,
+        "south-patrol": 160.6704556291407,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
         "south-archer": 0,
@@ -5599,7 +5599,7 @@
         {
           "id": "east-archer",
           "hp": 100,
-          "模式": "life"
+          "模式": "return"
         },
         {
           "id": "north-watch",
@@ -5623,7 +5623,7 @@
         },
         {
           "id": "south-patrol",
-          "hp": 164,
+          "hp": 172,
           "模式": "attack"
         },
         {
@@ -5644,7 +5644,7 @@
         {
           "id": "west-archer",
           "hp": 100,
-          "模式": "life"
+          "模式": "return"
         }
       ],
       "后续冷却": 719345
@@ -5655,8 +5655,8 @@
       "夜次": 33,
       "门": "west-gate",
       "数量": 2,
-      "等待毫秒": 905000,
-      "预警与击退毫秒": 12720,
+      "等待毫秒": 904000,
+      "预警与击退毫秒": 12660,
       "准入生命": [
         {
           "id": "east-watch",
@@ -5739,9 +5739,9 @@
         "north-patrol": 180,
         "north-archer": 100,
         "south-watch": 180,
-        "south-patrol": 164,
+        "south-patrol": 172,
         "south-archer": 100,
-        "west-watch": 168,
+        "west-watch": 180,
         "west-patrol": 180,
         "west-archer": 100
       },
@@ -5750,11 +5750,11 @@
         "east-patrol": 72.80109889280519,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 5.892851112980476,
+        "south-watch": 2.649699173590551,
         "south-patrol": 98.48857801796105,
         "south-archer": 0,
-        "west-watch": 23.999606373691023,
-        "west-patrol": 135.63231280438578,
+        "west-watch": 23.9997029307869,
+        "west-patrol": 131.8677756187293,
         "east-archer": 0,
         "north-archer": 0,
         "west-archer": 0
@@ -5807,13 +5807,13 @@
         },
         {
           "id": "west-watch",
-          "hp": 168,
+          "hp": 180,
           "模式": "attack"
         },
         {
           "id": "west-patrol",
           "hp": 180,
-          "模式": "attack"
+          "模式": "return"
         },
         {
           "id": "west-archer",
@@ -5830,7 +5830,7 @@
       "门": "east-gate",
       "数量": 3,
       "等待毫秒": 928000,
-      "预警与击退毫秒": 11700,
+      "预警与击退毫秒": 14800,
       "准入生命": [
         {
           "id": "east-watch",
@@ -5901,13 +5901,13 @@
         {
           "id": "west-archer",
           "hp": 100,
-          "离岗": true,
+          "离岗": false,
           "空间": "village"
         }
       ],
       "最低生命": {
         "east-watch": 180,
-        "east-patrol": 152,
+        "east-patrol": 125,
         "east-archer": 100,
         "north-watch": 180,
         "north-patrol": 180,
@@ -5915,13 +5915,187 @@
         "south-watch": 180,
         "south-patrol": 180,
         "south-archer": 100,
-        "west-watch": 168,
+        "west-watch": 180,
         "west-patrol": 180,
         "west-archer": 100
       },
       "最大在岗离岗距离": {
-        "east-watch": 81.58534712361006,
-        "east-patrol": 127.98143115851788,
+        "east-watch": 79.19225612665984,
+        "east-patrol": 137.74076428099656,
+        "north-watch": 0,
+        "north-patrol": 161.55494421403515,
+        "south-watch": 2.649699173590551,
+        "south-patrol": 98.48857801796105,
+        "west-watch": 0,
+        "west-patrol": 78.10249675906655,
+        "west-archer": 0,
+        "east-archer": 0,
+        "south-archer": 0,
+        "north-archer": 0
+      },
+      "结束生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 125,
+          "模式": "attack"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "模式": "post"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "模式": "life"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "模式": "life"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "模式": "post"
+        }
+      ],
+      "后续冷却": 847401
+    },
+    {
+      "场次": 34,
+      "事件序号": 34,
+      "夜次": 35,
+      "门": "north-gate",
+      "数量": 3,
+      "等待毫秒": 977000,
+      "预警与击退毫秒": 9360,
+      "准入生命": [
+        {
+          "id": "east-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "barracks"
+        },
+        {
+          "id": "north-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "north-archer",
+          "hp": 100,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "south-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "barracks"
+        },
+        {
+          "id": "west-watch",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-patrol",
+          "hp": 180,
+          "离岗": false,
+          "空间": "village"
+        },
+        {
+          "id": "west-archer",
+          "hp": 100,
+          "离岗": true,
+          "空间": "village"
+        }
+      ],
+      "最低生命": {
+        "east-watch": 180,
+        "east-patrol": 125,
+        "east-archer": 100,
+        "north-watch": 171,
+        "north-patrol": 168,
+        "north-archer": 100,
+        "south-watch": 180,
+        "south-patrol": 180,
+        "south-archer": 100,
+        "west-watch": 180,
+        "west-patrol": 180,
+        "west-archer": 100
+      },
+      "最大在岗离岗距离": {
+        "east-watch": 2.600216092144353,
+        "east-patrol": 72.80109889280519,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
         "south-watch": 2.649699173590551,
@@ -5937,200 +6111,26 @@
         {
           "id": "east-watch",
           "hp": 180,
+          "模式": "post"
+        },
+        {
+          "id": "east-patrol",
+          "hp": 180,
+          "模式": "patrol"
+        },
+        {
+          "id": "east-archer",
+          "hp": 100,
           "模式": "return"
         },
         {
-          "id": "east-patrol",
-          "hp": 152,
-          "模式": "attack"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "模式": "post"
-        },
-        {
           "id": "north-watch",
-          "hp": 180,
+          "hp": 171,
           "模式": "post"
         },
         {
           "id": "north-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "模式": "life"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "模式": "life"
-        },
-        {
-          "id": "west-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "模式": "life"
-        }
-      ],
-      "后续冷却": 847401
-    },
-    {
-      "场次": 34,
-      "事件序号": 34,
-      "夜次": 35,
-      "门": "north-gate",
-      "数量": 3,
-      "等待毫秒": 980000,
-      "预警与击退毫秒": 8580,
-      "准入生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "barracks"
-        },
-        {
-          "id": "north-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "north-archer",
-          "hp": 100,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "south-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "barracks"
-        },
-        {
-          "id": "west-watch",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-patrol",
-          "hp": 180,
-          "离岗": false,
-          "空间": "village"
-        },
-        {
-          "id": "west-archer",
-          "hp": 100,
-          "离岗": true,
-          "空间": "village"
-        }
-      ],
-      "最低生命": {
-        "east-watch": 180,
-        "east-patrol": 152,
-        "east-archer": 100,
-        "north-watch": 176,
-        "north-patrol": 164,
-        "north-archer": 100,
-        "south-watch": 180,
-        "south-patrol": 180,
-        "south-archer": 100,
-        "west-watch": 180,
-        "west-patrol": 180,
-        "west-archer": 100
-      },
-      "最大在岗离岗距离": {
-        "east-watch": 0.023252670426305827,
-        "east-patrol": 72.80109889280519,
-        "north-watch": 15.780666892724899,
-        "north-patrol": 161.55494421403515,
-        "south-watch": 2.649699173590551,
-        "south-patrol": 98.48857801796105,
-        "west-watch": 0,
-        "west-patrol": 78.10249675906655,
-        "east-archer": 0,
-        "north-archer": 0,
-        "south-archer": 0,
-        "west-archer": 0
-      },
-      "结束生命": [
-        {
-          "id": "east-watch",
-          "hp": 180,
-          "模式": "post"
-        },
-        {
-          "id": "east-patrol",
-          "hp": 180,
-          "模式": "patrol"
-        },
-        {
-          "id": "east-archer",
-          "hp": 100,
-          "模式": "life"
-        },
-        {
-          "id": "north-watch",
-          "hp": 176,
-          "模式": "attack"
-        },
-        {
-          "id": "north-patrol",
-          "hp": 164,
+          "hp": 168,
           "模式": "attack"
         },
         {
@@ -6151,7 +6151,7 @@
         {
           "id": "south-archer",
           "hp": 100,
-          "模式": "life"
+          "模式": "return"
         },
         {
           "id": "west-watch",
@@ -6166,7 +6166,7 @@
         {
           "id": "west-archer",
           "hp": 100,
-          "模式": "life"
+          "模式": "return"
         }
       ],
       "后续冷却": 514052
@@ -6178,7 +6178,7 @@
       "门": "south-gate",
       "数量": 3,
       "等待毫秒": 997000,
-      "预警与击退毫秒": 12140,
+      "预警与击退毫秒": 14100,
       "准入生命": [
         {
           "id": "east-watch",
@@ -6257,11 +6257,11 @@
         "east-watch": 180,
         "east-patrol": 180,
         "east-archer": 100,
-        "north-watch": 176,
-        "north-patrol": 164,
+        "north-watch": 171,
+        "north-patrol": 168,
         "north-archer": 100,
         "south-watch": 180,
-        "south-patrol": 156,
+        "south-patrol": 124,
         "south-archer": 100,
         "west-watch": 180,
         "west-patrol": 180,
@@ -6272,14 +6272,14 @@
         "east-patrol": 72.80109889280519,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 0,
-        "south-patrol": 153.18819703577958,
+        "north-archer": 0,
+        "south-watch": 87.48101854119443,
+        "south-patrol": 156.1338605362983,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
-        "north-archer": 0,
+        "west-archer": 0,
         "east-archer": 0,
-        "south-archer": 0,
-        "west-archer": 0
+        "south-archer": 0
       },
       "结束生命": [
         {
@@ -6319,7 +6319,7 @@
         },
         {
           "id": "south-patrol",
-          "hp": 156,
+          "hp": 124,
           "模式": "attack"
         },
         {
@@ -6351,8 +6351,8 @@
       "夜次": 37,
       "门": "west-gate",
       "数量": 3,
-      "等待毫秒": 978000,
-      "预警与击退毫秒": 15000,
+      "等待毫秒": 976000,
+      "预警与击退毫秒": 11980,
       "准入生命": [
         {
           "id": "east-watch",
@@ -6435,9 +6435,9 @@
         "north-patrol": 180,
         "north-archer": 100,
         "south-watch": 180,
-        "south-patrol": 156,
+        "south-patrol": 124,
         "south-archer": 100,
-        "west-watch": 152,
+        "west-watch": 162,
         "west-patrol": 180,
         "west-archer": 100
       },
@@ -6447,11 +6447,11 @@
         "east-archer": 0,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 0,
+        "south-watch": 2.649699173590551,
         "south-patrol": 98.48857801796105,
         "south-archer": 0,
-        "west-watch": 23.999714419272806,
-        "west-patrol": 146.9578066128306,
+        "west-watch": 25.992990289850088,
+        "west-patrol": 171.38076964051908,
         "north-archer": 0,
         "west-archer": 0
       },
@@ -6484,7 +6484,7 @@
         {
           "id": "north-archer",
           "hp": 100,
-          "模式": "post"
+          "模式": "return"
         },
         {
           "id": "south-watch",
@@ -6503,13 +6503,13 @@
         },
         {
           "id": "west-watch",
-          "hp": 152,
+          "hp": 162,
           "模式": "attack"
         },
         {
           "id": "west-patrol",
           "hp": 180,
-          "模式": "return"
+          "模式": "attack"
         },
         {
           "id": "west-archer",
@@ -6525,8 +6525,8 @@
       "夜次": 38,
       "门": "east-gate",
       "数量": 1,
-      "等待毫秒": 874000,
-      "预警与击退毫秒": 7420,
+      "等待毫秒": 877000,
+      "预警与击退毫秒": 7800,
       "准入生命": [
         {
           "id": "east-watch",
@@ -6603,7 +6603,7 @@
       ],
       "最低生命": {
         "east-watch": 180,
-        "east-patrol": 172,
+        "east-patrol": 176,
         "east-archer": 100,
         "north-watch": 180,
         "north-patrol": 180,
@@ -6611,22 +6611,22 @@
         "south-watch": 180,
         "south-patrol": 180,
         "south-archer": 100,
-        "west-watch": 152,
+        "west-watch": 162,
         "west-patrol": 180,
         "west-archer": 100
       },
       "最大在岗离岗距离": {
         "east-watch": 0.023252670426305827,
-        "east-patrol": 147.21450487061577,
+        "east-patrol": 138.5294067576613,
         "east-archer": 0,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "north-archer": 0,
         "south-watch": 5.892851112980476,
         "south-patrol": 98.48857801796105,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
         "west-archer": 0,
+        "north-archer": 0,
         "south-archer": 0
       },
       "结束生命": [
@@ -6637,7 +6637,7 @@
         },
         {
           "id": "east-patrol",
-          "hp": 172,
+          "hp": 176,
           "模式": "attack"
         },
         {
@@ -6700,7 +6700,7 @@
       "门": "north-gate",
       "数量": 1,
       "等待毫秒": 964000,
-      "预警与击退毫秒": 6480,
+      "预警与击退毫秒": 6680,
       "准入生命": [
         {
           "id": "east-watch",
@@ -6777,10 +6777,10 @@
       ],
       "最低生命": {
         "east-watch": 180,
-        "east-patrol": 172,
+        "east-patrol": 176,
         "east-archer": 100,
         "north-watch": 180,
-        "north-patrol": 176,
+        "north-patrol": 180,
         "north-archer": 100,
         "south-watch": 180,
         "south-patrol": 180,
@@ -6826,7 +6826,7 @@
         },
         {
           "id": "north-patrol",
-          "hp": 176,
+          "hp": 180,
           "模式": "attack"
         },
         {
@@ -6873,8 +6873,8 @@
       "夜次": 40,
       "门": "south-gate",
       "数量": 1,
-      "等待毫秒": 982000,
-      "预警与击退毫秒": 6980,
+      "等待毫秒": 981000,
+      "预警与击退毫秒": 7080,
       "准入生命": [
         {
           "id": "east-watch",
@@ -6954,10 +6954,10 @@
         "east-patrol": 180,
         "east-archer": 100,
         "north-watch": 180,
-        "north-patrol": 176,
+        "north-patrol": 180,
         "north-archer": 100,
         "south-watch": 180,
-        "south-patrol": 176,
+        "south-patrol": 180,
         "south-archer": 100,
         "west-watch": 180,
         "west-patrol": 180,
@@ -6969,8 +6969,8 @@
         "east-archer": 0,
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
-        "south-watch": 0,
-        "south-patrol": 156.3060828082289,
+        "south-watch": 5.892851112980476,
+        "south-patrol": 163.3195687302279,
         "west-watch": 0,
         "west-patrol": 78.10249675906655,
         "north-archer": 0,
@@ -7015,7 +7015,7 @@
         },
         {
           "id": "south-patrol",
-          "hp": 176,
+          "hp": 180,
           "模式": "attack"
         },
         {
@@ -7048,7 +7048,7 @@
       "门": "west-gate",
       "数量": 1,
       "等待毫秒": 897000,
-      "预警与击退毫秒": 10980,
+      "预警与击退毫秒": 11640,
       "准入生命": [
         {
           "id": "east-watch",
@@ -7131,9 +7131,9 @@
         "north-patrol": 180,
         "north-archer": 100,
         "south-watch": 180,
-        "south-patrol": 176,
+        "south-patrol": 180,
         "south-archer": 100,
-        "west-watch": 176,
+        "west-watch": 180,
         "west-patrol": 180,
         "west-archer": 100
       },
@@ -7144,10 +7144,10 @@
         "north-watch": 0,
         "north-patrol": 161.55494421403515,
         "south-watch": 2.649699173590551,
-        "south-patrol": 98.48857801796105,
+        "south-patrol": 143.6038917116585,
         "south-archer": 0,
-        "west-watch": 23.999999999999897,
-        "west-patrol": 142.28656353004982,
+        "west-watch": 26.000000000000114,
+        "west-patrol": 137.6916862437686,
         "west-archer": 0,
         "north-archer": 0
       },
@@ -7199,7 +7199,7 @@
         },
         {
           "id": "west-watch",
-          "hp": 176,
+          "hp": 180,
           "模式": "attack"
         },
         {

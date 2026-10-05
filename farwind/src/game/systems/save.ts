@@ -36,7 +36,7 @@ async function writeSave(s: State) {
     };
     try{
       const store=t.objectStore('states'),old=store.get('current');
-      old.onsuccess=()=>{if(old.result&&old.result.schema_version<15){const previous=store.get('before-combat-build');previous.onsuccess=()=>{if(!previous.result)store.put(old.result,'before-combat-build');};}if(old.result&&old.result.schema_version<16){const backup=store.get('before-aiming-scope');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-aiming-scope');};}if(old.result&&old.result.schema_version<20){const backup=store.get('before-cat-companion');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-cat-companion');};}if(old.result&&old.result.schema_version<21){const backup=store.get('before-xiaobao-life');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-xiaobao-life');};}if(old.result&&old.result.schema_version===21){const backup=store.get('before-windwhisper-city');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-windwhisper-city');};}if(old.result&&old.result.schema_version===22){const backup=store.get('before-city-completion');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-city-completion');};}store.put(clean,'current');};
+      old.onsuccess=()=>{if(old.result&&old.result.schema_version<15){const previous=store.get('before-combat-build');previous.onsuccess=()=>{if(!previous.result)store.put(old.result,'before-combat-build');};}if(old.result&&old.result.schema_version<16){const backup=store.get('before-aiming-scope');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-aiming-scope');};}if(old.result&&old.result.schema_version<20){const backup=store.get('before-cat-companion');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-cat-companion');};}if(old.result&&old.result.schema_version<21){const backup=store.get('before-xiaobao-life');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-xiaobao-life');};}if(old.result&&old.result.schema_version===21){const backup=store.get('before-windwhisper-city');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-windwhisper-city');};}if(old.result&&old.result.schema_version===22){const backup=store.get('before-city-completion');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-city-completion');};}if(old.result&&old.result.schema_version===23){const backup=store.get('before-road-reopening');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-road-reopening');};}if(old.result&&old.result.schema_version===24){const backup=store.get('before-wave-combat');backup.onsuccess=()=>{if(!backup.result)store.put(old.result,'before-wave-combat');};}store.put(clean,'current');};
     }
     catch(e){t.abort();d.close();no(e);}
   });
@@ -49,7 +49,7 @@ export async function load() {
       r = t.objectStore("states").get("current");
     r.onsuccess = () => {
       try {
-        if(r.result&&(r.result.content_version!==2||![21,22,23].includes(r.result.schema_version)))throw Error('当前战斗记录版本不匹配，请开启新旅途。');
+        if(r.result&&(r.result.content_version!==2||![21,22,23,24,25].includes(r.result.schema_version)))throw Error('当前战斗记录版本不匹配，请开启新旅途。');
         ok(r.result ? validate(r.result) : null);
       } catch (e) {
         no(e);
@@ -70,7 +70,7 @@ export const saveDiagnostic = () => queue.snapshot();
 
 // 最新阶段优先导出，城市迁移前备份同样通过正式界面可取回。
 export async function migrationBackup(){
- await queue.barrier();const d=await db(),keys=['before-city-completion','before-windwhisper-city','before-xiaobao-life','before-cat-companion','before-aiming-scope','before-combat-build'];
+ await queue.barrier();const d=await db(),keys=['before-wave-combat','before-road-reopening','before-city-completion','before-windwhisper-city','before-xiaobao-life','before-cat-companion','before-aiming-scope','before-combat-build'];
  return new Promise<unknown>((ok,no)=>{const t=d.transaction('states','readonly'),store=t.objectStore('states');let index=0;
   const next=()=>{if(index===keys.length){ok(null);return;}const r=store.get(keys[index++]);r.onsuccess=()=>r.result?ok(r.result):next();r.onerror=()=>no(r.error);};next();t.oncomplete=()=>d.close();t.onabort=()=>{d.close();no(t.error);};
  });

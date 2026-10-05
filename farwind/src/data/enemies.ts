@@ -1,3 +1,4 @@
+import footContacts from './enemyFootContacts.json';
 // 沿用旧敌人ID与掉落类别，新增物种不改变主线或存档结构。
 export const ENEMIES = {
   canyonHunter:{name:'峡牙猎兽',art:'canyonHunter',hp:72,speed:125,reach:145,height:78,stride:46,frames:48,drop:'berry'},
@@ -27,6 +28,17 @@ export function enemyArt(type: string) {
   const kind=enemyKind(type),sample=kind==='leaf'||kind==='spore';
   if(['archer','bell','shade','geomancer'].includes(kind))return {path:`/assets/enemies-combat-v2/${kind}/atlas.json`,frameWidth:480,frameHeight:480,nativeHeight:480,originY:1};
   return {path:`/assets/enemies-${sample?'v2':'v1'}/${ENEMIES[kind].art}.png`,frameWidth:sample?384:160,frameHeight:sample?256:160,nativeHeight:sample?160:60,originY:110/128};
+}
+
+// 图格底缘并非鞋底：仅校正显示原点，逻辑身体和攻击抬升量保持原值。
+export function enemyFootOrigin(type:string,frame:number){
+  const feet=type==='cragAxeman'?footContacts.cragAxeman:type==='cliffLancer'?footContacts.cliffLancer:type==='canyonHunter'?footContacts.canyonHunter:undefined;
+  return feet?.[frame]!==undefined?feet[frame]/160:enemyArt(type).originY;
+}
+// 原始等分图格在底部混入下一行头部，显示时排除这段串格，不重绘素材。
+export function enemyFrameBottom(type:string,frame:number){
+  const cuts=type==='cragAxeman'?footContacts.裁切底缘.cragAxeman:type==='cliffLancer'?footContacts.裁切底缘.cliffLancer:type==='canyonHunter'?footContacts.裁切底缘.canyonHunter:undefined;
+  return cuts?.[frame];
 }
 
 export const enemyBehavior=(type:string):Exclude<EnemyKind,'canyonHunter'|'cliffLancer'|'cragAxeman'>=>({canyonHunter:'wolf',cliffLancer:'archer',cragAxeman:'guardian'} as Record<string,Exclude<EnemyKind,'canyonHunter'|'cliffLancer'|'cragAxeman'>>)[type]??enemyKind(type) as Exclude<EnemyKind,'canyonHunter'|'cliffLancer'|'cragAxeman'>;

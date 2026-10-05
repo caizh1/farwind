@@ -1,3 +1,7 @@
+import {openGuardCare} from './guardAftermath';
+import {guardName,currentMemorial} from '../systems/guardAftermath';
+import {roadQuestText} from '../systems/merchantRoadState';
+import {ROAD_NEST,MERCHANT_PATH,ROAD_BRANCHES,ROAD_POSTS} from '../../data/merchantRoad';
 import {INTERIOR_FURNITURE,INTERIOR_SERVICE} from '../../data/villageInteriors';
 import type {ShopId} from '../../data/economy';
 import {
@@ -16,6 +20,7 @@ export function lifeInteract(world: World, p: Prop) {
   if(p.id.startsWith("interior:")){
     const f=INTERIOR_FURNITURE.find(f=>`interior:${f.id}`===p.id&&f.space===world.state.life.playerSpace);
     if(!f) return false;
+    if(f.id==='barracks:wall-map'){openGuardCare(world);return true;}
     if(f.shop) world.ui.shop(f.shop); else world.ui.dialog(f.label,f.description);
     return true;
   }
@@ -265,10 +270,13 @@ export function attachLifeUi(world: World) {
 export function showNotes(world: World) {
   world.ui.dialog(
     "居民笔记",
-    PEOPLE.map((p) => {
+    `${roadQuestText(world.state)}。\n巢穴位置：密林北侧（${ROAD_NEST.x}，${ROAD_NEST.y}）。\n${world.state.merchantRoad.parcel?"商旅包裹：送往"+(world.state.merchantRoad.parcel.destination?"风语城西侧集市":"风铃村广场")+"，无期限。":""}\n${world.state.merchantRoad.escort?"同行委托："+(world.state.merchantRoad.escort.picked?ROAD_POSTS[world.state.merchantRoad.escort.branch].name:ROAD_BRANCHES[world.state.merchantRoad.escort.branch].name)+"。":""}\n\n`+PEOPLE.map((p) => {
+      const guard=world.state.defense.guards.find(g=>g.id===p.id);
+      if(guard?.dead){const r=currentMemorial(world.state.defense,guard);return `${guardName(guard)} · 已阵亡\n${r?.buriedAt!=null?'已安葬，姓名留在营房旁纪念碑。':r?.collectedAt!=null?'已收殓，等待次日安葬。':'战斗结束并安全后收殓。'}补岗请到营房办理。`;}
+
       const o = world.state.life.observed[p.id],
         home = HOMES.find((h) => h.id === p.home)!;
-      return `${p.name} · ${p.job}\n住所：${home.name}。${p.habit}。\n通常：${p.schedule
+      return `${guard?guardName(guard):p.name} · ${p.job}\n住所：${home.name}。${p.habit}。\n通常：${p.schedule
         .filter((s) => s.activity !== "duty")
         .map(
           (s) =>
