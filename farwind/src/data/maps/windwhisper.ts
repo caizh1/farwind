@@ -1,4 +1,4 @@
-import {fortressHeight,CITY_FORTRESS,FORTRESS_ARCHERS,FORTRESS_SOLIDS,FORTRESS_STAIR} from '../cityFortress';
+import {fortressHeight,fortressFrontY,CITY_FORTRESS,FORTRESS_ARCHERS,FORTRESS_SOLIDS,FORTRESS_STAIR} from '../cityFortress';
 import {ROAD_DECOR,ROAD_NEST,ROAD_POSTS} from '../merchantRoad';
 import type { Prop } from '../world';
 import {CITY_BUILDING_PROPS,CITY_STREET_PROPS,CITY_WALL} from '../cityLayout';
@@ -12,6 +12,9 @@ export const TRADE_ROAD_NODES = [
   { name: '城外疏林', x: 8650, y: 1400, scale: 1.5 },
   { name: '门前道路', x: 9250, y: 1600, scale: 1.65 },
 ] as const;
+export function tradeRoadAnchor(index:number,opened:boolean){const n=TRADE_ROAD_NODES[index];return {...n,y:n.y+(opened?(index%2&&index!==5?-450:450):0)};}
+// 城墙已经斜向扩到旧矩形城界之外；新出生点必须处于墙脚外侧并留出缓冲。
+export function tradeRoadSpawnPoint(p:{x:number;y:number}){return p.x>=4330&&p.x<=9620&&p.y>=720&&p.y<=2360&&(p.x<CITY_FORTRESS.x-120||p.y>=fortressFrontY(p.x-CITY_FORTRESS.x)+140);}
 export const TRADE_ROADS = [
   { id: 'city-trade-main', width: 230, service: false, points: [[4000,1600], ...TRADE_ROAD_NODES.map(n=>[n.x,n.y]), [9500,1770], [9690,1610], [9840,1450], [10200,1420], [10620,1600], [11790,1600]] },
   { id: 'city-trade-north', width: 110, service: false, points: [[4550,1540],[4900,1120],[5650,1000],[6280,1220],[6490,1600]] },

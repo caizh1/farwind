@@ -292,6 +292,7 @@ export class World extends Phaser.Scene {
     for(const a of CITY_COMPLETE_ASSETS){const key=`city-complete-${a.id}`,url=`/assets/windwhisper-city/completion/${a.file}`;if("frameSize" in a)this.load.spritesheet(key,url,{frameWidth:a.frameSize,frameHeight:a.frameSize});else this.load.image(key,url);}
     for(const id of CITY_ASSETS)this.load.image(`city-${id}`,`/assets/windwhisper-city/${id==='stone-bridge'?'stone-bridge-v2':id}.png`);
     this.load.image('city-fortress-v4','/assets/windwhisper-city/completion/fortress-connected-v4.png');
+    this.load.image('city-fortress-v5','/assets/windwhisper-city/completion/fortress-connected-v5.png');
     this.load.image('city-gate-crown','/assets/windwhisper-city/completion/gate-crown-v3.png');
     this.load.image('city-wall-materials','/assets/windwhisper-city/completion/wall-materials-v2.png');
     for(const ground of Object.values(CAMP_NEST_GROUND))this.load.image(ground.texture,`/assets/camp-nests/${ground.texture}.webp`);

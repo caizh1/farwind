@@ -1,10 +1,9 @@
-import {CITY_FORTRESS,fortressFrontY} from '../../data/cityFortress';
+import {CITY_FORTRESS,fortressFrontY,fortressGuardDepth} from '../../data/cityFortress';
 import Phaser from 'phaser';
 import {groundShadows} from '../rendering/groundShadows';
 import type {CityDefense} from '../systems/cityDefense';
 import type {CityState} from '../systems/tradeRoadState';
 import {CITY_GUARD_POSTS,cityGuardId,cityWallElevation} from '../../data/maps/windwhisper';
-import {cityWallScreenX} from '../rendering/cityWalls';
 import {NpcMotion} from '../systems/npcAnimation';
 import {Actor} from './actor';
 export class CityGuards {
@@ -23,7 +22,7 @@ export class CityGuards {
       const action=['post','intercept'].includes(g.mode)&&g.cooldown>(p.role==='archer'?1150:720),key=action?'city-complete-guard-actions-v2':`city-complete-${p.role==='archer'?'archer':'guard'}-walk`,frame=action?(p.role==='archer'?4:0)+Math.min(3,Math.floor(((p.role==='archer'?1440:900)-g.cooldown)/75)):row*4+(walking?Math.floor(m.distance/26)%4:0);
       const hiddenByWall=p.role!=='archer'&&g.x>CITY_FORTRESS.x&&g.x<CITY_FORTRESS.x+CITY_FORTRESS.width&&g.y>fortressFrontY(g.x-CITY_FORTRESS.x)-300&&g.y<fortressFrontY(g.x-CITY_FORTRESS.x);
       const elevation=p.role==='archer'?cityWallElevation(g):0,footY=g.y-elevation,screenX=g.x;
-      v.sprite.setTexture(key,Math.max(0,frame)).setOrigin(.5,.94).setDisplaySize(100,100).setPosition(screenX,footY).setDepth(g.y+2).setVisible(visible).setAlpha(g.hp<=0?.4:1).setData('城墙表面',elevation>0);Actor.mirror(v.sprite,m.direction===2);
+      v.sprite.setTexture(key,Math.max(0,frame)).setOrigin(.5,.94).setDisplaySize(100,100).setPosition(screenX,footY).setDepth(fortressGuardDepth(g.x,g.y,elevation)).setVisible(visible).setAlpha(g.hp<=0?.4:1).setData('城墙表面',elevation>0);Actor.mirror(v.sprite,m.direction===2);
       v.label.setText(`${onWall?'城墙弓卫':'重甲近卫'}${g.mode==='down'?' · 后备军'+Math.ceil(g.replacement/1000)+'秒':g.mode==='replacement'?' · 接岗途中':g.mode==='recover'?(g.hp===p.maxHP?' · 换岗交接':' · 疗伤'):g.mode==='retreat'?(g.hp===p.maxHP?' · 退岗交接':' · 撤回疗伤'):''}`).setPosition(screenX,footY-100).setDepth(g.y+200).setVisible(visible&&!hiddenByWall&&Math.hypot(g.x-this.scene.cameras.main.midPoint.x,g.y-this.scene.cameras.main.midPoint.y)<650);
       if(visible&&!hiddenByWall&&g.hp>0){this.bars.fillStyle(0x263b40,.85).fillRect(screenX-24,footY-88,48,5);this.bars.fillStyle(0x8ab5bd).fillRect(screenX-24,footY-88,48*g.hp/p.maxHP,5);}
     }

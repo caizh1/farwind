@@ -1,5 +1,6 @@
 import type {ItemId} from './content';
 import type {Prop} from './world';
+import type {Place} from './npcLife';
 export const ROAD_GENERAL={x:9560,y:1750};
 export const ROAD_NEST={x:6100,y:1050,name:'裂牙巢穴'};
 export const ROAD_POSTS=[{x:4500,y:1750,name:'林缘哨岗'},{x:6510,y:1820,name:'桥西哨岗'},{x:8780,y:1790,name:'疏林哨岗'}];
@@ -14,6 +15,9 @@ export const MERCHANTS:MerchantDefinition[]=[
  {id:'visitor-3',name:'沈砾',specialty:'旅行装备行商',art:'artisan',goods:{ironSword:{price:66,stock:1},leatherCoat:{price:50,stock:1},brookShoes:{price:33,stock:2},deerBoots:{price:88,stock:1}},supply:[],demand:{}},
 ];
 export const merchantDefinition=(id:string)=>MERCHANTS.find(m=>m.id===id);
+export function merchantStall(index:number,endpoint:0|1){const p=MERCHANT_PATH[endpoint?MERCHANT_PATH.length-1:0];return {x:p.x+(index<2?-50:50),y:p.y+(index<2?0:55)};}
+// 停运期间仅允许所属城镇的摊位、街区与驿站，不沿联通道路返摊。
+export function merchantLocalPlace(endpoint:0|1,p:Place){return p.space===(endpoint?'city:inn':'inn')||p.space==='village'&&(endpoint?p.x>=10400:p.x<4000);}
 export const ROAD_DECOR:Prop[]=[
  {id:'road-nest-marker',art:'city-complete-notice-board',x:5840,y:1230,w:70,h:100,kind:'sign',label:'裂牙巢穴 · 密林支路'},
  {id:'road-nest-den',art:'nest-north',x:ROAD_NEST.x,y:ROAD_NEST.y-60,w:350,h:220},

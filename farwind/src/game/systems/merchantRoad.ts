@@ -1,5 +1,5 @@
 import type {World} from '../scenes/World';
-import {MERCHANTS,MERCHANT_PATH,ROAD_POSTS,ROAD_BRANCHES,ROAD_NEST,merchantDefinition,roadGuardStanding} from '../../data/merchantRoad';
+import {MERCHANTS,MERCHANT_PATH,ROAD_POSTS,ROAD_BRANCHES,ROAD_NEST,merchantDefinition,roadGuardStanding,merchantStall,merchantLocalPlace} from '../../data/merchantRoad';
 import {CITY_STOCK} from '../../data/maps/windwhisper';
 import {lifeNavigation,moveLife,type LifeNav} from './npcNavigation';
 import type {NavigationBudget,EnemyBody} from './enemy';
@@ -18,9 +18,10 @@ export class MerchantRoad {
  private navs=new Map<string,LifeNav>();private hits=new Map<string,number>();
  private cargoViews=new Map<string,Phaser.GameObjects.Image>();
  private views=new Map<string,{sprite:Phaser.GameObjects.Sprite;label:Phaser.GameObjects.Text;motion:NpcMotion}>();
- constructor(private w:World){}
+ constructor(private w:World){this.keepLocal();}
+ private keepLocal(){const s=this.w.state;if(s.merchantRoad.opened)return;for(const [i,m]of s.merchantRoad.merchants.entries()){const p=merchantResident(s,m.id);if(merchantLocalPlace(m.endpoint,p))continue;Object.assign(p,{space:'village',...merchantStall(i,m.endpoint),activity:'shop'});this.navs.delete(m.id);this.w.snapshotPending=true;}}
  private nav(id:string){if(!this.navs.has(id))this.navs.set(id,lifeNavigation());return this.navs.get(id)!;}
- reset(){this.navs.clear();this.hits.clear();for(const v of this.views.values()){v.sprite.destroy();v.label.destroy();}this.views.clear();for(const image of this.cargoViews.values())image.destroy();this.cargoViews.clear();}
+ reset(){this.navs.clear();this.hits.clear();for(const v of this.views.values()){v.sprite.destroy();v.label.destroy();}this.views.clear();for(const image of this.cargoViews.values())image.destroy();this.cargoViews.clear();this.keepLocal();}
  targets(){const s=this.w.state;if(s.life.playerSpace!=='village')return [];return [
   ...s.merchantRoad.guards.filter(g=>g.hp>0).map(g=>({id:`${g.id}:${g.serial}`,x:g.x,y:g.y,hp:g.hp})),
   ...s.merchantRoad.merchants.filter(m=>m.hp>0&&merchantResident(s,m.id).space==='village').map(m=>({...merchantResident(s,m.id),id:`road-merchant:${m.id}`,hp:m.hp})),
@@ -37,6 +38,7 @@ export class MerchantRoad {
  }
  private walkGuard(g:RoadGuard,target:{x:number;y:number},ms:number,now:number,budget:NavigationBudget){const b={space:'village' as const,x:g.x,y:g.y},done=moveLife(b,{space:'village',...target},ms,now,budget,this.nav(g.id),p=>roadGuardStanding(p,['deploy','retreat'].includes(g.mode)));g.x=b.x;g.y=b.y;return done;}
  step(ms:number,now:number,budget:NavigationBudget){
+  this.keepLocal();
   const w=this.w,s=w.state,r=s.merchantRoad,live=w.enemies.filter(e=>e.hp>0&&!e.disabled);
   for(const g of r.guards){g.cooldown=Math.max(0,g.cooldown-ms);
    const index=Number(g.id.split(':')[1]),post=g.post===3&&['retreat','recover'].includes(g.mode)?ROAD_POSTS.reduce((a,b)=>dist(g,a)<dist(g,b)?a:b):ROAD_POSTS[Math.min(g.post,2)],position={x:post.x+(index%2?35:-35),y:post.y};
@@ -65,9 +67,9 @@ export class MerchantRoad {
     if(dist(s.player,person)>90)moveLife(person,{space:s.life.playerSpace,...s.player},ms,now,budget,this.nav(m.id));continue;
    }
    const refill=()=>{const day=Math.floor(s.time/1440);if(day>m.stockDay){m.stockDay=day;m.stock=Object.fromEntries(Object.entries(d.goods).map(([id,g])=>[id,g.stock]));m.sold={};m.discount=m.relation>=2?2:0;w.snapshotPending=true;}};
-   const endpoint=MERCHANT_PATH[m.endpoint?MERCHANT_PATH.length-1:0],stall={x:endpoint.x+(index<2?-50:50),y:endpoint.y+(index<2?0:55)};
+   const stall=merchantStall(index,m.endpoint);
    const approach=()=>dist(person,stall)>1200?(m.endpoint?MERCHANT_PATH.find(p=>p.x>person.x+8)??stall:[...MERCHANT_PATH].reverse().find(p=>p.x<person.x-8)??stall):stall;
-   if(!r.opened){if(s.time%1440<420||s.time%1440>=1200){person.activity='sleep';moveLife(person,{space:m.endpoint?'city:inn':'inn',x:580+index*50,y:750},ms,now,budget,this.nav(m.id));continue;}if(dist(person,stall)<8)refill();person.activity='shop';let target=stall;if(dist(person,stall)>1200){target=m.endpoint?MERCHANT_PATH.find(p=>p.x>person.x+8)??stall:[...MERCHANT_PATH].reverse().find(p=>p.x<person.x-8)??stall;}moveLife(person,{space:'village',...target},ms,now,budget,this.nav(m.id));continue;}
+   if(!r.opened){const local=(p:Parameters<typeof merchantLocalPlace>[1])=>merchantLocalPlace(m.endpoint,p);if(s.time%1440<420||s.time%1440>=1200){person.activity='sleep';moveLife(person,{space:m.endpoint?'city:inn':'inn',x:580+index*50,y:750},ms,now,budget,this.nav(m.id),local);continue;}if(person.space==='village'&&dist(person,stall)<8)refill();person.activity='shop';moveLife(person,{space:'village',...stall},ms,now,budget,this.nav(m.id),local);continue;}
    const atEndpoint=dist(person,stall)<8,minute=s.time%1440;
    if(m.waitUntil>0&&dist(person,stall)>1200){person.activity='walk';moveLife(person,{space:'village',...approach()},ms,now,budget,this.nav(m.id));continue;}
    if(m.waitUntil>0&&(minute<420||minute>=1200)){person.activity='sleep';moveLife(person,{space:m.endpoint?'city:inn':'inn',x:580+index*50,y:750},ms,now,budget,this.nav(m.id));continue;}

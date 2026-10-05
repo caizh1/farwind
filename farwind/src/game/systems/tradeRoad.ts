@@ -1,7 +1,7 @@
 import {ROAD_NEST} from '../../data/merchantRoad';
 import {resetRoadNest} from './merchantRoadState';
 import type {World} from '../scenes/World';
-import {TRADE_ROAD_NODES} from '../../data/maps/windwhisper';
+import {TRADE_ROAD_NODES,tradeRoadAnchor,tradeRoadSpawnPoint} from '../../data/maps/windwhisper';
 import {renewTradeRoad,createTradeRoad,roadUnit,roadDefeat,type RoadUnit} from './tradeRoadState';
 import {randomSeed,offerWindGift,giftValue} from './windGifts';
 import {motionBlocked,clearMotionLine} from './obstacles';
@@ -22,11 +22,13 @@ export class TradeRoad {
   participate(id:string,damage:number){const u=this.unit(id);if(u&&damage>0)u.participated=true;}
   capture(){for(const e of this.w.enemies){const u=this.unit(e.id);if(!u||u.defeated)continue;Object.assign(u,{hp:e.hp,x:e.x,y:e.y,serial:e.attackSerial??0,cooldown:Math.min(15000,Math.max(0,Math.max(e.cool,e.attack?.recoveryUntil??0,e.staggerUntil)-this.w.sim))});}}
   private legal(u:RoadUnit,node:number){
-    const original=TRADE_ROAD_NODES[node],base=this.w.state.merchantRoad.opened?{...original,y:original.y+(node%2?-450:450)}:original;
-    if(this.w.state.merchantRoad.opened&&!u.spawned&&Math.abs(u.homeY-original.y)<350){for(let i=0;i<80;i++){const p={x:base.x+(i%9-4)*45,y:base.y+Math.floor(i/9)*15};if(!motionBlocked(p.x,p.y)){Object.assign(u,{...p,homeX:p.x,homeY:p.y});break;}}}if(!motionBlocked(u.homeX,u.homeY)&&(this.w.state.merchantRoad.opened?Math.abs(u.homeY-original.y)>=350:Math.abs(u.homeY-base.y)>=85))return true;
+    if(u.spawned)return true;
+    const original=TRADE_ROAD_NODES[node],opened=this.w.state.merchantRoad.opened,base=tradeRoadAnchor(node,opened);
+    const allowed=(p:{x:number;y:number})=>tradeRoadSpawnPoint(p)&&!motionBlocked(p.x,p.y)&&Math.abs(p.y-base.y)>=85&&(!opened||Math.abs(p.y-original.y)>=350);
+    const home={x:u.homeX,y:u.homeY};if(allowed(home)){Object.assign(u,home);return true;}
     const n=base,offset=Number(u.id.split(':').at(-1))*19+u.wave*11;
     for(let i=0;i<80;i++){const angle=(offset+i*2.399963),radius=240+i%5*30,p={x:n.x+Math.cos(angle)*radius,y:n.y+Math.sin(angle)*radius};
-      if(p.x<4330||p.x>9620||p.y<720||p.y>2360||motionBlocked(p.x,p.y)||Math.abs(p.y-n.y)<85||this.w.state.merchantRoad.opened&&Math.abs(p.y-original.y)<350)continue;
+      if(!allowed(p))continue;
       Object.assign(u,{x:p.x,y:p.y,homeX:p.x,homeY:p.y});return true;
     }return false;
   }
@@ -41,7 +43,7 @@ export class TradeRoad {
     if(w.state.tradeRoad.seed===null)w.state.tradeRoad=createTradeRoad(1,randomSeed());
     if(p.x>9780&&!w.state.city.visited){w.state.city.visited=true;w.snapshotPending=true;w.ui.message('抵达风语城 · 西门集市、驿站与风塔广场已开放。');}
     for(const [i,n] of w.state.tradeRoad.nodes.entries()){
-      const original=TRADE_ROAD_NODES[i],d=w.state.merchantRoad.opened?{...original,y:original.y+(i%2?-450:450)}:original,near=distance(d,p)<900;
+      const d=tradeRoadAnchor(i,w.state.merchantRoad.opened),near=distance(d,p)<900;
       if(!n.active&&distance(d,p)<300){n.active=true;w.snapshotPending=true;w.ui.message(`${d.name} · 第一波动静，沿路可以绕行或撤退。`);}
       for(const u of n.units)if(u.drop&&near){u.dropRemaining=Math.max(0,u.dropRemaining-delta);if(u.dropRemaining===0)u.drop=false;}
       // 已出生的追击者按自身保存位置恢复；不能因最初节点离城门太远而在刷新后消失。
@@ -52,11 +54,10 @@ export class TradeRoad {
         if(w.enemies.some(e=>e.id===u.id))continue;
         if(!this.legal(u,i))continue;
         if(u.spawned){if(this.live()>=12)continue;this.spawn(u,i);continue;}
-        // 每个出生点都在道路肩部，中央至少120单位保持可撤退。
-        if(Math.abs(u.homeY-d.y)<85){const adjusted={...u,y:d.y+(u.homeY<d.y?-260:260),homeY:d.y+(u.homeY<d.y?-260:260)};if(!motionBlocked(adjusted.x,adjusted.y))Object.assign(u,adjusted);else continue;}
+        // 新出生点统一检查道路肩部与真实城墙外侧；已出生单位保留追击位置。
         if(distance(u,p)<220){this.cues.delete(u.id);u.cue=800;continue;}
         let cue=this.cues.get(u.id),created=false;if(!cue){if(this.live()>=12)continue;cue={id:u.id,x:u.x,y:u.y,startedAt:now,readyAt:now+u.cue,spawned:false};this.cues.set(u.id,cue);created=true;}
-        if(!created)u.cue=Math.max(0,u.cue-delta);cue.readyAt=now+u.cue;
+        if(!created)u.cue=Math.max(0,u.cue-delta);Object.assign(cue,{x:u.x,y:u.y,readyAt:now+u.cue});
         if(u.cue===0){this.cues.delete(u.id);this.spawn(u,i);}
       }
     }
@@ -74,7 +75,7 @@ export class TradeRoad {
     }
   }
   private live(){return [...this.w.enemies,...this.w.defense.enemies].filter(e=>e.hp>0&&!e.disabled).length+(this.w.wilderness?.pendingCount??0)+this.pendingCount;}
-  private spawn(u:RoadUnit,node:number){const w=this.w,e=w.makeEnemy({id:u.id,type:u.type,x:u.x,y:u.y});Object.assign(e,{hp:u.hp,maxHP:u.maxHP,attackSerial:u.serial,homeX:u.homeX,homeY:u.homeY,cool:w.sim+(u.spawned?Math.max(800,u.cooldown):u.cooldown),combatTier:w.state.tradeRoad.rulesVersion===2?(node>=1?2:1):0,leashRadius:1100,damageScale:TRADE_ROAD_NODES[node].scale*(u.elite?1.25:1),eliteLevel:u.elite?1:0,nav:enemyNavigation()});u.spawned=true;u.cue=0;w.enemies.push(e);}
+  private spawn(u:RoadUnit,node:number){if(!u.spawned&&!this.legal(u,node))return;const w=this.w,e=w.makeEnemy({id:u.id,type:u.type,x:u.x,y:u.y});Object.assign(e,{hp:u.hp,maxHP:u.maxHP,attackSerial:u.serial,homeX:u.homeX,homeY:u.homeY,cool:w.sim+(u.spawned?Math.max(800,u.cooldown):u.cooldown),combatTier:w.state.tradeRoad.rulesVersion===2?(node>=1?2:1):0,leashRadius:1100,damageScale:TRADE_ROAD_NODES[node].scale*(u.elite?1.25:1),eliteLevel:u.elite?1:0,nav:enemyNavigation()});u.spawned=true;u.cue=0;w.enemies.push(e);}
   defeat(e:World['enemies'][number],source:'player'|'companion'|'guard'){
     const s=this.w.state;if(e.id.startsWith('road-nest:')){const n=s.merchantRoad.nest,u=n.units.find(u=>u.id===e.id);if(!u||u.defeated)return false;u.hp=0;u.defeated=true;u.participated||=source!=='guard';u.x=e.x;u.y=e.y;if(u.participated){const gold=creditCombatCoins(s,{elite:u.elite?1:0},true);if(gold)this.w.float(e.x,e.y,`金币 +${gold}`);if(!add(s,enemyProfile(u.type).drop,1)){u.drop=true;u.dropRemaining=60000;}}if(n.units.filter(u=>u.wave===n.wave).every(u=>u.defeated)){n.wave++;this.w.ui.message(n.wave===3?'裂牙巢穴已清剿。返回西门向岚铎将军报告。':`裂牙巢穴 · 第${n.wave+1}阶段`);}this.w.snapshotPending=true;this.w.syncDrops();return true;}
     const u=roadDefeat(s.tradeRoad,e.id,source!=='guard');if(!u)return false;

@@ -28,3 +28,7 @@ export const fortressFrontY=(x:number)=>{
 // 东南转角沿同一套墙材回折，接回原城界；截取原素材的直墙，避免重新画砖面。
 export const FORTRESS_TAIL={x:10545,y:1930,length:810,slope:170/360,sourceX:70,sourceY:30,tileWidth:360,tileHeight:470,foot:285} as const;
 for(let u=0;u<FORTRESS_TAIL.length;u+=12)FORTRESS_SOLIDS.push({id:`city-fortress-foot-6-${u}`,x:FORTRESS_TAIL.x-u-6,y:FORTRESS_TAIL.y+(u+6)*FORTRESS_TAIL.slope,w:14,h:70});
+
+// 步道与前垛口分层：地面人物仍按墙脚遮挡，墙上人物处于后墙与前垛口之间。
+export const fortressParapetY=(x:number)=>x<480?Math.round(12+x*.49):x>=1100&&x<1645?Math.round(485+(x-1100)*.48):undefined;
+export const fortressGuardDepth=(x:number,y:number,elevation:number)=>elevation>160&&fortressParapetY(x-CITY_FORTRESS.x)!==undefined?fortressFrontY(x-CITY_FORTRESS.x)+65:y+2;

@@ -3,7 +3,8 @@ import {describe,it,expect,vi} from 'vitest';
 vi.mock('phaser',()=>({default:{}}));
 import {initialState,validate,parseSave,add,count} from '../src/game/systems/state';
 import {roadAction,merchantTrade,merchantResident,merchantBuyCost,merchantSaleValue,resetRoadNest,roadRouteStatus} from '../src/game/systems/merchantRoadState';
-import {MERCHANTS,MERCHANT_PATH,ROAD_POSTS,ROAD_GENERAL,ROAD_BRANCHES} from '../src/data/merchantRoad';
+import {MERCHANTS,MERCHANT_PATH,ROAD_POSTS,ROAD_GENERAL,ROAD_BRANCHES,merchantLocalPlace,merchantStall} from '../src/data/merchantRoad';
+import {tradeRoadAnchor,tradeRoadSpawnPoint} from '../src/data/maps/windwhisper';
 import {initialStock,shops} from '../src/data/economy';
 import {motionBlocked} from '../src/game/systems/obstacles';
 import {renewTradeRoad,createTradeRoad} from '../src/game/systems/tradeRoadState';
@@ -18,6 +19,47 @@ const atGeneral=(s:ReturnType<typeof initialState>)=>{s.player={...s.player,...m
 function cleared(){let s=initialState();atGeneral(s);s=roadAction(s,'talk');s=roadAction(s,'talk');s=roadAction(s,'accept');for(const u of s.merchantRoad.nest.units){u.hp=0;u.spawned=true;u.defeated=true;}s.merchantRoad.nest.wave=3;return s;}
 function opened(){return roadAction(cleared(),'report');}
 describe('重开商路正式状态与交易门禁',()=>{
+ it('停运旧档与未报告的已清巢穴不会让行商沿商路返摊，伤情货单仍保留',()=>{
+  for(const ready of [false,true]){const s=ready?cleared():initialState();
+   for(const [i,m]of s.merchantRoad.merchants.entries()){Object.assign(merchantResident(s,m.id),{space:'village',x:5000+i*1000,y:1600});m.hp=100+i;m.cargo=70;m.relation=2;m.stockDay=0;}
+   const ledger=structuredClone(s.merchantRoad.merchants),w:any={state:s,enemies:[],ui:{message:()=>{}},snapshotPending:false},runtime=new MerchantRoad(w);
+   expect(w.snapshotPending).toBe(true);expect(s.merchantRoad.merchants).toEqual(ledger);
+   for(const [i,m]of s.merchantRoad.merchants.entries())expect(merchantResident(s,m.id)).toMatchObject({space:'village',...merchantStall(i,m.endpoint)});
+   for(const time of [480,1260,1860]){s.time=time;for(let frame=0;frame<900;frame++){runtime.step(40,frame*40,{queries:2,remainingMs:4});for(const m of s.merchantRoad.merchants)expect(merchantLocalPlace(m.endpoint,merchantResident(s,m.id))).toBe(true);}}
+   expect(s.merchantRoad.arrivals).toEqual([]);expect(s.merchantRoad.merchants.map(m=>m.trip)).toEqual([0,0,0,0]);expect(s.merchantRoad.opened).toBe(false);expect(()=>parseSave(JSON.stringify(s))).not.toThrow();
+  }
+ },30000);
+ it('停运行商从当地驿站返摊时不把室内坐标当成长途路线坐标',()=>{
+  const s=initialState();for(const m of s.merchantRoad.merchants)Object.assign(merchantResident(s,m.id),{space:m.endpoint?'city:inn':'inn',x:700,y:900});
+  const w:any={state:s,enemies:[],ui:{message:()=>{}},snapshotPending:false},runtime=new MerchantRoad(w);
+  for(let frame=0;frame<2000;frame++){runtime.step(40,frame*40,{queries:2,remainingMs:4});for(const m of s.merchantRoad.merchants)expect(merchantLocalPlace(m.endpoint,merchantResident(s,m.id))).toBe(true);}
+  expect(s.merchantRoad.merchants.every(m=>merchantResident(s,m.id).space==='village')).toBe(true);expect(()=>validate(s)).not.toThrow();
+ },30000);
+ it('城门两节点所有新波次在斜墙外侧预告及出生，开通后门前支路仍可激活',()=>{
+  expect(tradeRoadSpawnPoint({x:9250,y:1250})).toBe(false);expect(tradeRoadSpawnPoint({x:9250,y:1880})).toBe(true);expect(tradeRoadAnchor(5,true).y).toBeGreaterThan(1600);
+  for(const openedRoute of [false,true])for(let seed=0;seed<12;seed++)for(const node of [4,5]){
+   const s=openedRoute?opened():initialState();s.tradeRoad=createTradeRoad(1,seed);Object.assign(s.player,tradeRoadAnchor(node,openedRoute));
+   const view={destroy:()=>{}},w:any={state:s,sim:0,enemies:[],defense:{enemies:[]},enemyProjectiles:{shots:[]},enemyBlades:new Map(),makeEnemy:(d:any)=>({...d,hp:72,maxHP:72,cool:0,staggerUntil:0,sprite:view,shadow:view}),ui:{message:()=>{}},syncDrops:()=>{}};
+   const road=new TradeRoad(w);for(let wave=0;wave<3;wave++){for(let tick=0;tick<15;tick++){w.sim+=100;road.update(100);for(const cue of road.cues.values())expect(tradeRoadSpawnPoint(cue),`${seed}:${node}:${wave}`).toBe(true);}
+    const enemies=w.enemies.filter((e:any)=>e.id.startsWith(`road:1:${node}:`));expect(enemies.length,`${openedRoute}:${seed}:${node}:${wave}`).toBe(5+wave);
+    for(const e of enemies){expect(tradeRoadSpawnPoint(e)).toBe(true);expect(motionBlocked(e.x,e.y)).toBe(false);e.hp=0;road.defeat(e,'guard');w.enemies=w.enemies.filter((a:any)=>a!==e);}
+   }expect(s.tradeRoad.nodes[node].cleared).toBe(true);expect(s.tradeRoad.nodes[node].rewarded).toBe(false);expect(()=>validate(s)).not.toThrow();
+  }
+ },30000);
+ it('已出生后追进城的怪物刷新恢复实际伤势，不挪走或伪造清剿',()=>{
+  const s=initialState();s.tradeRoad=createTradeRoad(1,12);const n=s.tradeRoad.nodes[5],u=n.units[0];n.active=true;Object.assign(u,{spawned:true,hp:35,x:9900,y:1600,homeX:9250,homeY:1880});Object.assign(s.player,{x:9900,y:1600});
+  const view={destroy:()=>{}},w:any={state:parseSave(JSON.stringify(s)),sim:100,enemies:[],defense:{enemies:[]},enemyProjectiles:{shots:[]},enemyBlades:new Map(),makeEnemy:(d:any)=>({...d,cool:0,staggerUntil:0,sprite:view,shadow:view}),ui:{message:()=>{}}};new TradeRoad(w).update(100);
+  expect(w.enemies.find((e:any)=>e.id===u.id)).toMatchObject({x:9900,y:1600,hp:35});expect(w.state.tradeRoad.nodes[5].cleared).toBe(false);
+ });
+ it('为正式页面生成停运旧坐标和开通后门前支路固定样本',()=>{
+  const folder='docs/road-reopening/evidence-boundaries';mkdirSync(folder,{recursive:true});
+  const closed=initialState();closed.tradeRoad=createTradeRoad(1,881);Object.assign(closed.player,{x:9250,y:1600});
+  for(const [i,m]of closed.merchantRoad.merchants.entries())Object.assign(merchantResident(closed,m.id),{space:'village',x:5000+i*1000,y:1600});
+  expect(motionBlocked(closed.player.x,closed.player.y)).toBe(false);
+  writeFileSync(folder+'/closed-legacy.json',JSON.stringify({说明:'初始能力固定样本。四行商置于旧档遗留商路坐标，主角定位门前节点，以真实页面观察停运归位和城墙外新出生；不代表自然走完全程。',...validate(closed)},null,2));
+  const open=opened();open.tradeRoad=createTradeRoad(1,881);const branch=tradeRoadAnchor(5,true);Object.assign(open.player,{x:branch.x,y:branch.y-240});expect(motionBlocked(open.player.x,open.player.y)).toBe(false);
+  writeFileSync(folder+'/open-branch.json',JSON.stringify({说明:'固定逻辑清剿与回报样本，主角定位开通后的城外门前支路。用于实测支路出生与地图位置，不代表真实战斗完成巢穴。',...validate(open)},null,2));
+ });
  it('交互身份不会被居民记录覆盖，统一将军与四名行商入口',()=>{const ids=merchantRoadTargets({state:initialState()} as any).map(p=>p.id);expect(ids).toContain('road-general');expect(ids.filter(id=>id.startsWith('road-merchant:'))).toHaveLength(4);expect(ids).not.toContain('captain');});
  it('将军各阶段与位置说明复用统一对话，谢礼和状态单独呈现',()=>{const states=[initialState(),cleared(),opened()];for(const s of states){const dialog=vi.fn(),shell=vi.fn(),w:any={state:s,ui:{dialog,shell},economy:{run:vi.fn()}};merchantRoadInteraction(w,merchantRoadTargets(w).find(p=>p.id==='road-general')!);expect(shell).not.toHaveBeenCalled();expect(dialog).toHaveBeenCalledWith('守城将军 · 岚铎',expect.not.stringContaining('<br>'),'captain',undefined,expect.objectContaining({context:'风语城西门 · 重开商路',closeLabel:'先告辞'}));const options=dialog.mock.calls[0][4];if(s.merchantRoad.opened){expect(options.choices[0]).toMatchObject({id:'road-reward',label:'领取清剿谢礼',detail:'100金币／药剂3瓶'});expect(options.note).toContain('谢礼待领取');}else if(s.merchantRoad.accepted){expect(options.choices[0].id).toBe('road-report');}else{expect(options.choices.map((c:any)=>c.id)).toEqual(['road-answer-detour','road-answer-fight']);}}});
  it('深入对话才可接受，不能未清剿通商；离开与刷新保留层次',()=>{let s=initialState();atGeneral(s);expect(()=>roadAction(s,'accept')).toThrow();s=roadAction(s,'talk');s=parseSave(JSON.stringify(s));expect(s.merchantRoad.dialogue).toBe(1);s=roadAction(s,'talk');s=roadAction(s,'accept');expect(()=>roadAction(s,'report')).toThrow();expect(s.merchantRoad.guards).toEqual([]);expect(s.city.guards).toHaveLength(24);});

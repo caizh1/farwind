@@ -6,7 +6,7 @@ import type {Interface} from './interface';
 import {cityBuilding} from '../../data/cityLayout';
 import {region} from '../../data/world';
 import {WORLD_PLAN_REGIONS,type WorldPlanRegion} from '../../data/worldPlan';
-import {CITY_SERVICES,CITY_PROPS,TRADE_ROAD_NODES} from '../../data/maps/windwhisper';
+import {CITY_SERVICES,CITY_PROPS,TRADE_ROAD_NODES,tradeRoadAnchor} from '../../data/maps/windwhisper';
 import {BUILDING_LOTS,SERVICE_SIGNS} from '../../data/maps/windbell/layout';
 import {MAP_REGIONS} from '../../data/village';
 import {ENCOUNTERS} from '../../data/maps/windbell/encounters';
@@ -75,7 +75,7 @@ export function showWorldAtlas(ui:Interface){
  for(const sign of SERVICE_SIGNS)landmarks.push({name:sign.name,detail:'风铃村服务点',point:sign.point,color:'#8de2df'});
  for(const p of CITY_PROPS.filter(p=>p.id.startsWith('road-rest-')))landmarks.push({name:p.label!.split(' · ')[0],detail:'休整商路 · 保留已获及待领风赐',point:p,color:'#8de2df'});
  for(const b of CITY_BUILDINGS)landmarks.push({name:b.name,detail:b.private?'具名住宅 · 门口敲门拜访':'城市场所 · 门口进入',point:b.door,color:'#8de2df',below:true});
- for(const [i,n]of TRADE_ROAD_NODES.entries()){const progress=s.tradeRoad.nodes[i];landmarks.push({name:`${i+1} · ${n.name}`,detail:s.merchantRoad.opened?(progress?.cleared?'支路已清剿':'怪物退居支路 · 主路恢复通行'):progress?.cleared?'三波已清除':progress?.active?`第 ${progress.wave+1} / 3 波 · 已击退 ${progress.units.filter(u=>u.defeated).length} / 18`:'尚未触发 · 三波遭遇',point:n,color:progress?.cleared?'#87caae':'#df826e'});}
+ for(const [i,n]of TRADE_ROAD_NODES.entries()){const progress=s.tradeRoad.nodes[i];landmarks.push({name:`${i+1} · ${n.name}`,detail:s.merchantRoad.opened?(progress?.cleared?'支路已清剿':'怪物退居支路 · 主路恢复通行'):progress?.cleared?'三波已清除':progress?.active?`第 ${progress.wave+1} / 3 波 · 已击退 ${progress.units.filter(u=>u.defeated).length} / 18`:'尚未触发 · 三波遭遇',point:tradeRoadAnchor(i,s.merchantRoad.opened),color:progress?.cleared?'#87caae':'#df826e'});}
  for(const [name,x,y]of [['西门驿站与集市',10500,2260],['风塔与中央广场',11790,1690],['东南住宅区',12820,2380],['议事与档案区',12900,660]] as const)landmarks.push({name,detail:'风语城街区',point:{x,y},color:'#c8c0a3'});
   for(const n of SHORTCUTS)landmarks.push({name:n.name,detail:s.mapProgress.shortcuts.includes(n.id)?'已修复':'待修复',point:n.barrier,color:'#e6c29b'});
  function updateLandmarks(){

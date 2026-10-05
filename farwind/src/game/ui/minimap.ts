@@ -3,7 +3,7 @@ import {roadTracked,roadRouteStatus} from '../systems/merchantRoadState';
 import {CITY_BUILDINGS} from '../../data/cityLayout';
 import {cityBuilding} from '../../data/cityLayout';
 import { BRIDGES, WORLD, WATERS, roads, region } from '../../data/world';
-import { CITY_PROPS, CITY_SERVICES, TRADE_ROAD_NODES } from '../../data/maps/windwhisper';
+import { CITY_PROPS, CITY_SERVICES, TRADE_ROAD_NODES,tradeRoadAnchor } from '../../data/maps/windwhisper';
 import { SERVICE_SIGNS } from '../../data/maps/windbell/layout';
 import { ENCOUNTERS } from '../../data/maps/windbell/encounters';
 import { SHORTCUTS } from '../../data/maps/windbell/shortcuts';
@@ -100,7 +100,7 @@ export class Minimap {
     }
     if(visible(ROAD_NEST)){marker(ROAD_NEST,s.merchantRoad.nest.wave===3?'#a7d5aa':'#e48c6e');label(ROAD_NEST,s.merchantRoad.nest.wave===3?'巢穴已清剿':'裂牙巢穴','#ffe0bf');}
     if(s.merchantRoad.opened)for(const p of ROAD_POSTS)if(visible(p)){marker(p,'#91e5db');label(p,p.name,'#bff8eb');}
-    for (const [i, p] of TRADE_ROAD_NODES.entries()) if (visible(p)) {
+    for (const [i, p] of TRADE_ROAD_NODES.map((_,i)=>tradeRoadAnchor(i,s.merchantRoad.opened)).entries()) if (visible(p)) {
       const cleared = s.tradeRoad.nodes[i]?.cleared;
       marker(p, cleared ? '#a7d5aa' : '#e48c6e'); label(p, p.name, cleared ? '#d1edcb' : '#ffe0bf');
     }
