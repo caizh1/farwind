@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>缚枝祭主 · 静态美术候选</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#101915;color:#e4e8d8}*{box-sizing:border-box}body{margin:0}main{max-width:1540px;margin:auto;padding:32px 24px 64px}header{display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:24px;margin-bottom:24px}.eyebrow{color:#b9ca99;font-size:12px;letter-spacing:.14em}h1{font-size:clamp(25px,3.2vw,40px);font-weight:550;margin:10px 0}p{color:#acb9a6;font-size:14px;line-height:1.85;margin:8px 0}.tag{font-size:13px;border:1px solid #526445;border-radius:20px;padding:8px 14px;color:#c1d5a2}nav{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}button{font:inherit;font-size:14px;padding:10px 17px;border-radius:7px;border:1px solid #42563b;color:#d8e3cc;background:#1a291f;cursor:pointer}button[aria-pressed=true]{background:#c5d4a7;color:#172117;border-color:#c5d4a7}button:focus-visible,a:focus-visible{outline:2px solid #e4da9d;outline-offset:4px}button:hover{border-color:#dce3ad}.stage{background:#16201c;border:1px solid #334b35;border-radius:12px;overflow:hidden;min-height:200px}.stage a{display:flex;align-items:center;justify-content:center;min-height:200px}.stage img{display:block;width:100%;max-height:78vh;object-fit:contain}.caption{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:start;margin:12px 0 28px}.caption p{margin:0;flex:1 1 500px}.caption a{font-size:13px;padding:4px 0}a{color:#d4e5b6;text-underline-offset:4px}.cards{display:grid;grid-template-columns:1.2fr 1fr;gap:20px}.card{background:#18251c;padding:22px;border:1px solid #334830;border-radius:10px}h2{font-size:18px;font-weight:550;margin:0 0 15px}.downloads{display:flex;gap:13px 20px;flex-wrap:wrap;margin-top:19px;font-size:14px}.facts{display:flex;gap:30px;flex-wrap:wrap;margin:14px 0 20px}.facts strong{font-size:25px;color:#d9e7c0;font-weight:500;display:block}.facts span{font-size:12px;color:#acbda1}ul{margin:0;padding-left:20px;color:#bbc9b0;font-size:14px;line-height:1.9}footer{font-size:12px;line-height:1.8;color:#8da087;margin-top:24px}@media(max-width:760px){main{padding:22px 14px 40px}.cards{grid-template-columns:1fr}nav button{flex:1 1 27%;min-width:0;padding:9px 7px}.stage img{min-height:240px}.card{padding:18px}.facts{gap:18px}header{gap:10px}}
+</style>
+</head>
+<body><main>
+<header><div><div class="eyebrow">东侧巢穴 · 保留原画设计 · 第二轮制作</div><h1>缚枝祭主 · 静态美术候选</h1><p>交织根系、披肩叶簇、骨木双镰与嵌入式风核。先检查造型，再进入完整动作制作。</p></div><div class="tag">静态美术待确认</div></header>
+<nav aria-label="选择检查视图">
+<button aria-pressed="true" data-image="art-comparison.jpg">原画对照</button>
+<button aria-pressed="false" data-image="front.png">新模型</button>
+<button aria-pressed="false" data-image="three-views.jpg">三视图</button>
+<button aria-pressed="false" data-image="structure-check.jpg">灰模与轮廓</button>
+<button aria-pressed="false" data-image="bend-check.jpg">弯曲检查</button>
+<button aria-pressed="false" data-image="detail-board.jpg">局部细节</button>
+<button aria-pressed="false" data-image="readability.jpg">小尺寸识别</button>
+</nav>
+<div class="stage"><a id="full" href="evidence/art-comparison.jpg" target="_blank" rel="noopener"><img id="art" src="evidence/art-comparison.jpg" alt="原画、上一版动作样片与新静态模型的同尺寸对照"></a></div>
+<div class="caption"><p id="caption" aria-live="polite">左：原画；中：上一版；右：本轮候选。同背景、同主体展示高度。原画是二维设计，不能声称相机完全一致。</p><a id="download" href="evidence/art-comparison.jpg" download>下载当前图片</a></div>
+<div class="cards">
+<section class="card"><h2>本轮改动</h2><ul><li>重做根系躯干、肩肘与根足，增加树冠前后纵深和颅后结构。</li><li>用弯曲叶片构成前、后、侧的披肩层次。</li><li>镰刃有实体厚度、独立内齿和木质背脊；面具改为细长折面壳。</li><li>采用手绘风格颜色纹理；原始材质与绘制图集均保留。</li></ul><div class="downloads"><a href="source/east-boss-art.blend" download>Blender 工程</a><a href="evidence/front.png" download>高清透明图</a><a href="REPORT.md">验收与审查</a><a href="../east-boss-motion/index.html">查看上一版动作</a></div></section>
+<section class="card"><h2>可编辑交付</h2><div class="facts"><div><strong>23</strong><span>骨骼</span></div><div><strong>4 张</strong><span>4096 × 4096 绘制图集</span></div><div><strong>2048</strong><span>原始渲染边长</span></div></div><p>四张图集在 Blender 中烘焙。纹理生成源为 1254 像素，4K 图集不代表新增原生 4K 细节；叶片共用纹理区域以保留叶脉清晰度。</p><div class="downloads"><a href="source/textures/wood-paint-4k.png" download>根系图集</a><a href="source/textures/leaves-paint-4k.png" download>叶片图集</a><a href="source/textures/ivory-paint-4k.png" download>骨木图集</a><a href="source/textures/core-paint-4k.png" download>风核图集</a><a href="TEXTURE-PROMPTS.md">纹理来源与提示词</a></div></section>
+</div>
+<footer>全部模型图片由交付的 Blender 工程直接渲染。对照板只裁去透明留白、等比缩放和加标签，不补画模型。工程检查不等于最终美术认可。依照本轮方案，静态美术确认后才更新六秒动画；正式战斗、运行性能和命中手感尚未接入验证。</footer>
+</main>
+<script>
+const art=document.querySelector('#art'),full=document.querySelector('#full'),caption=document.querySelector('#caption'),download=document.querySelector('#download');
+const descriptions={
+'art-comparison.jpg':'左：原画；中：上一版；右：本轮候选。同背景、同主体展示高度。原画是二维设计，不能声称相机完全一致。',
+'front.png':'新模型游戏视角。2048 × 2048 透明 PNG，点击图片可放大查看；此图直接来自交付工程。',
+'three-views.jpg':'同一份网格、同一套材质的正面、侧面与背面；模型没有使用整张原画作为主体卡片。',
+'structure-check.jpg':'关闭颜色纹理与原材质，检查实体体积和纯色轮廓。灰模与轮廓均由 Blender 直接渲染。',
+'bend-check.jpg':'左、右肩肘及躯干扭转检查。只用于检查蒙皮与遮挡，不是最终攻击动画。',
+'detail-board.jpg':'面具、根系和肩肘局部。没有用后期补画、锐化或特效遮盖模型。',
+'readability.jpg':'以主体高 256、384、512 像素检查识别；这是离线缩放样本，不能代替游戏实机验收。'};
+document.querySelectorAll('button[data-image]').forEach(button=>button.addEventListener('click',()=>{
+document.querySelectorAll('button[data-image]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
+const file=button.dataset.image;art.src='evidence/'+file;art.alt=descriptions[file];full.href=art.src;download.href=art.src;caption.textContent=descriptions[file];
+}));
+</script>
+</body></html>
