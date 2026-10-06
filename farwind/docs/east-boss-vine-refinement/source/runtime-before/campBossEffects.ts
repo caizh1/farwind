@@ -1,0 +1,215 @@
+import type Phaser from 'phaser';
+import {CAMP_BOSSES,BOSS_PROJECTILES,BOSS_RULES,type CampBossKind} from '../../data/maps/windbell/campBosses';
+import {sampleEnemyAttack,sporeDirections,sporeOrigin,type EnemyAttack,type AttackGeometry} from '../systems/enemyAttack';
+import {bossHazardGeometry} from '../systems/campBossCombat';
+import type {BossHazard,BossBattle} from '../systems/campBossState';
+import type {Point} from '../systems/obstacles';
+import {sampleBossParry,type BossParryPose} from '../systems/bossParry';
+import {WARNING} from './attackWarningView';
+import {wolfClawTip,wolfClawWave,isWolfClaw} from '../systems/wolfClaw';
+import {isBossLaser,laserSample,laserRays,laserPoint,laserHazard,laserRadii} from '../systems/bossLaser';
+import {BossLaserVfx} from './bossLaserVfx';
+import {isVine,vineGeometry} from '../systems/eastBossTierFive';
+
+type Body=Point&{hp?:number;boss?:CampBossKind;bossBattle?:BossBattle;wallHit?:{at:number;until:number;direction?:Point};parried?:{at:number;until:number;direction:Point;perfect:boolean}};
+type Effect={id:string;boss:CampBossKind;kind:string;phase:'蓄力'|'出手'|'消散';point:Point;radius:number;elapsed:number;direction?:Point;inner?:number;skill?:number;origin?:Point;travel?:number};
+const PALETTE={
+  'spore-heart':{edge:0xf0a94f,core:0xfff1bc,ink:0x574037},
+  'thorn-crown':{edge:0xe8b46d,core:0xfff3d2,ink:0x49352e},
+  'crag-tusk':{edge:0xeab076,core:0xffecd0,ink:0x493629},
+  'bound-branch':{edge:0x8fdbc1,core:0xe7ffe1,ink:0x294e42},
+} as const;
+const unit=(n:number)=>Math.max(0,Math.min(1,n));
+
+// 分镜的两层特效直接采样战斗时钟，不建立粒子计时器或另一套持久化状态。
+export class CampBossEffects{
+  readonly groundInk:Phaser.GameObjects.Graphics;
+  readonly strikeInk:Phaser.GameObjects.Graphics;
+  private records:Effect[]=[];
+  readonly laserVfx:BossLaserVfx;
+  constructor(scene:Phaser.Scene){this.groundInk=scene.add.graphics().setDepth(WARNING.floor-1);this.strikeInk=scene.add.graphics().setDepth(8993);this.laserVfx=new BossLaserVfx(scene);}
+  begin(){this.groundInk.clear();this.strikeInk.clear();this.laserVfx.begin();this.records=[];}
+  snapshot(){const materials=this.laserVfx.snapshot();return {objects:2+materials.objects,laserMaterials:materials,effects:this.records};}
+  private record(boss:CampBossKind,id:string,kind:string,phase:Effect['phase'],point:Point,radius:number,elapsed:number,extra:Partial<Effect>={}){this.records.push({boss,id,kind,phase,point:{x:point.x,y:point.y},radius,elapsed,...extra});}
+  private path(ink:Phaser.GameObjects.Graphics,points:Point[],close=false){ink.beginPath().moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)ink.lineTo(points[i].x,points[i].y);if(close)ink.closePath();}
+  private glint(p:Point,r:number,color:number,alpha:number){const ink=this.strikeInk;ink.lineStyle(3,0x46382e,alpha*.6).lineBetween(p.x-r,p.y,p.x+r,p.y).lineBetween(p.x,p.y-r,p.x,p.y+r);ink.lineStyle(1.5,color,alpha).lineBetween(p.x-r,p.y,p.x+r,p.y).lineBetween(p.x,p.y-r,p.x,p.y+r);}
+  private shard(p:Point,size:number,angle:number,color:number,alpha:number){
+    const points=[0,1,2,3].map(i=>{const a=angle+i*Math.PI/2,r=size*(i%2?.58:1);return {x:p.x+Math.cos(a)*r,y:p.y+Math.sin(a)*r};});
+    const ink=this.groundInk;ink.fillStyle(color,alpha).lineStyle(1.4,0x46372c,alpha*.8);this.path(ink,points,true);ink.fillPath().strokePath();ink.lineStyle(1,0xf0d9ae,alpha*.7).lineBetween(points[0].x,points[0].y,p.x,p.y);
+  }
+  private debris(p:Point,r:number,elapsed:number,kind:CampBossKind,alpha=1){
+    const ink=this.groundInk,palette=PALETTE[kind],u=unit(elapsed/620),fade=(1-u)*alpha;if(fade<=0)return;
+    // 先裂土，碎片沿抛物线起落；淡尘圈只装饰，实线危险边界由原几何层绘制。
+    ink.lineStyle(9,palette.ink,fade*.14).strokeEllipse(p.x,p.y,r*(1+u)*2,r*(1+u)*.95);
+    for(let i=0;i<9;i++){
+      const a=i*Math.PI*2/9+.13,dx=Math.cos(a),dy=Math.sin(a),reach=r*(.6+(i%3)*.15),bend=a+(i%2?.22:-.24);
+      ink.lineStyle(3,palette.ink,fade*.85).beginPath().moveTo(p.x+dx*7,p.y+dy*7).lineTo(p.x+Math.cos(bend)*reach*.58,p.y+Math.sin(bend)*reach*.58).lineTo(p.x+dx*reach,p.y+dy*reach).strokePath();
+      ink.lineStyle(1,palette.edge,fade*.55).lineBetween(p.x+dx*8,p.y+dy*8,p.x+Math.cos(bend)*reach*.58,p.y+Math.sin(bend)*reach*.58);
+      const distance=r*.5+u*(20+i%3*10),lift=Math.sin(u*Math.PI)*(17+i%3*8),x=p.x+dx*distance,y=p.y+dy*distance;
+      ink.fillStyle(palette.ink,fade*.16).fillEllipse(x,y,10,4);
+      this.shard({x,y:y-lift},4+i%3,a+u*2,kind==='spore-heart'?0x9a7760:kind==='bound-branch'?0xa4b77b:0xbda081,fade);
+    }
+  }
+  private sweep(g:AttackGeometry,elapsed:number,duration:number,kind:CampBossKind,part:number,strong:boolean,tail=false){
+    const ink=this.strikeInk,palette=PALETTE[kind],u=unit(elapsed/duration),fade=elapsed<duration?.98:unit(1-(elapsed-duration)/220),angle=Math.atan2(g.direction!.y,g.direction!.x),half=g.halfAngle!,reverse=part%2?-1:1;
+    const head=.18+.82*unit(u*2.6),localEnd=-half+half*2*head,end=angle+reverse*localEnd,start=angle+reverse*Math.max(-half,localEnd-half*(.65+head*.65)),count=tail?1:kind==='thorn-crown'?3:kind==='spore-heart'?2:1;
+    for(let claw=0;claw<count;claw++){
+      const r=g.radius*(.94-claw*.18),points:Point[]=[];
+      for(let i=0;i<=18;i++){const t=i/18,a=start+(end-start)*t,rough=Math.sin(i*1.7+claw)*1.2;points.push({x:g.a.x+Math.cos(a)*(r+rough),y:g.a.y+Math.sin(a)*(r+rough)});}
+      ink.lineStyle(strong?23:19,palette.edge,fade*.11);this.path(ink,points);ink.strokePath();
+      // 双端收尖的手绘刃痕，避免等宽粗线像一组悬空管道。
+      const side=(sign:number)=>points.map((p,i)=>{const width=(strong?6:4.5)*Math.sin(i/18*Math.PI)**.7+.2,dx=(p.x-g.a.x)/r,dy=(p.y-g.a.y)/r;return {x:p.x+dx*width*sign,y:p.y+dy*width*sign};});
+      ink.fillStyle(palette.edge,fade*.92).lineStyle(1.7,palette.ink,fade*.75);this.path(ink,[...side(1),...side(-1).reverse()],true);ink.fillPath().strokePath();
+      ink.lineStyle(2,palette.core,fade*.95);this.path(ink,points);ink.strokePath();
+      if(tail)for(let i=3;i<16;i+=3){const p=points[i],dx=(p.x-g.a.x)/r,dy=(p.y-g.a.y)/r;ink.fillStyle(palette.ink,fade*.85).fillTriangle(p.x-dy*4,p.y+dx*4,p.x+dy*4,p.y-dx*4,p.x+dx*9,p.y+dy*9).lineStyle(1,palette.edge,fade).lineBetween(p.x,p.y,p.x+dx*9,p.y+dy*9);}
+      const tip=points.at(-1)!;this.glint(tip,5,palette.core,fade*.9);
+    }
+    // 散开的末端碎光不形成第二道危险弧，也不扩大判定。
+    for(let i=0;i<5;i++){const a=angle-half+half*2*i/4,r=g.radius+u*18,x=g.a.x+Math.cos(a)*r,y=g.a.y+Math.sin(a)*r;ink.lineStyle(1.6,palette.edge,fade*.65).lineBetween(x,y,x+Math.cos(a)*8,y+Math.sin(a)*8);}
+  }
+  private parryDebris(body:Body,p:BossParryPose){
+    const kind=body.boss!,palette=PALETTE[kind],power=p.quality==='perfect'?1.4:1,t=p.elapsed,u=unit(t/280),fade=1-u;
+    if(fade>0)for(let i=0;i<5;i++){
+      const side=(i-2)*9,travel=8+u*(16+i%2*6),lift=Math.sin(u*Math.PI)*(12+i%3*6),point={x:body.x+p.x-p.direction.x*travel-p.direction.y*side,y:body.y+p.y-CAMP_BOSSES[kind].height*.45-p.direction.y*travel*.4+p.direction.x*side*.35-lift};
+      if(kind==='spore-heart')this.strikeInk.fillStyle(palette.core,fade*.7).fillCircle(point.x,point.y,(1.5+i%2)*power);
+      else if(kind==='bound-branch')this.strikeInk.fillStyle(palette.edge,fade*.8).fillTriangle(point.x-3,point.y,point.x+4,point.y-5*power,point.x+2,point.y+3);
+      else this.shard(point,(2+i%2)*power,i+u*2,kind==='crag-tusk'?0xb9a37e:0x9e9674,fade*.8);
+    }
+    const dust=unit(p.braceElapsed/260),alpha=(1-dust)*.2;
+    if(p.phase!=='impact'&&p.phase!=='recoil'&&alpha>0)for(const side of [-1,1])this.groundInk.fillStyle(palette.ink,alpha).fillEllipse(body.x+side*(13+dust*12),body.y-1,18+dust*20,5+dust*5);
+    if(fade>0||alpha>0)this.record(kind,'弹反:'+body.parried!.at,p.debris,'消散',body,24*power,t,{direction:{...p.direction}});
+  }
+  private wolfClaw(body:Body,a:EnemyAttack,now:number,view:string){
+    const palette=PALETTE['thorn-crown'],ink=this.strikeInk,t=now-a.contactAt,part=a.bossPart??0;
+    if(t<0){
+      // 蓄光跟随正在抬起的爪尖，尚未出手时没有攻击刃痕。
+      const p=wolfClawTip(a,now,body,view),u=unit((now-a.startedAt)/(a.contactAt-a.startedAt));this.glint(p,3+u*3,palette.core,u*.65);this.record('thorn-crown',a.attackId,'爪尖蓄光','蓄力',p,6,now-a.startedAt,{skill:1});return;
+    }
+    const g=sampleEnemyAttack(a,now,body).geometry,wave=wolfClawWave(a,now),{origin,travel,direction:d,point:center}=wave,fade=now<a.activeUntil?1:unit((a.recoveryUntil-now)/(a.recoveryUntil-a.activeUntil)),growth=.2+.8*unit(t/55);
+    // 三道短弧绕自身中心展开，再整体离开释放点，绝不绕脚底根画固定圆弧。
+    for(let claw=0;claw<3;claw++){
+      const points:Point[]=[],side=(claw-1)*12,reverse=part%2?-1:1;
+      for(let i=0;i<=18;i++){const u=i/18,v=(u-.5)*54*growth*reverse,bow=Math.sin(u*Math.PI)*9*growth;points.push({x:center.x+d.x*(bow+claw*1.5)-d.y*(v+side),y:center.y+d.y*(bow+claw*1.5)+d.x*(v+side)});}
+      ink.lineStyle(13,palette.edge,fade*.13);this.path(ink,points);ink.strokePath();
+      const edge=(sign:number)=>points.map((p,i)=>{const width=(.2+3*Math.sin(i/18*Math.PI))*growth*sign;return {x:p.x+d.x*width,y:p.y+d.y*width};});
+      ink.fillStyle(palette.edge,fade*.92).lineStyle(1.4,palette.ink,fade*.8);this.path(ink,[...edge(1),...edge(-1).reverse()],true);ink.fillPath().strokePath();ink.lineStyle(1.5,palette.core,fade);this.path(ink,points);ink.strokePath();
+    }
+    this.record('thorn-crown',a.attackId,'挥出爪风',now<a.activeUntil?'出手':'消散',center,g.radius,t,{skill:1,direction:{...d},origin,travel});
+  }
+  private laser(h:BossHazard,now:number){
+    const ink=this.groundInk,{stage,progress,start,angle}=laserSample(h,now),red=0xff303c,dark=0x391722;
+    if(stage==='charge'){
+      const alpha=.3+.5*unit((now-h.born)/(h.activeAt-h.born));
+      for(const g of laserRays(h,now)){if(g.radius<=0)continue;
+        ink.lineStyle(3,dark,.85);this.path(ink,[g.a,g.b]);ink.strokePath();
+        for(let i=0;i<14;i++){const point=(u:number)=>({x:g.a.x+(g.b.x-g.a.x)*u,y:g.a.y+(g.b.y-g.a.y)*u});ink.lineStyle(2,red,alpha);this.path(ink,[point(i/14),point((i+.65)/14)]);ink.strokePath();}
+      }
+    }else if(stage!=='rays'&&stage!=='recover'){
+      // 未扫过的圆周只有虚线预告；已经烧出的部分由透明地裂素材覆盖。
+      for(const radius of laserRadii(h))for(let i=0;i<48;i++){
+        if(stage==='etch'&&i/48<progress)continue;if(stage==='echo'||stage==='delay')break;
+        const a=start+i*Math.PI/24,p=laserPoint(h,a,radius),q=laserPoint(h,a+.065,radius);
+        ink.lineStyle(1.5,red,.3).lineBetween(p.x,p.y,q.x,q.y);
+      }
+    }
+    this.laserVfx.ground(h,now,ink);
+    const name={charge:'赤环八向预警',rays:'八向旋转激光',pause:'环形扫射预备',etch:'三环激光刻线',delay:'三环灼痕蓄爆',echo:'二段贴地追爆',recover:'赤环消散'}[stage];
+    this.record('bound-branch',h.id,name,stage==='charge'||stage==='pause'||stage==='delay'?'蓄力':'出手',h.point,h.radius,now-h.activeAt,{skill:6,direction:{x:Math.cos(angle),y:Math.sin(angle)},travel:progress*Math.PI*2*h.radius});
+  }
+  draw(body:Body,a:EnemyAttack|null|undefined,now:number,parry:BossParryPose|null=sampleBossParry(body,now),view?:string,sockets?:Record<string,Point>){
+    const kind=body.boss,b=body.bossBattle;if(!kind||(body.hp??0)<=0||b&&(now<b.entryUntil||now<b.transformUntil))return;
+    const palette=PALETTE[kind],ink=this.strikeInk;
+    if(kind==='bound-branch'&&a&&!a.cancelled&&a.bossSkill===7&&b?.clonePoint){
+      const t=now-a.startedAt,p=b.clonePoint,growth=unit((t-400)/1000),form=unit((t-1400)/700),fade=unit((2400-t)/300),height=250*Math.max(growth*.35,form);
+      this.groundInk.lineStyle(5,0x294e42,.9).strokeEllipse(p.x,p.y,94,35).lineStyle(2,0xa1d596,.9).strokeEllipse(p.x,p.y,88,30);
+      for(let i=0;i<12;i++){const angle=i*Math.PI/6,x=p.x+Math.cos(angle)*42,y=p.y+Math.sin(angle)*15,points=Array.from({length:15},(_,n)=>{const u=n/14;return {x:x+(p.x-x)*u+Math.sin(u*9+i)*14*growth,y:y-height*u};});ink.lineStyle(8,0x203c30,.95*fade);this.path(ink,points);ink.strokePath();ink.lineStyle(4,0x71a263,.95*fade);this.path(ink,points);ink.strokePath();ink.lineStyle(1,0xd3e9a5,.65*fade);this.path(ink,points);ink.strokePath();}
+      ink.lineStyle(3,0xa4d79b,.65).strokeEllipse(body.x,body.y-100,145,205);this.record(kind,a.attackId,'藤蔓交织成分身','蓄力',p,48,t,{skill:7});return;
+    }
+    if(isVine(a)&&now>=a!.contactAt&&now<a!.recoveryUntil){
+      const g=vineGeometry(a!,body,Math.min(now,a!.activeUntil)),side=(a!.bossPart??0)%2?'vineR':'vineL',hand=sockets?.[side]??sockets?.[(a!.bossPart??0)%2?'right':'left']??{x:body.x,y:body.y-130},u=unit((now-a!.contactAt)/120),fade=now<a!.activeUntil?1:unit(1-(now-a!.activeUntil)/180);
+      if(fade>0){const end=now<a!.activeUntil?g.b:{x:g.a.x+(g.b.x-g.a.x)*fade,y:g.a.y+(g.b.y-g.a.y)*fade},length=Math.hypot(end.x-g.a.x,end.y-g.a.y),n=Math.min(96,Math.max(10,Math.ceil(length/20))),points=Array.from({length:n+1},(_,i)=>{const f=i/n,wave=Math.sin(f*18+now/65)*3*Math.sin(f*Math.PI),d=a!.direction;return {x:g.a.x+(end.x-g.a.x)*f-d.y*wave,y:g.a.y+(end.y-g.a.y)*f+d.x*wave};});ink.lineStyle(18,0x25352e,fade);this.path(ink,[hand,...points]);ink.strokePath();ink.lineStyle(11,0x6c9961,fade);this.path(ink,[hand,...points]);ink.strokePath();ink.lineStyle(3,0xd6edb1,fade*.8);this.path(ink,points);ink.strokePath();this.glint(end,8,0xeaffd0,fade);}
+      this.record(kind,a!.attackId,'手臂伸藤','出手',g.b,32,now-a!.contactAt,{skill:8,origin:g.a,travel:Math.hypot(g.b.x-g.a.x,g.b.y-g.a.y)});return;
+    }
+    if(kind==='crag-tusk'&&body.wallHit&&now<body.wallHit.at+620){const t=now-body.wallHit.at,d=body.wallHit.direction??{x:0,y:1},p={x:body.x+d.x*30,y:body.y+d.y*30};this.debris(p,48,t,kind);this.record(kind,'撞墙:'+body.wallHit.at,'撞墙碎石','消散',p,48,t);}
+    if(kind==='bound-branch'&&b&&now<b.exposedUntil){
+      const p=sockets?.core??{x:body.x,y:body.y-CAMP_BOSSES[kind].height*.46},alpha=.65+Math.sin(now/100)*.15;this.glint(p,14,palette.core,alpha);ink.lineStyle(2,palette.edge,.55).strokeCircle(p.x,p.y,20);
+      this.record(kind,'风核:'+b.exposedUntil,'风核暴露','出手',p,20,Math.max(0,now-(b.exposedUntil-BOSS_RULES.exposed)));
+      // 破茧已有可靠受击时钟；弹反也只显示短碎光，不复用伤害爆炸。
+      if(!parry&&body.parried&&now-body.parried.at<620)this.debris({x:body.x,y:body.y-25},30,now-body.parried.at,kind,.8);
+    }
+    if(parry){this.parryDebris(body,parry);return;}
+    if(!a||a.cancelled||now<a.startedAt||now>=a.recoveryUntil)return;
+    if(isBossLaser(a)){
+      const h=laserHazard(a),stage=laserSample(h,now).stage,p={x:body.x,y:body.y-CAMP_BOSSES[kind].height*.64},charge=unit((now-a.startedAt)/(a.contactAt-a.startedAt)),fade=now<a.activeUntil?1:unit((a.recoveryUntil-now)/(a.recoveryUntil-a.activeUntil));
+      this.laserVfx.core(p,now-a.startedAt,charge,fade,ink.depth);
+      if(now>=a.activeUntil)this.laser({...h,expires:a.recoveryUntil},now);
+      this.record(kind,a.attackId,'双臂赤核蓄光',stage==='charge'?'蓄力':stage==='recover'?'消散':'出手',p,20,now-a.startedAt,{skill:6});return;
+    }
+    if(isWolfClaw(a)){this.wolfClaw(body,a,now,view??(Math.abs(a.direction.x)>.5?'right':a.direction.y>0?'down':'up'));return;}
+    const pose=sampleEnemyAttack(a,now,body),t=now-a.contactAt,skill=a.bossSkill??0,d=a.direction,strong=b?.phase===2;
+    if(t<0){
+      const u=unit((now-a.startedAt)/(a.contactAt-a.startedAt)),p=(sockets&&skill===0?sockets[a.bossPart?'right':'left']:sockets?.core)??{x:body.x+d.x*24,y:body.y-CAMP_BOSSES[kind].height*.35+d.y*12};
+      this.glint(p,5+u*7,a.bossShotAngles?BOSS_PROJECTILES[kind as keyof typeof BOSS_PROJECTILES].core:palette.core,.25+u*.6);
+      if(!a.bossArea)this.record(kind,a.attackId,'武器蓄光','蓄力',p,5+u*7,now-a.startedAt,{skill,direction:{...d}});
+      return;
+    }
+    if(sockets&&skill===0){
+      // 镰尖亮点与短拖尾读取导出挂点；地面危险区仍读取正式扇区，不由刀光改变判定。
+      this.sweep(pose.geometry,t,a.activeUntil-a.contactAt,kind,a.bossPart??0,!!strong);
+      const tip=sockets[a.bossPart?'right':'left'],fade=now<a.activeUntil?1:unit((a.recoveryUntil-now)/(a.recoveryUntil-a.activeUntil));
+      const g=pose.geometry,u=unit(t/(a.activeUntil-a.contactAt)),head=.18+.82*unit(u*2.6),reverse=a.bossPart?-1:1,angle=Math.atan2(g.direction!.y,g.direction!.x)+reverse*(-g.halfAngle!+2*g.halfAngle!*head),edge={x:g.a.x+Math.cos(angle)*g.radius*.94,y:g.a.y+Math.sin(angle)*g.radius*.94};
+      // 扩大的镰斩有连接武器与外沿的刀气，不留下不可见的新增伤害区。
+      ink.lineStyle(10,palette.edge,fade*.16).lineBetween(tip.x,tip.y,edge.x,edge.y).lineStyle(2,palette.core,fade*.7).lineBetween(tip.x,tip.y,edge.x,edge.y);
+      const dx=tip.x-sockets.core.x,dy=tip.y-sockets.core.y,length=Math.hypot(dx,dy)||1;
+      ink.lineStyle(8,palette.edge,fade*.25).lineBetween(tip.x-dy/length*18,tip.y+dx/length*18,tip.x,tip.y).lineStyle(2,palette.core,fade).lineBetween(tip.x-dy/length*12,tip.y+dx/length*12,tip.x,tip.y);this.glint(tip,4,palette.core,fade);
+      this.record(kind,a.attackId,'真实镰尖刀光',pose.phase==='recovery'?'消散':'出手',tip,8,t,{skill,direction:{...d}});return;
+    }
+    if(a.bossCocoon){
+      const p={x:body.x,y:body.y-CAMP_BOSSES[kind].height*.38},u=unit(t/240),alpha=now<a.activeUntil?.9:unit((a.recoveryUntil-now)/220);
+      for(let i=0;i<3;i++){const points:Point[]=[];for(let n=0;n<=12;n++){const angle=-Math.PI*.85+n/12*Math.PI*1.7,r=27+i*5;points.push({x:p.x+Math.sin(angle)*r*u,y:p.y+Math.cos(angle)*(36+i*4)*u});}ink.lineStyle(5,palette.ink,alpha*.7);this.path(ink,points);ink.strokePath();ink.lineStyle(2,palette.edge,alpha);this.path(ink,points);ink.strokePath();}
+      this.glint(p,7,palette.core,.6);this.record(kind,a.attackId,'护心枝壳',pose.phase==='recovery'?'消散':'出手',p,40,t,{skill});return;
+    }
+    if(a.bossArea)return;
+    if(a.bossShotAngles){
+      if(t>=300)return;const style=BOSS_PROJECTILES[kind as keyof typeof BOSS_PROJECTILES],alpha=1-t/300;
+      for(const direction of sporeDirections(a)){const p=sporeOrigin(body,direction,true),start={x:p.x,y:p.y-28},end={x:start.x+direction.x*(16+t*.07),y:start.y+direction.y*(16+t*.07)};
+        ink.lineStyle(10,style.outline,alpha*.65).lineBetween(start.x,start.y,end.x,end.y).lineStyle(6,style.color,alpha).lineBetween(start.x,start.y,end.x,end.y).lineStyle(2,style.core,alpha).lineBetween(start.x,start.y,end.x,end.y);this.glint(end,5,style.core,alpha);
+      }
+      this.record(kind,a.attackId,'齐射喷闪','出手',body,40,t,{skill,direction:{...d}});return;
+    }
+    if((a.step??0)>30){
+      const duration=a.activeUntil-a.contactAt,u=unit(t/duration),alpha=now<a.activeUntil?1:unit((a.recoveryUntil-now)/220),length=Math.min(110,a.motionAt),g=pose.geometry;
+      for(const side of [-1,1]){const x=body.x-d.y*g.radius*.7*side,y=body.y+d.x*g.radius*.7*side;ink.lineStyle(9,palette.ink,alpha*.35).lineBetween(x-d.x*length,y-d.y*length,x,y).lineStyle(4,palette.edge,alpha*.75).lineBetween(x-d.x*length,y-d.y*length,x,y).lineStyle(1.6,palette.core,alpha).lineBetween(x-d.x*length,y-d.y*length,x,y);}
+      for(let i=0;i<7;i++){const behind=length*(i+1)/8,side=(i%2?1:-1)*(g.radius*.6+i*2);this.groundInk.fillStyle(0xc4b590,alpha*.22).fillEllipse(body.x-d.x*behind-d.y*side,body.y-d.y*behind+d.x*side,14+i*2,8+i);}
+      this.sweep(g,t,duration,kind,0,!!strong);
+      if(u>.8)this.debris(body,kind==='crag-tusk'?38:28,Math.max(0,t-duration),kind,.7);
+      this.record(kind,a.attackId,'突进爪刃与尘尾',pose.phase==='recovery'?'消散':'出手',g.a,g.radius,t,{skill,direction:{...g.direction!}});
+    }else{
+      this.sweep(pose.geometry,t,a.activeUntil-a.contactAt,kind,a.bossPart??0,!!strong,kind==='thorn-crown'&&skill===2);
+      this.record(kind,a.attackId,kind==='thorn-crown'&&skill===2?'背后荆尾扫弧':kind==='thorn-crown'?'三道爪痕':kind==='bound-branch'?'镰枝斩弧':kind==='crag-tusk'?'獠牙半月':'菌冠扫弧',pose.phase==='recovery'?'消散':'出手',pose.geometry.a,pose.geometry.radius,t,{skill,direction:{...pose.geometry.direction!}});
+    }
+  }
+  ground(h:BossHazard,now:number){
+    if(h.laser){if(now>=h.born&&now<h.expires)this.laser(h,now);return;}
+    const kind=h.owner.slice(5) as CampBossKind;if(!PALETTE[kind]||now<h.born||now>=h.expires)return;
+    const palette=PALETTE[kind],ink=this.groundInk,t=now-h.activeAt,g=bossHazardGeometry(h,now);
+    if(t<0){
+      if(h.kind==='circle'){const u=unit((now-h.born)/(h.activeAt-h.born));ink.lineStyle(2,palette.ink,.2+u*.25);for(let i=0;i<5;i++){const a=i*Math.PI*2/5;ink.lineBetween(h.point.x+Math.cos(a)*8,h.point.y+Math.sin(a)*8,h.point.x+Math.cos(a)*h.radius*.6*u,h.point.y+Math.sin(a)*h.radius*.6*u);}}
+      this.record(kind,h.id,'地面异动','蓄力',h.point,h.radius,now-h.born,{inner:g.inner});return;
+    }
+    const fade=unit((h.expires-now)/260);
+    if(h.kind==='ring'){
+      const middle=(g.radius+g.inner!)/2;ink.lineStyle(g.radius-g.inner!,palette.edge,fade*.18).strokeCircle(h.point.x,h.point.y,middle).lineStyle(6,palette.ink,fade*.65).strokeCircle(h.point.x,h.point.y,g.radius).lineStyle(3.5,palette.edge,fade).strokeCircle(h.point.x,h.point.y,g.radius).lineStyle(1.4,palette.core,fade).strokeCircle(h.point.x,h.point.y,g.radius);
+      for(let i=0;i<16;i++){const a=i*Math.PI/8,r=g.radius+8+(i%3)*5,p={x:h.point.x+Math.cos(a)*r,y:h.point.y+Math.sin(a)*r-6-Math.sin(t/120+i)*4};this.shard(p,3+i%3,a+t/500,kind==='spore-heart'?0xaf86a5:0xbda081,fade*.7);}
+      this.debris(h.point,30,t,kind,.8);this.record(kind,h.id,'扩散冲击与碎屑','出手',h.point,g.radius,t,{inner:g.inner});return;
+    }
+    this.debris(h.point,h.radius,t*620/Math.min(620,h.expires-h.activeAt),kind,fade);
+    if(kind==='spore-heart'||kind==='bound-branch'){
+      const rise=unit(t/140),sink=unit((h.expires-now)/200);
+      for(let i=0;i<5;i++){const a=i*Math.PI*2/5,x=h.point.x+Math.cos(a)*h.radius*.55,y=h.point.y+Math.sin(a)*h.radius*.48,height=(28+i%3*8)*rise*sink;
+        const points=[{x:x-5,y},{x:x-9,y:y-height*.35},{x:x+3,y:y-height},{x:x+2,y:y-height*.32},{x:x+7,y}];ink.fillStyle(kind==='spore-heart'?0x967154:0x667b49,fade*.75).lineStyle(2,palette.ink,fade*.9);this.path(ink,points,true);ink.fillPath().strokePath();ink.lineStyle(1.5,0xd9c89b,fade*.65).lineBetween(x,y,x+3,y-height);
+      }
+    }
+    this.record(kind,h.id,kind==='crag-tusk'?'震踏裂土与飞石':'破土根枝',fade<1?'消散':'出手',h.point,h.radius,t);
+  }
+}
