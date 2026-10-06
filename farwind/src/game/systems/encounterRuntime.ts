@@ -11,6 +11,7 @@ type Member=EncounterDefinition["members"][number];
 export const SPAWN_CUE={lead:900,fade:260} as const;
 export type SpawnCue=Point&{id:string;startedAt:number;readyAt:number;spawned:boolean};
 const distance=(a:Point,b:Point)=>Math.hypot(a.x-b.x,a.y-b.y);
+const restoreSlots=(c:SavedBossCombat|null|undefined)=>1+Number((c?.clone?.hp??0)>0||c?.battle.cloneSpawnAt!==undefined&&!c.battle.cloneUsed);
 const inView=(p:Point,v:Rect,margin=140)=>p.x>=v.left-margin&&p.x<=v.right+margin&&p.y>=v.top-margin&&p.y<=v.bottom+margin;
 export type EncounterPort={reserved?:()=>number;suspended?:()=>boolean;bossReady?:(kind:NonNullable<Member['boss']>)=>boolean;checkpoint?:()=>Promise<void>;enabled?:(d:EncounterDefinition)=>boolean;read:()=>EncounterState;bodies:()=>EnemyBody[];spawn:(d:Member,s:EncounterMemberState)=>void;release:(id:string)=>void;busy:(id:string)=>boolean;signal?:(d:EncounterDefinition)=>void;bossEnter?:(d:Member)=>void;occupied?:()=>readonly Point[];bossCapture?:(e:EnemyBody,now:number)=>SavedBossCombat;bossReset?:(id:string)=>void;};
 // 本控制器只决定实例生灭；血量仍由 World 里唯一的 EnemyBody 和伤害系统结算。
@@ -45,15 +46,15 @@ export class WildernessEncounters{
     if(this.port.suspended?.())return;
     const state=this.port.read(),existing=this.existing();let count=this.live();
     // 存档中的进行中首领优先恢复，防止邻近历史巡游占满预算后丢失战斗实例。
-    for(const d of this.definitions()){const g=state.groups[d.id];if(this.port.enabled&&!this.port.enabled(d)||g.boss?.stage!=='battle')continue;const i=d.members.findIndex(m=>m.boss),m=d.members[i];if((!this.port.bossReady||this.port.bossReady(m.boss!))&&!existing.has(m.id)&&!g.members[i].defeated&&count<ENCOUNTER_LIMITS.active){this.port.spawn(m,g.members[i]);existing.add(m.id);count++;}}
+    for(const d of this.definitions()){const g=state.groups[d.id];if(this.port.enabled&&!this.port.enabled(d)||g.boss?.stage!=='battle')continue;const i=d.members.findIndex(m=>m.boss),m=d.members[i];if((!this.port.bossReady||this.port.bossReady(m.boss!))&&!existing.has(m.id)&&!g.members[i].defeated&&count+restoreSlots(g.boss.combat)<=ENCOUNTER_LIMITS.active){this.port.spawn(m,g.members[i]);existing.add(m.id);count=this.live();}}
     for(const d of this.definitions().sort((a,b)=>distance(a,player)-distance(b,player))){const g=state.groups[d.id];if(!g.activated||this.port.enabled&&!this.port.enabled(d))continue;
-      for(const [i,m] of d.members.entries())if((!m.boss||g.boss?.stage==='battle'&&(!this.port.bossReady||this.port.bossReady(m.boss)))&&(g.wave===undefined||m.boss||'wave' in m&&m.wave===g.wave&&(g.waveWarning??0)===0)&&!existing.has(m.id)&&!g.members[i].defeated&&(m.boss||distance(g.members[i],player)<ENCOUNTER_LIMITS.activateDistance||this.port.busy(m.id))&&count<ENCOUNTER_LIMITS.active&&(!state.memoryDifficulty||m.boss||this.waveLive(d.id)<10)&&(m.boss||!state.memoryDifficulty||g.members[i].participated)){if(!m.boss&&!g.members[i].participated)this.queue(m,g.members[i],now);else this.port.spawn(m,g.members[i]);count++;}
+      for(const [i,m] of d.members.entries())if((!m.boss||g.boss?.stage==='battle'&&(!this.port.bossReady||this.port.bossReady(m.boss)))&&(g.wave===undefined||m.boss||'wave' in m&&m.wave===g.wave&&(g.waveWarning??0)===0)&&!existing.has(m.id)&&!g.members[i].defeated&&(m.boss||distance(g.members[i],player)<ENCOUNTER_LIMITS.activateDistance||this.port.busy(m.id))&&count+(m.boss?restoreSlots(g.boss?.combat):1)<=ENCOUNTER_LIMITS.active&&(!state.memoryDifficulty||m.boss||this.waveLive(d.id)<10)&&(m.boss||!state.memoryDifficulty||g.members[i].participated)){if(!m.boss&&!g.members[i].participated)this.queue(m,g.members[i],now);else this.port.spawn(m,g.members[i]);count=this.live();}
     }
   }
   capture(now:number){
     const state=this.port.read();
     for(const e of this.port.bodies()){
-      const u=unitState(state,e.id);if(!u||u.defeated||e.hp<=0)continue;
+      if(e.bossClone)continue;const u=unitState(state,e.id);if(!u||u.defeated||e.hp<=0)continue;
       u.hp=e.hp;u.x=e.x;u.y=e.y;u.serial=e.attackSerial??0;u.face={...e.face??e.attack?.direction??u.face};u.guardOpen=Math.max(0,Math.min(1200,(e.guardOpenUntil??0)-now));
       if(e.boss&&this.port.bossCapture){const d=encounterUnit(e.id)!;state.groups[d.group].boss!.combat=this.port.bossCapture(e,now);}
       u.cooldown=Math.max(0,Math.min(10000,Math.max(e.cool,e.attack?.recoveryUntil??0,e.staggerUntil)-now));
@@ -93,7 +94,7 @@ export class WildernessEncounters{
     this.capture(now);this.arrivals.clear();
     for(const e of [...this.port.bodies()]){const u=unitState(this.port.read(),e.id);if(!u)continue;
       u.cooldown=Math.max(800,u.cooldown);
-      if(e.boss){const b=this.port.read().groups[encounterUnit(e.id)!.group].boss?.combat;if(b){b.attack=null;b.hazards=[];b.shots=[];b.battle.nextAt=Math.max(800,b.battle.nextAt);b.battle.move=-1;b.battle.part=0;b.battle.major=false;}this.port.bossReset?.(e.id);}
+      if(e.boss){const b=this.port.read().groups[encounterUnit(e.id)!.group].boss?.combat;for(const combat of [b,b?.clone?.combat])if(combat){combat.attack=null;combat.hazards=[];combat.shots=[];combat.battle.nextAt=Math.max(800,combat.battle.nextAt);combat.battle.move=-1;combat.battle.part=0;combat.battle.major=false;delete combat.battle.cloneSpawnAt;delete combat.battle.clonePoint;}this.port.bossReset?.(e.id);}
       this.port.release(e.id);
     }
   }

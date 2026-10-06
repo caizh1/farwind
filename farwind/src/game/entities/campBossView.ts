@@ -12,6 +12,7 @@ import type {State} from '../systems/state';
 import {ENCOUNTERS} from '../../data/maps/windbell/encounters';
 import {CampBossEffects} from './campBossEffects';
 import {BossLaserVfx} from './bossLaserVfx';
+import {BossVineVfx} from './bossVineVfx';
 import {WARNING,drawDanger,previewWarning,projectileWarning,warningProgress} from './attackWarningView';
 import {sampleBossParry,type BossParryPose} from '../systems/bossParry';
 import {BossMotion} from '../systems/bossMotion';
@@ -23,16 +24,17 @@ import {EastBossAnimation,type EastPose} from '../systems/eastBossAnimation';
 export class CampBossView{
   entries=new WeakMap<Phaser.GameObjects.Sprite,{motion:SlimeAnimation;continuous:BossMotion;rig?:BossRig;pose?:EnemyPose;parry:BossParryPose|null;east?:EastBossAnimation;eastPose?:EastPose;late?:boolean}>();
   rigs=new Set<BossRig>();
+  growth=new Map<string,Phaser.GameObjects.Sprite>();cloneLabels=new Map<string,Phaser.GameObjects.Text>();
   ink:Phaser.GameObjects.Graphics;
   warningFill:Phaser.GameObjects.Graphics;
   warningEdge:Phaser.GameObjects.Graphics;
   reaction:Phaser.GameObjects.Text;
   effects:CampBossEffects;
   assets:BossArtCache;
-  static preload(scene:Phaser.Scene){BossLaserVfx.preload(scene);}
+  static preload(scene:Phaser.Scene){BossLaserVfx.preload(scene);BossVineVfx.preload(scene);}
   constructor(public scene:Phaser.Scene){this.warningFill=scene.add.graphics().setDepth(WARNING.floor);this.warningEdge=scene.add.graphics().setDepth(WARNING.floor+1);this.assets=new BossArtCache(scene);this.effects=new CampBossEffects(scene);this.ink=scene.add.graphics().setDepth(8994);this.reaction=scene.add.text(0,0,'',{fontFamily:'sans-serif',fontSize:'14px',color:'#fff0cc',backgroundColor:'#233c34e8',padding:{x:8,y:5}}).setOrigin(.5,1).setDepth(8996).setVisible(false);}
-  reset(){for(const rig of this.rigs)rig.destroy();this.rigs.clear();this.entries=new WeakMap();this.ink.clear();this.warningFill.clear();this.warningEdge.clear();this.effects.begin();this.reaction.setVisible(false);}
-  begin(){for(const rig of this.rigs)rig.setVisible(false);this.ink.clear();this.warningFill.clear();this.warningEdge.clear();this.effects.begin();this.reaction.setVisible(false);}
+  reset(){for(const sprite of this.growth.values())sprite.destroy();this.growth.clear();for(const label of this.cloneLabels.values())label.destroy();this.cloneLabels.clear();for(const rig of this.rigs)rig.destroy();this.rigs.clear();this.entries=new WeakMap();this.ink.clear();this.warningFill.clear();this.warningEdge.clear();this.effects.begin();this.reaction.setVisible(false);}
+  begin(){for(const sprite of this.growth.values())sprite.setVisible(false);for(const label of this.cloneLabels.values())label.setVisible(false);this.assets.east.beginFrame();for(const rig of this.rigs)rig.setVisible(false);this.ink.clear();this.warningFill.clear();this.warningEdge.clear();this.effects.begin();this.reaction.setVisible(false);}
   draw(body:AnimatedEnemy&Pick<EnemyBody,'boss'|'bossBattle'>,attack:EnemyAttack|null|undefined,sprite:Phaser.GameObjects.Sprite,now:number,showBar:boolean):EnemyPose{
     const kind=body.boss!,d=CAMP_BOSSES[kind];
     let entry=this.entries.get(sprite);if(!entry){entry={motion:new SlimeAnimation(),continuous:new BossMotion(),parry:null};this.entries.set(sprite,entry);}
@@ -41,17 +43,19 @@ export class CampBossView{
     const parry=sampleBossParry(body,now);entry.parry=parry;
     if(kind==='bound-branch'&&this.assets.east?.ready){
       entry.east??=new EastBossAnimation();
-      const sampled=entry.east.sample(body,attack,now,base,entry.motion.distance),rendered=this.assets.east.sample(sampled);entry.eastPose=sampled;
+      const sampled=entry.east.sample(body,attack,now,base,entry.motion.distance),forecast=entry.east.forecast(body,attack,now,base,entry.motion.distance),rendered=this.assets.east.sample(sampled,(body as EnemyBody).id,forecast);entry.eastPose=sampled;
       const pose:EnemyPose={...base,phase:sampled.phase,provisional:!rendered||rendered.late};entry.pose=pose;entry.late=rendered?.late;
       entry.rig?.setVisible(false);
       if(rendered){
         const f=rendered.frame,k=d.height/512,alpha=base.action==='death'?Math.max(0,1-Math.max(0,base.elapsed-1200)/500):arriving?Math.min(1,u/.55):1;
-        sprite.setTexture(rendered.key,rendered.id).setOrigin(f.pivot[0]/f.rect[2],f.pivot[1]/f.rect[3]).setScale(k).setPosition(body.x,body.y).setDepth(body.y).setRotation(0).setAlpha(alpha).setVisible(alpha>0).clearTint();Actor.mirror(sprite,false);
+        sprite.setTexture(rendered.key,rendered.id).setOrigin(f.pivot[0]/f.rect[2],f.pivot[1]/f.rect[3]).setScale(k).setPosition(body.x,body.y).setDepth(body.y).setRotation(0).setAlpha(alpha).setVisible(alpha>0).clearTint();Actor.mirror(sprite,false);if((body as EnemyBody).bossClone){sprite.setTint(0xd4f5cf);const id=(body as EnemyBody).id;let label=this.cloneLabels.get(id);if(!label){label=this.scene.add.text(0,0,'缚枝分身',{fontFamily:'sans-serif',fontSize:'14px',color:'#e1f8d0',stroke:'#203c30',strokeThickness:3}).setOrigin(.5,1);this.cloneLabels.set(id,label);}label.setPosition(body.x,body.y-d.height-20).setDepth(body.y+1).setVisible(true);}
         const sockets=Object.fromEntries(Object.entries(f.sockets).map(([name,p])=>[name,{x:body.x+(p[0]-f.pivot[0])*k,y:body.y+(p[1]-f.pivot[1])*k}]));
         if(new URLSearchParams(location.search).get('eastBossEffects')!=='off')this.effects.draw(body,attack,now,parry,undefined,sockets);
       }
+      if(attack?.bossSkill===7&&!attack.cancelled&&body.bossBattle?.clonePoint){const m=this.assets.east.manifest!,form=Math.max(0,Math.min(1,(now-attack.startedAt-1400)/700)),id=m.clips.idle.directions[sampled.direction][0].frame,f=m.frames[id],key=this.assets.east.key(f.page);if(this.scene.textures.exists(key)&&form>0){const point=body.bossBattle.clonePoint;let growth=this.growth.get((body as EnemyBody).id);if(!growth){growth=this.scene.add.sprite(point.x,point.y,key,id);this.growth.set((body as EnemyBody).id,growth);}growth.setTexture(key,id).setPosition(point.x,point.y).setOrigin(f.pivot[0]/f.rect[2],f.pivot[1]/f.rect[3]).setScale(d.height/512).setDepth(point.y).setCrop(0,f.rect[3]*(1-form),f.rect[2],f.rect[3]*form).setVisible(true).setTint(0xd4f5cf);}}
       if(arriving)this.arrivalEffect(kind,body,u);
       if(body.bossBattle?.phase===2&&(body.hp??0)>0)this.ink.lineStyle(2,d.color,.25+Math.sin(now/260)*.1).strokeEllipse(body.x,body.y-3,64,23);
+      if((body as EnemyBody).bossClone&&(body.hp??0)>0)this.ink.lineStyle(2,0xa4d695,.8).strokeEllipse(body.x,body.y-3,70,25);
       if(showBar&&(body.hp??0)>0&&!arriving){const x=body.x-35,y=body.y-d.height-14;this.ink.fillStyle(0x18372d,.95).fillRoundedRect(x-2,y-2,74,10,2).fillStyle(0xdbb47c).fillRect(x,y,70*(body.hp??0)/(body.maxHP??d.hp),6);}
       return pose;
     }

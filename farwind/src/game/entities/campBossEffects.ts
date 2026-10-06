@@ -9,6 +9,8 @@ import {WARNING} from './attackWarningView';
 import {wolfClawTip,wolfClawWave,isWolfClaw} from '../systems/wolfClaw';
 import {isBossLaser,laserSample,laserRays,laserPoint,laserHazard,laserRadii} from '../systems/bossLaser';
 import {BossLaserVfx} from './bossLaserVfx';
+import {isVine,vineGeometry} from '../systems/eastBossTierFive';
+import {BossVineVfx} from './bossVineVfx';
 
 type Body=Point&{hp?:number;boss?:CampBossKind;bossBattle?:BossBattle;wallHit?:{at:number;until:number;direction?:Point};parried?:{at:number;until:number;direction:Point;perfect:boolean}};
 type Effect={id:string;boss:CampBossKind;kind:string;phase:'蓄力'|'出手'|'消散';point:Point;radius:number;elapsed:number;direction?:Point;inner?:number;skill?:number;origin?:Point;travel?:number};
@@ -26,9 +28,10 @@ export class CampBossEffects{
   readonly strikeInk:Phaser.GameObjects.Graphics;
   private records:Effect[]=[];
   readonly laserVfx:BossLaserVfx;
-  constructor(scene:Phaser.Scene){this.groundInk=scene.add.graphics().setDepth(WARNING.floor-1);this.strikeInk=scene.add.graphics().setDepth(8993);this.laserVfx=new BossLaserVfx(scene);}
-  begin(){this.groundInk.clear();this.strikeInk.clear();this.laserVfx.begin();this.records=[];}
-  snapshot(){const materials=this.laserVfx.snapshot();return {objects:2+materials.objects,laserMaterials:materials,effects:this.records};}
+  readonly vineVfx:BossVineVfx;
+  constructor(scene:Phaser.Scene){this.groundInk=scene.add.graphics().setDepth(WARNING.floor-1);this.strikeInk=scene.add.graphics().setDepth(8993);this.laserVfx=new BossLaserVfx(scene);this.vineVfx=new BossVineVfx(scene);}
+  begin(){this.groundInk.clear();this.strikeInk.clear();this.laserVfx.begin();this.vineVfx.begin();this.records=[];}
+  snapshot(){const materials=this.laserVfx.snapshot(),vine=this.vineVfx.snapshot();return {objects:2+materials.objects+vine.objects,laserMaterials:materials,vineMaterials:vine,effects:this.records};}
   private record(boss:CampBossKind,id:string,kind:string,phase:Effect['phase'],point:Point,radius:number,elapsed:number,extra:Partial<Effect>={}){this.records.push({boss,id,kind,phase,point:{x:point.x,y:point.y},radius,elapsed,...extra});}
   private path(ink:Phaser.GameObjects.Graphics,points:Point[],close=false){ink.beginPath().moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)ink.lineTo(points[i].x,points[i].y);if(close)ink.closePath();}
   private glint(p:Point,r:number,color:number,alpha:number){const ink=this.strikeInk;ink.lineStyle(3,0x46382e,alpha*.6).lineBetween(p.x-r,p.y,p.x+r,p.y).lineBetween(p.x,p.y-r,p.x,p.y+r);ink.lineStyle(1.5,color,alpha).lineBetween(p.x-r,p.y,p.x+r,p.y).lineBetween(p.x,p.y-r,p.x,p.y+r);}
@@ -118,6 +121,17 @@ export class CampBossEffects{
   draw(body:Body,a:EnemyAttack|null|undefined,now:number,parry:BossParryPose|null=sampleBossParry(body,now),view?:string,sockets?:Record<string,Point>){
     const kind=body.boss,b=body.bossBattle;if(!kind||(body.hp??0)<=0||b&&(now<b.entryUntil||now<b.transformUntil))return;
     const palette=PALETTE[kind],ink=this.strikeInk;
+    if(kind==='bound-branch'&&a&&!a.cancelled&&a.bossSkill===7&&b?.clonePoint){
+      const t=now-a.startedAt,p=b.clonePoint,growth=unit((t-400)/1000),form=unit((t-1400)/700),fade=unit((2400-t)/300),height=250*Math.max(growth*.35,form);
+      this.groundInk.lineStyle(5,0x294e42,.9).strokeEllipse(p.x,p.y,94,35).lineStyle(2,0xa1d596,.9).strokeEllipse(p.x,p.y,88,30);
+      for(let i=0;i<12;i++){const angle=i*Math.PI/6,x=p.x+Math.cos(angle)*42,y=p.y+Math.sin(angle)*15,points=Array.from({length:15},(_,n)=>{const u=n/14;return {x:x+(p.x-x)*u+Math.sin(u*9+i)*14*growth,y:y-height*u};});ink.lineStyle(8,0x203c30,.95*fade);this.path(ink,points);ink.strokePath();ink.lineStyle(4,0x71a263,.95*fade);this.path(ink,points);ink.strokePath();ink.lineStyle(1,0xd3e9a5,.65*fade);this.path(ink,points);ink.strokePath();}
+      ink.lineStyle(3,0xa4d79b,.65).strokeEllipse(body.x,body.y-100,145,205);this.record(kind,a.attackId,'藤蔓交织成分身','蓄力',p,48,t,{skill:7});return;
+    }
+    if(isVine(a)&&!a!.cancelled&&now>=a!.contactAt&&now<a!.recoveryUntil){
+      const g=vineGeometry(a!,body,Math.min(now,a!.activeUntil)),side=(a!.bossPart??0)%2?'vineR':'vineL',hand=sockets?.[side]??sockets?.[(a!.bossPart??0)%2?'right':'left']??{x:body.x,y:body.y-130};
+      this.vineVfx.draw(a!,body,hand,g,now,this.groundInk);
+      this.record(kind,a!.attackId,'手臂伸藤','出手',g.b,32,now-a!.contactAt,{skill:8,origin:g.a,travel:Math.hypot(g.b.x-g.a.x,g.b.y-g.a.y)});return;
+    }
     if(kind==='crag-tusk'&&body.wallHit&&now<body.wallHit.at+620){const t=now-body.wallHit.at,d=body.wallHit.direction??{x:0,y:1},p={x:body.x+d.x*30,y:body.y+d.y*30};this.debris(p,48,t,kind);this.record(kind,'撞墙:'+body.wallHit.at,'撞墙碎石','消散',p,48,t);}
     if(kind==='bound-branch'&&b&&now<b.exposedUntil){
       const p=sockets?.core??{x:body.x,y:body.y-CAMP_BOSSES[kind].height*.46},alpha=.65+Math.sin(now/100)*.15;this.glint(p,14,palette.core,alpha);ink.lineStyle(2,palette.edge,.55).strokeCircle(p.x,p.y,20);

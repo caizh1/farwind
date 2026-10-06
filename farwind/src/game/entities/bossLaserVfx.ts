@@ -5,6 +5,7 @@ import {laserConfig,laserRadii,laserPoint,laserRays,laserSample} from '../system
 
 const KEY='boss-laser-vfx-v2';
 const BURST_KEY='boss-laser-burst-v3';
+export const BOSS_LASER_TEXTURE_BYTES=1536*1024*4+1448*1086*4;
 const LIMIT=64;
 const BURST_COUNT=36;
 const BURST_LIFE=330;
@@ -22,7 +23,7 @@ export class BossLaserVfx{
   constructor(private scene:Phaser.Scene){}
   static preload(scene:Phaser.Scene){scene.load.image(KEY,'/assets/boss-laser/laser-vfx-v2.png');scene.load.image(BURST_KEY,'/assets/boss-laser/laser-burst-v3.png');}
   begin(){for(const image of this.pool)image.setVisible(false);this.cursor=0;this.bursts=[];}
-  snapshot(){return {ready:!!this.scene.textures?.exists(KEY)&&!!this.scene.textures?.exists(BURST_KEY),objects:this.pool.length,visible:this.cursor,limit:LIMIT,bursts:this.bursts};}
+  snapshot(){return {ready:!!this.scene.textures?.exists(KEY)&&!!this.scene.textures?.exists(BURST_KEY),textureBytes:(this.scene.textures?.exists(KEY)?1536*1024*4:0)+(this.scene.textures?.exists(BURST_KEY)?1448*1086*4:0),objects:this.pool.length,visible:this.cursor,limit:LIMIT,bursts:this.bursts};}
   private stamp(frame:string,p:Point,w:number,h:number,alpha:number,depth:number,angle=0,origin:Point={x:.5,y:.5},flip=false){
     const key=frame.startsWith('burst-')?BURST_KEY:KEY;
     if(alpha<=0||this.cursor>=LIMIT||!this.scene.textures?.exists(key))return;

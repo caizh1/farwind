@@ -8,6 +8,31 @@ import type {EnemyPose} from '../src/game/systems/enemyAnimation';
 const base:EnemyPose={action:'idle',frame:0,index:0,facing:0,phase:'idle',elapsed:0,provisional:true};
 function boss():EnemyBody{return {id:'boss-bound-branch',boss:'bound-branch',type:'leaf',x:0,y:0,homeX:0,homeY:0,hp:2500,cool:0,windup:0,ai:'警戒',face:{x:0,y:1},nav:enemyNavigation(),bossBattle:{...initialBossBattle(0),entryUntil:0,move:0,part:0}};}
 describe('东侧首领真实战斗时钟动画',()=>{
+ it('只读预取覆盖藤刺换手和末刺退出，不改攻击、实体或播放器进度',()=>{
+  const e=boss(),b=e.bossBattle!;b.move=8;b.part=6;
+  const a=createBossAttack(e,2000,{x:0,y:100},b),player=new EastBossAnimation(),now=a.recoveryUntil-40;
+  player.sample(e,a,now,base,0);const before=JSON.stringify({e,a,player});
+  const predicted=player.forecast(e,a,now,base,0);
+  expect(predicted.some(p=>p.clip==='vine-right')).toBe(true);expect(JSON.stringify({e,a,player})).toBe(before);
+  b.part=7;const last=createBossAttack(e,4000,{x:0,y:100},b);player.sample(e,last,last.activeUntil-40,base,0);
+  const tail=player.forecast(e,last,last.activeUntil-40,base,0);expect(tail.some(p=>p.clip==='vine-exit')).toBe(true);expect(tail.some(p=>p.clip==='vine-left')).toBe(false);
+ });
+ it('预取遵守已经取消的攻击以及正式待机循环，不续播下一击',()=>{
+  const e=boss();e.bossBattle!.move=8;const a=createBossAttack(e,2000,{x:0,y:100},e.bossBattle!);a.cancelled=true;
+  const player=new EastBossAnimation();player.sample(e,a,1180,base,0);const predicted=player.forecast(e,a,1180,base,0);
+  expect(predicted.every(p=>!p.clip.startsWith('vine-'))).toBe(true);expect(predicted.some(p=>p.clip==='idle'&&p.time<100)).toBe(true);
+ });
+ it('预取排定藤刺起手，不把开场当成双镰，也不决定尚未排定的选招',()=>{
+  const e=boss(),player=new EastBossAnimation();e.bossBattle!.move=8;e.bossBattle!.nextAt=1400;
+  player.sample(e,null,1000,base,0);expect(player.forecast(e,null,1000,base,0).some(p=>p.clip==='vine-enter')).toBe(true);
+  e.bossBattle!.move=-1;expect(player.forecast(e,null,1000,base,0).every(p=>!p.clip.startsWith('vine-')&&!p.clip.startsWith('cross-'))).toBe(true);
+ });
+ it('同伴独占大招时不预取被阻止的施法，移动时持续预取真实步态',()=>{
+  const e=boss(),peer=boss(),player=new EastBossAnimation();peer.id='peer';e.bossClone={owner:'peer',attempt:0,serial:0};e.eastPeers=[peer,e];peer.bossBattle!.eastMajorUntil=10000;e.bossBattle!.move=8;e.bossBattle!.nextAt=1000;
+  player.sample(e,null,1000,base,0);expect(player.forecast(e,null,1000,base,0).every(p=>!p.clip.startsWith('vine-'))).toBe(true);
+  e.bossBattle!.move=0;e.eastMotion={speed:50,heading:0,distance:0,now:1000};const walk={...base,action:'walk'} as EnemyPose;player.sample(e,null,1000,walk,0);
+  expect(player.forecast(e,null,1000,walk,0).some(p=>p.clip==='walk')).toBe(true);expect(player.forecast(e,null,1000,walk,0).some(p=>p.clip.startsWith('cross-'))).toBe(false);
+ });
  it.each([1,2] as const)('第 %i 阶段的命中与收势对齐同一美术关键帧',phase=>{
   const e=boss(),b=e.bossBattle!;b.phase=phase;const a=createBossAttack(e,2000,{x:0,y:100},b);
   expect(eastAttackTime(a,a.startedAt)).toBe(0);expect(eastAttackTime(a,a.lockAt)).toBe(400);expect(eastAttackTime(a,a.contactAt)).toBe(750);expect(eastAttackTime(a,a.activeUntil)).toBe(950);expect(eastAttackTime(a,a.recoveryUntil)).toBe(1030);

@@ -130,7 +130,7 @@ it.each(Object.keys(CAMP_BOSSES) as CampBossKind[])('%s全部招式和连段强�
  for(const phase of [1,2] as const)for(let move=0;move<info.skills.length;move++)for(let part=0;part<bossParts(kind,move,phase);part++){
   Object.assign(e.bossBattle,{phase,move,part});const base={...e,memoryDifficulty:undefined},a=createBossAttack(e,10000,{x:d.x+100,y:d.y},e.bossBattle),b=createBossAttack(base,10000,{x:d.x+100,y:d.y},e.bossBattle);
   expect(a.damage).toBeCloseTo(b.damage*2.6);expect(a.contactAt-a.lockAt).toBeCloseTo(b.contactAt-b.lockAt);
-  if(bossMajor(kind,move))expect(a.contactAt-a.startedAt).toBeGreaterThanOrEqual(1000);
+  if(bossMajor(kind,move)&&!(kind==='bound-branch'&&move===8&&part>0))expect(a.contactAt-a.startedAt).toBeGreaterThanOrEqual(1000);
   if(a.bossArea||a.bossLaser||a.bossCocoon)expect(a.activeUntil-a.contactAt).toBeCloseTo(b.activeUntil-b.contactAt);
  }
  Object.assign(e.bossBattle,{phase:1,move:-1,part:0,nextAt:0,exposedUntil:0});e.hp=e.maxHP*.55;

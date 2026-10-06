@@ -82,7 +82,7 @@ export function validateEncounters(raw:unknown):EncounterState{
 }
 export function unitState(s:EncounterState,id:string):EncounterMemberState|undefined{const d=encounterUnit(id);if(!d)return;if(s.instance&&!id.startsWith(s.instance+'|'))return;const group=s.groups[d.group],u=group?.members.find(m=>m.id===id);if(u)return u;const summon=group?.summons?.find(m=>m.id===id);if(summon)return summon;
  const owned=/^(.+):(祭根|护猎):(\d+):(\d+)$/.exec(id);if(!owned||group?.boss?.attempt!==Number(owned[3]))return;
- const b=group.boss.combat?.battle,node=owned[2]==='祭根'?b?.roots?.[Number(owned[4])]:b?.summons?.find(m=>m.id===id);if(!node)return;
+ const b=owned[1].includes(':clone:')?group.boss.combat?.clone?.combat.battle:group.boss.combat?.battle,node=owned[2]==='祭根'?b?.roots?.[Number(owned[4])]:b?.summons?.find(m=>m.id===id);if(!node)return;
  return {id,hp:node.hp,x:node.x,y:node.y,serial:0,cooldown:0,defeated:node.hp===0,drop:false,dropRemaining:0,participated:false,face:{x:0,y:1},guardOpen:0};
 }
 export const campCleared=(s:EncounterState,id:string)=>ENCOUNTERS.some(d=>d.id===id&&d.kind==="camp")&&s.groups[id].cleared;

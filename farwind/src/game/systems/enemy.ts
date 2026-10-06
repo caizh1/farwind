@@ -225,6 +225,7 @@ export type EnemyBody = Point & {
   damageScale?:number;
   fungalShield?:EnemyBody;
   bossSummon?:{owner:string;attempt:number};
+  bossClone?:{owner:string;attempt:number};eastClone?:EnemyBody;eastCloneRestore?:import("./campBossState").SavedEastClone;eastPeers?:readonly EnemyBody[];eastAim?:Point&{at:number};
   passiveRoot?:{owner:string;index:number;attempt:number;kind?:'root'|'sac'|'rock'|'sigil'};
   runeSlow?:number;
   eliteLevel?:number;
@@ -351,7 +352,7 @@ export function updateEnemy(
   const d = distance(e, player),
     home = { x: e.homeX, y: e.homeY };
   const safe = enemyAttackPermitted(e,player);
-  if(e.boss){const event=updateCampBoss(e,player,now,dtMs*(1-(e.runeSlow??0)),targetId,safe&&permission(e,targetId));if(event!==undefined){if(e.boss==='bound-branch'&&e.ai!=='首领减速')stopEastLocomotion(e,now);return event;}}
+  if(e.boss){e.eastPeers=peers;const event=updateCampBoss(e,player,now,dtMs*(1-(e.runeSlow??0)),targetId,safe&&permission(e,targetId));if(event!==undefined){if(e.boss==='bound-branch'&&e.ai!=='首领减速')stopEastLocomotion(e,now);return event;}}
   e.rejection = !safe
     ? "家园追击边界"
     : d >= creatureReach(e.type,e.elite)

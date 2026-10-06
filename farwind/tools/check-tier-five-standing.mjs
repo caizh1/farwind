@@ -1,0 +1,2 @@
+// 查找同方向的合法初始站位，用正式地形规则避免验收样本出生于障碍内。
+import {createServer} from 'vite';const v=await createServer({server:{middlewareMode:true},appType:'custom'});try{const{syncMapGeometry}=await v.ssrLoadModule('/src/data/world.ts');syncMapGeometry(false);const{motionBlocked}=await v.ssrLoadModule('/src/game/systems/obstacles.ts');for(let d=0;d<8;d++){const p=[200,240,280,320,360,400,450,500].map(r=>({x:3710+Math.sin(d*Math.PI/4)*r,y:1100+Math.cos(d*Math.PI/4)*r})).find(p=>!motionBlocked(p.x,p.y));console.log(d,p)}}finally{await v.close()}

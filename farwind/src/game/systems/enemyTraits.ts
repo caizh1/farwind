@@ -1,3 +1,4 @@
+import {summonProtected} from './eastBossTierFive';
 import {enemyBehavior} from '../../data/enemies';
 import {fungalShieldActive,FUNGAL} from './fungalCombat';
 import type {Point} from './obstacles';
@@ -12,6 +13,7 @@ export function turnToward(facing:Point,target:Point,seconds:number):Point{
 }
 export function enemyProtection(e:Pick<EnemyBody,'type'|'x'|'y'|'face'|'guardOpenUntil'|'staggerUntil'|'attack'|'boss'|'bossBattle'|'hp'|'fungalShield'|'maxHP'>,origin:Point|undefined,now:number,breaksGuard=false){
  if(e.boss&&e.bossBattle){
+  if(summonProtected(e,now))return {reduction:0,immune:true,hpFloor:e.hp};
   const b=e.bossBattle,a=e.attack,hpFloor=now<b.entryUntil||now<b.transformUntil?e.hp:b.phase===1?(e.maxHP??CAMP_BOSSES[e.boss].hp)*.55:0;
   if(now<b.exposedUntil)return {reduction:0,hpFloor};
   if(a?.bossCocoon&&!a.cancelled&&now>=a.contactAt&&now<a.activeUntil){

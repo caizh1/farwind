@@ -5,7 +5,29 @@ import {clearMotionLine,motionBlocked} from './obstacles';
 import {ENCOUNTER_LIMITS} from '../../data/maps/windbell/encounters';
 import type {BossBattle} from './campBossState';
 import type {EnemyBody} from './enemy';
+import {eastTierFive,eastCloneId,EAST_TIER_FIVE} from './eastBossTierFive';
+import {initialBossBattle} from './campBossState';
+import {restoreBossCombat} from './campBossCombat';
+import {enemyLeashRadius} from '../../data/enemyPursuit';
 type Node=NonNullable<BossBattle['roots']>[number];
+function updateEastClone(w:World,boss:EnemyBody){
+ const b=boss.bossBattle!;if(!eastTierFive(boss)||boss.bossClone)return;
+ const clearPoint=(p:{x:number;y:number})=>!motionBlocked(p.x,p.y)&&Math.hypot(p.x-boss.homeX,p.y-boss.homeY)<=enemyLeashRadius(boss)&&Math.hypot(p.x-w.state.player.x,p.y-w.state.player.y)>=90&&w.enemies.every(e=>e===boss||e.hp<=0||Math.hypot(e.x-p.x,e.y-p.y)>=80);
+ if(boss.eastCloneRestore){const saved=boss.eastCloneRestore;delete boss.eastCloneRestore;
+  const e=w.makeEnemy({id:saved.id,type:'leaf',boss:'bound-branch',x:saved.x,y:saved.y});Object.assign(e,{hp:saved.hp,maxHP:boss.maxHP,memoryDifficulty:boss.memoryDifficulty,bossAttempt:boss.bossAttempt,bossClone:{owner:boss.id,attempt:boss.bossAttempt??0},homeX:boss.homeX,homeY:boss.homeY,leashRadius:boss.leashRadius,attackSerial:saved.serial,face:{...saved.face}});restoreBossCombat(e,saved.combat,w.sim,w.bossHazards,w.enemyProjectiles);boss.eastClone=e;
+  if(saved.hp>0)w.enemies.push(e);else{e.sprite.destroy();e.shadow.destroy();}
+ }
+ if(b.cloneUsed)return;
+ if(b.cloneSpawnAt!==undefined){
+  if(!b.clonePoint||!clearPoint(b.clonePoint)||activeHostileCount(w)>ENCOUNTER_LIMITS.active){if(boss.attack?.bossSkill===7)boss.attack.cancelled=true;delete b.cloneSpawnAt;delete b.clonePoint;b.cloneRetryAt=w.sim+EAST_TIER_FIVE.retry;return;}
+  if(w.sim>=b.cloneSpawnAt){const p=b.clonePoint,id=eastCloneId(boss.id,boss.bossAttempt??0),e=w.makeEnemy({id,type:'leaf',boss:'bound-branch',...p});Object.assign(e,{hp:boss.maxHP,maxHP:boss.maxHP,memoryDifficulty:boss.memoryDifficulty,bossAttempt:boss.bossAttempt,bossClone:{owner:boss.id,attempt:boss.bossAttempt??0},homeX:boss.homeX,homeY:boss.homeY,leashRadius:boss.leashRadius,bossBattle:initialBossBattle(w.sim),face:{...boss.face??{x:0,y:1}}});boss.eastClone=e;w.enemies.push(e);b.cloneUsed=true;b.clonePending=false;delete b.cloneSpawnAt;delete b.clonePoint;}
+  return;
+ }
+ if(!b.clonePending||w.sim<(b.cloneRetryAt??0)||activeHostileCount(w)>=ENCOUNTER_LIMITS.active)return;
+ if(b.clonePoint&&clearPoint(b.clonePoint))return;
+ b.clonePoint=Array.from({length:48},(_,i)=>{const a=i*Math.PI/12,r=220+Math.floor(i/24)*80;return {x:boss.x+Math.cos(a)*r,y:boss.y+Math.sin(a)*r};}).find(p=>clearPoint(p)&&clearMotionLine(boss,p));
+ if(!b.clonePoint)b.cloneRetryAt=w.sim+EAST_TIER_FIVE.retry;
+}
 export function defeatBossSummon(owner:EnemyBody|undefined,id:string,now:number){
  const b=owner?.bossBattle,s=b?.summons?.find(s=>s.id===id);if(!b||!s||s.hp<=0)return false;s.hp=0;
  const defeated=Math.max(b.summoned??0,b.summons!.length)-b.summons!.filter(s=>s.hp>0).length;
@@ -15,10 +37,12 @@ export function defeatBossSummon(owner:EnemyBody|undefined,id:string,now:number)
 // 机关和召唤物只创建正式 EnemyBody；伤害、弹反、死亡继续走 World 的统一入口。
 export function updateBossEnvironment(w:World){
  for(const e of w.enemies){
+  if(e.bossClone){const owner=w.enemies.find(b=>b.id===e.bossClone!.owner&&b.hp>0&&b.bossAttempt===e.bossClone!.attempt);if(!owner){w.clearBossEffects(e.id);e.sprite.destroy();e.shadow.destroy();w.enemies=w.enemies.filter(b=>b!==e);continue;}owner.eastClone=e;}
   if(e.bossSummon){const owner=w.enemies.find(b=>b.id===e.bossSummon!.owner&&b.bossAttempt===e.bossSummon!.attempt);const saved=owner?.bossBattle?.summons?.find(s=>s.id===e.id);if(saved)Object.assign(saved,{x:e.x,y:e.y,hp:e.hp});}
  }
  for(const boss of [...w.enemies]){
   const b=boss.bossBattle;if(!boss.boss||boss.hp<=0||!b)continue;
+  updateEastClone(w,boss);
   const addNodes=(kind:NonNullable<Node['kind']>,count:number,radius:number)=>{
    b.roots??=[];const live=b.roots.filter(r=>r.hp>0&&r.kind===kind).length;
    const available=Array.from({length:32},(_,i)=>({x:boss.x+Math.cos(i*Math.PI/16)*radius,y:boss.y+Math.sin(i*Math.PI/16)*radius})).filter(p=>!motionBlocked(p.x,p.y)&&clearMotionLine(boss,p)&&Math.hypot(p.x-w.state.player.x,p.y-w.state.player.y)>=65&&w.enemies.every(e=>e.hp<=0||Math.hypot(e.x-p.x,e.y-p.y)>=60));

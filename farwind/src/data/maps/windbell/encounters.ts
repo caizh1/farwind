@@ -56,6 +56,7 @@ const SOUTH_ADDITIONS:Record<string,EncounterDefinition['members']>={
 export const ENCOUNTERS:readonly EncounterDefinition[]=[...BASE_ENCOUNTERS.map(d=>({...d,members:[...d.members.filter(m=>!m.boss),...SOUTH_ADDITIONS[d.id]??[],...d.members.filter(m=>m.boss)]})),...LEGACY_ENCOUNTERS];
 export const ENCOUNTER_UNITS=ENCOUNTERS.flatMap(group=>group.members.map(member=>({...member,group:group.id})));
 export const encounterUnit=(id:string):(EncounterDefinition['members'][number]&{group:string})|undefined=>{
+ const clone=/^(.+):clone:(\d+):0$/.exec(id);if(clone&&id.length<160){const owner=encounterUnit(clone[1]);if(owner?.boss==='bound-branch'&&!clone[1].includes(':clone:'))return {...owner,id};}
  const support=/^(.+):唤巢:([0-3])$/.exec(id);if(support&&id.length<160){const owner=encounterUnit(support[1]);if(owner?.type==='bell')return {id,type:'slime',group:owner.group,x:owner.x,y:owner.y};}
  const owned=/^(.+):(祭根|护猎):(\d+):(\d+)$/.exec(id);if(owned&&id.length<160){const owner=encounterUnit(owned[1]);if(owner?.boss)return {id,type:owned[2]==='护猎'?'wolf':'priest',group:owner.group,x:owner.x,y:owner.y};}
  const instance=/^(memory:\d+)\|(.+)$/.exec(id);if(instance){const base=ENCOUNTER_UNITS.find(s=>s.id===instance[2])??dynamicEncounterUnit(instance[2]);return base?{...base,id}:undefined;}

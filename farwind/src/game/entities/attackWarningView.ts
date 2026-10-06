@@ -7,6 +7,7 @@ import {bossHazardGeometry} from '../systems/campBossCombat';
 import type {BossHazard} from '../systems/campBossState';
 import {laserSample,laserGeometries,laserCanHit} from '../systems/bossLaser';
 import {clearMeleeLine,type Point} from '../systems/obstacles';
+import {isVine,vineGeometry} from '../systems/eastBossTierFive';
 
 export const WARNING={red:0xff343c,outline:0x2b1724,light:0xfff4ee,floor:WORLD.top-900} as const;
 type Shape=AttackGeometry&{outline?:Point[]};
@@ -22,6 +23,7 @@ export function projectileWarning(root:Point,d:Point,length:number,radius:number
 
 // 只推进副本，沿用正式冲撞的地形、家园边界与岩柱约束，不改攻击或敌人位置。
 export function previewWarning(a:EnemyAttack,root:Point,space?:Parameters<typeof advanceEnemyAttack>[4]):Shape{
+  if(isVine(a))return vineGeometry(a,root,a.contactAt,true);
   const first=sampleEnemyAttack(a,a.contactAt,root).geometry;
   if(a.boss==='thorn-crown'&&a.bossSkill===1)return {...first,radius:a.bossGeometry!.radius};
   if(a.type==='leaf'&&!a.boss)return {kind:'sector',a:{...root},b:{...root},radius:72,direction:a.direction,halfAngle:.85};

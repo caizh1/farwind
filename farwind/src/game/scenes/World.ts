@@ -18,7 +18,7 @@ import {CityGuards} from '../entities/cityGuards';
 import {CITY_ASSETS,CITY_BRIDGE_FRAMES,TRADE_ROAD_NODES} from '../../data/maps/windwhisper';
 import {WIND_BELL_BOUNDS} from '../../data/maps/windbell/bounds';
 import {roadParticipation,roadUnit} from '../systems/tradeRoadState';
-import {activeHostileCount,resumeHostile} from '../systems/combatUnitBudget';
+import {activeHostileCount,resumeHostile,pendingEastClone} from '../systems/combatUnitBudget';
 import {CAMP_NESTS,CAMP_NEST_GROUND,campNestPresentation} from '../../data/campNests';
 import {observeCombat} from '../systems/combatObservation';
 import {bossGroundContains,bossGroundBlocks} from '../systems/meleeGeometry';
@@ -648,7 +648,7 @@ export class World extends Phaser.Scene {
           bossHazards:this.bossHazards.hazards,
           bossEffects:this.enemyView.boss.effects.snapshot(),
           bossPresentation:{hero:this.hero.debug(),combatFacing:this.battleFacing(),reaction:{visible:this.enemyView.boss.reaction.visible,text:this.enemyView.boss.reaction.text,root:[this.enemyView.boss.reaction.x,this.enemyView.boss.reaction.y]},camera:{view:{x:this.cameras.main.worldView.x,y:this.cameras.main.worldView.y},zoom:this.cameras.main.zoom}},
-          bossContacts:this.contactHistory.filter(c=>c.id.startsWith('boss-')),
+          bossContacts:this.contactHistory.filter(c=>c.id.includes('boss-')),
           bossProjectiles:this.enemyProjectiles.shots.filter(s=>s.attack.boss).map(s=>{const glyph=this.enemyView.shots.get(s.id);return {id:s.id,x:s.x,y:s.y,state:s.state,skill:s.attack.bossSkill,part:s.attack.bossPart,visual:glyph?{texture:glyph.texture.key,width:glyph.displayWidth,height:glyph.displayHeight,depth:glyph.depth}:null};}),
           wilderness:{active:this.enemies.filter(e=>encounterUnit(e.id)&&e.hp>0).length,south:regionalThreat(this.state.encounters,"south"),arrivals:[...this.wilderness?.arrivals.values()??[]],spawnDepth:this.enemyView.spawnInk.depth},
           enemies: this.enemies.map((e) => ({
@@ -657,7 +657,7 @@ export class World extends Phaser.Scene {
             y: e.y,
             hp: e.hp,
             type:e.type,
-            behavior:{passiveRoot:e.passiveRoot,shieldSource:e.fungalShield?.id,boss:e.boss,battle:e.bossBattle,attempt:e.bossAttempt,elite:e.elite,face:e.face,guardOpen:Math.max(0,(e.guardOpenUntil??0)-this.sim),attack:e.attack?{direction:e.attack.direction,startedAt:e.attack.startedAt,lockAt:e.attack.lockAt,contactAt:e.attack.contactAt,activeUntil:e.attack.activeUntil,recoveryUntil:e.attack.recoveryUntil,cancelled:e.attack.cancelled,skill:e.attack.bossSkill,part:e.attack.bossPart,area:e.attack.bossArea,geometry:e.attack.bossGeometry,shotAngles:e.attack.bossShotAngles??e.attack.shotAngles,bombAt:e.attack.bombAt,supportTarget:e.attack.supportTarget}:null,pose:this.enemyView.debug(e.sprite)?.pose},
+            behavior:{clone:e.bossClone,passiveRoot:e.passiveRoot,shieldSource:e.fungalShield?.id,boss:e.boss,battle:e.bossBattle,attempt:e.bossAttempt,elite:e.elite,face:e.face,guardOpen:Math.max(0,(e.guardOpenUntil??0)-this.sim),attack:e.attack?{direction:e.attack.direction,startedAt:e.attack.startedAt,lockAt:e.attack.lockAt,contactAt:e.attack.contactAt,activeUntil:e.attack.activeUntil,recoveryUntil:e.attack.recoveryUntil,cancelled:e.attack.cancelled,skill:e.attack.bossSkill,part:e.attack.bossPart,area:e.attack.bossArea,geometry:e.attack.bossGeometry,shotAngles:e.attack.bossShotAngles??e.attack.shotAngles,bombAt:e.attack.bombAt,supportTarget:e.attack.supportTarget}:null,pose:this.enemyView.debug(e.sprite)?.pose},
             ...(import.meta.env.DEV
               ? {
                   art:this.enemyView.debug(e.sprite),
@@ -717,7 +717,8 @@ export class World extends Phaser.Scene {
     if(this.state.life.playerSpace!=='village'){
       if(this.blocked(this.state.player.x,this.state.player.y)){Object.assign(this.state.player,nearestRoomStanding(this.state.life.playerSpace,this.state.player));this.ui.message('新增家具占用旧站位，已在同一房间修复落脚点。');}
       if(isCitySpace(this.state.xiaobao.space)&&spaceBlocked(this.state.xiaobao.space,this.state.xiaobao.x,this.state.xiaobao.y))Object.assign(this.state.xiaobao,nearestRoomStanding(this.state.xiaobao.space,this.state.xiaobao));
-    }else if (this.blocked(this.state.player.x, this.state.player.y)) {
+    // 新旅途尚未恢复实体；旧旅途的首领不能把导入站位误判为建筑占位。
+    }else if (motionBlocked(this.state.player.x, this.state.player.y)) {
       const savedRegion = regionAt(this.state.player).id;
       const safe = nearestStanding(
         this.state.player,
@@ -787,7 +788,7 @@ export class World extends Phaser.Scene {
     this.cityDefense=new CityDefense(()=>this.state.city,e=>{const body=this.enemies.find(b=>b.id===e.id);if(body)this.recordEnemyDefeat(body,'guard');},()=>{this.snapshotPending=true;});
     this.wilderness=new WildernessEncounters({
       suspended:()=>this.state.player.x>WIND_BELL_BOUNDS.right+1150,
-      reserved:()=>this.defense.enemies.filter(e=>e.hp>0&&!e.disabled).length+(this.tradeRoad?.pendingCount??0),
+      reserved:()=>this.enemies.filter(pendingEastClone).length+this.defense.enemies.filter(e=>e.hp>0&&!e.disabled).length+(this.tradeRoad?.pendingCount??0),
       bossReady:kind=>this.enemyView.boss.assets.ready(kind),
       checkpoint:()=>this.persist(true),
       enabled:d=>this.state.windMemory.active?ADVENTURE_ROUTES[this.state.windMemory.active.direction].includes(d.id):legacyEncounterEnabled(this.state,d.id),read:()=>this.combatEncounters,bodies:()=>this.enemies,
@@ -1218,7 +1219,7 @@ export class World extends Phaser.Scene {
   }
   clearBossEffects(id:string){
     const owned=(value:string|null|undefined)=>!!value&&(value===id||value.startsWith(id+":"));
-    for(const root of this.enemies.filter(e=>e.passiveRoot?.owner===id||e.bossSummon?.owner===id)){root.sprite.destroy();root.shadow.destroy();this.enemies=this.enemies.filter(e=>e!==root);}
+    for(const root of this.enemies.filter(e=>e.passiveRoot?.owner===id||e.bossSummon?.owner===id||e.bossClone?.owner===id)){if(root.bossClone)this.clearBossEffects(root.id);this.bossHazards.clear(root.id);this.enemyProjectiles.shots=this.enemyProjectiles.shots.filter(s=>s.attack.attackerId!==root.id);if(root.attack)root.attack.cancelled=true;root.hp=0;root.sprite.destroy();root.shadow.destroy();this.enemies=this.enemies.filter(e=>e!==root);}
 
     this.bossHazards.clear(id);this.enemyProjectiles.shots=this.enemyProjectiles.shots.filter(s=>s.attack.attackerId!==id);
     this.state.xiaobao.affected=this.state.xiaobao.affected.filter(e=>!owned(e.id));
@@ -1240,6 +1241,7 @@ export class World extends Phaser.Scene {
     this.state.xiaobao.affected=this.state.xiaobao.affected.filter(t=>t.id!==e.id);
     e.sprite.setVisible(false);e.shadow.setVisible(false);if(e.attack)e.attack.cancelled=true;
     if(e.passiveRoot?.owner.startsWith('event:')){const id=e.passiveRoot.owner.slice(6) as SouthEventId;this.state.southEvents[id]=0;this.ui.message(`${SOUTH_EVENTS[id].name}已完成，采集恢复；回村委托簿领取谢礼。`);this.defense.critical=true;return;}
+    if(e.bossClone){this.clearBossEffects(e.id);if(e.attack)e.attack.cancelled=true;this.defense.critical=true;return;}
     if(e.bossSummon){const owner=this.enemies.find(b=>b.id===e.bossSummon!.owner&&b.bossAttempt===e.bossSummon!.attempt);if(defeatBossSummon(owner,e.id,this.sim))this.ui.message('护猎已破，猎王失衡！');this.defense.critical=true;return;}
     if(e.passiveRoot){
       const tag=e.passiveRoot,boss=this.enemies.find(b=>b.id===tag.owner&&b.hp>0&&b.bossAttempt===tag.attempt),root=boss?.bossBattle?.roots?.[tag.index];

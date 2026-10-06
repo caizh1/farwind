@@ -1,6 +1,6 @@
 export type Faction = "village" | "hostile";
 export type UnitRef = { id: string; faction: Faction; hp: number; armor: number;
-  reduction?: number; flatReduction?:number; incomingScale?:number; hpFloor?:number; shield?: { amount: number; remaining: number } };
+  immune?:boolean;reduction?: number; flatReduction?:number; incomingScale?:number; hpFloor?:number; shield?: { amount: number; remaining: number } };
 export type DamageEvent = {
   sourceId: string; targetId: string; attackId: string; amount: number;
   sourceType: "player-replay" | "player-rune" | "player-phantom" | "player-melee" | "player-wind" | "guard-melee" | "tower-arrow" | "enemy-melee" | "enemy-shot" | "enemy-blast" | "companion-melee" | "companion-shot" | "companion-element";
@@ -28,7 +28,7 @@ export function resolveBlastDamage(event:DamageEvent,source:UnitRef,target:UnitR
 }
 function damage(event:DamageEvent,source:Pick<UnitRef,'id'|'faction'>,target:UnitRef,friendlyFire=false){
   if (event.sourceId !== source.id || event.targetId !== target.id ||
-    source.id === target.id || (!friendlyFire&&source.faction === target.faction) || target.hp <= 0 ||
+    source.id === target.id || (!friendlyFire&&source.faction === target.faction) || target.hp <= 0 || target.immune ||
     !event.attackId || !Number.isFinite(event.amount) || event.amount <= 0)
     return { applied: false, damage: 0, hp: target.hp, killed: false };
   let damage = Math.max(event.sourceType==='player-rune'||event.sourceType==='player-phantom'||event.sourceType==='player-replay'?0:1, event.amount*(Math.max(0,Math.min(1,event.sourceScale??1))) - target.armor) * (1 - Math.max(0, Math.min(.8, target.reduction ?? 0)));

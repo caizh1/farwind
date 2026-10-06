@@ -2,6 +2,8 @@ import {eastWalkStride} from './eastBossLocomotion';
 import type {AnimatedEnemy,EnemyPose} from './enemyAnimation';
 import type {EnemyAttack} from './enemyAttack';
 import {BOSS_RULES} from '../../data/maps/windbell/campBosses';
+import {createBossAttack,bossEngagementRange} from './campBossCombat';
+import {eastDuoCanStart} from './eastBossTierFive';
 
 export type EastPose={clip:string;time:number;direction:number;phase:string};
 const clamp=(v:number)=>Math.max(0,Math.min(1,v));
@@ -20,6 +22,49 @@ export function eastAttackTime(a:EnemyAttack,now:number,shift=false){
 export class EastBossAnimation{
  lastBody?:{x:number;y:number;faceX?:number;faceY?:number};aim={x:0,y:1};
  lastScythe:'left'|'right'='left';direction=0;lastNow=-Infinity;previous='idle';changedAt=0;turnUntil=0;turnClip='turn-right';walkAt=0;lastDistance=0;walkPhase=0;stopClip='stop';
+ // 只读预取：在副本上采样正式时钟与已选定连段，不选招、不推进真实战斗或步态。
+ forecast(body:AnimatedEnemy,a:EnemyAttack|null|undefined,now:number,base:EnemyPose,distance:number):EastPose[]{
+  const animation=Object.assign(new EastBossAnimation(),this),copy={...body,bossBattle:body.bossBattle?{...body.bossBattle}:undefined};
+  let attack=a&&!a.cancelled&&now<a.recoveryUntil?{...a}:undefined;
+  const times=new Set(Array.from({length:31},(_,i)=>i*500/30));
+  if(attack)for(const at of [attack.lockAt,attack.contactAt,attack.activeUntil,attack.recoveryUntil])if(at>=now&&at<=now+500)times.add(at-now);
+  const result:EastPose[]=[],speed=body.eastMotion?.speed??0,aim=this.aim,target={x:body.x+aim.x*1000,y:body.y+aim.y*1000};
+  for(const offset of [...times].sort((a,b)=>a-b)){
+   const at=now+offset,b=copy.bossBattle;
+   if(attack&&at>=attack.recoveryUntil){
+    const part=attack.bossPart??0;
+    if(b&&(attack.bossSkill===8&&part<7||attack.bossSkill===0&&part===0)){
+     b.move=attack.bossSkill!;b.part=part+1;
+     attack=createBossAttack({...copy,boss:'bound-branch'} as import('./enemy').EnemyBody,attack.recoveryUntil,target,b);
+    }else{
+     if(b&&!attack.cancelled){b.move=-1;b.lastSkill=attack.bossSkill;b.exposedUntil=Math.max(b.exposedUntil,at+500);}
+     attack=undefined;
+    }
+   }
+   if(!attack&&b&&(b.move===0||b.move>=7)&&base.action!=='walk'&&speed<.1&&at>=b.nextAt&&at>=b.entryUntil&&at>=b.transformUntil&&!a?.cancelled&&(body.hp??1)>0){
+    // 已排定但尚未开始的动作可以预取；没有排定动作时不猜测玩家或选招结果。
+    const enemy=copy as import('./enemy').EnemyBody,point=enemy.nav?.lastSeen??target;
+    const starts=Math.max(now,b.nextAt,...(enemy.eastPeers??[]).filter(p=>p!==body&&p.hp>0).map(p=>p.bossBattle?.eastMajorUntil??0));
+    if(at>=starts&&Math.hypot(point.x-body.x,point.y-body.y)<=bossEngagementRange('bound-branch',b)){
+     const pending=createBossAttack({...enemy,boss:'bound-branch'},starts,point,b);
+     if(eastDuoCanStart(enemy,b.move,at,pending.contactAt,pending.recoveryUntil))attack=pending;
+    }
+   }
+   const moving=!attack&&base.action==='walk';
+   copy.x=body.x+(moving?(body.face?.x??0)*speed*offset/1000:0);copy.y=body.y+(moving?(body.face?.y??1)*speed*offset/1000:0);
+   if(body.eastMotion){const turn=body.eastMotion.turn;copy.eastMotion={...body.eastMotion,turn:turn&&turn.elapsed+offset<200?{...turn,elapsed:turn.elapsed+offset}:undefined};if(turn&&turn.elapsed+offset>=200){const angle=(turn.from+turn.sign)*Math.PI/4;copy.face={x:Math.sin(angle),y:Math.cos(angle)};}}
+   result.push(animation.sample(copy,attack,at,{...base,elapsed:base.elapsed+offset},distance+(moving?speed*offset/1000:0)));
+  }
+  // 玩家变向和障碍停步不可预知；只预取当前支撑相附近的短入口，不装整套移动片段。
+  const transitions:EastPose[]=[];
+  if((!a||a.cancelled||now>=a.recoveryUntil)&&!body.parried&&(body.hp??1)>0&&['idle','start','walk','stop'].some(c=>this.previous===c||this.previous.startsWith(c+'-'))){
+   const add=(clip:string,times:number[])=>{for(const time of times)transitions.push({clip,time,direction:this.direction,phase:'移动预取'});};
+   add('start',[0,80]);
+   if(base.action==='walk')for(const delta of [-1,0,1]){const step=(Math.round(this.walkPhase*8)+delta+8)%8;add(step?'stop-'+step:'stop',[0,80]);}
+   else for(const sign of ['left','right'])for(const foot of ['left','right'])add('walk-turn-'+sign+'-'+foot,[0,50]);
+  }
+  return [...result.slice(0,7),...transitions,...result.slice(7)];
+ }
  sample(body:AnimatedEnemy,a:EnemyAttack|null|undefined,now:number,base:EnemyPose,distance:number):EastPose{
   if(now<this.lastNow){this.previous='idle';this.changedAt=now;this.turnUntil=0;this.walkAt=distance;this.lastBody=undefined;}
   this.lastNow=now;
@@ -41,7 +86,9 @@ export class EastBossAnimation{
   else if(live){
    const skill=a!.bossSkill??0;
    phase=now<a!.contactAt?'蓄力':now<a!.activeUntil?'出手':'收势';
-   if(skill===0){clip=(a!.bossPart?'cross-right':'cross-left')+(body.eastStepBlocked?'-planted':'');time=eastAttackTime(a!,now);}
+   if(skill===7){clip='summon';time=Math.max(0,now-a!.startedAt);}
+   else if(skill===8){if(!a!.bossPart&&now<a!.lockAt){clip='vine-enter';time=1200*clamp((now-a!.startedAt)/(a!.lockAt-a!.startedAt));}else if(a!.bossPart===7&&now>=a!.activeUntil){clip='vine-exit';time=900*clamp((now-a!.activeUntil)/(a!.recoveryUntil-a!.activeUntil));}else{clip=(a!.bossPart??0)%2?'vine-right':'vine-left';const actual=[a!.startedAt,a!.lockAt,a!.contactAt,a!.activeUntil,a!.recoveryUntil],source=[0,324,674,794,1000];time=1000;for(let i=1;i<actual.length;i++)if(now<actual[i]){time=source[i-1]+(source[i]-source[i-1])*clamp((now-actual[i-1])/Math.max(1,actual[i]-actual[i-1]));break;}}}
+   else if(skill===0){clip=(a!.bossPart?'cross-right':'cross-left')+(body.eastStepBlocked?'-planted':'');time=eastAttackTime(a!,now);}
    else if(skill===4){clip='shift';time=eastAttackTime(a!,now,true);}
    else{
     const name=({1:'needles',2:'roots',3:'cocoon',5:'ritual',6:'laser'} as Record<number,string>)[skill];
