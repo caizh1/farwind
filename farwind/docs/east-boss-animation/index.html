@@ -1,0 +1,28 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>缚枝祭主 · 动画接入检查</title>
+<style>body{margin:0;background:#14241d;color:#e1e8d9;font:16px system-ui}main{max-width:1100px;margin:auto;padding:24px}h1{font-size:25px}p{line-height:1.7;color:#b9cbbb}.controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:16px 0}button,select{font:inherit;padding:8px;background:#294137;color:inherit;border:1px solid #647866;border-radius:6px}#stage{width:100%;aspect-ratio:1100/650;background:#34483e}#stage canvas{max-width:100%}output{white-space:pre-wrap;display:block;font:13px/1.6 monospace}input{min-width:0;flex:1}</style>
+<main><h1>缚枝祭主 · 正式动画接入检查</h1><p>第四版模型直接渲染。此页检查真实图集播放、八方向与纹理预算；实战表现以东侧巢穴的游戏录像为准。</p><div class="controls"><label>动作 <select id="clip"></select></label><label>方向 <select id="direction"><option value="0">正面</option><option value="1">右前</option><option value="2">右侧</option><option value="3">右后</option><option value="4">背面</option><option value="5">左后</option><option value="6">左侧</option><option value="7">左前</option></select></label><label>速度 <select id="speed"><option value="1">正常</option><option value="0.25">四分之一</option></select></label><button id="pause">暂停</button><button id="combo">连续双镰</button></div><div id="stage"></div><output id="status">正在准备图集……</output></main>
+<script type="module">
+import Phaser from '/node_modules/phaser/dist/phaser.esm.js';
+import {EastBossAtlas} from '/src/game/entities/eastBossAtlas.ts';
+const definitions=await fetch('./source/clips.json').then(r=>r.json());
+const names=definitions.clips,clip=document.querySelector('#clip'),dir=document.querySelector('#direction'),speed=document.querySelector('#speed'),status=document.querySelector('#status');
+let elapsed=0,paused=false,combo=false;
+document.querySelector('#pause').onclick=e=>{paused=!paused;e.target.textContent=paused?'继续':'暂停'};
+document.querySelector('#combo').onclick=()=>{combo=true;elapsed=0};clip.onchange=()=>{elapsed=0;combo=false};
+class Preview extends Phaser.Scene{
+ async create(){
+  this.add.ellipse(550,550,180,40,0x10271b,.35);this.add.line(0,0,0,550,1100,550,0x87977e,.3).setOrigin(0);
+  this.sprite=this.add.sprite(550,550,'__WHITE');this.cacheArt=new EastBossAtlas(this);
+  try{await this.cacheArt.prepare(true);for(const name of Object.keys(this.cacheArt.manifest.clips)){const o=document.createElement('option');o.value=name;o.textContent=names[name].label;clip.append(o)}this.loaded=true;}catch(e){status.textContent=e.message;throw e}
+ }
+ update(now,dt){if(!this.loaded)return;if(!paused)elapsed+=Math.min(dt,100)*Number(speed.value);let name=clip.value,t=elapsed;
+  if(combo){t%=4200;if(t<1170)name='cross-left';else if(t<1330){name='cross-link';t-=1170}else if(t<2500){name='cross-right';t-=1330}else if(t<3700){name='exposed';t-=2500}else if(t<4000){name='recover';t-=3700}else{name='idle';t-=4000}}
+  else t%=this.cacheArt.manifest.clips[name].duration;
+  const p={clip:name,time:t,direction:Number(dir.value),phase:'检查'},f=this.cacheArt.sample(p);
+  if(f){const k=360/512;this.sprite.setTexture(f.key,f.id).setOrigin(f.frame.pivot[0]/f.frame.rect[2],f.frame.pivot[1]/f.frame.rect[3]).setScale(k);}
+  status.textContent=`${names[name].label} · ${Math.round(t)} 毫秒 · ${this.cacheArt.compressed?'原生压缩纹理':'PNG 兼容纹理'}\n驻留 ${(this.cacheArt.metrics.residentBytes/1048576).toFixed(1)} MiB ／ 峰值 ${(this.cacheArt.metrics.peakBytes/1048576).toFixed(1)} MiB ／ 当前${f?.late?'等待分包':'帧就绪'}\n${this.cacheArt.failure}`;
+  window.__eastBossPreview={pose:p,frame:f?.id,late:f?.late,metrics:{...this.cacheArt.metrics},compressed:this.cacheArt.compressed,failure:this.cacheArt.failure};
+ }
+}
+new Phaser.Game({type:Phaser.WEBGL,parent:'stage',width:1100,height:650,backgroundColor:'#34483e',render:{antialias:true},scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},scene:Preview,audio:{noAudio:true}});
+</script></html>
