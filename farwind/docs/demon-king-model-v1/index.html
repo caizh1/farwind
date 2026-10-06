@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>寂冠之王 · 建模审阅</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#171c21;color:#eae4d7;font-family:system-ui,-apple-system,"PingFang SC",sans-serif;line-height:1.65}main{max-width:1440px;margin:auto;padding:32px 24px 70px}h1{font-size:38px;line-height:1.2;margin:12px 0}h2{margin-top:38px;font-size:25px}.intro{color:#b9bebf;max-width:980px}.links,.controls,.status{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.status span{padding:5px 12px;border:1px solid #607066;border-radius:8px;color:#c2d5c8}.status .pending{border-color:#82704f;color:#dbc38b}a{color:#dac08b;text-decoration:none}a:hover{text-decoration:underline}.links{margin:22px 0}figure{margin:0;background:#e0d8c7;border-radius:12px;overflow:hidden;min-width:0}figure img{width:100%;height:auto;display:block}figcaption{padding:10px 16px;color:#4c4943;font-size:14px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.grid img{max-height:740px;object-fit:contain}.controls{margin:14px 0}button{border:1px solid #716650;background:#272c30;color:#e7d7b8;padding:9px 14px;border-radius:6px;font:inherit;cursor:pointer}button[aria-pressed=true]{background:#e0d8c7;color:#282b2d}.viewer{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.8fr);gap:20px}.viewer figure{background:#e0d8c7}.viewer.dark figure{background:#26323e}.viewer img{max-height:800px;object-fit:contain}.viewer p{color:#b9bebf}video{width:100%;display:block;background:#e0d8c7;border-radius:10px}details{margin-top:20px;padding:16px;background:#242a30;border-radius:10px}small{color:#b9bebf}footer{margin-top:40px;color:#b9bebf}button:focus-visible,a:focus-visible{outline:3px solid #dbc38b;outline-offset:4px}@media(max-width:760px){main{padding:22px 14px}h1{font-size:29px}.grid,.grid.three,.viewer{grid-template-columns:1fr}.controls button{flex:1 1 95px}}
+</style>
+<main>
+<div class="status"><span>离线建模工程</span><span id="engineering">工程检查：读取中</span><span class="pending">美术签收：待确认</span></div>
+<h1>寂冠之王</h1>
+<p class="intro">按已确认的黑焰版原画制作：七枚悬冠、无面、裂晶胸甲、缺刃王剑、三组前袍与侧背披袍。提供基础绑定、六秒黑焰待机与独立压力检查动作。下方模型画面由 Blender 工程直接渲染，源与交付副本另做像素一致性检查。</p>
+<nav class="links"><a href="source/demon-king-editable.blend">可编辑工程</a><a href="source/demon-king-delivery.blend">渲染交付工程</a><a href="README.md">使用说明</a><a href="FINAL-ACCEPTANCE.md">验收记录</a><a href="evidence/audit-source.json">源工程检查</a><a href="evidence/audit-delivery.json">交付检查</a></nav>
+<figure><img src="previews/comparison.png" alt="原画与模型同高度对照"><figcaption>同主体高度；右侧采用固定近正面机位。原画绘画透视与模型姿态存在差异，美术还原度单独审阅。</figcaption></figure>
+<h2>分件与无特效检查</h2>
+<figure><img loading="lazy" src="previews/model-board.png" alt="正面、无黑焰斜面、灰模与背面"><figcaption>关闭黑焰后核对甲片、长袍和实体背面，避免特效掩盖结构。</figcaption></figure>
+<h2>六秒待机与变形压力检查</h2>
+<div class="grid"><div><video controls loop muted playsinline preload="metadata" poster="previews/reference-pose.png" src="evidence/idle.mp4"></video><p>六秒待机：轻微悬浮、悬冠缓转、袍摆反向飘动与黑焰卷动。</p></div><div><video controls loop muted playsinline preload="metadata" src="evidence/pressure.mp4"></video><p>四秒压力序列：抬臂、弯肘、扭腰、迈步。关闭黑焰；这是变形检查动作。</p></div></div>
+<h2>八方向与深色背景</h2>
+<div class="controls" id="directions"></div>
+<div class="controls"><button id="background" aria-pressed="false">切换深色背景</button><a href="previews/directions.png">查看八方向总览</a></div>
+<div class="viewer" id="viewer"><figure><img id="direction-image" src="previews/game-0.png" alt="游戏机位方向一"></figure><div><h3>直接旋转模型渲染</h3><p>八个方向均为独立模型渲染，右手持剑关系一致。该角色存在不对称造型，后续导出应保留方向差异。</p><figure><img loading="lazy" src="previews/head-detail.png" alt="悬冠与无面细节"></figure></div></div>
+<h2>缩小与场景比例</h2>
+<div class="grid"><figure><img loading="lazy" src="previews/scale-256.png" alt="主体高度二百五十六像素"><figcaption>主体高度 256 像素。</figcaption></figure><figure><img loading="lazy" src="previews/scale-384.png" alt="主体高度三百八十四像素"><figcaption>主体高度 384 像素。</figcaption></figure></div>
+<figure style="margin-top:20px"><img loading="lazy" src="previews/scene-scale.png" alt="离线森林场景比例合成"><figcaption>历史游戏背景与角色素材的离线合成，仅用于比例和明暗检查。</figcaption></figure>
+<details><summary>阶段对照</summary><div class="grid three"><figure><img loading="lazy" src="previews/stage-a.png" alt="初始分件候选"><figcaption>初始候选：铜边偏亮，上身偏宽。</figcaption></figure><figure><img loading="lazy" src="previews/stage-b.png" alt="上身收窄与袍片调整"><figcaption>收窄上身、调整袍片后的中间候选。</figcaption></figure><figure><img loading="lazy" src="previews/grey-front.png" alt="当前工程灰模"><figcaption>当前工程的中性灰模检查。</figcaption></figure></div></details>
+<footer>本轮范围：角色建模、基础绑定、待机与离线验收。正式战斗动作、游戏接入及运行性能留待下一轮。</footer>
+</main>
+<script>
+const controls=document.querySelector('#directions');for(let i=0;i<8;i++){const b=document.createElement('button');b.textContent=`方向 ${i+1} · ${i*45}°`;b.setAttribute('aria-pressed',String(i===0));b.onclick=()=>{for(const other of controls.children)other.setAttribute('aria-pressed','false');b.setAttribute('aria-pressed','true');document.querySelector('#direction-image').src=`previews/game-${i}.png`;document.querySelector('#direction-image').alt=`游戏机位方向${i+1}`};controls.append(b)}
+document.querySelector('#background').onclick=function(){const dark=document.querySelector('#viewer').classList.toggle('dark');this.setAttribute('aria-pressed',String(dark));this.textContent=dark?'切换浅色背景':'切换深色背景'};
+Promise.all(['source','delivery'].map(x=>fetch(`evidence/audit-${x}.json`).then(r=>r.json()))).then(rs=>{document.querySelector('#engineering').textContent=rs.every(r=>r.结论==='通过')?'工程检查：通过':'工程检查：需修复'}).catch(()=>{document.querySelector('#engineering').textContent='工程检查：请打开验收记录'});
+</script></html>

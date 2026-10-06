@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>东侧首领 · 连续播放优化</title>
+<style>body{margin:0;background:#17271f;color:#e4e7dc;font:16px/1.7 system-ui,sans-serif}main{max-width:1440px;margin:auto;padding:24px}h1{margin:0 0 12px;font-size:28px}h2{font-size:20px;margin:12px 0}p{color:#b6cbbd}a{color:#c3e0ba}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}article{min-width:0}video,img{display:block;width:100%;border-radius:8px;background:#20382c}table{border-collapse:collapse;width:100%;margin:18px 0}td,th{padding:8px 12px;text-align:left;border-bottom:1px solid #405d49}@media(max-width:760px){.grid{grid-template-columns:1fr}main{padding:16px}td,th{padding:6px;font-size:14px}}</style>
+<main><h1>东侧首领 · 连续播放优化</h1><p>保持同一精修模型和战斗规则，优化开场、循环、换手与移动过渡的资源预取。对照是相同固定存档、相同场景和视口的真实战斗，包含载入界面；各视频可以独立播放，未伪装成逐帧同步对照。</p>
+<div class="grid"><article><h2>上一版 · PNG 双首领</h2><video aria-label="优化前双首领录像" controls muted preload="metadata" src="duo-png-before.mp4" poster="streaming-duo-before.png"></video></article><article><h2>优化后 · PNG 双首领</h2><video aria-label="优化后双首领录像" controls muted preload="metadata" src="duo-png-after.mp4" poster="streaming-direction-3.png"></video></article></div>
+<h2>独立环境完整回归结果</h2><table><thead><tr><th>指标</th><th>上一版</th><th>本轮</th></tr></thead><tbody><tr><td>PNG 双首领非关键回退帧次</td><td>118</td><td>2</td></tr><tr><td>关键出手缺帧</td><td>0</td><td>0</td></tr><tr><td>合计纹理上限</td><td>192 MiB</td><td>192 MiB</td></tr><tr><td>单体压缩／PNG 回退</td><td>9／20</td><td>0／0</td></tr></tbody></table>
+<p>双实体 PNG 回退减少约 98%，仍有少量非关键回退。数字来自整段游戏采样，视频原始采样为 25 帧，不能用录像重复帧冒充更高采样率。</p>
+<h2>优化后 · 四分之一慢放</h2><video aria-label="优化后双首领慢放" controls muted preload="metadata" src="duo-png-after-quarter.mp4"></video>
+<h2>真实背景与低闪光检查</h2><div class="grid"><article><h2>树林背景 · 方向三</h2><img alt="方向三的藤束与刺尖实战截图" src="streaming-direction-3.png"></article><article><h2>低闪光与简化特效</h2><img alt="低闪光下保留的藤刺和地面危险路径" src="streaming-simple.png"></article></div>
+<p><a href="index.html">查看 Blender 动作与建模对照</a>。本轮没有重新修改模型、图集比例或伤害，最终美术观感仍按实际试玩判断。</p></main></html>

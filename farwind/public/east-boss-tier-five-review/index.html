@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>东侧 Boss 第五档 · 实战验收</title>
+<style>
+body{margin:0;background:#172921;color:#eee7ce;font:16px/1.7 system-ui,sans-serif}
+main{max-width:1200px;margin:auto;padding:32px 22px}h1{font-size:30px;margin:0 0 10px}h2{font-size:22px;margin:28px 0 14px}
+p{color:#c0d1be}nav{display:flex;gap:12px;flex-wrap:wrap}a{color:#d6edb7}
+nav a{display:inline-flex;padding:9px 15px;background:#345240;border-radius:8px;text-decoration:none}
+section{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:22px}
+article{min-width:0;padding:15px;border:1px solid #536348;border-radius:12px;background:#21372b}
+video,img{display:block;max-width:100%;width:100%;border-radius:6px}small{color:#aac09c}h3{margin:0 0 10px}ul{padding-left:20px}
+</style>
+<main>
+<h1>东侧 Boss 第五档：同源分身与八连藤刺</h1>
+<p>仅风忆第五档及以上解锁。首次清剿及第一至四档保留原七招。本页展示交付工程直接渲染与真实游戏录像，没有生成视频补帧。</p>
+<nav><a href="/" target="_blank">打开游戏 · 5173</a><a href="#combat">查看真实战斗</a><a href="#animation">查看动作与慢放</a></nav>
+<h2 id="combat">真实东侧巢穴</h2>
+<section>
+<article><h3>双 Boss 错峰战斗</h3><video controls preload="metadata" poster="duo-png-restored.png" src="duo-combat-gameplay.mp4"></video><p>独立生命与阶段，共用纹理缓存。顶部血条为本体。</p></article>
+<article><h3>八次基础风步</h3><video controls preload="metadata" poster="vine-warning.png" src="vine-gameplay.mp4"></video><p>满体力，无减耗和体力恢复风赐，八次风步均执行。</p></article>
+<article><h3>藤蔓长成分身</h3><video controls preload="metadata" poster="summon-growth.png" src="summon-gameplay.mp4"></video><p>召唤期间免伤，分身具有完整独立生命，生长点固定。</p></article>
+<article><h3>黑洞中召唤</h3><video controls preload="metadata" poster="black-hole-summon.png" src="black-hole-summon-gameplay.mp4"></video><p>本体仍受黑洞牵引，生长点不会跟随滑动。</p></article>
+<article><h3>实战四分之一慢放</h3><video controls preload="metadata" poster="vine-warning.png" src="vine-gameplay-quarter.mp4"></video><p>检查伸长、锁向、风步与实际接触。</p></article>
+<article><h3>双实体实际截图</h3><img alt="缚枝祭主和独立缚枝分身在东侧巢穴" src="duo-png-restored.png"><p>PNG 兼容路径也通过保存刷新检查。</p></article>
+</section>
+<h2 id="animation">Blender 新动作</h2>
+<section>
+<article><h3>关闭攻击特效 · 正常速度</h3><video controls preload="metadata" src="animation-normal.mp4"></video><p>召唤、聚藤、左右出臂与退出；八方向从模型直接渲染。</p></article>
+<article><h3>关闭攻击特效 · 四分之一慢放</h3><video controls preload="metadata" src="animation-quarter.mp4"></video><p>可编辑工程与母版均已交付。</p></article>
+</section>
+<h2>八个真实方向</h2><img alt="左臂藤刺八方向直接渲染检查图" src="vine-directions.png">
+<h2>验收结论</h2>
+<ul>
+<li>相关单元检查三百五十三项、透明边缘三项、真实浏览器二十六项已通过，类型检查及构建通过。</li>
+<li>双 Boss 合计纹理峰值小于一百九十二 MiB；关键出手缺帧零、失败页零。压缩持续战斗帧时间 P95 约十六点七毫秒。</li>
+<li>P0/P1 审查结论：PASS。全量旧基线仍有十一项已复现的失败，没有宣称全量回归全绿。</li>
+<li>低端设备、公网下载、高档长期平衡尚未验证；动画完成度仍以实际试玩判断。</li>
+</ul>
+<small>玩家旅途存档未导入验收样本，旧模型、图集和工程保留。</small>
+</main>
+</html>
