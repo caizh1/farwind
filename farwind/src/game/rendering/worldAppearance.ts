@@ -30,7 +30,7 @@ export function makeGroundAppearance(scene: Phaser.Scene) {
     decor.push({x,y,width:32+seed%20,height:20+seed%10,texture:`quality-${ART_QUALITY.decorations[seed%3]}`,flip:!!(seed%2)});
   }
   const image=(key:string)=>scene.textures.get(key).getSourceImage() as HTMLImageElement;
-  const bake=(c:CanvasRenderingContext2D,cx:number,cy:number)=>{
+  const bake=function*(c:CanvasRenderingContext2D,cx:number,cy:number):Generator<void,void,unknown>{
     for(const logical of staticProps){
       const p=logical.displayAt?{...logical,...logical.displayAt}:logical;
       const base=scene.textures.get(appearanceFor(p).texture),frame=base.get(p.frame??'__BASE'),a=appearanceFor(p,{width:frame.cutWidth,height:frame.cutHeight});
@@ -45,6 +45,8 @@ export function makeGroundAppearance(scene: Phaser.Scene) {
         const contact=c.createRadialGradient(0,0,0,0,0,rx);contact.addColorStop(0,'#14271d80');contact.addColorStop(.4,'#14271d50');contact.addColorStop(1,'#14271d00');
         c.fillStyle=contact;c.fillRect(-rx,-rx,rx*2,rx*2);c.restore();
       }
+      c.getImageData(0,0,1,1);
+      yield;
       if(lowPlantTexture(a.texture))continue;
       // 与动态场景物件一致，只烘焙脚根柔影，不把整张立面贴图投到地上。
     }
@@ -52,6 +54,8 @@ export function makeGroundAppearance(scene: Phaser.Scene) {
       if(d.x+d.width/2+8<cx||d.x-d.width/2-8>cx+600||d.y+8<cy||d.y-d.height-8>cy+550)continue;
       c.save();c.translate(d.x,d.y);if(d.flip)c.scale(-1,1);paintContact(c,contactForFrame(scene,d.texture),d.width,d.height,true);c.restore();
       c.save();c.translate(d.x,d.y);if(d.flip)c.scale(-1,1);c.drawImage(image(d.texture),-d.width/2,-d.height,d.width,d.height);c.restore();
+      c.getImageData(0,0,1,1);
+      yield;
     }
     // 连贯的大色块比逐像素噪声更接近手绘；全局坐标让跨块与刷新保持相同。
   };

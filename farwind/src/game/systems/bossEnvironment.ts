@@ -1,3 +1,4 @@
+import {memoryHealth,memoryStrength} from '../../data/windMemoryDifficulty';
 import {activeHostileCount} from './combatUnitBudget';
 import type {World} from '../scenes/World';
 import {clearMotionLine,motionBlocked} from './obstacles';
@@ -39,13 +40,13 @@ export function updateBossEnvironment(w:World){
     b.summons=(b.summons??[]).filter(s=>s.hp>0);b.summoned??=0;
     const points=Array.from({length:24},(_,i)=>({x:boss.x+Math.cos(i*Math.PI/12)*200,y:boss.y+Math.sin(i*Math.PI/12)*200}));
     for(const p of points){if(b.summons.length>=2||b.summoned>=4)break;if(motionBlocked(p.x,p.y)||!clearMotionLine(boss,p)||Math.hypot(p.x-w.state.player.x,p.y-w.state.player.y)<220||w.enemies.some(e=>e.hp>0&&Math.hypot(e.x-p.x,e.y-p.y)<65)||b.summons.some(e=>Math.hypot(e.x-p.x,e.y-p.y)<90))continue;
-      b.summons.push({id:`${boss.id}:护猎:${boss.bossAttempt??0}:${b.summoned++}`,...p,hp:58});
+      b.summons.push({id:`${boss.id}:护猎:${boss.bossAttempt??0}:${b.summoned++}`,...p,hp:memoryHealth(58,boss.memoryDifficulty)});
     }
    }
   }
   for(const [index,r] of (b.roots??[]).entries())if(r.kind==='sac'&&r.hp>0&&r.until!==undefined){
    const id=`${boss.id}:孢囊:${boss.bossAttempt??0}:${index}:${r.serial??0}`;
-   if(!w.bossHazards.hazards.some(h=>h.id===id)&&w.bossHazards.hazards.length<3)w.bossHazards.hazards.push({id,owner:boss.id,attempt:boss.bossAttempt??0,kind:'circle',point:{x:r.x,y:r.y},born:r.until-2500,activeAt:r.until,expires:r.until+250,radius:65,speed:0,damage:22,used:[],independent:true});
+   if(!w.bossHazards.hazards.some(h=>h.id===id)&&w.bossHazards.hazards.length<3)w.bossHazards.hazards.push({id,owner:boss.id,attempt:boss.bossAttempt??0,kind:'circle',point:{x:r.x,y:r.y},born:r.until-2500,activeAt:r.until,expires:r.until+250,radius:65,speed:0,damage:22*memoryStrength(boss.memoryDifficulty,true).damage,used:[],independent:true});
    if(w.sim>=r.until){r.hp=0;const body=w.enemies.find(e=>e.passiveRoot?.owner===boss.id&&e.passiveRoot.index===index);if(body){body.hp=0;body.sprite.setVisible(false);body.shadow.setVisible(false);}}
   }
   for(const saved of b.summons??[]){if(saved.hp<=0||w.enemies.some(e=>e.id===saved.id)||activeHostileCount(w)>=ENCOUNTER_LIMITS.active||w.enemies.filter(e=>e.hp>0&&(e.bossSummon||e.id.includes(':唤巢:'))).length>=2)continue;const e=w.makeEnemy({id:saved.id,type:'wolf',x:saved.x,y:saved.y});e.hp=saved.hp;e.bossSummon={owner:boss.id,attempt:boss.bossAttempt??0};w.enemies.push(e);}

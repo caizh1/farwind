@@ -1171,6 +1171,9 @@ kbd {
 .resident-tools[hidden] { display: none; }
 
 /* 传承操作与手记使用正常文档流，窄屏允许按钮换行。 */
+.dialog-panel.wind-lesson-panel {height:min(620px,calc(100dvh - 52px));}
+.wind-lesson-panel .dialog-text {flex:1;}
+.wind-lesson-panel .lesson-actions {flex-shrink:0;}
 .lesson-actions {display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;min-width:0;}
 .xiaobao-feedback {margin:0;padding:8px 10px;color:#ffe4a7;background:#243a30;border:1px solid #bc9d65;border-radius:7px;white-space:normal;overflow-wrap:anywhere;}
 .lesson-actions button {flex:1 1 145px;min-width:0;white-space:normal;}
@@ -1277,3 +1280,27 @@ kbd {
 
 /* 行商操作保持正常文档流，窄屏自动换行。 */
 .merchant-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;align-items:center;min-width:0}.merchant-actions button{flex:1 1 180px;min-width:0;white-space:normal}.panel #merchant-quantity{width:5em;max-width:100%;margin-left:8px}.panel #merchant-preview{overflow-wrap:anywhere}
+
+/* 风忆远征：数值卡片，细节默认收起。 */
+.panel.memory-panel {width:min(720px,94vw);min-width:0;padding:20px 26px;}
+.memory-panel h1 {font-size:30px;margin:8px 0 12px;}
+.memory-content {display:flex;flex-direction:column;gap:8px;}
+.memory-panel .memory-note,.memory-panel .memory-feedback {margin:0;font-size:14px;}
+.memory-routes {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;text-align:left;}
+.memory-routes article,.memory-current {min-width:0;padding:10px 14px;border:1px solid #a4bc95;border-radius:10px;background:#edf0df;display:flex;flex-direction:column;gap:6px;}
+.memory-panel h2 {margin:0;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.memory-panel small {font-size:12px;font-weight:normal;color:#617361;}
+.memory-power,.memory-heading {display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.memory-power {font-size:14px;}
+.memory-power b {color:#886435;}
+.memory-values {display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 12px;font-size:13px;}
+.memory-values b {text-align:right;overflow-wrap:anywhere;}
+.memory-panel summary {font-size:13px;cursor:pointer;color:#617361;}
+.memory-panel ol {padding-left:22px;font-size:13px;line-height:1.8;}
+.memory-panel button {margin:0;padding:6px 12px;font-size:14px;}
+.memory-current {text-align:left;}
+.memory-panel .memory-target {margin:0;font-size:16px;line-height:1.5;}
+.memory-stats {width:100%;border-collapse:collapse;margin:8px 0;font-size:13px;text-align:left;}
+.memory-stats td,.memory-stats th {padding:4px 6px;border-bottom:1px solid #a4bc9540;}
+.memory-other>.memory-routes {margin-top:10px;}
+@media(max-width:540px){.panel.memory-panel{padding:16px;}.memory-routes{grid-template-columns:minmax(0,1fr);}.memory-panel h1{font-size:26px;}}

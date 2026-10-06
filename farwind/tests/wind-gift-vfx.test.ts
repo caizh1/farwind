@@ -16,7 +16,7 @@ describe('完整风赐视觉与运行边界',()=>{
    for(const path of paths){expect(path.every(p=>p.every(Number.isFinite))).toBe(true);if(id==='returningBreath'){expect(Math.max(...path.map(p=>p[0]))-Math.min(...path.map(p=>p[0]))).toBeLessThan(36);expect(Math.max(...path.map(p=>p[1]))-Math.min(...path.map(p=>p[1]))).toBeLessThan(36);}else expect(path.every(p=>Math.hypot(p[0]-300,p[1]-140)<60)).toBe(true);}
   }
  });
- it('重做目录覆盖全部七十八项；旧六帧轮播不能进入演出，相邻时刻连续且重复渲染稳定',()=>{
+ it('编排覆盖全部基础风赐与共鸣；旧六帧轮播不能进入演出，相邻时刻连续且重复渲染稳定',()=>{
   expect(Object.keys(GIFT_CHOREOGRAPHY).sort()).toEqual([...Object.keys(WIND_GIFTS).filter(id=>id!=='blackHole'),...Object.keys(GIFT_RESONANCES)].sort());
   for(const id of Object.keys(GIFT_CHOREOGRAPHY) as Exclude<GiftVisualId,'blackHole'>[]){
    const art=WIND_GIFT_ART[id],f:RuneFx={id:1,visual:'gift:'+id,rune:'',point:{x:300,y:140},radius:art.size,born:0,life:art.life,direction:{x:1,y:0},end:{x:420,y:140}};
@@ -25,9 +25,9 @@ describe('完整风赐视觉与运行边界',()=>{
   }
   expect(giftEnvelope(0)).toBe(0);expect(giftEnvelope(1)).toBe(0);
  });
- it('六十二种风赐和十八组共鸣各有独立且可解析的纹样',()=>{
+ it('六十五种风赐和十八组共鸣各有独立且可解析的纹样',()=>{
   expect(Object.keys(WIND_GIFT_ART).sort()).toEqual([...Object.keys(WIND_GIFTS),...Object.keys(GIFT_RESONANCES)].sort());
-  expect(new Set(Object.keys(WIND_GIFT_ART).map(id=>giftGlyphSvg(id as GiftVisualId))).size).toBe(80);
+  expect(new Set(Object.keys(WIND_GIFT_ART).map(id=>giftGlyphSvg(id as GiftVisualId))).size).toBe(83);
   for(const art of Object.values(WIND_GIFT_ART)){expect(art.description).toMatch(/[\u4e00-\u9fff]/);expect(art.life).toBeGreaterThan(0);expect(GIFT_MATERIALS[art.motion]).toBeDefined();}
  });
  it('各动作从起势至消散都有有限坐标，降闪与简化模式有效，结束不残留',()=>{

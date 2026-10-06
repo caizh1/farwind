@@ -7,7 +7,7 @@ test('完整目录使用示例可播放、暂停、拖动，所有素材加载�
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400&&r.url().includes('/assets/'))errors.push(`素材响应异常：${r.status()} ${r.url()}`);});
  await page.emulateMedia({reducedMotion:'reduce'});await page.goto('/tools/wind-gift-demo.html');
  const choice=page.locator('#gift-visual-choice'),time=page.locator('#gift-demo-time');
- await expect(choice.locator('option')).toHaveCount(79);
+ await expect(choice.locator('option')).toHaveCount(Object.keys(GIFT_DEMOS).length);
  await expect(page.locator('#gift-visual-pause')).toHaveAttribute('aria-pressed','true');
  for(const id of Object.keys(GIFT_DEMOS) as GiftVisualId[]){
   await choice.selectOption(id);await expect(page.locator('#gift-demo-caption')).toHaveText(GIFT_DEMOS[id].result);await expect(page.locator('[data-demo-step="result"]')).toHaveAttribute('aria-current','step');

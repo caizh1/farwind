@@ -24,8 +24,8 @@ describe('新风赐完整目录、成长与旧存档兼容',()=>{
  it('范围余震只在真实中心播放一次，多个受击目标仍各自结算伤害',()=>{const a=arena(['aftershock']),parent=a.engine.parent('','wind_gift',{x:100,y:0});expect(a.gifts.area({x:100,y:0},100,parent,.2,'aftershock')).toBe(40);expect(a.hits).toHaveLength(2);expect(a.enemies.map(e=>e.hp)).toEqual([9980,9980]);expect(a.engine.effects.filter(f=>f.visual==='gift:aftershock')).toHaveLength(1);});
  it('美术只消费成立的命中，回血为零、取消I均不伪造特效',()=>{const a=arena(['drinkDew','echoWind','pierceCurtain']);a.begin(true);expect(a.engine.effects.some(f=>f.visual==='gift:echoWind')).toBe(false);a.land(a.begin());expect(a.engine.effects.some(f=>f.visual==='gift:drinkDew')).toBe(false);a.state.player.hp=50;a.advance(601);a.land(a.begin());expect(a.engine.effects.some(f=>f.visual==='gift:drinkDew')).toBe(true);});
  it('专属护盾与减速标记随实际状态到期与清场，不写入存档',()=>{const a=arena(['firstVeil','holdWind']);a.gifts.incoming(10);a.land(a.begin(true));expect(a.gifts.statusVisuals().map(s=>s.id)).toEqual(['firstVeil','holdWind']);a.advance(1501);expect(a.gifts.statusVisuals().map(s=>s.id)).toEqual(['firstVeil']);a.gifts.clear();expect(a.gifts.statusVisuals()).toEqual([]);expect(a.state.windGifts).not.toHaveProperty('visuals');});
- it('六十二种均有中文效果，四十八种新增、十八组共鸣；读档保留旧候选及凭据',()=>{
-  expect(Object.keys(WIND_GIFTS)).toHaveLength(62);expect(Object.keys(EXTRA_WIND_GIFTS)).toHaveLength(48);expect(Object.keys(GIFT_RESONANCES)).toHaveLength(18);
+ it('六十五种均有中文效果，五十一种扩展、十八组共鸣；读档保留旧候选及凭据',()=>{
+  expect(Object.keys(WIND_GIFTS)).toHaveLength(65);expect(Object.keys(EXTRA_WIND_GIFTS)).toHaveLength(51);expect(Object.keys(GIFT_RESONANCES)).toHaveLength(18);
   const s=initialState();s.windGifts.held=(Object.keys(WIND_GIFTS) as WindGiftId[]).map(id=>({id,level:id==='rapidFire'?3:4}));s.windGifts.receipts=['旧凭据'];s.windGifts.pending=[{receipt:'旧凭据',candidates:['blade','spring','armor']}];
   const saved=parseSave(JSON.stringify(s));expect(saved.windGifts).toEqual(s.windGifts);
   for(const id of Object.keys(WIND_GIFTS) as WindGiftId[])expect(giftEffect(id,4)).not.toMatch(/undefined|NaN|\{v\}/);

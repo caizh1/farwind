@@ -1,0 +1,2 @@
+import {defineConfig} from '@playwright/test';
+export default defineConfig({testDir:'../tests',testMatch:'east-boss-combat-enhancement.spec.ts',workers:1,retries:0,timeout:180000,use:{baseURL:'http://127.0.0.1:5368',headless:true,viewport:{width:1440,height:1000},video:{mode:'on',size:{width:1440,height:1000}},launchOptions:{args:['--enable-gpu','--use-gl=angle','--use-angle=metal']}},outputDir:'.east-boss-combat-local/browser-results',reporter:[['list']]});

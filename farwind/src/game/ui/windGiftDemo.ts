@@ -1,5 +1,11 @@
 import {giftEffect, WIND_GIFTS, GIFT_RESONANCES, type WindGiftId} from '../systems/windGifts';
 import type {GiftVisualId} from '../entities/windGiftArt';
+import {BLACK_HOLE,blackHoleConfig} from '../../data/blackHole';
+
+export const isBlackHoleDemo=(id:GiftVisualId)=>['blackHole','riftRadius','riftSuction','riftDuration'].includes(id);
+export function demoBlackHoleConfig(id:GiftVisualId,level=1,levels:Partial<Record<GiftVisualId,number>>={}){
+ return blackHoleConfig({held:(['riftRadius','riftSuction','riftDuration'] as const).map(gift=>({id:gift,level:gift===id?level:levels[gift]??0}))});
+}
 
 export type DemoAction = 'I' | 'J' | '终结' | 'K' | 'L' | '移动' | '药剂' | '受击' | '等待' | '小宝' | '清场';
 type Demo = {setup:string; actions:DemoAction[]; result:string; target:'hero'|'enemy'|'companion'|'path'; enemies:number; delay:number};
@@ -10,6 +16,9 @@ export const GIFT_DEMOS = {
  rapidFire:demo('长按I；未获得800毫秒，一级600、二级480、三级400毫秒',['I','I','I','I'],'三级封顶 · 恢复每秒2.50次基础节奏'),
  gale:demo('面对远处敌人',['I'],'剑风命中 · 远程伤害提高'),
  blackHole:demo('I施放有概率触发；此处展示触发成功的情况',['I'],'裂缝牵引普通敌人并持续伤害','enemy',3),
+ riftRadius:demo('已持有裂界·黑洞斩；展示I概率触发成功后的强化',['I'],'扩界生效 · 裂缝变大，伤害与吸收范围扩大，停留更久','enemy',3),
+ riftSuction:demo('已持有裂界·黑洞斩；外围敌人站在伤害范围之外',['I'],'吞星生效 · 远处敌人先被吸入，再持续受伤','enemy',3),
+ riftDuration:demo('已持有裂界·黑洞斩；展示I概率触发成功后的强化',['I'],'长夜生效 · 裂缝停留更久，持续吸收与伤害','enemy',3),
  shock:demo('完成连段，准备终结',['J','J','终结'],'终结命中 · 周围敌人受到冲击','enemy',3),
  chain:demo('目标身边还有两名敌人',['J'],'命中后附伤依次跳向另两名敌人','enemy',3),
  stride:demo('向右移动',['移动'],'脚下流风 · 移动更快','path'),
@@ -89,14 +98,14 @@ export const GIFT_DEMOS = {
 } satisfies Record<GiftVisualId,Demo>;
 
 export const DEMO_INTRO=850, DEMO_ACTION_TIME=760, DEMO_CONTACT=350;
-export function demoTimeline(id:GiftVisualId){
+export function demoTimeline(id:GiftVisualId,level=1,levels:Partial<Record<GiftVisualId,number>>={}){
  const plan=GIFT_DEMOS[id];
  const contact=DEMO_INTRO+(plan.actions.length-1)*DEMO_ACTION_TIME+DEMO_CONTACT;
  const effectAt=contact+plan.delay;
- return {contact,effectAt,total:Math.max(DEMO_INTRO+plan.actions.length*DEMO_ACTION_TIME,effectAt+ (id==='blackHole'?2400:1500))+1200};
+ return {contact,effectAt,total:Math.max(DEMO_INTRO+plan.actions.length*DEMO_ACTION_TIME,effectAt+(isBlackHoleDemo(id)?BLACK_HOLE.open+demoBlackHoleConfig(id,level,levels).hold+BLACK_HOLE.close:1500))+1200};
 }
-export function demoSample(id:GiftVisualId,age:number){
- const plan=GIFT_DEMOS[id],timeline=demoTimeline(id),elapsed=age-DEMO_INTRO,index=Math.floor(elapsed/DEMO_ACTION_TIME);
+export function demoSample(id:GiftVisualId,age:number,level=1,levels:Partial<Record<GiftVisualId,number>>={}){
+ const plan=GIFT_DEMOS[id],timeline=demoTimeline(id,level,levels),elapsed=age-DEMO_INTRO,index=Math.floor(elapsed/DEMO_ACTION_TIME);
  const action=index>=0&&index<plan.actions.length?plan.actions[index]:undefined;
  const local=action?elapsed-index*DEMO_ACTION_TIME:0;
  const phase=age<DEMO_INTRO?'prepare':age<timeline.effectAt?'action':'result';

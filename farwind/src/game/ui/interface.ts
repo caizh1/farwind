@@ -1,3 +1,4 @@
+import {windMemoryTracked} from '../systems/windMemory';
 import {roadTracked,roadQuestText} from '../systems/merchantRoadState';
 import {guardMemorialJournal} from './guardAftermath';
 import { showWorldAtlas } from './worldAtlas';
@@ -20,8 +21,8 @@ import {updateCampBossHud} from './campBossHud';
 import {southQuestObjective} from "../systems/fieldQuest";
 import {DEMON_KING,demonFormation,retaliationSummary} from '../../data/demonKing';
 import {demonMalice,demonKingSummary} from '../systems/demonKingState';
-import {WIND_NAMES,WIND_EFFECTS,WIND_LESSONS} from '../../data/windLessons';
-import {windLearningSource,windLessonStatus} from '../systems/skills';
+import {WIND_NAMES,WIND_EFFECTS} from '../../data/windLessons';
+import {windLearningSource,windLessonProgress} from '../systems/skills';
 import { showShop } from "./shop";
 import { showEquipment, type EquipmentViewSlot } from "./equipment";
 import { showBag, bagTrade } from "./bag";
@@ -611,10 +612,7 @@ export class Interface {
   }
   skillJournal(s:State){
     const skills=s.skills,stage=skills.swordWindStage;
-    const pending=WIND_LESSONS.find(l=>skills.completedLessons.includes(l.id)&&l.stage>stage);
-    const next=WIND_LESSONS.find(l=>l.stage>stage&&!skills.completedLessons.includes(l.id)&&skills.discoveredLessons.includes(l.id));
-    const records=WIND_LESSONS.filter(l=>skills.completedLessons.includes(l.id)).map(l=>`<li>${l.name} · ${l.source}${l.stage>stage?'（经历已保存，等待前置）':''}</li>`).join('');
-    return `<section class="skill-journal"><h2>旅人技艺</h2><h3>${WIND_NAMES[stage]}</h3><p>${WIND_EFFECTS[stage]}</p><p>学习来源：${windLearningSource(skills)}</p>${stage?`<p>连续发射间隔：${swordWindInterval(giftLevel(s.windGifts,'rapidFire'))}毫秒 · 疾风连发 ${giftLevel(s.windGifts,'rapidFire')}／3级；未获得800、一级600、二级480、三级400毫秒。教学试用固定800毫秒。</p>`:''}<p>永久近战：${skills.meleeFinisher?'四连终结':'三连（练习场教本可学四连）'}。J／左键即时连斩；I／中键独立剑风，按住连续施放；剑风可越过水面，实体障碍会截断。</p>${records?`<ul>${records}</ul>`:''}<p>${pending?windLessonStatus(skills,pending.id).replaceAll('\n','<br>'):next?`已发现的线索：${next.name} · ${next.hint}`:stage===5?'五段传承已掌握。能力永久保留，不占技法位置。':'尚未发现新的传承线索，可观察旅途中的教本与风敏装置。'}</p></section>`;
+    return `<section class="skill-journal"><h2>旅人技艺</h2><p>${windLessonProgress(skills).replaceAll('\n','<br>')}</p><h3>${WIND_NAMES[stage]}</h3><p>${WIND_EFFECTS[stage]}</p><p>学习来源：${windLearningSource(skills)}</p>${stage?`<p>连续发射间隔：${swordWindInterval(giftLevel(s.windGifts,'rapidFire'))}毫秒 · 疾风连发 ${giftLevel(s.windGifts,'rapidFire')}／3级；未获得800、一级600、二级480、三级400毫秒。教学试用固定800毫秒。</p>`:''}<p>永久近战：${skills.meleeFinisher?'四连终结':'三连（练习场教本可学四连）'}。J／左键即时连斩；I／中键独立剑风，按住连续施放；剑风可越过水面，实体障碍会截断。</p></section>`;
   }
   offerShop(id: ShopId) {
     const button = document.createElement("button");
@@ -762,8 +760,8 @@ export class Interface {
     this.root.querySelector("#day")!.textContent =
       `第 ${Math.floor(s.time / 1440) + 1} 日 · ${place}`;
     const tracked=legacyTracked(s),inCity=isCitySpace(s.life.playerSpace)||s.life.playerSpace==='village'&&s.player.x>9690;
-    const roadTask=roadTracked(s);
-    const objective=roadTask?roadQuestText(s)+(roadTask.name==='清剿裂牙巢穴'?' · 桥前密林北侧支路':' · '+roadTask.name):inCity?`风塔异响：${CITY_MAIN_HINTS[s.city.progress.main]}`:tracked?`${tracked.name}：${tracked.text}`:s.fieldQuests["south-supply"]==="active"?southQuestObjective(s):objectives[s.quest];
+    const roadTask=roadTracked(s),memoryTask=windMemoryTracked(s);
+    const objective=memoryTask?`${memoryTask.name}：${memoryTask.text}`:s.windMemory.active?.finished?'风忆远征已完成，Q 打开手记结束此次远征。':roadTask?roadQuestText(s)+(roadTask.name==='清剿裂牙巢穴'?' · 桥前密林北侧支路':' · '+roadTask.name):inCity?`风塔异响：${CITY_MAIN_HINTS[s.city.progress.main]}`:tracked?`${tracked.name}：${tracked.text}`:s.fieldQuests["south-supply"]==="active"?southQuestObjective(s):objectives[s.quest];
     this.root.querySelector("#objective")!.textContent = objective;
     this.root.querySelector("#objective-summary")!.textContent =
       `任务 · ${objective}`;

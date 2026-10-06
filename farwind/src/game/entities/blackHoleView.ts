@@ -23,15 +23,15 @@ export class BlackHoleView {
   for(const r of this.system.rifts){
    let layer=this.rifts.get(r.id);
    if(!layer){layer={core:this.scene.add.image(r.x,r.y-42,'black-hole-rift'),flow:this.scene.add.image(r.x,r.y,'black-hole-suction').setDepth(WORLD.top-880),dust:this.scene.add.graphics().setDepth(r.y+4)};this.rifts.set(r.id,layer);}
-   const age=Math.max(0,now-r.born),closeAt=BLACK_HOLE.open+BLACK_HOLE.hold;
+   const age=Math.max(0,now-r.born),closeAt=BLACK_HOLE.open+r.hold,scale=r.radius/BLACK_HOLE.radius;
    const frame=age<BLACK_HOLE.open?Math.min(3,Math.floor(age/BLACK_HOLE.open*4)):age<closeAt?4+Math.floor((age-BLACK_HOLE.open)/90)%8:12+Math.min(3,Math.floor((age-closeAt)/BLACK_HOLE.close*4));
-   const envelope=Math.min(1,age/BLACK_HOLE.open)*Math.max(0,Math.min(1,(BLACK_HOLE.open+BLACK_HOLE.hold+BLACK_HOLE.close-age)/BLACK_HOLE.close)),alpha=envelope*(lowFlash?.6:1);
-   layer.core.setFrame(frame).setPosition(r.x,r.y-42).setDisplaySize(180,240).setDepth(base+r.y+3).setAlpha(lowFlash?.8:1);
+   const envelope=Math.min(1,age/BLACK_HOLE.open)*Math.max(0,Math.min(1,(closeAt+BLACK_HOLE.close-age)/BLACK_HOLE.close)),alpha=envelope*(lowFlash?.6:1);
+   layer.core.setFrame(frame).setPosition(r.x,r.y-42*scale).setDisplaySize(180*scale,240*scale).setDepth(base+r.y+3).setAlpha(lowFlash?.8:1);
    layer.flow.setDepth(indoor?7503:WORLD.top-880);layer.dust.setDepth(base+r.y+4);
-   layer.flow.setFrame(Math.floor(age/80)%8).setDisplaySize(410,410).setAlpha(alpha*.52);
+   layer.flow.setFrame(Math.floor(age/80)%8).setDisplaySize(410*r.pullRadius/BLACK_HOLE.radius,410*r.pullRadius/BLACK_HOLE.radius).setAlpha(alpha*.52);
    layer.dust.clear();
    for(let i=0;i<(simple?6:14);i++){
-    const u=(age/680+i/14)%1,angle=i*2.399+u*.85+age/2400,radius=BLACK_HOLE.radius*(1-u);
+    const u=(age/680+i/14)%1,angle=i*2.399+u*.85+age/2400,radius=r.pullRadius*(1-u);
     const x=r.x+Math.cos(angle)*radius,y=r.y+Math.sin(angle)*radius;
     const tail=radius+9,tailAngle=angle-.08,a=alpha*Math.sin(Math.PI*u);
     layer.dust.lineStyle(1.2,0xeee4ff,a*.8).lineBetween(x,y,r.x+Math.cos(tailAngle)*tail,r.y+Math.sin(tailAngle)*tail);

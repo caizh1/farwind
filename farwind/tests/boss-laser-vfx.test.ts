@@ -1,6 +1,6 @@
 import {describe,it,expect} from 'vitest';
 import {BossLaserVfx} from '../src/game/entities/bossLaserVfx';
-import {BOSS_LASER} from '../src/game/systems/bossLaser';
+import {BOSS_LASER,LASER_ETCH,LASER_ECHO,LASER_DURATION} from '../src/game/systems/bossLaser';
 import {shiftBossHazard,type BossHazard} from '../src/game/systems/campBossState';
 
 function renderer(){
@@ -28,5 +28,15 @@ describe('赤环美术素材生命周期',()=>{
   const r=renderer(),poses=[];for(const age of [0,15,25,37,50,65,90,110,145,190,240,290]){r.draw(r.h,4000+age);poses.push(r.vfx.snapshot().bursts.find(v=>v.site===0)!);}
   expect(poses.map(v=>v.frame)).toEqual(Array.from({length:12},(_,i)=>i));expect(poses.every(v=>v.point.x===poses[0].point.x&&v.point.y===poses[0].point.y)).toBe(true);expect(new Set(poses.map(v=>v.phase))).toEqual(new Set(['起爆','升腾','消散']));
   const frame=r.draw(r.h,4200),flames=frame.素材.filter(v=>v.setTexture[1].startsWith('burst-'));expect(flames.every(v=>v.setRotation[0]===0)).toBe(true);expect(new Set(flames.map(v=>v.setTexture[1])).size).toBeGreaterThan(2);expect(frame.地面.some(v=>v[0]==='fillEllipse')).toBe(true);
+ });
+});
+
+// 三环必须完整绘制，不能以对象池上限静默裁掉外圈。
+describe('三环特效预算',()=>{
+ it('整招三圈都有刻线和爆裂，峰值不超过六十四对象',()=>{
+  const r=renderer();r.h.radius=360;r.h.expires=1200+LASER_DURATION;r.h.laser={count:8,angle:0,version:2,radii:[140,250,360],rayHits:{},centerLocked:true};
+  for(let t=0;t<r.h.expires+500;t+=10){r.draw(r.h,t);expect(r.vfx.snapshot().visible).toBeLessThanOrEqual(64);}
+  for(const time of [1200+LASER_ETCH+1400,1200+LASER_ECHO+300]){const frame=r.draw(r.h,time);for(const radius of [140,250,360])expect(frame.素材.some(v=>Math.abs(Math.hypot(v.setPosition[0]-300,v.setPosition[1]-400)-radius)<1)).toBe(true);}
+  expect(r.images.length).toBeLessThanOrEqual(64);
  });
 });

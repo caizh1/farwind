@@ -18,9 +18,10 @@ import {BossMotion} from '../systems/bossMotion';
 import {BossRig} from './bossRig';
 import {isBossLaser} from '../systems/bossLaser';
 import {isWolfClaw,wolfClawView} from '../systems/wolfClaw';
+import {EastBossAnimation,type EastPose} from '../systems/eastBossAnimation';
 
 export class CampBossView{
-  entries=new WeakMap<Phaser.GameObjects.Sprite,{motion:SlimeAnimation;continuous:BossMotion;rig?:BossRig;pose?:EnemyPose;parry:BossParryPose|null}>();
+  entries=new WeakMap<Phaser.GameObjects.Sprite,{motion:SlimeAnimation;continuous:BossMotion;rig?:BossRig;pose?:EnemyPose;parry:BossParryPose|null;east?:EastBossAnimation;eastPose?:EastPose;late?:boolean}>();
   rigs=new Set<BossRig>();
   ink:Phaser.GameObjects.Graphics;
   warningFill:Phaser.GameObjects.Graphics;
@@ -38,6 +39,22 @@ export class CampBossView{
     const base=entry.motion.sample(body,attack,now);if(base.action==='idle'&&body.face)base.facing=entry.motion.facing=slimeFacing(body.face.x,body.face.y,base.facing);if(isWolfClaw(attack)&&!attack!.cancelled){const view=wolfClawView(attack!);base.facing=entry.motion.facing=view==='down'?0:view==='up'?1:attack!.direction.x<0?2:3;}if(isBossLaser(attack)&&!attack!.cancelled){base.facing=entry.motion.facing=0;}const direction=base.facing===0?0:base.facing===1?1:2;
     const arriving=(body.hp??0)>0&&!!body.bossBattle&&now<body.bossBattle.entryUntil,u=arriving?Math.max(0,Math.min(1,1-(body.bossBattle!.entryUntil-now)/BOSS_RULES.appearance)):1;
     const parry=sampleBossParry(body,now);entry.parry=parry;
+    if(kind==='bound-branch'&&this.assets.east?.ready){
+      entry.east??=new EastBossAnimation();
+      const sampled=entry.east.sample(body,attack,now,base,entry.motion.distance),rendered=this.assets.east.sample(sampled);entry.eastPose=sampled;
+      const pose:EnemyPose={...base,phase:sampled.phase,provisional:!rendered||rendered.late};entry.pose=pose;entry.late=rendered?.late;
+      entry.rig?.setVisible(false);
+      if(rendered){
+        const f=rendered.frame,k=d.height/512,alpha=base.action==='death'?Math.max(0,1-Math.max(0,base.elapsed-1200)/500):arriving?Math.min(1,u/.55):1;
+        sprite.setTexture(rendered.key,rendered.id).setOrigin(f.pivot[0]/f.rect[2],f.pivot[1]/f.rect[3]).setScale(k).setPosition(body.x,body.y).setDepth(body.y).setRotation(0).setAlpha(alpha).setVisible(alpha>0).clearTint();Actor.mirror(sprite,false);
+        const sockets=Object.fromEntries(Object.entries(f.sockets).map(([name,p])=>[name,{x:body.x+(p[0]-f.pivot[0])*k,y:body.y+(p[1]-f.pivot[1])*k}]));
+        if(new URLSearchParams(location.search).get('eastBossEffects')!=='off')this.effects.draw(body,attack,now,parry,undefined,sockets);
+      }
+      if(arriving)this.arrivalEffect(kind,body,u);
+      if(body.bossBattle?.phase===2&&(body.hp??0)>0)this.ink.lineStyle(2,d.color,.25+Math.sin(now/260)*.1).strokeEllipse(body.x,body.y-3,64,23);
+      if(showBar&&(body.hp??0)>0&&!arriving){const x=body.x-35,y=body.y-d.height-14;this.ink.fillStyle(0x18372d,.95).fillRoundedRect(x-2,y-2,74,10,2).fillStyle(0xdbb47c).fillRect(x,y,70*(body.hp??0)/(body.maxHP??d.hp),6);}
+      return pose;
+    }
     let phase=base.phase,action:EnemyPose['action']=base.action;
     const dir=direction===0?'down':direction===1?'up':'right',frameName=`${dir}/idle`;
     if(arriving){phase='首领现身';action='idle';this.arrivalEffect(kind,body,u);}
@@ -55,7 +72,7 @@ export class CampBossView{
     }else sprite.setVisible(false);
     this.effects.draw(body,attack,now,parry,dir);
     if(body.bossBattle?.phase===2&&(body.hp??0)>0)this.ink.lineStyle(2,d.color,.25+Math.sin(now/260)*.1).strokeEllipse(body.x,body.y-3,64,23);
-    if(showBar&&(body.hp??0)>0&&!arriving){const x=body.x-35,y=body.y-d.height-14;this.ink.fillStyle(0x18372d,.95).fillRoundedRect(x-2,y-2,74,10,2).fillStyle(0xdbb47c).fillRect(x,y,70*(body.hp??0)/d.hp,6);}
+    if(showBar&&(body.hp??0)>0&&!arriving){const x=body.x-35,y=body.y-d.height-14;this.ink.fillStyle(0x18372d,.95).fillRoundedRect(x-2,y-2,74,10,2).fillStyle(0xdbb47c).fillRect(x,y,70*(body.hp??0)/(body.maxHP??d.hp),6);}
     return pose;
   }
   // 显形直接读取战斗时钟；暂停、保存、撤离和读档无需另一套动画计时器。
@@ -97,5 +114,5 @@ export class CampBossView{
   debugReaction(sprite:Phaser.GameObjects.Sprite){return this.entries.get(sprite)?.parry??null;}
   syncImpact(sprite:Phaser.GameObjects.Sprite){this.entries.get(sprite)?.rig?.syncImpact(sprite);}
   visible(sprite:Phaser.GameObjects.Sprite){return this.entries.get(sprite)?.rig?.mesh.visible??sprite.visible;}
-  debugMotion(sprite:Phaser.GameObjects.Sprite){const e=this.entries.get(sprite),rig=e?.rig;if(!rig)return null;const v=rig.mesh.vertices;return {mode:'连续关节网格',vertices:v.length/4,visible:rig.mesh.visible,pose:{...e!.continuous.current},clawTip:rig.clawTip?{...rig.clawTip}:null,points:[50,150,250,350,430].map(i=>[v[i*4],v[i*4+1]])};}
+  debugMotion(sprite:Phaser.GameObjects.Sprite){const e=this.entries.get(sprite),rig=e?.rig;if(e?.eastPose)return {mode:'八方向预渲染动画',pose:e.eastPose,late:e.late,compressed:this.assets.east.compressed,resources:{...this.assets.east.metrics},failure:this.assets.east.failure};if(!rig)return null;const v=rig.mesh.vertices;return {mode:'连续关节网格',vertices:v.length/4,visible:rig.mesh.visible,pose:{...e!.continuous.current},clawTip:rig.clawTip?{...rig.clawTip}:null,points:[50,150,250,350,430].map(i=>[v[i*4],v[i*4+1]])};}
 }

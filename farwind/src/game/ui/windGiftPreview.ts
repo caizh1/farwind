@@ -6,7 +6,8 @@ import {GIFT_MATERIAL_URL,clamp,smooth} from '../entities/windGiftChoreography';
 import {canvasInk,paintRuneFx} from '../entities/runeView';
 import {combatVisual,swordWindVisual,parryVisual,clipFor} from '../../data/animation';
 import {resolveStrike} from '../systems/combat';
-import {DEMO_INTRO,DEMO_ACTION_TIME,DEMO_CONTACT,demoSample,demoTimeline,demoEffect,type DemoAction} from './windGiftDemo';
+import {DEMO_INTRO,DEMO_ACTION_TIME,DEMO_CONTACT,demoSample,demoTimeline,demoEffect,isBlackHoleDemo,demoBlackHoleConfig,type DemoAction} from './windGiftDemo';
+import {BLACK_HOLE} from '../../data/blackHole';
 import {CHAIN_LIGHTNING} from '../entities/chainLightning';
 import {paintWindGiftStatus} from '../entities/windGiftMotion';
 
@@ -59,7 +60,7 @@ const companionIds=new Set<GiftVisualId>(['sharedHeart','protectCompanion','rela
 const healthIds=new Set<GiftVisualId>(['potion','spring','drinkDew','stopBleeding','lingeringGrace','springGrace','dewSpring','windBone','guardedReturn']);
 const staminaIds=new Set<GiftVisualId>(['breath','poise','longBreath','finalBreath','returningBreath','cyclicBreath','breathCycle','dualityFlow','thrift']);
 const shieldIds=new Set<GiftVisualId>(['firstVeil','lingeringGrace','springGrace','armoredVeil','protectCompanion','guardedReturn','dualityFlow']);
-const pullIds=new Set<GiftVisualId>(['curledWind','windHunt','blackHole']);
+const pullIds=new Set<GiftVisualId>(['curledWind','windHunt','blackHole','riftRadius','riftSuction','riftDuration']);
 
 function paintFireRhythm(g:CanvasRenderingContext2D,age:number,level:number){
  const current=Math.min(3,Math.max(0,level)),next=Math.min(3,current+1),elapsed=Math.max(0,age-DEMO_INTRO);
@@ -75,9 +76,9 @@ function paintFireRhythm(g:CanvasRenderingContext2D,age:number,level:number){
  });
  g.fillStyle='#e7dcc1';g.font='14px sans-serif';g.fillText('800 → 600 → 480 → 400毫秒 · 三级封顶 · 风律第三次另减30／60毫秒',28,347);g.restore();
 }
-export function paintGiftPreview(g:CanvasRenderingContext2D,id:GiftVisualId,age:number,simple=false,lowFlash=false,level=1){
+export function paintGiftPreview(g:CanvasRenderingContext2D,id:GiftVisualId,age:number,simple=false,lowFlash=false,level=1,levels:Partial<Record<GiftVisualId,number>>={}){
  if(id==='rapidFire'){paintFireRhythm(g,age,level);return demoSample(id,age);}
- const s=demoSample(id,age),x=heroX(s),y=258,art=WIND_GIFT_ART[id],color=GIFT_MATERIALS[art.motion].color;
+ const s=demoSample(id,age,level,levels),x=heroX(s),y=258,art=WIND_GIFT_ART[id],color=GIFT_MATERIALS[art.motion].color,blackHole=isBlackHoleDemo(id),rift=demoBlackHoleConfig(id,level,levels);
  const fxAge=age-s.effectAt,activated=fxAge>=0,benefit=smooth(fxAge/350),companion=companionIds.has(id);
  g.save();g.globalAlpha=1;
  const bg=g.createLinearGradient(0,0,0,360);bg.addColorStop(0,'#142f36');bg.addColorStop(1,'#38534b');g.fillStyle=bg;g.fillRect(0,0,900,360);
@@ -87,6 +88,7 @@ export function paintGiftPreview(g:CanvasRenderingContext2D,id:GiftVisualId,age:
  g.strokeStyle='#93ab8940';for(let i=0;i<22;i++){const px=100+i*33,py=293+(i*17%31);g.beginPath();g.moveTo(px,py);g.lineTo(px-3,py-5);g.moveTo(px,py);g.lineTo(px+4,py-7);g.stroke();}
  g.textAlign='left';g.font='13px sans-serif';g.fillStyle='#d7dbbf';g.fillText('演示场 · '+(companion?'主角与小宝':'主角与目标'),28,30);g.textAlign='right';g.fillStyle='#a5bab5';g.fillText('使用过程放慢展示',872,30);
  const positions=Array.from({length:s.plan.enemies},(_,i)=>({x:560+i*115,y:y}));
+ if(blackHole){positions[1].x=700;positions[2].x=560+Math.min(220,rift.pullRadius*.7-8);}
  if(id==='longEdge')positions[0].x=730;
  if(id==='broadWind'&&positions[1])positions[1]={x:575,y:y+47};
  if(id==='chain'){positions[1]={x:675,y:185};positions[2]={x:720,y:300};}
@@ -98,10 +100,11 @@ export function paintGiftPreview(g:CanvasRenderingContext2D,id:GiftVisualId,age:
  const hitAge=age-recentHit,hitPulse=hitAge<260?Math.sin(clamp(hitAge/260)*Math.PI):0;
  const damage=s.plan.actions.some(a=>['I','J','终结','小宝','清场'].includes(a))||id==='residualWind'||id==='residualTide';
  positions.forEach((p,i)=>{
-  if(pullIds.has(id)&&i>0&&activated){const center=positions[0];p.x+=(center.x-p.x)*smooth(fxAge/700)*.68;p.y+=(center.y-p.y)*smooth(fxAge/700)*.68;}
+  if(pullIds.has(id)&&i>0&&activated){const center=positions[0],inRange=!blackHole||Math.hypot(p.x-center.x,p.y-center.y)<=rift.pullRadius*.7,pull=!inRange?0:blackHole?smooth(Math.max(0,Math.min(fxAge-BLACK_HOLE.open,rift.hold))/1000)*.82:smooth(fxAge/700)*.68;p.x+=(center.x-p.x)*pull;p.y+=(center.y-p.y)*pull;}
   const dead=s.plan.actions.includes('清场')&&activated,fade=dead?Math.max(0,1-fxAge/500):1;
   const native=i===0||['pierceCurtain','oneLineArmy','broadWind','residualWind'].includes(id),effectContact=s.effectAt+(id==='chain'&&i>0?(i-1)*CHAIN_LIGHTNING.jumpDelay*1.8:0);
-  const derived=damage&&age>=effectContact&&(s.plan.target==='enemy'||s.plan.target==='path')&&(id!=='chain'||i>0),pulse=native?hitPulse:derived?Math.sin(clamp((age-effectContact)/260)*Math.PI):0;
+  const inDamageRange=!blackHole||fxAge>=BLACK_HOLE.open&&Math.hypot(p.x-positions[0].x,p.y-positions[0].y)<=rift.radius*.7;
+  const derived=damage&&age>=effectContact&&inDamageRange&&(s.plan.target==='enemy'||s.plan.target==='path')&&(id!=='chain'||i>0),pulse=native?hitPulse:derived?Math.sin(clamp((age-effectContact)/260)*Math.PI):0;
   shadow(g,p.x,p.y,25);sprite(g,'slime',0,p.x+pulse*9,p.y,fade,1+pulse*.13,1-pulse*.13);
   bar(g,p.x,p.y-99,dead?0:1-(native?hitCount*.12:0)-(derived?.2:0),'#df927c',dead?'已击败':id==='clearPath'?'远程目标（示意）':i===0?'目标':'附近敌人');
   if(activated&&['holdWind','delayedEdge','windHunt','returningTide','residualTide'].includes(id)){g.fillStyle='#b9ecdf';g.font='14px sans-serif';g.textAlign='center';g.fillText('减速',p.x,p.y+25);}
@@ -123,7 +126,7 @@ export function paintGiftPreview(g:CanvasRenderingContext2D,id:GiftVisualId,age:
  if(companion){const attack=s.action==='小宝',px=attack?360+smooth(s.local/260)*145:345,py=y+24;shadow(g,px,py,24);sprite(g,attack?'xiaobao-attack':'xiaobao',attack?Math.min(7,Math.floor(s.local/90)):0,px,py);g.fillStyle='#ecdec0';g.font='15px sans-serif';g.textAlign='center';g.fillText('小宝',px,py+28);if(s.plan.target==='companion'){bar(g,px,py-147,.6+(id==='guardedReturn'?.23*benefit:0),'#b8d69e','伙伴生命');if(activated){g.strokeStyle='#b9e3ed';g.lineWidth=3;g.strokeRect(px-45,py-151,90,13);}}}
  if(s.action==='药剂'&&s.local<600){g.fillStyle='#b7e7c0';g.font='18px sans-serif';g.textAlign='center';g.fillText('使用药剂',x+90,y-82);stamp(g,'icon-potion.png',0,96,x+78,y-125,38,38);}
  // 剑风从主角向目标飞行；近战特效出现在剑与目标接触的位置。
- if(s.action==='I'&&s.local>=220&&s.local<DEMO_CONTACT+100){const t=clamp((s.local-220)/(DEMO_CONTACT-220)),p=positions[['pierceCurtain','oneLineArmy'].includes(id)?positions.length-1:0];stamp(g,id==='blackHole'?'animation/black-hole-slash/flight.png':'animation/sword-wind/sword-wind-flight.png',Math.floor(s.local/60)%6,id==='blackHole'?256:128,x+68+(p.x-x-68)*t,y-70,125,id==='broadWind'?170:100,lowFlash?.5:.9);}
+ if(s.action==='I'&&s.local>=220&&s.local<DEMO_CONTACT+100){const t=clamp((s.local-220)/(DEMO_CONTACT-220)),p=positions[['pierceCurtain','oneLineArmy'].includes(id)?positions.length-1:0];stamp(g,blackHole?'animation/black-hole-slash/flight.png':'animation/sword-wind/sword-wind-flight.png',Math.floor(s.local/60)%6,blackHole?256:128,x+68+(p.x-x-68)*t,y-70,125,id==='broadWind'?170:100,lowFlash?.5:.9);}
  if(hitPulse>0&&!simple)stamp(g,'animation/sword-wind/sword-wind-hit.png',Math.min(5,Math.floor(hitAge/50)),128,positions[0].x,y-65,80,100,lowFlash?.35:.7);
  const ink=canvasInk(g);ink.giftMaterial=(material,px,py,width,height,alpha,rotation)=>{const image=imageFor(GIFT_MATERIAL_URL());if(!ready(image))return;g.save();g.globalAlpha=alpha;g.translate(px,py);g.rotate(rotation);g.drawImage(image,material%6*256,Math.floor(material/6)*256,256,256,-width/2,-height/2,width,height);g.restore();};
  const target=s.plan.target==='enemy'?positions[id==='oneLineArmy'?1:0]:s.plan.target==='companion'?{x:s.action==='小宝'?360+smooth(s.local/260)*145:345,y:y+24}:{x,y};
@@ -137,12 +140,19 @@ export function paintGiftPreview(g:CanvasRenderingContext2D,id:GiftVisualId,age:
    if(second)paintWindGiftFx(ink,{id:1,visual:'gift:relayEdge',rune:'',point:markedPoint,radius:34,born:0,life:320,giftPhase:'consume',direction:{x:1,y:0}},markAge/1.8,simple,lowFlash);
   }
  }
- if(activated&&id==='blackHole'&&fxAge<2200){const frame=fxAge<240?Math.floor(fxAge/60):fxAge<1680?4+Math.floor((fxAge-240)/90)%8:12+Math.min(3,Math.floor((fxAge-1680)/80));if(!simple)stamp(g,'animation/black-hole-slash/suction.png',Math.floor(fxAge/80)%8,256,point.x,y,250,160,lowFlash?.2:.4);stamp(g,'animation/black-hole-slash/rift.png',frame,256,point.x,y-70,120,200,lowFlash?.5:.8);}
+ if(activated&&blackHole&&fxAge<BLACK_HOLE.open+rift.hold+BLACK_HOLE.close){
+  const closeAt=BLACK_HOLE.open+rift.hold,scale=rift.radius/BLACK_HOLE.radius,pullScale=rift.pullRadius/BLACK_HOLE.radius;
+  const frame=fxAge<BLACK_HOLE.open?Math.floor(fxAge/60):fxAge<closeAt?4+Math.floor((fxAge-BLACK_HOLE.open)/90)%8:12+Math.min(3,Math.floor((fxAge-closeAt)/80));
+  const envelope=clamp(fxAge/BLACK_HOLE.open)*clamp((closeAt+BLACK_HOLE.close-fxAge)/BLACK_HOLE.close);
+  if(!simple)stamp(g,'animation/black-hole-slash/suction.png',Math.floor(fxAge/80)%8,256,point.x,y,250*pullScale,160*pullScale,envelope*(lowFlash?.2:.4));
+  stamp(g,'animation/black-hole-slash/rift.png',frame,256,point.x,y-70*scale,120*scale,200*scale,lowFlash?.5:.8);
+  g.fillStyle=color;g.font='14px sans-serif';g.textAlign='right';g.fillText(`伤害半径 ${Math.round(rift.radius)} · 吸收半径 ${Math.round(rift.pullRadius)} · 持续 ${(rift.hold/1000).toFixed(2)}秒`,872,54);
+ }
  else if(activated&&id==='chain'){
   const origin={x:positions[0].x,y:positions[0].y-45};
   for(let i=1;i<positions.length;i++){const p=positions[i],lead=(i-1)*CHAIN_LIGHTNING.jumpDelay;paintWindGiftFx(ink,{id:i,visual:'gift:chain',rune:'',point:{x:p.x,y:p.y-45},end:origin,radius:art.size,born:0,life:CHAIN_LIGHTNING.life+lead,lead},fxAge/1.8,simple,lowFlash);}
  }
- else if(activated&&id!=='blackHole'){
+ else if(activated&&!blackHole){
   const end=id==='drinkDew'||id==='returningBreath'?{x:positions[0].x,y:y-65}:undefined;
   paintWindGiftFx(ink,{id:0,visual:'gift:'+id,rune:'',point,radius:Math.min(art.size*1.1,100),born:0,life:art.life,direction:{x:1,y:0},end,giftPhase:['relayEdge','sideBySide','relayTogether'].includes(id)?'consume':'hit'},fxAge/1.8,simple,lowFlash);
   if(id==='riposte'||id==='riposteFormation'){g.save();g.translate(x+38,y-65);g.scale(1,.4);paintRuneFx(ink,{id:1,visual:'wind-gift-fan',rune:'',point:{x:0,y:0},radius:335,born:0,life:800,direction:{x:1,y:0}},fxAge/1.8,simple,lowFlash);g.restore();}
@@ -163,10 +173,10 @@ export function startGiftPreview(root:HTMLElement,simple=false,lowFlash=false,le
  const condition=document.createElement('p');condition.className='gift-demo-condition';canvas.before(condition);
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  let elapsed=0,last=0,frame=0,paused=reduced,stopped=false;const controller=new AbortController();
- const render=()=>{const id=select.value as GiftVisualId,s=paintGiftPreview(context,id,elapsed,simple,lowFlash,levels[id]??(id==='rapidFire'?0:1));range.max=String(s.total);range.value=String(elapsed);clock.textContent=`${(elapsed/1000).toFixed(1)} / ${(s.total/1000).toFixed(1)}秒`;caption.textContent=s.caption;canvas.setAttribute('aria-label',`${giftVisualName(id)}使用示例：${s.caption}`);root.querySelectorAll<HTMLElement>('[data-demo-step]').forEach(e=>{if(e.dataset.demoStep===s.phase)e.setAttribute('aria-current','step');else e.removeAttribute('aria-current');});};
- const draw=(now:number)=>{frame=0;if(stopped||!canvas.isConnected)return;if(!details.open||document.hidden||paused){last=0;return;}if(last)elapsed=(elapsed+Math.min(100,now-last))%demoTimeline(select.value as GiftVisualId).total;last=now;render();frame=requestAnimationFrame(draw);};
+ const render=()=>{const id=select.value as GiftVisualId,s=paintGiftPreview(context,id,elapsed,simple,lowFlash,levels[id]??(id==='rapidFire'?0:1),levels);range.max=String(s.total);range.value=String(elapsed);clock.textContent=`${(elapsed/1000).toFixed(1)} / ${(s.total/1000).toFixed(1)}秒`;caption.textContent=s.caption;canvas.setAttribute('aria-label',`${giftVisualName(id)}使用示例：${s.caption}`);root.querySelectorAll<HTMLElement>('[data-demo-step]').forEach(e=>{if(e.dataset.demoStep===s.phase)e.setAttribute('aria-current','step');else e.removeAttribute('aria-current');});};
+ const draw=(now:number)=>{frame=0;if(stopped||!canvas.isConnected)return;if(!details.open||document.hidden||paused){last=0;return;}const id=select.value as GiftVisualId;if(last)elapsed=(elapsed+Math.min(100,now-last))%demoTimeline(id,levels[id]??1,levels).total;last=now;render();frame=requestAnimationFrame(draw);};
  const schedule=()=>{cancelAnimationFrame(frame);frame=0;last=0;if(!stopped&&details.open&&!document.hidden&&!paused)frame=requestAnimationFrame(draw);};
- const update=()=>{const id=select.value as GiftVisualId,level=levels[id]??(id==='rapidFire'?0:1),plan=demoSample(id,0).plan;elapsed=reduced?demoTimeline(id).effectAt+300:0;title.textContent=`${giftVisualName(id)} · ${Object.hasOwn(GIFT_RESONANCES,id)?'共鸣效果':`${level}级效果`}`;condition.textContent=`触发条件：${plan.setup}`;title.nextElementSibling!.textContent=`操作：${plan.actions.map(a=>a==='I'?'I 剑风':a==='J'?'J 挥剑':a==='K'?'K 弹反':a==='L'?'L 风步':a==='小宝'?'小宝攻击':a==='清场'?'整场结束':a).join(' → ')}`;description.textContent=demoEffect(id,level);render();schedule();};
+ const update=()=>{const id=select.value as GiftVisualId,level=levels[id]??(id==='rapidFire'?0:1),plan=demoSample(id,0,level,levels).plan;elapsed=reduced?demoTimeline(id,level,levels).effectAt+300:0;title.textContent=`${giftVisualName(id)} · ${Object.hasOwn(GIFT_RESONANCES,id)?'共鸣效果':`${level}级效果`}`;condition.textContent=`触发条件：${plan.setup}`;title.nextElementSibling!.textContent=`操作：${plan.actions.map(a=>a==='I'?'I 剑风':a==='J'?'J 挥剑':a==='K'?'K 弹反':a==='L'?'L 风步':a==='小宝'?'小宝攻击':a==='清场'?'整场结束':a).join(' → ')}`;description.textContent=demoEffect(id,level);render();schedule();};
  select.addEventListener('change',update,{signal:controller.signal});replay.addEventListener('click',()=>{paused=reduced;pause.textContent=paused?'播放示例':'暂停';pause.setAttribute('aria-pressed',String(paused));update();},{signal:controller.signal});
  range.addEventListener('input',()=>{elapsed=Number(range.value);paused=true;pause.textContent='继续播放';pause.setAttribute('aria-pressed','true');render();schedule();},{signal:controller.signal});
  pause.textContent=paused?'播放示例':'暂停';pause.setAttribute('aria-pressed',String(paused));

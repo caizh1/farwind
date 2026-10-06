@@ -39,14 +39,17 @@ export function completeWindLesson(s:State,id:LessonId):State {
 }
 // 已完成事件的来源由手记读取，旧版继承不伪造导师或风道经历。
 export function windLearningSource(s:SkillState){return s.swordWindStage===0?'尚未学习':s.swordWindStage===1&&s.legacySwordWind&&!s.completedLessons.includes(LESSON_IDS[0])?'旧版正式学习继承':lessonById(LESSON_IDS[s.swordWindStage-1]).source;}
+// 完成数量与连续解锁阶段分别呈现；教本和手记共用下一步指引。
+export function windLessonProgress(s:SkillState){
+  const stage=s.swordWindStage,completed=WIND_LESSONS.filter(l=>s.completedLessons.includes(l.id));
+  const next=WIND_LESSONS.find(l=>l.stage>stage&&!s.completedLessons.includes(l.id));
+  const records=WIND_LESSONS.map(l=>`${l.stage}. ${l.name} · ${s.completedLessons.includes(l.id)?l.stage<=stage?'已完成 · 已解锁':'已完成 · 待解锁':l.stage<=stage?'旧版继承 · 已解锁':'未完成'}`).join('\n');
+  const pending=completed.filter(l=>l.stage>stage);
+  return `传承完成：${completed.length}/5\n能力已解锁：${stage?`第 ${stage} 段 · ${WIND_NAMES[stage]}`:'尚未学习'}${pending.length?`\n能力按顺序解锁，目前缺少第 ${next!.stage} 关「${next!.name}」。`:''}\n${next?`下一步：第 ${next.stage} 关「${next.name}」 · ${next.source}\n${next.hint}`:'五段传承已掌握。能力永久保留，不占技法位置。'}${pending.length?`\n补齐后会自动结算，无需重做已完成的传承：${pending.map(l=>l.name).join('、')}。`:''}\n\n${records}`;
+}
 // 记录机关经历不等于掌握对应本领；重读、结算与手记使用同一份前置说明。
 export function windLessonStatus(s:SkillState,id:LessonId){
   const lesson=lessonById(id),stage=s.swordWindStage;
-  const current=`当前本领：${WIND_NAMES[stage]}（${stage}/5）。`;
-  const missing=WIND_LESSONS.filter(l=>l.stage>stage&&l.stage<lesson.stage&&!s.completedLessons.includes(l.id));
-  if(s.completedLessons.includes(id)&&missing.length){
-    const next=missing[0];
-    return `经历已记录，但尚未掌握 ${WIND_NAMES[lesson.stage]}。\n${current}\n还需完成：${missing.map(l=>l.name).join('、')}。\n下一步：${next.source} · ${next.hint}\n补齐后会自动结算，无需重做${lesson.name}。`;
-  }
-  return `这段经历已经记录。${current}\n重复练习不再提升阶段。`;
+  const done=s.completedLessons.includes(id);
+  return `${lesson.name}：${done?lesson.stage>stage?`已完成并保存，尚未掌握 ${WIND_NAMES[lesson.stage]}，无需重做。`:'已完成并保存，本领已解锁。':'尚未完成。'}\n\n${windLessonProgress(s)}`;
 }

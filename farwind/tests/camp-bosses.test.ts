@@ -209,8 +209,8 @@ describe('首领攻击、阶段与控制抗性',()=>{
   const normal=body('spore-heart');normal.bossBattle!.move=2;normal.attack=createBossAttack(normal,0,{x:normal.x+70,y:normal.y},normal.bossBattle!);const normalEnd=normal.attack.recoveryUntil;updateEnemy(normal,{x:normal.x+70,y:normal.y},normalEnd,20);expect(normal.bossBattle!.exposedUntil).toBe(normalEnd+1400);
   normal.bossBattle!.move=3;normal.attack=createBossAttack(normal,3000,target,normal.bossBattle!);const end=normal.attack.recoveryUntil;updateEnemy(normal,target,end,20);expect(normal.bossBattle!.exposedUntil).toBe(end+1400);
  });
- it('护心茧正面减伤，重击或绕后可靠破茧，无通用常态护体',()=>{
-  const e=body('bound-branch'),front={x:e.x+80,y:e.y};expect(enemyProtection(e,front,0).reduction).toBe(0);e.bossBattle!.move=3;e.attack=createBossAttack(e,0,front,e.bossBattle!);expect(enemyProtection(e,front,1000).reduction).toBe(.8);expect(enemyProtection(e,{x:e.x-80,y:e.y},1000).reduction).toBe(0);expect(e.attack.cancelled).toBe(true);expect(e.bossBattle!.exposedUntil).toBe(2500);
+ it('护心茧正面减伤，绕后破茧但不中断施法，无通用常态护体',()=>{
+  const e=body('bound-branch'),front={x:e.x+80,y:e.y};expect(enemyProtection(e,front,0).reduction).toBe(0);e.bossBattle!.move=3;e.attack=createBossAttack(e,0,front,e.bossBattle!);expect(enemyProtection(e,front,1000).reduction).toBe(.8);expect(enemyProtection(e,{x:e.x-80,y:e.y},1000).reduction).toBe(0);expect(e.attack.cancelled).toBe(false);expect(e.staggerUntil).toBe(0);expect(e.bossBattle!.exposedUntil).toBe(2500);
  });
  it('首领冲锋撞真实障碍会失衡，没有精英穿石豁免',()=>{
   const e=body('crag-tusk');e.bossBattle!.move=0;const a=createBossAttack(e,0,{x:e.x+300,y:e.y},e.bossBattle!);a.locked=true;const x=e.x;advanceEnemyAttack(a,e,{x:x+300,y:e.y},a.activeUntil,{blocked:(px)=>px>x+100,clear:(_a,b)=>b.x<=x+100,melee:()=>true,wall:()=>true});expect(a.wallAt).toBeDefined();expect(e.x).toBeLessThanOrEqual(x+100);expect(a.cancelled).toBe(true);

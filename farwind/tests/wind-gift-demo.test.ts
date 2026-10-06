@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {GIFT_DEMOS,DEMO_INTRO,DEMO_ACTION_TIME,DEMO_CONTACT,demoSample,demoTimeline,demoEffect} from '../src/game/ui/windGiftDemo';
+import {GIFT_DEMOS,DEMO_INTRO,DEMO_ACTION_TIME,DEMO_CONTACT,demoSample,demoTimeline,demoEffect,demoBlackHoleConfig} from '../src/game/ui/windGiftDemo';
 import {WIND_GIFTS,GIFT_RESONANCES,giftEffect} from '../src/game/systems/windGifts';
 import type {GiftVisualId} from '../src/game/entities/windGiftArt';
 describe('风赐主角教学时间轴',()=>{
@@ -20,5 +20,12 @@ describe('风赐主角教学时间轴',()=>{
  });
  it('已获得等级与正式数值一致，共鸣沿用正式效果文字',()=>{
   expect(demoEffect('potion',4)).toBe(giftEffect('potion',4));expect(demoEffect('armor',25)).toContain('25%');expect(demoEffect('bladeDance')).toBe(GIFT_RESONANCES.bladeDance.effect);
+ });
+ it('黑洞示例读取当前等级与其他强化，长夜时间轴容纳完整开合与消散',()=>{
+  const levels={riftRadius:3,riftSuction:3,riftDuration:3};expect(demoBlackHoleConfig('blackHole',5,levels)).toEqual({radius:288,pullRadius:450,hold:5040});
+  expect(demoBlackHoleConfig('riftDuration',4,levels).hold).toBe(5640);
+  expect(demoTimeline('riftRadius',3).total-demoTimeline('blackHole').total).toBe(1800);
+  expect(demoEffect('riftRadius',3)).toContain('600毫秒');
+  expect(demoTimeline('riftDuration',4).total-demoTimeline('blackHole').total).toBe(2400);
  });
 });

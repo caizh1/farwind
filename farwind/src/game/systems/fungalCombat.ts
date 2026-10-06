@@ -1,5 +1,5 @@
 import type {EnemyBody} from './enemy';
-import {FUNGAL_BLAST_RADIUS,createEnemyAttack,delayEnemyAttack,geometryTouches,type EnemyContact,type AttackGeometry} from './enemyAttack';
+import {FUNGAL_BLAST_RADIUS,createEnemyAttack,ENEMY_ATTACK,delayEnemyAttack,geometryTouches,type EnemyContact,type AttackGeometry} from './enemyAttack';
 import {clearMeleeLine,type Point} from './obstacles';
 
 export const FUNGAL={channel:900,shieldTime:2400,cooldown:4800,range:340,reduction:.65,blastRadius:FUNGAL_BLAST_RADIUS,blastDamage:26,friendlyDamage:80,rootRadius:160} as const;
@@ -28,7 +28,7 @@ export function updateFungalPriest(e:EnemyBody,peers:readonly EnemyBody[],threat
   if(now<e.staggerUntil||now<e.cool||distance(e,threat)>600||!permit(e,targetId))return null;
   const ally=peers.filter(p=>validAlly(e,p)&&!p.fungalShield).sort((a,b)=>(e.combatTier?Number(!a.attack&&a.type!=='guardian')-Number(!b.attack&&b.type!=='guardian'):0)||distance(a,threat)-distance(b,threat)||a.id.localeCompare(b.id))[0];if(!ally)return null;
   const a=createEnemyAttack(e.id,e.attackSerial=(e.attackSerial??0)+1,e.type,now,e,ally,undefined,undefined,e.combatTier??0);
-  a.eventId=(e as EnemyBody&{eventId?:string}).eventId??null;e.lastAttackStarted=now;a.supportTarget=ally.id;e.attack=a;e.targetId=targetId;e.cool=now+FUNGAL.cooldown;e.windup=FUNGAL.channel;e.nav.path=[];return null;
+  a.eventId=(e as EnemyBody&{eventId?:string}).eventId??null;e.lastAttackStarted=now;a.supportTarget=ally.id;e.attack=a;e.targetId=targetId;e.cool=a.recoveryUntil+Math.max(0,FUNGAL.cooldown-FUNGAL.channel-ENEMY_ATTACK.priest.active-ENEMY_ATTACK.priest.recovery)/(a.memoryFrequency??1);e.windup=a.contactAt-now;e.nav.path=[];return null;
 }
 export function fungalShieldActive(e:Pick<EnemyBody,'fungalShield'|'x'|'y'>,now:number){
   const source=e.fungalShield,a=source?.attack;
@@ -42,11 +42,11 @@ export function takeFungalBlast(e:EnemyBody,now:number){
 }
 export function fungalBlastContact(blast:NonNullable<ReturnType<typeof takeFungalBlast>>,target:Point&{id:string}):EnemyContact|null{
   if(!geometryTouches(blast.geometry,target)||!clearMeleeLine(blast.point,target))return null;
-  const a={...blast.attack,attackId:`${blast.attack.attackId}:blast:${target.id}`,damage:FUNGAL.blastDamage,parryable:false,emitted:true,resolved:false,geometry:blast.geometry};
+  const a={...blast.attack,attackId:`${blast.attack.attackId}:blast:${target.id}`,damage:FUNGAL.blastDamage*(blast.attack.memoryDamageScale??1),parryable:false,emitted:true,resolved:false,geometry:blast.geometry};
   return {at:blast.at,attack:a,origin:blast.point,geometry:blast.geometry,blastId:blast.attack.attackId,targetId:target.id,sampledPoint:{x:target.x,y:target.y}};
 }
 // 范围攻击使用独立接触实例，但仍必须能追溯到本次实际引爆的唯一攻击。
 export function validFungalBlastContact(c:EnemyContact,source:EnemyBody,targetId:string){
   const a=source.attack,g=c.geometry;
-  return source.type==='bomber'&&source.hp>0&&!source.disabled&&!!a&&!a.cancelled&&a.detonated===true&&a.blastPoint?.x===c.origin.x&&a.blastPoint?.y===c.origin.y&&a.type==='bomber'&&c.attack.type==='bomber'&&a.bombAt===c.at&&c.blastId===a.attackId&&c.targetId===targetId&&c.attack.attackerId===source.id&&c.attack.attackId===`${a.attackId}:blast:${targetId}`&&c.attack.damage===FUNGAL.blastDamage&&!c.attack.parryable&&g?.kind==='circle'&&g.radius===FUNGAL.blastRadius&&g.a.x===c.origin.x&&g.a.y===c.origin.y&&g.b.x===c.origin.x&&g.b.y===c.origin.y;
+  return source.type==='bomber'&&source.hp>0&&!source.disabled&&!!a&&!a.cancelled&&a.detonated===true&&a.blastPoint?.x===c.origin.x&&a.blastPoint?.y===c.origin.y&&a.type==='bomber'&&c.attack.type==='bomber'&&a.bombAt===c.at&&c.blastId===a.attackId&&c.targetId===targetId&&c.attack.attackerId===source.id&&c.attack.attackId===`${a.attackId}:blast:${targetId}`&&c.attack.damage===FUNGAL.blastDamage*(a.memoryDamageScale??1)&&!c.attack.parryable&&g?.kind==='circle'&&g.radius===FUNGAL.blastRadius&&g.a.x===c.origin.x&&g.a.y===c.origin.y&&g.b.x===c.origin.x&&g.b.y===c.origin.y;
 }

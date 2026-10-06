@@ -1,5 +1,5 @@
 import type {EnemyAttack} from './enemyAttack';
-import {isBossLaser,LASER_ECHO} from './bossLaser';
+import {isBossLaser,laserHazard,laserSample} from './bossLaser';
 import type {WolfClawSkin,WolfClawPose} from './wolfClaw';
 import type {Point} from './obstacles';
 
@@ -20,7 +20,7 @@ export function deformBossFlex(skin:WolfClawSkin,p:Point,pose:WolfClawPose):Poin
 export function sampleBossFlex(a:EnemyAttack|null|undefined,now:number,arm:number):WolfClawPose{
  if(!isBossLaser(a)||a!.cancelled||now<a!.startedAt||now>=a!.recoveryUntil)return {shoulder:0,elbow:0};
  const attack=a!,smooth=(x:number)=>{const u=Math.max(0,Math.min(1,x));return u*u*(3-2*u);};
- const lower=attack.contactAt+LASER_ECHO,u=now<attack.contactAt?smooth((now-attack.startedAt)/(attack.contactAt-attack.startedAt)):now<lower?1:1-smooth((now-lower)/(attack.recoveryUntil-lower));
+ const lower=attack.contactAt+laserSample(laserHazard(attack),now).echo,u=now<attack.contactAt?smooth((now-attack.startedAt)/(attack.contactAt-attack.startedAt)):now<lower?1:1-smooth((now-lower)/(attack.recoveryUntil-lower));
  if(u===0)return {shoulder:0,elbow:0};
  return {shoulder:(arm===0?.7:-.7)*u,elbow:(arm===0?-3.4:3.9)*u};
 }

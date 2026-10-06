@@ -10,14 +10,14 @@ export const CAMP_BOSSES = {
   'crag-tusk': {phaseName:'断岩怒踏',name:'崩岩獠王',camp:'north-boar-camp',type:'boar',hp:2500,height:240,speed:62,color:0xe3ad76,
     skills:['裂地冲锋','半月甩角','三连震踏','环形震地','断岩筑阵','碎岩投掷'],lesson:'横移避开冲锋；真实撞墙会失衡；震地环可用风步穿越。'},
   'bound-branch': {phaseName:'双印仪式',name:'缚枝祭主',camp:'east-thorn-camp',type:'leaf',hp:2500,height:250,speed:68,color:0xa8d6bd,
-    skills:['十字镰斩','棘针齐射','缠根封路','护心结茧','移步换阵','缚枝仪式','赤环灭光'],lesson:'交叉斩分两段；赤光间隙可躲避，圆形灼痕会延迟追爆；破茧或收招时反击。'},
+    skills:['十字镰斩','棘针齐射','缠根封路','护心结茧','移步换阵','缚枝仪式','赤环灭光'],lesson:'交叉斩分两段；旋转赤光持续五秒，三圈灼痕延迟追爆；弹反可打断，破茧后仍须躲招。'},
 } as const satisfies Record<string,{phaseName:string;name:string;camp:string;type:EnemyKind;hp:number;height:number;speed:number;color:number;skills:readonly string[];lesson:string}>;
 export type CampBossKind=keyof typeof CAMP_BOSSES;
 export const BOSS_PHASE_HINTS:Record<CampBossKind,string>={
  'spore-heart':'拆除两处祭根削弱保护；双根全断，核心暴露两秒。',
  'thorn-crown':'三次扑猎分别锁向；击败两只护猎狼，使猎王失衡两秒。',
  'crag-tusk':'诱导冲锋撞墙或岩柱，破甲一点八秒；绕背攻击。',
- 'bound-branch':'根带中央留有通道；拆除两处祭印，中止仪式并露出风核。',
+ 'bound-branch':'根带中央留有通道；拆除两处祭印可露出风核，但仪式继续；站在三环间隙躲避追爆。',
 };
 // 实体弹丸采用亮色核心和深色边缘；两类弹丸用圆形与针形区分，色觉差异也能识别。
 export const BOSS_PROJECTILES={

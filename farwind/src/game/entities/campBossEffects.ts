@@ -7,7 +7,7 @@ import type {Point} from '../systems/obstacles';
 import {sampleBossParry,type BossParryPose} from '../systems/bossParry';
 import {WARNING} from './attackWarningView';
 import {wolfClawTip,wolfClawWave,isWolfClaw} from '../systems/wolfClaw';
-import {isBossLaser,laserSample,laserRays,laserPoint,laserHazard} from '../systems/bossLaser';
+import {isBossLaser,laserSample,laserRays,laserPoint,laserHazard,laserRadii} from '../systems/bossLaser';
 import {BossLaserVfx} from './bossLaserVfx';
 
 type Body=Point&{hp?:number;boss?:CampBossKind;bossBattle?:BossBattle;wallHit?:{at:number;until:number;direction?:Point};parried?:{at:number;until:number;direction:Point;perfect:boolean}};
@@ -99,28 +99,28 @@ export class CampBossEffects{
     const ink=this.groundInk,{stage,progress,start,angle}=laserSample(h,now),red=0xff303c,dark=0x391722;
     if(stage==='charge'){
       const alpha=.3+.5*unit((now-h.born)/(h.activeAt-h.born));
-      for(const g of laserRays(h)){if(g.radius<=0)continue;
+      for(const g of laserRays(h,now)){if(g.radius<=0)continue;
         ink.lineStyle(3,dark,.85);this.path(ink,[g.a,g.b]);ink.strokePath();
         for(let i=0;i<14;i++){const point=(u:number)=>({x:g.a.x+(g.b.x-g.a.x)*u,y:g.a.y+(g.b.y-g.a.y)*u});ink.lineStyle(2,red,alpha);this.path(ink,[point(i/14),point((i+.65)/14)]);ink.strokePath();}
       }
     }else if(stage!=='rays'&&stage!=='recover'){
       // 未扫过的圆周只有虚线预告；已经烧出的部分由透明地裂素材覆盖。
-      for(let i=0;i<48;i++){
+      for(const radius of laserRadii(h))for(let i=0;i<48;i++){
         if(stage==='etch'&&i/48<progress)continue;if(stage==='echo'||stage==='delay')break;
-        const a=start+i*Math.PI/24,p=laserPoint(h,a),q=laserPoint(h,a+.065);
+        const a=start+i*Math.PI/24,p=laserPoint(h,a,radius),q=laserPoint(h,a+.065,radius);
         ink.lineStyle(1.5,red,.3).lineBetween(p.x,p.y,q.x,q.y);
       }
     }
     this.laserVfx.ground(h,now,ink);
-    const name={charge:'赤环八向预警',rays:'八向红色激光',pause:'环形扫射预备',etch:'环形激光刻线',delay:'圆形灼痕蓄爆',echo:'二段贴地追爆',recover:'赤环消散'}[stage];
+    const name={charge:'赤环八向预警',rays:'八向旋转激光',pause:'环形扫射预备',etch:'三环激光刻线',delay:'三环灼痕蓄爆',echo:'二段贴地追爆',recover:'赤环消散'}[stage];
     this.record('bound-branch',h.id,name,stage==='charge'||stage==='pause'||stage==='delay'?'蓄力':'出手',h.point,h.radius,now-h.activeAt,{skill:6,direction:{x:Math.cos(angle),y:Math.sin(angle)},travel:progress*Math.PI*2*h.radius});
   }
-  draw(body:Body,a:EnemyAttack|null|undefined,now:number,parry:BossParryPose|null=sampleBossParry(body,now),view?:string){
+  draw(body:Body,a:EnemyAttack|null|undefined,now:number,parry:BossParryPose|null=sampleBossParry(body,now),view?:string,sockets?:Record<string,Point>){
     const kind=body.boss,b=body.bossBattle;if(!kind||(body.hp??0)<=0||b&&(now<b.entryUntil||now<b.transformUntil))return;
     const palette=PALETTE[kind],ink=this.strikeInk;
     if(kind==='crag-tusk'&&body.wallHit&&now<body.wallHit.at+620){const t=now-body.wallHit.at,d=body.wallHit.direction??{x:0,y:1},p={x:body.x+d.x*30,y:body.y+d.y*30};this.debris(p,48,t,kind);this.record(kind,'撞墙:'+body.wallHit.at,'撞墙碎石','消散',p,48,t);}
     if(kind==='bound-branch'&&b&&now<b.exposedUntil){
-      const p={x:body.x,y:body.y-CAMP_BOSSES[kind].height*.46},alpha=.65+Math.sin(now/100)*.15;this.glint(p,14,palette.core,alpha);ink.lineStyle(2,palette.edge,.55).strokeCircle(p.x,p.y,20);
+      const p=sockets?.core??{x:body.x,y:body.y-CAMP_BOSSES[kind].height*.46},alpha=.65+Math.sin(now/100)*.15;this.glint(p,14,palette.core,alpha);ink.lineStyle(2,palette.edge,.55).strokeCircle(p.x,p.y,20);
       this.record(kind,'风核:'+b.exposedUntil,'风核暴露','出手',p,20,Math.max(0,now-(b.exposedUntil-BOSS_RULES.exposed)));
       // 破茧已有可靠受击时钟；弹反也只显示短碎光，不复用伤害爆炸。
       if(!parry&&body.parried&&now-body.parried.at<620)this.debris({x:body.x,y:body.y-25},30,now-body.parried.at,kind,.8);
@@ -136,10 +136,21 @@ export class CampBossEffects{
     if(isWolfClaw(a)){this.wolfClaw(body,a,now,view??(Math.abs(a.direction.x)>.5?'right':a.direction.y>0?'down':'up'));return;}
     const pose=sampleEnemyAttack(a,now,body),t=now-a.contactAt,skill=a.bossSkill??0,d=a.direction,strong=b?.phase===2;
     if(t<0){
-      const u=unit((now-a.startedAt)/(a.contactAt-a.startedAt)),p={x:body.x+d.x*24,y:body.y-CAMP_BOSSES[kind].height*.35+d.y*12};
+      const u=unit((now-a.startedAt)/(a.contactAt-a.startedAt)),p=(sockets&&skill===0?sockets[a.bossPart?'right':'left']:sockets?.core)??{x:body.x+d.x*24,y:body.y-CAMP_BOSSES[kind].height*.35+d.y*12};
       this.glint(p,5+u*7,a.bossShotAngles?BOSS_PROJECTILES[kind as keyof typeof BOSS_PROJECTILES].core:palette.core,.25+u*.6);
       if(!a.bossArea)this.record(kind,a.attackId,'武器蓄光','蓄力',p,5+u*7,now-a.startedAt,{skill,direction:{...d}});
       return;
+    }
+    if(sockets&&skill===0){
+      // 镰尖亮点与短拖尾读取导出挂点；地面危险区仍读取正式扇区，不由刀光改变判定。
+      this.sweep(pose.geometry,t,a.activeUntil-a.contactAt,kind,a.bossPart??0,!!strong);
+      const tip=sockets[a.bossPart?'right':'left'],fade=now<a.activeUntil?1:unit((a.recoveryUntil-now)/(a.recoveryUntil-a.activeUntil));
+      const g=pose.geometry,u=unit(t/(a.activeUntil-a.contactAt)),head=.18+.82*unit(u*2.6),reverse=a.bossPart?-1:1,angle=Math.atan2(g.direction!.y,g.direction!.x)+reverse*(-g.halfAngle!+2*g.halfAngle!*head),edge={x:g.a.x+Math.cos(angle)*g.radius*.94,y:g.a.y+Math.sin(angle)*g.radius*.94};
+      // 扩大的镰斩有连接武器与外沿的刀气，不留下不可见的新增伤害区。
+      ink.lineStyle(10,palette.edge,fade*.16).lineBetween(tip.x,tip.y,edge.x,edge.y).lineStyle(2,palette.core,fade*.7).lineBetween(tip.x,tip.y,edge.x,edge.y);
+      const dx=tip.x-sockets.core.x,dy=tip.y-sockets.core.y,length=Math.hypot(dx,dy)||1;
+      ink.lineStyle(8,palette.edge,fade*.25).lineBetween(tip.x-dy/length*18,tip.y+dx/length*18,tip.x,tip.y).lineStyle(2,palette.core,fade).lineBetween(tip.x-dy/length*12,tip.y+dx/length*12,tip.x,tip.y);this.glint(tip,4,palette.core,fade);
+      this.record(kind,a.attackId,'真实镰尖刀光',pose.phase==='recovery'?'消散':'出手',tip,8,t,{skill,direction:{...d}});return;
     }
     if(a.bossCocoon){
       const p={x:body.x,y:body.y-CAMP_BOSSES[kind].height*.38},u=unit(t/240),alpha=now<a.activeUntil?.9:unit((a.recoveryUntil-now)/220);

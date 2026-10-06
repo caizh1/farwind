@@ -4,7 +4,7 @@ import {WindGiftCombat} from './windGiftCombat';
 import {CHAIN_LIGHTNING} from '../entities/chainLightning';
 import {SwordWindView} from '../entities/swordWindView';
 import {staggerEnemy} from './enemy';
-import {BlackHoleSlash} from './blackHoleSlash';
+import {BlackHoleSlash,blackHoleConfig,type BlackHolePort} from './blackHoleSlash';
 import {BlackHoleView} from '../entities/blackHoleView';
 import type {SwordWind,WindMotion} from './swordWind';
 import {enemyLeashRadius} from './enemy';
@@ -56,21 +56,25 @@ export class RuneWorld {
  }
  releaseBlackHole(wind:SwordWind){const w=this.world;if(w.practice.mode!=='off'||w.lessons?.trial)return;
   const A=this.attacks.get(wind.attack.id)?.A??outgoingDamage(w.state,STRIKES[0].damage);
-  this.blackHole.release(wind,giftLevel(w.state.windGifts,'blackHole'),A,wind.config.damage*(1+giftValue(w.state.windGifts,'gale')));
+  this.blackHole.release(wind,giftLevel(w.state.windGifts,'blackHole'),A,wind.config.damage*(1+giftValue(w.state.windGifts,'gale')),blackHoleConfig(w.state.windGifts));
  }
  advanceBlackHole(prev:number,now:number,motions:WindMotion[]){const w=this.world;
   if(w.state.player.hp<=0||(w.state.life.playerSpace!=='village'&&!w.cityChapter?.active())||w.practice.mode!=='off'){this.blackHole.clear();this.blackHoleView.clear();return;}
-  this.blackHole.advance(prev,now,motions,{clear:(a,b)=>w.meleeLine(a.x,a.y,b.x,b.y),
+  this.blackHole.advance(prev,now,motions,this.blackHolePort());
+ }
+ private blackHolePort():BlackHolePort{const w=this.world;return {eastBossPullHandled:true,clear:(a,b)=>w.meleeLine(a.x,a.y,b.x,b.y),
    move:(target,dx,dy)=>{const e=target as typeof w.enemies[number];if(e.id===CITY_BOSS_ID)return;
-    sweepMove(e,dx,dy,(x,y)=>w.blocked(x,y)||Math.hypot(x-e.homeX,y-e.homeY)>enemyLeashRadius(e),clearMotionLine,
+    const before={x:e.x,y:e.y};sweepMove(e,dx,dy,(x,y)=>w.blocked(x,y,e.id)||Math.hypot(x-e.homeX,y-e.homeY)>enemyLeashRadius(e),clearMotionLine,
      [...w.combatTargets().filter(t=>t.id!==e.id&&t.hp>0&&(!('disabled' in t)||!t.disabled)),{id:'player',...w.state.player}]);
+    if(e.boss==='bound-branch'){e.externalMotion??={x:0,y:0};e.externalMotion.x+=e.x-before.x;e.externalMotion.y+=e.y-before.y;}
    },
    damage:(target,amount,rift,phase)=>{const parent=this.engine.parent('','wind_gift',rift);parent.A=rift.A;parent.attackInstanceId=`black-hole:${rift.wind.releaseId}`;
     const ev=this.engine.child(parent,target,amount,['wind_gift',phase==='dot'?'black_hole_dot':'black_hole_slash']);
     ev.origin=phase==='dot'?{x:rift.x,y:rift.y}:{...rift.wind.origin};
     const hit=this.damage(target,ev);if(hit.applied){ev.actual=hit.damage;this.engine.log(ev);w.state.runes.peace=0;}return hit.applied?hit.damage:0;
-   }});
+   }};
  }
+ pullEastBoss(prev:number,now:number){const w=this.world;if(w.state.player.hp<=0||w.state.life.playerSpace!=='village'||w.practice.mode!=='off')return;this.blackHole.pullEastBoss(prev,now,w.combatTargets(),this.blackHolePort());}
  drawBlackHole(now:number){const settings=this.world.state.runes.settings;this.blackHoleView.draw(now,settings.simple,settings.lowFlash);this.giftView.draw(now);}
  giftLanded(target:RuneTarget,parent:RuneEvent,finisher:boolean,attack?:Attack){
   if(attack)this.gifts.landed(attack,target,parent);

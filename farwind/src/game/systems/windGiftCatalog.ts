@@ -1,5 +1,8 @@
 // 新风赐定义与共鸣共用一份目录，等级只增加明确列出的数值。
 export const EXTRA_WIND_GIFTS = {
+ riftRadius: {name:"扩界",group:"I黑洞",value:0.2,effect:"黑洞伤害半径与裂缝大小增加{v}%，吸收范围同步扩大（上限100%）；每级同时延长停留600毫秒（额外上限3000毫秒，可与长夜叠加）；需要裂界·黑洞斩",unit:"%",cap:1},
+ riftSuction: {name:"吞星",group:"I黑洞",value:0.3,effect:"黑洞吸收半径额外增加初始半径的{v}%（上限200%），外围只牵引、进入伤害范围才持续掉血；需要裂界·黑洞斩",unit:"%",cap:2},
+ riftDuration: {name:"长夜",group:"I黑洞",value:600,effect:"黑洞吸收与持续伤害时间增加{v}毫秒（上限3000毫秒）；需要裂界·黑洞斩",unit:"毫秒",cap:3000},
  windBone: {name:"风骨",group:"被动",value:10,effect:"最大生命增加{v}点",unit:"点",cap:undefined},
  longBreath: {name:"长息",group:"被动",value:10,effect:"最大体力增加{v}点",unit:"点",cap:undefined},
  fullWind: {name:"盈风",group:"被动",value:0.1,effect:"生命至少80%时，原生伤害增加{v}%",unit:"%",cap:undefined},

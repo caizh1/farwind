@@ -1,3 +1,4 @@
+import {memoryStrength,type WindMemoryDifficulty} from '../../data/windMemoryDifficulty';
 import {projectilePathClear} from './projectileGeometry';
 import {sampleAttackTiming} from './attackTiming';
 import {isWolfClaw,wolfClawRadius} from './wolfClaw';
@@ -13,7 +14,7 @@ export type BossGeometry={kind:'sector'|'circle'|'ring';point:Point;radius:numbe
 type AttackSpace={blocked:(x:number,y:number)=>boolean;clear:(a:Point,b:Point)=>boolean;melee:(a:Point,b:Point,id?:string)=>boolean;wall?:(a:Point,b:Point)=>boolean};
 export type CombatTier=0|1|2;
 export type ProjectileProfile={speed:number;life:number;radius:number;distance:number;size:number;needleSize:number};
-export type EnemyAttack={aimTarget?:Point;aimAt?:number;combatTier?:CombatTier;chainPart?:1|2;projectile?:ProjectileProfile;eventId?:string|null;areaPattern?:'center'|'sides';attackId:string;attackerId:string;type:EnemyKind;elite?:EliteKind;step?:number;combo?:number;boss?:CampBossKind;bossSkill?:number;bossPart?:number;bossAttempt?:number;bossGeometry?:BossGeometry;bossShotAngles?:number[];shotAngles?:number[];bossArea?:'circle'|'ring';bossCocoon?:boolean;bossLaser?:boolean;bossStunned?:boolean;bossSideStep?:number;bossSideMotion?:number;supportTarget?:string;bombAt?:number;detonated?:boolean;blastPoint?:Point;startedAt:number;lockAt:number;contactAt:number;activeUntil:number;recoveryUntil:number;direction:Point;locked:boolean;shape:"sweep";range:number;halfAngle:number;parryable:boolean;damage:number;cancelled:boolean;resolved:boolean;emitted:boolean;motionAt:number;scanAt:number;previousGeometry?:AttackGeometry;geometry?:AttackGeometry;actualContactAt?:number;chargeSound?:boolean;strikeSound?:boolean;wallAt?:number;launched?:boolean};
+export type EnemyAttack={memoryDamageScale?:number;memoryFrequency?:number;memoryRecoveryWait?:number;aimTarget?:Point;aimAt?:number;combatTier?:CombatTier;chainPart?:1|2;projectile?:ProjectileProfile;eventId?:string|null;areaPattern?:'center'|'sides';attackId:string;attackerId:string;type:EnemyKind;elite?:EliteKind;step?:number;combo?:number;boss?:CampBossKind;bossSkill?:number;bossPart?:number;bossAttempt?:number;bossGeometry?:BossGeometry;bossShotAngles?:number[];shotAngles?:number[];bossArea?:'circle'|'ring';bossCocoon?:boolean;bossLaser?:boolean;bossLaserVersion?:2;bossStunned?:boolean;bossSideStep?:number;bossSideMotion?:number;supportTarget?:string;bombAt?:number;detonated?:boolean;blastPoint?:Point;startedAt:number;lockAt:number;contactAt:number;activeUntil:number;recoveryUntil:number;direction:Point;locked:boolean;shape:"sweep";range:number;halfAngle:number;parryable:boolean;damage:number;cancelled:boolean;resolved:boolean;emitted:boolean;motionAt:number;scanAt:number;previousGeometry?:AttackGeometry;geometry?:AttackGeometry;actualContactAt?:number;chargeSound?:boolean;strikeSound?:boolean;wallAt?:number;launched?:boolean};
 export type EnemyContact={at:number;attack:EnemyAttack;origin:Point;geometry?:AttackGeometry;normal?:Point;training?:boolean;projectileId?:string;targetId?:string;bossHazardId?:string;blastId?:string;sampledPoint?:Point};
 export const SPORE = { speed: 250, life: 1600, radius: 14, muzzle: 24, burst: 260 } as const;
 // 旧规则和首领保留原弹体；新参数在正式攻击起手时快照，渲染与结算共用。
@@ -32,13 +33,28 @@ export function sporeContactAt(origin:Point,d:Point,target:Point,started:number,
  return time<=ended+1e-7&&projectilePathClear(origin,{x:origin.x+d.x*travel,y:origin.y+d.y*travel},radius,clear)?time:null;
 }
 export function aim(origin:Point,target:Point,fallback:Point={x:0,y:1}):Point {const d=Math.hypot(target.x-origin.x,target.y-origin.y);return d>1e-7?{x:(target.x-origin.x)/d,y:(target.y-origin.y)/d}:{...fallback};}
-function baseEnemyAttack(attackerId:string,serial:number,type:string,now:number,origin:Point,target:Point,windup?:number,elite?:EliteKind,combatTier:CombatTier=0,chainPart?:1|2):EnemyAttack {
+function baseEnemyAttack(attackerId:string,serial:number,type:string,now:number,origin:Point&{memoryDifficulty?:WindMemoryDifficulty;boss?:CampBossKind;elite?:EliteKind},target:Point,windup?:number,elite?:EliteKind,combatTier:CombatTier=0,chainPart?:1|2):EnemyAttack {
  const kind=enemyBehavior(type),base=ENEMY_ATTACK[kind],combo=elite==='alpha'?(serial%2?1:2):undefined;
  const m=elite==='alpha'?{...base,windup:650,lock:280,step:150,recovery:combo===1?140:1100}:elite==='ram'?{...base,windup:850,lock:400,active:400,step:300,recovery:1000}:elite==='brood'?{...base,windup:900,lock:350,recovery:1000}:base,duration=windup??(kind==='spore'&&!elite&&serial%2===0?880:m.windup);
  // contactAt只表示攻击段起点；首次真实接触另记actualContactAt。
  return {attackId:`${attackerId}:${serial}`,attackerId,type:kind,combatTier,...combatTier?{aimTarget:{x:target.x,y:target.y},aimAt:now}:{},...chainPart?{chainPart}:{},...combatTier&&['spore','archer'].includes(kind)?{projectile:ordinaryProjectile(combatTier)}:{},...kind==='spore'&&!elite&&serial%2===0?{shotAngles:[-.62,0,.62]}: {},...kind==='bomber'?{bombAt:now+duration+m.active+1000,parryable:false}: {},...elite?{elite,step:m.step,combo}: {},startedAt:now,lockAt:now+duration-m.lock,contactAt:now+duration,activeUntil:now+duration+m.active,recoveryUntil:now+duration+m.active+m.recovery,direction:aim(origin,target),locked:false,shape:"sweep",range:ENEMY_ATTACK.range,halfAngle:ENEMY_ATTACK.halfAngle,parryable:kind!=='bomber'&&kind!=='priest',damage:type==='canyonHunter'?18:type==='cliffLancer'?26:type==='cragAxeman'?(serial%2?40:72):m.damage,cancelled:false,resolved:false,emitted:false,motionAt:0,scanAt:now};
 }
-export const creatureCooldown=(a:EnemyAttack)=>a.elite==='alpha'?a.recoveryUntil+(a.combo===1?0:900):a.elite?a.recoveryUntil+800:a.contactAt+ENEMY_ATTACK[enemyBehavior(a.type)].cooldown;
+const baseCreatureCooldown=(a:EnemyAttack)=>a.elite==='alpha'?a.recoveryUntil+(a.combo===1?0:900):a.elite?a.recoveryUntil+800:a.contactAt+ENEMY_ATTACK[enemyBehavior(a.type)].cooldown;
+export const creatureCooldown=(a:EnemyAttack)=>a.memoryFrequency?a.recoveryUntil+(a.memoryRecoveryWait??Math.max(0,baseCreatureCooldown(a)-a.recoveryUntil))/a.memoryFrequency:baseCreatureCooldown(a);
+// 仅创建新攻击时调用；已保存攻击恢复时沿用原快照，不重复强化。
+export function applyMemoryAttack(a:EnemyAttack,root:Point&{memoryDifficulty?:WindMemoryDifficulty;boss?:CampBossKind;elite?:EliteKind},major=false){
+ if(!root.memoryDifficulty)return a;
+ const power=memoryStrength(root.memoryDifficulty,!!root.boss||!!root.elite);
+ a.memoryRecoveryWait=Math.max(0,baseCreatureCooldown(a)-a.recoveryUntil);a.memoryDamageScale=power.damage;a.memoryFrequency=power.frequency;a.damage*=power.damage;
+ const lead=a.contactAt-a.lockAt,windup=a.contactAt-a.startedAt,active=a.activeUntil-a.contactAt,recovery=a.recoveryUntil-a.activeUntil;
+ const duration=Math.max(lead,major?1000:0,windup/power.attack);
+ // 持续施法和危险区保持原节拍；普通攻击段与动画共用压缩后的时钟。
+ const lasting=!!a.bossArea||!!a.bossLaser||!!a.bossCocoon||a.type==='priest'||a.type==='geomancer';
+ const newActive=lasting?active:active/power.attack;
+ a.lockAt=a.startedAt+duration-lead;a.contactAt=a.startedAt+duration;a.activeUntil=a.contactAt+newActive;a.recoveryUntil=a.activeUntil+recovery;
+ if(a.bombAt!==undefined)a.bombAt+=duration-windup+newActive-active;
+ return a;
+}
 // 母孢中央弹沿锁向发射，两侧弹交替扇区；锁向后弹道固定，身份独立。
 export function sporeDirections(a:EnemyAttack):Point[]{
  if(a.bossShotAngles||a.shotAngles){const angle=Math.atan2(a.direction.y,a.direction.x);return (a.bossShotAngles??a.shotAngles!).map(offset=>({x:Math.cos(angle+offset),y:Math.sin(angle+offset)}));}
@@ -135,10 +151,10 @@ export function createEnemyAttack(...args:Parameters<typeof baseEnemyAttack>):En
   a.chainPart??=1;
   if(a.chainPart===2)Object.assign(a,{lockAt:a.startedAt+200,contactAt:a.startedAt+450,activeUntil:a.startedAt+580,recoveryUntil:a.startedAt+1230,step:48});
  }
- return a;
+ return args[4].boss?a:applyMemoryAttack(a,{...args[4],elite:args[7]??args[4].elite});
 }
 // 连段继续使用正式攻击编号；取消、重击硬直、弹反或换目标都会切断后续。
-export function enemyFollowup(e:{id:string;type:string;attack?:EnemyAttack|null;attackSerial?:number;hp:number;staggerUntil:number;targetId?:string|null;x:number;y:number},target:Point,now:number,targetId:string,permit:boolean):EnemyAttack|null {
+export function enemyFollowup(e:{id:string;type:string;attack?:EnemyAttack|null;attackSerial?:number;hp:number;staggerUntil:number;targetId?:string|null;x:number;y:number;memoryDifficulty?:WindMemoryDifficulty},target:Point,now:number,targetId:string,permit:boolean):EnemyAttack|null {
  const a=e.attack;if(!a||a.chainPart!==1||a.cancelled||now<a.recoveryUntil||now<e.staggerUntil||e.hp<=0||e.targetId!==targetId||!permit||Math.hypot(e.x-target.x,e.y-target.y)>175||!clearMeleeLine(e,target))return null;
  const next=createEnemyAttack(e.id,e.attackSerial=(e.attackSerial??0)+1,e.type,now,e,target,undefined,undefined,2,2);next.damage=a.damage;next.eventId=a.eventId;return next;
 }

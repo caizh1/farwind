@@ -1,3 +1,4 @@
+import {memoryHealth,type WindMemoryDifficulty} from '../../windMemoryDifficulty';
 import {enemyProfile} from '../../enemies';
 import {CAMP_BOSSES,type CampBossKind} from './campBosses';
 // 精英共享原物种的身体、伤害与素材；变化来自招式和场地。
@@ -7,7 +8,7 @@ export const ELITES={
  brood:{name:'灰冠母孢',type:'spore',hp:160,reach:340},
 } as const;
 export type EliteKind=keyof typeof ELITES;
-export const creatureMaxHP=(type:string,elite?:EliteKind,boss?:CampBossKind)=>boss?CAMP_BOSSES[boss].hp:elite?ELITES[elite].hp:enemyProfile(type).hp;
+export const creatureMaxHP=(type:string,elite?:EliteKind,boss?:CampBossKind,difficulty?:WindMemoryDifficulty)=>memoryHealth(boss?CAMP_BOSSES[boss].hp:elite?ELITES[elite].hp:enemyProfile(type).hp,difficulty,!!elite||!!boss);
 export const creatureReach=(type:string,elite?:EliteKind)=>elite?ELITES[elite].reach:enemyProfile(type).reach;
 export const ARENA_STONES=[
  {id:'echo-stone-west',x:880,y:-900,w:100,h:115,solid:[72,58] as const},

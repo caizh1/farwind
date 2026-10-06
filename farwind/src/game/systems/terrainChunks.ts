@@ -1,5 +1,20 @@
 // 只选择相机附近的地面块；不管理敌人、伤亡、任务或世界时间。
 export const GROUND_CHUNK = { width: 600, height: 550, padding: 1 } as const;
+export const GROUND_CACHE_LIMIT = 64;
+export const GROUND_BAKE_BUDGET = 2;
+
+// Map按最近使用顺序维护；当前排队范围不可淘汰，离开视野的旧块供折返复用。
+export function groundCacheEvictions(resident: Iterable<string>, protectedKeys: ReadonlySet<string>, limit = GROUND_CACHE_LIMIT) {
+  const keys = [...resident];
+  let excess = Math.max(0, keys.length - limit);
+  return keys.filter(key => !protectedKeys.has(key) && excess-- > 0);
+}
+
+// 每个next只推进一个小绘制段；到达本帧期限便留给下一帧。
+export function advanceGroundBake(task: Generator<void, void, unknown>, deadline: number, now = () => performance.now()) {
+  while (now() < deadline) if (task.next().done) return true;
+  return false;
+}
 export type GroundView = {
   left: number;
   top: number;

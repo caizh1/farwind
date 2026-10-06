@@ -30,8 +30,8 @@ describe('东门赤环灭光正式连招',()=>{
  });
  it('三段时序互不重叠，二段保留五百毫秒延迟',()=>{
   const {h}=setup();const start=h.activeAt;
-  for(const [offset,stage] of [[-1,'charge'],[0,'rays'],[600,'pause'],[LASER_ETCH,'etch'],[LASER_ETCH+1450,'delay'],[LASER_ECHO,'echo'],[LASER_DURATION,'recover']] as const)expect(laserSample(h,start+offset).stage).toBe(stage);
-  expect(laserGeometries(h,start+600)).toEqual([]);expect(laserGeometries(h,start+LASER_ECHO-1)).toEqual([]);
+  for(const [offset,stage] of [[-1,'charge'],[0,'rays'],[BOSS_LASER.rays,'pause'],[LASER_ETCH,'etch'],[LASER_ETCH+1450,'delay'],[LASER_ECHO,'echo'],[LASER_DURATION,'recover']] as const)expect(laserSample(h,start+offset).stage).toBe(stage);
+  expect(laserGeometries(h,start+BOSS_LASER.rays)).toEqual([]);expect(laserGeometries(h,start+LASER_ECHO-1)).toEqual([]);
  });
  it('八向射线有真实空隙与安全内圈，不发射孢子或额外近战伤害',()=>{
   const {e,a,h}=setup();const rays=laserGeometries(h,a.contactAt);expect(rays).toHaveLength(8);
@@ -40,18 +40,18 @@ describe('东门赤环灭光正式连招',()=>{
  });
  it('圆激光固定半径顺时针扫过，二段走同一轨迹；圈内不受圆盘伤害',()=>{
   const {e,a,h}=setup();for(const offset of [LASER_ETCH,LASER_ECHO]){
-   const duration=offset===LASER_ETCH?BOSS_LASER.etch:BOSS_LASER.echo,t=a.contactAt+offset+duration/4,g=laserGeometries(h,t)[0];
-   expect(geometryTouches(g,at(e,230,Math.PI/2-.05))).toBe(true);expect(geometryTouches(g,at(e,230,Math.PI))).toBe(false);expect(geometryTouches(g,at(e,60,Math.PI/2))).toBe(false);
+   const duration=offset===LASER_ETCH?BOSS_LASER.etch:BOSS_LASER.echo,t=a.contactAt+offset+duration/4,g=laserGeometries(h,t)[1];
+   expect(geometryTouches(g,at(e,250,Math.PI/2-.05))).toBe(true);expect(geometryTouches(g,at(e,250,Math.PI))).toBe(false);expect(geometryTouches(g,at(e,60,Math.PI/2))).toBe(false);
   }
  });
  it('每段对每个目标各命中一次，重复采样不重放，伙伴独立结算',()=>{
-  const {e,a,hazards}=setup(),target=at(e,230,-.05),peer=at(e,230,-.05,'xiaobao'),events=[];
-  for(let t=a.contactAt;t<=a.activeUntil;t+=10)events.push(...hazards.update(t-10,t,[e],[target,peer]));
+  const {e,a,hazards}=setup(),target=at(e,250,-.05),peer=at(e,250,-.05,'xiaobao'),events=[];
+  for(let t=a.contactAt+LASER_ETCH;t<=a.activeUntil;t+=10)events.push(...hazards.update(t-10,t,[e],[target,peer]));
   expect(events.filter(e=>e.targetId==='player').map(e=>e.attack.bossPart)).toEqual([1,2]);expect(events.filter(e=>e.targetId==='xiaobao')).toHaveLength(2);
   expect(new Set(events.map(e=>e.attack.attackId)).size).toBe(4);expect(events.map(e=>e.attack.damage)).toEqual([22,22,30,30]);
  });
  it('一次跨越换段的更新不会吞掉圆扫和二段接触',()=>{
-  const {e,a,hazards}=setup(),p=at(e,230,Math.PI/2-.05),events=hazards.update(a.contactAt+600,a.activeUntil-1,[e],[p]);
+  const {e,a,hazards}=setup(),p=at(e,250,Math.PI/2-.05),events=hazards.update(a.contactAt+BOSS_LASER.rays,a.activeUntil-1,[e],[p]);
   expect(events.map(e=>e.attack.bossPart)).toEqual([1,2]);
  });
  it('快速横穿射线按前后位置插值检测，端点均安全仍能命中',()=>{
@@ -84,7 +84,7 @@ describe('东门赤环灭光正式连招',()=>{
   const bad=structuredClone(saved);bad.hazards[0].used=['rays:player','rays:player'];expect(()=>validateCampBoss({stage:'battle',warning:0,attempt:0,away:0,combat:bad},e.id)).toThrow();
  });
  it('已命中射线不报警，未命中二段依然给出真实未来预警',()=>{
-  const {e,a,h}=setup(),p=at(e,230,Math.PI/2-.05);h.used.push('rays:player');expect(hazardWarningAt(h,at(e,200),a.contactAt+20)).toBeNull();
+  const {e,a,h}=setup(),p=at(e,250,Math.PI/2-.05);h.laser!.rayHits={player:a.contactAt};expect(hazardWarningAt(h,at(e,200),a.contactAt+20)).toBeNull();
   expect(hazardWarningAt(h,p,a.contactAt+LASER_ECHO)).not.toBeNull();expect(hazardWarningAt(h,e,a.contactAt+LASER_ECHO)).toBeNull();
  });
  it('双臂上举保持到扫圆完成，二段连续收势且不修改攻击状态',()=>{

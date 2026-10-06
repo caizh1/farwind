@@ -1,3 +1,4 @@
+import {memoryHealth,validateMemoryDifficulty,type WindMemoryDifficulty} from '../../data/windMemoryDifficulty';
 import {randomSeed} from './windGifts';
 import {ENCOUNTERS,ENCOUNTER_LIMITS,encounterUnit,LEGACY_ENCOUNTER_IDS,ENCOUNTER_COMPOSITION_VERSION,waveMembers,adventureIndex,ADVENTURE_ROUTES} from "../../data/maps/windbell/encounters";
 import {creatureMaxHP,ARENA_STONES,type ArenaStoneId,type EliteKind} from "../../data/maps/windbell/elites";
@@ -7,9 +8,9 @@ import {initialCampBoss,validateCampBoss,type CampBossState} from './campBossSta
 import {enemyLeashRadius} from '../../data/enemyPursuit';
 export type EncounterMemberState={id:string;hp:number;x:number;y:number;serial:number;cooldown:number;defeated:boolean;drop:boolean;dropRemaining:number;participated:boolean;face:{x:number;y:number};guardOpen:number};
 export type EncounterGroupState={rulesVersion?:1|2;composition:number;cycle:number;activated:boolean;cleared:boolean;cooldown:number;members:EncounterMemberState[];warning:number|null;summons?:EncounterMemberState[];wave?:number;waveWarning?:number;rewarded?:boolean;boss?:CampBossState};
-export type EncounterState={elapsed:number;seed?:number;instance?:string;broken:ArenaStoneId[];groups:Record<string,EncounterGroupState>};
-const member=(m:{id:string;type:string;elite?:EliteKind;boss?:CampBossKind;x:number;y:number}):EncounterMemberState=>({id:m.id,hp:creatureMaxHP(m.type,m.elite,m.boss),x:m.x,y:m.y,serial:0,cooldown:0,defeated:false,drop:false,dropRemaining:0,participated:false,face:{x:0,y:1},guardOpen:0});
-export const initialEncounters=(seed=randomSeed(),instance?:string):EncounterState=>({elapsed:0,seed,...instance?{instance}:{},broken:[],groups:Object.fromEntries(ENCOUNTERS.map(d=>[d.id,{rulesVersion:2,composition:ENCOUNTER_COMPOSITION_VERSION,cycle:0,activated:false,cleared:false,cooldown:0,warning:null,members:d.members.map(m=>member({...m,id:instance?`${instance}|${m.id}`:m.id})),...d.kind==='camp'?{boss:initialCampBoss()}: {}}]))});
+export type EncounterState={elapsed:number;memoryDifficulty?:WindMemoryDifficulty;seed?:number;instance?:string;broken:ArenaStoneId[];groups:Record<string,EncounterGroupState>};
+const member=(m:{id:string;type:string;elite?:EliteKind;boss?:CampBossKind;x:number;y:number},difficulty?:WindMemoryDifficulty):EncounterMemberState=>({id:m.id,hp:creatureMaxHP(m.type,m.elite,m.boss,difficulty),x:m.x,y:m.y,serial:0,cooldown:0,defeated:false,drop:false,dropRemaining:0,participated:false,face:{x:0,y:1},guardOpen:0});
+export const initialEncounters=(seed=randomSeed(),instance?:string,memoryDifficulty?:WindMemoryDifficulty):EncounterState=>({elapsed:0,seed,...memoryDifficulty?{memoryDifficulty}:{},...instance?{instance}:{},broken:[],groups:Object.fromEntries(ENCOUNTERS.map(d=>[d.id,{rulesVersion:2,composition:ENCOUNTER_COMPOSITION_VERSION,cycle:0,activated:false,cleared:false,cooldown:0,warning:null,members:d.members.map(m=>member({...m,id:instance?`${instance}|${m.id}`:m.id},memoryDifficulty)),...d.kind==='camp'?{boss:initialCampBoss()}: {}}]))});
 export const campGuardsDefeated=(d:typeof ENCOUNTERS[number],g:EncounterGroupState)=>g.members.every(m=>!!encounterUnit(m.id)?.boss||m.defeated);
 
 // 未击败的首领只封锁自己的场地；撤离后的待登场记录不能锁住其他方向或村庄。
@@ -51,6 +52,7 @@ export function migrateEncounterComposition(s:EncounterState){
 }
 export function validateEncounters(raw:unknown):EncounterState{
  const s=structuredClone(raw) as EncounterState;
+ if(!s)throw Error('荒野遭遇存档无效。');s.memoryDifficulty=validateMemoryDifficulty(s.memoryDifficulty);if(s.memoryDifficulty&&!s.instance)throw Error('首次遭遇不能携带风忆强度。');
  migrateEncounterComposition(s);
  const n=(v:unknown,max:number)=>typeof v==="number"&&Number.isFinite(v)&&v>=0&&v<=max;
  const fail=()=>{throw Error("荒野遭遇存档无效，上一份有效存档仍保留。");};
@@ -60,23 +62,23 @@ export function validateEncounters(raw:unknown):EncounterState{
  for(const d of ENCOUNTERS){const g=s.groups[d.id],defs=encounterDefinitions(s,d);
   if(g?.wave!==undefined&&(s.seed===undefined||adventureIndex(d.id)<0||!Number.isSafeInteger(g.wave)||g.wave<0||g.wave>3||!n(g.waveWarning,2000)||typeof g.rewarded!=="boolean"))fail();
   if(!g||g.rulesVersion!==undefined&&![1,2].includes(g.rulesVersion)||g.composition!==ENCOUNTER_COMPOSITION_VERSION||!Number.isSafeInteger(g.cycle)||!n(g.cycle,1e9)||typeof g.activated!=="boolean"||typeof g.cleared!=="boolean"||!n(g.cooldown,d.cooldownMs)||!Array.isArray(g.members)||g.members.length!==defs.length)fail();
-  if(g.summons!==undefined&&(!Array.isArray(g.summons)||g.summons.length>4||g.summons.filter(u=>!u.defeated).length>2||new Set(g.summons.map(u=>u.id)).size!==g.summons.length||g.summons.some(u=>{const owner=encounterUnit(u.id);return !owner||owner.group!==d.id||!u.id.includes(':唤巢:')||!n(u.hp,48)||u.defeated!==(u.hp===0)||!validOutdoorPoint(u)||u.drop||u.dropRemaining!==0||!n(u.serial,1e9)||!n(u.cooldown,10000)||!u.face||Math.abs(Math.hypot(u.face.x,u.face.y)-1)>.001;})))fail();
+  if(g.summons!==undefined&&(!Array.isArray(g.summons)||g.summons.length>4||g.summons.filter(u=>!u.defeated).length>2||new Set(g.summons.map(u=>u.id)).size!==g.summons.length||g.summons.some(u=>{const owner=encounterUnit(u.id);return !owner||owner.group!==d.id||!u.id.includes(':唤巢:')||!n(u.hp,memoryHealth(48,s.memoryDifficulty))||u.defeated!==(u.hp===0)||!validOutdoorPoint(u)||u.drop||u.dropRemaining!==0||!n(u.serial,1e9)||!n(u.cooldown,10000)||!u.face||Math.abs(Math.hypot(u.face.x,u.face.y)-1)>.001;})))fail();
   if(g.warning!==null&&(!d.after&&!d.id.startsWith('legacy-')||g.activated||!n(g.warning,2500)||!!d.after&&!s.groups[d.after]?.cleared))fail();
   if(d.kind==='camp'){
-   g.boss=validateCampBoss(g.boss,defs.find(m=>m.boss)!.id);
+   g.boss=validateCampBoss(g.boss,defs.find(m=>m.boss)!.id,s.memoryDifficulty);
    const guards=campGuardsDefeated(d,g),boss=g.members[defs.findIndex(m=>m.boss)];
    if((g.boss.stage==='guards')===guards||g.boss.stage==='defeated'!==boss.defeated||g.boss.stage==='legacy'&&boss.defeated||g.boss.stage!=='guards'&&!g.activated)fail();
   }else if(g.boss!==undefined)fail();
   for(const [i,u] of g.members.entries()){
    // 额外余量容纳边缘受击后撤，坐标仍受室外边界及有限活动范围校验。
    const savedRadius=enemyLeashRadius({...defs[i],leashRadius:d.radius})+100;
-   if(!u||u.id!==defs[i].id||!n(u.hp,creatureMaxHP(defs[i].type,defs[i].elite,defs[i].boss))||!validOutdoorPoint(u)||Math.hypot(u.x-defs[i].x,u.y-defs[i].y)>savedRadius||!Number.isSafeInteger(u.serial)||!n(u.serial,1e9)||!n(u.cooldown,10000)||typeof u.defeated!=="boolean"||u.defeated!==(u.hp===0)||typeof u.drop!=="boolean"||!n(u.dropRemaining,ENCOUNTER_LIMITS.dropLifetimeMs)||u.drop!==(u.dropRemaining>0)||u.drop&&!u.defeated||typeof u.participated!=="boolean"||!u.face||!Number.isFinite(u.face.x)||!Number.isFinite(u.face.y)||Math.abs(Math.hypot(u.face.x,u.face.y)-1)>.001||!n(u.guardOpen,1200))fail();
+   if(!u||u.id!==defs[i].id||!n(u.hp,creatureMaxHP(defs[i].type,defs[i].elite,defs[i].boss,s.memoryDifficulty))||!validOutdoorPoint(u)||Math.hypot(u.x-defs[i].x,u.y-defs[i].y)>savedRadius||!Number.isSafeInteger(u.serial)||!n(u.serial,1e9)||!n(u.cooldown,10000)||typeof u.defeated!=="boolean"||u.defeated!==(u.hp===0)||typeof u.drop!=="boolean"||!n(u.dropRemaining,ENCOUNTER_LIMITS.dropLifetimeMs)||u.drop!==(u.dropRemaining>0)||u.drop&&!u.defeated||typeof u.participated!=="boolean"||!u.face||!Number.isFinite(u.face.x)||!Number.isFinite(u.face.y)||Math.abs(Math.hypot(u.face.x,u.face.y)-1)>.001||!n(u.guardOpen,1200))fail();
   }
-  if(g.cleared!==(g.members.every(u=>u.defeated)||g.boss?.stage==='legacy')||!g.activated&&(g.cycle!==0||g.cleared||g.cooldown>0||g.members.some((u,i)=>u.hp!==creatureMaxHP(defs[i].type,defs[i].elite,defs[i].boss)||u.defeated||u.drop||u.participated||u.x!==defs[i].x||u.y!==defs[i].y||u.serial!==0||u.cooldown!==0)))fail();
+  if(g.cleared!==(g.members.every(u=>u.defeated)||g.boss?.stage==='legacy')||!g.activated&&(g.cycle!==0||g.cleared||g.cooldown>0||g.members.some((u,i)=>u.hp!==creatureMaxHP(defs[i].type,defs[i].elite,defs[i].boss,s.memoryDifficulty)||u.defeated||u.drop||u.participated||u.x!==defs[i].x||u.y!==defs[i].y||u.serial!==0||u.cooldown!==0)))fail();
  }
  if(Object.values(s.groups).filter(g=>g.boss?.stage==='battle').length>1)fail();
  if(s.broken.length&&!s.groups["north-rock-arena"].activated)fail();
- return {elapsed:s.elapsed,...s.seed===undefined?{}:{seed:s.seed},...s.instance?{instance:s.instance}:{},broken:[...s.broken],groups:Object.fromEntries(ENCOUNTERS.map(d=>{const g=s.groups[d.id];return [d.id,{rulesVersion:g.rulesVersion??1,composition:g.composition,cycle:g.cycle,activated:g.activated,cleared:g.cleared,cooldown:g.cooldown,warning:g.warning,...g.summons?{summons:structuredClone(g.summons)}:{},...g.wave===undefined?{}:{wave:g.wave,waveWarning:g.waveWarning,rewarded:g.rewarded},...g.boss?{boss:g.boss}:{},members:g.members.map(u=>({id:u.id,hp:u.hp,x:u.x,y:u.y,serial:u.serial,cooldown:u.cooldown,defeated:u.defeated,drop:u.drop,dropRemaining:u.dropRemaining,participated:u.participated,face:{...u.face},guardOpen:u.guardOpen}))}];}))};
+ return {elapsed:s.elapsed,...s.memoryDifficulty?{memoryDifficulty:s.memoryDifficulty}:{},...s.seed===undefined?{}:{seed:s.seed},...s.instance?{instance:s.instance}:{},broken:[...s.broken],groups:Object.fromEntries(ENCOUNTERS.map(d=>{const g=s.groups[d.id];return [d.id,{rulesVersion:g.rulesVersion??1,composition:g.composition,cycle:g.cycle,activated:g.activated,cleared:g.cleared,cooldown:g.cooldown,warning:g.warning,...g.summons?{summons:structuredClone(g.summons)}:{},...g.wave===undefined?{}:{wave:g.wave,waveWarning:g.waveWarning,rewarded:g.rewarded},...g.boss?{boss:g.boss}:{},members:g.members.map(u=>({id:u.id,hp:u.hp,x:u.x,y:u.y,serial:u.serial,cooldown:u.cooldown,defeated:u.defeated,drop:u.drop,dropRemaining:u.dropRemaining,participated:u.participated,face:{...u.face},guardOpen:u.guardOpen}))}];}))};
 }
 export function unitState(s:EncounterState,id:string):EncounterMemberState|undefined{const d=encounterUnit(id);if(!d)return;if(s.instance&&!id.startsWith(s.instance+'|'))return;const group=s.groups[d.group],u=group?.members.find(m=>m.id===id);if(u)return u;const summon=group?.summons?.find(m=>m.id===id);if(summon)return summon;
  const owned=/^(.+):(祭根|护猎):(\d+):(\d+)$/.exec(id);if(!owned||group?.boss?.attempt!==Number(owned[3]))return;
@@ -111,11 +113,11 @@ export function resetEncounter(s:EncounterState,id:string){
  g.rulesVersion=2;g.members=d.members.map((m,i)=>({...member(m),serial:g.members[i].serial}));g.cycle++;g.cleared=false;g.activated=true;return true;
 }
 
-export function encounterDefinitions(s:EncounterState,d:typeof ENCOUNTERS[number]){const defs=s.groups[d.id]?.wave===undefined?d.members:waveMembers(d,s.seed!,s.groups[d.id].rulesVersion??1);return s.instance?defs.map(m=>({...m,id:`${s.instance}|${m.id}`})):defs;}
+export function encounterDefinitions(s:EncounterState,d:typeof ENCOUNTERS[number]){const defs=s.groups[d.id]?.wave===undefined?d.members:waveMembers(d,s.seed!,s.groups[d.id].rulesVersion??1,s.memoryDifficulty?.level);return s.instance?defs.map(m=>({...m,id:`${s.instance}|${m.id}`})):defs;}
 export function activateAdventure(s:EncounterState,id:string){
  const d=ENCOUNTERS.find(d=>d.id===id)!,g=s.groups[id],node=adventureIndex(id);if(node<0||g.activated||s.seed===undefined)return false;
  const route=ADVENTURE_ROUTES[d.direction];if(node>0&&!s.groups[route[node-1]].rewarded)return false;
- g.members=waveMembers(d,s.seed,g.rulesVersion??1).map(m=>member({...m,id:s.instance?`${s.instance}|${m.id}`:m.id}));g.wave=0;g.waveWarning=2000;g.rewarded=false;g.activated=true;g.warning=null;return true;
+ g.members=waveMembers(d,s.seed,g.rulesVersion??1,s.memoryDifficulty?.level).map(m=>member({...m,id:s.instance?`${s.instance}|${m.id}`:m.id},s.memoryDifficulty));g.wave=0;g.waveWarning=2000;g.rewarded=false;g.activated=true;g.warning=null;return true;
 }
 export function advanceAdventureWave(s:EncounterState,d:typeof ENCOUNTERS[number],delta:number){
  const g=s.groups[d.id];if(g.wave===undefined||g.rewarded)return;

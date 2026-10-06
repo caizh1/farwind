@@ -1,3 +1,5 @@
+import {memoryStrength,type WindMemoryDifficulty} from '../../data/windMemoryDifficulty';
+import {advanceEastLocomotion,stopEastLocomotion,type EastLocomotion} from './eastBossLocomotion';
 import {tacticalDestination} from './enemyTactics';
 import {enemyBehavior} from '../../data/enemies';
 import {inProtected} from "../../data/defenseZones";
@@ -9,7 +11,7 @@ import {turnToward,wolfFlank} from './enemyTraits';
 import {advanceEnemyRecoil,type EnemyRecoil} from './enemyReaction';
 import {CAMP_BOSSES,BOSS_RULES,type CampBossKind} from '../../data/maps/windbell/campBosses';
 import type {BossBattle} from './campBossState';
-import {updateCampBoss} from './campBossCombat';
+import {updateCampBoss,bossEngagementRange} from './campBossCombat';
 import {updateFungalPriest} from './fungalCombat';
 import {ENEMY_PURSUIT,BOSS_PURSUIT,enemyLeashRadius} from '../../data/enemyPursuit';
 export {ENEMY_PURSUIT,enemyLeashRadius} from '../../data/enemyPursuit';
@@ -215,6 +217,7 @@ export function repairEnemyPoint(origin: Point, home: Point, radius = 420) {
   return nearestStanding(origin, anchors, allowed);
 }
 export type EnemyBody = Point & {
+  memoryDifficulty?:WindMemoryDifficulty;
   lastAttackStarted?:number;
   combatTier?:import('./enemyAttack').CombatTier;
   tacticalPoint?:Point;
@@ -232,6 +235,8 @@ export type EnemyBody = Point & {
   boss?:CampBossKind;
   bossBattle?:BossBattle;
   bossAttempt?:number;
+  eastMotion?:EastLocomotion;
+  eastStepBlocked?:boolean;
   hp: number;
   homeX: number;
   homeY: number;
@@ -248,6 +253,8 @@ export type EnemyBody = Point & {
   targetId?: string | null;
   playerAggroUntil?: number;
   companionAggroUntil?: number;
+  externalMotion?: Point;
+  combatPrevious?: Point;
   companionControlGrace?: number;
   companionControlLimit?: number;
   parried?: {at:number;until:number;direction:Point;perfect:boolean};
@@ -289,6 +296,8 @@ export function staggerEnemy(e:Pick<EnemyBody,"staggerUntil"|"staggerSince">,now
   e.staggerSince=now;
 }
 export function companionControl(e: EnemyBody, now:number, duration:number) {
+  // 主角连击触发的同伴控制也不能暂停东侧首领正在释放的招式。
+  if(e.boss==='bound-branch'&&e.attack&&!e.attack.cancelled&&now<e.attack.recoveryUntil)return;
   if(e.boss&&e.bossBattle){
     if(now<e.bossBattle.entryUntil||now<e.bossBattle.controlImmuneUntil)return;
     const ms=Math.min(BOSS_RULES.control,duration);
@@ -342,7 +351,7 @@ export function updateEnemy(
   const d = distance(e, player),
     home = { x: e.homeX, y: e.homeY };
   const safe = enemyAttackPermitted(e,player);
-  if(e.boss){const event=updateCampBoss(e,player,now,dtMs*(1-(e.runeSlow??0)),targetId,safe&&permission(e,targetId));if(event!==undefined)return event;}
+  if(e.boss){const event=updateCampBoss(e,player,now,dtMs*(1-(e.runeSlow??0)),targetId,safe&&permission(e,targetId));if(event!==undefined){if(e.boss==='bound-branch'&&e.ai!=='首领减速')stopEastLocomotion(e,now);return event;}}
   e.rejection = !safe
     ? "家园追击边界"
     : d >= creatureReach(e.type,e.elite)
@@ -434,6 +443,7 @@ export function updateEnemy(
       ? (support||e.combatTier&&['archer','spore'].includes(enemyBehavior(e.type))?distance(p,destination)<12:(e.boss?distance(p,aim)<100:!permitted&&e.type!=='spore'?distance(p,destination)<12:e.type==='spore'?distance(p,aim)>=155&&distance(p,aim)<270:distance(p,aim) < Math.max(70,creatureReach(e.type,e.elite)-10)) && clearMeleeLine(p,aim))
       : distance(p,destination) <= 8;
   if (reached(e)) {
+    if(e.boss==='bound-branch')stopEastLocomotion(e,now);
     e.ai = chase ? tracking?"等待冷却":"搜索目标" : "家园";
     e.nav.mode=mode;
     e.nav.target={...target};
@@ -483,8 +493,15 @@ export function updateEnemy(
     e.ai = e.nav.failed ? "无路径等待" : pathPending(e.nav)?"分帧规划路线":"等待查询";
     return null;
   }
+  if(e.boss==='bound-branch'){
+    const space=enemyAttackSpace(e),remaining=tracking?Math.max(0,d-bossEngagementRange(e.boss,e.bossBattle!)):Math.max(0,distance(e,home)-8);
+    const moved=advanceEastLocomotion(e,waypoint,now,dtMs*(1-(e.runeSlow??0)),(x,y)=>!allowed({x,y})||space.blocked(x,y),space.clear,remaining);
+    e.ai=moved?'追击转向':e.eastMotion?.turn?'原地转身':'受阻等待';
+    if(!moved&&!e.eastMotion?.turn){e.nav.path=[];e.nav.next=now;}
+    return null;
+  }
   const length = distance(e, waypoint),
-    step = Math.min(length, (e.boss?CAMP_BOSSES[e.boss].speed:profile.speed) * dt);
+    step = Math.min(length, (e.boss?CAMP_BOSSES[e.boss].speed:profile.speed) * memoryStrength(e.memoryDifficulty).movement * dt);
   const next = {
     x: e.x + ((waypoint.x - e.x) / length) * step,
     y: e.y + ((waypoint.y - e.y) / length) * step,

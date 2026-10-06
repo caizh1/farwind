@@ -390,7 +390,7 @@ export function validate(raw: unknown): State {
   )
     throw Error("存档交易或装备状态无效，请使用有效备份。");
   if(s.runes.growth.r32.advanced!==(s.windLegacy.wind>=3)||s.runes.growth.r12.advanced!==(s.windLegacy.blade>=3))throw Error('传承与符文进阶记录不一致。');
-  s.encounters=validateEncounters(s.encounters);s.southEvents=validateSouthEvents(s.southEvents,s.encounters);s.fieldQuests=validateFieldQuests(s.fieldQuests);
+  s.encounters=validateEncounters(s.encounters);if(s.encounters.memoryDifficulty)throw Error('首次清剿记录不能使用风忆强度。');s.southEvents=validateSouthEvents(s.southEvents,s.encounters);s.fieldQuests=validateFieldQuests(s.fieldQuests);
   s.demonKing=validateDemonKing(s);
   for(const key of ['wind','blade'] as const){const phase=s.windLegacy[key];if(phase>=3&&!s.encounters.groups[key==='wind'?'legacy-wind-device':'legacy-blade-post'].cleared||phase===4&&!s.encounters.groups[key==='wind'?'legacy-wind-passage':'legacy-blade-road'].cleared)throw Error('传承节点与战斗记录不一致。');}
   if(s.windLegacy.ending&&(!s.encounters.groups['east-thorn-camp'].cleared||!s.mapProgress.shortcuts.includes('east-corridor')))throw Error('传承归途与据点或回廊记录不一致。');

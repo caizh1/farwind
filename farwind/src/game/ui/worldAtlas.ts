@@ -1,3 +1,4 @@
+import {windMemoryTracked} from '../systems/windMemory';
 import {ROAD_NEST,ROAD_POSTS} from '../../data/merchantRoad';
 import {roadTracked,roadRouteStatus} from '../systems/merchantRoadState';
 import {loadCityMapArt} from './cityMapArt';
@@ -83,7 +84,7 @@ export function showWorldAtlas(ui:Interface){
   element('map-landmark-list').innerHTML=local.map((l,i)=>`<button data-map-landmark="${i}"${l.campId?` data-camp-status="${l.campId}" data-cleared="${s.encounters.groups[l.campId].cleared}"`:''}><b>${l.name}</b><span>${l.detail}</span></button>`).join('')||'<p>此区域暂未开放。</p>';
   ui.modal.querySelectorAll<HTMLButtonElement>('[data-map-landmark]').forEach(b=>b.addEventListener('click',()=>{const l=local[Number(b.dataset.mapLandmark)];showInfo(l.name,l.detail,'地点已在地图中定位。');element<HTMLButtonElement>('atlas-enter').disabled=true;animateTo({...camera,...l.point,scale:Math.max(camera.scale,size.width/3000)});},{signal}));
  }
- const tracked=roadTracked(s)??legacyTracked(s);
+ const tracked=windMemoryTracked(s)??roadTracked(s)??legacyTracked(s);
  function draw(){
   if(closed||size.width<2||size.height<2)return;
   const begin=performance.now(),dpr=Math.min(window.devicePixelRatio||1,2);

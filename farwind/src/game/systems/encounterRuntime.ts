@@ -1,3 +1,4 @@
+import {creatureMaxHP} from '../../data/maps/windbell/elites';
 import {adventureSpawn} from './adventureSpawns';
 import {ENCOUNTERS,ENCOUNTER_LIMITS,encounterUnit,type EncounterDefinition,adventureIndex,ADVENTURE_ROUTES} from "../../data/maps/windbell/encounters";
 import {advanceEncounters,campCleared,resetEncounter,unitState,encounterDefinitions,activateAdventure,advanceAdventureWave,type EncounterState,type EncounterMemberState} from "./encounterState";
@@ -17,6 +18,7 @@ export class WildernessEncounters{
   arrivals=new Map<string,SpawnCue>();
   get pendingCount(){return [...this.arrivals.values()].filter(c=>!c.spawned).length;}
   private live(){return this.port.bodies().filter(e=>e.hp>0&&!e.disabled).length+this.pendingCount+(this.port.reserved?.()??0);}
+  private waveLive(group:string){return this.port.bodies().filter(e=>e.hp>0&&!e.disabled&&encounterUnit(e.id)?.group===group).length+[...this.arrivals.values()].filter(c=>!c.spawned&&encounterUnit(c.id)?.group===group).length;}
   private existing(){return new Set([...this.port.bodies().map(e=>e.id),...this.arrivals.keys()]);}
   private queue(m:Member,u:EncounterMemberState,now:number){this.arrivals.set(m.id,{id:m.id,x:u.x,y:u.y,startedAt:now,readyAt:now+SPAWN_CUE.lead,spawned:false});}
   private advanceArrivals(now:number,player:Point){
@@ -43,9 +45,9 @@ export class WildernessEncounters{
     if(this.port.suspended?.())return;
     const state=this.port.read(),existing=this.existing();let count=this.live();
     // 存档中的进行中首领优先恢复，防止邻近历史巡游占满预算后丢失战斗实例。
-    for(const d of this.definitions()){const g=state.groups[d.id];if(g.boss?.stage!=='battle')continue;const i=d.members.findIndex(m=>m.boss),m=d.members[i];if((!this.port.bossReady||this.port.bossReady(m.boss!))&&!existing.has(m.id)&&!g.members[i].defeated&&count<ENCOUNTER_LIMITS.active){this.port.spawn(m,g.members[i]);existing.add(m.id);count++;}}
-    for(const d of this.definitions().sort((a,b)=>distance(a,player)-distance(b,player))){const g=state.groups[d.id];if(!g.activated)continue;
-      for(const [i,m] of d.members.entries())if((!m.boss||g.boss?.stage==='battle'&&(!this.port.bossReady||this.port.bossReady(m.boss)))&&(g.wave===undefined||m.boss||'wave' in m&&m.wave===g.wave&&(g.waveWarning??0)===0)&&!existing.has(m.id)&&!g.members[i].defeated&&(m.boss||distance(g.members[i],player)<ENCOUNTER_LIMITS.activateDistance||this.port.busy(m.id))&&count<ENCOUNTER_LIMITS.active){if(!m.boss&&!g.members[i].participated)this.queue(m,g.members[i],now);else this.port.spawn(m,g.members[i]);count++;}
+    for(const d of this.definitions()){const g=state.groups[d.id];if(this.port.enabled&&!this.port.enabled(d)||g.boss?.stage!=='battle')continue;const i=d.members.findIndex(m=>m.boss),m=d.members[i];if((!this.port.bossReady||this.port.bossReady(m.boss!))&&!existing.has(m.id)&&!g.members[i].defeated&&count<ENCOUNTER_LIMITS.active){this.port.spawn(m,g.members[i]);existing.add(m.id);count++;}}
+    for(const d of this.definitions().sort((a,b)=>distance(a,player)-distance(b,player))){const g=state.groups[d.id];if(!g.activated||this.port.enabled&&!this.port.enabled(d))continue;
+      for(const [i,m] of d.members.entries())if((!m.boss||g.boss?.stage==='battle'&&(!this.port.bossReady||this.port.bossReady(m.boss)))&&(g.wave===undefined||m.boss||'wave' in m&&m.wave===g.wave&&(g.waveWarning??0)===0)&&!existing.has(m.id)&&!g.members[i].defeated&&(m.boss||distance(g.members[i],player)<ENCOUNTER_LIMITS.activateDistance||this.port.busy(m.id))&&count<ENCOUNTER_LIMITS.active&&(!state.memoryDifficulty||m.boss||this.waveLive(d.id)<10)&&(m.boss||!state.memoryDifficulty||g.members[i].participated)){if(!m.boss&&!g.members[i].participated)this.queue(m,g.members[i],now);else this.port.spawn(m,g.members[i]);count++;}
     }
   }
   capture(now:number){
@@ -61,7 +63,7 @@ export class WildernessEncounters{
   private resetBoss(d:EncounterDefinition){
     const g=this.port.read().groups[d.id],b=g.boss!,i=d.members.findIndex(m=>m.boss),m=d.members[i],u=g.members[i];
     this.port.bossReset?.(m.id);this.port.release(m.id);
-    Object.assign(u,{hp:CAMP_BOSSES[m.boss!].hp,x:m.x,y:m.y,cooldown:0,guardOpen:0,participated:false,face:{x:0,y:1}});
+    Object.assign(u,{hp:creatureMaxHP(m.type,m.elite,m.boss,this.port.read().memoryDifficulty),x:m.x,y:m.y,cooldown:0,guardOpen:0,participated:false,face:{x:0,y:1}});
     Object.assign(b,{stage:'warning',warning:BOSS_RULES.entry,away:0,attempt:b.attempt+1,combat:null});
   }
   private updateBoss(d:EncounterDefinition,delta:number,player:Point){
@@ -132,6 +134,17 @@ export class WildernessEncounters{
       if(g.wave!==undefined&&(g.waveWarning??0)>0)continue;
       if(!missing.length)continue;
       if(!g.activated&&missing.some(m=>(!d.after&&!d.id.startsWith('legacy-')&&inView(m,view))||distance(m,player)<(d.id.startsWith('legacy-')?75:d.after?150:350)||motionBlocked(m.x,m.y)))continue;
+      if(state.memoryDifficulty&&g.wave!==undefined){
+        // 每次只占用空闲名额；未出场的补援保留在同一波记录中，不提前推进。
+        let room=Math.min(10-this.waveLive(d.id),ENCOUNTER_LIMITS.active-this.live());
+        const occupied=[...this.port.bodies().filter(e=>e.hp>0&&!e.disabled),...[...this.arrivals.values()].filter(c=>!c.spawned),...this.port.occupied?.()??[]];
+        for(const m of missing){if(room<=0)break;const u=unitState(state,m.id)!;
+          const p=u.participated?{x:u.x,y:u.y}:adventureSpawn(d,player,occupied,d.members.indexOf(m),view);
+          if(!p||motionBlocked(p.x,p.y)||occupied.some(e=>distance(e,p)<45))continue;
+          Object.assign(u,p);this.queue(m,u,now);occupied.push(p);room--;
+        }
+        continue;
+      }
       let live=this.live();
       if(live+missing.length>ENCOUNTER_LIMITS.active){
         // 给近处新场地让出显示预算。休眠前已经捕获伤势，不卸载交战、返家或在途事件。

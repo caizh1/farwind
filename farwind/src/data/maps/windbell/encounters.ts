@@ -87,10 +87,11 @@ export const TACTICAL_TEMPLATES:readonly (readonly EnemyKind[])[]=[
  ['guardian','leaf','priest','archer','wolf','slime'],
  ['wolf','leaf','geomancer','archer','guardian','slime'],
 ];
-export function waveMembers(d:EncounterDefinition,seed:number,rulesVersion:1|2=2):WaveMember[]{
+export function waveMembers(d:EncounterDefinition,seed:number,rulesVersion:1|2=2,memoryLevel=0):WaveMember[]{
  const node=adventureIndex(d.id);if(node<0)return d.members.map(m=>({...m,wave:0}));
  let hash=seed>>>0;for(const c of d.id)hash=Math.imul(hash^c.charCodeAt(0),16777619)>>>0;
- const sizes=node===0?[6,6]:node===1?[8,8]:node===2?[8,8,8]:node===3?[6,6]:[8,8];
+ const baseSizes=node===0?[6,6]:node===1?[8,8]:node===2?[8,8,8]:node===3?[6,6]:[8,8];
+ const sizes=[...baseSizes],extra=Math.min(baseSizes.reduce((sum,size)=>sum+size,0),2*memoryLevel);for(let i=0;i<extra;i++)sizes[i%sizes.length]++;
  const result:WaveMember[]=[];
  for(const [wave,size] of sizes.entries()){
   const pattern=rulesVersion===1?COMBAT_TEMPLATES[d.direction][(hash+wave)%6]:node===0&&wave===0?['slime','leaf','spore','wolf','slime','leaf'] as const:TACTICAL_TEMPLATES[(hash+wave+node)%4];
@@ -100,13 +101,17 @@ export function waveMembers(d:EncounterDefinition,seed:number,rulesVersion:1|2=2
    const original=pinned[slot];let type=original?.type??(slot<6?pattern[slot]:pattern[slot%2]);
    let role=combatRole(type);if(!original&&role!=='melee'&&roles[role]>=COMPOSITION_LIMITS[role]){type=slot%2===0?'leaf':'slime';role='melee';}roles[role]++;
    const angle=slot*Math.PI*2/size,radius=210+(wave%2)*35;
-   result.push({...original,id:original?.id??`v2:${d.id}:${wave}:${slot}:${type}`,type,x:original?.x??d.x+Math.cos(angle)*radius,y:original?.y??d.y+Math.sin(angle)*radius,wave});
+   result.push({...original,id:original?.id??(memoryLevel?`v3:${d.id}:${wave}:${slot}:${size}:${type}`:`v2:${d.id}:${wave}:${slot}:${type}`),type,x:original?.x??d.x+Math.cos(angle)*radius,y:original?.y??d.y+Math.sin(angle)*radius,wave});
   }
  }
  const boss=d.members.find(m=>m.boss);if(boss)result.push({...boss,wave:sizes.length});
  return result;
 }
 export function dynamicEncounterUnit(id:string):(EncounterDefinition['members'][number]&{group:string})|undefined{
+ const extended=/^v3:([a-z-]+):(\d):(\d{1,2}):(\d{1,2}):([a-z]+)$/.exec(id);
+ if(extended){const [,group,w,s,count,type]=extended,d=ENCOUNTERS.find(d=>d.id===group),size=Number(count),slot=Number(s);if(!d||adventureIndex(group)<0||Number(w)>2||size<6||size>16||slot>=size||!['slime','leaf','spore','boar','raven','wolf','burrow','guardian','priest','bomber','archer','bell','shade','geomancer'].includes(type))return;
+  const angle=slot*Math.PI*2/size,radius=210+(Number(w)%2)*35;return {id,type:type as EnemyKind,group,x:d.x+Math.cos(angle)*radius,y:d.y+Math.sin(angle)*radius};
+ }
  const match=/^v2:([a-z-]+):(\d):(\d):([a-z]+)$/.exec(id);if(!match)return;
  const [,group,w,s,type]=match,d=ENCOUNTERS.find(d=>d.id===group);if(!d||adventureIndex(group)<0||Number(w)>2||Number(s)>9||!['slime','leaf','spore','boar','raven','wolf','burrow','guardian','priest','bomber','archer','bell','shade','geomancer'].includes(type))return;
  const node=adventureIndex(group),size=node===0||node===3?6:8,angle=Number(s)*Math.PI*2/size,radius=210+(Number(w)%2)*35;

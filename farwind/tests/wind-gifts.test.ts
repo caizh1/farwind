@@ -269,6 +269,6 @@ describe("回锋一次近战与扇形剑气", () => {
     h.engine.captureGiftAttack("第二击", false);
     expect(h.engine.native("第一击", h.enemies[0], 100, 1).amount).toBe(120);
     expect(h.engine.native("第二击", h.enemies[0], 100, 1).amount).toBe(140);
-    expect(Object.keys(WIND_GIFTS)).toHaveLength(62);
+    expect(Object.keys(WIND_GIFTS)).toHaveLength(65);
   });
 });

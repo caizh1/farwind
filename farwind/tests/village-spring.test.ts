@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { props } from "../src/data/world";
 import { initialState, validate } from "../src/game/systems/state";
-import { springSnapshot } from "../src/game/systems/villageSpring";
+import { springSnapshot, springBlockReason } from "../src/game/systems/villageSpring";
+import { interactNearby } from "../src/game/systems/interactions";
 import { StateCommit } from "../src/game/systems/stateCommit";
 import { type RuneSafety } from "../src/game/systems/runeState";
 import { motionBlocked, clearMotionLine } from "../src/game/systems/obstacles";
@@ -48,5 +49,32 @@ describe("村庄饮用泉水", () => {
     await expect(commit.run(() => state, s => springSnapshot(s, safe), async () => {}, next => { state = next; })).rejects.toThrow("正在保存");
     expect(state).toEqual(before); finish(); await pending;
     expect(state.player).toMatchObject({ hp: 100, stamina: 100 });
+  });
+  it("饮用提示的限制与实际恢复门禁一致", () => {
+    const state = wounded();
+    expect(springBlockReason(state, safe)).toBe("");
+    for (const key of Object.keys(safe) as (keyof RuneSafety)[]) {
+      const safety = { ...safe, [key]: true }, reason = springBlockReason(state, safety);
+      expect(reason).not.toBe("");
+      expect(() => springSnapshot(state, safety)).toThrow(reason);
+    }
+    const full = springSnapshot(state, safe);
+    expect(springBlockReason(full, safe)).toContain("已满");
+  });
+  it("泉水提示不会被附近战利品抢走，无目标时仍能拾取", () => {
+    const spring = props.find(p => p.id === "plaza-fountain")!;
+    let state = wounded(), pickups = 0;
+    const world: Parameters<typeof interactNearby>[0] = {
+      state, target: spring,
+      interact: target => { expect(target).toBe(spring); state = springSnapshot(state, safe); },
+      claimDrop: () => { pickups++; return true; },
+    };
+    interactNearby(world);
+    expect(state.player).toMatchObject({ hp: 100, stamina: 100 });
+    expect(pickups).toBe(0);
+    world.target = undefined; interactNearby(world);
+    expect(pickups).toBe(1);
+    world.state.life.playerSpace = "general-shop"; interactNearby(world);
+    expect(pickups).toBe(1);
   });
 });

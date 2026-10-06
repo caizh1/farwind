@@ -10,7 +10,7 @@ import {
   resolveSwordWindConfig,
   type SwordWindConfig,
 } from "../../data/swordWind";
-import { completeWindLesson, effectiveWindStage, windLessonStatus } from "./skills";
+import { completeWindLesson, effectiveWindStage, windLessonStatus, windLessonProgress } from "./skills";
 import type { World } from "../scenes/World";
 import type { State } from "./state";
 import { save } from "./save";
@@ -154,9 +154,10 @@ export class WindLessons {
       return;
     w.ui.dialog(
       l.name,
-      `${l.hint}\n${done ? windLessonStatus(w.state.skills, id) : "成长来自这次具体经历，不需要击杀、材料或重复练习。"}\n${!done && (id === LESSON_IDS[0] || id === LESSON_IDS[3]) ? "圆形铺垫标示试用站位。按 I／中键独立送风；按住可持续施放；面向北方。临时能力仅用于教学风铃。" : ""}`,
+      `${windLessonStatus(w.state.skills, id)}${!done?`\n\n本关操作：${l.hint}\n成长来自这次具体经历，不需要击杀、材料或重复练习。`:''}\n${!done && (id === LESSON_IDS[0] || id === LESSON_IDS[3]) ? "圆形铺垫标示试用站位。按 I／中键独立送风；按住可持续施放；面向北方。临时能力仅用于教学风铃。" : ""}`,
       "rune",
     );
+    w.ui.modal?.querySelector('.dialog-panel')?.classList.add('wind-lesson-panel');
     if (this.pending?.id === id) {
       this.button(
         "重试保存已完成的经历",
@@ -165,15 +166,11 @@ export class WindLessons {
       return;
     }
     if (!w.state.skills.discoveredLessons.includes(id)) void this.discover(id);
-    if (id === LESSON_IDS[0] || id === LESSON_IDS[3]) {
-      this.button(done ? "重看动作与用途" : "开始限定试用", () => {
-        if (!done) this.trial = id;
+    if (!done && (id === LESSON_IDS[0] || id === LESSON_IDS[3])) {
+      this.button("开始限定试用", () => {
+        this.trial = id;
         w.ui.close(true);
-        w.ui.message(
-          done
-            ? WIND_EFFECTS[w.state.skills.swordWindStage]
-            : "临时试用：站上铺垫，面向北方，按 I／中键独立送风。离开范围后结束。",
-        );
+        w.ui.message("临时试用：站上铺垫，面向北方，按 I／中键独立送风。离开范围后结束。");
       });
     }
     if (!done && id === LESSON_IDS[1])
@@ -258,7 +255,7 @@ export class WindLessons {
         }).join("\n\n");
         w.ui.dialog(
           "风记住了这段经历",
-          `${lines}\n\n正式进度已保存。${WIND_LESSONS[after - 1].next}`,
+          `${lines}\n\n正式进度已保存。\n${windLessonProgress(w.state.skills)}`,
           "rune",
         );
         w.soundFx.play("success");
@@ -274,6 +271,7 @@ export class WindLessons {
           "这侧风帆已扶正，铜铃开始随风鸣响。另一侧仍然歪倒，再扶正它便能让三铃齐响。",
         );
       }
+      w.ui.modal?.querySelector('.dialog-panel')?.classList.add('wind-lesson-panel');
     } catch (e) {
       w.ui.dialog(
         "经历尚未保存",

@@ -1,5 +1,7 @@
+import {memoryStrength} from '../../data/windMemoryDifficulty';
+import {advanceEastLocomotion} from './eastBossLocomotion';
 import {CAMP_BOSSES,BOSS_RULES,type CampBossKind} from '../../data/maps/windbell/campBosses';
-import {createEnemyAttack,advanceEnemyAttack,delayEnemyAttack,aim,geometryTouches,type EnemyAttack,type EnemyContact,type AttackGeometry} from './enemyAttack';
+import {createEnemyAttack,applyMemoryAttack,advanceEnemyAttack,delayEnemyAttack,aim,geometryTouches,type EnemyAttack,type EnemyContact,type AttackGeometry} from './enemyAttack';
 import {sweepMove} from './combat';
 import {motionBlocked,clearMotionLine,clearMeleeLine,type Point} from './obstacles';
 import type {EnemyBody} from './enemy';
@@ -7,7 +9,7 @@ import type {EnemyProjectiles} from './enemyProjectiles';
 import {enemyLeashRadius} from '../../data/enemyPursuit';
 import {initialBossBattle,shiftBossBattle,shiftBossAttack,shiftBossHazard,shiftBossShot,type BossBattle,type BossHazard,type SavedBossCombat} from './campBossState';
 
-import {BOSS_LASER,LASER_DURATION,isBossLaser,laserHazard,laserSample,laserGeometries,clipLaserRays} from './bossLaser';
+import {BOSS_LASER,LASER_DURATION,isBossLaser,laserHazard,laserSample,laserGeometries,clipLaserRays,laserCanHit,laserHitKey} from './bossLaser';
 
 const range=(a:Point,b:Point)=>Math.hypot(a.x-b.x,a.y-b.y);
 // 预警与实际危险区共用落点，真实障碍处不显示无法生效的攻击。
@@ -19,7 +21,7 @@ export function selectBossMove(e:EnemyBody,target:Point,now:number){const b=e.bo
  const usable=(i:number)=>!(kind==='thorn-crown'&&i===4&&((b.summoned??0)>=4||wolves.filter(w=>w.hp>0).length>=2))&&!(kind==='crag-tusk'&&i===4&&nodes.filter(r=>r.kind==='rock'&&r.hp>0).length>=3)&&!(kind==='spore-heart'&&i===5&&nodes.filter(r=>r.kind==='sac'&&r.hp>0).length>=2);
  const candidates=Array.from({length:count},(_,i)=>i).filter(i=>i!==b.lastSkill&&b.cooldowns![i]<=now&&(!b.major||!bossMajor(kind,i))&&usable(i));
  const facing=e.face??{x:0,y:1},behind=distance>0&&((target.x-e.x)*facing.x+(target.y-e.y)*facing.y)/distance<-.25;
- const score=(i:number)=>(kind==='bound-branch'&&i===6&&b.next%3===2?8:0)+(i===(distance>190?0:distance<105?2:1)?4:0)+(i>=4&&b.next%3===2?5:0)+(kind==='thorn-crown'&&behind&&i===2?5:0)+(kind==='crag-tusk'&&nodes.some(r=>r.kind==='rock'&&r.hp>0)&&i===0?2:0)+(kind==='spore-heart'&&nodes.some(r=>r.kind==='root'&&r.hp>0)&&i===4?2:0)+(kind==='bound-branch'&&i===3&&!behind&&e.hp<CAMP_BOSSES[kind].hp*.7?2:0)+(kind==='bound-branch'&&b.phase===2&&i===5&&nodes.filter(r=>r.kind==='sigil'&&r.hp>0).length<2?2:0)+(count-1-(i+b.next)%count)*.1;
+ const score=(i:number)=>(kind==='bound-branch'&&i===6&&b.next%3===2?8:0)+(i===(distance>190?0:distance<105?2:1)?4:0)+(i>=4&&b.next%3===2?5:0)+(kind==='thorn-crown'&&behind&&i===2?5:0)+(kind==='crag-tusk'&&nodes.some(r=>r.kind==='rock'&&r.hp>0)&&i===0?2:0)+(kind==='spore-heart'&&nodes.some(r=>r.kind==='root'&&r.hp>0)&&i===4?2:0)+(kind==='bound-branch'&&i===3&&!behind&&e.hp<(e.maxHP??CAMP_BOSSES[kind].hp)*.7?2:0)+(kind==='bound-branch'&&b.phase===2&&i===5&&nodes.filter(r=>r.kind==='sigil'&&r.hp>0).length<2?2:0)+(count-1-(i+b.next)%count)*.1;
  return candidates.sort((a,c)=>score(c)-score(a)||a-c)[0]??-1;
 }
 export function bossParts(kind:CampBossKind,move:number,phase:1|2){
@@ -47,7 +49,7 @@ function bossMove(kind:CampBossKind,b:BossBattle){
     if(move===2){windup=850;active=350;area='circle';radius=50;reach=340;heavy=true;}
     if(move===3){windup=1100;active=1700;area='ring';radius=250;reach=300;heavy=true;}
   }else{
-    if(move===0){offset=part?.65:-.65;radius=135;halfAngle=.72;active=200;}
+    if(move===0){offset=part?.65:-.65;radius=190;halfAngle=Math.PI/3;active=200;}
     if(move===1){windup=900;reach=340;angles=part?[-.9,-.45,0,.45,.9]:[-.75,-.35,0,.75];}
     if(move===2){windup=1100;active=2200;reach=340;area='circle';radius=38;heavy=true;}
     if(move===3){windup=900;active=2400;reach=260;cocoon=true;}
@@ -59,6 +61,7 @@ function bossMove(kind:CampBossKind,b:BossBattle){
   if(bossMajor(kind,move))windup=Math.max(1000,windup);else windup=Math.min(900,Math.max(700,windup));
   // 二阶段提高连段密度，危险大招仍保留完整一秒预警；锁向后至少350毫秒可躲避。
   if(phase===2&&!bossMajor(kind,move))windup=Math.max(700,windup-100);
+  if(kind==='bound-branch'&&move===0){windup=part?(phase===2?350:400):(phase===2?700:750);active=200;recovery=part?220:(phase===2?60:80);step=part?18:24;}
   return {windup,active,recovery,step,reach,heavy,angles,area,cocoon,radius,halfAngle,offset,rear,sideStep:kind==='thorn-crown'&&move===3?64:0};
 }
 export function bossEngagementRange(kind:CampBossKind,b:BossBattle){
@@ -73,13 +76,14 @@ export function createBossAttack(e:EnemyBody,now:number,target:Point,b:BossBattl
   const kind=e.boss!,move=b.move,part=b.part;
   const {windup,active,recovery,step,reach,heavy,angles,area,cocoon,radius,halfAngle,offset,rear,sideStep}=bossMove(kind,b);
   const a=createEnemyAttack(e.id,e.attackSerial=(e.attackSerial??0)+1,e.type,now,e,target,windup);
+  if(kind==='bound-branch')e.eastStepBlocked=false;
   a.attackId=`${e.id}:战斗${e.bossAttempt??0}:${e.attackSerial}`;
   Object.assign(a,{boss:kind,bossSkill:move,bossPart:part,bossAttempt:e.bossAttempt??0,step,lockAt:now+windup-350,activeUntil:now+windup+active,recoveryUntil:now+windup+active+recovery,damage:((move===4&&(kind==='thorn-crown'||kind==='crag-tusk'))||(move===5&&kind==='spore-heart'))?0:heavy?BOSS_RULES.heavyDamage:BOSS_RULES.damage,range:reach,parryable:!area&&!cocoon&&radius>0,bossShotAngles:angles,bossArea:area,bossCocoon:cocoon,
     bossGeometry:{kind:area??'sector',point:area==='circle'?{x:target.x,y:target.y}:{x:e.x,y:e.y},radius,halfAngle,offset,rear},
     ...sideStep?{bossSideStep:sideStep,bossSideMotion:0}:{}});
-  if(kind==='bound-branch'&&move===6){a.bossLaser=true;a.parryable=false;a.bossGeometry!.kind='ring';}
+  if(kind==='bound-branch'&&move===6){a.bossLaser=true;a.bossLaserVersion=2;a.parryable=false;a.bossGeometry!.kind='ring';}
   if(rear){a.direction={...e.face??a.direction};a.locked=true;a.lockAt=now;}
-  return a;
+  return applyMemoryAttack(a,e,bossMajor(kind,move));
 }
 
 // 返回 undefined 时由原有有界导航靠近；技能、连招与收招只由本状态机推进。
@@ -90,16 +94,22 @@ export function updateCampBoss(e:EnemyBody,target:Point,now:number,dtMs:number,t
   if(e.attack&&!e.attack.cancelled){const frozen=Math.max(0,Math.min(now,e.staggerUntil)-Math.max(now-dtMs,e.staggerSince??now-dtMs));if(frozen)delayEnemyAttack(e.attack,frozen);}
   if(now<e.staggerUntil){e.ai='首领失衡';return null;}
   if(e.attack){const a=e.attack;
+    if(kind==='bound-branch'&&a.bossSkill===0&&now<a.contactAt){const space=bossAttackSpace(e),trial={x:e.x,y:e.y};sweepMove(trial,a.direction.x*(a.step??0),a.direction.y*(a.step??0),space.blocked,space.clear);e.eastStepBlocked=(a.step??0)===0||range(trial,e)<(a.step??0)*.8;/* 锁向后若落脚不足，选择原地挥镰，避免稳足素材随根点滑行。 */if(e.eastStepBlocked&&now>=a.lockAt)a.step=0;}
     // 侧跃有真实扫掠和独立蓄力，不瞬移、穿树或在锁向后追踪。
     if(a.bossSideStep&&now<a.lockAt){const u=Math.min(1,(now-a.startedAt)/260),wanted=a.bossSideStep*u,delta=wanted-(a.bossSideMotion??0);if(delta>0){const p=bossAttackSpace(e);sweepMove(e,-a.direction.y*delta,a.direction.x*delta,p.blocked,p.clear);a.bossSideMotion=wanted;}}
     if(!a.locked&&a.bossArea==='circle')a.bossGeometry!.point={x:target.x,y:target.y};
-    const event=advanceEnemyAttack(a,e,target,now,bossAttackSpace(e));e.windup=Math.max(0,a.contactAt-now);e.face={...a.direction};
+    const beforeMotion={x:e.x,y:e.y},beforeAmount=a.motionAt;
+    const event=advanceEnemyAttack(a,e,target,now,bossAttackSpace(e));if(kind==='bound-branch'&&a.bossSkill===0&&a.motionAt-beforeAmount>.01&&range(e,beforeMotion)<(a.motionAt-beforeAmount)*.5)e.eastStepBlocked=true;e.windup=Math.max(0,a.contactAt-now);e.face={...a.direction};
     e.ai=isBossLaser(a)?({charge:'赤环蓄力',rays:'八向激光',pause:'赤环换式',etch:'环形刻线',delay:'灼痕蓄爆',echo:'地面追爆',recover:'首领收招'} as const)[laserSample(laserHazard(a),now).stage]:a.bossCocoon?'护心结茧':now<a.contactAt?'首领蓄力':now<a.activeUntil?'首领出手':'首领收招';
     if(a.wallAt!==undefined&&!a.bossStunned){a.bossStunned=true;e.wallHit={at:a.wallAt,until:a.wallAt+1800,direction:{...a.direction}};e.staggerSince=now;e.staggerUntil=now+1800;b.exposedUntil=Math.max(b.exposedUntil,now+1800);b.part=bossParts(kind,b.move,b.phase)-1;}
     if(now>=a.recoveryUntil||a.cancelled){
       e.attack=null;e.windup=0;
-      if(b.part+1<bossParts(kind,b.move,b.phase)){b.part++;b.nextAt=Math.max(now+(b.phase===2?100:160),e.staggerUntil,b.exposedUntil);}
-      else if(!a.cancelled&&b.phase===2&&(kind==='bound-branch'||(b.cooldowns?.[3]??0)<=now)&&(kind==='thorn-crown'&&b.move===1||kind==='crag-tusk'&&b.move===2||kind==='bound-branch'&&b.move===2||kind==='spore-heart'&&b.move===1)){b.move=kind==='bound-branch'?1:3;b.part=0;b.nextAt=Math.max(now+200,e.staggerUntil,b.exposedUntil);}
+      if(kind==='bound-branch'&&a.bossSkill===0&&a.cancelled)b.part=bossParts(kind,b.move,b.phase)-1;
+      if(b.part+1<bossParts(kind,b.move,b.phase)){
+        b.part++;const linked=kind==='bound-branch'&&b.move===0;b.nextAt=Math.max(linked?a.recoveryUntil:now+(b.phase===2?100:160)/memoryStrength(e.memoryDifficulty,true).frequency,e.staggerUntil,b.exposedUntil);
+        if(linked&&b.nextAt<=now&&permitted){e.attack=createBossAttack(e,b.nextAt,target,b);e.windup=Math.max(0,e.attack.contactAt-now);e.cool=e.attack.recoveryUntil;}
+      }
+      else if(!a.cancelled&&b.phase===2&&(kind==='bound-branch'||(b.cooldowns?.[3]??0)<=now)&&(kind==='thorn-crown'&&b.move===1||kind==='crag-tusk'&&b.move===2||kind==='bound-branch'&&b.move===2||kind==='spore-heart'&&b.move===1)){b.move=kind==='bound-branch'?1:3;b.part=0;b.nextAt=Math.max(now+200/memoryStrength(e.memoryDifficulty,true).frequency,e.staggerUntil,b.exposedUntil);}
       else{
         // 撞墙、拆机关或弹反已经设置窗口；取消的攻击不能在失衡结束后再次延长。
         if(!a.cancelled||!b.exposedUntil)b.exposedUntil=Math.max(b.exposedUntil,now+(b.phase===2?1050:1400));
@@ -108,7 +118,7 @@ export function updateCampBoss(e:EnemyBody,target:Point,now:number,dtMs:number,t
     }
     return event;
   }
-  if(b.move===-1&&b.phase===1&&e.hp<=CAMP_BOSSES[kind].hp*.55){
+  if(b.move===-1&&b.phase===1&&e.hp<=(e.maxHP??CAMP_BOSSES[kind].hp)*.55){
     // 完整连招结束即转换；转换免伤期间不消耗刚获得的反击窗口。
     const remaining=Math.max(0,b.exposedUntil-now);b.phase=2;b.transformUntil=now+BOSS_RULES.transform;
     if(remaining)b.exposedUntil=b.transformUntil+remaining;
@@ -118,7 +128,8 @@ export function updateCampBoss(e:EnemyBody,target:Point,now:number,dtMs:number,t
   if(b.move===-1){b.move=selectBossMove(e,target,now);if(b.move<0){b.nextAt=now+200;return null;}b.part=0;}
   if(range(e,target)>bossEngagementRange(kind,b))return undefined;
   if(!permitted||!clearMeleeLine(e,target))return undefined;
-  b.lastSkill=b.move;b.major=bossMajor(kind,b.move);b.cooldowns![b.move]=now+(b.major?12000:3500);b.next++;
+  if(kind==='bound-branch'&&(e.eastMotion?.speed??0)>.1){const space=bossAttackSpace(e);advanceEastLocomotion(e,target,now,dtMs,space.blocked,space.clear,0);e.ai='首领减速';return null;}
+  b.lastSkill=b.move;b.major=bossMajor(kind,b.move);b.cooldowns![b.move]=now+(b.major?12000:3500)/memoryStrength(e.memoryDifficulty,true).frequency;b.next++;
   e.targetId=targetId;e.attack=createBossAttack(e,now,target,b);e.cool=e.attack.recoveryUntil;e.windup=e.attack.contactAt-now;e.nav.path=[];
   e.nav.mode='chase';e.nav.returning=false;e.nav.lastSeen={...target};e.nav.lostAt=undefined;e.ai='首领前摇';return null;
 }
@@ -137,27 +148,31 @@ export class BossHazards{
   clear(owner?:string){this.hazards=owner?this.hazards.filter(h=>h.owner!==owner):[];}
   private updateLaser(h:BossHazard,e:EnemyBody,prev:number,now:number,targets:readonly (Point&{id:string;previous:Point;ordinaryOnly?:boolean})[],contacts:EnemyContact[]){
     const source=e.attack;
-    // 取消、死亡与换战斗清理整套连招；失衡期间时钟随正式攻击一起冻结。
     if(!source||source.cancelled||h.id!==source.attackId+':赤环'){h.expires=now;return;}
     h.born=source.startedAt;h.activeAt=source.contactAt;h.expires=source.activeUntil;
-    h.point={...source.bossGeometry!.point};h.laser!.angle=Math.atan2(source.direction.y,source.direction.x);if(source.locked)clipLaserRays(h,clearMeleeLine);
+    const modern=h.laser!.version===2,old=e.combatPrevious??e,rootAt=(t:number)=>{const u=now>prev?Math.max(0,Math.min(1,(t-prev)/(now-prev))):1;return {x:old.x+(e.x-old.x)*u,y:old.y+(e.y-old.y)*u};};
+    h.laser!.angle=Math.atan2(source.direction.y,source.direction.x);
+    const place=(t:number)=>{
+      if(!modern){h.point={...source.bossGeometry!.point};return;}
+      if(!h.laser!.centerLocked){const etch=h.activeAt+laserSample(h,t).etch;h.point=rootAt(Math.min(t,etch));if(t>=etch){h.laser!.centerLocked=true;source.bossGeometry!.point={...h.point};}}
+    };
     const start=Math.max(prev,h.activeAt),end=Math.min(now,h.expires);
-    for(const target of targets){
-      if(target.ordinaryOnly)continue;
-      for(let t=start;t<=end;t=Math.min(end,t+5)){
-        const stage=laserSample(h,t).stage,key=stage+':'+target.id;
-        if(!h.used.includes(key)){
-          const u=now>prev?(t-prev)/(now-prev):1,p={x:target.previous.x+(target.x-target.previous.x)*u,y:target.previous.y+(target.y-target.previous.y)*u};
-          const g=laserGeometries(h,t).find(g=>geometryTouches(g,p));
-          if(g&&clearMeleeLine(h.point,p)){
-            h.used.push(key);
-            const a=shiftBossAttack(source,0);Object.assign(a,{attackId:`${h.id}:${key}`,bossPart:stage==='rays'?0:stage==='etch'?1:2,damage:stage==='echo'?BOSS_RULES.heavyDamage:BOSS_RULES.damage,geometry:g,emitted:true});
-            contacts.push({at:t,attack:a,origin:h.point,geometry:g,bossHazardId:h.id,targetId:target.id,sampledPoint:p});
-          }
-        }
-        if(t>=end)break;
+    for(let t=start;t<=end;t=Math.min(end,t+5)){
+      place(t);const stage=laserSample(h,t).stage;if(stage==='rays'&&source.locked)clipLaserRays(h,clearMeleeLine,t);
+      const geometries=laserGeometries(h,t);
+      for(const target of targets){
+        if(target.ordinaryOnly)continue;
+        const u=now>prev?(t-prev)/(now-prev):1,p={x:target.previous.x+(target.x-target.previous.x)*u,y:target.previous.y+(target.y-target.previous.y)*u};
+        const index=geometries.findIndex((g,i)=>laserCanHit(h,t,stage==='rays'?0:i,target.id)&&geometryTouches(g,p));
+        if(index<0||!clearMeleeLine(h.point,p))continue;
+        const key=laserHitKey(h,stage,stage==='rays'?0:index,target.id),repeated=modern&&stage==='rays';
+        if(repeated){h.laser!.rayHits??={};h.laser!.rayHits[target.id]=t;}else h.used.push(key);
+        const a=shiftBossAttack(source,0);Object.assign(a,{attackId:`${h.id}:${key}${repeated?':'+t:''}`,bossPart:stage==='rays'?0:stage==='etch'?1:2,damage:stage==='echo'?BOSS_RULES.heavyDamage:BOSS_RULES.damage,geometry:geometries[index],emitted:true});
+        contacts.push({at:t,attack:a,origin:{...h.point},geometry:geometries[index],bossHazardId:h.id,targetId:target.id,sampledPoint:p});
       }
+      if(t>=end)break;
     }
+    place(now);if(source.locked&&['charge','rays'].includes(laserSample(h,now).stage))clipLaserRays(h,clearMeleeLine,now);
   }
   launch(e:EnemyBody,now:number){const a=e.attack;
     if(a&&isBossLaser(a)){if(a.launched||a.cancelled||now>=a.activeUntil||this.hazards.length>=BOSS_RULES.maxHazards)return;a.launched=true;this.hazards.push(laserHazard(a));return;}

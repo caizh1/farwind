@@ -20,6 +20,12 @@ import { items } from "../../data/content";
 import { add, remove, count, reward } from "./state";
 import type { World } from "../scenes/World";
 
+// E 键先执行画面正在提示的交互，附近战利品不能抢走饮用、对话或入门操作。
+export function interactNearby(world: Pick<World, "target" | "claimDrop" | "state"> & { interact: (target: Prop) => void }) {
+  if (world.target) world.interact(world.target);
+  else if (world.state.life.playerSpace === "village") world.claimDrop();
+}
+
 export function interact(this: World, p: Prop) {
   if(merchantRoadInteraction(this,p))return;
   if(cityInteractionComplete(this,p))return;
@@ -27,6 +33,8 @@ export function interact(this: World, p: Prop) {
   if(legacyInteract(this,p))return;
   if (p.id === 'guard-memorial') { openGuardCare(this,true); return; }
   if (p.id === "plaza-fountain") { void this.drinkSpring(); return; }
+  const memoryCamp=ENCOUNTERS.find(d=>d.kind==='camp'&&p.id===(d.direction==='south'?'south-camp-root':`camp-root-${d.id}`));
+  if(memoryCamp&&this.state.encounters.groups[memoryCamp.id].cleared){this.ui.open('wind-memory');return;}
   if(p.id.startsWith('camp-root-')){const d=ENCOUNTERS.find(d=>d.id===p.id.slice(10));if(d){const t=regionalThreat(this.state.encounters,d.direction),boss=d.members.find(m=>m.boss)!.boss!;this.ui.dialog(d.name,t.cleared?'营地已经清空。这个方向的巡游不再补充，据点不再组织袭村。':`足迹与巢穴通往附近道路。清理全部驻守后，${CAMP_BOSSES[boss].name}会在预警后入场。击败首领，才能切断巡游与当地袭村来源。可以撤战回村守卫。`);return;}}
   if(p.id.startsWith("repair-")&&SHORTCUT_IDS.includes(p.id.slice(7) as ShortcutId)){openShortcut(this,p.id.slice(7) as ShortcutId);return;}
   if(p.id === "community-ledger"){openCommissions(this);return;}

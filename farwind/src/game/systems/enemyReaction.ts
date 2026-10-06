@@ -11,6 +11,7 @@ export function reactToEnemyHit(e:EnemyBody,now:number,move:StrikeConfig,directi
  // 祭根是固定环境机关；受击反馈沿用扣血动画，不改变脚点或留下无法恢复的位移。
  if(e.passiveRoot){e.recoil=undefined;e.staggerUntil=Math.max(e.staggerUntil,now+move.stagger);e.staggerSince=now;return {guarded,interrupted:false,guardBroken:false};}
  if(e.boss){
+  if(e.boss==='bound-branch')return {guarded,interrupted:false,guardBroken:false};
   const broken=e.bossBattle&&now<e.bossBattle.exposedUntil&&!!e.attack?.bossCocoon;
   if(broken){e.attack!.cancelled=true;e.parried={at:now,until:now+800,direction:{...direction},perfect:false};e.staggerUntil=now+800;e.staggerSince=now;}
   return {guarded,interrupted:!!broken,guardBroken:!!broken};

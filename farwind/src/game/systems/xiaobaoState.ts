@@ -346,7 +346,7 @@ export function validateXiaobao(
     !Array.isArray(s.affected) ||
     !ids(
       s.affected.map((e) => e?.id),
-      enemyDefs.length+ENCOUNTER_UNITS.length+116,
+      enemyDefs.length+ENCOUNTER_UNITS.length+400,
       (id) => typeof id === "string" && (enemyDefs.some(e=>e.id===id) || !!encounters && !!unitState(encounters,id) || !!road&&!!savedRoad(id)),
     ) ||
     !s.affected.every(
@@ -357,7 +357,7 @@ export function validateXiaobao(
         point(e) &&
         n(
           e.hp,
-          (road&&savedRoad(e.id)?.maxHP)??creatureMaxHP((enemyDefs.find((d) => d.id === e.id)??encounterUnit(e.id))!.type,encounterUnit(e.id)?.elite,encounterUnit(e.id)?.boss),
+          (road&&savedRoad(e.id)?.maxHP)??creatureMaxHP((enemyDefs.find((d) => d.id === e.id)??encounterUnit(e.id))!.type,encounterUnit(e.id)?.elite,encounterUnit(e.id)?.boss,encounters?.memoryDifficulty),
           0.001,
         ) &&
         n(e.control, 800) &&

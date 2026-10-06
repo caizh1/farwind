@@ -1,0 +1,7 @@
+// 在正式地图中寻找根部扫掠受阻而镰刃视线仍可达的位置，生成独立初始样本。
+import {createServer} from 'vite';import{readFile,writeFile}from'node:fs/promises';
+const server=await createServer({server:{middlewareMode:true},appType:'custom'});
+try{const{syncMapGeometry}=await server.ssrLoadModule('/src/data/world.ts');syncMapGeometry(false);const{motionBlocked,clearMotionLine,clearMeleeLine}=await server.ssrLoadModule('/src/game/systems/obstacles.ts');const{validate}=await server.ssrLoadModule('/src/game/systems/state.ts');let found;
+outer:for(let radius=50;radius<=280;radius+=10)for(let angle=0;angle<Math.PI*2;angle+=Math.PI/40){const root={x:3710+Math.cos(angle)*radius,y:1100+Math.sin(angle)*radius};if(motionBlocked(root.x,root.y))continue;for(let d=0;d<8;d++){const v={x:Math.sin(d*Math.PI/4),y:Math.cos(d*Math.PI/4)},end={x:root.x+v.x*24,y:root.y+v.y*24},target={x:root.x+v.x*70,y:root.y+v.y*70};if(!motionBlocked(target.x,target.y)&&clearMeleeLine(root,target,'boss-bound-branch')&&(motionBlocked(end.x,end.y)||!clearMotionLine(root,end))){found={root,target};break outer;}}}
+if(!found)throw Error('未找到符合正式碰撞条件的受阻攻击初始点');const s=JSON.parse(await readFile('docs/east-boss-motion-v2/fixtures/skill-0.json','utf8'));Object.assign(s.player,found.target);Object.assign(s.encounters.groups['east-thorn-camp'].members.find(m=>m.id==='boss-bound-branch'),found.root);await writeFile('docs/east-boss-motion-v2/fixtures/obstacle.json',JSON.stringify(validate(s)));console.log('受阻初始点',found);
+}finally{await server.close()}

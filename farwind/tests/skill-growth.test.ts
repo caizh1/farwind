@@ -3,6 +3,8 @@ import { initialState, validate } from "../src/game/systems/state";
 import {
   completeWindLesson,
   effectiveWindStage,
+  windLessonStatus,
+  windLessonProgress,
 } from "../src/game/systems/skills";
 import { LESSON_IDS,WIND_LESSONS } from "../src/data/windLessons";
 import {
@@ -56,6 +58,33 @@ function complete(stage: number) {
   return s;
 }
 describe("永久学习与迁移", () => {
+  it("完成一三四五关时显示四关已完成，并指向第二关；补齐后五段自动解锁", () => {
+    let s=initialState();
+    s.skills.devices.leakClosed=true;
+    s.skills.devices.splitLeft=1;
+    s.skills.devices.splitRight=2;
+    for(const index of [0,2,3,4])s=completeWindLesson(s,LESSON_IDS[index]);
+    s=validate(s);
+    const before=structuredClone(s);
+    for(const index of [0,2,3,4]){
+      const text=windLessonStatus(s.skills,LESSON_IDS[index]);
+      expect(text).toContain('传承完成：4/5');
+      expect(text).toContain('能力已解锁：第 1 段 · 一线斩');
+      expect(text).toContain('4. 展风于野 · 已完成 · 待解锁');
+      expect(text).toContain('下一步：第 2 关「两铃相继」');
+      expect(text).toContain('选择「解开缠住铃绳的藤蔓」');
+      expect(text).toContain('无需重做已完成的传承：长风不息、展风于野、一风三向');
+      expect(text).not.toContain('（1/5）');
+    }
+    expect(windLessonStatus(s.skills,LESSON_IDS[1])).toContain('两铃相继：尚未完成');
+    expect(s).toEqual(before);
+    s.skills.devices.serialValve=1;
+    s=validate(completeWindLesson(s,LESSON_IDS[1]));
+    expect(s.skills.swordWindStage).toBe(5);
+    expect(windLessonProgress(s.skills)).toContain('传承完成：5/5');
+    expect(windLessonProgress(s.skills)).not.toContain('待解锁');
+    expect(windLessonProgress(s.skills)).not.toContain('下一步');
+  });
   it("先记录一风三向再重读，应明确当前初阶与缺失前置", () => {
     let s = initialState();
     s.skills.legacySwordWind = true;
@@ -70,10 +99,10 @@ describe("永久学习与迁移", () => {
     lessons.open(LESSON_IDS[4]);
     const text = dialog.mock.calls[0][1];
     expect(text).toContain("尚未掌握 三向疾风斩");
-    expect(text).toContain("当前本领：一线斩（1/5）");
-    expect(text).toContain("还需完成：两铃相继、长风不息、展风于野");
-    expect(text).toContain("下一步：西部旧农庄的串联风铃");
-    expect(text).toContain("补齐后会自动结算，无需重做一风三向");
+    expect(text).toContain("能力已解锁：第 1 段 · 一线斩");
+    expect(text).toContain("2. 两铃相继 · 未完成");
+    expect(text).toContain("下一步：第 2 关「两铃相继」 · 西部旧农庄的串联风铃");
+    expect(text).toContain("补齐后会自动结算，无需重做已完成的传承：一风三向");
     expect(text).not.toContain("重复练习不再提升阶段");
     expect(s.skills.swordWindStage).toBe(1);
   });

@@ -5,7 +5,7 @@ import {BOSS_RULES} from '../../data/maps/windbell/campBosses';
 import {advanceEnemyAttack,sampleEnemyAttack,geometryTouches,SPORE,type EnemyAttack,type AttackGeometry} from '../systems/enemyAttack';
 import {bossHazardGeometry} from '../systems/campBossCombat';
 import type {BossHazard} from '../systems/campBossState';
-import {laserSample,laserGeometries} from '../systems/bossLaser';
+import {laserSample,laserGeometries,laserCanHit} from '../systems/bossLaser';
 import {clearMeleeLine,type Point} from '../systems/obstacles';
 
 export const WARNING={red:0xff343c,outline:0x2b1724,light:0xfff4ee,floor:WORLD.top-900} as const;
@@ -88,7 +88,7 @@ export function drawDanger(ink:Phaser.GameObjects.Graphics,floor:Phaser.GameObje
 // 地面提示只来自仍有效的正式危险区，已经命中过玩家的区域不再贴身报警。
 export function hazardWarningAt(h:BossHazard,p:Point,now:number):number|null{
   if(h.used.includes('player')||h.damage<=0||now>=h.expires||!clearMeleeLine(h.point,p))return null;
-  if(h.laser){for(let t=now;t<Math.min(h.expires,now+700);t+=15){if(!h.used.includes(laserSample(h,t).stage+':player')&&laserGeometries(h,t).some(g=>geometryTouches(g,p)))return t;}return null;}
+  if(h.laser){const preview=h.laser.version===2?{...h,laser:{...h.laser,reaches:undefined}}:h;for(let t=now;t<Math.min(h.expires,now+700);t+=15){if(laserGeometries(preview,t).some((g,i)=>laserCanHit(h,t,laserSample(h,t).stage==='rays'?0:i,'player')&&geometryTouches(g,p)))return t;}return null;}
   const d=Math.hypot(p.x-h.point.x,p.y-h.point.y);
   const at=h.kind==='ring'?Math.max(now,h.activeAt+Math.max(0,d-BOSS_RULES.ringInner-BOSS_RULES.ringWidth)/Math.max(1,h.speed)*1000):Math.max(now,h.activeAt);
   return at<h.expires&&geometryTouches(bossHazardGeometry(h,at),p)?at:null;

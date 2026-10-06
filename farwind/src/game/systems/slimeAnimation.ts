@@ -48,13 +48,13 @@ export function slimePose(action: SlimeAction, facing: Facing, elapsed: number, 
   }
   return { action, frame: offset + frame, index, facing, phase, elapsed, provisional: true };
 }
-export type SlimeBody = { x: number; y: number; hp?: number; staggerUntil?:number; recoil?:{at:number}; parried?: { at: number; until: number; direction: { x: number; y: number }; perfect: boolean } };
+export type SlimeBody = { x: number; y: number; hp?: number; externalMotion?:{x:number;y:number}; staggerUntil?:number; recoil?:{at:number}; parried?: { at: number; until: number; direction: { x: number; y: number }; perfect: boolean } };
 export class SlimeAnimation {
   facing: Facing = 0;
   distance = 0;
   hurtAt = -Infinity;
   deathAt = -Infinity;
-  last?: { x: number; y: number; hp?: number; now: number };
+  last?: { x: number; y: number; hp?: number; now: number;externalX?:number;externalY?:number };
   sample(body: SlimeBody, attack: EnemyAttack | null | undefined, now: number): SlimePose {
     const previous = this.last;
     if (previous && now < previous.now) { this.last = undefined; this.distance = 0; this.hurtAt = this.deathAt = -Infinity; }
@@ -63,7 +63,7 @@ export class SlimeAnimation {
       if (body.hp <= 0) this.deathAt = now;
       else this.hurtAt = now;
     }
-    const delta = last ? Math.hypot(body.x - last.x, body.y - last.y) : 0;
+    const delta = last ? Math.hypot(body.x-last.x-((body.externalMotion?.x??0)-(last.externalX??0)),body.y-last.y-((body.externalMotion?.y??0)-(last.externalY??0))) : 0;
     const dt = last ? now - last.now : 0;
     const parried = body.parried && now < body.parried.until ? body.parried : null;
     const attacking = attack && !attack.cancelled && now < attack.recoveryUntil ? attack : null;
@@ -74,8 +74,8 @@ export class SlimeAnimation {
     const moving = dt > 0 && delta > .001 && delta <= dt / 1000 * 180 + .5 && !attacking && !parried && !hurt && (body.hp ?? 1) > 0;
     if (parried) this.facing = slimeFacing(parried.direction.x, parried.direction.y, this.facing);
     else if (attacking) this.facing = slimeFacing(attacking.direction.x, attacking.direction.y, this.facing);
-    else if (moving && last) { this.facing = slimeFacing(body.x - last.x, body.y - last.y, this.facing); this.distance += delta; }
-    this.last = { x: body.x, y: body.y, hp: body.hp, now };
+    else if (moving && last) { this.facing = slimeFacing(body.x-last.x-((body.externalMotion?.x??0)-(last.externalX??0)),body.y-last.y-((body.externalMotion?.y??0)-(last.externalY??0)), this.facing); this.distance += delta; }
+    this.last = { x: body.x, y: body.y, hp: body.hp, now,externalX:body.externalMotion?.x??0,externalY:body.externalMotion?.y??0 };
     if ((body.hp ?? 1) <= 0) {
       if (!Number.isFinite(this.deathAt)) this.deathAt = now;
       return slimePose('death', this.facing, now - this.deathAt);

@@ -21,7 +21,10 @@ const GIFT_ART: Partial<Record<
     label: "剑风伤害",
     path: "M13 26h30c12 0 10-14 2-12M13 34h37M20 42h19c12 0 10 14 2 12",
   },
-  blackHole:{kind:"attack",label:"I黑洞斩触发率",path:"M32 8 24 28l7 3-4 25 13-25-8-4 0-19M14 36c-6-13 18-28 34-17M50 28c7 12-15 27-35 18M12 18l4 3M49 46l4 4"},
+  blackHole:{kind:"attack",label:"黑洞触发率与跳伤",path:"M32 8 24 28l7 3-4 25 13-25-8-4 0-19M14 36c-6-13 18-28 34-17M50 28c7 12-15 27-35 18M12 18l4 3M49 46l4 4"},
+  riftRadius:{kind:"attack",label:"黑洞范围与停留",path:""},
+  riftSuction:{kind:"attack",label:"额外吸收半径",path:""},
+  riftDuration:{kind:"attack",label:"黑洞停留时间",path:""},
   riposte: {
     kind: "attack",
     label: "弹反反击",

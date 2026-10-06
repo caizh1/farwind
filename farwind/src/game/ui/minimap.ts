@@ -1,3 +1,4 @@
+import {windMemoryTracked} from '../systems/windMemory';
 import {ROAD_NEST,ROAD_POSTS} from '../../data/merchantRoad';
 import {roadTracked,roadRouteStatus} from '../systems/merchantRoadState';
 import {CITY_BUILDINGS} from '../../data/cityLayout';
@@ -89,7 +90,7 @@ export class Minimap {
       c.textAlign = 'center'; c.lineJoin = 'round'; c.strokeStyle = '#18392deb'; c.lineWidth = 3;
       c.strokeText(name, lx, ly); c.fillStyle = color; c.fillText(name, lx, ly);
     };
-    const tracked = roadTracked(s)??legacyTracked(s);
+    const tracked = windMemoryTracked(s)??roadTracked(s)??legacyTracked(s);
     if (tracked && visible(tracked.point)) { marker(tracked.point, '#ffe398', 5); label(tracked.point, tracked.name, '#fff0b4'); }
     for (const b of BRIDGES) {
       const point = { x: b.x + b.w / 2, y: b.y + b.h / 2 + 110 };

@@ -7,7 +7,7 @@ export const WIND_GIFTS = {
   blade: { name: "砺刃", effect: "原生近战伤害 +12%", value: 0.12 },
   rapidFire: {name:"疾风连发",effect:"剑风连续发射间隔：800 → 600 → 480 → 400毫秒；重复选择升级，三级封顶",value:1},
   gale: { name: "聚风", effect: "原生剑风伤害 +12%", value: 0.12 },
-  blackHole: {name:"裂界·黑洞斩",effect:"I攻击5%触发星云风刃与次元裂缝，每级增加1个百分点，最高10%；裂缝牵引周围敌人，并造成40%基础普通攻击伤害／秒",value:.05},
+  blackHole: {name:"裂界·黑洞斩",effect:"I攻击5%触发星云风刃与次元裂缝，每级增加1个百分点，最高10%；裂缝牵引周围敌人，每250毫秒跳伤一次；每级跳伤+3点，单跳10点封顶（基础普攻18时显示2→5→8→10）",value:.05},
   riposte: {
     name: "回锋",
     effect:
@@ -77,7 +77,7 @@ export function giftEffect(id: WindGiftId, level: number) {
   if(id==='rapidFire')return `连续剑风间隔 ${swordWindInterval(level)}毫秒（每秒 ${(1000/swordWindInterval(level)).toFixed(2)}次）；${level>=3?'已满级 · 三级上限，恢复原基础节奏':`下一级 ${swordWindInterval(level+1)}毫秒 · 三级上限400毫秒`}。未获得800毫秒；一级600、二级480、三级400毫秒。风律每第三次连续I仍缩短30／60毫秒。`;
   const extra=EXTRA_WIND_GIFTS[id as keyof typeof EXTRA_WIND_GIFTS];
   if(extra)return extra.effect.replace('{v}',String(Math.round(giftDisplayValue(id,level)*(extra.unit==='%'?100:1)*100)/100));
-  if(id==='blackHole')return `I每次施放${Math.round(Math.min(.1,.05+.01*(level-1))*100)}%触发黑洞斩；风刃命中或抵达终点后撕开次元裂缝，牵引180范围内敌人1.44秒，持续造成40%基础普通攻击伤害／秒。首领与机关不被强制位移。每级触发率增加1个百分点，最高10%。`;
+  if(id==='blackHole')return `I每次施放${Math.round(Math.min(.1,.05+.01*(level-1))*100)}%触发黑洞斩；风刃命中或抵达终点后撕开次元裂缝，基础伤害与吸收半径180，持续1.44秒，可由扩界、吞星、长夜强化。范围内每250毫秒跳伤一次：一级为基础普攻的10%，每次升级跳伤+3点，单跳10点封顶；基础普攻18时，一级至四级显示2→5→8→10。首领与机关不被强制位移。每级触发率增加1个百分点，最高10%。`;
   const value = Math.round(
     WIND_GIFTS[id].value *
       level *
@@ -106,7 +106,7 @@ export function offerWindGift(
 ) {
   if (s.receipts.includes(receipt)) return false;
   const available = (Object.keys(WIND_GIFTS) as WindGiftId[]).filter(
-    (id) => !giftMaxed(s,id) && (windUnlocked || !['rapidFire','gale','blackHole',...Object.keys(EXTRA_WIND_GIFTS).filter(k=>EXTRA_WIND_GIFTS[k as keyof typeof EXTRA_WIND_GIFTS].group.startsWith('I')||['holdWind','curledWind','borrowWind','storedTurn','guidingEdge','duet','cyclicBreath','duality'].includes(k))].includes(id)),
+    (id) => !giftMaxed(s,id) && (!['riftRadius','riftSuction','riftDuration'].includes(id)||giftLevel(s,'blackHole')>0) && (windUnlocked || !['rapidFire','gale','blackHole',...Object.keys(EXTRA_WIND_GIFTS).filter(k=>EXTRA_WIND_GIFTS[k as keyof typeof EXTRA_WIND_GIFTS].group.startsWith('I')||['holdWind','curledWind','borrowWind','storedTurn','guidingEdge','duet','cyclicBreath','duality'].includes(k))].includes(id)),
   );
   const sorted = available.sort(
     (a, b) =>
