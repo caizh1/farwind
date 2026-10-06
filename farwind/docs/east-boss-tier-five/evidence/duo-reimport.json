@@ -1,0 +1,554 @@
+{
+  "说明": "正式导入独立样本后使用真实键鼠；只读诊断，不修改运行状态。",
+  "指标": {
+    "纹理峰值MiB": 57.29060363769531,
+    "关键缺帧": 0,
+    "失败页": 0,
+    "帧时间P95": 33.30000000000018
+  },
+  "样本": [
+    {
+      "now": 318.31000000000006,
+      "mode": "",
+      "player": {
+        "x": 3710,
+        "y": 1100,
+        "hp": 100,
+        "stamina": 100,
+        "swordWindStage": 1
+      },
+      "enemies": [
+        {
+          "id": "memory:8|boss-bound-branch",
+          "x": 3710,
+          "y": 900,
+          "hp": 4750,
+          "type": "leaf",
+          "behavior": {
+            "boss": "bound-branch",
+            "battle": {
+              "phase": 1,
+              "next": 0,
+              "move": -1,
+              "part": 0,
+              "nextAt": 1800,
+              "entryUntil": 0,
+              "exposedUntil": 0,
+              "transformUntil": 0,
+              "controlImmuneUntil": 0,
+              "startedAt": 0,
+              "lastSkill": -1,
+              "major": false,
+              "cooldowns": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "castSerial": 0,
+              "summoned": 0,
+              "summons": [],
+              "cloneUsed": true
+            },
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 1,
+              "index": 1,
+              "facing": 0,
+              "phase": "警戒",
+              "elapsed": 318.31000000000006,
+              "provisional": false
+            }
+          },
+          "art": {
+            "pose": {
+              "action": "idle",
+              "frame": 1,
+              "index": 1,
+              "facing": 0,
+              "phase": "警戒",
+              "elapsed": 318.31000000000006,
+              "provisional": false
+            },
+            "continuous": {
+              "mode": "八方向预渲染动画",
+              "pose": {
+                "clip": "idle",
+                "time": 318.31000000000006,
+                "direction": 0,
+                "phase": "警戒"
+              },
+              "late": false,
+              "compressed": true,
+              "resources": {
+                "residentBytes": 59142768,
+                "peakBytes": 60073552,
+                "decodedPeakBytes": 0,
+                "inflatedPeakBytes": 1032192,
+                "downloadBytes": 15322614,
+                "loads": 109,
+                "misses": 4,
+                "failedPages": 0,
+                "criticalMisses": 0
+              },
+              "failure": ""
+            },
+            "parryReaction": null,
+            "root": [
+              3710,
+              900
+            ],
+            "rotation": 0,
+            "frame": "idle/0/0009",
+            "origin": [
+              0.4762198744769875,
+              0.9098469465648855
+            ],
+            "scale": [
+              0.48828125,
+              0.48828125
+            ],
+            "flip": false,
+            "provisional": false
+          },
+          "wallHit": null,
+          "flashRemaining": 0,
+          "windup": 0,
+          "attack": null,
+          "pose": null,
+          "parried": null,
+          "staggerRemaining": 0,
+          "staggerUntil": 0,
+          "home": {
+            "x": 3710,
+            "y": 1100
+          },
+          "footprint": {
+            "left": 3698,
+            "right": 3722,
+            "top": 890,
+            "bottom": 910
+          },
+          "ai": "首领破防窗口",
+          "attackRejected": null,
+          "meleeBlocker": null,
+          "waypoint": null,
+          "path": [],
+          "queries": 0,
+          "visited": 0,
+          "recovered": false,
+          "disabled": false
+        },
+        {
+          "id": "memory:8|boss-bound-branch:clone:0:0",
+          "x": 3950,
+          "y": 900,
+          "hp": 4750,
+          "type": "leaf",
+          "behavior": {
+            "clone": {
+              "owner": "memory:8|boss-bound-branch",
+              "attempt": 0
+            },
+            "boss": "bound-branch",
+            "battle": {
+              "phase": 1,
+              "next": 0,
+              "move": -1,
+              "part": 0,
+              "nextAt": 1805,
+              "entryUntil": 5,
+              "exposedUntil": 5,
+              "transformUntil": 5,
+              "controlImmuneUntil": 5,
+              "startedAt": 5,
+              "lastSkill": -1,
+              "major": false,
+              "cooldowns": [
+                5,
+                5,
+                5,
+                5,
+                5,
+                5
+              ],
+              "castSerial": 0,
+              "summoned": 0,
+              "summons": []
+            },
+            "attempt": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "guardOpen": 0,
+            "attack": null,
+            "pose": {
+              "action": "idle",
+              "frame": 1,
+              "index": 1,
+              "facing": 0,
+              "phase": "警戒",
+              "elapsed": 318.31000000000006,
+              "provisional": false
+            }
+          },
+          "art": {
+            "pose": {
+              "action": "idle",
+              "frame": 1,
+              "index": 1,
+              "facing": 0,
+              "phase": "警戒",
+              "elapsed": 318.31000000000006,
+              "provisional": false
+            },
+            "continuous": {
+              "mode": "八方向预渲染动画",
+              "pose": {
+                "clip": "idle",
+                "time": 318.31000000000006,
+                "direction": 0,
+                "phase": "警戒"
+              },
+              "late": false,
+              "compressed": true,
+              "resources": {
+                "residentBytes": 59142768,
+                "peakBytes": 60073552,
+                "decodedPeakBytes": 0,
+                "inflatedPeakBytes": 1032192,
+                "downloadBytes": 15322614,
+                "loads": 109,
+                "misses": 4,
+                "failedPages": 0,
+                "criticalMisses": 0
+              },
+              "failure": ""
+            },
+            "parryReaction": null,
+            "root": [
+              3950,
+              900
+            ],
+            "rotation": 0,
+            "frame": "idle/0/0009",
+            "origin": [
+              0.4762198744769875,
+              0.9098469465648855
+            ],
+            "scale": [
+              0.48828125,
+              0.48828125
+            ],
+            "flip": false,
+            "provisional": false
+          },
+          "wallHit": null,
+          "flashRemaining": 0,
+          "windup": 0,
+          "attack": null,
+          "pose": null,
+          "parried": null,
+          "staggerRemaining": 0,
+          "staggerUntil": 5,
+          "home": {
+            "x": 3710,
+            "y": 1100
+          },
+          "footprint": {
+            "left": 3938,
+            "right": 3962,
+            "top": 890,
+            "bottom": 910
+          },
+          "ai": "首领破防窗口",
+          "attackRejected": null,
+          "meleeBlocker": null,
+          "waypoint": null,
+          "path": [],
+          "queries": 0,
+          "visited": 0,
+          "recovered": false,
+          "disabled": false
+        }
+      ],
+      "combat": {
+        "windFireInterval": 800,
+        "windFireRemaining": 0,
+        "windReservation": null,
+        "windReleases": [],
+        "windHeld": false,
+        "meleeFinisherEnabled": true,
+        "momentum": null,
+        "actionKind": null,
+        "isFinisher": false,
+        "hurt": null,
+        "parry": null,
+        "parrySerial": 0,
+        "parryBuffered": null,
+        "parryCooldownRemaining": 0,
+        "regenPaused": false,
+        "afterguard": null,
+        "autoCounter": null,
+        "intentFacing": 0,
+        "intentAim": null,
+        "attackAim": null,
+        "automatic": false,
+        "primaryTarget": null,
+        "delivery": "blade",
+        "sourceContactId": null,
+        "windDirection": null,
+        "status": "K 架剑就绪",
+        "attackConfig": null,
+        "counterAttack": null,
+        "lastRejection": "",
+        "actions": [],
+        "recoveryCancelEnabled": false,
+        "parryLegalAt": 318.31000000000006,
+        "dashLegalAt": 318.31000000000006,
+        "phase": "idle",
+        "effectiveFacing": 0,
+        "ready": false,
+        "reservationOwner": null,
+        "hitStopRemaining": 0,
+        "lastHitStopRequested": 0,
+        "bufferArrivedAt": null,
+        "bufferExpiresAt": null,
+        "stage": 0,
+        "attackInstanceId": null,
+        "comboId": null,
+        "facing": null,
+        "hitRegion": null,
+        "hitTargets": [],
+        "buffered": false,
+        "bufferRemaining": 0,
+        "dashRemaining": 0,
+        "dashCooldownRemaining": 0,
+        "dashInvulnerable": false,
+        "trailSamples": 0,
+        "invulnerableSources": []
+      },
+      "fx": {
+        "objects": 2,
+        "laserMaterials": {
+          "ready": true,
+          "objects": 0,
+          "visible": 0,
+          "limit": 64,
+          "bursts": []
+        },
+        "effects": []
+      },
+      "contacts": [],
+      "hazards": [],
+      "runes": {
+        "bands": [],
+        "traces": [],
+        "clock": 6855962.664163542,
+        "duos": [],
+        "cooldowns": {},
+        "counts": {},
+        "statuses": {},
+        "fields": [],
+        "projectiles": [],
+        "effects": [],
+        "events": [],
+        "metrics": {
+          "native": 0,
+          "rune": 0,
+          "duo": 0,
+          "status": 0,
+          "damage": 0,
+          "critical": 0,
+          "phoenix": 0,
+          "prevented": 0
+        },
+        "temporary": {
+          "feathers": 0,
+          "immune": false,
+          "domain": 0,
+          "bossGuard": 0
+        },
+        "pending": 0,
+        "blackHole": {
+          "metrics": {
+            "rolls": 0,
+            "procs": 0,
+            "slashHits": 0,
+            "dotDamage": 0,
+            "pulled": 0
+          },
+          "blades": [],
+          "rifts": []
+        },
+        "windGifts": {
+          "metrics": {
+            "companionHits": 0,
+            "derived": 0,
+            "healed": 0,
+            "shielded": 0,
+            "pulled": 0,
+            "echoes": 0,
+            "resonances": 0
+          },
+          "shield": 0,
+          "companionShield": 0,
+          "slow": [],
+          "jobs": 0,
+          "zones": 0,
+          "echoes": [],
+          "resonances": []
+        },
+        "visual": {
+          "materials": 0,
+          "visible": 0,
+          "giftMaterials": 0,
+          "giftVisible": 0,
+          "giftEffects": [],
+          "lightning": []
+        },
+        "lock": "首领封锁中",
+        "destination": {
+          "id": "initial",
+          "point": {
+            "x": 670,
+            "y": 720
+          }
+        }
+      },
+      "battle": {
+        "stage": "battle",
+        "warning": 0,
+        "attempt": 0,
+        "away": 0,
+        "combat": {
+          "clone": {
+            "id": "memory:8|boss-bound-branch:clone:0:0",
+            "hp": 4750,
+            "x": 3950,
+            "y": 900,
+            "serial": 0,
+            "face": {
+              "x": 0,
+              "y": 1
+            },
+            "combat": {
+              "battle": {
+                "phase": 1,
+                "next": 0,
+                "move": -1,
+                "part": 0,
+                "nextAt": 1486.69,
+                "entryUntil": -313.31000000000006,
+                "exposedUntil": -313.31000000000006,
+                "transformUntil": -313.31000000000006,
+                "controlImmuneUntil": -313.31000000000006,
+                "startedAt": -313.31000000000006,
+                "lastSkill": -1,
+                "major": false,
+                "cooldowns": [
+                  -313.31000000000006,
+                  -313.31000000000006,
+                  -313.31000000000006,
+                  -313.31000000000006,
+                  -313.31000000000006,
+                  -313.31000000000006
+                ],
+                "castSerial": 0,
+                "summoned": 0,
+                "summons": []
+              },
+              "attack": null,
+              "hazards": [],
+              "shots": [],
+              "stagger": 0,
+              "parried": null
+            }
+          },
+          "battle": {
+            "phase": 1,
+            "next": 0,
+            "move": -1,
+            "part": 0,
+            "nextAt": 1481.69,
+            "entryUntil": -318.31000000000006,
+            "exposedUntil": -318.31000000000006,
+            "transformUntil": -318.31000000000006,
+            "controlImmuneUntil": -318.31000000000006,
+            "startedAt": -318.31000000000006,
+            "lastSkill": -1,
+            "major": false,
+            "cooldowns": [
+              -318.31000000000006,
+              -318.31000000000006,
+              -318.31000000000006,
+              -318.31000000000006,
+              -318.31000000000006,
+              -318.31000000000006,
+              -318.31000000000006,
+              -318.31000000000006,
+              -318.31000000000006
+            ],
+            "castSerial": 0,
+            "summoned": 0,
+            "summons": [],
+            "cloneUsed": true
+          },
+          "attack": null,
+          "hazards": [],
+          "shots": [],
+          "stagger": 0,
+          "parried": null
+        }
+      },
+      "fps": [
+        59.88023952095874,
+        20.040080160320606,
+        59.880239520957105,
+        59.88023952095874,
+        59.88023952095874,
+        60.24096385542037,
+        59.88023952095874,
+        60.24096385542202,
+        59.880239520957105,
+        59.88023952095874,
+        30.030030030029867,
+        59.88023952095874,
+        59.88023952095548,
+        59.88023952095874,
+        59.88023952095874,
+        59.88023952095874,
+        60.24096385542037,
+        59.88023952095874,
+        60.24096385542037,
+        59.88023952095874,
+        59.88023952095874,
+        59.88023952095874,
+        59.88023952095548,
+        60.240963855423665,
+        59.88023952095874,
+        59.88023952095548,
+        60.240963855423665,
+        60.24096385542037,
+        59.52380952380888,
+        60.240963855423665,
+        59.88023952095874,
+        60.24096385542037,
+        59.88023952095874
+      ]
+    }
+  ]
+}
